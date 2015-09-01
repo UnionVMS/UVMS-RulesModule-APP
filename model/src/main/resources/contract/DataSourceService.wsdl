@@ -1,0 +1,74 @@
+<definitions name="ModuleObjectDataSource"
+             targetNamespace="source.wsdl.fisheries.ec.europa.eu"
+             xmlns:v="source.wsdl.fisheries.ec.europa.eu"
+             xmlns:tv="types.wsdl.fisheries.ec.europa.eu"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="source.wsdl.fisheries.ec.europa.eu">
+            
+            <xsd:import namespace="types.wsdl.fisheries.ec.europa.eu" schemaLocation="Element.xsd"/>
+            
+            <xsd:element name="GetDataRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="id" type="tv:ModuleObject"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetDataResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="vessel" type="tv:ModuleObject"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+           
+        </xsd:schema>
+    </types>
+    
+    <message name="Exception">
+        <part name="body" element="tv:ModuleObjectException"/>
+    </message>
+
+    <message name="Request">
+        <part name="body" element="v:GetDataRequest"/>
+    </message>
+    
+    <message name="Response">
+        <part name="body" element="v:GetDataResponse"/>
+    </message>
+
+    <portType name="DataSourcePortType">
+        <operation name="GetModuleObject">
+            <input message="v:Request"/>
+            <output message="v:Response"/>
+            <fault name="Exception" message="v:Exception"/>
+        </operation>
+    </portType>
+
+    <binding name="DataSourceSoapBinding" type="v:DataSourcePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetModuleObject">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="Exception">
+                <soap:fault name="Exception" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="DataSourceQueueService">
+        <port name="DataSourcePortType" binding="v:DataSourceSoapBinding">
+            <soap:address location="http://REPLACE_ME"/>
+        </port>
+    </service>
+
+</definitions>

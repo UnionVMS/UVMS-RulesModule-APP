@@ -1,0 +1,76 @@
+<definitions name="ModuleObjectModule"
+             targetNamespace="module.wsdl.fisheries.ec.europa.eu"
+             xmlns:v="module.wsdl.fisheries.ec.europa.eu"
+             xmlns:tv="types.wsdl.fisheries.ec.europa.eu"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+>
+
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="module.wsdl.fisheries.ec.europa.eu">
+            <xsd:import namespace="types.wsdl.fisheries.ec.europa.eu" schemaLocation="Element.xsd"/>
+            
+            <xsd:element name="GetModuleObjectRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="object" type="tv:ModuleObject"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="GetModuleObjectResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="object" type="tv:ModuleObject"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+        </xsd:schema>
+    </types>
+    
+    <message name="GetModuleObjectFaultException">
+        <part name="body" element="tv:ModuleObjectException"/>
+    </message>
+    
+    <message name="GetModuleObjectRequest">
+        <part name="body" element="v:GetModuleObjectRequest"/>
+    </message>
+
+    <message name="GetModuleObjectResponse">
+        <part name="body" element="v:GetModuleObjectResponse"/>
+    </message>
+
+    <portType name="ModuleObjectModulePortType">
+        <operation name="GetModuleObject">
+            <input message="v:GetModuleObjectRequest"/>
+            <output message="v:GetModuleObjectResponse"/>
+            <fault name="GetModuleObjectFaultException" message="v:GetModuleObjectFaultException"/>
+        </operation>
+    </portType>
+
+    <binding name="ModuleObjectModuleSoapBinding" type="v:ModuleObjectModulePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetModuleObject">
+            <!-- <soap:operation soapAction="http://www.snowboard-info.com/EndorsementSearch"/> -->
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="GetModuleObjectFaultException">
+                <soap:fault name="GetModuleObjectFaultException" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="ModuleObjectModuleService">
+        <port name="ModuleObjectModulePortType" binding="v:ModuleObjectModuleSoapBinding">
+            <soap:address location="http://REPLACE_ME"/>
+        </port>
+    </service>
+
+</definitions>

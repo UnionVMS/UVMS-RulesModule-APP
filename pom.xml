@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+    <artifactId>rules</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <description>Maven projekt-archetype for UnionVms modules</description>
+    
+    <properties>
+        <mockito.version>1.9.5</mockito.version>
+        <junit.version>4.10</junit.version>
+        <javaee.version>7.0</javaee.version>
+        <swagger.version>1.3.1</swagger.version>
+        <sl4j.version>1.7.7</sl4j.version>
+        <logback.version>1.1.2</logback.version>
+        <logback.core.version>1.1.2</logback.core.version>
+        <drools.version>6.2.0.Final</drools.version>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>${javaee.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- LOGGING DEPENDENCIES -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${sl4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.core.version}</version>
+        </dependency>
+        
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+	
+    <distributionManagement>
+        <repository>
+            <id>hav.releases</id>
+            <name>HaV release repo</name>
+            <url>http://livm06p:9080/nexus/content/repositories/releases/</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>hav.snapshots</id>
+            <name>HaV release repo</name>
+            <url>http://livm06p:9080/nexus/content/repositories/snapshots/</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+    
+    <scm>
+        <connection>scm:svn:http://svn/svn/unionvms/branches/dev/Modules/YOUR_MODULE_NAME/APP</connection>
+    </scm>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.4</version>
+                <configuration>
+                    <goalPrefix>plugin</goalPrefix>
+                    <outputDirectory>target/dir</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+  <modules>
+    <module>rest</module>
+    <module>service</module>
+    <module>message</module>
+    <module>model</module>
+    <module>module</module>
+  </modules>
+</project>
