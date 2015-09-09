@@ -1,0 +1,11 @@
+import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
+global eu.europa.ec.fisheries.uvms.rules.service.business.ErrorReportDao errorReportDao;
+
+rule "Create an error report"
+dialect "java"
+    when
+        $e : ErrorEvent($myComment : comment, $positionEvent : positionEvent)
+    then
+//        System.out.println("Create an error for guid: " + $positionEvent.getGuid());
+        errorReportDao.createError($myComment, $positionEvent.getGuid());
+end

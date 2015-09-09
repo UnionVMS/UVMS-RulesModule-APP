@@ -23,7 +23,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer {
     final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
     final static int ONE_MINUTE = 60000;
 
-    @Resource(mappedName = MessageConstants.COMPONENT_RESPONSE_QUEUE)
+    @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
 
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)

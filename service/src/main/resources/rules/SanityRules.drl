@@ -1,0 +1,26 @@
+import eu.europa.ec.fisheries.uvms.rules.service.business.PositionEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
+
+declare PositionEvent
+    @role(event)
+    @timestamp(timestamp.getTime())
+end
+
+rule "Latitude must exist"
+dialect "java"
+    when
+        $p : PositionEvent(latitude == null, $myAssetName : assetName) from entry-point "NewPositionStream"
+    then
+//        System.out.println("latitude is null (" + $myAssetName + ")");
+        insert(new ErrorEvent($p, "latitude is null for asset " + $myAssetName));
+end
+
+rule "Longitude must exist"
+dialect "java"
+    when
+        $p : PositionEvent(longitude == null, $myAssetName : assetName) from entry-point "NewPositionStream"
+    then
+//        System.out.println("longitude is null (" + $myAssetName + ")");
+        insert(new ErrorEvent($p, "longitude is null for asset " + $myAssetName));
+end
+

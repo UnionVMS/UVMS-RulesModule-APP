@@ -27,7 +27,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
     @Resource(mappedName = MessageConstants.QUEUE_DATASOURCE_INTERNAL)
     private Queue localDbQueue;
 
-    @Resource(mappedName = MessageConstants.COMPONENT_RESPONSE_QUEUE)
+    @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
 
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)

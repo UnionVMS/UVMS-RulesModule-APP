@@ -7,7 +7,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
-    
+
     <properties>
         <mockito.version>1.9.5</mockito.version>
         <junit.version>4.10</junit.version>
@@ -18,7 +18,7 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -26,7 +26,7 @@
             <version>${javaee.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- LOGGING DEPENDENCIES -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -43,7 +43,7 @@
             <artifactId>logback-core</artifactId>
             <version>${logback.core.version}</version>
         </dependency>
-        
+
         <!-- TEST -->
         <dependency>
             <groupId>junit</groupId>
@@ -58,7 +58,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-	
+
     <distributionManagement>
         <repository>
             <id>hav.releases</id>
@@ -73,11 +73,11 @@
             <layout>default</layout>
         </snapshotRepository>
     </distributionManagement>
-    
+
     <scm>
-        <connection>scm:svn:http://svn/svn/unionvms/branches/dev/Modules/YOUR_MODULE_NAME/APP</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP</connection>
     </scm>
-    
+
     <build>
         <plugins>
             <plugin>

@@ -12,13 +12,13 @@
         <artifactId>rules</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <properties>
         <!-- the name of the wsdlfiles wothout fileending -->
-        <wsdl.contract.name>ComponentModuleService</wsdl.contract.name>
-        <wsdl.source.name>ComponentDataSourceService</wsdl.source.name>
+        <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
+        <wsdl.source.name>RulesDataSourceService</wsdl.source.name>
     </properties>
-    
+
     <profiles>
         <profile>
             <id>generate-from-wsdl</id>
@@ -93,9 +93,9 @@
             </build>
         </profile>
     </profiles>
-    
+
     <build>
-        <finalName>${project.name}-${project.version}</finalName>
+        <finalName>${project.parent.artifactId}-model-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
