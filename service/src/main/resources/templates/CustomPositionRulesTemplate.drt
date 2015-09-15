@@ -1,0 +1,20 @@
+template header
+attribute
+operator
+value
+action
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.PositionEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.business.CustomEvent;
+
+template "CustomPositionRulesTemplate"
+
+rule "Custom position rule_@{row.rowNumber}"
+when
+   $p : PositionEvent(@{attribute} @{operator} "@{value}")
+then
+   System.out.println("DEBUG - Rule triggered. Action:'@{action}', guid:" + $p.getGuid());
+   insert(new CustomEvent($p, "@{action}"));
+end
+
+end template

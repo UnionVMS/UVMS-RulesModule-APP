@@ -9,6 +9,7 @@ public class DummyMovement {
     private Double latitude;
     private Double longitude;
     private Date timestamp;
+    private Double calculatedSpeed;
 
     public String getGuid() {
         return guid;
@@ -56,6 +57,14 @@ public class DummyMovement {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Double getCalculatedSpeed() {
+        return calculatedSpeed;
+    }
+
+    public void setCalculatedSpeed(Double calculatedSpeed) {
+        this.calculatedSpeed = calculatedSpeed;
     }
 
 }

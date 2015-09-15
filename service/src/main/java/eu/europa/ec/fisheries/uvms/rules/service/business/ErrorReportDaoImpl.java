@@ -30,15 +30,15 @@ public class ErrorReportDaoImpl implements ErrorReportDao {
     public ErrorReport getErrorReportByOffendingObjectGuid(String guid) throws ErrorReportDaoException {
         ErrorReport errorReport;
         try {
-            TypedQuery<ErrorReport> query = em.createNamedQuery(ServiceConstants.FIND_BY_GUID, ErrorReport.class);
+            TypedQuery<ErrorReport> query = em.createNamedQuery(ServiceConstants.FIND_ERROR_REPORT_BY_GUID, ErrorReport.class);
             query.setParameter(GUID_PARAMETER, guid);
             errorReport = query.getSingleResult();
         } catch (NoResultException e) {
             LOG.debug("Fist position report");
             return null;
         } catch (Exception e) {
-            LOG.error("[ Error when getting asset. ] {}", e.getMessage());
-            throw new ErrorReportDaoException("[ Error when getting asset. ]", e);
+            LOG.error("[ Error when getting error report. ] {}", e.getMessage());
+            throw new ErrorReportDaoException("[ Error when getting error report. ]", e);
         }
 
         return errorReport;

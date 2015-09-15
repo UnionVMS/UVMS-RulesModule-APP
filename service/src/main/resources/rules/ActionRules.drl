@@ -1,11 +1,22 @@
+import eu.europa.ec.fisheries.uvms.rules.service.business.CustomEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
+global eu.europa.ec.fisheries.uvms.rules.service.business.CustomEventDao customEventDao;
 global eu.europa.ec.fisheries.uvms.rules.service.business.ErrorReportDao errorReportDao;
+
+rule "Create a custom event"
+dialect "java"
+    when
+        CustomEvent($positionEvent : positionEvent, $action : action)
+    then
+        System.out.println("DEBUG - Create a custom event, action: " + $action);
+        customEventDao.createCustomEvent($positionEvent, $action);
+end
 
 rule "Create an error report"
 dialect "java"
     when
         $e : ErrorEvent($myComment : comment, $positionEvent : positionEvent)
     then
-//        System.out.println("Create an error for guid: " + $positionEvent.getGuid());
+        System.out.println("DEBUG - Create an error for guid: " + $positionEvent.getGuid());
         errorReportDao.createError($myComment, $positionEvent.getGuid());
 end

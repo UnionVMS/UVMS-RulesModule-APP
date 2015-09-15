@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
-    <kbase name="rules-stream" packages="rules" eventProcessingMode="stream">
-        <ksession name="ksession-rules-stream"/>
-    </kbase>
-    <kbase name="rules-cloud" packages="rules" eventProcessingMode="cloud">
-        <ksession name="ksession-rules-cloud"/>
-    </kbase>
-</kmodule>

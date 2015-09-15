@@ -11,6 +11,7 @@ public class PositionEvent {
     private Double longitude;
     private Date timestamp;
     private String comment;
+    private Double calculatedSpeed;
 
     public Integer getId() {
         return id;
@@ -74,6 +75,20 @@ public class PositionEvent {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Double getCalculatedSpeed() {
+        return calculatedSpeed;
+    }
+
+    public void setCalculatedSpeed(Double calculatedSpeed) {
+        this.calculatedSpeed = calculatedSpeed;
+    }
+
+    @Override
+    public String toString() {
+        return "PositionEvent [id=" + id + ", guid=" + guid + ", assetName=" + assetName + ", country=" + country + ", latitude=" + latitude
+                + ", longitude=" + longitude + ", timestamp=" + timestamp + ", comment=" + comment + ", calculatedSpeed=" + calculatedSpeed + "]";
     }
 
 }

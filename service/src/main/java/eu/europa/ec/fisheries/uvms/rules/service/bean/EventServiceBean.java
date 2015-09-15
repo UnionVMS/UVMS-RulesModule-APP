@@ -26,9 +26,6 @@ public class EventServiceBean implements EventService {
     @Inject
     RulesValidator rulesValidator;
 
-    // @Inject
-    // AssetDao assetDao;
-
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void messageReceived(@Observes @MessageReceivedEvent EventMessage message) {
@@ -38,8 +35,6 @@ public class EventServiceBean implements EventService {
 
             // There will arrive some kind of report, for now a dummy report
             DummyMovement dummyMovement = createDummyMovementReport(message.getJmsMessage().getText());
-
-            // Asset asset = getAsset(dummyMovenemnt.getGuid());
 
             sanitycheck(dummyMovement);
 
@@ -55,6 +50,7 @@ public class EventServiceBean implements EventService {
         Double latitude = null; // Error in latitude
         Double longitude = null; // Error in longitude
         Date timestamp = new Date();
+        Double calculatedSpeed = 1000d;
 
         DummyMovement dummyMovement = new DummyMovement();
         dummyMovement.setAssetName(assetName);
@@ -63,18 +59,13 @@ public class EventServiceBean implements EventService {
         dummyMovement.setLatitude(latitude);
         dummyMovement.setLongitude(longitude);
         dummyMovement.setTimestamp(timestamp);
+        dummyMovement.setCalculatedSpeed(calculatedSpeed);
 
         return dummyMovement;
     }
 
     private void sanitycheck(DummyMovement dummyMovement) {
         PositionEvent pe = new PositionEvent();
-        dummyMovement.getAssetName();
-        dummyMovement.getCountry();
-        dummyMovement.getGuid();
-        dummyMovement.getLatitude();
-        dummyMovement.getLongitude();
-        dummyMovement.getTimestamp();
 
         pe.setAssetName(dummyMovement.getAssetName());
         pe.setCountry(dummyMovement.getCountry());
@@ -82,23 +73,11 @@ public class EventServiceBean implements EventService {
         pe.setLatitude(dummyMovement.getLatitude());
         pe.setLongitude(dummyMovement.getLongitude());
         pe.setTimestamp(dummyMovement.getTimestamp());
+        pe.setCalculatedSpeed(dummyMovement.getCalculatedSpeed());
+
+        pe.setComment(dummyMovement.getGuid());
 
         rulesValidator.evaluate(pe);
     }
-
-    // I think we will have to persist previous reported position in order to
-    // verify that assets are sending in a timely manner
-    // private Asset getAsset(String guid) throws AssetDaoException {
-    // Asset asset = assetDao.getAssetByGuid(guid);
-    //
-    // if (asset == null) {
-    // asset = assetDao.createAsset(guid);
-    // } else {
-    // asset.setTimestamp(new Date());
-    // assetDao.updateAsset(asset);
-    // }
-    // LOG.info("myggan - asset from DB:{}", asset.getName());
-    // return asset;
-    // }
 
 }
