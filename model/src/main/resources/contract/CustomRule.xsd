@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:customrule="urn:rules.schema.fisheries.ec.europa.eu:v1" 
+            targetNamespace="urn:rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:complexType name="CustomRuleType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="type" type="xsd:string"/>
+            <xsd:element name="availability" type="xsd:string"/>
+            <xsd:element name="definitions" type="customrule:CustomRuleSegmentType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="notifications" type="customrule:CustomRuleActionType" minOccurs="1" maxOccurs="unbounded"/>
+<!--
+            <xsd:element name="owner" type="xsd:string"/>
+ -->
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CustomRuleSegmentType">
+        <xsd:sequence>
+            <xsd:element name="startOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="criteria" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="subCriteria" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="condition" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="endOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="logicBoolOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="order" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CustomRuleActionType">
+        <xsd:sequence>
+            <xsd:element name="type" type="customrule:ActionType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="text" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ActionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SEND_TO_ENDPOINT"/>
+            <xsd:enumeration value="ON_HOLD"/>
+            <xsd:enumeration value="OPEN_TICKET"/>
+            <xsd:enumeration value="EMAIL"/>
+            <xsd:enumeration value="POLL"/>
+            <xsd:enumeration value="SMS"/>
+            <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
+            <xsd:enumeration value="SEND_TO_WEBSERVICE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

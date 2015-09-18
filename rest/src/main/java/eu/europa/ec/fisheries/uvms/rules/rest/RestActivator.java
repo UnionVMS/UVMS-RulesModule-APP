@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest;
 
 import eu.europa.ec.fisheries.uvms.rules.rest.constants.RestConstants;
-import eu.europa.ec.fisheries.uvms.rules.rest.service.RestResource;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
@@ -18,7 +18,7 @@ public class RestActivator extends Application {
     private final Set<Class<?>> set = new HashSet<>();
 
     public RestActivator() {
-        set.add(RestResource.class);
+        set.add(RulesRestResource.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 

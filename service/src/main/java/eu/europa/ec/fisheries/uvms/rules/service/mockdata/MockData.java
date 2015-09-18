@@ -1,8 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mockdata;
 
-import eu.europa.ec.fisheries.wsdl.types.ModuleObject;
 import java.util.ArrayList;
 import java.util.List;
+
+import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 
 public class MockData {
 
@@ -12,9 +13,9 @@ public class MockData {
      * @param id
      * @return
      */
-    public static ModuleObject getDto(Long id) {
-        ModuleObject dto = new ModuleObject();
-        dto.setId(id.toString());
+    public static CustomRuleType getDto(Long id) {
+        CustomRuleType dto = new CustomRuleType();
+        dto.setName("DummyRule" + id);
         return null;
     }
 
@@ -24,8 +25,8 @@ public class MockData {
      * @param amount
      * @return
      */
-    public static List<ModuleObject> getDtoList(Integer amount) {
-        List<ModuleObject> dtoList = new ArrayList<>();
+    public static List<CustomRuleType> getDtoList(Integer amount) {
+        List<CustomRuleType> dtoList = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             dtoList.add(getDto(Long.valueOf(i)));
         }

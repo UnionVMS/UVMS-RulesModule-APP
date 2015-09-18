@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:movement="urn:rules.schema.fisheries.ec.europa.eu:v1"
+            targetNamespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+    
+<!--
+    <xsd:import namespace="urn:movement.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
+-->
+
+    <xsd:simpleType name="SearchKey">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DUMMY_SEARCH_KEY"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="RulesQuery">
+        <xsd:sequence>
+            <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="movementSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ListCriteria">
+        <xsd:sequence>
+            <xsd:element name="key" type="search:SearchKey" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+            
+    <xsd:complexType name="ListPagination">
+        <xsd:sequence>
+            <xsd:element name="page" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="listSize" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+<!--
+    <xsd:complexType name="MovementMapResponseType">
+        <xsd:sequence>
+            <xsd:element name="key" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="movements" type="movement:MovementType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="segments" type="movement:MovementSegment" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="tracks" type="movement:MovementTrack" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+-->
+
+</xsd:schema>

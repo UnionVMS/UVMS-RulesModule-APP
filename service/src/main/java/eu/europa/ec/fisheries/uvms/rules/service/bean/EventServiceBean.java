@@ -15,12 +15,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.MessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.DummyMovement;
-import eu.europa.ec.fisheries.uvms.rules.service.business.PositionEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.business.PositionFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 
 @Stateless
 public class EventServiceBean implements EventService {
-
     final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
 
     @Inject
@@ -65,19 +64,22 @@ public class EventServiceBean implements EventService {
     }
 
     private void sanitycheck(DummyMovement dummyMovement) {
-        PositionEvent pe = new PositionEvent();
+        PositionFact p = new PositionFact();
 
-        pe.setAssetName(dummyMovement.getAssetName());
-        pe.setCountry(dummyMovement.getCountry());
-        pe.setGuid(dummyMovement.getGuid());
-        pe.setLatitude(dummyMovement.getLatitude());
-        pe.setLongitude(dummyMovement.getLongitude());
-        pe.setTimestamp(dummyMovement.getTimestamp());
-        pe.setCalculatedSpeed(dummyMovement.getCalculatedSpeed());
+        p.setAssetName(dummyMovement.getAssetName());
+        p.setCountry(dummyMovement.getCountry());
+        p.setGuid(dummyMovement.getGuid());
+        p.setLatitude(dummyMovement.getLatitude());
+        p.setLongitude(dummyMovement.getLongitude());
+        p.setTimestamp(dummyMovement.getTimestamp());
+        p.setCalculatedSpeed(dummyMovement.getCalculatedSpeed());
 
-        pe.setComment(dummyMovement.getGuid());
+        p.setComment(dummyMovement.getGuid());
 
-        rulesValidator.evaluate(pe);
+        p.setVESSEL_CFR("SWE111222");
+        p.setMOBILE_TERMINAL_Member_id("ABC99");
+
+        rulesValidator.evaluate(p);
     }
 
 }

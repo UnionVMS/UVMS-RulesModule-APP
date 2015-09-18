@@ -1,6 +1,6 @@
 package rest.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
@@ -15,34 +15,34 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import eu.europa.ec.fisheries.uvms.rules.rest.service.RestResource;
+import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.service.Service;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
-import eu.europa.ec.fisheries.wsdl.types.ModuleObject;
 
 public class RestResourceTest {
 
     private static final Long ID = 1L;
-    private static final Integer VESSEL_LIST_SIZE = 3;
+    private static final Integer CUSTOM_RULE_LIST_SIZE = 3;
 
-    List<ModuleObject> DTO_LIST = MockData.getDtoList(VESSEL_LIST_SIZE);
-    ModuleObject DTO = MockData.getDto(ID);
+    List<CustomRuleType> DTO_LIST = MockData.getDtoList(CUSTOM_RULE_LIST_SIZE);
+    CustomRuleType DTO = MockData.getDto(ID);
 
     private final ResponseDto ERROR_RESULT;
     private final ResponseDto SUCCESS_RESULT;
     private final ResponseDto SUCCESS_RESULT_LIST;
     private final ResponseDto SUCCESS_RESULT_DTO;
 
-    RestResource SERVICE_NULL = new RestResource();
+    RulesRestResource SERVICE_NULL = new RulesRestResource();
 
     @Mock
-    Service serviceLayer;
+    RulesService serviceLayer;
 
     @InjectMocks
-    RestResource vesselResource;
+    RulesRestResource rulesRestResource;
 
     public RestResourceTest() {
         ERROR_RESULT = new ResponseDto(ResponseCode.ERROR);
@@ -76,8 +76,8 @@ public class RestResourceTest {
      */
     @Test
     public void testGetVesselList() throws ServiceException {
-        doReturn(DTO_LIST).when(serviceLayer).getList();
-        ResponseDto result = vesselResource.getList();
+        doReturn(DTO_LIST).when(serviceLayer).getCustomRuleList();
+        ResponseDto result = rulesRestResource.getCustomRuleList();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
     }
 
@@ -88,7 +88,7 @@ public class RestResourceTest {
      */
     @Test
     public void testGetVesselListNull() throws ServiceException {
-        ResponseDto result = SERVICE_NULL.getList();
+        ResponseDto result = SERVICE_NULL.getCustomRuleList();
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 
@@ -100,7 +100,7 @@ public class RestResourceTest {
     @Test
     public void testGetVesselById() throws ServiceException {
         doReturn(DTO).when(serviceLayer).getById(ID);
-        ResponseDto result = vesselResource.getById(ID);
+        ResponseDto result = rulesRestResource.getById(ID);
         Mockito.verify(serviceLayer).getById(ID);
         assertEquals(SUCCESS_RESULT_DTO.toString(), result.toString());
 
@@ -124,8 +124,8 @@ public class RestResourceTest {
      */
     @Test
     public void testCreateVessel() throws ServiceException {
-        ResponseDto result = vesselResource.create(DTO);
-        Mockito.verify(serviceLayer).create(DTO);
+        ResponseDto result = rulesRestResource.create(DTO);
+        Mockito.verify(serviceLayer).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
@@ -145,7 +145,7 @@ public class RestResourceTest {
      */
     @Test
     public void testUpdateVessel() throws ServiceException {
-        ResponseDto result = vesselResource.update(DTO);
+        ResponseDto result = rulesRestResource.update(DTO);
         Mockito.verify(serviceLayer).update(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }

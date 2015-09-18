@@ -2,7 +2,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.Date;
 
-public class PositionEvent {
+public class PositionFact {
+    // Temp raw factoids
+    private String VESSEL_CFR;
+    private String MOBILE_TERMINAL_Member_id;
+
     private Integer id;
     private String guid;
     private String assetName;
@@ -27,6 +31,22 @@ public class PositionEvent {
 
     public void setGuid(String guid) {
         this.guid = guid;
+    }
+
+    public String getVESSEL_CFR() {
+        return VESSEL_CFR;
+    }
+
+    public void setVESSEL_CFR(String vESSEL_CFR) {
+        VESSEL_CFR = vESSEL_CFR;
+    }
+
+    public String getMOBILE_TERMINAL_Member_id() {
+        return MOBILE_TERMINAL_Member_id;
+    }
+
+    public void setMOBILE_TERMINAL_Member_id(String mOBILE_TERMINAL_Member_id) {
+        MOBILE_TERMINAL_Member_id = mOBILE_TERMINAL_Member_id;
     }
 
     public String getAssetName() {
@@ -83,12 +103,6 @@ public class PositionEvent {
 
     public void setCalculatedSpeed(Double calculatedSpeed) {
         this.calculatedSpeed = calculatedSpeed;
-    }
-
-    @Override
-    public String toString() {
-        return "PositionEvent [id=" + id + ", guid=" + guid + ", assetName=" + assetName + ", country=" + country + ", latitude=" + latitude
-                + ", longitude=" + longitude + ", timestamp=" + timestamp + ", comment=" + comment + ", calculatedSpeed=" + calculatedSpeed + "]";
     }
 
 }

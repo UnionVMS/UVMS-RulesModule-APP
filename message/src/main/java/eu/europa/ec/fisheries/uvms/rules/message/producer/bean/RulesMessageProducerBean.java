@@ -40,7 +40,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         try {
-            connectToQueue();
+            connectQueue();
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
@@ -53,7 +53,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
 
             return message.getJMSMessageID();
         } catch (Exception e) {
-            LOG.error("[ Error when sending message. ] {0}", e.getMessage());
+            LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
         } finally {
             try {
@@ -66,7 +66,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
         }
     }
 
-    private void connectToQueue() throws JMSException {
+    private void connectQueue() throws JMSException {
         connection = connectionFactory.createConnection();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         connection.start();

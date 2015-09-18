@@ -2,18 +2,18 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 public class CustomEvent {
     private int id;
-    private PositionEvent positionEvent;
+    private PositionFact positionFact;
     private String action;
 
     public CustomEvent() {
     }
 
-    public CustomEvent(PositionEvent p) {
-        this.positionEvent = p;
+    public CustomEvent(PositionFact p) {
+        this.positionFact = p;
     }
 
-    public CustomEvent(PositionEvent p, String action) {
-        this.positionEvent = p;
+    public CustomEvent(PositionFact p, String action) {
+        this.positionFact = p;
         this.action = action;
     }
 
@@ -25,12 +25,12 @@ public class CustomEvent {
         this.id = id;
     }
 
-    public PositionEvent getPositionEvent() {
-        return positionEvent;
+    public PositionFact getPositionFact() {
+        return positionFact;
     }
 
-    public void setPositionEvent(PositionEvent positionEvent) {
-        this.positionEvent = positionEvent;
+    public void setPositionFact(PositionFact positionFact) {
+        this.positionFact = positionFact;
     }
 
     public String getAction() {

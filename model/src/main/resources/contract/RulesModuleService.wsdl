@@ -1,0 +1,202 @@
+<definitions name="RulesModule"
+             targetNamespace="urn:module.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:module="urn:module.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:customrule="urn:rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:module.rules.schema.fisheries.ec.europa.eu:v1">
+
+            <xsd:import namespace="urn:rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
+            <xsd:import namespace="urn:common.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesCommon.xsd"/>
+            <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
+
+            <!-- Rules Base Request -->
+            <xsd:simpleType name="RulesModuleMethod">
+                <xsd:restriction base="xsd:string">
+                    <!-- Actions triggered by user -->
+                    <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="LIST_CUSTOM_RULES"/>
+                    
+                    <!-- Actions triggered by rule engine -->
+                    <xsd:enumeration value="CREATE_ERROR_REPORT"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+
+            <xsd:complexType name="RulesBaseRequest" abstract="true">
+                <xsd:sequence>
+                    <xsd:element name="method" type="module:RulesModuleMethod"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Create custom rule request -->
+            <xsd:element name="CreateCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="customRule" type="customrule:CustomRuleType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create custom rule response -->
+            <xsd:element name="CreateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- List custom rules request -->
+            <xsd:element name="GetCustomRuleListRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:RulesQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- List custom rules response -->
+            <xsd:element name="GetCustomRuleListResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Create error report request -->
+            <xsd:element name="CreateErrorReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="offendingGuid" type="xsd:string"/>
+                                <xsd:element name="comment" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create error report response -->
+            <xsd:element name="CreateErrorReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ack" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="RulesException">
+        <part name="body" element="common:ExceptionType"/>
+    </message>
+
+    <message name="CreateCustomRuleRequest">
+        <part name="body" element="module:CreateCustomRuleRequest"/>
+    </message>
+    <message name="CreateCustomRuleResponse">
+        <part name="body" element="module:CreateCustomRuleResponse"/>
+    </message>
+    
+    <message name="GetCustomRuleListRequest">
+        <part name="body" element="module:GetCustomRuleListRequest"/>
+    </message>
+    <message name="GetCustomRuleListResponse">
+        <part name="body" element="module:GetCustomRuleListResponse"/>
+    </message>
+    
+    <message name="CreateErrorReportRequest">
+        <part name="body" element="module:CreateErrorReportRequest"/>
+    </message>
+    <message name="CreateErrorReportResponse">
+        <part name="body" element="module:CreateErrorReportResponse"/>
+    </message>
+    
+    <portType name="RulesModulePortType">
+    
+        <operation name="CreateCustomRule">
+            <input message="module:CreateCustomRuleRequest"/>
+            <output message="module:CreateCustomRuleResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRuleList">
+            <input message="module:GetCustomRuleListRequest"/>
+            <output message="module:GetCustomRuleListResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="CreateErrorReport">
+            <input message="module:CreateErrorReportRequest"/>
+            <output message="module:CreateErrorReportResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+    </portType>
+
+    <binding name="RulesModuleSoapBinding" type="module:RulesModulePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="CreateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRuleList">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CreateErrorReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+    </binding>
+
+    <service name="RulesModuleService">
+        <port name="RulesModulePortType" binding="module:RulesModuleSoapBinding">
+            <soap:address location="http://REPLACE_ME"/>
+        </port>
+    </service>
+
+</definitions>

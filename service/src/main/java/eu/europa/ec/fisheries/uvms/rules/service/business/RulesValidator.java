@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +24,9 @@ import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.uvms.rules.service.entity.CustomRule;
+import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
 
 //@Startup
 @Singleton
@@ -35,13 +38,7 @@ public class RulesValidator {
     private static final String CUSTOM_RULE_DRL = "src/main/resources/rules/TemplateRules.drl";
 
     @Inject
-    private ErrorReportDao errorReportDao;
-
-    @Inject
-    private CustomRuleDao customRuleDao;
-
-    @Inject
-    private CustomEventDao customEventDao;
+    RulesService rulesService;
 
     private KieSession ksession;
     private KieServices kservices;
@@ -84,16 +81,26 @@ public class RulesValidator {
         }
     }
 
-    public void evaluate(PositionEvent pe) {
-        // Add rules
+    public void evaluate(PositionFact p) {
+        // Add sanity rules
         kfs.write(kservices.getResources().newClassPathResource(SANITY_RESOURCE_DRL));
 
-        // Add rules
-        List<CustomRule> rules = customRuleDao.getCustomRules();
+        // Fetch custom rules from DB
+        List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
+        List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
+        try {
+            rawRules = rulesService.getCustomRuleList();
+        } catch (ServiceException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        // Add custom rules
+        rules = RulesUtil.parseRules(rawRules);
         String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
         kfs.write(CUSTOM_RULE_DRL, drl);
 
-        // Add rules
+        // Add action rules
         kfs.write(kservices.getResources().newClassPathResource(ACTION_RESOURCE_DRL));
 
         // Create session
@@ -102,25 +109,23 @@ public class RulesValidator {
         ksession = kcontainer.newKieSession();
 
         // Inject beans
-        ksession.setGlobal("customEventDao", customEventDao);
-        ksession.setGlobal("errorReportDao", errorReportDao);
+        ksession.setGlobal("rulesService", rulesService);
 
-        ksession.insert(pe);
+        ksession.insert(p);
         ksession.fireAllRules();
     }
 
-    private String generateDrl(String template, List<CustomRule> rules) {
+    private String generateDrl(String template, List<CustomRuleDto> rules) {
         InputStream templateStream = this.getClass().getResourceAsStream(template);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
         TemplateDataListener listener = new TemplateDataListener(tc);
 
         int rowNum = 0;
-        for (CustomRule customRule : rules) {
+        for (CustomRuleDto rule : rules) {
             listener.newRow(rowNum, 0);
-            listener.newCell(rowNum, 0, customRule.getAttribute(), 0);
-            listener.newCell(rowNum, 1, customRule.getOperator(), 0);
-            listener.newCell(rowNum, 2, customRule.getValue(), 0);
-            listener.newCell(rowNum, 3, customRule.getAction(), 0);
+            listener.newCell(rowNum, 0, rule.getRuleName(), 0);
+            listener.newCell(rowNum, 1, rule.getExpression(), 0);
+            listener.newCell(rowNum, 2, rule.getAction(), 0);
             rowNum++;
         }
         listener.finishSheet();
