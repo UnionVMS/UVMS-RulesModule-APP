@@ -9,6 +9,7 @@
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
+        <release.branch.name>lasarus</release.branch.name>
         <mockito.version>1.9.5</mockito.version>
         <junit.version>4.10</junit.version>
         <javaee.version>7.0</javaee.version>
@@ -61,21 +62,19 @@
 
     <distributionManagement>
         <repository>
-            <id>hav.releases</id>
-            <name>HaV release repo</name>
-            <url>http://livm06p:9080/nexus/content/repositories/releases/</url>
-            <layout>default</layout>
+            <id>digit-releases</id>
+            <name>DG DIGIT Repository</name>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare/</url>
         </repository>
         <snapshotRepository>
-            <id>hav.snapshots</id>
-            <name>HaV release repo</name>
-            <url>http://livm06p:9080/nexus/content/repositories/snapshots/</url>
-            <layout>default</layout>
+            <id>digit-snapshots</id>
+            <name>DG DIGIT Snapshot Repository</name>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP</connection>       
     </scm>
 
     <build>
@@ -91,11 +90,11 @@
             </plugin>
         </plugins>
     </build>
-  <modules>
-    <module>rest</module>
-    <module>service</module>
-    <module>message</module>
-    <module>model</module>
-    <module>module</module>
-  </modules>
+    <modules>
+        <module>rest</module>
+        <module>service</module>
+        <module>message</module>
+        <module>model</module>
+        <module>module</module>
+    </modules>
 </project>
