@@ -116,13 +116,10 @@ public class RulesServiceBean implements RulesService {
             case OPEN_TICKET:
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
-            case POLL:
+            case MANUAL_POLL:
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
             case SEND_TO_ENDPOINT:
-                LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
-                break;
-            case SEND_TO_WEBSERVICE:
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
             case SMS:

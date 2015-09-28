@@ -78,12 +78,12 @@ public class RulesUtil {
             rulesDto.setExpression(sb.toString());
 
             // Format as of now: "ACTION,VALUE;ACTION,VALUE;ACTION,VALUE;"
-            List<CustomRuleActionType> actions = rawRule.getNotifications();
+            List<CustomRuleActionType> actions = rawRule.getActions();
             sb = new StringBuilder();
             for (CustomRuleActionType action : actions) {
-                sb.append(action.getType());
+                sb.append(action.getAction());
                 sb.append(",");
-                sb.append(action.getText());
+                sb.append(action.getValue());
                 sb.append(";");
             }
 

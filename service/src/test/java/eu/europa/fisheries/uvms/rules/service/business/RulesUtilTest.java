@@ -49,15 +49,15 @@ public class RulesUtilTest {
 
         // First action
         CustomRuleActionType action1 = new CustomRuleActionType();
-        action1.setType(ActionType.EMAIL);
-        action1.setText("user@company.se");
-        rawRule.getNotifications().add(action1);
+        action1.setAction(ActionType.EMAIL);
+        action1.setValue("user@company.se");
+        rawRule.getActions().add(action1);
 
         // Second action
         CustomRuleActionType action2 = new CustomRuleActionType();
-        action2.setType(ActionType.SMS);
-        action2.setText("+46111111111");
-        rawRule.getNotifications().add(action2);
+        action2.setAction(ActionType.SMS);
+        action2.setValue("+46111111111");
+        rawRule.getActions().add(action2);
 
         // First part of rule
         CustomRuleSegmentType segment1 = new CustomRuleSegmentType();
