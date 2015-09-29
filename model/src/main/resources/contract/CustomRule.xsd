@@ -16,6 +16,9 @@
             <xsd:element name="timeIntervals" type="customrule:CustomRuleIntervalType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="definitions" type="customrule:CustomRuleSegmentType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="actions" type="customrule:CustomRuleActionType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="lastTriggered" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -66,7 +69,7 @@
             <xsd:enumeration value="SEND_TO_ENDPOINT"/>
             <xsd:enumeration value="MANUAL_POLL"/>
             <xsd:enumeration value="ON_HOLD"/>
-            <xsd:enumeration value="OPEN_TICKET"/>
+            <xsd:enumeration value="TICKET"/>
             <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
             <xsd:enumeration value="EMAIL"/>
             <xsd:enumeration value="SMS"/>

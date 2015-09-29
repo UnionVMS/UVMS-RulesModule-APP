@@ -1,18 +1,26 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.dto;
 
-public enum ResponseCode implements RestResponseCode {
+public enum ResponseCode {
 
-    OK("200"),
-    ERROR("500");
+    OK(200),
+    UNDEFINED_ERROR(500),
 
-    private final String code;
+    // RULES_ERROR(501),
 
-    private ResponseCode(String code) {
+    INPUT_ERROR(511),
+    MAPPING_ERROR(512),
+
+    SERVICE_ERROR(521),
+    MODEL_ERROR(522),
+    DOMAIN_ERROR(523);
+
+    private final int code;
+
+    private ResponseCode(int code) {
         this.code = code;
     }
 
-    @Override
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 

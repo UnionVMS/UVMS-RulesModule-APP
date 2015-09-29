@@ -1,6 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import eu.europa.ec.fisheries.uvms.rules.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.jms.JMSException;
@@ -23,9 +23,9 @@ public class JAXBMarshaller {
      * @param data
      * @return
      * @throws
-     * eu.europa.ec.fisheries.uvms.rules.model.exception.ModelMarshallException
+     * eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException
      */
-    public static <T> String marshallJaxBObjectToString(T data) throws ModelMarshallException {
+    public static <T> String marshallJaxBObjectToString(T data) throws RulesModelMarshallException {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(data.getClass());
             Marshaller marshaller = jaxbContext.createMarshaller();
@@ -35,7 +35,7 @@ public class JAXBMarshaller {
             return sw.toString();
         } catch (JAXBException ex) {
             LOG.error("[ Error when marshalling object to string ] {} ", ex.getMessage());
-            throw new ModelMarshallException("[ Error when marshalling Object to String ]", ex);
+            throw new RulesModelMarshallException("[ Error when marshalling Object to String ]", ex);
         }
     }
 
@@ -48,9 +48,9 @@ public class JAXBMarshaller {
      * @param clazz pperException
      * @return
      * @throws
-     * eu.europa.ec.fisheries.uvms.rules.model.exception.ModelMarshallException
+     * eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException
      */
-    public static <R> R unmarshallTextMessage(TextMessage textMessage, Class clazz) throws ModelMarshallException {
+    public static <R> R unmarshallTextMessage(TextMessage textMessage, Class clazz) throws RulesModelMarshallException {
         try {
             JAXBContext jc = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -58,7 +58,7 @@ public class JAXBMarshaller {
             return (R) unmarshaller.unmarshal(sr);
         } catch (JMSException | JAXBException ex) {
             LOG.error("[ Error when Text message to object ] {} ", ex.getMessage());
-            throw new ModelMarshallException("[Error when unmarshalling response in ResponseMapper ]", ex);
+            throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper ]", ex);
         }
     }
 

@@ -15,13 +15,13 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.ModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesParameterService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PositionFact;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -41,18 +41,18 @@ public class RulesServiceBean implements RulesService {
      * {@inheritDoc}
      *
      * @param customRule
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType createCustomRule(CustomRuleType customRule) throws ServiceException {
+    public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException {
         LOG.info("Create invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapCreateCustomRule(customRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             return RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response);
-        } catch (ModelMapperException | MessageException ex) {
-            throw new ServiceException(ex.getMessage());
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
         }
     }
 
@@ -60,30 +60,30 @@ public class RulesServiceBean implements RulesService {
      * {@inheritDoc}
      *
      * @return
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Override
-    public List<CustomRuleType> getCustomRuleList() throws ServiceException {
+    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
         LOG.info("Get list invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapListCustomRule();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
-        } catch (ModelMapperException | MessageException ex) {
-            throw new ServiceException(ex.getMessage());
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
         }
     }
 
     // Triggered by rule engine, no response expected
     @Override
-    public void createErrorReport(String comment, String guid) throws ServiceException {
+    public void createErrorReport(String comment, String guid) throws RulesServiceException {
         LOG.info("Get list invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapCreateErrorReport(comment, guid);
             producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-        } catch (ModelMapperException | MessageException ex) {
-            throw new ServiceException(ex.getMessage());
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class RulesServiceBean implements RulesService {
             case ON_HOLD:
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
-            case OPEN_TICKET:
+            case TICKET:
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
             case MANUAL_POLL:
@@ -126,6 +126,7 @@ public class RulesServiceBean implements RulesService {
                 LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
             case TOP_BAR_NOTIFICATION:
+                LOG.info("Performing action '{}' with value '{}' regarding guid '{}'", action, value, p.getGuid());
                 break;
             default:
                 // Unreachable, ActionType.valueOf(action) would fail before
@@ -141,24 +142,24 @@ public class RulesServiceBean implements RulesService {
      *
      * @param id
      * @return
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType getById(Long id) throws ServiceException {
+    public CustomRuleType getById(Long id) throws RulesServiceException {
         LOG.info("Get by id invoked in service layer");
-        throw new ServiceException("Get by id not implemented in service layer");
+        throw new RulesServiceException("Get by id not implemented in service layer");
     }
 
     /**
      * {@inheritDoc}
      *
      * @param data
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType update(CustomRuleType customRuleType) throws ServiceException {
+    public CustomRuleType update(CustomRuleType customRuleType) throws RulesServiceException {
         LOG.info("Update invoked in service layer");
-        throw new ServiceException("Update not implemented in service layer");
+        throw new RulesServiceException("Update not implemented in service layer");
     }
 
 }

@@ -1,6 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.exception;
 
-public class InputArgumentException extends ModelException {
+public class InputArgumentException extends RulesModelException {
     private static final long serialVersionUID = 1L;
 
     public InputArgumentException() {

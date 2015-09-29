@@ -17,8 +17,9 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 @Path("/customrules")
 @Stateless
@@ -41,16 +42,12 @@ public class RulesRestResource {
         LOG.info("Create invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.createCustomRule(customRule), ResponseCode.OK);
-        } catch (ServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when creating. ] {} ", ex.getStackTrace());
-            return new ResponseDto(ResponseCode.ERROR);
+            return ErrorHandler.getFault(ex);
         }
     }
 
-    /**
-     * TODO Rename this class so the name is YOUR_COMPNENT_NAME Resource instead
-     * of RestResource
-     */
     @EJB
     RulesService serviceLayer;
 
@@ -70,9 +67,9 @@ public class RulesRestResource {
         LOG.info("Get list invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.getCustomRuleList(), ResponseCode.OK);
-        } catch (ServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
-            return new ResponseDto(ex.getMessage(), ResponseCode.ERROR);
+            return ErrorHandler.getFault(ex);
         }
     }
 
@@ -92,9 +89,9 @@ public class RulesRestResource {
         LOG.info("Get by id invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.getById(id), ResponseCode.OK);
-        } catch (ServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting by id. ] {} ", ex.getStackTrace());
-            return new ResponseDto(ex.getMessage(), ResponseCode.ERROR);
+            return ErrorHandler.getFault(ex);
         }
     }
 
@@ -113,9 +110,9 @@ public class RulesRestResource {
         LOG.info("Update invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.update(customRuleType), ResponseCode.OK);
-        } catch (ServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
-            return new ResponseDto(ResponseCode.ERROR);
+            return ErrorHandler.getFault(ex);
         }
     }
 

@@ -13,7 +13,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.entity.Parameter;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 @Stateless
 public class RulesParameterServiceBean implements RulesParameterService {
@@ -24,7 +24,7 @@ public class RulesParameterServiceBean implements RulesParameterService {
     EntityManager em;
 
     @Override
-    public String getStringValue(ParameterKey key) throws ServiceException {
+    public String getStringValue(ParameterKey key) throws RulesServiceException {
         try {
             Query query = em.createNamedQuery(ServiceConstants.FIND_BY_NAME);
             query.setParameter("key", key.getKey());
@@ -32,24 +32,24 @@ public class RulesParameterServiceBean implements RulesParameterService {
             return entity.getParamValue();
         } catch (Exception ex) {
             LOG.error("[ Error when getting String value ]", ex.getMessage());
-            throw new ServiceException("[ Error when getting String value ]", ex);
+            throw new RulesServiceException("[ Error when getting String value ]", ex);
         }
     }
 
     @Override
-    public Boolean getBooleanValue(ParameterKey key) throws ServiceException {
+    public Boolean getBooleanValue(ParameterKey key) throws RulesServiceException {
         try {
             Query query = em.createNamedQuery(ServiceConstants.FIND_BY_NAME);
             query.setParameter("key", key.getKey());
             Parameter entity = (Parameter) query.getSingleResult();
             return parseBooleanValue(entity.getParamValue());
-        } catch (ServiceException ex) {
+        } catch (RulesServiceException ex) {
             LOG.error("[ Error when getting Boolean value ]", ex.getMessage());
-            throw new ServiceException("[ Error when getting Boolean value ]", ex);
+            throw new RulesServiceException("[ Error when getting Boolean value ]", ex);
         }
     }
 
-    private Boolean parseBooleanValue(String value) throws InputArgumentException, ServiceException {
+    private Boolean parseBooleanValue(String value) throws InputArgumentException, RulesServiceException {
         try {
             if (value.equalsIgnoreCase("true")) {
                 return Boolean.TRUE;
@@ -62,7 +62,7 @@ public class RulesParameterServiceBean implements RulesParameterService {
             }
         } catch (Exception ex) {
             LOG.error("[ Error when parsing Boolean value from String ]", ex.getMessage());
-            throw new ServiceException("[ Error when parsing Boolean value from String ]", ex);
+            throw new RulesServiceException("[ Error when parsing Boolean value from String ]", ex);
         }
     }
 

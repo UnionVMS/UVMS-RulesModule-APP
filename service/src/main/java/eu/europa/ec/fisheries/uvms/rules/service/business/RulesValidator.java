@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 //@Startup
 @Singleton
@@ -90,7 +90,7 @@ public class RulesValidator {
         List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
         try {
             rawRules = rulesService.getCustomRuleList();
-        } catch (ServiceException e) {
+        } catch (RulesServiceException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

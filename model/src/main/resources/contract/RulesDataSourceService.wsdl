@@ -2,6 +2,8 @@
              targetNamespace="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:source="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:customrule="urn:rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -14,6 +16,8 @@
             <xsd:import namespace="urn:rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
             <xsd:import namespace="urn:common.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesCommon.xsd"/>
             <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
+            <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
+            <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
 
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesDataSourceMethod">
@@ -21,6 +25,8 @@
                     <!-- Actions triggered by user -->
                     <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES"/>
+                    <xsd:enumeration value="LIST_TICKETS"/>
+                    <xsd:enumeration value="LIST_ALARMS"/>
                     
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ERROR_REPORT"/>
@@ -79,6 +85,54 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- List tickets request -->
+            <xsd:element name="GetTicketListRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:RulesQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- List tickets response -->
+            <xsd:element name="GetTicketListResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- List alarms request -->
+            <xsd:element name="GetAlarmListRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:RulesQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- List alarms response -->
+            <xsd:element name="GetAlarmListResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarms" type="alarm:AlarmType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Create error report request -->
             <xsd:element name="CreateErrorReportRequest">
                 <xsd:complexType>
@@ -106,7 +160,7 @@
     </types>
 
     <message name="RulesException">
-        <part name="body" element="common:ExceptionType"/>
+        <part name="body" element="common:RulesFault"/>
     </message>
 
     <message name="CreateCustomRuleRequest">
@@ -122,7 +176,21 @@
     <message name="GetCustomRuleListResponse">
         <part name="body" element="source:GetCustomRuleListResponse"/>
     </message>
+
+    <message name="GetTicketListRequest">
+        <part name="body" element="source:GetTicketListRequest"/>
+    </message>
+    <message name="GetTicketListResponse">
+        <part name="body" element="source:GetTicketListResponse"/>
+    </message>
     
+    <message name="GetAlarmListRequest">
+        <part name="body" element="source:GetAlarmListRequest"/>
+    </message>
+    <message name="GetAlarmListResponse">
+        <part name="body" element="source:GetAlarmListResponse"/>
+    </message>
+
     <message name="CreateErrorReportRequest">
         <part name="body" element="source:CreateErrorReportRequest"/>
     </message>
@@ -141,6 +209,18 @@
         <operation name="GetCustomRuleList">
             <input message="source:GetCustomRuleListRequest"/>
             <output message="source:GetCustomRuleListResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketList">
+            <input message="source:GetTicketListRequest"/>
+            <output message="source:GetTicketListResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarmList">
+            <input message="source:GetAlarmListRequest"/>
+            <output message="source:GetAlarmListResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -168,6 +248,30 @@
         </operation>
 
         <operation name="GetCustomRuleList">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketList">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarmList">
             <input>
                 <soap:body use="literal"/>
             </input>

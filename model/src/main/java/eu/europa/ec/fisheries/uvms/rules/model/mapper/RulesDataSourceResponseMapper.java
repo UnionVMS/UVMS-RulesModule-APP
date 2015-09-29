@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.ModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
 public class RulesDataSourceResponseMapper {
 
@@ -22,46 +22,46 @@ public class RulesDataSourceResponseMapper {
      *
      * @param response
      * @param correlationId
-     * @throws ModelMapperException
+     * @throws RulesModelMapperException
      * @throws JMSException
      */
-    private static void validateResponse(TextMessage response, String correlationId) throws ModelMapperException, JMSException {
+    private static void validateResponse(TextMessage response, String correlationId) throws RulesModelMapperException, JMSException {
 
         if (response == null) {
             LOG.error("[ Error when validating response in ResponseMapper: Response is Null ]");
-            throw new ModelMapperException("[ Error when validating response in ResponseMapper: Response is Null ]");
+            throw new RulesModelMapperException("[ Error when validating response in ResponseMapper: Response is Null ]");
         }
 
         if (response.getJMSCorrelationID() == null) {
             LOG.error("[ No corelationId in response.] Expected was: {} ", correlationId);
-            throw new ModelMapperException("[ No corelationId in response (Null) ] . Expected was: " + correlationId);
+            throw new RulesModelMapperException("[ No corelationId in response (Null) ] . Expected was: " + correlationId);
         }
 
         if (!correlationId.equalsIgnoreCase(response.getJMSCorrelationID())) {
             LOG.error("[ Wrong corelationId in response. Expected was {0} But actual was: {1} ]", correlationId, response.getJMSCorrelationID());
-            throw new ModelMapperException("[ Wrong corelationId in response. ] Expected was: " + correlationId + "But actual was: "
+            throw new RulesModelMapperException("[ Wrong corelationId in response. ] Expected was: " + correlationId + "But actual was: "
                     + response.getJMSCorrelationID());
         }
 
     }
 
-    public static CustomRuleType mapToCreateCustomRuleFromResponse(TextMessage message) throws ModelMapperException {
+    public static CustomRuleType mapToCreateCustomRuleFromResponse(TextMessage message) throws RulesModelMapperException {
         CreateCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, CreateCustomRuleResponse.class);
         return response.getCustomRule();
     }
 
-    public static String createCustomRuleResponse(CustomRuleType customRule) throws ModelMapperException {
+    public static String createCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
         CreateCustomRuleResponse response = new CreateCustomRuleResponse();
         response.setCustomRule(customRule);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message) throws ModelMapperException {
+    public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message) throws RulesModelMapperException {
         GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
         return response.getCustomRules();
     }
 
-    public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws ModelMapperException {
+    public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
         GetCustomRuleListResponse response = new GetCustomRuleListResponse();
         response.getCustomRules().addAll(customRules);
         return JAXBMarshaller.marshallJaxBObjectToString(response);

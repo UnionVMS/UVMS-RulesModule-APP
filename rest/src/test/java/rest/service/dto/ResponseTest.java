@@ -1,14 +1,15 @@
 package rest.service.dto;
 
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 
 public class ResponseTest {
 
@@ -36,12 +37,12 @@ public class ResponseTest {
 
         String VALUE = "HELLO_DTO";
         ResponseDto dto = new ResponseDto(VALUE, ResponseCode.OK);
-        Assert.assertEquals(dto.getCode(), ResponseCode.OK.getCode());
-        Assert.assertEquals(dto.getData(), VALUE);
+        Assert.assertEquals(dto.getCode().intValue(), ResponseCode.OK.getCode());
+        Assert.assertEquals(VALUE, dto.getData());
 
-        dto = new ResponseDto(ResponseCode.ERROR);
-        Assert.assertEquals(dto.getCode(), ResponseCode.ERROR.getCode());
-        Assert.assertEquals(dto.getData(), null);
+        dto = new ResponseDto(VALUE, ResponseCode.UNDEFINED_ERROR);
+        Assert.assertEquals(dto.getCode().intValue(), ResponseCode.UNDEFINED_ERROR.getCode());
+        Assert.assertEquals(VALUE, dto.getData());
 
     }
 }

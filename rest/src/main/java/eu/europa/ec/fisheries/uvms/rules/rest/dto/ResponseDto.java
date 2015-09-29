@@ -7,15 +7,16 @@ import java.util.Objects;
  */
 public class ResponseDto<T> {
 
-    private T data;
-    private final RestResponseCode code;
+    private final T data;
+    private final Integer code;
 
-    public ResponseDto(T data, RestResponseCode code) {
+    public ResponseDto(T data, ResponseCode code) {
         this.data = data;
-        this.code = code;
+        this.code = code.getCode();
     }
 
-    public ResponseDto(RestResponseCode code) {
+    public ResponseDto(T data, Integer code) {
+        this.data = data;
         this.code = code;
     }
 
@@ -23,8 +24,8 @@ public class ResponseDto<T> {
         return data;
     }
 
-    public String getCode() {
-        return code.getCode();
+    public Integer getCode() {
+        return code;
     }
 
     @Override

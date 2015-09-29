@@ -6,11 +6,11 @@
             xmlns="http://schemas.xmlsoap.org/wsdl/">
     
 
-    <xsd:element name="ExceptionType">
+    <xsd:element name="RulesFault">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="code" type="xsd:integer"/>
-                <xsd:element name="fault" type="xsd:string"/>
+                <xsd:element name="code" type="xsd:int"/>
+                <xsd:element name="message" type="xsd:string"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

@@ -20,7 +20,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
 
 public class RestResourceTest {
@@ -45,8 +45,8 @@ public class RestResourceTest {
     RulesRestResource rulesRestResource;
 
     public RestResourceTest() {
-        ERROR_RESULT = new ResponseDto(ResponseCode.ERROR);
-        SUCCESS_RESULT = new ResponseDto(ResponseCode.OK);
+        ERROR_RESULT = new ResponseDto(null, ResponseCode.UNDEFINED_ERROR);
+        SUCCESS_RESULT = new ResponseDto(null, ResponseCode.OK);
         SUCCESS_RESULT_LIST = new ResponseDto(DTO_LIST, ResponseCode.OK);
         SUCCESS_RESULT_DTO = new ResponseDto(DTO, ResponseCode.OK);
     }
@@ -72,10 +72,10 @@ public class RestResourceTest {
     /**
      * Test get list with a happy outcome
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselList() throws ServiceException {
+    public void testGetVesselList() throws RulesServiceException {
         doReturn(DTO_LIST).when(serviceLayer).getCustomRuleList();
         ResponseDto result = rulesRestResource.getCustomRuleList();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
@@ -84,10 +84,10 @@ public class RestResourceTest {
     /**
      * Test get list when the injected EJB is null
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselListNull() throws ServiceException {
+    public void testGetVesselListNull() throws RulesServiceException {
         ResponseDto result = SERVICE_NULL.getCustomRuleList();
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
@@ -95,10 +95,10 @@ public class RestResourceTest {
     /**
      * Test get by id with a happy outcome
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselById() throws ServiceException {
+    public void testGetVesselById() throws RulesServiceException {
         doReturn(DTO).when(serviceLayer).getById(ID);
         ResponseDto result = rulesRestResource.getById(ID);
         Mockito.verify(serviceLayer).getById(ID);
@@ -109,10 +109,10 @@ public class RestResourceTest {
     /**
      * Test get by id when the injected EJB is null
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselByIdNull() throws ServiceException {
+    public void testGetVesselByIdNull() throws RulesServiceException {
         ResponseDto result = SERVICE_NULL.getById(ID);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
@@ -120,10 +120,10 @@ public class RestResourceTest {
     /**
      * Test create with a happy outcome
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testCreateVessel() throws ServiceException {
+    public void testCreateVessel() throws RulesServiceException {
         ResponseDto result = rulesRestResource.create(DTO);
         Mockito.verify(serviceLayer).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
@@ -141,10 +141,10 @@ public class RestResourceTest {
     /**
      * Test update with a happy outcome
      *
-     * @throws ServiceException
+     * @throws RulesServiceException
      */
     @Test
-    public void testUpdateVessel() throws ServiceException {
+    public void testUpdateVessel() throws RulesServiceException {
         ResponseDto result = rulesRestResource.update(DTO);
         Mockito.verify(serviceLayer).update(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
