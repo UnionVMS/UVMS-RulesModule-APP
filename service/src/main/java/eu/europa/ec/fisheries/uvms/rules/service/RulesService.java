@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PositionFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -28,6 +30,14 @@ public interface RulesService {
      * @throws RulesServiceException
      */
     public List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
+
+    /**
+     * Lists alarms by query
+     *
+     * @return
+     * @throws RulesServiceException
+     */
+    public List<AlarmType> getAlarmList(AlarmQuery query) throws RulesServiceException;
 
     /**
      * Get an object by id

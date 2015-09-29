@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
-            xmlns:movement="urn:rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
             targetNamespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
     
 <!--
-    <xsd:import namespace="urn:movement.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
+    <xsd:import namespace="urn:alarm.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
 -->
 
     <xsd:simpleType name="SearchKey">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="DUMMY_SEARCH_KEY"/>
+            <xsd:enumeration value="FROM_DATE"/>
+            <xsd:enumeration value="TO_DATE"/>
+            <xsd:enumeration value="OBJECT_NAME"/>
+            <xsd:enumeration value="RULE_NAME"/>
+            <xsd:enumeration value="SENDER"/>
         </xsd:restriction>
     </xsd:simpleType>
     
-    <xsd:complexType name="RulesQuery">
+    <xsd:complexType name="AlarmQuery">
         <xsd:sequence>
             <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="movementSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="alarmSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -32,8 +36,8 @@
             
     <xsd:complexType name="ListPagination">
         <xsd:sequence>
-            <xsd:element name="page" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="listSize" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="page" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="listSize" type="xsd:int" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
     

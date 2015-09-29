@@ -66,9 +66,11 @@
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
+<!-- 
                             <xsd:sequence>
                                 <xsd:element name="query" type="search:RulesQuery"/>
                             </xsd:sequence>
+ -->
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
@@ -79,8 +81,8 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
-                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -90,9 +92,11 @@
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
+<!-- 
                             <xsd:sequence>
-                                <xsd:element name="query" type="search:RulesQuery"/>
+                                <xsd:element name="query" type="search:TicketQuery"/>
                             </xsd:sequence>
+-->
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
@@ -103,32 +107,8 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
-                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
-                    </xsd:sequence>
-                </xsd:complexType>
-            </xsd:element>
-
-            <!-- List alarms request -->
-            <xsd:element name="GetAlarmListRequest">
-                <xsd:complexType>
-                    <xsd:complexContent>
-                        <xsd:extension base="source:RulesBaseRequest">
-                            <xsd:sequence>
-                                <xsd:element name="query" type="search:RulesQuery"/>
-                            </xsd:sequence>
-                        </xsd:extension>
-                    </xsd:complexContent>
-                </xsd:complexType>
-            </xsd:element>
-            
-            <!-- List alarms response -->
-            <xsd:element name="GetAlarmListResponse">
-                <xsd:complexType>
-                    <xsd:sequence>
-                        <xsd:element name="alarms" type="alarm:AlarmType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element name="totalNumberOfPages" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
-                        <xsd:element name="currentPage" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -156,6 +136,30 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Alarms QueryList request -->
+            <xsd:element name="GetAlarmListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:AlarmQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Alarms QueryList response -->
+            <xsd:element name="GetAlarmListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarms" type="alarm:AlarmType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
         </xsd:schema>
     </types>
 
@@ -183,19 +187,19 @@
     <message name="GetTicketListResponse">
         <part name="body" element="source:GetTicketListResponse"/>
     </message>
-    
-    <message name="GetAlarmListRequest">
-        <part name="body" element="source:GetAlarmListRequest"/>
-    </message>
-    <message name="GetAlarmListResponse">
-        <part name="body" element="source:GetAlarmListResponse"/>
-    </message>
 
     <message name="CreateErrorReportRequest">
         <part name="body" element="source:CreateErrorReportRequest"/>
     </message>
     <message name="CreateErrorReportResponse">
         <part name="body" element="source:CreateErrorReportResponse"/>
+    </message>
+    
+    <message name="GetAlarmListByQueryRequest">
+        <part name="body" element="source:GetAlarmListByQueryRequest"/>
+    </message>
+    <message name="GetAlarmListByQueryResponse">
+        <part name="body" element="source:GetAlarmListByQueryResponse"/>
     </message>
     
     <portType name="RulesModulePortType">
@@ -218,15 +222,15 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
-        <operation name="GetAlarmList">
-            <input message="source:GetAlarmListRequest"/>
-            <output message="source:GetAlarmListResponse"/>
-            <fault name="RulesException" message="source:RulesException"/>
-        </operation>
-
         <operation name="CreateErrorReport">
             <input message="source:CreateErrorReportRequest"/>
             <output message="source:CreateErrorReportResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarmListByQuery">
+            <input message="source:GetAlarmListByQueryRequest"/>
+            <output message="source:GetAlarmListByQueryResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -271,7 +275,7 @@
             </fault>
         </operation>
 
-        <operation name="GetAlarmList">
+        <operation name="CreateErrorReport">
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -283,7 +287,7 @@
             </fault>
         </operation>
 
-        <operation name="CreateErrorReport">
+        <operation name="GetAlarmListByQuery">
             <input>
                 <soap:body use="literal"/>
             </input>

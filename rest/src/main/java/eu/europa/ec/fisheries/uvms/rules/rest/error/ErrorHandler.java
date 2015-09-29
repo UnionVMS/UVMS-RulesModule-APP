@@ -19,19 +19,10 @@ public class ErrorHandler {
                 return new ResponseDto<String>(ex.getMessage(), ResponseCode.INPUT_ERROR);
             }
 
-            // if(ex instanceof MobileTerminalServiceMapperException) {
-            // return new ResponseDto<String>(ex.getMessage(),
-            // ResponseCode.MAPPING_ERROR);
-            // }
             return new ResponseDto<String>(ex.getMessage(), ResponseCode.SERVICE_ERROR);
         }
 
         if (ex instanceof RulesModelException) {
-            // if(ex instanceof MobileTerminalModelValidationException) {
-            // return new ResponseDto<String>(ex.getMessage(),
-            // ResponseCode.INPUT_ERROR);
-            // }
-
             if (ex instanceof eu.europa.ec.fisheries.uvms.rules.model.exception.InputArgumentException) {
                 return new ResponseDto<String>(ex.getMessage(), ResponseCode.MAPPING_ERROR);
             }
@@ -51,13 +42,7 @@ public class ErrorHandler {
             if (ex instanceof RulesModelMarshallException) {
                 return new ResponseDto<String>(ex.getMessage(), ResponseCode.MAPPING_ERROR);
             }
-
         }
-
-        // if(ex instanceof MobileTerminalException) {
-        // return new ResponseDto<String>(ex.getMessage(),
-        // ResponseCode.MOBILE_TERMINAL_ERROR);
-        // }
 
         return new ResponseDto<String>(ex.getMessage(), ResponseCode.UNDEFINED_ERROR);
     }

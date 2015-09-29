@@ -8,9 +8,12 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
 public class RulesDataSourceResponseMapper {
@@ -64,6 +67,21 @@ public class RulesDataSourceResponseMapper {
     public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
         GetCustomRuleListResponse response = new GetCustomRuleListResponse();
         response.getCustomRules().addAll(customRules);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static List<AlarmType> mapToAlarmListFromResponse(TextMessage message) throws RulesModelMapperException {
+        GetAlarmListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmListByQueryResponse.class);
+        return response.getAlarms();
+    }
+
+    public static String createAlarmListResponse(AlarmListResponseDto responseDto) throws RulesModelMapperException {
+        GetAlarmListByQueryResponse response = new GetAlarmListByQueryResponse();
+        response.getAlarms().addAll(responseDto.getAlarmList());
+        // TODO: intValue() should not be necessary - something is fishy with
+        // the wsdl
+        response.setCurrentPage(responseDto.getCurrentPage().intValue());
+        response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages().intValue());
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

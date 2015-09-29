@@ -21,14 +21,13 @@ import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
-@Path("/customrules")
+// TODO: Just a copy of RulesRestResource as of yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+@Path("/tickets")
 @Stateless
-public class RulesRestResource {
+public class TicketRestResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesRestResource.class);
-
-    @EJB
-    RulesService serviceLayer;
+    final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
 
     /**
      *
@@ -50,6 +49,9 @@ public class RulesRestResource {
             return ErrorHandler.getFault(ex);
         }
     }
+
+    @EJB
+    RulesService serviceLayer;
 
     /**
      *

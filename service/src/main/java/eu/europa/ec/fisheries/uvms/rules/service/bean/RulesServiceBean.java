@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -66,10 +69,44 @@ public class RulesServiceBean implements RulesService {
     public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
         LOG.info("Get list invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapListCustomRule();
+            String request = RulesDataSourceRequestMapper.mapCustomRuleList();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     * @throws RulesServiceException
+     */
+    @Override
+    // TODO: Check out Movement....
+    // public GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws
+    // RulesServiceException {
+    public List<AlarmType> getAlarmList(AlarmQuery query) throws RulesServiceException {
+        try {
+            LOG.info("Get alarm list invoked in service layer");
+            LOG.info("myggan - query:{}", query);
+            String request = RulesDataSourceRequestMapper.mapAlarmList(query);
+            LOG.info("myggan - request:{}", request);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            try {
+                LOG.info("myggan - response:{}", response.getText());
+            } catch (JMSException e) {
+                LOG.info("myggan - response failed");
+                e.printStackTrace();
+            }
+            if (response == null) {
+                LOG.error("[ Error when getting list, response from JMS Queue is null ]");
+                throw new RulesServiceException("[ Error when getting list, response from JMS Queue is null ]");
+            }
+            return RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
