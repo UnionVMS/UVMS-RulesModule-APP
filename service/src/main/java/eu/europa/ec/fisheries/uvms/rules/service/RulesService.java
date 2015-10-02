@@ -6,6 +6,8 @@ import javax.ejb.Local;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
+import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PositionFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -40,6 +42,30 @@ public interface RulesService {
     public List<AlarmType> getAlarmList(AlarmQuery query) throws RulesServiceException;
 
     /**
+     * Lists tickets by query
+     *
+     * @return
+     * @throws RulesServiceException
+     */
+    public List<TicketType> getTicketList(TicketQuery query) throws RulesServiceException;
+
+    /**
+     * Update an alarm
+     *
+     * @param alarm
+     * @throws RulesServiceException
+     */
+    public AlarmType updateAlarm(AlarmType alarm) throws RulesServiceException;
+
+    /**
+     * Update a ticket
+     *
+     * @param ticket
+     * @throws RulesServiceException
+     */
+    public TicketType updateTicket(TicketType ticket) throws RulesServiceException;
+
+    /**
      * Get an object by id
      *
      * @param id
@@ -65,7 +91,7 @@ public interface RulesService {
      *            the offending guid
      * @throws RulesServiceException
      */
-    public void createErrorReport(String comment, String guid) throws RulesServiceException;
+    public void createAlarmReport(String comment, String guid) throws RulesServiceException;
 
     /**
      * Entry point of action performed as a result of a custom rule triggered

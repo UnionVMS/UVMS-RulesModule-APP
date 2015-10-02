@@ -8,16 +8,57 @@
     <xsd:complexType name="AlarmType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="open" type="xsd:boolean"/>
+            <xsd:element name="status" type="alarm:AlarmStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="affectedObject" type="xsd:string"/>
-            <xsd:element name="ruleName" type="xsd:string"/>
+            <xsd:element name="rulesTriggered" type="alarm:RulesTriggeredType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="sender" type="xsd:string"/>
-            <xsd:element name="longitude" type="xsd:decimal"/>
-            <xsd:element name="latitude" type="xsd:decimal"/>
+            <xsd:element name="rawPositionReport" type="alarm:RawPositionReportType"/>
             <xsd:element name="resolveDate" type="xsd:string"/>
             <xsd:element name="resolvedBy" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:complexType name="RawPositionReportType">
+        <xsd:sequence>
+            <xsd:element name="asset" type="alarm:AssetInformationType"/>
+            <xsd:element name="positionInformation" type="alarm:PositionInformationType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AssetInformationType">
+        <xsd:sequence>
+            <xsd:element name="assetName" type="xsd:string"/>
+            <xsd:element name="flagState" type="xsd:string"/>
+            <xsd:element name="ircs" type="xsd:string"/>
+            <xsd:element name="cfr" type="xsd:string"/>
+            <xsd:element name="externalMarkings" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RulesTriggeredType">
+        <xsd:sequence>
+            <xsd:element name="ruleName" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="comment" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PositionInformationType">
+        <xsd:sequence>
+            <xsd:element name="status" type="xsd:string"/>
+            <xsd:element name="timestamp" type="xsd:string"/>
+            <xsd:element name="latitude" type="xsd:decimal"/>
+            <xsd:element name="longitude" type="xsd:decimal"/>
+            <xsd:element name="measuredSpeed" type="xsd:decimal"/>
+            <xsd:element name="course" type="xsd:decimal"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="AlarmStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OPEN"/>
+            <xsd:enumeration value="CLOSED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

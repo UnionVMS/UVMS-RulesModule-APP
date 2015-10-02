@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
@@ -12,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
+import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -89,19 +90,11 @@ public class RulesServiceBean implements RulesService {
     // public GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws
     // RulesServiceException {
     public List<AlarmType> getAlarmList(AlarmQuery query) throws RulesServiceException {
+        LOG.info("Get alarm list invoked in service layer");
         try {
-            LOG.info("Get alarm list invoked in service layer");
-            LOG.info("myggan - query:{}", query);
             String request = RulesDataSourceRequestMapper.mapAlarmList(query);
-            LOG.info("myggan - request:{}", request);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            try {
-                LOG.info("myggan - response:{}", response.getText());
-            } catch (JMSException e) {
-                LOG.info("myggan - response failed");
-                e.printStackTrace();
-            }
             if (response == null) {
                 LOG.error("[ Error when getting list, response from JMS Queue is null ]");
                 throw new RulesServiceException("[ Error when getting list, response from JMS Queue is null ]");
@@ -112,12 +105,41 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
+    @Override
+    public List<TicketType> getTicketList(TicketQuery query) throws RulesServiceException {
+        LOG.info("Get ticket list invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapTicketList(query);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            if (response == null) {
+                LOG.error("[ Error when getting list, response from JMS Queue is null ]");
+                throw new RulesServiceException("[ Error when getting list, response from JMS Queue is null ]");
+            }
+            return RulesDataSourceResponseMapper.mapToTicketListFromResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public AlarmType updateAlarm(AlarmType alarm) throws RulesServiceException {
+        LOG.info("Update alarm invoked in service layer - NOT IMPLEMENTED");
+        return null;
+    }
+
+    @Override
+    public TicketType updateTicket(TicketType ticket) throws RulesServiceException {
+        LOG.info("Update ticket invoked in service layer - NOT IMPLEMENTED");
+        return null;
+    }
+
     // Triggered by rule engine, no response expected
     @Override
-    public void createErrorReport(String comment, String guid) throws RulesServiceException {
+    public void createAlarmReport(String comment, String guid) throws RulesServiceException {
         LOG.info("Get list invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapCreateErrorReport(comment, guid);
+            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(comment, guid);
             producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());

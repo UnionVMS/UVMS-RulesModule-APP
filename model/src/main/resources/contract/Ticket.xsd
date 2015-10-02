@@ -8,15 +8,23 @@
     <xsd:complexType name="TicketType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="open" type="xsd:boolean"/>
+            <xsd:element name="status" type="ticket:TicketStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="affectedObject" type="xsd:string"/>
             <xsd:element name="ruleName" type="xsd:string"/>
-            <xsd:element name="longitude" type="xsd:decimal"/>
-            <xsd:element name="latitude" type="xsd:decimal"/>
+<!-- TODO: Add position report (mostly for "see on map") -->
             <xsd:element name="resolveDate" type="xsd:string"/>
             <xsd:element name="resolvedBy" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
+    
+    <xsd:simpleType name="TicketStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OPEN"/>
+            <xsd:enumeration value="PENDING"/>
+            <xsd:enumeration value="CLOSED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
 
 </xsd:schema>

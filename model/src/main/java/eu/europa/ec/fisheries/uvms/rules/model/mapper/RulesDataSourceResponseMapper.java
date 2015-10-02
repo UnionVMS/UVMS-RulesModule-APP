@@ -12,8 +12,11 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
 public class RulesDataSourceResponseMapper {
@@ -78,10 +81,21 @@ public class RulesDataSourceResponseMapper {
     public static String createAlarmListResponse(AlarmListResponseDto responseDto) throws RulesModelMapperException {
         GetAlarmListByQueryResponse response = new GetAlarmListByQueryResponse();
         response.getAlarms().addAll(responseDto.getAlarmList());
-        // TODO: intValue() should not be necessary - something is fishy with
-        // the wsdl
-        response.setCurrentPage(responseDto.getCurrentPage().intValue());
-        response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages().intValue());
+        response.setCurrentPage(responseDto.getCurrentPage());
+        response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages());
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static List<TicketType> mapToTicketListFromResponse(TextMessage message) throws RulesModelMapperException {
+        GetTicketListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketListByQueryResponse.class);
+        return response.getTickets();
+    }
+
+    public static String createTicketListResponse(TicketListResponseDto responseDto) throws RulesModelMapperException {
+        GetTicketListByQueryResponse response = new GetTicketListByQueryResponse();
+        response.getTickets().addAll(responseDto.getTicketList());
+        response.setCurrentPage(responseDto.getCurrentPage());
+        response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages());
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

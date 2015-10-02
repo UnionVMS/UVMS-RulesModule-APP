@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.uvms.rules.rest.constants.RestConstants;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.AlarmRestResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.TicketRestResource;
 
 @ApplicationPath(RestConstants.MODULE_REST)
 public class RestActivator extends Application {
@@ -24,6 +25,7 @@ public class RestActivator extends Application {
     public RestActivator() {
         set.add(RulesRestResource.class);
         set.add(AlarmRestResource.class);
+        set.add(TicketRestResource.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 

@@ -29,7 +29,7 @@
                     <xsd:enumeration value="LIST_ALARMS"/>
                     
                     <!-- Actions triggered by rule engine -->
-                    <xsd:enumeration value="CREATE_ERROR_REPORT"/>
+                    <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -87,11 +87,9 @@
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
-<!-- 
                             <xsd:sequence>
                                 <xsd:element name="query" type="search:TicketQuery"/>
                             </xsd:sequence>
- -->
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
@@ -108,8 +106,8 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Create error report request -->
-            <xsd:element name="CreateErrorReportRequest">
+            <!-- Create alarm report request -->
+            <xsd:element name="CreateAlarmReportRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
@@ -122,8 +120,8 @@
                 </xsd:complexType>
             </xsd:element>
             
-            <!-- Create error report response -->
-            <xsd:element name="CreateErrorReportResponse">
+            <!-- Create alarm report response -->
+            <xsd:element name="CreateAlarmReportResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ack" type="xsd:string"/>
@@ -149,6 +147,28 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="alarms" type="alarm:AlarmType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Tickets QueryList request -->
+            <xsd:element name="GetTicketListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:TicketQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Ticket QueryList response -->
+            <xsd:element name="GetTicketListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -180,12 +200,12 @@
     <message name="GetTicketListResponse">
         <part name="body" element="module:GetTicketListResponse"/>
     </message>
-    
-    <message name="CreateErrorReportRequest">
-        <part name="body" element="module:CreateErrorReportRequest"/>
+
+    <message name="CreateAlarmReportRequest">
+        <part name="body" element="module:CreateAlarmReportRequest"/>
     </message>
-    <message name="CreateErrorReportResponse">
-        <part name="body" element="module:CreateErrorReportResponse"/>
+    <message name="CreateAlarmReportResponse">
+        <part name="body" element="module:CreateAlarmReportResponse"/>
     </message>
     
     <message name="GetAlarmListByQueryRequest">
@@ -193,6 +213,13 @@
     </message>
     <message name="GetAlarmListByQueryResponse">
         <part name="body" element="module:GetAlarmListByQueryResponse"/>
+    </message>
+    
+    <message name="GetTicketListByQueryRequest">
+        <part name="body" element="module:GetTicketListByQueryRequest"/>
+    </message>
+    <message name="GetTicketListByQueryResponse">
+        <part name="body" element="module:GetTicketListByQueryResponse"/>
     </message>
     
     <portType name="RulesModulePortType">
@@ -215,15 +242,21 @@
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
-        <operation name="CreateErrorReport">
-            <input message="module:CreateErrorReportRequest"/>
-            <output message="module:CreateErrorReportResponse"/>
+        <operation name="CreateAlarmReport">
+            <input message="module:CreateAlarmReportRequest"/>
+            <output message="module:CreateAlarmReportResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
         <operation name="GetAlarmListByQuery">
             <input message="module:GetAlarmListByQueryRequest"/>
             <output message="module:GetAlarmListByQueryResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketListByQuery">
+            <input message="module:GetTicketListByQueryRequest"/>
+            <output message="module:GetTicketListByQueryResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
@@ -268,7 +301,7 @@
             </fault>
         </operation>
 
-        <operation name="CreateErrorReport">
+        <operation name="CreateAlarmReport">
             <input>
                 <soap:body use="literal"/>
             </input>
@@ -281,6 +314,18 @@
         </operation>
 
         <operation name="GetAlarmListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketListByQuery">
             <input>
                 <soap:body use="literal"/>
             </input>

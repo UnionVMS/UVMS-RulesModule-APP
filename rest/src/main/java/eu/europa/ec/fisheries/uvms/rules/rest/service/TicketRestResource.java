@@ -3,25 +3,23 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-
-// TODO: Just a copy of RulesRestResource as of yet!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 @Path("/tickets")
 @Stateless
@@ -29,46 +27,25 @@ public class TicketRestResource {
 
     final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
 
-    /**
-     *
-     * @responseMessage 200 A custom rule successfully created
-     * @responseMessage 500 No custom rule was created
-     *
-     * @summary Create a custom rule
-     *
-     */
-    @POST
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto create(final CustomRuleType customRule) {
-        LOG.info("Create invoked in rest layer");
-        try {
-            return new ResponseDto(serviceLayer.createCustomRule(customRule), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when creating. ] {} ", ex.getStackTrace());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
     @EJB
     RulesService serviceLayer;
 
     /**
      *
-     * @responseMessage 200 [Success]
-     * @responseMessage 500 [Error]
+     * @responseMessage 200 All alarms matching query fetched
+     * @responseMessage 500 No alarms fetched
      *
-     * @summary Get a list of all custom rules
+     * @summary Get a list of all alarms by query
      *
      */
-    @GET
+    @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("list")
-    public ResponseDto getCustomRuleList() {
-        LOG.info("Get list invoked in rest layer");
+    @Path("/list")
+    public ResponseDto<TicketListResponseDto> getCustomRuleList(TicketQuery query) {
+        LOG.info("Get alarm list invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getCustomRuleList(), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.getTicketList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -77,41 +54,19 @@ public class TicketRestResource {
 
     /**
      *
-     * @responseMessage 200 [Success]
-     * @responseMessage 500 [Error]
+     * @responseMessage 200 Selected alarm updated
+     * @responseMessage 500 No alarm updated
      *
-     * @summary [Description]
-     *
-     */
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "{id}")
-    public ResponseDto getById(@PathParam(value = "id") final Long id) {
-        LOG.info("Get by id invoked in rest layer");
-        try {
-            return new ResponseDto(serviceLayer.getById(id), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when geting by id. ] {} ", ex.getStackTrace());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    /**
-     *
-     * @responseMessage 200 [Success]
-     * @responseMessage 500 [Error]
-     *
-     * @summary [Description]
+     * @summary Update an alarm
      *
      */
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto update(final CustomRuleType customRuleType) {
-        LOG.info("Update invoked in rest layer");
+    public ResponseDto updateTicket(final TicketType ticketType) {
+        LOG.info("Update ticket invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.update(customRuleType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateTicket(ticketType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

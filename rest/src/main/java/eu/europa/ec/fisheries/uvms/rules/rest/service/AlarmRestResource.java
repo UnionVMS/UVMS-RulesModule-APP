@@ -12,8 +12,8 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
@@ -45,9 +45,6 @@ public class AlarmRestResource {
     public ResponseDto<AlarmListResponseDto> getCustomRuleList(AlarmQuery query) {
         LOG.info("Get alarm list invoked in rest layer");
         try {
-            LOG.info("myggan - query:{}", query);
-            // LOG.info("myggan - query.getAlarmSearchCriteria().get(0).getKey():{}",
-            // query.getAlarmSearchCriteria().get(0).getKey());
             return new ResponseDto(serviceLayer.getAlarmList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
@@ -66,10 +63,10 @@ public class AlarmRestResource {
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto update(final CustomRuleType customRuleType) {
-        LOG.info("Update invoked in rest layer");
+    public ResponseDto updateAlarm(final AlarmType alarmType) {
+        LOG.info("Update alarm invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.update(customRuleType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateAlarm(alarmType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

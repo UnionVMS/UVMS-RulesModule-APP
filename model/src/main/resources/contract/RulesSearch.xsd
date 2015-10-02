@@ -10,6 +10,7 @@
     <xsd:import namespace="urn:alarm.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
 -->
 
+<!-- TODO: Is it necessary for another SearchKey class for tickets? It's the same minus SENDER -->
     <xsd:simpleType name="SearchKey">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="FROM_DATE"/>
@@ -24,6 +25,14 @@
         <xsd:sequence>
             <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="alarmSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+<!-- TODO: Is this necessary? Or reuse AlarmQuery? -->
+    <xsd:complexType name="TicketQuery">
+        <xsd:sequence>
+            <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="ticketSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
