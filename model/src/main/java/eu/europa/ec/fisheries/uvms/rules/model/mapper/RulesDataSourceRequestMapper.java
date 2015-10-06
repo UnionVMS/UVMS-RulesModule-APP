@@ -3,14 +3,17 @@ package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
@@ -31,11 +34,10 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapCreateAlarmReport(String comment, String guid) throws RulesModelMapperException {
+    public static String mapCreateAlarmReport(AlarmType alarm) throws RulesModelMapperException {
         CreateAlarmReportRequest request = new CreateAlarmReportRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_ALARM_REPORT);
-        request.setComment(comment);
-        request.setOffendingGuid(guid);
+        request.setAlarm(alarm);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -50,6 +52,13 @@ public class RulesDataSourceRequestMapper {
         GetTicketListByQueryRequest request = new GetTicketListByQueryRequest();
         request.setMethod(RulesDataSourceMethod.LIST_TICKETS);
         request.setQuery(query);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapCreateTicket(TicketType ticket) throws RulesModelMapperException {
+        CreateTicketRequest request = new CreateTicketRequest();
+        request.setMethod(RulesDataSourceMethod.CREATE_TICKET);
+        request.setTicket(ticket);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

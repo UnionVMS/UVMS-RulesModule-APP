@@ -1,21 +1,12 @@
 import eu.europa.ec.fisheries.uvms.rules.service.business.CustomEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
 global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
 
 rule "Create a custom event"
 dialect "java"
     when
-        CustomEvent($positionFact : positionFact, $action : action)
+        CustomEvent($ruleName : ruleName, $movementFact : movementFact, $action : action)
     then
         System.out.println("DEBUG - Create a custom event, action: " + $action);
-        rulesService.customRuleTriggered($positionFact, $action);
+        rulesService.customRuleTriggered($ruleName, $movementFact, $action);
 end
 
-rule "Create an error report"
-dialect "java"
-    when
-        $e : ErrorEvent($myComment : comment, $positionFact : positionFact)
-    then
-        System.out.println("DEBUG - Create an error for guid: " + $positionFact.getGuid());
-        rulesService.createErrorReport($myComment, $positionFact.getGuid());
-end

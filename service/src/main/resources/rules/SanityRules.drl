@@ -1,20 +1,37 @@
-import eu.europa.ec.fisheries.uvms.rules.service.business.PositionFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import java.util.Date;
+global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
 
-rule "Latitude must exist"
+
+rule "Sanity check - Latitude must exist"
 dialect "java"
     when
-        $p : PositionFact(latitude == null, $myAssetName : assetName)
+        $fact : RawFact(movementBaseType.position.latitude == null)
     then
-        System.out.println("DEBUG - Latitude is null (" + $myAssetName + ")");
-        insert(new ErrorEvent($p, "latitude is null for asset " + $myAssetName));
+        System.out.println("DEBUG - Sanity check - Latitude must exist");
+        $fact.setOk(false);
+        insert(new ErrorEvent("Sanity check - Latitude must exist", $fact));
 end
 
-rule "Longitude must exist"
+rule "Sanity check - Longitude must exist"
 dialect "java"
     when
-        $p : PositionFact(longitude == null, $myAssetName : assetName)
+        $fact : RawFact(movementBaseType.position.longitude == null)
     then
-        System.out.println("DEBUG - Longitude is null (" + $myAssetName + ")");
-        insert(new ErrorEvent($p, "longitude is null for asset " + $myAssetName));
+        System.out.println("DEBUG - Sanity check - Longitude must exist");
+        $fact.setOk(false);
+        insert(new ErrorEvent("Sanity check - Latitude must exist", $fact));
 end
+
+
+rule "Create an alarm report"
+dialect "java"
+    when
+        $e : ErrorEvent($ruleName : ruleName, $rawFact : rawFact)
+    then
+        System.out.println("DEBUG - Create an alarm for movement guid: " + $rawFact.getMovementBaseType().getGuid());
+        rulesService.createAlarmReport($ruleName, $rawFact);
+end
+

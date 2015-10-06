@@ -1,12 +1,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleActionType;
+import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleIntervalType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleSegmentType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 
@@ -26,29 +34,63 @@ public class RulesUtil {
 
             for (CustomRuleSegmentType segment : segments) {
                 sb.append(segment.getStartOperator());
-                sb.append(segment.getCriteria());
-                if (segment.getSubCriteria() != null) {
-                    sb.append("_");
-                    sb.append(segment.getSubCriteria());
+
+                switch (segment.getCriteria()) {
+                case VESSEL:
+                    sb.append("vessel");
+                    break;
+                case MOBILE_TERMINAL:
+                    sb.append("mobileTerminal");
+                    break;
+                case GEO_AREA:
+                    sb.append("geoArea");
+                    break;
+                default:
+                    break;
+                }
+                switch (segment.getSubCriteria()) {
+                case CFR:
+                    sb.append("Cfr");
+                    break;
+                case IRCS:
+                    sb.append("Ircs");
+                    break;
+                case NAME:
+                    sb.append("Name");
+                    break;
+                case MEMBER_ID:
+                    sb.append("MemberNumber");
+                    break;
+                case SERIAL_NO:
+                    sb.append("SerialNumber");
+                    break;
+                case DNID:
+                    sb.append("Dnid");
+                    break;
+                case AREA_ID:
+                    sb.append("AreaId");
+                    break;
+                default:
+                    break;
                 }
 
                 switch (segment.getCondition()) {
-                case "EQ":
+                case EQ:
                     sb.append(" == ");
                     break;
-                case "NE":
+                case NE:
                     sb.append(" != ");
                     break;
-                case "GT":
+                case GT:
                     sb.append(" > ");
                     break;
-                case "GE":
+                case GE:
                     sb.append(" >= ");
                     break;
-                case "LT":
+                case LT:
                     sb.append(" < ");
                     break;
-                case "LE":
+                case LE:
                     sb.append(" <= ");
                     break;
                 default: // undefined
@@ -59,20 +101,37 @@ public class RulesUtil {
                 sb.append(segment.getValue());
                 sb.append("\"");
                 sb.append(segment.getEndOperator());
-                // TODO: Better if this is empty instead of NONE
                 switch (segment.getLogicBoolOperator()) {
-                case "AND":
+                case AND:
                     sb.append(" && ");
                     break;
-                case "OR":
+                case OR:
                     sb.append(" || ");
                     break;
-                case "NONE":
+                case NONE:
                     break;
                 default: // undefined
                     break;
                 }
+            }
 
+            // Add time intervals
+            List<CustomRuleIntervalType> intervals = rawRule.getTimeIntervals();
+
+            for (int i = 0; i < intervals.size(); i++) {
+                // If first
+                if (i == 0) {
+                    sb.append(" && (");
+                }
+
+                sb.append(createInterval(intervals.get(i)));
+
+                // If last
+                if (i == intervals.size() - 1) {
+                    sb.append(")");
+                } else {
+                    sb.append(" || ");
+                }
             }
 
             rulesDto.setExpression(sb.toString());
@@ -93,6 +152,41 @@ public class RulesUtil {
         }
 
         return rules;
+    }
+
+    private static String createInterval(CustomRuleIntervalType interval) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RulesUtil.stringToDate(\"");
+        sb.append(interval.getStart());
+        sb.append("\")");
+        sb.append(" <= timestamp && timestamp <= ");
+        // sb.append(" <= timestamp <= "); // test
+        sb.append("RulesUtil.stringToDate(\"");
+        sb.append(interval.getEnd());
+        sb.append("\")");
+        return sb.toString();
+    }
+
+    final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
+
+    public static Date stringToDate(String dateString) throws IllegalArgumentException {
+        if (dateString != null) {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(FORMAT).withOffsetParsed();
+            DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
+            GregorianCalendar cal = dateTime.toGregorianCalendar();
+            return cal.getTime();
+        } else {
+            return null;
+        }
+    }
+
+    public static String dateToString(Date date) {
+        String dateString = null;
+        if (date != null) {
+            DateFormat df = new SimpleDateFormat(FORMAT);
+            dateString = df.format(date);
+        }
+        return dateString;
     }
 
 }

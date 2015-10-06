@@ -49,7 +49,6 @@
             <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
             <artifactId>movement-model</artifactId>
             <version>${movement.model.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -39,15 +39,58 @@
     <xsd:complexType name="CustomRuleSegmentType">
         <xsd:sequence>
             <xsd:element name="startOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="criteria" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="subCriteria" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="condition" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="criteria" type="customrule:CriteriaType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="subCriteria" type="customrule:SubCriteriaType" minOccurs="1" maxOccurs="1"/>
+
+            <xsd:element name="condition" type="customrule:ConditionType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="endOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="logicBoolOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="logicBoolOperator" type="customrule:LogicOperatorType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="order" type="xsd:string" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:simpleType name="CriteriaType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="VESSEL"/>
+            <xsd:enumeration value="MOBILE_TERMINAL"/>
+            <xsd:enumeration value="GEO_AREA"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SubCriteriaType">
+        <xsd:restriction base="xsd:string">
+            <!-- VESSEL -->
+            <xsd:enumeration value="CFR"/>
+            <xsd:enumeration value="IRCS"/>
+            <xsd:enumeration value="NAME"/>
+            <!-- MOBILE_TERMINAL -->
+            <xsd:enumeration value="SERIAL_NO"/>
+            <xsd:enumeration value="DNID"/>
+            <xsd:enumeration value="MEMBER_ID"/>
+            <!-- GEO_AREA -->
+            <xsd:enumeration value="AREA_ID"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="LogicOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AND"/>
+            <xsd:enumeration value="OR"/>
+            <xsd:enumeration value="NONE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ConditionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EQ"/>
+            <xsd:enumeration value="NE"/>
+            <xsd:enumeration value="GT"/>
+            <xsd:enumeration value="GE"/>
+            <xsd:enumeration value="LT"/>
+            <xsd:enumeration value="LE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <xsd:complexType name="CustomRuleIntervalType">
         <xsd:sequence>

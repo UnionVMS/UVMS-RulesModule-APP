@@ -8,12 +8,10 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
@@ -73,9 +71,9 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static List<AlarmType> mapToAlarmListFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static GetAlarmListByQueryResponse mapToAlarmListFromResponse(TextMessage message) throws RulesModelMapperException {
         GetAlarmListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmListByQueryResponse.class);
-        return response.getAlarms();
+        return response;
     }
 
     public static String createAlarmListResponse(AlarmListResponseDto responseDto) throws RulesModelMapperException {
@@ -86,9 +84,9 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static List<TicketType> mapToTicketListFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static GetTicketListByQueryResponse mapToTicketListFromResponse(TextMessage message) throws RulesModelMapperException {
         GetTicketListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketListByQueryResponse.class);
-        return response.getTickets();
+        return response;
     }
 
     public static String createTicketListResponse(TicketListResponseDto responseDto) throws RulesModelMapperException {

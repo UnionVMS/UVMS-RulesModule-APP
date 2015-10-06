@@ -34,7 +34,7 @@ public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
     private static final String SANITY_RESOURCE_DRL = "/rules/SanityRules.drl";
     private static final String ACTION_RESOURCE_DRL = "/rules/ActionRules.drl";
-    private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomPositionRulesTemplate.drt";
+    private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";
     private static final String CUSTOM_RULE_DRL = "src/main/resources/rules/TemplateRules.drl";
 
     @Inject
@@ -81,8 +81,25 @@ public class RulesValidator {
         }
     }
 
-    public void evaluate(PositionFact p) {
+    public void evaluate(RawFact fact) {
+        loadRules();
+
+        ksession.insert(fact);
+        ksession.fireAllRules();
+    }
+
+    public void evaluate(MovementFact p) {
+        loadRules();
+
+        ksession.insert(p);
+        ksession.fireAllRules();
+    }
+
+    // TODO: This should load on startup and when custom rules changes ONLY.
+    private void loadRules() {
         // Add sanity rules
+        // TODO: This can be done with an maven artifact and some scanner
+        // stuff............
         kfs.write(kservices.getResources().newClassPathResource(SANITY_RESOURCE_DRL));
 
         // Fetch custom rules from DB
@@ -95,10 +112,12 @@ public class RulesValidator {
             e.printStackTrace();
         }
 
-        // Add custom rules
-        rules = RulesUtil.parseRules(rawRules);
-        String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
-        kfs.write(CUSTOM_RULE_DRL, drl);
+        if (rawRules != null && !rawRules.isEmpty()) {
+            // Add custom rules
+            rules = RulesUtil.parseRules(rawRules);
+            String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
+            kfs.write(CUSTOM_RULE_DRL, drl);
+        }
 
         // Add action rules
         kfs.write(kservices.getResources().newClassPathResource(ACTION_RESOURCE_DRL));
@@ -110,9 +129,6 @@ public class RulesValidator {
 
         // Inject beans
         ksession.setGlobal("rulesService", rulesService);
-
-        ksession.insert(p);
-        ksession.fireAllRules();
     }
 
     private String generateDrl(String template, List<CustomRuleDto> rules) {

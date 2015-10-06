@@ -1,0 +1,20 @@
+template header
+rulename
+expression
+action
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.CustomEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+
+template "CustomRulesTemplate"
+
+rule "@{rulename}"
+when
+   $fact : MovementFact(@{expression})
+then
+   System.out.println("DEBUG - Rule @{rulename} triggered. Action(s):'@{action}'");
+   insert(new CustomEvent("@{rulename}", $fact, "@{action}"));
+end
+
+end template

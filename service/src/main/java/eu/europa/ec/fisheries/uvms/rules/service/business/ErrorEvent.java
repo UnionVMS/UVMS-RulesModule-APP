@@ -2,19 +2,19 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 public class ErrorEvent {
     private int id;
-    private PositionFact positionFact;
-    private String comment;
+    private RawFact rawFact;
+    private String ruleName;
 
     public ErrorEvent() {
     }
 
-    public ErrorEvent(PositionFact p) {
-        this.positionFact = p;
+    public ErrorEvent(RawFact fact) {
+        this.rawFact = fact;
     }
 
-    public ErrorEvent(PositionFact p, String comment) {
-        this.positionFact = p;
-        this.comment = comment;
+    public ErrorEvent(String ruleName, RawFact fact) {
+        this.ruleName = ruleName;
+        this.rawFact = fact;
     }
 
     public int getId() {
@@ -25,20 +25,20 @@ public class ErrorEvent {
         this.id = id;
     }
 
-    public PositionFact getPositionFact() {
-        return positionFact;
+    public RawFact getRawFact() {
+        return rawFact;
     }
 
-    public void setPositionFact(PositionFact positionFact) {
-        this.positionFact = positionFact;
+    public void setRawFact(RawFact rawFact) {
+        this.rawFact = rawFact;
     }
 
-    public String getComment() {
-        return comment;
+    public String getRuleName() {
+        return ruleName;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
     }
 
 }

@@ -2,18 +2,20 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 public class CustomEvent {
     private int id;
-    private PositionFact positionFact;
+    private MovementFact movementFact;
     private String action;
+    private String ruleName;
 
     public CustomEvent() {
     }
 
-    public CustomEvent(PositionFact p) {
-        this.positionFact = p;
+    public CustomEvent(MovementFact fact) {
+        this.movementFact = fact;
     }
 
-    public CustomEvent(PositionFact p, String action) {
-        this.positionFact = p;
+    public CustomEvent(String ruleName, MovementFact fact, String action) {
+        this.ruleName = ruleName;
+        this.movementFact = fact;
         this.action = action;
     }
 
@@ -25,12 +27,12 @@ public class CustomEvent {
         this.id = id;
     }
 
-    public PositionFact getPositionFact() {
-        return positionFact;
+    public MovementFact getMovementFact() {
+        return movementFact;
     }
 
-    public void setPositionFact(PositionFact positionFact) {
-        this.positionFact = positionFact;
+    public void setMovementFact(MovementFact fact) {
+        this.movementFact = fact;
     }
 
     public String getAction() {
@@ -39,6 +41,14 @@ public class CustomEvent {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
     }
 
 }

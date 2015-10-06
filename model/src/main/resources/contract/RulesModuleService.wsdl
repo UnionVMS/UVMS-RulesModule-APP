@@ -30,6 +30,7 @@
                     
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
+                    <xsd:enumeration value="CREATE_TICKET"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -112,8 +113,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="offendingGuid" type="xsd:string"/>
-                                <xsd:element name="comment" type="xsd:string"/>
+                                <xsd:element name="alarm" type="alarm:AlarmType"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -122,6 +122,28 @@
             
             <!-- Create alarm report response -->
             <xsd:element name="CreateAlarmReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ack" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Create ticket request -->
+            <xsd:element name="CreateTicketRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create ticket response -->
+            <xsd:element name="CreateTicketResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ack" type="xsd:string"/>
@@ -208,6 +230,13 @@
         <part name="body" element="module:CreateAlarmReportResponse"/>
     </message>
     
+    <message name="CreateTicketRequest">
+        <part name="body" element="module:CreateTicketRequest"/>
+    </message>
+    <message name="CreateTicketResponse">
+        <part name="body" element="module:CreateTicketResponse"/>
+    </message>
+    
     <message name="GetAlarmListByQueryRequest">
         <part name="body" element="module:GetAlarmListByQueryRequest"/>
     </message>
@@ -245,6 +274,12 @@
         <operation name="CreateAlarmReport">
             <input message="module:CreateAlarmReportRequest"/>
             <output message="module:CreateAlarmReportResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="CreateTicket">
+            <input message="module:CreateTicketRequest"/>
+            <output message="module:CreateTicketResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
@@ -302,6 +337,18 @@
         </operation>
 
         <operation name="CreateAlarmReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CreateTicket">
             <input>
                 <soap:body use="literal"/>
             </input>
