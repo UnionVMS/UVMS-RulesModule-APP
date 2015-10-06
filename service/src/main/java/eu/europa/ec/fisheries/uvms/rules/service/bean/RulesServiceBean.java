@@ -225,10 +225,9 @@ public class RulesServiceBean implements RulesService {
             TicketType ticket = new TicketType();
 
             AssetIdType assetIdType = new AssetIdType();
-            String type = fact.getMovementType().getAssetId().getIdType().name();
-            String value = fact.getMovementType().getAssetId().getValue();
-            assetIdType.setType(type);
-            assetIdType.setValue(value);
+            assetIdType.setType(fact.getMovementType().getAssetId().getIdType().name());
+            assetIdType.setValue(fact.getMovementType().getAssetId().getValue());
+            ticket.setAssetId(assetIdType);
 
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
