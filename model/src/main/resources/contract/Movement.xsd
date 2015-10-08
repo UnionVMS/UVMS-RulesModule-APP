@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:movement="urn:movement.schema.fisheries.ec.europa.eu:v1" 
-            targetNamespace="urn:movement.schema.fisheries.ec.europa.eu:v1"
-            xmlns:asset="urn:asset.movement.schema.fisheries.ec.europa.eu:v1"
-            xmlns:mobterm="urn:mobileterminal.movement.schema.fisheries.ec.europa.eu:v1"
+<xsd:schema xmlns:movement="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" 
+            targetNamespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:asset="urn:asset.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:mobterm="urn:mobileterminal.rules.schema.fisheries.ec.europa.eu:v1"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
     
-    <xsd:import namespace="urn:asset.movement.schema.fisheries.ec.europa.eu:v1" schemaLocation="Asset.xsd"/>
-    <xsd:import namespace="urn:mobileterminal.movement.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminal.xsd"/>
+    <xsd:import namespace="urn:asset.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Asset.xsd"/>
+    <xsd:import namespace="urn:mobileterminal.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminal.xsd"/>
     
     <xsd:simpleType name="SegmentCategoryType">
         <xsd:restriction base="xsd:string">

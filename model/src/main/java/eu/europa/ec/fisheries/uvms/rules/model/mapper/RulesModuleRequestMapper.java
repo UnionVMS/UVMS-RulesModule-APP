@@ -1,6 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
