@@ -6,6 +6,7 @@
              xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:movement="urn:movement.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -18,7 +19,8 @@
             <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
-
+            <xsd:import namespace="urn:movement.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
+            
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesModuleMethod">
                 <xsd:restriction base="xsd:string">
@@ -31,6 +33,9 @@
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
+                    
+                    <!-- Receive position report -->
+                    <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -39,6 +44,20 @@
                     <xsd:element name="method" type="module:RulesModuleMethod"/>
                 </xsd:sequence>
             </xsd:complexType>
+
+            <xsd:element name="SetMovementReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="movement:MovementBaseType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="SetMovementReportResponse"/>
 
             <!-- Create custom rule request -->
             <xsd:element name="CreateCustomRuleRequest">
@@ -251,6 +270,13 @@
         <part name="body" element="module:GetTicketListByQueryResponse"/>
     </message>
     
+    <message name="SetMovementReportRequest">
+        <part name="body" element="module:SetMovementReportRequest"/>
+    </message>
+    <message name="SetMovementReportResponse">
+        <part name="body" element="module:SetMovementReportResponse"/>
+    </message>
+    
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -295,6 +321,11 @@
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
+        <operation name="SetMovementReport">
+            <input message="module:SetMovementReportRequest"/>
+            <output message="module:SetMovementReportResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
     </portType>
 
     <binding name="RulesModuleSoapBinding" type="module:RulesModulePortType">
@@ -373,6 +404,18 @@
         </operation>
 
         <operation name="GetTicketListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="SetMovementReport">
             <input>
                 <soap:body use="literal"/>
             </input>
