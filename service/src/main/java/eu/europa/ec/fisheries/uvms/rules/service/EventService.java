@@ -3,12 +3,15 @@ package eu.europa.ec.fisheries.uvms.rules.service;
 import javax.ejb.Local;
 import javax.enterprise.event.Observes;
 
-import eu.europa.ec.fisheries.uvms.rules.message.event.MessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 
 @Local
 public interface EventService {
 
-    public void messageReceived(@Observes @MessageReceivedEvent EventMessage message);
+    public void setMovementReportRecieved(@Observes @SetMovementReportReceivedEvent EventMessage message);
+
+    public void validateMovementReportRecieved(@Observes @ValidateMovementReportReceivedEvent EventMessage message);
 
 }

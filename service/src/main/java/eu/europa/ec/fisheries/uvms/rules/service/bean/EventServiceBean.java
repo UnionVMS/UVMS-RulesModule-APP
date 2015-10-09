@@ -3,9 +3,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -28,36 +30,127 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
-import eu.europa.ec.fisheries.uvms.rules.message.event.MessageReceivedEvent;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementMapper;
+
+//import eu.europa.ec.fisheries.schema.movement.module.v1.MovementBaseRequest;
 
 @Stateless
 public class EventServiceBean implements EventService {
     final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
 
+    // TODO: Where is the observer of this?
+    @Inject
+    @ErrorEvent
+    Event<EventMessage> errorEvent;
+
     @Inject
     RulesValidator rulesValidator;
 
+    @Inject
+    RulesService rulseService;
+
+    @EJB
+    RulesMessageProducer messageProducer;
+
+    // @Inject
+    // ValidationMapper validationMapper;
+
+    // @Override
+    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    // public void setMovementReportRecieved(@Observes
+    // @SetMovementReportReceivedEvent EventMessage message) {
+    // try {
+    // LOG.info("Received SetMovementReportReceivedEvent");
+    //
+    // // TODO: A MovementBaseType arrives. Here is a dummy.
+    // MovementBaseType movementBaseType =
+    // generateDummyMovementBaseType("dummy_guid");
+    //
+    // // Wrap incoming raw movement in a fact and validate
+    // RawFact raw = generateRawFact(movementBaseType);
+    // rulesValidator.evaluate(raw);
+    //
+    // if (raw.isOk()) {
+    // LOG.info("Send the validated raw position to Movement - NOT IMPLEMENTED");
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    //
+    // }
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void messageReceived(@Observes @MessageReceivedEvent EventMessage message) {
+    public void setMovementReportRecieved(@Observes @SetMovementReportReceivedEvent EventMessage message) {
+        LOG.info("Received SetMovementReportReceivedEvent");
         try {
-            LOG.info("Received MessageRecievedEvent");
 
-            // TODO: A MovementBaseType arrives. Here is a dummy.
-            MovementBaseType movementBaseType = generateDummyMovementBaseType(message.getJmsMessage().getText());
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+
+            if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
+                message.setErrorMessage(" [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
+                        + baseRequest.getMethod().name() + " ]");
+                errorEvent.fire(message);
+            }
+
+            SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
+            RawMovementType rawMovementType = request.getRequest();
 
             // Wrap incoming raw movement in a fact and validate
-            RawFact raw = generateRawFact(movementBaseType);
-            rulesValidator.evaluate(raw);
+            RawFact rawFact = generateRawFact(rawMovementType);
+            rulesValidator.evaluate(rawFact);
 
-            if (raw.isOk()) {
+            if (rawFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement - NOT IMPLEMENTED");
+                // MovementBaseType m =
+                // validationMapper.rawMovementToBaseMovement(rawMovementType);
+
+                MovementBaseType movementBaseType = MovementMapper.getMapper().map(rawMovementType, MovementBaseType.class);
+                String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
+
+                LOG.info("myggan - movement:{}", movement);
+
+                // messageProducer.sendMessageOnQueue(movement,
+                // DataSourceQueue.INTEGRATION);
+                messageProducer.sendDataSourceMessage(movement, DataSourceQueue.INTEGRATION);
+
+                // TODO: Do I want an answer here? Or asych?
+                // rulseService.setMovementReport(m);
+
             }
+
+        } catch (RulesModelMapperException | ModelMarshallException | MessageException ex) {
+            LOG.error("[ Error when creating movement ] {}", ex.getMessage());
+            errorEvent.fire(message);
+        }
+
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void validateMovementReportRecieved(@Observes @ValidateMovementReportReceivedEvent EventMessage message) {
+        try {
+            LOG.info("Received ValidateMovementReportReceivedEvent");
 
             // TODO: Later, a MovementType arrives. Here is a dummy.
 
@@ -131,9 +224,9 @@ public class EventServiceBean implements EventService {
         return movementType;
     }
 
-    private RawFact generateRawFact(MovementBaseType movementBaseType) {
+    private RawFact generateRawFact(RawMovementType rawMovementType) {
         RawFact raw = new RawFact();
-        raw.setMovementBaseType(movementBaseType);
+        raw.setRawMovementType(rawMovementType);
         raw.setOk(true);
         return raw;
     }

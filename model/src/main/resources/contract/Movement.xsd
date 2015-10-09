@@ -6,10 +6,29 @@
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
-    
+
     <xsd:import namespace="urn:asset.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Asset.xsd"/>
     <xsd:import namespace="urn:mobileterminal.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminal.xsd"/>
-    
+
+    <!-- Type received in UNIONVMS -->
+    <xsd:complexType name="RawMovementType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
+            <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
+            <xsd:element name="assetId" type="asset:AssetId"/>
+            <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
+            <xsd:element name="mobileTerminalId" type="mobterm:MobileTerminal"/>
+            <xsd:element name="position" type="movement:MovementPoint"/>
+            <xsd:element name="positionTime" type="xsd:dateTime"/>
+            <xsd:element name="status" type="xsd:string"/>
+            <xsd:element name="reportedSpeed" type="xsd:double" nillable="true"/>
+            <xsd:element name="reportedCourse" type="xsd:double" nillable="true"/>
+            <xsd:element name="movementType" type="movement:MovementTypeType"/>
+            <xsd:element name="source" type="movement:MovementSourceType"/>
+            <xsd:element name="activity" type="movement:MovementActivityType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
     <xsd:simpleType name="SegmentCategoryType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="GAP"/>
@@ -23,7 +42,7 @@
             <xsd:enumeration value="OTHER"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="MovementActivityTypeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="COE"/>
@@ -68,29 +87,10 @@
         </xsd:restriction>
     </xsd:simpleType>
     
-    <!-- Type received in UNIONVMS -->
-    <xsd:complexType name="MovementBaseType">
-        <xsd:sequence>
-            <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
-            <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
-            <xsd:element name="assetId" type="asset:AssetId"/>
-            <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
-            <xsd:element name="mobileTerminalId" type="mobterm:MobileTerminal"/>
-            <xsd:element name="position" type="movement:MovementPoint"/>
-            <xsd:element name="positionTime" type="xsd:dateTime"/>
-            <xsd:element name="status" type="xsd:string"/>
-            <xsd:element name="reportedSpeed" type="xsd:double" nillable="true"/>
-            <xsd:element name="reportedCourse" type="xsd:double" nillable="true"/>
-            <xsd:element name="movementType" type="movement:MovementTypeType"/>
-            <xsd:element name="source" type="movement:MovementSourceType"/>
-            <xsd:element name="activity" type="movement:MovementActivityType"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    
     <!-- type sent to FLUX -->
     <xsd:complexType name="MovementType">
         <xsd:complexContent>
-            <xsd:extension base="movement:MovementBaseType">
+            <xsd:extension base="movement:RawMovementType">
                 <xsd:sequence>
                     <xsd:element name="calculatedCourse" type="xsd:double" nillable="true"/>
                     <!-- <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>-->

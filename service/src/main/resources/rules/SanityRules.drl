@@ -8,9 +8,9 @@ global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
 rule "Sanity check - Latitude must exist"
 dialect "java"
     when
-        $fact : RawFact(movementBaseType.position.latitude == null)
+        $fact : RawFact(latitude == null)
     then
-        System.out.println("DEBUG - Sanity check - Latitude must exist");
+        System.out.println("DEBUG - Sanity check - Latitude must exist!");
         $fact.setOk(false);
         insert(new ErrorEvent("Sanity check - Latitude must exist", $fact));
 end
@@ -18,11 +18,11 @@ end
 rule "Sanity check - Longitude must exist"
 dialect "java"
     when
-        $fact : RawFact(movementBaseType.position.longitude == null)
+        $fact : RawFact(longitude == null)
     then
-        System.out.println("DEBUG - Sanity check - Longitude must exist");
+        System.out.println("DEBUG - Sanity check - Longitude must exist!");
         $fact.setOk(false);
-        insert(new ErrorEvent("Sanity check - Latitude must exist", $fact));
+        insert(new ErrorEvent("Sanity check - Longitude must exist", $fact));
 end
 
 
@@ -31,7 +31,7 @@ dialect "java"
     when
         $e : ErrorEvent($ruleName : ruleName, $rawFact : rawFact)
     then
-        System.out.println("DEBUG - Create an alarm for movement guid: " + $rawFact.getMovementBaseType().getGuid());
+        System.out.println("DEBUG - Create an alarm!");
         rulesService.createAlarmReport($ruleName, $rawFact);
 end
 

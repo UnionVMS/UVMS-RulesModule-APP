@@ -1,7 +1,7 @@
 <definitions name="RulesDataSource"
              targetNamespace="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:source="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
-             xmlns:customrule="urn:rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
@@ -13,7 +13,7 @@
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:source.rules.schema.fisheries.ec.europa.eu:v1">
 
-            <xsd:import namespace="urn:rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
+            <xsd:import namespace="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
             <xsd:import namespace="urn:common.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesCommon.xsd"/>
             <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>

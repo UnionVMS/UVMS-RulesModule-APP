@@ -13,10 +13,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleActionType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleIntervalType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleSegmentType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 
 public class RulesUtil {
     final static Logger LOG = LoggerFactory.getLogger(RulesUtil.class);

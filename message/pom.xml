@@ -19,6 +19,20 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- To verify movements from Movement Module -->
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
+            <artifactId>movement-model</artifactId>
+            <version>${movement.model.version}</version>
+        </dependency>
+
+        <!-- To verify movements from Exchange Module (boat -> plugin -> exchange) -->
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
+            <artifactId>exchange-model</artifactId>
+            <version>${exchange.model.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

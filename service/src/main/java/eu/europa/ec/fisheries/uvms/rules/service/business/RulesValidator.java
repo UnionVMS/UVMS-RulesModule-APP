@@ -24,7 +24,7 @@ import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
@@ -82,17 +82,61 @@ public class RulesValidator {
     }
 
     public void evaluate(RawFact fact) {
-        loadRules();
+        // Add sanity rules
+        // TODO: This can be done with an maven artifact and some scanner
+        // stuff............
+
+        LOG.info("Sanity check");
+
+        kfs.write(kservices.getResources().newClassPathResource(SANITY_RESOURCE_DRL));
+
+        // Create session
+        kservices.newKieBuilder(kfs).buildAll();
+        kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
+        ksession = kcontainer.newKieSession();
+
+        // Inject beans
+        ksession.setGlobal("rulesService", rulesService);
 
         ksession.insert(fact);
         ksession.fireAllRules();
+
+        destroy();
     }
 
-    public void evaluate(MovementFact p) {
-        loadRules();
+    public void evaluate(MovementFact fact) {
+        LOG.info("Custom rule check");
 
-        ksession.insert(p);
-        ksession.fireAllRules();
+        // Fetch custom rules from DB
+        List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
+        List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
+        try {
+            rawRules = rulesService.getCustomRuleList();
+        } catch (RulesServiceException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if (rawRules != null && !rawRules.isEmpty()) {
+            // Add custom rules
+            rules = RulesUtil.parseRules(rawRules);
+            String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
+            kfs.write(CUSTOM_RULE_DRL, drl);
+
+            // Add action rules
+            kfs.write(kservices.getResources().newClassPathResource(ACTION_RESOURCE_DRL));
+
+            // Create session
+            kservices.newKieBuilder(kfs).buildAll();
+            kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
+            ksession = kcontainer.newKieSession();
+
+            // Inject beans
+            ksession.setGlobal("rulesService", rulesService);
+
+            ksession.insert(fact);
+            ksession.fireAllRules();
+        }
     }
 
     // TODO: This should load on startup and when custom rules changes ONLY.

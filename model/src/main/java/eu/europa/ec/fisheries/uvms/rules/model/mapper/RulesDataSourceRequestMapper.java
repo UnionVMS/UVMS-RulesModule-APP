@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportRequest;
@@ -14,7 +15,6 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
 public class RulesDataSourceRequestMapper {

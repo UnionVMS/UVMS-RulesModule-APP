@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.RawPositionReportType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
@@ -21,8 +23,6 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.schema.rules.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -78,7 +78,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
-        LOG.info("Get list invoked in service layer");
+        LOG.info("Get custom rule list invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapCustomRuleList();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
@@ -154,11 +154,15 @@ public class RulesServiceBean implements RulesService {
             alarm.setRuleTriggered(ruleName);
 
             RawPositionReportType rawPosition = new RawPositionReportType();
-            rawPosition.setLatitude(fact.getMovementBaseType().getPosition().getLatitude());
-            rawPosition.setLongitude(fact.getMovementBaseType().getPosition().getLongitude());
-            Date timestamp = fact.getMovementBaseType().getPositionTime().toGregorianCalendar().getTime();
-            rawPosition.setTimestamp(RulesUtil.dateToString(timestamp));
-            rawPosition.setGuid(fact.getMovementBaseType().getGuid());
+            rawPosition.setLatitude(fact.getLatitude());
+            rawPosition.setLongitude(fact.getLongitude());
+
+            if (fact.getRawMovementType().getPositionTime() != null) {
+                Date timestamp = fact.getRawMovementType().getPositionTime().toGregorianCalendar().getTime();
+                rawPosition.setTimestamp(RulesUtil.dateToString(timestamp));
+            }
+
+            rawPosition.setGuid(fact.getRawMovementType().getGuid());
             alarm.setRawPositionReport(rawPosition);
 
             String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarm);

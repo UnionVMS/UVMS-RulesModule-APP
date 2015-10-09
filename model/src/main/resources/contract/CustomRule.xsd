@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:customrule="urn:rules.schema.fisheries.ec.europa.eu:v1" 
-            targetNamespace="urn:rules.schema.fisheries.ec.europa.eu:v1"
+<xsd:schema xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1" 
+            targetNamespace="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">

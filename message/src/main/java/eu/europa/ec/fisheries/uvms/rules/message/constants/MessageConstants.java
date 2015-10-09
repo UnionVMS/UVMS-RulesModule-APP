@@ -10,4 +10,6 @@ public class MessageConstants {
     public static final String RULES_RESPONSE_QUEUE = "java:/jms/queue/UVMSRules";
     public static final String QUEUE_DATASOURCE_INTERNAL = "java:/jms/queue/UVMSRulesModel";
 
+    public static final String MOVEMENT_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSMovementEvent";
+
 }

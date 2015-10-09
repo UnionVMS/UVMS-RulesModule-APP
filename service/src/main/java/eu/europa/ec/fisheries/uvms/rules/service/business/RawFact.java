@@ -1,18 +1,27 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 
 public class RawFact {
 
-    private MovementBaseType movementBaseType;
+    private RawMovementType rawMovementType;
     private boolean ok = true;
 
-    public MovementBaseType getMovementBaseType() {
-        return movementBaseType;
+    public RawMovementType getRawMovementType() {
+        return rawMovementType;
     }
 
-    public void setMovementBaseType(MovementBaseType movementBaseType) {
-        this.movementBaseType = movementBaseType;
+    public void setRawMovementType(RawMovementType rawMovementType) {
+        this.rawMovementType = rawMovementType;
+    }
+
+    // Getters
+    public Double getLatitude() {
+        return this.rawMovementType.getPosition().getLatitude();
+    }
+
+    public Double getLongitude() {
+        return this.rawMovementType.getPosition().getLongitude();
     }
 
     public boolean isOk() {

@@ -12,14 +12,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
-import eu.europa.ec.fisheries.schema.rules.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.v1.CriteriaType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleActionType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleSegmentType;
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.schema.rules.v1.SubCriteriaType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubCriteriaType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.CustomRuleDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 

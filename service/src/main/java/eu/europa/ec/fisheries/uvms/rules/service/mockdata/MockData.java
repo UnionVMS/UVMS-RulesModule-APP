@@ -3,7 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mockdata;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.europa.ec.fisheries.schema.rules.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 
 public class MockData {
 

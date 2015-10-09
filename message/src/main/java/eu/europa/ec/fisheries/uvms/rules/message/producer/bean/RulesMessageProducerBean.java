@@ -30,6 +30,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
     @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
 
+    @Resource(mappedName = MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE)
+    private Queue movementQueue;
+
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
@@ -48,6 +51,11 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
             switch (queue) {
             case INTERNAL:
                 session.createProducer(localDbQueue).send(message);
+                break;
+            case INTEGRATION:
+                session.createProducer(movementQueue).send(message);
+                break;
+            default:
                 break;
             }
 
