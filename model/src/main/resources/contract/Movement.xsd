@@ -17,9 +17,9 @@
             <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="assetId" type="asset:AssetId"/>
             <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
-            <xsd:element name="mobileTerminalId" type="mobterm:MobileTerminalType"/>
+            <xsd:element name="mobileTerminal" type="mobterm:MobileTerminalType"/>
             <xsd:element name="position" type="movement:MovementPoint"/>
-            <xsd:element name="positionTime" type="xsd:dateTime"/>
+            <xsd:element name="positionTime" type="xsd:string"/>
             <xsd:element name="status" type="xsd:string"/>
             <xsd:element name="reportedSpeed" type="xsd:double" nillable="true"/>
             <xsd:element name="reportedCourse" type="xsd:double" nillable="true"/>
@@ -94,7 +94,7 @@
                 <xsd:sequence>
                     <xsd:element name="calculatedCourse" type="xsd:double" nillable="true"/>
                     <!-- <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>-->
-                    <xsd:element name="mobileTerminal" type="mobterm:MobileTerminalId"/>
+                    <xsd:element name="mobileTerminalGuid" type="xsd:string"/>
                     <xsd:element name="measuredSpeed" type="xsd:double" nillable="true"/>
                     <xsd:element name="calculatedSpeed" type="xsd:double" nillable="true"/>
                     <xsd:element name="segmentIds" type="xsd:string"  minOccurs="1" maxOccurs="2"/>
