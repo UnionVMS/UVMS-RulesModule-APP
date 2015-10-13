@@ -3,21 +3,21 @@ package eu.europa.ec.fisheries.uvms.rules.model.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 
 public class AlarmListResponseDto implements Serializable {
 
     private static final long serialVersionUID = 1;
 
-    private List<AlarmType> alarmList;
+    private List<AlarmReportType> alarmList;
     private int totalNumberOfPages;
     private int currentPage;
 
-    public List<AlarmType> getAlarmList() {
+    public List<AlarmReportType> getAlarmList() {
         return alarmList;
     }
 
-    public void setAlarmList(List<AlarmType> alarmList) {
+    public void setAlarmList(List<AlarmReportType> alarmList) {
         this.alarmList = alarmList;
     }
 

@@ -1,7 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -10,9 +12,9 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.RawPositionReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
@@ -131,7 +133,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public AlarmType updateAlarm(AlarmType alarm) throws RulesServiceException {
+    public AlarmReportType updateAlarm(AlarmReportType alarm) throws RulesServiceException {
         LOG.info("Update alarm invoked in service layer - NOT IMPLEMENTED");
         return null;
     }
@@ -147,25 +149,25 @@ public class RulesServiceBean implements RulesService {
     public void createAlarmReport(String ruleName, RawFact fact) throws RulesServiceException {
         LOG.info("Create alarm invoked in service layer");
         try {
-            AlarmType alarm = new AlarmType();
-            alarm.setOpenDate(RulesUtil.dateToString(new Date()));
-            alarm.setSender("DummyFlagState");
-            alarm.setStatus(AlarmStatusType.OPEN);
-            alarm.setRuleTriggered(ruleName);
-
-            RawPositionReportType rawPosition = new RawPositionReportType();
-            rawPosition.setLatitude(fact.getLatitude());
-            rawPosition.setLongitude(fact.getLongitude());
-
-            if (fact.getRawMovementType().getPositionTime() != null) {
-                Date timestamp = fact.getRawMovementType().getPositionTime().toGregorianCalendar().getTime();
-                rawPosition.setTimestamp(RulesUtil.dateToString(timestamp));
+            // TODO: Decide who sets the guid, Rules or Exchange
+            if (fact.getRawMovementType().getGuid() == null) {
+                fact.getRawMovementType().setGuid(UUID.randomUUID().toString());
             }
 
-            rawPosition.setGuid(fact.getRawMovementType().getGuid());
-            alarm.setRawPositionReport(rawPosition);
+            AlarmReportType alarmReport = new AlarmReportType();
+            alarmReport.setGuid(UUID.randomUUID().toString());
+            alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
+            alarmReport.setStatus(AlarmStatusType.OPEN);
+            alarmReport.setRawMovement(fact.getRawMovementType());
 
-            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarm);
+            // Alarm item
+            List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
+            AlarmItemType alarmItem = new AlarmItemType();
+            alarmItem.setRuleName(ruleName);
+            alarmItems.add(alarmItem);
+            alarmReport.getAlarmItem().addAll(alarmItems);
+
+            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
             producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());

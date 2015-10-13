@@ -52,8 +52,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementMapper;
 
-//import eu.europa.ec.fisheries.schema.movement.module.v1.MovementBaseRequest;
-
 @Stateless
 public class EventServiceBean implements EventService {
     final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
@@ -71,33 +69,6 @@ public class EventServiceBean implements EventService {
 
     @EJB
     RulesMessageProducer messageProducer;
-
-    // @Inject
-    // ValidationMapper validationMapper;
-
-    // @Override
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    // public void setMovementReportRecieved(@Observes
-    // @SetMovementReportReceivedEvent EventMessage message) {
-    // try {
-    // LOG.info("Received SetMovementReportReceivedEvent");
-    //
-    // // TODO: A MovementBaseType arrives. Here is a dummy.
-    // MovementBaseType movementBaseType =
-    // generateDummyMovementBaseType("dummy_guid");
-    //
-    // // Wrap incoming raw movement in a fact and validate
-    // RawFact raw = generateRawFact(movementBaseType);
-    // rulesValidator.evaluate(raw);
-    //
-    // if (raw.isOk()) {
-    // LOG.info("Send the validated raw position to Movement - NOT IMPLEMENTED");
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    //
-    // }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -120,23 +91,22 @@ public class EventServiceBean implements EventService {
             RawFact rawFact = generateRawFact(rawMovementType);
             rulesValidator.evaluate(rawFact);
 
-            if (rawFact.isOk()) {
-                LOG.info("Send the validated raw position to Movement - NOT IMPLEMENTED");
-                // MovementBaseType m =
-                // validationMapper.rawMovementToBaseMovement(rawMovementType);
+            // MovementComChannelType.FLUX -> assetId
+            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId
+            // assetId | mobileTerminalId -> connectId
+            // TODO: Get more stuff; MobileTerminal guid, finns asset (på tex
+            // IRCS), ...
 
+            if (rawFact.isOk()) {
+
+                LOG.info("Send the validated raw position to Movement");
                 MovementBaseType movementBaseType = MovementMapper.getMapper().map(rawMovementType, MovementBaseType.class);
                 String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
-                LOG.info("myggan - movement:{}", movement);
-
-                // messageProducer.sendMessageOnQueue(movement,
-                // DataSourceQueue.INTEGRATION);
-                messageProducer.sendDataSourceMessage(movement, DataSourceQueue.INTEGRATION);
+                messageProducer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);
 
                 // TODO: Do I want an answer here? Or asych?
                 // rulseService.setMovementReport(m);
-
             }
 
         } catch (RulesModelMapperException | ModelMarshallException | MessageException ex) {
@@ -229,47 +199,6 @@ public class EventServiceBean implements EventService {
         raw.setRawMovementType(rawMovementType);
         raw.setOk(true);
         return raw;
-    }
-
-    private MovementBaseType generateDummyMovementBaseType(String movementGuid) {
-        MovementBaseType movementBaseType = new MovementBaseType();
-
-        MovementActivityType activity = new MovementActivityType();
-        activity.setCallback("CALLBACK");
-        activity.setMessageId("MESSAGE_ID");
-        activity.setMessageType(MovementActivityTypeType.ANC);
-        movementBaseType.setActivity(activity);
-        AssetId assetId = new AssetId();
-        assetId.setAssetType(AssetType.VESSEL);
-        assetId.setIdType(AssetIdType.CFR);
-        assetId.setValue("SWE111222");
-        movementBaseType.setAssetId(assetId);
-        movementBaseType.setConnectId("CONNECT_ID");
-        movementBaseType.setGuid(movementGuid);
-        movementBaseType.setMovementType(MovementTypeType.POS);
-        MovementPoint position = new MovementPoint();
-        position.setAltitude(0.0d);
-        position.setLatitude(null); // ERROR
-        position.setLongitude(2.2d);
-        movementBaseType.setPosition(position);
-        // 2015-10-15 00:00:00
-        Date date = new Date(1444867200000l);
-        GregorianCalendar gregory = new GregorianCalendar();
-        gregory.setTime(date);
-        XMLGregorianCalendar positionTime;
-        try {
-            positionTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregory);
-            movementBaseType.setPositionTime(positionTime);
-        } catch (DatatypeConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        movementBaseType.setReportedCourse(22.5);
-        movementBaseType.setReportedSpeed(99.9);
-        movementBaseType.setSource(MovementSourceType.INMARSAT_C);
-        movementBaseType.setStatus("STATUS");
-
-        return movementBaseType;
     }
 
 }

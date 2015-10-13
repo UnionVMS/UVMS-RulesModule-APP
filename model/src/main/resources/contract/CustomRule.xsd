@@ -38,13 +38,12 @@
 
     <xsd:complexType name="CustomRuleSegmentType">
         <xsd:sequence>
-            <xsd:element name="startOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="startOperator" type="customrule:StartOperatorType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="criteria" type="customrule:CriteriaType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="subCriteria" type="customrule:SubCriteriaType" minOccurs="1" maxOccurs="1"/>
-
             <xsd:element name="condition" type="customrule:ConditionType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="endOperator" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="endOperator" type="customrule:EndOperatorType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="logicBoolOperator" type="customrule:LogicOperatorType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="order" type="xsd:string" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
@@ -89,6 +88,22 @@
             <xsd:enumeration value="GE"/>
             <xsd:enumeration value="LT"/>
             <xsd:enumeration value="LE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StartOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="("/>
+            <xsd:enumeration value="(("/>
+            <xsd:enumeration value="((("/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EndOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value=")"/>
+            <xsd:enumeration value="))"/>
+            <xsd:enumeration value=")))"/>
         </xsd:restriction>
     </xsd:simpleType>
 

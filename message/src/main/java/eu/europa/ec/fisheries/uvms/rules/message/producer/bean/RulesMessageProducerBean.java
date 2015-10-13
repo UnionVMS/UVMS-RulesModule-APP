@@ -52,7 +52,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
             case INTERNAL:
                 session.createProducer(localDbQueue).send(message);
                 break;
-            case INTEGRATION:
+            case MOVEMENT:
                 session.createProducer(movementQueue).send(message);
                 break;
             default:

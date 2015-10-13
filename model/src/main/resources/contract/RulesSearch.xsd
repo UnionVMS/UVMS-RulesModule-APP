@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
-            xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
             targetNamespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
     
-<!--
-    <xsd:import namespace="urn:alarm.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
--->
-
 <!-- TODO: Is it necessary for another SearchKey class for tickets? It's the same minus SENDER -->
     <xsd:simpleType name="SearchKey">
         <xsd:restriction base="xsd:string">

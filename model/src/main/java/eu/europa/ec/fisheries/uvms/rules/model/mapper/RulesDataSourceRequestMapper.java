@@ -3,7 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -34,7 +34,7 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapCreateAlarmReport(AlarmType alarm) throws RulesModelMapperException {
+    public static String mapCreateAlarmReport(AlarmReportType alarm) throws RulesModelMapperException {
         CreateAlarmReportRequest request = new CreateAlarmReportRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_ALARM_REPORT);
         request.setAlarm(alarm);

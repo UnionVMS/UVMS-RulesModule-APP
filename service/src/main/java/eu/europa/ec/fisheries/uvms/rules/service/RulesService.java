@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.ejb.Local;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -58,7 +58,7 @@ public interface RulesService {
      * @param alarm
      * @throws RulesServiceException
      */
-    public AlarmType updateAlarm(AlarmType alarm) throws RulesServiceException;
+    public AlarmReportType updateAlarm(AlarmReportType alarm) throws RulesServiceException;
 
     /**
      * Update a ticket

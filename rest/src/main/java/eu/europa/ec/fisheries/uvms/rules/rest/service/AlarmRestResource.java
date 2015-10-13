@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
@@ -63,10 +63,10 @@ public class AlarmRestResource {
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto updateAlarm(final AlarmType alarmType) {
+    public ResponseDto updateAlarm(final AlarmReportType alarmReportType) {
         LOG.info("Update alarm invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateAlarm(alarmType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateAlarm(alarmReportType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

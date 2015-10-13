@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" 
             targetNamespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:movement="urn:movement.rules.schema.fisheries.ec.europa.eu:v1"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
 
-    <xsd:complexType name="AlarmType">
+    <xsd:import namespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
+
+    <xsd:complexType name="AlarmReportType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
             <xsd:element name="status" type="alarm:AlarmStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
-            <xsd:element name="affectedObject" type="xsd:string"/>
-            <xsd:element name="ruleTriggered" type="xsd:string"/>
-            <xsd:element name="sender" type="xsd:string"/>
-            <xsd:element name="rawPositionReport" type="alarm:RawPositionReportType"/>
+            <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="rawMovement" type="movement:RawMovementType"/>
             <xsd:element name="resolveDate" type="xsd:string"/>
             <xsd:element name="resolvedBy" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="RawPositionReportType">
+    <xsd:complexType name="AlarmItemType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="latitude" type="xsd:double" nillable="true"/>
-            <xsd:element name="longitude" type="xsd:double" nillable="true"/>
-            <xsd:element name="timestamp" type="xsd:string"/>
+            <xsd:element name="ruleName" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

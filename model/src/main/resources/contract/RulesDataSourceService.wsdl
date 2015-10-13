@@ -113,7 +113,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="alarm" type="alarm:AlarmType"/>
+                                <xsd:element name="alarm" type="alarm:AlarmReportType"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -168,7 +168,7 @@
             <xsd:element name="GetAlarmListByQueryResponse">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="alarms" type="alarm:AlarmType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="alarms" type="alarm:AlarmReportType" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                         <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                     </xsd:sequence>
