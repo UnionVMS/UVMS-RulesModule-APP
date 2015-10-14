@@ -17,7 +17,7 @@
             <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="assetId" type="asset:AssetId"/>
             <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
-            <xsd:element name="mobileTerminal" type="mobterm:MobileTerminalType"/>
+            <xsd:element name="mobileTerminalId" type="mobterm:MobileTerminalId"/>
             <xsd:element name="position" type="movement:MovementPoint"/>
             <xsd:element name="positionTime" type="xsd:string"/>
             <xsd:element name="status" type="xsd:string"/>
