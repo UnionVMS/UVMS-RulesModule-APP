@@ -4,29 +4,28 @@
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
-
-    <xsd:complexType name="MobileTerminalType">
+    
+    <xsd:complexType name="MobileTerminalId">
         <xsd:sequence>
-            <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="connectId" type="xsd:string"/>
-            <xsd:element name="type" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="mobileTerminalId" type="mobterm:MobileTerminalIdType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
+            <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
+            <xsd:element name="mobileTerminalIdList" type="mobterm:IdList" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-
-    <xsd:complexType name="MobileTerminalIdType">
+    
+    <xsd:simpleType name="IdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SATELLITE_NUMBER"/>
+            <xsd:enumeration value="LES"/>
+            <xsd:enumeration value="DNID"/>
+            <xsd:enumeration value="MEMBER_NUMBER"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="IdList">
         <xsd:sequence>
             <xsd:element name="type" type="mobterm:IdType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
-
-    <xsd:simpleType name="IdType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="SATELLITE_NUMBER"/>
-            <xsd:enumeration value="DNID"/>
-            <xsd:enumeration value="MEMBER_NUMBER"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-
 </xsd:schema>
