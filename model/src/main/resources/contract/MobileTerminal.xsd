@@ -5,7 +5,7 @@
             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
             xmlns="http://schemas.xmlsoap.org/wsdl/">
     
-    <xsd:complexType name="MobileTerminalId">
+    <xsd:complexType name="MobileTerminalType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
