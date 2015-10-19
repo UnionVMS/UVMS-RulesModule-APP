@@ -163,6 +163,7 @@ public class RulesServiceBean implements RulesService {
             // Alarm item
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
             AlarmItemType alarmItem = new AlarmItemType();
+            alarmItem.setGuid(UUID.randomUUID().toString());
             alarmItem.setRuleName(ruleName);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
