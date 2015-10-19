@@ -33,6 +33,12 @@
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
         </dependency>
+
+        <dependency>
+	        <groupId>eu.europa.ec.fisheries</groupId>
+	        <artifactId>uvms-config</artifactId>
+	        <version>${uvms.config.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

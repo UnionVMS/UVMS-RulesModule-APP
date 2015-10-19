@@ -11,4 +11,5 @@ public class MessageConstants {
     public static final String QUEUE_DATASOURCE_INTERNAL = "java:/jms/queue/UVMSRulesModel";
     public static final String MOVEMENT_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSMovementEvent";
 
+    public static final String MODULE_NAME = "rules";
 }

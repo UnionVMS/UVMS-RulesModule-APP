@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -32,7 +33,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesParameterService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
@@ -45,7 +45,7 @@ public class RulesServiceBean implements RulesService {
     final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
 
     @EJB
-    RulesParameterService parameterService;
+    ParameterService parameterService;
 
     @EJB
     RulesResponseConsumer consumer;

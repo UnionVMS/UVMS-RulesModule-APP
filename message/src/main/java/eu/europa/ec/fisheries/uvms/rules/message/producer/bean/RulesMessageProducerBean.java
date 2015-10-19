@@ -14,13 +14,16 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
+import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 
 @Stateless
-public class RulesMessageProducerBean implements RulesMessageProducer {
+public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
 
     final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
@@ -32,6 +35,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
 
     @Resource(mappedName = MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE)
     private Queue movementQueue;
+
+    @Resource(mappedName = ConfigConstants.CONFIG_MESSAGE_IN_QUEUE)
+    private Queue configQueue;
 
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
@@ -55,6 +61,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
             case MOVEMENT:
                 session.createProducer(movementQueue).send(message);
                 break;
+            case CONFIG:
+                session.createProducer(configQueue).send(message);
             default:
                 break;
             }
@@ -97,6 +105,18 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
         } catch (JMSException e) {
             LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String sendConfigMessage(String text) throws ConfigMessageException {
+        try {
+            return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
+        }
+        catch (MessageException e) {
+            LOG.error("[ Error when sending config message. ] {}", e.getMessage());
+            throw new ConfigMessageException("[ Error when sending config message. ]");
         }
     }
 
