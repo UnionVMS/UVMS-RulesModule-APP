@@ -31,6 +31,9 @@
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
+
+                    <!-- Ping -->
+                    <xsd:enumeration value="PING"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -199,6 +202,24 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Ping request -->
+            <xsd:element name="PingRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Ping response -->
+            <xsd:element name="PingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
         </xsd:schema>
     </types>
 
@@ -255,6 +276,13 @@
         <part name="body" element="source:GetTicketListByQueryResponse"/>
     </message>
     
+    <message name="PingRequest">
+        <part name="body" element="source:PingRequest"/>
+    </message>
+    <message name="PingResponse">
+        <part name="body" element="source:PingResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -297,6 +325,11 @@
             <input message="source:GetTicketListByQueryRequest"/>
             <output message="source:GetTicketListByQueryResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="Ping">
+            <input message="source:PingRequest"/>
+            <output message="source:PingResponse"/>
         </operation>
 
     </portType>
@@ -386,6 +419,15 @@
             <fault name="RulesException">
                 <soap:fault name="RulesException" use="literal"/>
             </fault>
+        </operation>
+
+        <operation name="Ping">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
         </operation>
 
     </binding>

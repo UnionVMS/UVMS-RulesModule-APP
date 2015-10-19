@@ -20,13 +20,16 @@
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
             <xsd:import namespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
-            
+
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesModuleMethod">
                 <xsd:restriction base="xsd:string">
                     <!-- Receive position report -->
                     <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
                     <xsd:enumeration value="VALIDATE_MOVEMENT_REPORT"/>
+
+                    <!-- Ping -->
+                    <xsd:enumeration value="PING"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -205,6 +208,24 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Ping request -->
+            <xsd:element name="PingRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Ping response -->
+            <xsd:element name="PingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
         </xsd:schema>
     </types>
 
@@ -268,6 +289,13 @@
         <part name="body" element="module:SetMovementReportResponse"/>
     </message>
     
+    <message name="PingRequest">
+        <part name="body" element="module:PingRequest"/>
+    </message>
+    <message name="PingResponse">
+        <part name="body" element="module:PingResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -317,6 +345,11 @@
             <output message="module:SetMovementReportResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
+        <operation name="Ping">
+            <input message="module:PingRequest"/>
+            <output message="module:PingResponse"/>
+        </operation>
+
     </portType>
 
     <binding name="RulesModuleSoapBinding" type="module:RulesModulePortType">
@@ -416,6 +449,15 @@
             <fault name="RulesException">
                 <soap:fault name="RulesException" use="literal"/>
             </fault>
+        </operation>
+
+        <operation name="Ping">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
         </operation>
 
     </binding>

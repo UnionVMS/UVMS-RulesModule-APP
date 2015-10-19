@@ -64,13 +64,23 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
         } finally {
-            try {
-                connection.stop();
-                connection.close();
-            } catch (JMSException e) {
-                LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
-                throw new MessageException("[ Error when sending message. ]", e);
-            }
+			disconnectQueue();
+        }
+    }
+
+    @Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
+        try {
+            LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(), message.getJMSReplyTo());
+            connectQueue();
+            TextMessage response = session.createTextMessage(text);
+            response.setJMSCorrelationID(message.getJMSMessageID());
+            session.createProducer(message.getJMSReplyTo()).send(response);
+        } catch (JMSException e) {
+            LOG.error("[ Error when returning module rules request. ] {} {}", e.getMessage(), e.getStackTrace());
+        } finally {
+            disconnectQueue();
         }
     }
 
@@ -78,6 +88,16 @@ public class RulesMessageProducerBean implements RulesMessageProducer {
         connection = connectionFactory.createConnection();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         connection.start();
+    }
+
+    private void disconnectQueue() throws MessageException {
+        try {
+            connection.stop();
+            connection.close();
+        } catch (JMSException e) {
+            LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
+            throw new MessageException("[ Error when sending message. ]", e);
+        }
     }
 
 }

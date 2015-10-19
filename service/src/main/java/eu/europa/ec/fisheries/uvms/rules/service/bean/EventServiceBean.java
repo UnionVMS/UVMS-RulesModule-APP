@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
@@ -20,12 +21,14 @@ import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallExcepti
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
@@ -54,6 +57,21 @@ public class EventServiceBean implements EventService {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage) {
+    	try {
+        	PingResponse pingResponse = new PingResponse();
+        	pingResponse.setResponse("pong");
+        	String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
+        	messageProducer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
+    	}
+    	catch (RulesModelMarshallException | MessageException e) {
+    		LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
+    		errorEvent.fire(eventMessage);
+    	}
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setMovementReportRecieved(@Observes @SetMovementReportReceivedEvent EventMessage message) {
         LOG.info("Received SetMovementReportReceivedEvent");
         try {
@@ -76,7 +94,7 @@ public class EventServiceBean implements EventService {
             // MovementComChannelType.FLUX -> assetId
             // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId
             // assetId | mobileTerminalId -> connectId
-            // TODO: Get more stuff; MobileTerminal guid, finns asset (på tex
+            // TODO: Get more stuff; MobileTerminal guid, finns asset (pï¿½ tex
             // IRCS), ...
 
             if (rawFact.isOk()) {
