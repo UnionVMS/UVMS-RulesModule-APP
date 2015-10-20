@@ -23,7 +23,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
     final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
-    final static int TEN_SECONDS = 10000;
+
+    private final static long TEN_SECONDS = 10000;
 
     @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
