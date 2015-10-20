@@ -23,7 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
     final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
-    final static int ONE_MINUTE = 60000;
+    final static int TEN_SECONDS = 10000;
 
     @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
@@ -45,7 +45,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             }
             connectToQueue();
 
-            T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(ONE_MINUTE);
+            T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(TEN_SECONDS);
             if (response == null) {
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
