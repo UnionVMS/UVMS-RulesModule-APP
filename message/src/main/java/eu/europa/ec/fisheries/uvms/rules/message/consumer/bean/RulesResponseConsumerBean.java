@@ -45,8 +45,12 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             }
             connectToQueue();
 
-            return (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(ONE_MINUTE);
+            T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(ONE_MINUTE);
+            if (response == null) {
+                throw new MessageException("[ Response from JMS queue was null. ]");
+            }
 
+            return response;
         } catch (Exception e) {
             LOG.error("[ Error when getting medssage ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
