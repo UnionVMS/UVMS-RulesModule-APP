@@ -7,6 +7,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.jms.JMSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +59,15 @@ public class EventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage) {
-    	try {
-        	PingResponse pingResponse = new PingResponse();
-        	pingResponse.setResponse("pong");
-        	String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
-        	messageProducer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
-    	}
-    	catch (RulesModelMarshallException | MessageException e) {
-    		LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
-    		errorEvent.fire(eventMessage);
-    	}
+        try {
+            PingResponse pingResponse = new PingResponse();
+            pingResponse.setResponse("pong");
+            String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
+            messageProducer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
+        } catch (RulesModelMarshallException | MessageException e) {
+            LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
+            errorEvent.fire(eventMessage);
+        }
     }
 
     @Override
@@ -100,7 +100,7 @@ public class EventServiceBean implements EventService {
             if (rawFact.isOk()) {
 
                 LOG.info("Send the validated raw position to Movement");
-                MovementBaseType movementBaseType = MovementMapper.getMapper().map(rawMovementType, MovementBaseType.class);
+                MovementBaseType movementBaseType = MovementMapper.getInstance().getMapper().map(rawMovementType, MovementBaseType.class);
                 String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
                 messageProducer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);

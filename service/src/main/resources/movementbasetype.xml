@@ -7,11 +7,10 @@
     <mapping map-null="true">
         <class-a>eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType</class-a>
         <class-b>eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType</class-b>
-        <!-- 
         <field>
-            <a>extId</a>
-            <b>id</b>
-        </field> -->
+            <a>mobileTerminal.connectId</a>
+            <b>connectId</b>
+        </field>
     </mapping>
       
 </mappings>
