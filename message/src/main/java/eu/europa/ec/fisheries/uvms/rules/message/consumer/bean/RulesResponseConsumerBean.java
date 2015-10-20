@@ -47,7 +47,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
 
             T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(ONE_MINUTE);
             if (response == null) {
-                throw new MessageException("[ Response from JMS queue was null. ]");
+                throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
 
             return response;
