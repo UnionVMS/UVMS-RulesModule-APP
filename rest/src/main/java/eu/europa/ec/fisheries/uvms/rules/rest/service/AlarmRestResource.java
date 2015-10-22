@@ -57,16 +57,16 @@ public class AlarmRestResource {
      * @responseMessage 200 Selected alarm updated
      * @responseMessage 500 No alarm updated
      *
-     * @summary Update an alarm
+     * @summary Update an alarm status
      *
      */
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto updateAlarm(final AlarmReportType alarmReportType) {
-        LOG.info("Update alarm invoked in rest layer");
+    public ResponseDto updateAlarmStatus(final AlarmReportType alarmReportType) {
+        LOG.info("Update alarm status invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateAlarm(alarmReportType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateAlarmStatus(alarmReportType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

@@ -146,7 +146,7 @@ public class RestResourceTest {
     @Test
     public void testUpdateVessel() throws RulesServiceException {
         ResponseDto result = rulesRestResource.update(DTO);
-        Mockito.verify(serviceLayer).update(DTO);
+        Mockito.verify(serviceLayer).updateCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 

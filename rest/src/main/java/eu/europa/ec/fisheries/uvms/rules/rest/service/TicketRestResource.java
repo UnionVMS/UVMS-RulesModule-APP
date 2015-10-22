@@ -57,16 +57,16 @@ public class TicketRestResource {
      * @responseMessage 200 Selected alarm updated
      * @responseMessage 500 No alarm updated
      *
-     * @summary Update an alarm
+     * @summary Update ticket status
      *
      */
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto updateTicket(final TicketType ticketType) {
-        LOG.info("Update ticket invoked in rest layer");
+    public ResponseDto updateTicketStatus(final TicketType ticketType) {
+        LOG.info("Update ticket status invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateTicket(ticketType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateTicketStatus(ticketType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

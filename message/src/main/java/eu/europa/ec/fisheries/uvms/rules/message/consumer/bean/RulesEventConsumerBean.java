@@ -65,10 +65,10 @@ public class RulesEventConsumerBean implements MessageListener {
                 setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
                 break;
             case PING:
-            	pingReceivedEvent.fire(new EventMessage(textMessage));
-            	break;
+                pingReceivedEvent.fire(new EventMessage(textMessage));
+                break;
             default:
-                LOG.error("[ Request method {} is not implemented ]", request.getMethod().name());
+                LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
 
                 // ???:
                 // errorEvent.fire(new EventMessage(textMessage,
@@ -83,7 +83,7 @@ public class RulesEventConsumerBean implements MessageListener {
             // }
 
         } catch (NullPointerException | RulesModelMarshallException e) {
-            LOG.error("[ Error when receiving message in rules: ]", e);
+            LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
             errorEvent.fire(new EventMessage(textMessage, "Error when receiving message in rules: " + e.getMessage()));
         }
     }

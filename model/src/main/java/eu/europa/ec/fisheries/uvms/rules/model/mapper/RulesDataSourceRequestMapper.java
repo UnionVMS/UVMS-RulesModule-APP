@@ -14,6 +14,8 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -70,6 +72,22 @@ public class RulesDataSourceRequestMapper {
         CreateTicketRequest request = new CreateTicketRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_TICKET);
         request.setTicket(ticket);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapUpdateTicketStatus(TicketType ticket) throws RulesModelMapperException {
+        SetTicketStatusRequest request = new SetTicketStatusRequest();
+        request.setGuid(ticket.getGuid());
+        request.setStatus(ticket.getStatus());
+        request.setMethod(RulesDataSourceMethod.SET_TICKET_STATUS);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapUpdateAlarmStatus(AlarmReportType alarm) throws RulesModelMapperException {
+        SetAlarmStatusRequest request = new SetAlarmStatusRequest();
+        request.setGuid(alarm.getGuid());
+        request.setStatus(alarm.getStatus());
+        request.setMethod(RulesDataSourceMethod.SET_ALARM_STATUS);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

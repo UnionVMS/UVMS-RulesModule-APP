@@ -8,12 +8,16 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleResponse;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -72,6 +76,11 @@ public class RulesDataSourceResponseMapper {
         return response.getCustomRule();
     }
 
+    public static TicketType mapToSetTicketStatusFromResponse(TextMessage message) throws RulesModelMapperException {
+        SetTicketStatusResponse response = JAXBMarshaller.unmarshallTextMessage(message, SetTicketStatusResponse.class);
+        return response.getTicket();
+    }
+
     public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message) throws RulesModelMapperException {
         GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
         return response.getCustomRules();
@@ -106,6 +115,23 @@ public class RulesDataSourceResponseMapper {
         response.getTickets().addAll(responseDto.getTicketList());
         response.setCurrentPage(responseDto.getCurrentPage());
         response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages());
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String setTicketStatusResponse(TicketType ticket) throws RulesModelMapperException {
+        SetTicketStatusResponse response = new SetTicketStatusResponse();
+        response.setTicket(ticket);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static AlarmReportType mapToSetAlarmStatusFromResponse(TextMessage message) throws RulesModelMapperException {
+        SetAlarmStatusResponse response = JAXBMarshaller.unmarshallTextMessage(message, SetAlarmStatusResponse.class);
+        return response.getAlarm();
+    }
+
+    public static String setAlarmStatusResponse(AlarmReportType alarm) throws RulesModelMapperException {
+        SetAlarmStatusResponse response = new SetAlarmStatusResponse();
+        response.setAlarm(alarm);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

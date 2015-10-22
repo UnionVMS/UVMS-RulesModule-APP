@@ -26,7 +26,9 @@
                     <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES"/>
+                    <xsd:enumeration value="SET_TICKET_STATUS"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
+                    <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
                     
                     <!-- Actions triggered by rule engine -->
@@ -129,6 +131,52 @@
                         <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                         <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status request -->
+            <xsd:element name="SetTicketStatusRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                                <xsd:element name="status" type="ticket:TicketStatusType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Set ticket status response -->
+            <xsd:element name="SetTicketStatusResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set alarm status request -->
+            <xsd:element name="SetAlarmStatusRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                                <xsd:element name="status" type="alarm:AlarmStatusType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Set alarm status response -->
+            <xsd:element name="SetAlarmStatusResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -278,6 +326,20 @@
         <part name="body" element="source:GetTicketListResponse"/>
     </message>
 
+    <message name="SetTicketStatusRequest">
+        <part name="body" element="source:SetTicketStatusRequest"/>
+    </message>
+    <message name="SetTicketStatusResponse">
+        <part name="body" element="source:SetTicketStatusResponse"/>
+    </message>
+
+    <message name="SetAlarmStatusRequest">
+        <part name="body" element="source:SetAlarmStatusRequest"/>
+    </message>
+    <message name="SetAlarmStatusResponse">
+        <part name="body" element="source:SetAlarmStatusResponse"/>
+    </message>
+
     <message name="CreateAlarmReportRequest">
         <part name="body" element="source:CreateAlarmReportRequest"/>
     </message>
@@ -336,6 +398,18 @@
         <operation name="GetTicketList">
             <input message="source:GetTicketListRequest"/>
             <output message="source:GetTicketListResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="SetTicketStatus">
+            <input message="source:SetTicketStatusRequest"/>
+            <output message="source:SetTicketStatusResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="SetAlarmStatus">
+            <input message="source:SetAlarmStatusRequest"/>
+            <output message="source:SetAlarmStatusResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -410,6 +484,30 @@
         </operation>
 
         <operation name="GetTicketList">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="SetTicketStatus">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="SetAlarmStatus">
             <input>
                 <soap:body use="literal"/>
             </input>

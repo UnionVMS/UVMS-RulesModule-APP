@@ -133,15 +133,29 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public AlarmReportType updateAlarm(AlarmReportType alarm) throws RulesServiceException {
-        LOG.info("Update alarm invoked in service layer - NOT IMPLEMENTED");
-        return null;
+    public TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException {
+        LOG.info("Update ticket status invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
     }
 
     @Override
-    public TicketType updateTicket(TicketType ticket) throws RulesServiceException {
-        LOG.info("Update ticket invoked in service layer - NOT IMPLEMENTED");
-        return null;
+    public AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException {
+        LOG.info("Update ticket status invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateAlarmStatus(ticket);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToSetAlarmStatusFromResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
     }
 
     // Triggered by rule engine, no response expected
@@ -274,8 +288,8 @@ public class RulesServiceBean implements RulesService {
      * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType update(CustomRuleType customRule) throws RulesServiceException {
-        LOG.info("Update invoked in service layer");
+    public CustomRuleType updateCustomRule(CustomRuleType customRule) throws RulesServiceException {
+        LOG.info("Update custom rule invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);

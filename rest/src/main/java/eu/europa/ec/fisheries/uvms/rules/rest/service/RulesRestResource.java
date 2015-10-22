@@ -109,7 +109,7 @@ public class RulesRestResource {
     public ResponseDto update(final CustomRuleType customRuleType) {
         LOG.info("Update custom rule invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.update(customRuleType), ResponseCode.OK);
+            return new ResponseDto(serviceLayer.updateCustomRule(customRuleType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

@@ -31,6 +31,7 @@
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="OPEN"/>
             <xsd:enumeration value="CLOSED"/>
+            <xsd:enumeration value="REJECTED"/>
         </xsd:restriction>
     </xsd:simpleType>
 

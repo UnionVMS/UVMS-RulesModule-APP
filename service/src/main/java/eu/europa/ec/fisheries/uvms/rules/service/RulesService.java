@@ -53,20 +53,12 @@ public interface RulesService {
     public GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException;
 
     /**
-     * Update an alarm
-     *
-     * @param alarm
-     * @throws RulesServiceException
-     */
-    public AlarmReportType updateAlarm(AlarmReportType alarm) throws RulesServiceException;
-
-    /**
-     * Update a ticket
+     * Update a ticket status
      *
      * @param ticket
      * @throws RulesServiceException
      */
-    public TicketType updateTicket(TicketType ticket) throws RulesServiceException;
+    public TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException;
 
     /**
      * Get an object by id
@@ -83,7 +75,7 @@ public interface RulesService {
      * @param data
      * @throws RulesServiceException
      */
-    public CustomRuleType update(CustomRuleType customRuleType) throws RulesServiceException;
+    public CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException;
 
     /**
      * Creates an error report
@@ -105,5 +97,7 @@ public interface RulesService {
      *            the action(s) to be performed
      */
     public void customRuleTriggered(String ruleName, MovementFact f, String action) throws RulesServiceException;
+
+    public AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException;
 
 }
