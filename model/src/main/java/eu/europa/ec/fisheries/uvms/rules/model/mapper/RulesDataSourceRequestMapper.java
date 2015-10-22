@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
+import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 
@@ -21,6 +22,7 @@ public class RulesDataSourceRequestMapper {
 
     final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceRequestMapper.class);
 
+    // Custom rule
     public static String mapCreateCustomRule(CustomRuleType customRule) throws RulesModelMapperException {
         CreateCustomRuleRequest request = new CreateCustomRuleRequest();
         request.setCustomRule(customRule);
@@ -34,6 +36,14 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapUpdateCustomRule(CustomRuleType customRule) throws RulesModelMapperException {
+        UpdateCustomRuleRequest request = new UpdateCustomRuleRequest();
+        request.setCustomRule(customRule);
+        request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    // Alarm
     public static String mapCreateAlarmReport(AlarmReportType alarm) throws RulesModelMapperException {
         CreateAlarmReportRequest request = new CreateAlarmReportRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_ALARM_REPORT);
@@ -48,6 +58,7 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    // Tickets
     public static String mapTicketList(TicketQuery query) throws RulesModelMapperException {
         GetTicketListByQueryRequest request = new GetTicketListByQueryRequest();
         request.setMethod(RulesDataSourceMethod.LIST_TICKETS);

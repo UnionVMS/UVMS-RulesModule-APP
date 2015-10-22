@@ -274,9 +274,16 @@ public class RulesServiceBean implements RulesService {
      * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType update(CustomRuleType customRuleType) throws RulesServiceException {
+    public CustomRuleType update(CustomRuleType customRule) throws RulesServiceException {
         LOG.info("Update invoked in service layer");
-        throw new RulesServiceException("Update not implemented in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
     }
 
 }

@@ -13,6 +13,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleResponse;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -58,6 +59,17 @@ public class RulesDataSourceResponseMapper {
         CreateCustomRuleResponse response = new CreateCustomRuleResponse();
         response.setCustomRule(customRule);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String updateCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
+        UpdateCustomRuleResponse response = new UpdateCustomRuleResponse();
+        response.setCustomRule(customRule);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static CustomRuleType mapToUpdateCustomRuleFromResponse(TextMessage message) throws RulesModelMapperException {
+        UpdateCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, UpdateCustomRuleResponse.class);
+        return response.getCustomRule();
     }
 
     public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message) throws RulesModelMapperException {

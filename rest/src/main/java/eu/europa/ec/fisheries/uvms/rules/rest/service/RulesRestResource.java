@@ -100,14 +100,14 @@ public class RulesRestResource {
      * @responseMessage 200 [Success]
      * @responseMessage 500 [Error]
      *
-     * @summary [Description]
+     * @summary Update a custom rule
      *
      */
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     public ResponseDto update(final CustomRuleType customRuleType) {
-        LOG.info("Update invoked in rest layer");
+        LOG.info("Update custom rule invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.update(customRuleType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
