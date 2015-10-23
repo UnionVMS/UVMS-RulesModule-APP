@@ -12,6 +12,7 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -26,6 +27,8 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -38,6 +41,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementMapper;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -146,14 +150,25 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException {
-        LOG.info("Update ticket status invoked in service layer");
+    public AlarmReportType updateAlarmStatus(AlarmReportType alarm) throws RulesServiceException {
+        LOG.info("Update alarm status invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapUpdateAlarmStatus(ticket);
+            String request = RulesDataSourceRequestMapper.mapUpdateAlarmStatus(alarm);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToSetAlarmStatusFromResponse(response);
-        } catch (RulesModelMapperException | MessageException ex) {
+
+            AlarmReportType result = RulesDataSourceResponseMapper.mapToSetAlarmStatusFromResponse(response);
+
+            // If accepted, send movement to Movement Module
+            if (result.getStatus() == AlarmStatusType.CLOSED) {
+                MovementBaseType movementBaseType = MovementMapper.getInstance().getMapper().map(result.getRawMovement(), MovementBaseType.class);
+                String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
+                messageId = producer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);
+                response = consumer.getMessage(messageId, TextMessage.class);
+            }
+
+            return result;
+        } catch (RulesModelMapperException | MessageException | ModelMarshallException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
     }
