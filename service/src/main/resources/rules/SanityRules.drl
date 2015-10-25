@@ -1,4 +1,3 @@
-import eu.europa.ec.fisheries.uvms.rules.service.business.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import java.util.Date;
@@ -14,7 +13,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - Latitude must exist'");
         $fact.setOk(false);
-        insert(new ErrorEvent("Sanity check - Latitude must exist", $fact));
+        rulesService.createAlarmReport("Sanity check - Latitude must exist", $fact);
 end
 
 rule "Sanity check - Longitude must exist"
@@ -24,16 +23,6 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - Longitude must exist'");
         $fact.setOk(false);
-        insert(new ErrorEvent("Sanity check - Longitude must exist", $fact));
-end
-
-
-rule "Create an alarm report"
-dialect "java"
-    when
-        $e : ErrorEvent($ruleName : ruleName, $rawFact : rawFact)
-    then
-        logger.info("\t==> Executing RULE 'Create an alarm report'");
-        rulesService.createAlarmReport($ruleName, $rawFact);
+        rulesService.createAlarmReport("Sanity check - Longitude must exist", $fact);
 end
 

@@ -47,7 +47,7 @@ public class AlarmRestResource {
         try {
             return new ResponseDto(serviceLayer.getAlarmList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
+            LOG.error("[ Error when geting list. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }
@@ -68,7 +68,7 @@ public class AlarmRestResource {
         try {
             return new ResponseDto(serviceLayer.updateAlarmStatus(alarmReportType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
+            LOG.error("[ Error when updating. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }

@@ -51,48 +51,47 @@
 
     <xsd:simpleType name="CriteriaType">
         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVITY"/>
+            <xsd:enumeration value="ALTITUDE"/>
+            <xsd:enumeration value="ASSET_GROUP"/>
+            <xsd:enumeration value="ASSET_ID"/>
             <xsd:enumeration value="CALCULATED_COURSE"/>
             <xsd:enumeration value="CALCULATED_SPEED"/>
+            <xsd:enumeration value="CLOSEST_COUNTRY"/>
+            <xsd:enumeration value="CLOSEST_PORT"/>
             <xsd:enumeration value="COMCHANNEL_TYPE"/>
             <xsd:enumeration value="CONNECT_ID"/>
             <xsd:enumeration value="EXTERNAL_MARKING"/>
             <xsd:enumeration value="FLAG_STATE"/>
+            <xsd:enumeration value="AREA"/>
+            <xsd:enumeration value="LATITUDE"/>
+            <xsd:enumeration value="LONGITUDE"/>
             <xsd:enumeration value="MOBILE_TERMINAL"/>
             <xsd:enumeration value="MOVEMENT_GUID"/>
             <xsd:enumeration value="MOVEMENT_TYPE"/>
             <xsd:enumeration value="POSITION_REPORT_TIME"/>
             <xsd:enumeration value="REPORTED_COURSE"/>
             <xsd:enumeration value="REPORTED_SPEED"/>
-            <xsd:enumeration value="SOURCE"/>
+            <xsd:enumeration value="SEGMENT_TYPE"/>
             <xsd:enumeration value="STATUS_CODE"/>
+            <xsd:enumeration value="SOURCE"/>
             <xsd:enumeration value="VESSEL"/>
             <xsd:enumeration value="WKT"/>
-            <xsd:enumeration value="ALTITUDE"/>
-            <xsd:enumeration value="LATITUDE"/>
-            <xsd:enumeration value="LONGITUDE"/>
-            <xsd:enumeration value="SEGMENT_TYPE"/>
-            <xsd:enumeration value="ASSET_GROUP"/>
             <xsd:enumeration value="VECINITY_OF"/>
-
-            <xsd:enumeration value="ACTIVITY"/>
-            <xsd:enumeration value="ASSET_ID"/>
-            <xsd:enumeration value="GEO_AREA"/>
-            <xsd:enumeration value="CLOSEST_COUNTRY"/>
-            <xsd:enumeration value="CLOSEST_PORT"/>
         </xsd:restriction>
     </xsd:simpleType>
 
     <xsd:simpleType name="SubCriteriaType">
         <xsd:restriction base="xsd:string">
             <!-- VESSEL -->
-            <xsd:enumeration value="CFR"/>
-            <xsd:enumeration value="IRCS"/>
-            <xsd:enumeration value="NAME"/>
+            <xsd:enumeration value="VESSEL_CFR"/>
+            <xsd:enumeration value="VESSEL_IRCS"/>
+            <xsd:enumeration value="VESSEL_NAME"/>
             <!-- MOBILE_TERMINAL -->
-            <xsd:enumeration value="SERIAL_NO"/>
-            <xsd:enumeration value="DNID"/>
-            <xsd:enumeration value="MEMBER_ID"/>
-            <!-- GEO_AREA -->
+            <xsd:enumeration value="MT_SERIAL_NO"/>
+            <xsd:enumeration value="MT_DNID"/>
+            <xsd:enumeration value="MT_MEMBER_ID"/>
+            <!-- AREA -->
             <xsd:enumeration value="AREA_CODE"/>
             <xsd:enumeration value="AREA_TYPE"/>
             <xsd:enumeration value="AREA_ID"/>

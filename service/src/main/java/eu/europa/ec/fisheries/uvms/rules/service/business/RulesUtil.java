@@ -48,7 +48,7 @@ public class RulesUtil {
                 case MOBILE_TERMINAL:
                     sb.append("mobileTerminal");
                     break;
-                case GEO_AREA:
+                case AREA:
                     // If list and NE
                     if (segment.getCondition().equals(ConditionType.NE)) {
                         sb.append("!");
@@ -130,22 +130,22 @@ public class RulesUtil {
                     break;
                 }
                 switch (segment.getSubCriteria()) {
-                case CFR:
+                case VESSEL_CFR:
                     sb.append("Cfr");
                     break;
-                case IRCS:
+                case VESSEL_IRCS:
                     sb.append("Ircs");
                     break;
-                case NAME:
+                case VESSEL_NAME:
                     sb.append("Name");
                     break;
-                case MEMBER_ID:
+                case MT_MEMBER_ID:
                     sb.append("MemberNumber");
                     break;
-                case SERIAL_NO:
+                case MT_SERIAL_NO:
                     sb.append("SerialNumber");
                     break;
-                case DNID:
+                case MT_DNID:
                     sb.append("Dnid");
                     break;
                 case AREA_TYPE:
@@ -200,7 +200,7 @@ public class RulesUtil {
                 switch (segment.getCondition()) {
                 case EQ:
                     // Different EQ if a list
-                    if (segment.getCriteria().equals(CriteriaType.GEO_AREA)) {
+                    if (segment.getCriteria().equals(CriteriaType.AREA)) {
                         sb.append(".contains(");
                     } else {
                         sb.append(" == ");
@@ -208,7 +208,7 @@ public class RulesUtil {
                     break;
                 case NE:
                     // Different NE if a list
-                    if (segment.getCriteria().equals(CriteriaType.GEO_AREA)) {
+                    if (segment.getCriteria().equals(CriteriaType.AREA)) {
                         sb.append(".contains(");
                     } else {
                         sb.append(" != ");
@@ -235,7 +235,7 @@ public class RulesUtil {
                 sb.append("\"");
 
                 // If list, end "contains" with parenthesis
-                if (segment.getCriteria().equals(CriteriaType.GEO_AREA)
+                if (segment.getCriteria().equals(CriteriaType.AREA)
                         && (segment.getCondition().equals(ConditionType.EQ) || segment.getCondition().equals(ConditionType.NE))) {
                     sb.append(")");
                 }

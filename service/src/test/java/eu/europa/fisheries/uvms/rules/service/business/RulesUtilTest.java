@@ -69,7 +69,7 @@ public class RulesUtilTest {
         segment1.setStartOperator("(");
 
         segment1.setCriteria(CriteriaType.VESSEL);
-        segment1.setSubCriteria(SubCriteriaType.CFR);
+        segment1.setSubCriteria(SubCriteriaType.VESSEL_CFR);
         segment1.setCondition(ConditionType.EQ);
         segment1.setValue("SWE111111");
         segment1.setEndOperator("");
@@ -81,7 +81,7 @@ public class RulesUtilTest {
         CustomRuleSegmentType segment2 = new CustomRuleSegmentType();
         segment2.setStartOperator("");
         segment2.setCriteria(CriteriaType.VESSEL);
-        segment2.setSubCriteria(SubCriteriaType.CFR);
+        segment2.setSubCriteria(SubCriteriaType.VESSEL_CFR);
         segment2.setCondition(ConditionType.EQ);
         segment2.setValue("SWE222222");
         segment2.setEndOperator(")");
@@ -93,7 +93,7 @@ public class RulesUtilTest {
         CustomRuleSegmentType segment3 = new CustomRuleSegmentType();
         segment3.setStartOperator("");
         segment3.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment3.setSubCriteria(SubCriteriaType.MEMBER_ID);
+        segment3.setSubCriteria(SubCriteriaType.MT_MEMBER_ID);
         segment3.setCondition(ConditionType.EQ);
         segment3.setValue("ABC99");
         segment3.setEndOperator("");

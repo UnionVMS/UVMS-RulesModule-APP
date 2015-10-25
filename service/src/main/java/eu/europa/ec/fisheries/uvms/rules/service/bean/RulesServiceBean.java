@@ -247,6 +247,7 @@ public class RulesServiceBean implements RulesService {
             case TOP_BAR_NOTIFICATION:
                 LOG.info("Performing action '{}' with value '{}'", action, value);
                 break;
+            case ALARM:
             default:
                 // Unreachable, ActionType.valueOf(action) would fail before
                 LOG.info("The action '{}' is not defined", action);
