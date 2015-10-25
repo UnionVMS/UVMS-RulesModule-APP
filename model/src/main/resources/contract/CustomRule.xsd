@@ -51,9 +51,34 @@
 
     <xsd:simpleType name="CriteriaType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="VESSEL"/>
+            <xsd:enumeration value="CALCULATED_COURSE"/>
+            <xsd:enumeration value="CALCULATED_SPEED"/>
+            <xsd:enumeration value="COMCHANNEL_TYPE"/>
+            <xsd:enumeration value="CONNECT_ID"/>
+            <xsd:enumeration value="EXTERNAL_MARKING"/>
+            <xsd:enumeration value="FLAG_STATE"/>
             <xsd:enumeration value="MOBILE_TERMINAL"/>
+            <xsd:enumeration value="MOVEMENT_GUID"/>
+            <xsd:enumeration value="MOVEMENT_TYPE"/>
+            <xsd:enumeration value="POSITION_REPORT_TIME"/>
+            <xsd:enumeration value="REPORTED_COURSE"/>
+            <xsd:enumeration value="REPORTED_SPEED"/>
+            <xsd:enumeration value="SOURCE"/>
+            <xsd:enumeration value="STATUS_CODE"/>
+            <xsd:enumeration value="VESSEL"/>
+            <xsd:enumeration value="WKT"/>
+            <xsd:enumeration value="ALTITUDE"/>
+            <xsd:enumeration value="LATITUDE"/>
+            <xsd:enumeration value="LONGITUDE"/>
+            <xsd:enumeration value="SEGMENT_TYPE"/>
+            <xsd:enumeration value="ASSET_GROUP"/>
+            <xsd:enumeration value="VECINITY_OF"/>
+
+            <xsd:enumeration value="ACTIVITY"/>
+            <xsd:enumeration value="ASSET_ID"/>
             <xsd:enumeration value="GEO_AREA"/>
+            <xsd:enumeration value="CLOSEST_COUNTRY"/>
+            <xsd:enumeration value="CLOSEST_PORT"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -68,7 +93,25 @@
             <xsd:enumeration value="DNID"/>
             <xsd:enumeration value="MEMBER_ID"/>
             <!-- GEO_AREA -->
+            <xsd:enumeration value="AREA_CODE"/>
+            <xsd:enumeration value="AREA_TYPE"/>
             <xsd:enumeration value="AREA_ID"/>
+            <!-- ACTIVITY -->
+            <xsd:enumeration value="ACTIVITY_CALLBACK"/>
+            <xsd:enumeration value="ACTIVITY_MESSAGE_ID"/>
+            <xsd:enumeration value="ACTIVITY_MESSAGE_TYPE"/>
+            <!-- ASSET_ID -->
+            <xsd:enumeration value="ASSET_ID_ASSET_TYPE"/>
+            <xsd:enumeration value="ASSET_ID_TYPE"/>
+            <xsd:enumeration value="ASSET_ID_VALUE"/>
+            <!-- CLOSEST_COUNTRY -->
+            <xsd:enumeration value="COUNTRY_CODE"/>
+            <xsd:enumeration value="COUNTRY_DISTANCE"/>
+            <xsd:enumeration value="COUNTRY_REMOTE_ID"/>
+            <!-- CLOSEST_PORT -->
+            <xsd:enumeration value="PORT_CODE"/>
+            <xsd:enumeration value="PORT_DISTANCE"/>
+            <xsd:enumeration value="PORT_REMOTE_ID"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -131,6 +174,7 @@
             <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
             <xsd:enumeration value="EMAIL"/>
             <xsd:enumeration value="SMS"/>
+            <xsd:enumeration value="ALARM"/>
         </xsd:restriction>
     </xsd:simpleType>
 

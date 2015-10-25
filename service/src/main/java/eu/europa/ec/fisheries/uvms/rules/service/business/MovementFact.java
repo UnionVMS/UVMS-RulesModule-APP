@@ -1,88 +1,401 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
 import java.util.Date;
-
-import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetIdType;
-import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import java.util.List;
 
 public class MovementFact {
+    // Base
+    private Double calculatedCourse;
+    private Double calculatedSpeed;
+    private String comChannelType;
+    private String connectId;
+    private String externalMarking;
+    private String flagState;
+    private String mobileTerminalMemberNumber;
+    private String mobileTerminalSerialNumber;
+    private String mobileTerminalDnid;
+    private String movementGuid;
+    private String movementType; // MovementTypeType
+    private Date positionTime;
+    private Double reportedCourse;
+    private Double reportedSpeed;
+    private String source;
+    private String statusCode;
+    private String vesselName;
+    private String wkt;
 
-    private MovementType movementType;
+    // Activity
+    private String activityCallback;
+    private String activityMessageId;
+    private String activityMessageType;
 
-    // TODO: Not necessary???
-    private boolean ok = true;
+    // AssetId
+    private String assetIdAssetType;
+    private String assetIdType;
+    private String assetIdValue;
+    private String vesselCfr;
+    private String vesselIrcs;
 
-    // Helper
-    public Date getTimestamp() {
-        return this.getMovementType().getPositionTime().toGregorianCalendar().getTime();
+    // Position
+    private Double altitude;
+    private Double latitude;
+    private Double longitude;
+
+    // Meta
+    // private String previousMovementId;
+    private String fromSegmentType;
+
+    // Areas
+    List<String> areaCodes;
+    List<String> areaRemoteIds;
+    List<String> areaTypes;
+
+    // Closest country
+    private String closestCountryCode;
+    private Double closestCountryDistance;
+    private String closestCountryRemoteId;
+
+    // Closets port
+    private String closestPortCode;
+    private Double closestPortDistance;
+    private String closestPortRemoteId;
+
+    public Date getPositionTime() {
+        return positionTime;
     }
 
-    // Helper
+    public void setPositionTime(Date positionTime) {
+        this.positionTime = positionTime;
+    }
+
     public String getVesselCfr() {
-        if (this.movementType.getAssetId().getAssetType() == AssetType.VESSEL && this.movementType.getAssetId().getIdType() == AssetIdType.CFR) {
-            return this.movementType.getAssetId().getValue();
-        }
-        return null;
+        return vesselCfr;
     }
 
-    // Helper
+    public void setVesselCfr(String vesselCfr) {
+        this.vesselCfr = vesselCfr;
+    }
+
     public String getVesselIrcs() {
-        if (this.movementType.getAssetId().getAssetType() == AssetType.VESSEL && this.movementType.getAssetId().getIdType() == AssetIdType.IRCS) {
-            return this.movementType.getAssetId().getValue();
-        }
-        return null;
+        return vesselIrcs;
     }
 
-    // Helper
+    public void setVesselIrcs(String vesselIrcs) {
+        this.vesselIrcs = vesselIrcs;
+    }
+
     public String getVesselName() {
-        return null;
+        return vesselName;
     }
 
-    // Helper
+    public void setVesselName(String vesselName) {
+        this.vesselName = vesselName;
+    }
+
     public String getMobileTerminalMemberNumber() {
-        return "ABC99";
-        // return null;
+        return mobileTerminalMemberNumber;
     }
 
-    // Helper
-    // TODO: Where do I get mobile terminal serial number??????????????????
+    public void setMobileTerminalMemberNumber(String mobileTerminalMemberNumber) {
+        this.mobileTerminalMemberNumber = mobileTerminalMemberNumber;
+    }
+
     public String getMobileTerminalSerialNumber() {
-        return null;
+        return mobileTerminalSerialNumber;
     }
 
-    // Helper
+    public void setMobileTerminalSerialNumber(String mobileTerminalSerialNumber) {
+        this.mobileTerminalSerialNumber = mobileTerminalSerialNumber;
+    }
+
     public String getMobileTerminalDnid() {
-        return null;
+        return mobileTerminalDnid;
     }
 
-    // Helper
-    public String getGeoAreaAreaId() {
-        return null;
+    public void setMobileTerminalDnid(String mobileTerminalDnid) {
+        this.mobileTerminalDnid = mobileTerminalDnid;
     }
 
-    public MovementType getMovementType() {
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public Double getCalculatedSpeed() {
+        return calculatedSpeed;
+    }
+
+    public void setCalculatedSpeed(Double calculatedSpeed) {
+        this.calculatedSpeed = calculatedSpeed;
+    }
+
+    public String getExternalMarking() {
+        return externalMarking;
+    }
+
+    public void setExternalMarking(String externalMarking) {
+        this.externalMarking = externalMarking;
+    }
+
+    public String getFlagState() {
+        return flagState;
+    }
+
+    public void setFlagState(String flagState) {
+        this.flagState = flagState;
+    }
+
+    public Double getCalculatedCourse() {
+        return calculatedCourse;
+    }
+
+    public void setCalculatedCourse(Double calculatedCourse) {
+        this.calculatedCourse = calculatedCourse;
+    }
+
+    public Double getReportedCourse() {
+        return reportedCourse;
+    }
+
+    public void setReportedCourse(Double reportedCourse) {
+        this.reportedCourse = reportedCourse;
+    }
+
+    public Double getReportedSpeed() {
+        return reportedSpeed;
+    }
+
+    public void setReportedSpeed(Double reportedSpeed) {
+        this.reportedSpeed = reportedSpeed;
+    }
+
+    public String getConnectId() {
+        return connectId;
+    }
+
+    public void setConnectId(String connectId) {
+        this.connectId = connectId;
+    }
+
+    public String getMovementGuid() {
+        return movementGuid;
+    }
+
+    public void setMovementGuid(String movementGuid) {
+        this.movementGuid = movementGuid;
+    }
+
+    public String getWkt() {
+        return wkt;
+    }
+
+    public void setWkt(String wkt) {
+        this.wkt = wkt;
+    }
+
+    public String getComChannelType() {
+        return comChannelType;
+    }
+
+    public void setComChannelType(String comChannelType) {
+        this.comChannelType = comChannelType;
+    }
+
+    public String getMovementType() {
         return movementType;
+    }
+
+    public void setMovementType(String movementType) {
+        this.movementType = movementType;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public Double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(Double altitude) {
+        this.altitude = altitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getFromSegmentType() {
+        return fromSegmentType;
+    }
+
+    public void setFromSegmentType(String fromSegmentType) {
+        this.fromSegmentType = fromSegmentType;
+    }
+
+    public String getClosestCountryCode() {
+        return closestCountryCode;
+    }
+
+    public void setClosestCountryCode(String closestCountryCode) {
+        this.closestCountryCode = closestCountryCode;
+    }
+
+    public Double getClosestCountryDistance() {
+        return closestCountryDistance;
+    }
+
+    public void setClosestCountryDistance(Double closestCountryDistance) {
+        this.closestCountryDistance = closestCountryDistance;
+    }
+
+    public String getClosestCountryRemoteId() {
+        return closestCountryRemoteId;
+    }
+
+    public void setClosestCountryRemoteId(String closestCountryRemoteId) {
+        this.closestCountryRemoteId = closestCountryRemoteId;
+    }
+
+    public String getClosestPortCode() {
+        return closestPortCode;
+    }
+
+    public void setClosestPortCode(String closestPortCode) {
+        this.closestPortCode = closestPortCode;
+    }
+
+    public Double getClosestPortDistance() {
+        return closestPortDistance;
+    }
+
+    public void setClosestPortDistance(Double closestPortDistance) {
+        this.closestPortDistance = closestPortDistance;
+    }
+
+    public String getClosestPortRemoteId() {
+        return closestPortRemoteId;
+    }
+
+    public void setClosestPortRemoteId(String closestPortRemoteId) {
+        this.closestPortRemoteId = closestPortRemoteId;
+    }
+
+    public String getActivityCallback() {
+        return activityCallback;
+    }
+
+    public void setActivityCallback(String activityCallback) {
+        this.activityCallback = activityCallback;
+    }
+
+    public String getActivityMessageId() {
+        return activityMessageId;
+    }
+
+    public void setActivityMessageId(String activityMessageId) {
+        this.activityMessageId = activityMessageId;
+    }
+
+    public String getActivityMessageType() {
+        return activityMessageType;
+    }
+
+    public void setActivityMessageType(String activityMessageType) {
+        this.activityMessageType = activityMessageType;
+    }
+
+    public String getAssetIdAssetType() {
+        return assetIdAssetType;
+    }
+
+    public void setAssetIdAssetType(String assetIdAssetType) {
+        this.assetIdAssetType = assetIdAssetType;
+    }
+
+    public String getAssetIdType() {
+        return assetIdType;
+    }
+
+    public void setAssetIdType(String assetIdType) {
+        this.assetIdType = assetIdType;
+    }
+
+    public String getAssetIdValue() {
+        return assetIdValue;
+    }
+
+    public void setAssetIdValue(String assetIdValue) {
+        this.assetIdValue = assetIdValue;
+    }
+
+    public List<String> getAreaTypes() {
+        if (areaTypes == null) {
+            areaTypes = new ArrayList<String>();
+        }
+        return areaTypes;
+    }
+
+    public void setAreaTypes(List<String> areaTypes) {
+        this.areaTypes = areaTypes;
+    }
+
+    public List<String> getAreaCodes() {
+        if (areaCodes == null) {
+            areaCodes = new ArrayList<String>();
+        }
+        return areaCodes;
+    }
+
+    public void setAreaCodes(List<String> areaCodes) {
+        this.areaCodes = areaCodes;
+    }
+
+    public List<String> getAreaRemoteIds() {
+        if (areaRemoteIds == null) {
+            areaRemoteIds = new ArrayList<String>();
+        }
+        return areaRemoteIds;
+    }
+
+    public void setAreaRemoteIds(List<String> areaRemoteIds) {
+        this.areaRemoteIds = areaRemoteIds;
     }
 
     @Override
     public String toString() {
-        return "MovementFact [getTimestamp()=" + getTimestamp() + ", getVesselCfr()=" + getVesselCfr() + ", getVesselIrcs()=" + getVesselIrcs()
-                + ", getVesselName()=" + getVesselName() + ", getMobileTerminalMemberNumber()=" + getMobileTerminalMemberNumber()
-                + ", getMobileTerminalSerialNumber()=" + getMobileTerminalSerialNumber() + ", getMobileTerminalDnid()=" + getMobileTerminalDnid()
-                + ", getGeoAreaAreaId()=" + getGeoAreaAreaId() + ", getMovementType()=" + getMovementType() + ", isOk()=" + isOk() + "]";
-    }
-
-    public void setMovementType(MovementType movementType) {
-        this.movementType = movementType;
-    }
-
-    public boolean isOk() {
-        return ok;
-    }
-
-    public void setOk(boolean ok) {
-        this.ok = ok;
+        return "MovementFact [calculatedCourse=" + calculatedCourse + ", calculatedSpeed=" + calculatedSpeed + ", comChannelType=" + comChannelType
+                + ", connectId=" + connectId + ", externalMarking=" + externalMarking + ", flagState=" + flagState + ", mobileTerminalMemberNumber="
+                + mobileTerminalMemberNumber + ", mobileTerminalSerialNumber=" + mobileTerminalSerialNumber + ", mobileTerminalDnid="
+                + mobileTerminalDnid + ", movementGuid=" + movementGuid + ", movementType=" + movementType + ", positionTime=" + positionTime
+                + ", reportedCourse=" + reportedCourse + ", reportedSpeed=" + reportedSpeed + ", source=" + source + ", statusCode=" + statusCode
+                + ", vesselName=" + vesselName + ", wkt=" + wkt + ", activityCallback=" + activityCallback + ", activityMessageId="
+                + activityMessageId + ", activityMessageType=" + activityMessageType + ", assetIdAssetType=" + assetIdAssetType + ", assetIdType="
+                + assetIdType + ", assetIdValue=" + assetIdValue + ", vesselCfr=" + vesselCfr + ", vesselIrcs=" + vesselIrcs + ", altitude="
+                + altitude + ", latitude=" + latitude + ", longitude=" + longitude + ", fromSegmentType=" + fromSegmentType + ", areaCodes="
+                + areaCodes + ", areaRemoteIds=" + areaRemoteIds + ", areaTypes=" + areaTypes + ", closestCountryCode=" + closestCountryCode
+                + ", closestCountryDistance=" + closestCountryDistance + ", closestCountryRemoteId=" + closestCountryRemoteId + ", closestPortCode="
+                + closestPortCode + ", closestPortDistance=" + closestPortDistance + ", closestPortRemoteId=" + closestPortRemoteId + "]";
     }
 
 }

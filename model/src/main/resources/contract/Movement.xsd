@@ -87,23 +87,24 @@
         </xsd:restriction>
     </xsd:simpleType>
     
-    <!-- type sent to FLUX -->
+    <!-- type sent to FLUX 
     <xsd:complexType name="MovementType">
         <xsd:complexContent>
             <xsd:extension base="movement:RawMovementType">
                 <xsd:sequence>
                     <xsd:element name="calculatedCourse" type="xsd:double" nillable="true"/>
-                    <!-- <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>-->
                     <xsd:element name="mobileTerminalGuid" type="xsd:string"/>
                     <xsd:element name="measuredSpeed" type="xsd:double" nillable="true"/>
                     <xsd:element name="calculatedSpeed" type="xsd:double" nillable="true"/>
                     <xsd:element name="segmentIds" type="xsd:string"  minOccurs="1" maxOccurs="2"/>
                     <xsd:element name="metaData" type="movement:MovementMetaData"/>
                     <xsd:element name="wkt" type="xsd:string"/>
+                    <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+-->
     
     <xsd:complexType name="MovementMetaData">
         <xsd:sequence>

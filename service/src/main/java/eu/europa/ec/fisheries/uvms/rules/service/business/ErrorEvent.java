@@ -2,17 +2,17 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 public class ErrorEvent {
     private int id;
-    private RawFact rawFact;
+    private RawMovementFact rawFact;
     private String ruleName;
 
     public ErrorEvent() {
     }
 
-    public ErrorEvent(RawFact fact) {
+    public ErrorEvent(RawMovementFact fact) {
         this.rawFact = fact;
     }
 
-    public ErrorEvent(String ruleName, RawFact fact) {
+    public ErrorEvent(String ruleName, RawMovementFact fact) {
         this.ruleName = ruleName;
         this.rawFact = fact;
     }
@@ -25,11 +25,11 @@ public class ErrorEvent {
         this.id = id;
     }
 
-    public RawFact getRawFact() {
+    public RawMovementFact getRawFact() {
         return rawFact;
     }
 
-    public void setRawFact(RawFact rawFact) {
+    public void setRawFact(RawMovementFact rawFact) {
         this.rawFact = rawFact;
     }
 

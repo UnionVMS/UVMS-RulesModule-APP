@@ -38,10 +38,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapp
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesMapper;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -161,7 +161,8 @@ public class RulesServiceBean implements RulesService {
 
             // If accepted, send movement to Movement Module
             if (result.getStatus() == AlarmStatusType.CLOSED) {
-                MovementBaseType movementBaseType = MovementMapper.getInstance().getMapper().map(result.getRawMovement(), MovementBaseType.class);
+                MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper()
+                        .map(result.getRawMovement(), MovementBaseType.class);
                 String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
                 messageId = producer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);
                 response = consumer.getMessage(messageId, TextMessage.class);
@@ -175,7 +176,7 @@ public class RulesServiceBean implements RulesService {
 
     // Triggered by rule engine, no response expected
     @Override
-    public void createAlarmReport(String ruleName, RawFact fact) throws RulesServiceException {
+    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
         LOG.info("Create alarm invoked in service layer");
         try {
             // TODO: Decide who sets the guid, Rules or Exchange
@@ -261,8 +262,8 @@ public class RulesServiceBean implements RulesService {
             TicketType ticket = new TicketType();
 
             AssetIdType assetIdType = new AssetIdType();
-            assetIdType.setType(fact.getMovementType().getAssetId().getIdType().name());
-            assetIdType.setValue(fact.getMovementType().getAssetId().getValue());
+            assetIdType.setType(fact.getAssetIdType());
+            assetIdType.setValue(fact.getAssetIdValue());
             ticket.setAssetId(assetIdType);
 
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
@@ -270,9 +271,9 @@ public class RulesServiceBean implements RulesService {
             ticket.setStatus(TicketStatusType.OPEN);
 
             MovementType m = new MovementType();
-            m.setLatitude(fact.getMovementType().getPosition().getLatitude());
-            m.setLongitude(fact.getMovementType().getPosition().getLongitude());
-            m.setTimestamp(RulesUtil.dateToString(fact.getMovementType().getPositionTime().toGregorianCalendar().getTime()));
+            m.setLatitude(fact.getLatitude());
+            m.setLongitude(fact.getLongitude());
+            m.setTimestamp(RulesUtil.dateToString(fact.getPositionTime()));
             ticket.setMovement(m);
 
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);

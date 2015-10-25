@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.model.KieBaseModel;
-import org.kie.api.builder.model.KieModuleModel;
-import org.kie.api.builder.model.KieSessionModel;
-import org.kie.api.conf.EqualityBehaviorOption;
-import org.kie.api.conf.EventProcessingOption;
+import org.kie.api.builder.Message.Level;
+import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.internal.io.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +34,15 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
     private static final String SANITY_RESOURCE_DRL = "/rules/SanityRules.drl";
-    private static final String ACTION_RESOURCE_DRL = "/rules/ActionRules.drl";
     private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";
     private static final String CUSTOM_RULE_DRL = "src/main/resources/rules/TemplateRules.drl";
 
     @Inject
     RulesService rulesService;
 
-    private KieSession ksession;
+    private KieBase kbase;
+    private KieSessionConfiguration ksconf;
+
     private KieServices kservices;
     private KieContainer kcontainer;
     private KieFileSystem kfs;
@@ -50,58 +52,51 @@ public class RulesValidator {
         init();
     }
 
-    @PreDestroy
-    public void preDestroy() {
-        destroy();
-    }
-
     public void init() {
-        LOG.info("Starting up cloud validation session");
+        LOG.info("Initializing Rules Validator");
 
         kservices = KieServices.Factory.get();
-        KieModuleModel kieModuleModel = kservices.newKieModuleModel();
-
-        KieBaseModel kieBaseModel1 = kieModuleModel.newKieBaseModel("rules-cloud")
-                .setDefault(true)
-                .setEqualsBehavior(EqualityBehaviorOption.EQUALITY)
-                .setEventProcessingMode(EventProcessingOption.CLOUD);
-
-        KieSessionModel ksessionModel1 = kieBaseModel1.newKieSessionModel("stateful-ksession-rules-cloud")
-                .setDefault(true)
-                .setType(KieSessionModel.KieSessionType.STATEFUL);
 
         kfs = kservices.newKieFileSystem();
-    }
+        kfs.write(ResourceFactory.newClassPathResource(SANITY_RESOURCE_DRL));
+        KieBuilder kbuilder = kservices.newKieBuilder(kfs);
+        kbuilder.buildAll();
 
-    public void destroy() {
-        LOG.info("Shutting down validation session");
-        if (ksession != null) {
-            ksession.halt();
-            ksession.dispose();
+        // Check for errors
+        if (kbuilder.getResults().hasMessages(Level.ERROR)) {
+            throw new IllegalArgumentException(kbuilder.getResults().toString());
         }
+
+        // Get the Release ID (mvn style: groupId, artifactId,version)
+        ReleaseId releaseId = kbuilder.getKieModule().getReleaseId();
+        // ReleaseId releaseId = kservices.newReleaseId("kits.drools.testrules",
+        // "testrules", "1.0-SNAPSHOT");
+        LOG.info("GroupId:{}, Artifact:{}, Version:{}", releaseId.getGroupId(), releaseId.getArtifactId(), releaseId.getVersion());
+
+        // Create the Container, wrapping the KieModule with the given ReleaseId
+        kcontainer = kservices.newKieContainer(releaseId);
+
+        // Configure and create the KieBase
+        KieBaseConfiguration kbconf = kservices.newKieBaseConfiguration();
+        kbase = kcontainer.newKieBase(kbconf);
+
+        // Configure and create the StatelessKieSession
+        ksconf = kservices.newKieSessionConfiguration();
     }
 
-    public void evaluate(RawFact fact) {
-        // Add sanity rules
-        // TODO: This can be done with an maven artifact and some scanner
-        // stuff............
+    public void evaluate(RawMovementFact fact) {
+        LOG.info("Verifying raw movement");
 
-        LOG.info("Sanity check");
-
-        kfs.write(kservices.getResources().newClassPathResource(SANITY_RESOURCE_DRL));
-
-        // Create session
-        kservices.newKieBuilder(kfs).buildAll();
-        kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
-        ksession = kcontainer.newKieSession();
+        KieSession ksession = kbase.newKieSession(ksconf, null);
 
         // Inject beans
         ksession.setGlobal("rulesService", rulesService);
+        ksession.setGlobal("logger", LOG);
 
         ksession.insert(fact);
         ksession.fireAllRules();
 
-        destroy();
+        ksession.dispose();
     }
 
     public void evaluate(MovementFact fact) {
@@ -109,70 +104,35 @@ public class RulesValidator {
 
         // Fetch custom rules from DB
         List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
-        List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
+        List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            rawRules = rulesService.getCustomRuleList();
+            customRules = rulesService.getCustomRuleList();
         } catch (RulesServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("[ Error when getting rules ]");
+            // TODO: Throw exception???
         }
 
-        if (rawRules != null && !rawRules.isEmpty()) {
+        if (customRules != null && !customRules.isEmpty()) {
             // Add custom rules
-            rules = RulesUtil.parseRules(rawRules);
+            rules = RulesUtil.parseRules(customRules);
             String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
             kfs.write(CUSTOM_RULE_DRL, drl);
-
-            // Add action rules
-            kfs.write(kservices.getResources().newClassPathResource(ACTION_RESOURCE_DRL));
 
             // Create session
             kservices.newKieBuilder(kfs).buildAll();
             kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
-            ksession = kcontainer.newKieSession();
+            KieSession ksession = kcontainer.newKieSession();
 
             // Inject beans
             ksession.setGlobal("rulesService", rulesService);
+            ksession.setGlobal("logger", LOG);
 
             ksession.insert(fact);
             ksession.fireAllRules();
-        }
-    }
 
-    // TODO: This should load on startup and when custom rules changes ONLY.
-    private void loadRules() {
-        // Add sanity rules
-        // TODO: This can be done with an maven artifact and some scanner
-        // stuff............
-        kfs.write(kservices.getResources().newClassPathResource(SANITY_RESOURCE_DRL));
-
-        // Fetch custom rules from DB
-        List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
-        List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
-        try {
-            rawRules = rulesService.getCustomRuleList();
-        } catch (RulesServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            ksession.dispose();
         }
 
-        if (rawRules != null && !rawRules.isEmpty()) {
-            // Add custom rules
-            rules = RulesUtil.parseRules(rawRules);
-            String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
-            kfs.write(CUSTOM_RULE_DRL, drl);
-        }
-
-        // Add action rules
-        kfs.write(kservices.getResources().newClassPathResource(ACTION_RESOURCE_DRL));
-
-        // Create session
-        kservices.newKieBuilder(kfs).buildAll();
-        kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
-        ksession = kcontainer.newKieSession();
-
-        // Inject beans
-        ksession.setGlobal("rulesService", rulesService);
     }
 
     private String generateDrl(String template, List<CustomRuleDto> rules) {

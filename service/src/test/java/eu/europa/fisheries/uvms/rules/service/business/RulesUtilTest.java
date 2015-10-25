@@ -16,6 +16,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
@@ -70,7 +71,7 @@ public class RulesUtilTest {
         segment1.setCriteria(CriteriaType.VESSEL);
         segment1.setSubCriteria(SubCriteriaType.CFR);
         segment1.setCondition(ConditionType.EQ);
-        segment1.setValue("SWE111222");
+        segment1.setValue("SWE111111");
         segment1.setEndOperator("");
         segment1.setLogicBoolOperator(LogicOperatorType.OR);
         segment1.setOrder("0");
@@ -82,7 +83,7 @@ public class RulesUtilTest {
         segment2.setCriteria(CriteriaType.VESSEL);
         segment2.setSubCriteria(SubCriteriaType.CFR);
         segment2.setCondition(ConditionType.EQ);
-        segment2.setValue("SWE111333");
+        segment2.setValue("SWE222222");
         segment2.setEndOperator(")");
         segment2.setLogicBoolOperator(LogicOperatorType.AND);
         segment2.setOrder("1");
@@ -100,10 +101,27 @@ public class RulesUtilTest {
         segment3.setOrder("2");
         rawRule.getDefinitions().add(segment3);
 
+        // First interval
+        CustomRuleIntervalType interval1 = new CustomRuleIntervalType();
+        interval1.setStart("2000-10-01 02:00:00 +0200");
+        interval1.setEnd("2000-10-30 01:00:00 +0100");
+        rawRule.getTimeIntervals().add(interval1);
+
+        // First interval
+        CustomRuleIntervalType interval2 = new CustomRuleIntervalType();
+        interval2.setStart("2015-01-01 01:00:00 +0100");
+        interval2.setEnd("2016-12-31 01:00:00 +0100");
+        rawRule.getTimeIntervals().add(interval2);
+
         rawRules.add(rawRule);
 
+        String expectedRule =
+                "(vesselCfr == \"SWE111111\" || vesselCfr == \"SWE222222\") && mobileTerminalMemberNumber == \"ABC99\" && (RulesUtil.stringToDate(\"2000-10-01 02:00:00 +0200\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2000-10-30 01:00:00 +0100\") || RulesUtil.stringToDate(\"2015-01-01 01:00:00 +0100\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2016-12-31 01:00:00 +0100\"))";
+        // String expectedRule =
+        // "(vesselCfr == \"SWE111222\" || vesselCfr == \"SWE111333\") && mobileTerminalMemberNumber == \"ABC99\"";
+
         List<CustomRuleDto> rules = RulesUtil.parseRules(rawRules);
-        assertEquals("(vesselCfr == \"SWE111222\" || vesselCfr == \"SWE111333\") && mobileTerminalMemberNumber == \"ABC99\"", rules.get(0)
+        assertEquals(expectedRule, rules.get(0)
                 .getExpression());
         assertEquals("EMAIL,user@company.se;SMS,+46111111111;", rules.get(0).getAction());
 

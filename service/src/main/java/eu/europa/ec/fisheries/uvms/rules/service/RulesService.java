@@ -12,7 +12,7 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RawFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 @Local
@@ -86,7 +86,7 @@ public interface RulesService {
      *            the offending guid
      * @throws RulesServiceException
      */
-    public void createAlarmReport(String ruleName, RawFact fact) throws RulesServiceException;
+    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
 
     /**
      * Entry point of action performed as a result of a custom rule triggered
