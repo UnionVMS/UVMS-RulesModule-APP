@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:exchange="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+    
+
+    <xsd:simpleType name="PluginType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EMAIL"/>
+            <xsd:enumeration value="SATELLITE_RECEIVER"/>
+            <xsd:enumeration value="FLUX"/>
+            <xsd:enumeration value="OTHER"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+  
+</xsd:schema>

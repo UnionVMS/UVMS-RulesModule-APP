@@ -7,6 +7,7 @@
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:movement="urn:movement.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:exchange="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -20,7 +21,8 @@
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
             <xsd:import namespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
-
+            <xsd:import namespace="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Exchange.xsd"/>
+            
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesModuleMethod">
                 <xsd:restriction base="xsd:string">
@@ -44,6 +46,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
                                 <xsd:element name="request" type="movement:RawMovementType"/>
                             </xsd:sequence>
                         </xsd:extension>
