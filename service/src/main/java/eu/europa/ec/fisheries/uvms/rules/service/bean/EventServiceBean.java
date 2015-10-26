@@ -159,26 +159,4 @@ public class EventServiceBean implements EventService {
         fact.setOk(true);
         return fact;
     }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void getCustomRuleByGuid(@Observes @GetCustomRuleReceivedEvent EventMessage message) {
-    	String request = null;
-    	GetCustomRuleRequest baseRequest = null; 
-    	try {
-            baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetCustomRuleRequest.class);
-            if (baseRequest.getMethod() != RulesModuleMethod.GET_CUSTOM_RULE) {
-                message.setErrorMessage(" [ Error: Get cutom rule by guid invoked but it is not the intended method, caller is trying: "
-                        + baseRequest.getMethod().name() + " ]");
-                errorEvent.fire(message);
-            }
-            request = RulesModuleRequestMapper.createGetCustomRuleRequest(baseRequest);
-            producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            
-		} catch (MessageException | RulesModelMarshallException e) {
-			LOG.error("Cannot get cutom rule by guid: " + baseRequest.getGuid(), e.getMessage());
-		
-		}
-    
-    }
 }
