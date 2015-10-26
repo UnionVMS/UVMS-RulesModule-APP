@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,8 +296,32 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType getById(Long id) throws RulesServiceException {
+        LOG.info("Update invoked in service layer");
+        throw new RulesServiceException("Update not implemented in service layer");
+
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param id
+     * @return
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException {
         LOG.info("Get by id invoked in service layer");
-        throw new RulesServiceException("Get by id not implemented in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetCustomRule(guid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.getCustomRuleResponse(response, messageId);
+        } catch (MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        } catch (JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+
     }
 
     /**

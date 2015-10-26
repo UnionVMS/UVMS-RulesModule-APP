@@ -14,4 +14,6 @@ public interface EventService {
 
     public void setMovementReportRecieved(@Observes @SetMovementReportReceivedEvent EventMessage message);
 
+	void getCustomRuleByGuid(EventMessage message);
+
 }

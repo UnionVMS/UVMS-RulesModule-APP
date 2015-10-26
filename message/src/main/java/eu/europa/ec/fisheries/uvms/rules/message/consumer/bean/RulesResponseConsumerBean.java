@@ -19,6 +19,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 
+import java.util.NoSuchElementException;
+
 @Stateless
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
@@ -45,15 +47,14 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
                 throw new MessageException("No CorrelationID provided!");
             }
             connectToQueue();
+            T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(60000);
 
-            T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(TEN_SECONDS);
             if (response == null) {
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
-
             return response;
-        } catch (Exception e) {
-            LOG.error("[ Error when getting medssage ] {}", e.getMessage());
+        }catch (Exception e) {
+            LOG.error("[ Error when getting message ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
         } finally {
             try {

@@ -5,6 +5,8 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
 public class RestResourceTest {
 
     private static final Long ID = 1L;
+    private static final String GUID = "1";
     private static final Integer CUSTOM_RULE_LIST_SIZE = 3;
 
     List<CustomRuleType> DTO_LIST = MockData.getDtoList(CUSTOM_RULE_LIST_SIZE);
@@ -98,12 +101,11 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselById() throws RulesServiceException {
-        doReturn(DTO).when(serviceLayer).getById(ID);
-        ResponseDto result = rulesRestResource.getById(ID);
-        Mockito.verify(serviceLayer).getById(ID);
+    public void testGetVesselByGuid() throws RulesServiceException, RulesModelMapperException, RulesFaultException {
+        doReturn(DTO).when(serviceLayer).getByGuid(GUID);
+        ResponseDto result = rulesRestResource.getByGuid(GUID);
+        Mockito.verify(serviceLayer).getByGuid(GUID);
         assertEquals(SUCCESS_RESULT_DTO.toString(), result.toString());
-
     }
 
     /**
@@ -113,7 +115,7 @@ public class RestResourceTest {
      */
     @Test
     public void testGetVesselByIdNull() throws RulesServiceException {
-        ResponseDto result = SERVICE_NULL.getById(ID);
+        ResponseDto result = SERVICE_NULL.getByGuid(GUID);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 

@@ -11,6 +11,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +86,13 @@ public class RulesRestResource {
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "{id}")
-    public ResponseDto getById(@PathParam(value = "id") final Long id) {
-        LOG.info("Get by id invoked in rest layer");
+    @Path(value = "{guid}")
+    public ResponseDto getByGuid(@PathParam(value = "guid") final String guid) {
+        LOG.info("Get custom rule by guid invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getById(id), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when geting by id. ] {} ", ex.getStackTrace());
+            return new ResponseDto(serviceLayer.getByGuid(guid), ResponseCode.OK);
+        } catch (RulesFaultException | RulesModelMapperException | RulesServiceException | NullPointerException ex) {
+            LOG.error("[ Error when geting custom rule by guid. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
     }

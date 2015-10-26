@@ -11,6 +11,8 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -97,6 +99,15 @@ public interface RulesService {
      *            the action(s) to be performed
      */
     public void customRuleTriggered(String ruleName, MovementFact f, String action) throws RulesServiceException;
+
+    /**
+     * Get a custom rule by guid
+     *
+     * @param guid
+     * @return
+     * @throws RulesServiceException, RulesModelMapperException, RulesFaultException
+     */
+    public CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
     public AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException;
 

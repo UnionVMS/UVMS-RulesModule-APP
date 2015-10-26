@@ -29,6 +29,7 @@
                     <!-- Receive position report -->
                     <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
                     <xsd:enumeration value="VALIDATE_MOVEMENT_REPORT"/>
+                    <xsd:enumeration value="GET_CUSTOM_RULE"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
@@ -98,6 +99,30 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
+            
+            
+            <!-- Get custom rule by guid request -->
+            <xsd:element name="GetCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Get custom rule by guid response -->
+            <xsd:element name="GetCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
 
             <!-- List tickets request -->
             <xsd:element name="GetTicketListRequest">
@@ -249,6 +274,13 @@
     <message name="GetCustomRuleListResponse">
         <part name="body" element="module:GetCustomRuleListResponse"/>
     </message>
+	
+	<message name="GetCustomRuleRequest">
+        <part name="body" element="module:GetCustomRuleRequest"/>
+    </message>
+    <message name="GetCustomRuleResponse">
+        <part name="body" element="module:GetCustomRuleResponse"/>
+    </message>
 
     <message name="GetTicketListRequest">
         <part name="body" element="module:GetTicketListRequest"/>
@@ -312,6 +344,12 @@
             <output message="module:GetCustomRuleListResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
+		
+		<operation name="GetCustomRule">
+            <input message="module:GetCustomRuleRequest"/>
+            <output message="module:GetCustomRuleResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
 
         <operation name="GetTicketList">
             <input message="module:GetTicketListRequest"/>
@@ -359,6 +397,18 @@
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 
         <operation name="CreateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+		
+		<operation name="GetCustomRule">
             <input>
                 <soap:body use="literal"/>
             </input>

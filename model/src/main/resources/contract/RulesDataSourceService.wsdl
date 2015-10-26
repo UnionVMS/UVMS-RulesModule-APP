@@ -30,6 +30,7 @@
                     <xsd:enumeration value="LIST_TICKETS"/>
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
+                    <xsd:enumeration value="GET_CUSTOM_RULE"/>
                     
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
@@ -88,6 +89,30 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
+            
+            
+            <!-- Get custom rule request by guid-->
+            <xsd:element name="GetCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Get custom rule by guid response -->
+            <xsd:element name="GetCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
 
             <!-- Update custom rule request -->
             <xsd:element name="UpdateCustomRuleRequest">
@@ -318,6 +343,13 @@
     <message name="GetCustomRuleListResponse">
         <part name="body" element="source:GetCustomRuleListResponse"/>
     </message>
+    
+    <message name="GetCustomRuleRequest">
+        <part name="body" element="source:GetCustomRuleRequest"/>
+    </message>
+    <message name="GetCustomRuleResponse">
+        <part name="body" element="source:GetCustomRuleResponse"/>
+    </message>
 
     <message name="GetTicketListRequest">
         <part name="body" element="source:GetTicketListRequest"/>
@@ -392,6 +424,12 @@
         <operation name="GetCustomRuleList">
             <input message="source:GetCustomRuleListRequest"/>
             <output message="source:GetCustomRuleListResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+        
+        <operation name="GetCustomRule">
+            <input message="source:GetCustomRuleRequest"/>
+            <output message="source:GetCustomRuleResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -482,6 +520,18 @@
                 <soap:fault name="RulesException" use="literal"/>
             </fault>
         </operation>
+        
+        <operation name="GetCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
 
         <operation name="GetTicketList">
             <input>
@@ -575,7 +625,7 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-
+        
     </binding>
 
     <service name="RulesModuleService">

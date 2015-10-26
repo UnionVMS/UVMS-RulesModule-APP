@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
@@ -35,6 +36,10 @@ public class RulesEventConsumerBean implements MessageListener {
     @Inject
     @SetMovementReportReceivedEvent
     Event<EventMessage> setMovementReportRecievedEvent;
+    
+    @Inject
+    @GetCustomRuleReceivedEvent
+    Event<EventMessage> getCustomRuleRecievedEvent;
 
     @Inject
     @ValidateMovementReportReceivedEvent
@@ -67,6 +72,8 @@ public class RulesEventConsumerBean implements MessageListener {
             case PING:
                 pingReceivedEvent.fire(new EventMessage(textMessage));
                 break;
+            case GET_CUSTOM_RULE: 
+            	getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
             default:
                 LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
 

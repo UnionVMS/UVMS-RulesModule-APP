@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -24,6 +25,7 @@ import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -32,6 +34,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
@@ -157,4 +160,25 @@ public class EventServiceBean implements EventService {
         return fact;
     }
 
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void getCustomRuleByGuid(@Observes @GetCustomRuleReceivedEvent EventMessage message) {
+    	String request = null;
+    	GetCustomRuleRequest baseRequest = null; 
+    	try {
+            baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetCustomRuleRequest.class);
+            if (baseRequest.getMethod() != RulesModuleMethod.GET_CUSTOM_RULE) {
+                message.setErrorMessage(" [ Error: Get cutom rule by guid invoked but it is not the intended method, caller is trying: "
+                        + baseRequest.getMethod().name() + " ]");
+                errorEvent.fire(message);
+            }
+            request = RulesModuleRequestMapper.createGetCustomRuleRequest(baseRequest);
+            producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            
+		} catch (MessageException | RulesModelMarshallException e) {
+			LOG.error("Cannot get cutom rule by guid: " + baseRequest.getGuid(), e.getMessage());
+		
+		}
+    
+    }
 }

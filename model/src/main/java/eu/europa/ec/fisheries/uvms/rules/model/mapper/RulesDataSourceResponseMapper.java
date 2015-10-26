@@ -5,6 +5,10 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +16,7 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
@@ -21,6 +26,7 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
 public class RulesDataSourceResponseMapper {
 
@@ -34,7 +40,7 @@ public class RulesDataSourceResponseMapper {
      * @throws RulesModelMapperException
      * @throws JMSException
      */
-    private static void validateResponse(TextMessage response, String correlationId) throws RulesModelMapperException, JMSException {
+    private static void validateResponse(TextMessage response, String correlationId) throws RulesModelMapperException, JMSException, RulesFaultException {
 
         if (response == null) {
             LOG.error("[ Error when validating response in ResponseMapper: Response is Null ]");
@@ -52,6 +58,13 @@ public class RulesDataSourceResponseMapper {
                     + response.getJMSCorrelationID());
         }
 
+        try {
+            RulesFault rulesFault = JAXBMarshaller.unmarshallTextMessage(response, RulesFault.class);
+            throw  new RulesFaultException(response.getText(), rulesFault);
+        } catch (RulesModelMarshallException e) {
+            // Do nothing because the response message is not a error message. Can continue to parse the response message to a GetCustomRuleResponse
+        }
+
     }
 
     public static CustomRuleType mapToCreateCustomRuleFromResponse(TextMessage message) throws RulesModelMapperException {
@@ -66,6 +79,7 @@ public class RulesDataSourceResponseMapper {
     }
 
     public static String updateCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
+
         UpdateCustomRuleResponse response = new UpdateCustomRuleResponse();
         response.setCustomRule(customRule);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
@@ -85,7 +99,19 @@ public class RulesDataSourceResponseMapper {
         GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
         return response.getCustomRules();
     }
+    
+    public static CustomRuleType getCustomRuleResponse(TextMessage message, String correlationId) throws RulesModelMapperException, JMSException, RulesFaultException {
+        validateResponse(message, correlationId);
+        GetCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleResponse.class);
+        return response.getCustomRule();
+    }
 
+    public static String getCustomRuleResponse(CustomRuleType customRuleType) throws RulesModelMarshallException{
+    	GetCustomRuleResponse response = new GetCustomRuleResponse(); 
+    	response.setCustomRule(customRuleType);
+    	return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+    
     public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
         GetCustomRuleListResponse response = new GetCustomRuleListResponse();
         response.getCustomRules().addAll(customRules);

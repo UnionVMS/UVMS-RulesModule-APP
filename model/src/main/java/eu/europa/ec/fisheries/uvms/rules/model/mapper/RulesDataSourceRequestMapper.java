@@ -12,6 +12,7 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusRequest;
@@ -35,6 +36,13 @@ public class RulesDataSourceRequestMapper {
     public static String mapCustomRuleList() throws RulesModelMapperException {
         GetCustomRuleListRequest request = new GetCustomRuleListRequest();
         request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+    
+    public static String mapGetCustomRule(String guid) throws RulesModelMapperException {
+        GetCustomRuleRequest request = new GetCustomRuleRequest();
+        request.setMethod(RulesDataSourceMethod.GET_CUSTOM_RULE);
+        request.setGuid(guid);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
