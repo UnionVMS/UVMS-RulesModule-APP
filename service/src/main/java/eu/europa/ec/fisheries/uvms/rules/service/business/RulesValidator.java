@@ -34,6 +34,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
     private static final String SANITY_RESOURCE_DRL = "/rules/SanityRules.drl";
+    private static final String TIMER_DRL = "/rules/TimerRules.drl";
     private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";
     private static final String CUSTOM_RULE_DRL = "src/main/resources/rules/TemplateRules.drl";
 
@@ -52,13 +53,14 @@ public class RulesValidator {
         init();
     }
 
-    public void init() {
+    private void init() {
         LOG.info("Initializing Rules Validator");
 
         kservices = KieServices.Factory.get();
 
         kfs = kservices.newKieFileSystem();
         kfs.write(ResourceFactory.newClassPathResource(SANITY_RESOURCE_DRL));
+        kfs.write(ResourceFactory.newClassPathResource(TIMER_DRL));
         KieBuilder kbuilder = kservices.newKieBuilder(kfs);
         kbuilder.buildAll();
 
@@ -132,6 +134,24 @@ public class RulesValidator {
 
             ksession.dispose();
         }
+
+    }
+
+    public void evaluatePreviousReport(List<PreviousReportFact> previousReports) {
+        LOG.info("Verifying previous movement");
+
+        KieSession ksession = kbase.newKieSession(ksconf, null);
+
+        // Inject beans
+        ksession.setGlobal("rulesService", rulesService);
+        ksession.setGlobal("logger", LOG);
+
+        for (PreviousReportFact previousReport : previousReports) {
+            ksession.insert(previousReport);
+        }
+        ksession.fireAllRules();
+
+        ksession.dispose();
 
     }
 

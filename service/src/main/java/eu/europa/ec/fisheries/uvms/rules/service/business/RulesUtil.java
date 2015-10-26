@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
@@ -296,41 +297,28 @@ public class RulesUtil {
 
     private static String createInterval(CustomRuleIntervalType interval) {
         StringBuilder sb = new StringBuilder();
-        sb.append("RulesUtil.stringToDate(\"");
-        sb.append(interval.getStart());
-        sb.append("\")");
-        sb.append(" <= positionTime && positionTime <= ");
-        // sb.append(" <= positionTime <= "); // test
-        sb.append("RulesUtil.stringToDate(\"");
-        sb.append(interval.getEnd());
-        sb.append("\")");
+        if (interval.getStart() != null) {
+            sb.append("RulesUtil.stringToDate(\"");
+            sb.append(interval.getStart());
+            sb.append("\")");
+            sb.append(" <= positionTime");
+        }
+
+        if (interval.getStart() != null && interval.getEnd() != null) {
+            sb.append(" && ");
+        }
+
+        if (interval.getEnd() != null) {
+            sb.append("positionTime <= ");
+            sb.append("RulesUtil.stringToDate(\"");
+            sb.append(interval.getEnd());
+            sb.append("\")");
+        }
         return sb.toString();
     }
 
-    final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
-
-    public static Date stringToDate(String dateString) throws IllegalArgumentException {
-        if (dateString != null) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(FORMAT).withOffsetParsed();
-            DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
-            GregorianCalendar cal = dateTime.toGregorianCalendar();
-            return cal.getTime();
-        } else {
-            return null;
-        }
-    }
-
-    public static String dateToString(Date date) {
-        String dateString = null;
-        if (date != null) {
-            DateFormat df = new SimpleDateFormat(FORMAT);
-            dateString = df.format(date);
-        }
-        return dateString;
-    }
-
     public static MovementFact mapFact(MovementType movement, String externalMarking, String flagState, String mobileTerminalDnid,
-            String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String vesselName) {
+            String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String vesselName, String vesselGuid) {
         MovementFact fact = new MovementFact();
 
         // Base
@@ -358,6 +346,7 @@ public class RulesUtil {
             fact.setSource(movement.getSource().name());
         }
         fact.setStatusCode(movement.getStatus());
+        fact.setVesselGuid(vesselGuid);
         fact.setVesselName(vesselName);
         fact.setWkt(movement.getWkt());
 
@@ -426,4 +415,31 @@ public class RulesUtil {
 
         return fact;
     }
+
+    final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
+
+    public static Date stringToDate(String dateString) throws IllegalArgumentException {
+        if (dateString != null) {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(FORMAT).withOffsetParsed();
+            DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
+            GregorianCalendar cal = dateTime.toGregorianCalendar();
+            return cal.getTime();
+        } else {
+            return null;
+        }
+    }
+
+    public static String dateToString(Date date) {
+        String dateString = null;
+        if (date != null) {
+            DateFormat df = new SimpleDateFormat(FORMAT);
+            dateString = df.format(date);
+        }
+        return dateString;
+    }
+
+    public static DateTime nowUTC() {
+        return new DateTime(DateTimeZone.UTC);
+    }
+
 }

@@ -12,6 +12,8 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
@@ -96,6 +98,20 @@ public class RulesDataSourceRequestMapper {
         request.setGuid(alarm.getGuid());
         request.setStatus(alarm.getStatus());
         request.setMethod(RulesDataSourceMethod.SET_ALARM_STATUS);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapGetTicketByVesselGuid(String vesselGuid) throws RulesModelMapperException {
+        GetTicketByVesselGuidRequest request = new GetTicketByVesselGuidRequest();
+        request.setVesselGuid(vesselGuid);
+        request.setMethod(RulesDataSourceMethod.GET_TICKET_BY_VESSEL_GUID);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    // Previous report
+    public static String mapGetPreviousReport() throws RulesModelMapperException {
+        GetPreviousReportRequest request = new GetPreviousReportRequest();
+        request.setMethod(RulesDataSourceMethod.GET_PREVIOUS_REPORT);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

@@ -22,6 +22,7 @@ public class MovementFact {
     private Double reportedSpeed;
     private String source;
     private String statusCode;
+    private String vesselGuid;
     private String vesselName;
     private String wkt;
 
@@ -83,6 +84,14 @@ public class MovementFact {
 
     public void setVesselIrcs(String vesselIrcs) {
         this.vesselIrcs = vesselIrcs;
+    }
+
+    public String getVesselGuid() {
+        return vesselGuid;
+    }
+
+    public void setVesselGuid(String vesselGuid) {
+        this.vesselGuid = vesselGuid;
     }
 
     public String getVesselName() {

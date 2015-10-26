@@ -21,13 +21,13 @@
     </properties>
     
     <dependencyManagement>
-      <dependencies>
-          <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-bom</artifactId>
-            <type>pom</type>
-            <version>${drools.version}</version>
-            <scope>import</scope>
+        <dependencies>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-bom</artifactId>
+                <type>pom</type>
+                <version>${drools.version}</version>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -66,13 +66,13 @@
 
         <!-- drools dependencies -->
         <dependency>
-          <groupId>org.kie</groupId>
-          <artifactId>kie-api</artifactId>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.drools</groupId>
-          <artifactId>drools-compiler</artifactId>
-          <scope>runtime</scope>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
@@ -87,6 +87,13 @@
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-maven-plugin</artifactId>
+                <version>6.2.0.Final</version>
+                <extensions>true</extensions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

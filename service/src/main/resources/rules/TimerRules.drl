@@ -1,0 +1,16 @@
+import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import java.util.Date;
+
+global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
+global org.slf4j.Logger logger;
+
+
+rule "DEADLINE"
+dialect "java"
+    when
+        $fact : PreviousReportFact(deadline <= now)
+    then
+        logger.info("\t==> Executing RULE 'DEADLINE', deadline:" + $fact.getDeadline() + ", vesselGuid:" + $fact.getVesselGuid() + ", movementGuid:" + $fact.getMovementGuid());
+        rulesService.timerRuleTriggered("DEADLINE", $fact);
+end

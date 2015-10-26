@@ -39,6 +39,12 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = ConfigConstants.CONFIG_MESSAGE_IN_QUEUE)
     private Queue configQueue;
 
+    @Resource(mappedName = MessageConstants.VESSEL_MESSAGE_IN_QUEUE)
+    private Queue vesselQueue;
+
+    @Resource(mappedName = MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE)
+    private Queue mobileTerminalQueue;
+
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
@@ -63,6 +69,13 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 break;
             case CONFIG:
                 session.createProducer(configQueue).send(message);
+                break;
+            case VESSEL:
+                session.createProducer(vesselQueue).send(message);
+                break;
+            case MOBILE_TERMINAL:
+                session.createProducer(mobileTerminalQueue).send(message);
+                break;
             default:
                 break;
             }
@@ -72,15 +85,16 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
         } finally {
-			disconnectQueue();
+            disconnectQueue();
         }
     }
 
     @Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
         try {
-            LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(), message.getJMSReplyTo());
+            LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(),
+                    message.getJMSReplyTo());
             connectQueue();
             TextMessage response = session.createTextMessage(text);
             response.setJMSCorrelationID(message.getJMSMessageID());
@@ -113,8 +127,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     public String sendConfigMessage(String text) throws ConfigMessageException {
         try {
             return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
-        }
-        catch (MessageException e) {
+        } catch (MessageException e) {
             LOG.error("[ Error when sending config message. ] {}", e.getMessage());
             throw new ConfigMessageException("[ Error when sending config message. ]");
         }

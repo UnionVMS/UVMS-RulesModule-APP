@@ -16,8 +16,11 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
+import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusResponse;
@@ -158,6 +161,28 @@ public class RulesDataSourceResponseMapper {
     public static String setAlarmStatusResponse(AlarmReportType alarm) throws RulesModelMapperException {
         SetAlarmStatusResponse response = new SetAlarmStatusResponse();
         response.setAlarm(alarm);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static List<PreviousReportType> mapToGetPreviousReportResponse(TextMessage message) throws RulesModelMapperException {
+        GetPreviousReportResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportResponse.class);
+        return response.getPreviousReport();
+    }
+
+    public static String getPreviousReportResponse(List<PreviousReportType> previousReports) throws RulesModelMapperException {
+        GetPreviousReportResponse response = new GetPreviousReportResponse();
+        response.getPreviousReport().addAll(previousReports);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static GetTicketByVesselGuidResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message) throws RulesModelMapperException {
+        GetTicketByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketByVesselGuidResponse.class);
+        return response;
+    }
+
+    public static String getTicketByVesselGuidResponse(TicketType ticketType) throws RulesModelMapperException {
+        GetTicketByVesselGuidResponse response = new GetTicketByVesselGuidResponse();
+        response.setTicket(ticketType);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

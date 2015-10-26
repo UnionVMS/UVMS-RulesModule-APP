@@ -4,6 +4,7 @@
              xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:previous="urn:previous.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -18,6 +19,7 @@
             <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
+            <xsd:import namespace="urn:previous.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="PreviousReport.xsd"/>
 
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesDataSourceMethod">
@@ -35,6 +37,10 @@
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
+                    <xsd:enumeration value="GET_TICKET_BY_VESSEL_GUID"/>
+
+                    <!-- Actions triggered by timer -->
+                    <xsd:enumeration value="GET_PREVIOUS_REPORT"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
@@ -316,6 +322,46 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get previous report request -->
+            <xsd:element name="GetPreviousReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report response -->
+            <xsd:element name="GetPreviousReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReport" type="previous:PreviousReportType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by vessel guid request -->
+            <xsd:element name="GetTicketByVesselGuidRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="vesselGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by vessel guid response -->
+            <xsd:element name="GetTicketByVesselGuidResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
         </xsd:schema>
     </types>
 
@@ -407,6 +453,20 @@
         <part name="body" element="source:PingResponse"/>
     </message>
 
+    <message name="GetPreviousReportRequest">
+        <part name="body" element="source:GetPreviousReportRequest"/>
+    </message>
+    <message name="GetPreviousReportResponse">
+        <part name="body" element="source:GetPreviousReportResponse"/>
+    </message>
+
+    <message name="GetTicketByVesselGuidRequest">
+        <part name="body" element="source:GetTicketByVesselGuidRequest"/>
+    </message>
+    <message name="GetTicketByVesselGuidResponse">
+        <part name="body" element="source:GetTicketByVesselGuidResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -478,6 +538,18 @@
         <operation name="Ping">
             <input message="source:PingRequest"/>
             <output message="source:PingResponse"/>
+        </operation>
+
+        <operation name="GetPreviousReport">
+            <input message="source:GetPreviousReportRequest"/>
+            <output message="source:GetPreviousReportResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketByVesselGuidReport">
+            <input message="source:GetTicketByVesselGuidRequest"/>
+            <output message="source:GetTicketByVesselGuidResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
     </portType>
@@ -626,6 +698,30 @@
             </output>
         </operation>
         
+        <operation name="GetPreviousReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketByVesselGuidReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
     </binding>
 
     <service name="RulesModuleService">

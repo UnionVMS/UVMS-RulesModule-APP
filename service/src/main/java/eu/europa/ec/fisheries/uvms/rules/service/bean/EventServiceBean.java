@@ -106,12 +106,11 @@ public class EventServiceBean implements EventService {
             // IRCS), ...
 
             if (rawFact.isOk()) {
-
                 LOG.info("Send the validated raw position to Movement");
                 MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovementType, MovementBaseType.class);
-                String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
+                String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
-                String messageId = producer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);
+                String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
                 if (response != null) {
@@ -134,17 +133,31 @@ public class EventServiceBean implements EventService {
             LOG.info("Validating movement from Movement Module");
 
             // TODO: Enrich with extra data
+
+            // Vessel
             String externalMarking = "GO_GET_IT!!!";
             String flagState = "GO_GET_IT!!!";
+            String vesselName = "GO_GET_IT!!!";
+            String assetGroup = "GO_GET_IT!!!";
+            String vesselGuid = "GO_GET_IT!!!";
+
+            // String getVesselRequest = null;
+            // String messageId =
+            // producer.sendDataSourceMessage(getVesselRequest,
+            // DataSourceQueue.VESSEL);
+            // TextMessage response = consumer.getMessage(messageId,
+            // TextMessage.class);
+
+            // Mobile terminal
             String mobileTerminalDnid = "GO_GET_IT!!!";
             String mobileTerminalMemberNumber = "GO_GET_IT!!!";
             String mobileTerminalSerialNumber = "GO_GET_IT!!!";
-            String vesselName = "GO_GET_IT!!!";
-            String assetGroup = "GO_GET_IT!!!";
+
+            // ??? Maybe Movement?
             String vecinityOf = "GO_GET_IT!!!";
 
             MovementFact movementFact = RulesUtil.mapFact(movement, externalMarking, flagState, mobileTerminalDnid, mobileTerminalMemberNumber,
-                    mobileTerminalSerialNumber, vesselName);
+                    mobileTerminalSerialNumber, vesselName, vesselGuid);
 
             rulesValidator.evaluate(movementFact);
         } catch (Exception e) {

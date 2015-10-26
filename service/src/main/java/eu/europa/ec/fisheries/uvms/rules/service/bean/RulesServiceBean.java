@@ -20,11 +20,11 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
@@ -40,6 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapp
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -264,11 +265,7 @@ public class RulesServiceBean implements RulesService {
         try {
             TicketType ticket = new TicketType();
 
-            AssetIdType assetIdType = new AssetIdType();
-            assetIdType.setType(fact.getAssetIdType());
-            assetIdType.setValue(fact.getAssetIdValue());
-            ticket.setAssetId(assetIdType);
-
+            ticket.setVesselGuid(fact.getVesselGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
             ticket.setStatus(TicketStatusType.OPEN);
@@ -341,6 +338,49 @@ public class RulesServiceBean implements RulesService {
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
+    }
+
+    // Triggered by RulesTimerBean
+    @Override
+    public List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException {
+        LOG.info("Get previous movement reports invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetPreviousReport();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToGetPreviousReportResponse(response);
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    // Triggered by timer rule
+    @Override
+    public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException {
+        LOG.info("Timer rule triggered invoked in service layer");
+        try {
+            // Check if ticket already is created for this vessel
+            String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid());
+            String messageId = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response).getTicket() == null;
+
+            if (noTicketCreated) {
+                TicketType ticket = new TicketType();
+
+                ticket.setVesselGuid(fact.getVesselGuid());
+                ticket.setOpenDate(RulesUtil.dateToString(new Date()));
+                ticket.setRuleName(ruleName);
+                ticket.setStatus(TicketStatusType.OPEN);
+
+                String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
+                producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
+            }
+        } catch (RulesModelMapperException | MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+
     }
 
 }
