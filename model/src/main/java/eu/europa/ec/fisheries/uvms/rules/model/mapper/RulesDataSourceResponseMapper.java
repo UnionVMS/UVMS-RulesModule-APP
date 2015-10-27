@@ -7,6 +7,7 @@ import javax.jms.TextMessage;
 
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesException;
+import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;

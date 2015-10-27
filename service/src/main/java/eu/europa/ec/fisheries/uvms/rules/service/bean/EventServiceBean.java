@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;

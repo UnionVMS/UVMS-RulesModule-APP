@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
@@ -18,12 +17,5 @@ public class RulesModuleRequestMapper {
         request.setRequest(rawMovementType);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
-    
-    public static String createGetCustomRuleRequest(GetCustomRuleRequest ruleBaseType) throws RulesModelMarshallException{
-    	eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest request = new eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest();
-    	request.setMethod(RulesDataSourceMethod.GET_CUSTOM_RULE);
-    	request.setGuid(ruleBaseType.getGuid());
-    	return JAXBMarshaller.marshallJaxBObjectToString(request);
-    	
-    }
+
 }
