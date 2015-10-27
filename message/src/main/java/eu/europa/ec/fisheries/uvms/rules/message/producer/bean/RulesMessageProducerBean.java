@@ -7,6 +7,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -51,6 +52,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Connection connection = null;
     private Session session = null;
 
+    private static final int CONFIG_TTL = 30000;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
@@ -68,7 +71,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 session.createProducer(movementQueue).send(message);
                 break;
             case CONFIG:
-                session.createProducer(configQueue).send(message);
+                session.createProducer(configQueue).send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, CONFIG_TTL);
                 break;
             case VESSEL:
                 session.createProducer(vesselQueue).send(message);
