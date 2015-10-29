@@ -173,7 +173,6 @@
             <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
             <xsd:enumeration value="EMAIL"/>
             <xsd:enumeration value="SMS"/>
-            <xsd:enumeration value="ALARM"/>
         </xsd:restriction>
     </xsd:simpleType>
 

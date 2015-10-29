@@ -38,7 +38,34 @@ public class ConfigResource {
     @Path(value = "/actions")
     public ResponseDto getActions() {
         try {
-            return new ResponseDto(ActionType.values(), ResponseCode.OK);
+            Map map = new HashMap();
+            ActionType[] actionTypes = ActionType.values();
+            for (int i = 0; i < actionTypes.length; i++) {
+
+                boolean needValue = false;
+                ActionType actionType = actionTypes[i];
+                switch (actionType) {
+                    case SEND_TO_ENDPOINT:
+                        break;
+                    case MANUAL_POLL:
+                        break;
+                    case ON_HOLD:
+                        break;
+                    case TICKET:
+                        break;
+                    case TOP_BAR_NOTIFICATION:
+                        break;
+                    case EMAIL:
+                        needValue = true;
+                        break;
+                    case SMS:
+                        needValue = true;
+                        break;
+                }
+                map.put(actionType, needValue);
+            }
+
+            return new ResponseDto(map, ResponseCode.OK);
         } catch (Exception ex) {
             LOG.error("[ Error when getting actions. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
@@ -107,6 +134,76 @@ public class ConfigResource {
             }
         }
         return map;
+    }
+
+    // TODO:
+    // Is it possible (in an easy way) to map permitted operators to a specific (sub)criteria?
+
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/")
+    public ResponseDto getConfig() {
+        try {
+            Map map = new HashMap();
+
+            ConditionType[] con = getConditionsX();
+            Map act = getActionsX();
+            Map<String, ArrayList<String>> crit = getCriteriasX();
+            LogicOperatorType[] log = getLogicOperatorTypeX();
+
+            map.put("CONDITIONS", con);
+            map.put("ACTIONS", act);
+            map.put("CRITERIA", crit);
+            map.put("LOGIC_OPERATORS", log);
+
+            return new ResponseDto(map, ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting actions. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    private LogicOperatorType[] getLogicOperatorTypeX() {
+        return LogicOperatorType.values();
+    }
+
+    private Map<String, ArrayList<String>> getCriteriasX() {
+        return criterias();
+    }
+
+    private Map getActionsX() {
+        Map map = new HashMap();
+        ActionType[] actionTypes = ActionType.values();
+        for (int i = 0; i < actionTypes.length; i++) {
+
+            boolean needValue = false;
+            ActionType actionType = actionTypes[i];
+            switch (actionType) {
+                case SEND_TO_ENDPOINT:
+                    break;
+                case MANUAL_POLL:
+                    break;
+                case ON_HOLD:
+                    break;
+                case TICKET:
+                    break;
+                case TOP_BAR_NOTIFICATION:
+                    break;
+                case EMAIL:
+                    needValue = true;
+                    break;
+                case SMS:
+                    needValue = true;
+                    break;
+            }
+            map.put(actionType, needValue);
+        }
+        return map;
+    }
+
+    private ConditionType[] getConditionsX() {
+        return ConditionType.values();
     }
 
 }

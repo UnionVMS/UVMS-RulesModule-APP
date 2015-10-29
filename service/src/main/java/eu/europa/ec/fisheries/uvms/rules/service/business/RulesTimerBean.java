@@ -44,18 +44,6 @@ public class RulesTimerBean {
             // Get all previous reports from DB
             List<PreviousReportType> previousReports = rulesService.getPreviousMovementReports();
 
-            // Test data
-            // GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            // gregorianCalendar.add(GregorianCalendar.HOUR, -3);
-            // DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-            // XMLGregorianCalendar dummyPositionTime =
-            // datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
-            // PreviousReportType testPos = new PreviousReportType();
-            // testPos.setMovementGuid("DUMMY_MOVEMENT_GUID");
-            // testPos.setVesselGuid("DUMMY_VESSEL_GUID");
-            // testPos.setPositionTime(dummyPositionTime);
-            // previousReports.add(testPos);
-
             // Map to fact, adding 2h to deadline
             List<PreviousReportFact> previousReportFacts = new ArrayList<PreviousReportFact>();
             for (PreviousReportType previousReport : previousReports) {

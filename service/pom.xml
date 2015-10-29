@@ -51,11 +51,20 @@
             <version>${dozer.version}</version>
         </dependency>
         
-        <!-- not needed??? -->
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
             <artifactId>movement-model</artifactId>
             <version>${movement.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.vessel</groupId>
+            <artifactId>vessel-model</artifactId>
+            <version>${vessel.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>
+            <artifactId>model</artifactId>
+            <version>${mobileterminal.model.version}</version>
         </dependency>
 
         <dependency>

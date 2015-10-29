@@ -15,8 +15,8 @@
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="rawMovement" type="movement:RawMovementType"/>
-            <xsd:element name="resolveDate" type="xsd:string"/>
-            <xsd:element name="resolvedBy" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

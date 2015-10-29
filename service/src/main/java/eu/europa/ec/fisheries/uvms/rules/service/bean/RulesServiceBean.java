@@ -10,7 +10,11 @@ import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.exchange.module.v1.SendMovementToPluginRequest;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,7 +233,12 @@ public class RulesServiceBean implements RulesService {
             }
             switch (ActionType.valueOf(action)) {
             case EMAIL:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
+                // todo: What will the mail contain? Value=address.
+                // Is it enough with a notification, or what's in the fact?
+                // Or should I enrich the rules, and this method,
+                // to receive an additional text?
+                LOG.info("Sending email to '{}'", value);
+                sendToEmail(value, ruleName);
                 break;
             case ON_HOLD:
                 LOG.info("Performing action '{}' with value '{}'", action, value);
@@ -240,6 +249,7 @@ public class RulesServiceBean implements RulesService {
                 break;
             case MANUAL_POLL:
                 LOG.info("Performing action '{}' with value '{}'", action, value);
+                sendManualPoll(value);
                 break;
             case SEND_TO_ENDPOINT:
                 LOG.info("Performing action '{}' with value '{}'", action, value);
@@ -250,13 +260,36 @@ public class RulesServiceBean implements RulesService {
             case TOP_BAR_NOTIFICATION:
                 LOG.info("Performing action '{}' with value '{}'", action, value);
                 break;
-            case ALARM:
             default:
-                // Unreachable, ActionType.valueOf(action) would fail before
                 LOG.info("The action '{}' is not defined", action);
                 break;
             }
         }
+
+    }
+
+    private void sendManualPoll(String value) {
+        // todo: value is probably not used...
+        // But we still need plugin name, so perhaps we can use this here, but populate automatically. We'll see...
+
+        String pluginName = "";
+
+  //      String sendMovementToPluginRequest = ExchangeModuleRequestMapper.createSetCommandSendPollRequest(pluginName, PluginType.SATELLITE_RECEIVER);
+
+//        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
+//        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+
+    }
+
+    private void sendToEmail(String emailAddress, String ruleName) {
+        // TODO: Decide on what message to send
+        String message = "A rule has been triggered in UVMS: '" + ruleName + "'";
+
+//        SendMovementToPluginRequest sendMovementToPluginRequest;
+
+//        String sendMovementToPluginRequest = ExchangeModuleRequestMapper.
+//        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
+//        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
     }
 
@@ -301,7 +334,7 @@ public class RulesServiceBean implements RulesService {
     /**
      * {@inheritDoc}
      *
-     * @param id
+     * @param guid
      * @return
      * @throws RulesServiceException
      */
@@ -324,7 +357,7 @@ public class RulesServiceBean implements RulesService {
     /**
      * {@inheritDoc}
      *
-     * @param data
+     * @param customRule
      * @throws RulesServiceException
      */
     @Override

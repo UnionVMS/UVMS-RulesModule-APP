@@ -24,6 +24,8 @@
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>0.1-SNAPSHOT</uvms.config.version>
         <uvms.common.version>1.4-SNAPSHOT</uvms.common.version>
+        <vessel.model.version>1.0.10-SNAPSHOT</vessel.model.version>
+        <mobileterminal.model.version>1.0.7-SNAPSHOT</mobileterminal.model.version>
     </properties>
 
     <dependencies>

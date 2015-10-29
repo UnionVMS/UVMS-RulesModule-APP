@@ -38,9 +38,10 @@
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
                     <xsd:enumeration value="GET_TICKET_BY_VESSEL_GUID"/>
+                    <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
 
                     <!-- Actions triggered by timer -->
-                    <xsd:enumeration value="GET_PREVIOUS_REPORT"/>
+                    <xsd:enumeration value="GET_PREVIOUS_REPORTS"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
@@ -172,8 +173,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="guid" type="xsd:string"/>
-                                <xsd:element name="status" type="ticket:TicketStatusType"/>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -195,8 +195,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="guid" type="xsd:string"/>
-                                <xsd:element name="status" type="alarm:AlarmStatusType"/>
+                                <xsd:element name="alarm" type="alarm:AlarmReportType"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -362,6 +361,29 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Upsert previous report request -->
+            <xsd:element name="UpsertPreviousReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="previousReport" type="previous:PreviousReportType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Uppsert previous report response NOT NEEDED? -->
+            <xsd:element name="UpsertPreviousReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReport" type="previous:PreviousReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+
         </xsd:schema>
     </types>
 
@@ -467,6 +489,13 @@
         <part name="body" element="source:GetTicketByVesselGuidResponse"/>
     </message>
 
+    <message name="UpsertPreviousReportRequest">
+        <part name="body" element="source:UpsertPreviousReportRequest"/>
+    </message>
+    <message name="UpsertPreviousReportResponse">
+        <part name="body" element="source:UpsertPreviousReportResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -549,6 +578,12 @@
         <operation name="GetTicketByVesselGuidReport">
             <input message="source:GetTicketByVesselGuidRequest"/>
             <output message="source:GetTicketByVesselGuidResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpsertPreviousReport">
+            <input message="source:UpsertPreviousReportRequest"/>
+            <output message="source:UpsertPreviousReportResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -711,6 +746,18 @@
         </operation>
 
         <operation name="GetTicketByVesselGuidReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpsertPreviousReport">
             <input>
                 <soap:body use="literal"/>
             </input>

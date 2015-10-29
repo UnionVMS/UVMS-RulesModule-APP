@@ -6,10 +6,8 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesException;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,7 +167,7 @@ public class RulesDataSourceResponseMapper {
         return response.getPreviousReport();
     }
 
-    public static String getPreviousReportResponse(List<PreviousReportType> previousReports) throws RulesModelMapperException {
+    public static String mapToGetPreviousReportResponse(List<PreviousReportType> previousReports) throws RulesModelMapperException {
         GetPreviousReportResponse response = new GetPreviousReportResponse();
         response.getPreviousReport().addAll(previousReports);
         return JAXBMarshaller.marshallJaxBObjectToString(response);

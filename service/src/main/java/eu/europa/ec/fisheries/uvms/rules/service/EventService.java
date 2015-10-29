@@ -12,6 +12,6 @@ public interface EventService {
 
     public void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage);
 
-    public void setMovementReportRecieved(@Observes @SetMovementReportReceivedEvent EventMessage message);
+    public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message);
 
 }
