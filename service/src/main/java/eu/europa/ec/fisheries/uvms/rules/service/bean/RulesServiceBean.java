@@ -196,6 +196,7 @@ public class RulesServiceBean implements RulesService {
             alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
             alarmReport.setStatus(AlarmStatusType.OPEN);
             alarmReport.setRawMovement(fact.getRawMovementType());
+            alarmReport.setUpdatedBy("UVMS");
 
             // Alarm item
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
@@ -302,6 +303,7 @@ public class RulesServiceBean implements RulesService {
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
             ticket.setStatus(TicketStatusType.OPEN);
+            ticket.setUpdatedBy("UVMS");
 
             MovementType m = new MovementType();
             m.setLatitude(fact.getLatitude());
