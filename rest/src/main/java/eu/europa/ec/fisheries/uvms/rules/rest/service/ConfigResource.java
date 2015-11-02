@@ -32,38 +32,26 @@ public class ConfigResource {
 
     final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);
 
+    // TODO:
+    // Is it possible (in an easy way) to map permitted operators to a specific (sub)criteria?
+
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/actions")
-    public ResponseDto getActions() {
+    @Path(value = "/")
+    public ResponseDto getConfig() {
         try {
             Map map = new HashMap();
-            ActionType[] actionTypes = ActionType.values();
-            for (int i = 0; i < actionTypes.length; i++) {
 
-                boolean needValue = false;
-                ActionType actionType = actionTypes[i];
-                switch (actionType) {
-                    case SEND_TO_ENDPOINT:
-                        break;
-                    case MANUAL_POLL:
-                        break;
-                    case ON_HOLD:
-                        break;
-                    case TICKET:
-                        break;
-                    case TOP_BAR_NOTIFICATION:
-                        break;
-                    case EMAIL:
-                        needValue = true;
-                        break;
-                    case SMS:
-                        needValue = true;
-                        break;
-                }
-                map.put(actionType, needValue);
-            }
+            Map<String, ArrayList<String>> crit = getCriterias();
+            ConditionType[] con = getConditions();
+            Map act = getActions();
+            LogicOperatorType[] log = getLogicOperatorType();
+
+            map.put("CRITERIA", crit);
+            map.put("CONDITIONS", con);
+            map.put("ACTIONS", act);
+            map.put("LOGIC_OPERATORS", log);
 
             return new ResponseDto(map, ResponseCode.OK);
         } catch (Exception ex) {
@@ -72,46 +60,7 @@ public class ConfigResource {
         }
     }
 
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/conditions")
-    public ResponseDto getConditions() {
-        try {
-            return new ResponseDto(ConditionType.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting conditions. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/logicoperators")
-    public ResponseDto getLogicOperatorType() {
-        try {
-            return new ResponseDto(LogicOperatorType.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting logic operators. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/criterias")
-    public ResponseDto getCriterias() {
-        try {
-            return new ResponseDto(criterias(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting criterias. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    private Map<String, ArrayList<String>> criterias() {
+    private Map<String, ArrayList<String>> getCriterias() {
         Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 
         MainCriteria[] mainCriterias = MainCriteria.values();
@@ -136,43 +85,11 @@ public class ConfigResource {
         return map;
     }
 
-    // TODO:
-    // Is it possible (in an easy way) to map permitted operators to a specific (sub)criteria?
-
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/")
-    public ResponseDto getConfig() {
-        try {
-            Map map = new HashMap();
-
-            ConditionType[] con = getConditionsX();
-            Map act = getActionsX();
-            Map<String, ArrayList<String>> crit = getCriteriasX();
-            LogicOperatorType[] log = getLogicOperatorTypeX();
-
-            map.put("CONDITIONS", con);
-            map.put("ACTIONS", act);
-            map.put("CRITERIA", crit);
-            map.put("LOGIC_OPERATORS", log);
-
-            return new ResponseDto(map, ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting actions. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    private LogicOperatorType[] getLogicOperatorTypeX() {
+    private LogicOperatorType[] getLogicOperatorType() {
         return LogicOperatorType.values();
     }
 
-    private Map<String, ArrayList<String>> getCriteriasX() {
-        return criterias();
-    }
-
-    private Map getActionsX() {
+    private Map getActions() {
         Map map = new HashMap();
         ActionType[] actionTypes = ActionType.values();
         for (int i = 0; i < actionTypes.length; i++) {
@@ -202,7 +119,7 @@ public class ConfigResource {
         return map;
     }
 
-    private ConditionType[] getConditionsX() {
+    private ConditionType[] getConditions() {
         return ConditionType.values();
     }
 

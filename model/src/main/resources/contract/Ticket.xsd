@@ -11,8 +11,8 @@
             <xsd:element name="status" type="ticket:TicketStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="vesselGuid" type="xsd:string"/>
-            <xsd:element name="ruleName" type="xsd:string"/>
-            <xsd:element name="movement" type="ticket:MovementType"/>
+            <xsd:element name="ruleGuid" type="xsd:string"/>
+            <xsd:element name="movementGuid" type="xsd:string"/>
             <xsd:element name="updated" type="xsd:string"/>
             <xsd:element name="updatedBy" type="xsd:string"/>
         </xsd:sequence>
@@ -23,16 +23,8 @@
             <xsd:enumeration value="OPEN"/>
             <xsd:enumeration value="PENDING"/>
             <xsd:enumeration value="CLOSED"/>
+            <xsd:enumeration value="NONE"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
-    <xsd:complexType name="MovementType">
-        <xsd:sequence>
-            <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="latitude" type="xsd:double" nillable="true"/>
-            <xsd:element name="longitude" type="xsd:double" nillable="true"/>
-            <xsd:element name="timestamp" type="xsd:string"/>
-        </xsd:sequence>
-    </xsd:complexType>
     
 </xsd:schema>

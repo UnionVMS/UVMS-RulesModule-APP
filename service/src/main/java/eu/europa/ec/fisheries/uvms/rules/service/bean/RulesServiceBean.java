@@ -25,7 +25,6 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
@@ -194,6 +193,8 @@ public class RulesServiceBean implements RulesService {
             alarmReport.setRawMovement(fact.getRawMovementType());
             alarmReport.setUpdatedBy("UVMS");
 
+            // TODO: Add sender, recipient and assetGuid
+
             // Alarm item
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
             AlarmItemType alarmItem = new AlarmItemType();
@@ -297,15 +298,12 @@ public class RulesServiceBean implements RulesService {
 
             ticket.setVesselGuid(fact.getVesselGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-            ticket.setRuleName(ruleGuid);
+            ticket.setRuleGuid(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
             ticket.setUpdatedBy("UVMS");
 
-            MovementType m = new MovementType();
-            m.setLatitude(fact.getLatitude());
-            m.setLongitude(fact.getLongitude());
-            m.setTimestamp(RulesUtil.dateToString(fact.getPositionTime()));
-            ticket.setMovement(m);
+            // TODO: Add movementGuid
+//                ticket.setMovementGuid();
 
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
             producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
@@ -402,9 +400,12 @@ public class RulesServiceBean implements RulesService {
 
                 ticket.setVesselGuid(fact.getVesselGuid());
                 ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-                ticket.setRuleName(ruleGuid);
+                ticket.setRuleGuid(ruleGuid);
                 ticket.setUpdatedBy("UVMS");
                 ticket.setStatus(TicketStatusType.OPEN);
+
+                // TODO: Add movementGuid
+//                ticket.setMovementGuid();
 
                 String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
                 producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
