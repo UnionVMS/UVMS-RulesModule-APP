@@ -10,11 +10,7 @@ import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import eu.europa.ec.fisheries.schema.exchange.module.v1.SendMovementToPluginRequest;
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -407,6 +403,7 @@ public class RulesServiceBean implements RulesService {
                 ticket.setVesselGuid(fact.getVesselGuid());
                 ticket.setOpenDate(RulesUtil.dateToString(new Date()));
                 ticket.setRuleName(ruleName);
+                ticket.setUpdatedBy("UVMS");
                 ticket.setStatus(TicketStatusType.OPEN);
 
                 String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);

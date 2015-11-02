@@ -66,6 +66,16 @@
             <artifactId>model</artifactId>
             <version>${mobileterminal.model.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
+            <artifactId>exchange-model</artifactId>
+            <version>${exchange.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.spatial</groupId>
+            <artifactId>spatial-model</artifactId>
+            <version>${spatial.model.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>

@@ -60,7 +60,7 @@ public class RulesValidator {
 
         kfs = kservices.newKieFileSystem();
         kfs.write(ResourceFactory.newClassPathResource(SANITY_RESOURCE_DRL));
-        kfs.write(ResourceFactory.newClassPathResource(TIMER_DRL));
+//        kfs.write(ResourceFactory.newClassPathResource(TIMER_DRL));
         KieBuilder kbuilder = kservices.newKieBuilder(kfs);
         kbuilder.buildAll();
 
@@ -137,23 +137,23 @@ public class RulesValidator {
 
     }
 
-    public void evaluatePreviousReport(List<PreviousReportFact> previousReports) {
-        LOG.info("Verifying previous movement");
-
-        KieSession ksession = kbase.newKieSession(ksconf, null);
-
-        // Inject beans
-        ksession.setGlobal("rulesService", rulesService);
-        ksession.setGlobal("logger", LOG);
-
-        for (PreviousReportFact previousReport : previousReports) {
-            ksession.insert(previousReport);
-        }
-        ksession.fireAllRules();
-
-        ksession.dispose();
-
-    }
+//    public void evaluatePreviousReport(List<PreviousReportFact> previousReports) {
+//        LOG.info("Verifying previous movement");
+//
+//        KieSession ksession = kbase.newKieSession(ksconf, null);
+//
+//        // Inject beans
+//        ksession.setGlobal("rulesService", rulesService);
+//        ksession.setGlobal("logger", LOG);
+//
+//        for (PreviousReportFact previousReport : previousReports) {
+//            ksession.insert(previousReport);
+//        }
+//        ksession.fireAllRules();
+//
+//        ksession.dispose();
+//
+//    }
 
     private String generateDrl(String template, List<CustomRuleDto> rules) {
         InputStream templateStream = this.getClass().getResourceAsStream(template);

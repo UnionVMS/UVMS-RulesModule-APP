@@ -12,8 +12,6 @@
         <release.branch.name>salome</release.branch.name>
         <mockito.version>1.9.5</mockito.version>
         <junit.version>4.10</junit.version>
-        <movement.model.version>1.0.6-SNAPSHOT</movement.model.version>
-        <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
         <joda-time.version>2.7</joda-time.version>
         <javaee.version>7.0</javaee.version>
         <swagger.version>1.3.1</swagger.version>
@@ -24,9 +22,13 @@
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>0.1-SNAPSHOT</uvms.config.version>
         <uvms.common.version>1.4-SNAPSHOT</uvms.common.version>
+
+        <movement.model.version>1.0.6-SNAPSHOT</movement.model.version>
+        <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
         <vessel.model.version>1.0.10-SNAPSHOT</vessel.model.version>
         <mobileterminal.model.version>1.0.7-SNAPSHOT</mobileterminal.model.version>
         <usm4uvms.version>0.0.11-SNAPSHOT</usm4uvms.version>
+        <spatial.model.version>1.0-SNAPSHOT</spatial.model.version>
     </properties>
 
     <dependencies>

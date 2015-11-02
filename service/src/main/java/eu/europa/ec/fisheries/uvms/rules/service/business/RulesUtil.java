@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -42,19 +44,20 @@ public class RulesUtil {
             for (CustomRuleSegmentType segment : segments) {
                 sb.append(segment.getStartOperator());
 
+                // All criteria without subcriteria
                 switch (segment.getCriteria()) {
-                case VESSEL:
-                    sb.append("vessel");
-                    break;
-                case MOBILE_TERMINAL:
-                    sb.append("mobileTerminal");
-                    break;
+//                case VESSEL:
+//                    sb.append("vessel");
+//                    break;
+//                case MOBILE_TERMINAL:
+//                    sb.append("mobileTerminal");
+//                    break;
                 case AREA:
                     // If list and NE
                     if (segment.getCondition().equals(ConditionType.NE)) {
                         sb.append("!");
                     }
-                    sb.append("area");
+//                    sb.append("area");
                     break;
                 case EXTERNAL_MARKING:
                     sb.append("externalMarking");
@@ -71,24 +74,24 @@ public class RulesUtil {
                 case CALCULATED_SPEED:
                     sb.append("calculatedSpeed");
                     break;
-                case ACTIVITY:
-                    sb.append("activity");
-                    break;
+//                case ACTIVITY:
+//                    sb.append("activity");
+//                    break;
                 case ALTITUDE:
                     sb.append("altitude");
                     break;
-                case ASSET_ID:
-                    sb.append("assetId");
-                    break;
+//                case ASSET_ID:
+//                    sb.append("assetId");
+//                    break;
                 case CALCULATED_COURSE:
                     sb.append("calculatedCourse");
                     break;
-                case CLOSEST_COUNTRY:
-                    sb.append("closestCountry");
-                    break;
-                case CLOSEST_PORT:
-                    sb.append("closestPort");
-                    break;
+//                case CLOSEST_COUNTRY:
+//                    sb.append("closestCountry");
+//                    break;
+//                case CLOSEST_PORT:
+//                    sb.append("closestPort");
+//                    break;
                 case COMCHANNEL_TYPE:
                     sb.append("comChannelType");
                     break;
@@ -130,69 +133,70 @@ public class RulesUtil {
                 default:
                     break;
                 }
+                // All subcriteria
                 switch (segment.getSubCriteria()) {
                 case VESSEL_CFR:
-                    sb.append("Cfr");
+                    sb.append("vesselCfr");
                     break;
                 case VESSEL_IRCS:
-                    sb.append("Ircs");
+                    sb.append("vesselIrcs");
                     break;
                 case VESSEL_NAME:
-                    sb.append("Name");
+                    sb.append("vesselName");
                     break;
                 case MT_MEMBER_ID:
-                    sb.append("MemberNumber");
+                    sb.append("mobileTerminalMemberNumber");
                     break;
                 case MT_SERIAL_NO:
-                    sb.append("SerialNumber");
+                    sb.append("mobileTerminalSerialNumber");
                     break;
                 case MT_DNID:
-                    sb.append("Dnid");
+                    sb.append("mobileTerminalDnid");
                     break;
                 case AREA_TYPE:
-                    sb.append("Types");
+                    sb.append("areaTypes");
                     break;
                 case AREA_CODE:
-                    sb.append("Codes");
+                    sb.append("areaCodes");
                     break;
                 case AREA_ID:
-                    sb.append("RemoteIds");
+                    sb.append("areaRemoteIds");
                     break;
                 case ACTIVITY_CALLBACK:
-                    sb.append("Callback");
+                    sb.append("activityCallback");
                     break;
                 case ACTIVITY_MESSAGE_ID:
-                    sb.append("MessageId");
+                    sb.append("activityMessageId");
                     break;
                 case ACTIVITY_MESSAGE_TYPE:
-                    sb.append("MessageType");
+                    sb.append("activityMessageType");
                     break;
                 case ASSET_ID_ASSET_TYPE:
-                    sb.append("AssetType");
+                    sb.append("assetIdAssetType");
                     break;
                 case ASSET_ID_TYPE:
-                    sb.append("Type");
+                    sb.append("assetIdType");
                     break;
                 case ASSET_ID_VALUE:
-                    sb.append("Value");
+                    sb.append("assetIdValue");
                     break;
                 case COUNTRY_CODE:
-                    sb.append("Code");
+                    sb.append("closestCountryCode");
                     break;
                 case COUNTRY_DISTANCE:
-                    sb.append("Distance");
+                    sb.append("closestCountryDistance");
                     break;
                 case COUNTRY_REMOTE_ID:
-                    sb.append("RemoteId");
+                    sb.append("closestCountryRemoteId");
                     break;
                 case PORT_CODE:
-                    sb.append("Code");
+                    sb.append("closestPortCode");
                     break;
                 case PORT_DISTANCE:
-                    sb.append("Distance");
+                    sb.append("closestPortDistance");
                     break;
                 case PORT_REMOTE_ID:
-                    sb.append("RemoteId");
+                    sb.append("closestPortRemoteId");
                     break;
                 default:
                     break;
@@ -317,8 +321,8 @@ public class RulesUtil {
         return sb.toString();
     }
 
-    public static MovementFact mapFact(MovementType movement, String externalMarking, String flagState, String mobileTerminalDnid,
-            String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String vesselName, String vesselGuid) {
+    public static MovementFact mapMovementFact(MovementType movement, String externalMarking, String flagState, String mobileTerminalDnid,
+                                               String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String vesselName, String vesselGuid) {
         MovementFact fact = new MovementFact();
 
         // Base
@@ -412,6 +416,68 @@ public class RulesUtil {
             }
 
         }
+
+        return fact;
+    }
+
+    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, String pluginType, String mobileTerminalDnid, String mobileTerminalMemberNumber) {
+        RawMovementFact fact = new RawMovementFact();
+        fact.setRawMovementType(rawMovement);
+        fact.setOk(true);
+        fact.setPluginType(pluginType);
+
+        // Base
+        if (rawMovement.getComChannelType() != null) {
+            fact.setComChannelType(rawMovement.getComChannelType().name());
+        }
+        fact.setConnectId(rawMovement.getConnectId());
+        fact.setMovementGuid(rawMovement.getGuid());
+        if (rawMovement.getMovementType() != null) {
+            fact.setMovementType(rawMovement.getMovementType().name());
+        }
+        if (rawMovement.getPositionTime() != null) {
+            fact.setPositionTime(rawMovement.getPositionTime().toGregorianCalendar().getTime());
+        }
+        fact.setReportedCourse(rawMovement.getReportedCourse());
+        fact.setReportedSpeed(rawMovement.getReportedSpeed());
+        if (rawMovement.getSource() != null) {
+            fact.setSource(rawMovement.getSource().name());
+        }
+        fact.setStatusCode(rawMovement.getStatus());
+
+        // Activity
+        if (rawMovement.getActivity() != null) {
+            fact.setActivityCallback(rawMovement.getActivity().getCallback());
+            fact.setActivityMessageId(rawMovement.getActivity().getMessageId());
+            if (rawMovement.getActivity().getMessageType() != null) {
+                fact.setActivityMessageType(rawMovement.getActivity().getMessageType().name());
+            }
+        }
+
+        // Position
+        if (rawMovement.getPosition() != null) {
+            fact.setAltitude(rawMovement.getPosition().getAltitude());
+            fact.setLatitude(rawMovement.getPosition().getLatitude());
+            fact.setLongitude(rawMovement.getPosition().getLongitude());
+        }
+
+        // Mobile Terminal
+        fact.setMobileTerminalDnid(mobileTerminalDnid);
+        fact.setMobileTerminalMemberNumber(mobileTerminalMemberNumber);
+
+        // AssetId
+//        // TODO: Fix better test data!!!
+//        List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
+//        for (AssetIdList idList : assetIdList) {
+//            fact.setAssetIdAssetType(rawMovement.getAssetId().getAssetType().name());
+//            if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+//                fact.setVesselCfr(idList.getValue());
+//            }
+//            if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+//                fact.setVesselIrcs(idList.getValue());
+//            }
+//            // TODO: If we want more, add the valid combinations here
+//        }
 
         return fact;
     }

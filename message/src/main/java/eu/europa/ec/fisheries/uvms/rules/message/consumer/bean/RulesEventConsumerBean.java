@@ -43,7 +43,7 @@ public class RulesEventConsumerBean implements MessageListener {
 
     @Inject
     @ValidateMovementReportReceivedEvent
-    Event<EventMessage> validateMovementReportRecievedEvent;
+    Event<EventMessage> validateMovementReportReceivedEvent;
 
     @Inject
     @PingReceivedEvent
