@@ -57,13 +57,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             LOG.error("[ Error when getting message ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
         } finally {
-            try {
-                connection.stop();
-                connection.close();
-            } catch (JMSException e) {
-                LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
-                throw new MessageException("Error closing JMS connection", e);
-            }
+            disconnectQueue();
         }
     }
 
@@ -83,6 +77,17 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
         connection = connectionFactory.createConnection();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         connection.start();
+    }
+
+    private void disconnectQueue() {
+        try {
+            if (connection != null) {
+                connection.stop();
+                connection.close();
+            }
+        } catch (JMSException e) {
+            LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
+        }
     }
 
 }
