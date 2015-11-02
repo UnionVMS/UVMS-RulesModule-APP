@@ -4,9 +4,7 @@ import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
 public class RulesModuleRequestMapper {
 

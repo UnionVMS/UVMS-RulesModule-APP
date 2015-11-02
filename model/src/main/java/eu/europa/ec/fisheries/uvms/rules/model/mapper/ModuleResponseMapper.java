@@ -1,8 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportResponse;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
 public class ModuleResponseMapper {
 
@@ -20,6 +24,23 @@ public class ModuleResponseMapper {
             throw new RulesModelMapperException("Wrong corelationId in response. Expected was: " + correlationId + "But actual was: " + response.getJMSCorrelationID());
         }
 
+        //TODO unmarshall to RulesFault
     }
 
+    public static MovementRefType mapSetMovementReportResponse(TextMessage response, String correlationId) throws RulesModelMapperException {
+    	try {
+			validateResponse(response, correlationId);
+			SetMovementReportResponse unmarshalledResponse = JAXBMarshaller.unmarshallTextMessage(response, SetMovementReportResponse.class);
+			return unmarshalledResponse.getMovementRef();
+		} catch (RulesModelMapperException | JMSException e) {
+			//TODO take care of exception
+			throw new RulesModelMapperException("FIX ME");
+		}
+    }
+    
+    public static String createSetMovementReportResponse(MovementRefType movementRefType) throws RulesModelMarshallException {
+    	SetMovementReportResponse response = new SetMovementReportResponse();
+		response.setMovementRef(movementRefType);
+    	return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
 }
