@@ -9,12 +9,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.*;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
@@ -31,10 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -90,9 +85,13 @@ public class EventServiceBean implements EventService {
         }
     }
 
+
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
+        SetMovementReportResponse exchangeResponse = new SetMovementReportResponse();
+
         LOG.info("Validating movement from Exchange Module");
         try {
 
@@ -149,7 +148,7 @@ public class EventServiceBean implements EventService {
                 }
 
                 connectId = mobileTerminal.getConnectId();
-                LOG.info("myggan : connectId:{}", connectId);
+                LOG.info("myggan - connectId:{}", connectId);
                 rawMovementType.setConnectId(connectId);
             }
             RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, pluginType, mobileTerminalDnid, mobileTerminalMemberNumber);
@@ -166,10 +165,9 @@ public class EventServiceBean implements EventService {
             if (rawFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
                 MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovementType, MovementBaseType.class);
-                LOG.info("myggan - movementBaseType connectId:{}", movementBaseType.getConnectId());
 
                 movementBaseType.setConnectId(connectId);
-                LOG.info("myggan : movementBaseType.getConnectId():{}", movementBaseType.getConnectId());
+                LOG.info("myggan - movementBaseType.getConnectId():{}", movementBaseType.getConnectId());
 
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
@@ -188,13 +186,28 @@ public class EventServiceBean implements EventService {
                 if (response != null) {
                     MovementType createdMovement = RulesMapper.mapCreateMovementToMovementType(response);
                     validateMovementReportReceived(createdMovement, mobileTerminalDnid, mobileTerminalMemberNumber, mobileTerminalSerialNumber, connectId);
+
+                    // Tell Exchange that a movement was persisted in Movement
+                    MovementRefType ref = new MovementRefType();
+                    ref.setMovementRefGuid(createdMovement.getGuid());
+                    ref.setType("MOVEMENT");
+                    exchangeResponse.setMovementRef(ref);
+                    String exchangeResponseText = JAXBMarshaller.marshallJaxBObjectToString(exchangeResponse);
+                    LOG.info("myggan - status response sent to Exchange", exchangeResponseText);
+                    producer.sendModuleResponseMessage(message.getJmsMessage(), exchangeResponseText);
                 } else {
                     LOG.error("[ Error when getting movement from Movement , response from JMS Queue is null ]");
                 }
+            } else {
+                // Tell Exchange that the report caused an alarm
+                MovementRefType ref = new MovementRefType();
+                ref.setMovementRefGuid(rawFact.getMovementGuid());
+                ref.setType("ALARM");
+                exchangeResponse.setMovementRef(ref);
+                String exchangeResponseText = JAXBMarshaller.marshallJaxBObjectToString(exchangeResponse);
+                LOG.info("myggan - status response sent to Exchange", exchangeResponseText);
+                producer.sendModuleResponseMessage(message.getJmsMessage(), exchangeResponseText);
             }
-
-            // TODO: - Send back id of failed OR correct movement. AND if correct or not.
-
         } catch (RulesModelMapperException | MessageException | ModelMapperException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
             errorEvent.fire(message);

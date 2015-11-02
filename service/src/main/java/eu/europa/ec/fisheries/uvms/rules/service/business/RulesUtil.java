@@ -2,10 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -431,7 +428,7 @@ public class RulesUtil {
             fact.setComChannelType(rawMovement.getComChannelType().name());
         }
         fact.setConnectId(rawMovement.getConnectId());
-        fact.setMovementGuid(rawMovement.getGuid());
+        fact.setMovementGuid(UUID.randomUUID().toString());
         if (rawMovement.getMovementType() != null) {
             fact.setMovementType(rawMovement.getMovementType().name());
         }
