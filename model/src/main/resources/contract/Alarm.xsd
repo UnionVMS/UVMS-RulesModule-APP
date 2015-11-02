@@ -11,6 +11,7 @@
     <xsd:complexType name="AlarmReportType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="assetGuid" type="xsd:string"/>
             <xsd:element name="status" type="alarm:AlarmStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
@@ -23,7 +24,7 @@
     <xsd:complexType name="AlarmItemType">
         <xsd:sequence>
             <xsd:element name="guid" type="xsd:string"/>
-            <xsd:element name="ruleName" type="xsd:string"/>
+            <xsd:element name="ruleGuid" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

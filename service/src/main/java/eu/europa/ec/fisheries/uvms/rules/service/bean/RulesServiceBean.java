@@ -179,7 +179,7 @@ public class RulesServiceBean implements RulesService {
 
     // Triggered by rule engine, no response expected
     @Override
-    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
+    public void createAlarmReport(String ruleGuid, RawMovementFact fact) throws RulesServiceException {
         LOG.info("Create alarm invoked in service layer");
         try {
             // TODO: Decide who sets the guid, Rules or Exchange
@@ -198,7 +198,7 @@ public class RulesServiceBean implements RulesService {
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
-            alarmItem.setRuleName(ruleName);
+            alarmItem.setRuleGuid(ruleGuid);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 
@@ -290,14 +290,14 @@ public class RulesServiceBean implements RulesService {
 
     }
 
-    private void createTicket(String ruleName, MovementFact fact) throws RulesServiceException {
+    private void createTicket(String ruleGuid, MovementFact fact) throws RulesServiceException {
         LOG.info("Create ticket invoked in service layer");
         try {
             TicketType ticket = new TicketType();
 
             ticket.setVesselGuid(fact.getVesselGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-            ticket.setRuleName(ruleName);
+            ticket.setRuleName(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
             ticket.setUpdatedBy("UVMS");
 
@@ -387,7 +387,7 @@ public class RulesServiceBean implements RulesService {
 
     // Triggered by timer rule
     @Override
-    public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException {
+    public void timerRuleTriggered(String ruleGuid, PreviousReportFact fact) throws RulesServiceException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
             // Check if ticket already is created for this vessel
@@ -402,7 +402,7 @@ public class RulesServiceBean implements RulesService {
 
                 ticket.setVesselGuid(fact.getVesselGuid());
                 ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-                ticket.setRuleName(ruleName);
+                ticket.setRuleName(ruleGuid);
                 ticket.setUpdatedBy("UVMS");
                 ticket.setStatus(TicketStatusType.OPEN);
 

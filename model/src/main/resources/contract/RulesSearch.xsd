@@ -10,9 +10,10 @@
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="FROM_DATE"/>
             <xsd:enumeration value="TO_DATE"/>
-            <xsd:enumeration value="OBJECT_NAME"/>
-            <xsd:enumeration value="RULE_NAME"/>
+            <xsd:enumeration value="ASSET_GUID"/>
+            <xsd:enumeration value="RULE_GUID"/>
             <xsd:enumeration value="SENDER"/>
+            <xsd:enumeration value="STATUS"/>
         </xsd:restriction>
     </xsd:simpleType>
     
