@@ -117,8 +117,10 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
 
     private void disconnectQueue() throws MessageException {
         try {
-            connection.stop();
-            connection.close();
+            if (connection != null) {
+                connection.stop();
+                connection.close();
+            }
         } catch (JMSException e) {
             LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
