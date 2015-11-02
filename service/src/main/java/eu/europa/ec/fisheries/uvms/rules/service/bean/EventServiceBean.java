@@ -113,11 +113,11 @@ public class EventServiceBean implements EventService {
             SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
             RawMovementType rawMovementType = request.getRequest();
 
-            Date timestamp = new Date();
+            Date auditTimestamp = new Date();
 
             // Get Mobile Terminal
-            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType);
-            timestamp = auditLog("Time to fetch from Mobile Terminal Module:", timestamp);
+            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
+            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
 
             // Wrap incoming raw movement in a fact and validate
             String pluginType = request.getType().name();
@@ -125,35 +125,37 @@ public class EventServiceBean implements EventService {
             // Get some mobile terminal data to validate
             String mobileTerminalDnid = null;
             String mobileTerminalMemberNumber = null;
-            List<ComChannelType> channels = mobileTerminal.getChannels();
-            for (ComChannelType channel : channels) {
-                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
-                for (ComChannelAttribute chanAttribute : chanAttributes) {
-                    if (chanAttribute.getType().equals("DNID")){
-                        mobileTerminalDnid = chanAttribute.getValue();
-                    }
-                    if (chanAttribute.getType().equals("MEMBER_NUMBER")){
-                        mobileTerminalMemberNumber = chanAttribute.getValue();
-                    }
-                }
-            }
-
             String mobileTerminalSerialNumber = null;
-            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
-            for (MobileTerminalAttribute attribute : attributes) {
-                if (attribute.getType().equals("SERIAL_NUMBER")){
-                    mobileTerminalMemberNumber = attribute.getValue();
+            String connectId = null;
+            if (mobileTerminal != null) {
+                List<ComChannelType> channels = mobileTerminal.getChannels();
+                for (ComChannelType channel : channels) {
+                    List<ComChannelAttribute> chanAttributes = channel.getAttributes();
+                    for (ComChannelAttribute chanAttribute : chanAttributes) {
+                        if (chanAttribute.getType().equals("DNID")) {
+                            mobileTerminalDnid = chanAttribute.getValue();
+                        }
+                        if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
+                            mobileTerminalMemberNumber = chanAttribute.getValue();
+                        }
+                    }
                 }
+
+                List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
+                for (MobileTerminalAttribute attribute : attributes) {
+                    if (attribute.getType().equals("SERIAL_NUMBER")) {
+                        mobileTerminalMemberNumber = attribute.getValue();
+                    }
+                }
+
+                connectId = mobileTerminal.getConnectId();
+                LOG.info("myggan : connectId:{}", connectId);
+                rawMovementType.setConnectId(connectId);
             }
-
-            String connectId = mobileTerminal.getConnectId();
-            LOG.info("myggan : connectId:{}", connectId);
-            rawMovementType.setConnectId(connectId);
-
             RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, pluginType, mobileTerminalDnid, mobileTerminalMemberNumber);
 
             rulesValidator.evaluate(rawFact);
-            timestamp = auditLog("Time to validate sanity:", timestamp);
+            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             // MovementComChannelType.FLUX -> assetId
             // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId
@@ -175,7 +177,7 @@ public class EventServiceBean implements EventService {
 
                 String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-                timestamp = auditLog("Time to get movement from Movement Module:", timestamp);
+                auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
 
                 try {
                     LOG.info("myggan - incoming message from Movement Module:{}", response.getText());
@@ -201,23 +203,29 @@ public class EventServiceBean implements EventService {
     }
 
     private void validateMovementReportReceived(MovementType movement, String mobileTerminalDnid, String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String connectId) {
-        Date timestamp = new Date();
+        Date auditTimestamp = new Date();
         try {
             LOG.info("Validating movement from Movement Module");
 
 //            Vessel vessel = getVesselByMovement(movement);
             Vessel vessel = getVesselByConnectId(connectId);
-            timestamp = auditLog("Time to fetch from Vessel Module:", timestamp);
+            auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
 
-            // Enrich with extra vessel data
-            String externalMarking = vessel.getExternalMarking();
-            // TODO:
-            String flagState = "vessel.getCountryCode() ???";  // Det finns en tabell flagstate i vessel, kolla upp
-            String vesselName = vessel.getName();
-            // TODO:
-            String assetGroup = "GO_GET_IT!!!";
-            String vesselGuid = vessel.getVesselId().getGuid();  // guid
-
+            String externalMarking = null;
+            String flagState = null;
+            String vesselName = null;
+            String assetGroup = null;
+            String vesselGuid = null;
+            if (vessel != null) {
+                // Enrich with extra vessel data
+                externalMarking = vessel.getExternalMarking();
+                // TODO:
+                flagState = "vessel.getCountryCode() ???";  // Det finns en tabell flagstate i vessel, kolla upp
+                vesselName = vessel.getName();
+                // TODO:
+                assetGroup = "GO_GET_IT!!!";
+                vesselGuid = vessel.getVesselId().getGuid();  // guid
+            }
             // TODO Decide if we really want to verify stuff from MobileTerminal
             // Enrich with extra mobile terminal data
 
@@ -240,10 +248,10 @@ public class EventServiceBean implements EventService {
             // Verify how spatial data can be validated
 
             rulesValidator.evaluate(movementFact);
-            timestamp = auditLog("Time to validate rules:", timestamp);
+            auditTimestamp = auditLog("Time to validate rules:", auditTimestamp);
 
             persistThisMovementReport(vesselGuid, movement);
-            timestamp = auditLog("Time to persist the position time:", timestamp);
+            auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -330,18 +338,19 @@ public class EventServiceBean implements EventService {
             e.printStackTrace();
         }
 
-        Vessel result = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId).get(0);
+        List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
+        Vessel result = resultList.isEmpty()?null:resultList.get(0);
 
         return  result;
     }
 
     // TODO: Simplify!!!!!!!!!!!!!!!!!
-    private MobileTerminalType getMobileTerminalByRawMovement(RawMovementType rawMovement) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
-        eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.MobileTerminalType mobileTerminal = rawMovement.getMobileTerminal();
+    private MobileTerminalType getMobileTerminalByRawMovement(List<IdList> ids) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
+//        eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.MobileTerminalType mobileTerminal = rawMovement.getMobileTerminal();
 
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
-        List<IdList> ids = mobileTerminal.getMobileTerminalIdList();
+//        List<IdList> ids = mobileTerminal.getMobileTerminalIdList();
         MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
         for (IdList id : ids) {
             ListCriteria crit = new ListCriteria();
@@ -379,10 +388,10 @@ public class EventServiceBean implements EventService {
             e.printStackTrace();
         }
 
-        List<MobileTerminalType> result = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
+        List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
+        MobileTerminalType result = resultList.isEmpty()?null:resultList.get(0);
 
-        // todo: verify only one MT
-        return result.get(0);
+        return result;
 
     }
 
