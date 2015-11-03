@@ -22,7 +22,6 @@
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>0.1-SNAPSHOT</uvms.config.version>
         <uvms.common.version>1.4-SNAPSHOT</uvms.common.version>
-
         <movement.model.version>1.0.6-SNAPSHOT</movement.model.version>
         <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
         <vessel.model.version>1.0.10-SNAPSHOT</vessel.model.version>
@@ -68,12 +67,6 @@
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms</groupId>
-            <artifactId>uvms-commons</artifactId>
-            <version>${uvms.common.version}</version>
         </dependency>
     </dependencies>
 

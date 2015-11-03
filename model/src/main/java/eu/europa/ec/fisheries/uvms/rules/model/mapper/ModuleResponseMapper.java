@@ -28,19 +28,19 @@ public class ModuleResponseMapper {
     }
 
     public static MovementRefType mapSetMovementReportResponse(TextMessage response, String correlationId) throws RulesModelMapperException {
-    	try {
-			validateResponse(response, correlationId);
-			SetMovementReportResponse unmarshalledResponse = JAXBMarshaller.unmarshallTextMessage(response, SetMovementReportResponse.class);
-			return unmarshalledResponse.getMovementRef();
-		} catch (RulesModelMapperException | JMSException e) {
-			//TODO take care of exception
-			throw new RulesModelMapperException("FIX ME");
-		}
+        try {
+            validateResponse(response, correlationId);
+            SetMovementReportResponse unmarshalledResponse = JAXBMarshaller.unmarshallTextMessage(response, SetMovementReportResponse.class);
+            return unmarshalledResponse.getMovementRef();
+        } catch (RulesModelMapperException | JMSException e) {
+            //TODO take care of exception
+            throw new RulesModelMapperException("FIX ME");
+        }
     }
-    
+
     public static String createSetMovementReportResponse(MovementRefType movementRefType) throws RulesModelMarshallException {
-    	SetMovementReportResponse response = new SetMovementReportResponse();
-		response.setMovementRef(movementRefType);
-    	return JAXBMarshaller.marshallJaxBObjectToString(response);
+        SetMovementReportResponse response = new SetMovementReportResponse();
+        response.setMovementRef(movementRefType);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 }
