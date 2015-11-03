@@ -15,7 +15,7 @@
     
     <xsd:simpleType name="IdType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="SATELLITE_NUMBER"/>
+            <xsd:enumeration value="SERIAL_NUMBER"/>
             <xsd:enumeration value="LES"/>
             <xsd:enumeration value="DNID"/>
             <xsd:enumeration value="MEMBER_NUMBER"/>
