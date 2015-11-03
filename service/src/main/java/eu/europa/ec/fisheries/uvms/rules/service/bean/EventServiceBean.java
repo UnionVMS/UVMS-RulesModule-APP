@@ -378,7 +378,7 @@ public class EventServiceBean implements EventService {
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
                     break;
-                case SATELLITE_NUMBER:
+                case SERIAL_NUMBER:
                 case LES:
                 default:
                     LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
