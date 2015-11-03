@@ -9,7 +9,15 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandTypeType;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.SetCommandRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
+import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,7 +186,7 @@ public class RulesServiceBean implements RulesService {
 
     // Triggered by rule engine, no response expected
     @Override
-    public void createAlarmReport(String ruleGuid, RawMovementFact fact) throws RulesServiceException {
+    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
         LOG.info("Create alarm invoked in service layer");
         try {
             // TODO: Decide who sets the guid, Rules or Exchange
@@ -199,7 +207,7 @@ public class RulesServiceBean implements RulesService {
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
-            alarmItem.setRuleGuid(ruleGuid);
+            alarmItem.setRuleGuid(ruleName);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 
@@ -281,13 +289,19 @@ public class RulesServiceBean implements RulesService {
 
     private void sendToEmail(String emailAddress, String ruleName) {
         // TODO: Decide on what message to send
-        String message = "A rule has been triggered in UVMS: '" + ruleName + "'";
 
-//        SendMovementToPluginRequest sendMovementToPluginRequest;
+        EmailType email = new EmailType();
+        String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
+        email.setBody(body);
+        email.setFrom("No Reply");
+        email.setSubject("You've got mail!");
+        email.setTo(emailAddress);
 
-//        String sendMovementToPluginRequest = ExchangeModuleRequestMapper.
-//        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
-//        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+        try {
+            ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
+        } catch (ExchangeModelMapperException e) {
+            LOG.error("[ Failed to send email! ]");
+        }
 
     }
 
@@ -301,9 +315,8 @@ public class RulesServiceBean implements RulesService {
             ticket.setRuleGuid(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
             ticket.setUpdatedBy("UVMS");
-
-            // TODO: Add movementGuid
-//                ticket.setMovementGuid();
+            ticket.setMovementGuid(fact.getMovementGuid());
+            ticket.setGuid(UUID.randomUUID().toString());
 
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
             producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
@@ -403,9 +416,8 @@ public class RulesServiceBean implements RulesService {
                 ticket.setRuleGuid(ruleGuid);
                 ticket.setUpdatedBy("UVMS");
                 ticket.setStatus(TicketStatusType.OPEN);
-
-                // TODO: Add movementGuid
-//                ticket.setMovementGuid();
+                ticket.setMovementGuid(fact.getMovementGuid());
+                ticket.setGuid(UUID.randomUUID().toString());
 
                 String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
                 producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
