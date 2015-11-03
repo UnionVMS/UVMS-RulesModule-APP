@@ -3,9 +3,11 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -70,6 +72,18 @@ public class AlarmRestResource {
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
+        }
+    }
+
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/{guid}")
+    public ResponseDto getAlarmReportByGuid(@PathParam("guid") String guid) {
+        try {
+            return new ResponseDto(serviceLayer.getAlarmReportByGuid(guid), ResponseCode.OK);
+        } catch (RulesServiceException e) {
+            LOG.error("[ Error when getting alarm by GUID. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
         }
     }
 

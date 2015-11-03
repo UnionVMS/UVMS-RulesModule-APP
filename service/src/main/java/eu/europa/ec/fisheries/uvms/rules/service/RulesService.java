@@ -117,4 +117,18 @@ public interface RulesService {
 
     public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException;
 
+    /**
+     * @param guid the GUID of an alarm
+     * @return an alarm
+     * @throws RulesServiceException if unsuccessful
+     */
+    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException;
+
+    /**
+     * @param guid the GUID of a ticket
+     * @return a ticket
+     * @throws RulesServiceException if unsuccessful
+     */
+    public TicketType getTicketByGuid(String guid) throws RulesServiceException;
+
 }

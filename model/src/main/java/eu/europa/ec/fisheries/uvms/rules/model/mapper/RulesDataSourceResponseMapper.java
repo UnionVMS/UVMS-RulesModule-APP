@@ -5,27 +5,31 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
-import eu.europa.ec.fisheries.schema.rules.source.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SingleAlarmResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SingleTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
@@ -181,6 +185,30 @@ public class RulesDataSourceResponseMapper {
     public static String getTicketByVesselGuidResponse(TicketType ticketType) throws RulesModelMapperException {
         GetTicketByVesselGuidResponse response = new GetTicketByVesselGuidResponse();
         response.setTicket(ticketType);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String mapToCreateTicketResponse(TicketType ticket) throws RulesModelMarshallException {
+        CreateTicketResponse response = new CreateTicketResponse();
+        response.setTicket(ticket);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String toCreateAlarmReportResponse(AlarmReportType createdReport) throws RulesModelMarshallException {
+        CreateAlarmReportResponse response = new CreateAlarmReportResponse();
+        response.setAlarm(createdReport);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String toSingleAlarmReportResponse(AlarmReportType alarmReport) throws RulesModelMarshallException {
+        SingleAlarmResponse response = new SingleAlarmResponse();
+        response.setAlarm(alarmReport);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String toSingleTicketResponse(TicketType ticket) throws RulesModelMarshallException {
+        SingleTicketResponse response = new SingleTicketResponse();
+        response.setTicket(ticket);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

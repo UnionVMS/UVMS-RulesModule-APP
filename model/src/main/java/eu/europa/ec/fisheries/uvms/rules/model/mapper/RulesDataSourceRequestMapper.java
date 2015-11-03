@@ -1,18 +1,32 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.UpsertPreviousReportRequest;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-
-import javax.xml.datatype.XMLGregorianCalendar;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
 public class RulesDataSourceRequestMapper {
 
@@ -108,6 +122,20 @@ public class RulesDataSourceRequestMapper {
         UpsertPreviousReportRequest request = new UpsertPreviousReportRequest();
         request.setMethod(RulesDataSourceMethod.UPSERT_PREVIOUS_REPORT);
         request.setPreviousReport(report);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapGetTicketByGuid(String guid) throws RulesModelMarshallException {
+        GetTicketRequest request = new GetTicketRequest();
+        request.setGuid(guid);
+        request.setMethod(RulesDataSourceMethod.GET_TICKET);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapGetAlarmByGuid(String guid) throws RulesModelMarshallException {
+        GetAlarmRequest request = new GetAlarmRequest();
+        request.setMethod(RulesDataSourceMethod.GET_ALARM);
+        request.setGuid(guid);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

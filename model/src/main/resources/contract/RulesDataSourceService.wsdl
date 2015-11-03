@@ -33,7 +33,9 @@
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
                     <xsd:enumeration value="GET_CUSTOM_RULE"/>
-                    
+                    <xsd:enumeration value="GET_ALARM"/>
+                    <xsd:enumeration value="GET_TICKET"/>
+
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
@@ -229,6 +231,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ack" type="xsd:string"/>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -251,6 +254,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ack" type="xsd:string"/>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -383,6 +387,47 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get alarm by guid request -->
+            <xsd:element name="GetAlarmRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SingleAlarmResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by guid request -->
+            <xsd:element name="GetTicketRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SingleTicketResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
 
         </xsd:schema>
     </types>
@@ -496,6 +541,20 @@
         <part name="body" element="source:UpsertPreviousReportResponse"/>
     </message>
 
+    <message name="GetAlarmRequest">
+        <part name="body" element="source:GetAlarmRequest"/>
+    </message>
+    <message name="GetAlarmResponse">
+        <part name="body" element="source:SingleAlarmResponse"/>
+    </message>
+
+    <message name="GetTicketRequest">
+        <part name="body" element="source:GetTicketRequest"/>
+    </message>
+    <message name="GetTicketResponse">
+        <part name="body" element="source:SingleTicketResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -584,6 +643,18 @@
         <operation name="UpsertPreviousReport">
             <input message="source:UpsertPreviousReportRequest"/>
             <output message="source:UpsertPreviousReportResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarm">
+            <input message="source:GetAlarmRequest"/>
+            <output message="source:GetAlarmResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicket">
+            <input message="source:GetTicketRequest"/>
+            <output message="source:GetTicketResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -758,6 +829,30 @@
         </operation>
 
         <operation name="UpsertPreviousReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarm">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicket">
             <input>
                 <soap:body use="literal"/>
             </input>

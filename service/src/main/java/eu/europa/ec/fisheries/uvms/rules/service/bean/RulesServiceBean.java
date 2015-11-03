@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -31,18 +33,25 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SingleAlarmResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.SingleTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
@@ -50,6 +59,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesMapper;
 
@@ -66,6 +77,14 @@ public class RulesServiceBean implements RulesService {
 
     @EJB
     RulesMessageProducer producer;
+
+    @Inject
+    @AlarmReportEvent
+    private Event<NotificationMessage> alarmReportEvent;
+
+    @Inject
+    @TicketEvent
+    private Event<NotificationMessage> ticketEvent;
 
     /**
      * {@inheritDoc}
@@ -153,7 +172,13 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response);
+            TicketType updatedTicket = RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response);
+
+            // Notify long-polling clients of the update
+            ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+
+            return updatedTicket;
+
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
@@ -168,6 +193,9 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             AlarmReportType result = RulesDataSourceResponseMapper.mapToSetAlarmStatusFromResponse(response);
+
+            // Notify long-polling clients of the change
+            alarmReportEvent.fire(new NotificationMessage("guid", result.getGuid()));
 
             // If accepted, send movement to Movement Module
             if (result.getStatus() == AlarmStatusType.CLOSED) {
@@ -212,7 +240,13 @@ public class RulesServiceBean implements RulesService {
             alarmReport.getAlarmItem().addAll(alarmItems);
 
             String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
-            producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            // Notify long-polling clients of the new alarm report
+            CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
+            alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
+
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
@@ -319,7 +353,13 @@ public class RulesServiceBean implements RulesService {
             ticket.setGuid(UUID.randomUUID().toString());
 
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-            producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            // Notify long-polling clients of the new ticket
+            CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
+            ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
+
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
@@ -426,6 +466,34 @@ public class RulesServiceBean implements RulesService {
             throw new RulesServiceException(ex.getMessage());
         }
 
+    }
+
+    @Override
+    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException {
+        try {
+            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmByGuid(guid);
+            String messageId = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            SingleAlarmResponse singleAlarmReportResponse = JAXBMarshaller.unmarshallTextMessage(response, SingleAlarmResponse.class);
+            return singleAlarmReportResponse.getAlarm();
+        } catch (MessageException | RulesModelMarshallException e) {
+            LOG.error("[ Error when getting alarm by GUID ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting alarm by GUID. ]");
+        }
+    }
+
+    @Override
+    public TicketType getTicketByGuid(String guid) throws RulesServiceException {
+        try {
+            String getTicketReportRequest = RulesDataSourceRequestMapper.mapGetTicketByGuid(guid);
+            String messageId = producer.sendDataSourceMessage(getTicketReportRequest, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            SingleTicketResponse singleTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, SingleTicketResponse.class);
+            return singleTicketResponse.getTicket();
+        } catch (MessageException | RulesModelMarshallException e) {
+            LOG.error("[ Error when getting ticket by GUID ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting ticket by GUID. ]");
+        }
     }
 
 }

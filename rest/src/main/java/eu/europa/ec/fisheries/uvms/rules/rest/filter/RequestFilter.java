@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author jojoha
  */
-@WebFilter("/*")
+@WebFilter(asyncSupported = true, urlPatterns = {"/*"})
 public class RequestFilter implements Filter {
 
     final static Logger LOG = LoggerFactory.getLogger(RequestFilter.class);
