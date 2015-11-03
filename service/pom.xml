@@ -29,6 +29,7 @@
                 <version>${drools.version}</version>
                 <scope>import</scope>
             </dependency>
+           
         </dependencies>
     </dependencyManagement>
   
@@ -100,6 +101,11 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-templates</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>uvms-commons</artifactId>
+            <version>${uvms.common.version}</version>
         </dependency>
     </dependencies>
 
