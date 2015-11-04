@@ -38,9 +38,6 @@ public class EventServiceBean implements EventService {
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
-    @Inject
-    RulesValidator rulesValidator;
-
     @EJB
     RulesMessageProducer producer;
 
@@ -105,5 +102,7 @@ public class EventServiceBean implements EventService {
         }
 
     }
+
+    // TODO: Missing error handler for  errorEvent.fire(message);
 
 }
