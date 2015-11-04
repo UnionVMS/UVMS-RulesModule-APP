@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
@@ -10,6 +11,9 @@ import java.util.List;
 @Local
 public interface ValidationService {
     List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
+
+    // Triggered by rule engine
+    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException;
 
     // Triggered by rule engine
     void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;

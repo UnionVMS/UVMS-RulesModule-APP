@@ -40,6 +40,7 @@ public class RulesUtil {
             CustomRuleDto rulesDto = new CustomRuleDto();
 
             rulesDto.setRuleName(rawRule.getName());
+            rulesDto.setRuleGuid(rawRule.getGuid());
 
             List<CustomRuleSegmentType> segments = rawRule.getDefinitions();
             StringBuilder sb = new StringBuilder();
@@ -162,6 +163,9 @@ public class RulesUtil {
                 case AREA_CODE:
                     sb.append("areaCodes");
                     break;
+                case AREA_NAME:
+                    sb.append("areaNames");
+                    break;
                 case AREA_ID:
                     sb.append("areaRemoteIds");
                     break;
@@ -192,6 +196,9 @@ public class RulesUtil {
                 case COUNTRY_REMOTE_ID:
                     sb.append("closestCountryRemoteId");
                     break;
+                case COUNTRY_NAME:
+                    sb.append("closestCountryName");
+                    break;
                 case PORT_CODE:
                     sb.append("closestPortCode");
                     break;
@@ -200,6 +207,9 @@ public class RulesUtil {
                     break;
                 case PORT_REMOTE_ID:
                     sb.append("closestPortRemoteId");
+                    break;
+                case PORT_NAME:
+                    sb.append("closestPortName");
                     break;
                 default:
                     break;
@@ -324,9 +334,11 @@ public class RulesUtil {
         return sb.toString();
     }
 
-    public static MovementFact mapMovementFact(MovementType movement, String externalMarking, String flagState, String mobileTerminalDnid,
-                                               String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String vesselName, String vesselGuid) {
+    public static MovementFact mapMovementFact(MovementType movement, Vessel vessel, String mobileTerminalDnid, String mobileTerminalMemberNumber, String mobileTerminalSerialNumber) {
         MovementFact fact = new MovementFact();
+
+        // TODO: Add this
+        // comChannelType=null,
 
         // Base
         fact.setCalculatedCourse(movement.getCalculatedCourse());
@@ -335,8 +347,6 @@ public class RulesUtil {
             fact.setComChannelType(movement.getComChannelType().name());
         }
         fact.setConnectId(movement.getConnectId());
-        fact.setExternalMarking(externalMarking);
-        fact.setFlagState(flagState);
         fact.setMobileTerminalDnid(mobileTerminalDnid);
         fact.setMobileTerminalMemberNumber(mobileTerminalMemberNumber);
         fact.setMobileTerminalSerialNumber(mobileTerminalSerialNumber);
@@ -353,10 +363,22 @@ public class RulesUtil {
             fact.setSource(movement.getSource().name());
         }
         fact.setStatusCode(movement.getStatus());
-        fact.setVesselGuid(vesselGuid);
-        fact.setVesselName(vesselName);
         fact.setWkt(movement.getWkt());
 
+        if (vessel != null) {
+            fact.setExternalMarking(vessel.getExternalMarking());
+            fact.setFlagState(vessel.getCountryCode());
+            fact.setVesselGuid(vessel.getVesselId().getGuid());
+            fact.setVesselName(vessel.getName());
+            fact.setVesselCfr(vessel.getCfr());
+            fact.setVesselIrcs(vessel.getIrcs());
+
+            // TODO: Add these
+//            assetIdAssetType=null,
+//            assetIdType=null,
+//            assetIdValue=null,
+
+        }
         // Activity
         if (movement.getActivity() != null) {
             fact.setActivityCallback(movement.getActivity().getCallback());
@@ -366,7 +388,7 @@ public class RulesUtil {
             }
         }
 
-        // AssetId
+        // AssetId - this is wrong, we don't get anything from Movement. Probably Vessel or MobileTerminal
         if (movement.getAssetId() != null) {
             fact.setAssetIdAssetType(movement.getAssetId().getAssetType().name());
             if (movement.getAssetId().getIdType() != null) {
@@ -402,6 +424,7 @@ public class RulesUtil {
                 fact.getAreaCodes().add(area.getCode());
                 fact.getAreaRemoteIds().add(area.getRemoteId());
                 fact.getAreaTypes().add(area.getAreaType());
+                fact.getAreaNames().add(area.getName());
             }
 
             // Country
@@ -409,6 +432,7 @@ public class RulesUtil {
                 fact.setClosestCountryCode(movement.getMetaData().getClosestCountry().getCode());
                 fact.setClosestCountryDistance(movement.getMetaData().getClosestCountry().getDistance());
                 fact.setClosestCountryRemoteId(movement.getMetaData().getClosestCountry().getRemoteId());
+                fact.setClosestCountryName(movement.getMetaData().getClosestCountry().getName());
             }
 
             // Port
@@ -416,6 +440,7 @@ public class RulesUtil {
                 fact.setClosestPortCode(movement.getMetaData().getClosestPort().getCode());
                 fact.setClosestPortDistance(movement.getMetaData().getClosestPort().getDistance());
                 fact.setClosestPortRemoteId(movement.getMetaData().getClosestPort().getRemoteId());
+                fact.setClosestPortName(movement.getMetaData().getClosestPort().getName());
             }
 
         }

@@ -51,16 +51,19 @@ public class MovementFact {
     List<String> areaCodes;
     List<String> areaRemoteIds;
     List<String> areaTypes;
+    List<String> areaNames;
 
     // Closest country
     private String closestCountryCode;
     private Double closestCountryDistance;
     private String closestCountryRemoteId;
+    private String closestCountryName;
 
     // Closets port
     private String closestPortCode;
     private Double closestPortDistance;
     private String closestPortRemoteId;
+    private String closestPortName;
 
     public Date getPositionTime() {
         return positionTime;
@@ -391,20 +394,80 @@ public class MovementFact {
         this.areaRemoteIds = areaRemoteIds;
     }
 
+    public List<String> getAreaNames() {
+        if (areaNames == null) {
+            areaNames = new ArrayList<String>();
+        }
+        return areaNames;
+    }
+
+    public void setAreaNames(List<String> areaNames) {
+        this.areaNames = areaNames;
+    }
+
+    public String getClosestCountryName() {
+        return closestCountryName;
+    }
+
+    public void setClosestCountryName(String closestCountryName) {
+        this.closestCountryName = closestCountryName;
+    }
+
+    public String getClosestPortName() {
+        return closestPortName;
+    }
+
+    public void setClosestPortName(String closestPortName) {
+        this.closestPortName = closestPortName;
+    }
+
     @Override
     public String toString() {
-        return "MovementFact [calculatedCourse=" + calculatedCourse + ", calculatedSpeed=" + calculatedSpeed + ", comChannelType=" + comChannelType
-                + ", connectId=" + connectId + ", externalMarking=" + externalMarking + ", flagState=" + flagState + ", mobileTerminalMemberNumber="
-                + mobileTerminalMemberNumber + ", mobileTerminalSerialNumber=" + mobileTerminalSerialNumber + ", mobileTerminalDnid="
-                + mobileTerminalDnid + ", movementGuid=" + movementGuid + ", movementType=" + movementType + ", positionTime=" + positionTime
-                + ", reportedCourse=" + reportedCourse + ", reportedSpeed=" + reportedSpeed + ", source=" + source + ", statusCode=" + statusCode
-                + ", vesselName=" + vesselName + ", wkt=" + wkt + ", activityCallback=" + activityCallback + ", activityMessageId="
-                + activityMessageId + ", activityMessageType=" + activityMessageType + ", assetIdAssetType=" + assetIdAssetType + ", assetIdType="
-                + assetIdType + ", assetIdValue=" + assetIdValue + ", vesselCfr=" + vesselCfr + ", vesselIrcs=" + vesselIrcs + ", altitude="
-                + altitude + ", latitude=" + latitude + ", longitude=" + longitude + ", fromSegmentType=" + fromSegmentType + ", areaCodes="
-                + areaCodes + ", areaRemoteIds=" + areaRemoteIds + ", areaTypes=" + areaTypes + ", closestCountryCode=" + closestCountryCode
-                + ", closestCountryDistance=" + closestCountryDistance + ", closestCountryRemoteId=" + closestCountryRemoteId + ", closestPortCode="
-                + closestPortCode + ", closestPortDistance=" + closestPortDistance + ", closestPortRemoteId=" + closestPortRemoteId + "]";
+        return "MovementFact{" +
+                "calculatedCourse=" + calculatedCourse +
+                ", calculatedSpeed=" + calculatedSpeed +
+                ", comChannelType='" + comChannelType + '\'' +
+                ", connectId='" + connectId + '\'' +
+                ", externalMarking='" + externalMarking + '\'' +
+                ", flagState='" + flagState + '\'' +
+                ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
+                ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
+                ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
+                ", movementGuid='" + movementGuid + '\'' +
+                ", movementType='" + movementType + '\'' +
+                ", positionTime=" + positionTime +
+                ", reportedCourse=" + reportedCourse +
+                ", reportedSpeed=" + reportedSpeed +
+                ", source='" + source + '\'' +
+                ", statusCode='" + statusCode + '\'' +
+                ", vesselGuid='" + vesselGuid + '\'' +
+                ", vesselName='" + vesselName + '\'' +
+                ", wkt='" + wkt + '\'' +
+                ", activityCallback='" + activityCallback + '\'' +
+                ", activityMessageId='" + activityMessageId + '\'' +
+                ", activityMessageType='" + activityMessageType + '\'' +
+                ", assetIdAssetType='" + assetIdAssetType + '\'' +
+                ", assetIdType='" + assetIdType + '\'' +
+                ", assetIdValue='" + assetIdValue + '\'' +
+                ", vesselCfr='" + vesselCfr + '\'' +
+                ", vesselIrcs='" + vesselIrcs + '\'' +
+                ", altitude=" + altitude +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", fromSegmentType='" + fromSegmentType + '\'' +
+                ", areaCodes=" + areaCodes +
+                ", areaRemoteIds=" + areaRemoteIds +
+                ", areaTypes=" + areaTypes +
+                ", areaNames=" + areaNames +
+                ", closestCountryCode='" + closestCountryCode + '\'' +
+                ", closestCountryDistance=" + closestCountryDistance +
+                ", closestCountryRemoteId='" + closestCountryRemoteId + '\'' +
+                ", closestCountryName='" + closestCountryName + '\'' +
+                ", closestPortCode='" + closestPortCode + '\'' +
+                ", closestPortDistance=" + closestPortDistance +
+                ", closestPortRemoteId='" + closestPortRemoteId + '\'' +
+                ", closestPortName='" + closestPortName + '\'' +
+                '}';
     }
 
 }

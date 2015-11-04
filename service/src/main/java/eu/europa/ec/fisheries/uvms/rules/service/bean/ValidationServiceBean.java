@@ -81,6 +81,7 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     // Triggered by rule engine
+    @Override
     public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException {
         LOG.info("Creating custom event. NOT FULLY IMPLEMENTED");
 
@@ -118,6 +119,7 @@ public class ValidationServiceBean implements ValidationService {
                     LOG.info("Performing action '{}' with value '{}'", action, value);
                     break;
                 case SEND_TO_ENDPOINT:
+                    sendToEndpoint(ruleName, ruleGuid, fact, value);
                     LOG.info("Performing action '{}' with value '{}'", action, value);
                     break;
                 case SMS:
@@ -133,7 +135,11 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void sendToEmail(String emailAddress, String ruleName) {
+    private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) throws RulesServiceException {
+        LOG.info("Sending to endpoint {} [NOT IMPLEMENTED]", endpoint);
+    }
+
+    private void sendToEmail(String emailAddress, String ruleName) throws RulesServiceException {
         // TODO: Decide on what message to send
 
         EmailType email = new EmailType();
@@ -146,9 +152,12 @@ public class ValidationServiceBean implements ValidationService {
         LOG.info("Sending email:{}", body);
 
         try {
-            ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
-        } catch (ExchangeModelMapperException e) {
+            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+        } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ]");
+            throw new RulesServiceException("[ Failed to send email! ]");
         }
     }
 

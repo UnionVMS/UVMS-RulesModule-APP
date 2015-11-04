@@ -67,6 +67,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesMapper;
 public class RulesServiceBean implements RulesService {
 
     final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
+    public static final String REF_TYPE_MOVEMENT = "MOVEMENT";
+    public static final String REF_TYPE_ALARM = "ALARM";
 
     @EJB
     ParameterService parameterService;
@@ -199,17 +201,8 @@ public class RulesServiceBean implements RulesService {
             // Notify long-polling clients of the change
             alarmReportEvent.fire(new NotificationMessage("guid", result.getGuid()));
 
-            // If accepted, send movement to Movement Module
-            if (result.getStatus() == AlarmStatusType.CLOSED) {
-                MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper()
-                        .map(result.getRawMovement(), MovementBaseType.class);
-                String movement = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
-                messageId = producer.sendDataSourceMessage(movement, DataSourceQueue.MOVEMENT);
-                response = consumer.getMessage(messageId, TextMessage.class);
-            }
-
             return result;
-        } catch (RulesModelMapperException | MessageException | ModelMarshallException e) {
+        } catch (RulesModelMapperException | MessageException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -517,7 +510,13 @@ public class RulesServiceBean implements RulesService {
                 RawMovementType rawMovementType = alarm.getRawMovement();
 
                 String pluginType = alarm.getPluginType();
-                setMovementReportReceived(rawMovementType, pluginType);
+                MovementRefType refType = setMovementReportReceived(rawMovementType, pluginType);
+
+                // Close ok reprocessed alarms
+                if (refType.getType().equals(REF_TYPE_MOVEMENT)) {
+                    alarm.setStatus(AlarmStatusType.CLOSED);
+                    updateAlarmStatus(alarm);
+                }
             }
 
             // TODO: Better......................
@@ -585,7 +584,7 @@ public class RulesServiceBean implements RulesService {
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
                     ref.setMovementRefGuid(createdMovement.getGuid());
-                    ref.setType("MOVEMENT");
+                    ref.setType(REF_TYPE_MOVEMENT);
                     return ref;
                 } else {
                     LOG.error("[ Error when getting movement from Movement , response from JMS Queue is null ]");
@@ -595,7 +594,7 @@ public class RulesServiceBean implements RulesService {
                 // Tell Exchange that the report caused an alarm
                 MovementRefType ref = new MovementRefType();
                 ref.setMovementRefGuid(rawFact.getMovementGuid());
-                ref.setType("ALARM");
+                ref.setType(REF_TYPE_ALARM);
                 return ref;
             }
         } catch (MessageException |MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | VesselModelMapperException e) {
@@ -612,19 +611,13 @@ public class RulesServiceBean implements RulesService {
         String mobileTerminalSerialNumber = rawFact.getMobileTerminalSerialNumber();
 
         // Vessel
-        String externalMarking = null;
-        String flagState = null;
-        String vesselName = null;
         String assetGroup = null;
         String vesselGuid = null;
         if (vessel != null) {
             // TODO:
             assetGroup = "GO_GET_IT!!!";
 
-            vesselName = vessel.getName();
             vesselGuid = vessel.getVesselId().getGuid();
-            externalMarking = vessel.getExternalMarking();
-            flagState = vessel.getCountryCode();
         }
 
         try {
@@ -640,8 +633,9 @@ public class RulesServiceBean implements RulesService {
             // TODO:
             // Enrich with extra movement data
 
-            MovementFact movementFact = RulesUtil.mapMovementFact(movement, externalMarking, flagState, mobileTerminalDnid, mobileTerminalMemberNumber,
-                    mobileTerminalSerialNumber, vesselName, vesselGuid);
+//            MovementFact movementFact = RulesUtil.mapMovementFact(movement, externalMarking, flagState, mobileTerminalDnid, mobileTerminalMemberNumber,
+//                    mobileTerminalSerialNumber, vesselName, vesselGuid);
+            MovementFact movementFact = RulesUtil.mapMovementFact(movement, vessel, mobileTerminalDnid, mobileTerminalMemberNumber, mobileTerminalSerialNumber);
 
             LOG.info("myggan - movementFact:{}", movementFact);
 

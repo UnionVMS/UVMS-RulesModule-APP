@@ -46,6 +46,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE)
     private Queue mobileTerminalQueue;
 
+    @Resource(mappedName = MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE)
+    private Queue exchangeQueue;
+
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
@@ -78,6 +81,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 break;
             case MOBILE_TERMINAL:
                 session.createProducer(mobileTerminalQueue).send(message);
+                break;
+            case EXCHANGE:
+                session.createProducer(exchangeQueue).send(message);
                 break;
             default:
                 break;

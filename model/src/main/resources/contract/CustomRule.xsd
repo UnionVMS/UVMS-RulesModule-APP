@@ -95,6 +95,7 @@
             <xsd:enumeration value="AREA_CODE"/>
             <xsd:enumeration value="AREA_TYPE"/>
             <xsd:enumeration value="AREA_ID"/>
+            <xsd:enumeration value="AREA_NAME"/>
             <!-- ACTIVITY -->
             <xsd:enumeration value="ACTIVITY_CALLBACK"/>
             <xsd:enumeration value="ACTIVITY_MESSAGE_ID"/>
@@ -107,10 +108,12 @@
             <xsd:enumeration value="COUNTRY_CODE"/>
             <xsd:enumeration value="COUNTRY_DISTANCE"/>
             <xsd:enumeration value="COUNTRY_REMOTE_ID"/>
+            <xsd:enumeration value="COUNTRY_NAME"/>
             <!-- CLOSEST_PORT -->
             <xsd:enumeration value="PORT_CODE"/>
             <xsd:enumeration value="PORT_DISTANCE"/>
             <xsd:enumeration value="PORT_REMOTE_ID"/>
+            <xsd:enumeration value="PORT_NAME"/>
         </xsd:restriction>
     </xsd:simpleType>
 

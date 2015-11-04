@@ -34,6 +34,7 @@ public enum SubCriteria {
     AREA_CODE(MainCriteria.AREA),
     AREA_TYPE(MainCriteria.AREA),
     AREA_ID(MainCriteria.AREA),
+    AREA_NAME(MainCriteria.AREA),
 
     ACTIVITY_CALLBACK(MainCriteria.ACTIVITY),
     ACTIVITY_MESSAGE_ID(MainCriteria.ACTIVITY),
@@ -46,10 +47,12 @@ public enum SubCriteria {
     COUNTRY_CODE(MainCriteria.CLOSEST_COUNTRY),
     COUNTRY_DISTANCE(MainCriteria.CLOSEST_COUNTRY),
     COUNTRY_REMOTE_ID(MainCriteria.CLOSEST_COUNTRY),
+    COUNTRY_NAME(MainCriteria.CLOSEST_COUNTRY),
 
     PORT_CODE(MainCriteria.CLOSEST_PORT),
     PORT_DISTANCE(MainCriteria.CLOSEST_PORT),
-    PORT_REMOTE_ID(MainCriteria.CLOSEST_PORT);
+    PORT_REMOTE_ID(MainCriteria.CLOSEST_PORT),
+    PORT_NAME(MainCriteria.CLOSEST_PORT);
 
     private final MainCriteria mainCriteria;
 
