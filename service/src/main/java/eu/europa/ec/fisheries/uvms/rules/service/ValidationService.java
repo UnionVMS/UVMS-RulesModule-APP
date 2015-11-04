@@ -13,8 +13,9 @@ public interface ValidationService {
     List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
     // Triggered by rule engine
-    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException;
+    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions);
 
     // Triggered by rule engine
     void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
+
 }

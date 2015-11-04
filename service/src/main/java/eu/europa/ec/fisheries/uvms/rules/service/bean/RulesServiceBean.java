@@ -27,6 +27,7 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
@@ -87,7 +88,7 @@ public class RulesServiceBean implements RulesService {
     @TicketEvent
     private Event<NotificationMessage> ticketEvent;
 
-    @Inject
+    @EJB
     RulesValidator rulesValidator;
 
     /**
@@ -103,6 +104,9 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapCreateCustomRule(customRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            rulesValidator.init();
+
             return RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());

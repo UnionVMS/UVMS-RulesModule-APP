@@ -82,8 +82,8 @@ public class ValidationServiceBean implements ValidationService {
 
     // Triggered by rule engine
     @Override
-    public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException {
-        LOG.info("Creating custom event. NOT FULLY IMPLEMENTED");
+    public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) {
+        LOG.info("Performing actions on triggered user rules [NOT FULLY IMPLEMENTED]");
 
         // For now the actions are described as a comma separated list. Parse
         // out the action, switch on it, and log the action and the
@@ -105,28 +105,25 @@ public class ValidationServiceBean implements ValidationService {
                     // Is it enough with a notification, or what's in the fact?
                     // Or should I enrich the rules, and this method,
                     // to receive an additional text?
-                    LOG.info("Sending email to '{}'", value);
                     sendToEmail(value, ruleName);
                     break;
                 case ON_HOLD:
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
+                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 case TICKET:
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
                     createTicket(ruleName, ruleGuid, fact);
                     break;
                 case MANUAL_POLL:
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
+                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 case SEND_TO_ENDPOINT:
                     sendToEndpoint(ruleName, ruleGuid, fact, value);
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
                     break;
                 case SMS:
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
+                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 case TOP_BAR_NOTIFICATION:
-                    LOG.info("Performing action '{}' with value '{}'", action, value);
+                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 default:
                     LOG.info("The action '{}' is not defined", action);
@@ -135,12 +132,14 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) throws RulesServiceException {
+    private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
         LOG.info("Sending to endpoint {} [NOT IMPLEMENTED]", endpoint);
     }
 
-    private void sendToEmail(String emailAddress, String ruleName) throws RulesServiceException {
+    private void sendToEmail(String emailAddress, String ruleName) {
         // TODO: Decide on what message to send
+
+        LOG.info("Sending email to '{}'", emailAddress);
 
         EmailType email = new EmailType();
         String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
@@ -153,15 +152,18 @@ public class ValidationServiceBean implements ValidationService {
 
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
+            LOG.info("Email request to Exchange:{}", request);
+
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//            LOG.info("Email response from Exchange:{}", response);
+
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ]");
-            throw new RulesServiceException("[ Failed to send email! ]");
         }
     }
 
-    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) throws RulesServiceException {
+    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) {
         LOG.info("Create ticket invoked in service layer");
         try {
             TicketType ticket = new TicketType();
@@ -184,7 +186,7 @@ public class ValidationServiceBean implements ValidationService {
             ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
 
         } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
+            LOG.error("[ Failed to create ticket! ]");
         }
     }
 
