@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
@@ -22,9 +20,6 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.search.v1.SearchKey;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
-import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -41,14 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.SingleAlarmResponse;
@@ -64,8 +55,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
@@ -548,17 +537,23 @@ public class RulesServiceBean implements RulesService {
             MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
             auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
 
-            RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, mobileTerminal, pluginType);
+            // Get Vessel
+            Vessel vessel = null;
+            if (mobileTerminal != null) {
+                String connectId = mobileTerminal.getConnectId();
+                vessel = getVesselByConnectId(connectId);
+                auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+            }
+
+            RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, mobileTerminal, vessel, pluginType);
 
             rulesValidator.evaluate(rawFact);
 //            evaluate(rawFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             // MovementComChannelType.FLUX -> assetId
-            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId
+            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId (DNID/MEMBER_NUMBER)
             // assetId | mobileTerminalId -> connectId
-            // TODO: Get more stuff; MobileTerminal guid, finns asset (tex
-            // IRCS), ...
 
             if (rawFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
@@ -572,6 +567,7 @@ public class RulesServiceBean implements RulesService {
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
                 LOG.info("myggan - outgoing message to Movement Module:{}", createMovementRequest);
 
+                // Send to Movement
                 String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
                 auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
@@ -584,7 +580,7 @@ public class RulesServiceBean implements RulesService {
 
                 if (response != null) {
                     MovementType createdMovement = RulesMapper.mapCreateMovementToMovementType(response);
-                    validateMovementReportReceived(createdMovement, rawFact.getMobileTerminalDnid(), rawFact.getMobileTerminalMemberNumber(), rawFact.getMobileTerminalSerialNumber(), rawFact.getConnectId());
+                    validateCreatedMovement(createdMovement, rawFact, vessel);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -602,34 +598,38 @@ public class RulesServiceBean implements RulesService {
                 ref.setType("ALARM");
                 return ref;
             }
-        } catch (MessageException |MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException e) {
+        } catch (MessageException |MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | VesselModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
 
-    private void validateMovementReportReceived(MovementType movement, String mobileTerminalDnid, String mobileTerminalMemberNumber, String mobileTerminalSerialNumber, String connectId) {
+    private void validateCreatedMovement(MovementType movement, RawMovementFact rawFact, Vessel vessel) {
         Date auditTimestamp = new Date();
+
+        // Mobile Terminal
+        String mobileTerminalDnid = rawFact.getMobileTerminalDnid();
+        String mobileTerminalMemberNumber = rawFact.getMobileTerminalMemberNumber();
+        String mobileTerminalSerialNumber = rawFact.getMobileTerminalSerialNumber();
+
+        // Vessel
+        String externalMarking = null;
+        String flagState = null;
+        String vesselName = null;
+        String assetGroup = null;
+        String vesselGuid = null;
+        if (vessel != null) {
+            // TODO:
+            assetGroup = "GO_GET_IT!!!";
+
+            vesselName = vessel.getName();
+            vesselGuid = vessel.getVesselId().getGuid();
+            externalMarking = vessel.getExternalMarking();
+            flagState = vessel.getCountryCode();
+        }
+
         try {
             LOG.info("Validating movement from Movement Module");
 
-            Vessel vessel = getVesselByConnectId(connectId);
-            auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
-
-            String externalMarking = null;
-            String flagState = null;
-            String vesselName = null;
-            String assetGroup = null;
-            String vesselGuid = null;
-            if (vessel != null) {
-                // Enrich with extra vessel data
-                externalMarking = vessel.getExternalMarking();
-                // TODO:
-                flagState = "vessel.getCountryCode() ???";  // Det finns en tabell flagstate i vessel, kolla upp
-                vesselName = vessel.getName();
-                // TODO:
-                assetGroup = "GO_GET_IT!!!";
-                vesselGuid = vessel.getVesselId().getGuid();  // guid
-            }
             // TODO Decide if we really want to verify stuff from MobileTerminal
             // Enrich with extra mobile terminal data
 
@@ -638,18 +638,12 @@ public class RulesServiceBean implements RulesService {
             String vecinityOf = "GO_GET_IT!!!";
 
             // TODO:
-            // Spatial integration
-
-            // TODO:
-            // Enrich with extra spatial data
+            // Enrich with extra movement data
 
             MovementFact movementFact = RulesUtil.mapMovementFact(movement, externalMarking, flagState, mobileTerminalDnid, mobileTerminalMemberNumber,
                     mobileTerminalSerialNumber, vesselName, vesselGuid);
 
             LOG.info("myggan - movementFact:{}", movementFact);
-
-            // TODO:
-            // Verify how spatial data can be validated
 
             rulesValidator.evaluate(movementFact);
 //            evaluate(movementFact);
@@ -664,7 +658,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Vessel getVesselByConnectId(String connectId) throws VesselModelMapperException, MessageException {
-        LOG.info("myggan - search with connectId.{}", connectId);
+        LOG.info("myggan - search vessel with connectId:{}", connectId);
 
         VesselListQuery query = new VesselListQuery();
         VesselListCriteria criteria = new VesselListCriteria();
@@ -677,7 +671,7 @@ public class RulesServiceBean implements RulesService {
         query.setVesselSearchCriteria(criteria);
 
         VesselListPagination pagination = new VesselListPagination();
-        pagination.setListSize(10);
+        pagination.setListSize(1);
         pagination.setPage(1);
         query.setPagination(pagination);
 
@@ -730,6 +724,7 @@ public class RulesServiceBean implements RulesService {
         }
         query.setMobileTerminalSearchCriteria(criteria);
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
+        // TODO: setListSize(1), this is test because the vessel search is wrong
         pagination.setListSize(10);
         pagination.setPage(1);
         query.setPagination(pagination);

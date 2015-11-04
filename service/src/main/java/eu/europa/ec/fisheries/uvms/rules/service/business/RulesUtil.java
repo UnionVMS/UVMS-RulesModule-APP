@@ -11,6 +11,7 @@ import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -422,7 +423,7 @@ public class RulesUtil {
         return fact;
     }
 
-    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, String pluginType) {
+    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Vessel vessel, String pluginType) {
         RawMovementFact fact = new RawMovementFact();
         fact.setRawMovementType(rawMovement);
         fact.setOk(true);
@@ -477,7 +478,7 @@ public class RulesUtil {
 //        }
 
 
-        // Mobile Terminal
+        // From Mobile Terminal
         if (mobileTerminal != null) {
             List<ComChannelType> channels = mobileTerminal.getChannels();
             for (ComChannelType channel : channels) {
@@ -499,6 +500,11 @@ public class RulesUtil {
                 }
             }
             fact.setConnectId(mobileTerminal.getConnectId());
+        }
+
+        // From Vessel
+        if (vessel != null) {
+            fact.setVesselGuid(vessel.getVesselId().getGuid());
         }
         return fact;
     }

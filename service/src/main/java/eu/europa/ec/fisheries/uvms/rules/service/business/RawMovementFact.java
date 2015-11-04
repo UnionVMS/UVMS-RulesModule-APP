@@ -43,6 +43,9 @@ public class RawMovementFact {
     private String mobileTerminalDnid;
     private String mobileTerminalSerialNumber;
 
+    // Vessel
+    private String vesselGuid;
+
     public boolean isOk() {
         return ok;
     }
@@ -227,12 +230,21 @@ public class RawMovementFact {
         this.mobileTerminalDnid = mobileTerminalDnid;
     }
 
+    public String getVesselGuid() {
+        return vesselGuid;
+    }
+
+    public void setVesselGuid(String vesselGuid) {
+        this.vesselGuid = vesselGuid;
+    }
+
     @Override
     public String toString() {
         return "RawMovementFact{" +
                 "rawMovementType=" + rawMovementType +
                 ", ok=" + ok +
                 ", pluginType='" + pluginType + '\'' +
+                ", alarmGuid='" + alarmGuid + '\'' +
                 ", comChannelType='" + comChannelType + '\'' +
                 ", connectId='" + connectId + '\'' +
                 ", movementGuid='" + movementGuid + '\'' +
@@ -252,6 +264,7 @@ public class RawMovementFact {
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
+                ", vesselGuid='" + vesselGuid + '\'' +
                 '}';
     }
 }

@@ -116,7 +116,6 @@ public class ValidationServiceBean implements ValidationService {
                     break;
                 case MANUAL_POLL:
                     LOG.info("Performing action '{}' with value '{}'", action, value);
-                    sendManualPoll(value);
                     break;
                 case SEND_TO_ENDPOINT:
                     LOG.info("Performing action '{}' with value '{}'", action, value);
@@ -134,20 +133,6 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-
-    private void sendManualPoll(String value) {
-        // todo: value is probably not used...
-        // But we still need plugin name, so perhaps we can use this here, but populate automatically. We'll see...
-
-        String pluginName = "";
-
-        //      String sendMovementToPluginRequest = ExchangeModuleRequestMapper.createSetCommandSendPollRequest(pluginName, PluginType.SATELLITE_RECEIVER);
-
-//        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
-//        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
-
-    }
-
     private void sendToEmail(String emailAddress, String ruleName) {
         // TODO: Decide on what message to send
 
@@ -157,6 +142,8 @@ public class ValidationServiceBean implements ValidationService {
         email.setFrom("No Reply");
         email.setSubject("You've got mail!");
         email.setTo(emailAddress);
+
+        LOG.info("Sending email:{}", body);
 
         try {
             ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
@@ -216,6 +203,7 @@ public class ValidationServiceBean implements ValidationService {
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
             alarmItem.setRuleGuid(ruleName);
+            alarmItem.setRuleName(ruleName);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 
