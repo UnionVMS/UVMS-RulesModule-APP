@@ -12,6 +12,7 @@
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="vesselGuid" type="xsd:string"/>
             <xsd:element name="ruleGuid" type="xsd:string"/>
+            <xsd:element name="ruleName" type="xsd:string"/>
             <xsd:element name="movementGuid" type="xsd:string"/>
             <xsd:element name="updated" type="xsd:string"/>
             <xsd:element name="updatedBy" type="xsd:string"/>

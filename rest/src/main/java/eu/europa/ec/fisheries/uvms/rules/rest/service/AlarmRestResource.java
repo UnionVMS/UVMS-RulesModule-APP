@@ -23,6 +23,8 @@ import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
+import java.util.List;
+
 @Path("/alarms")
 @Stateless
 public class AlarmRestResource {
@@ -84,6 +86,28 @@ public class AlarmRestResource {
         } catch (RulesServiceException e) {
             LOG.error("[ Error when getting alarm by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Selected alarms processed
+     * @responseMessage 500 Reprocessing of alarms failed
+     *
+     * @summary Reprocess alarms
+     *
+     */
+    @POST
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/reprocess")
+    public ResponseDto reprocessAlarm(final List<String> alarmGuidList) {
+        LOG.info("Reprocess alarm invoked in rest layer");
+        try {
+            return new ResponseDto(serviceLayer.reprocessAlarm(alarmGuidList), ResponseCode.OK);
+        } catch (RulesServiceException | NullPointerException ex) {
+            LOG.error("[ Error when reprocessing. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
         }
     }
 

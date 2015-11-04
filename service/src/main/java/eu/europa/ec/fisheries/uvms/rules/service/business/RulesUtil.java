@@ -4,6 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttribute;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import org.joda.time.DateTime;
@@ -417,7 +422,7 @@ public class RulesUtil {
         return fact;
     }
 
-    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, String pluginType, String mobileTerminalDnid, String mobileTerminalMemberNumber) {
+    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, String pluginType) {
         RawMovementFact fact = new RawMovementFact();
         fact.setRawMovementType(rawMovement);
         fact.setOk(true);
@@ -427,7 +432,6 @@ public class RulesUtil {
         if (rawMovement.getComChannelType() != null) {
             fact.setComChannelType(rawMovement.getComChannelType().name());
         }
-        fact.setConnectId(rawMovement.getConnectId());
         fact.setMovementGuid(UUID.randomUUID().toString());
         if (rawMovement.getMovementType() != null) {
             fact.setMovementType(rawMovement.getMovementType().name());
@@ -458,10 +462,6 @@ public class RulesUtil {
             fact.setLongitude(rawMovement.getPosition().getLongitude());
         }
 
-        // Mobile Terminal
-        fact.setMobileTerminalDnid(mobileTerminalDnid);
-        fact.setMobileTerminalMemberNumber(mobileTerminalMemberNumber);
-
         // AssetId
 //        // TODO: Fix better test data!!!
 //        List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
@@ -476,6 +476,30 @@ public class RulesUtil {
 //            // TODO: If we want more, add the valid combinations here
 //        }
 
+
+        // Mobile Terminal
+        if (mobileTerminal != null) {
+            List<ComChannelType> channels = mobileTerminal.getChannels();
+            for (ComChannelType channel : channels) {
+                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
+                for (ComChannelAttribute chanAttribute : chanAttributes) {
+                    if (chanAttribute.getType().equals("DNID")) {
+                        fact.setMobileTerminalDnid(chanAttribute.getValue());
+                    }
+                    if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
+                        fact.setMobileTerminalMemberNumber(chanAttribute.getValue());
+                    }
+                }
+            }
+
+            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
+            for (MobileTerminalAttribute attribute : attributes) {
+                if (attribute.getType().equals("SERIAL_NUMBER")) {
+                    fact.setMobileTerminalSerialNumber(attribute.getValue());
+                }
+            }
+            fact.setConnectId(mobileTerminal.getConnectId());
+        }
         return fact;
     }
 

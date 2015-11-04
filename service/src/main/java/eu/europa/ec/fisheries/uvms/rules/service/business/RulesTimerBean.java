@@ -70,7 +70,7 @@ public class RulesTimerBean {
 */
 
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
-    // @Schedule(second = "*/30", minute = "*", hour = "*", persistent = false)
+//     @Schedule(second = "0", minute = "*/3", hour = "*", persistent = false)
     public void checkCommunication() {
         LOG.info("RulesTimerBean tick");
         try {
@@ -90,7 +90,10 @@ public class RulesTimerBean {
 
                 if (fact.getDeadline().getTime() <= fact.getNow().getTime()) {
                     LOG.info("\t==> Executing RULE 'DEADLINE', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid() + ", movementGuid:" + fact.getMovementGuid());
-                    rulesService.timerRuleTriggered("DEADLINE", fact);
+
+                    String ruleName = "DEADLINE";
+                    String ruleGuid = "DEADLINE";
+                    rulesService.timerRuleTriggered(ruleName, ruleGuid, fact);
                 }
 
 //                previousReportFacts.add(fact);

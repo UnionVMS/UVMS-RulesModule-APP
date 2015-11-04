@@ -10,6 +10,7 @@
 
     <xsd:complexType name="AlarmReportType">
         <xsd:sequence>
+            <xsd:element name="pluginType" type="xsd:string"/>
             <xsd:element name="guid" type="xsd:string"/>
             <xsd:element name="assetGuid" type="xsd:string"/>
             <xsd:element name="status" type="alarm:AlarmStatusType"/>

@@ -14,6 +14,7 @@
             <xsd:enumeration value="RULE_GUID"/>
             <xsd:enumeration value="SENDER"/>
             <xsd:enumeration value="STATUS"/>
+            <xsd:enumeration value="ALARM_GUID"/>
         </xsd:restriction>
     </xsd:simpleType>
     
@@ -21,6 +22,7 @@
         <xsd:sequence>
             <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="alarmSearchCriteria" type="search:ListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="dynamic" type="xsd:boolean"/>
         </xsd:sequence>
     </xsd:complexType>
 

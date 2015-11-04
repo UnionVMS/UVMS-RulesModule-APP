@@ -12,6 +12,7 @@ public class RawMovementFact {
     private RawMovementType rawMovementType;
     private boolean ok = true;
     private String pluginType;
+    private String alarmGuid;
 
     // Base
     private String comChannelType;
@@ -40,6 +41,7 @@ public class RawMovementFact {
     // Mobile Terminal
     private String mobileTerminalMemberNumber;
     private String mobileTerminalDnid;
+    private String mobileTerminalSerialNumber;
 
     public boolean isOk() {
         return ok;
@@ -55,6 +57,14 @@ public class RawMovementFact {
 
     public void setPluginType(String pluginType) {
         this.pluginType = pluginType;
+    }
+
+    public String getAlarmGuid() {
+        return alarmGuid;
+    }
+
+    public void setAlarmGuid(String alarmGuid) {
+        this.alarmGuid = alarmGuid;
     }
 
     public RawMovementType getRawMovementType() {
@@ -197,6 +207,14 @@ public class RawMovementFact {
         return mobileTerminalMemberNumber;
     }
 
+    public String getMobileTerminalSerialNumber() {
+        return mobileTerminalSerialNumber;
+    }
+
+    public void setMobileTerminalSerialNumber(String mobileTerminalSerialNumber) {
+        this.mobileTerminalSerialNumber = mobileTerminalSerialNumber;
+    }
+
     public void setMobileTerminalMemberNumber(String mobileTerminalMemberNumber) {
         this.mobileTerminalMemberNumber = mobileTerminalMemberNumber;
     }
@@ -233,7 +251,7 @@ public class RawMovementFact {
                 ", longitude=" + longitude +
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
+                ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
                 '}';
     }
-
 }

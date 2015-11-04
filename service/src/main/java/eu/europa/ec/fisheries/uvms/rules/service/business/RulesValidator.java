@@ -137,24 +137,6 @@ public class RulesValidator {
 
     }
 
-//    public void evaluatePreviousReport(List<PreviousReportFact> previousReports) {
-//        LOG.info("Verifying previous movement");
-//
-//        KieSession ksession = kbase.newKieSession(ksconf, null);
-//
-//        // Inject beans
-//        ksession.setGlobal("rulesService", rulesService);
-//        ksession.setGlobal("logger", LOG);
-//
-//        for (PreviousReportFact previousReport : previousReports) {
-//            ksession.insert(previousReport);
-//        }
-//        ksession.fireAllRules();
-//
-//        ksession.dispose();
-//
-//    }
-
     private String generateDrl(String template, List<CustomRuleDto> rules) {
         InputStream templateStream = this.getClass().getResourceAsStream(template);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
@@ -166,6 +148,7 @@ public class RulesValidator {
             listener.newCell(rowNum, 0, rule.getRuleName(), 0);
             listener.newCell(rowNum, 1, rule.getExpression(), 0);
             listener.newCell(rowNum, 2, rule.getAction(), 0);
+            listener.newCell(rowNum, 3, rule.getRuleGuid(), 0);
             rowNum++;
         }
         listener.finishSheet();

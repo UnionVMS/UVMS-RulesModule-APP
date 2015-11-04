@@ -2,6 +2,7 @@ template header
 rulename
 expression
 action
+ruleguid
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
@@ -14,8 +15,8 @@ rule "@{rulename}"
 when
    $fact : MovementFact(@{expression})
 then
-   logger.info("\t==> Executing RULE '@{rulename}' with action(s) '@{action}'");
-   rulesService.customRuleTriggered("@{rulename}", $fact, "@{action}");
+   logger.info("\t==> Executing RULE '@{rulename}' (guid:'@{ruleguid}') with action(s) '@{action}'");
+   rulesService.customRuleTriggered("@{rulename}", "@{ruleguid}", $fact, "@{action}");
 end
 
 end template

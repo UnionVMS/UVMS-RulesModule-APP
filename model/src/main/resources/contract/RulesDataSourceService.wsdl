@@ -36,6 +36,8 @@
                     <xsd:enumeration value="GET_ALARM"/>
                     <xsd:enumeration value="GET_TICKET"/>
 
+                    <xsd:enumeration value="REPROCESS_ALARMS"/>
+
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
@@ -429,6 +431,29 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Reprocess alarm request -->
+            <xsd:element name="ReprocessAlarmRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="alarmReportGuid" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Reprocess alarm response -->
+            <xsd:element name="ReprocessAlarmResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+
         </xsd:schema>
     </types>
 
@@ -555,6 +580,13 @@
         <part name="body" element="source:SingleTicketResponse"/>
     </message>
 
+    <message name="ReprocessAlarmRequest">
+        <part name="body" element="source:ReprocessAlarmRequest"/>
+    </message>
+    <message name="ReprocessAlarmResponse">
+        <part name="body" element="source:ReprocessAlarmResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -655,6 +687,12 @@
         <operation name="GetTicket">
             <input message="source:GetTicketRequest"/>
             <output message="source:GetTicketResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="ReprocessAlarmReport">
+            <input message="source:ReprocessAlarmRequest"/>
+            <output message="source:ReprocessAlarmResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -853,6 +891,18 @@
         </operation>
 
         <operation name="GetTicket">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="ReprocessAlarmReport">
             <input>
                 <soap:body use="literal"/>
             </input>

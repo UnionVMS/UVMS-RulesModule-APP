@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,25 +9,11 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpsertPreviousReportRequest;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+
+import java.util.List;
 
 public class RulesDataSourceRequestMapper {
 
@@ -136,6 +123,13 @@ public class RulesDataSourceRequestMapper {
         GetAlarmRequest request = new GetAlarmRequest();
         request.setMethod(RulesDataSourceMethod.GET_ALARM);
         request.setGuid(guid);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapReprocessAlarms(List<String> alarmGuids) throws RulesModelMapperException {
+        ReprocessAlarmRequest request = new ReprocessAlarmRequest();
+        request.getAlarmReportGuid().addAll(alarmGuids);
+        request.setMethod(RulesDataSourceMethod.REPROCESS_ALARMS);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

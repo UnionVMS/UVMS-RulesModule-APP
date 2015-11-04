@@ -5,6 +5,7 @@ public class CustomRuleDto {
     private String ruleName;
     private String expression;
     private String action;
+    private String ruleGuid;
 
     public String getRuleName() {
         return ruleName;
@@ -30,4 +31,11 @@ public class CustomRuleDto {
         this.action = action;
     }
 
+    public String getRuleGuid() {
+        return ruleGuid;
+    }
+
+    public void setRuleGuid(String ruleGuid) {
+        this.ruleGuid = ruleGuid;
+    }
 }

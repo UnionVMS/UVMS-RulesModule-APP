@@ -6,6 +6,8 @@ import javax.ejb.Local;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -30,7 +32,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException;
+    CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException;
 
     /**
      * Lists (all) custom rules
@@ -38,7 +40,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
+    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
     /**
      * Lists alarms by query
@@ -46,7 +48,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    public GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws RulesServiceException;
+    GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws RulesServiceException;
 
     /**
      * Lists tickets by query
@@ -54,7 +56,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    public GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException;
+    GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException;
 
     /**
      * Update a ticket status
@@ -62,7 +64,7 @@ public interface RulesService {
      * @param ticket
      * @throws RulesServiceException
      */
-    public TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException;
+    TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException;
 
     /**
      * Get an object by id
@@ -71,26 +73,24 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    public CustomRuleType getById(Long id) throws RulesServiceException;
+    CustomRuleType getById(Long id) throws RulesServiceException;
 
     /**
      * Update an object
      *
-     * @param data
+     * @param customRuleType
      * @throws RulesServiceException
      */
-    public CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException;
+    CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException;
 
     /**
      * Creates an error report
      *
-     * @param comment
-     *            note on the error occured
-     * @param guid
-     *            the offending guid
+     * @param ruleName
+     * @param fact
      * @throws RulesServiceException
      */
-    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
+    void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
 
     /**
      * Entry point of action performed as a result of a custom rule triggered
@@ -100,7 +100,7 @@ public interface RulesService {
      * @param action
      *            the action(s) to be performed
      */
-    public void customRuleTriggered(String ruleName, MovementFact f, String action) throws RulesServiceException;
+    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact f, String action) throws RulesServiceException;
 
     /**
      * Get a custom rule by guid
@@ -109,13 +109,17 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException, RulesModelMapperException, RulesFaultException
      */
-    public CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
+    CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
-    public AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException;
+    AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException;
 
-    public List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException;
+    List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException;
 
-    public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException;
+    void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException;
+
+    String reprocessAlarm(List<String> alarms) throws RulesServiceException;
+
+    MovementRefType setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm
