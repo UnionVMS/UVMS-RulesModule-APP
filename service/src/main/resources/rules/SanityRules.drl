@@ -2,7 +2,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import java.util.Date;
 
-global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
+global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
 global org.slf4j.Logger logger;
 
 
@@ -13,7 +13,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - latitude must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - latitude must exist", $fact);
+        validationService.createAlarmReport("Sanity check - latitude must exist", $fact);
 end
 
 rule "Sanity check - Longitude must exist"
@@ -23,7 +23,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - longitude must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - longitude must exist", $fact);
+        validationService.createAlarmReport("Sanity check - longitude must exist", $fact);
 end
 
 rule "Sanity check - comChannelType must exist"
@@ -33,7 +33,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - comChannelType must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - comChannelType must exist", $fact);
+        validationService.createAlarmReport("Sanity check - comChannelType must exist", $fact);
 end
 
 rule "Sanity check - connectId must exist"
@@ -43,7 +43,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - connectId must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - connectId must exist", $fact);
+        validationService.createAlarmReport("Sanity check - connectId must exist", $fact);
 end
 
 rule "Sanity check - movementType must exist"
@@ -53,7 +53,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - movementType must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - movementType must exist", $fact);
+        validationService.createAlarmReport("Sanity check - movementType must exist", $fact);
 end
 
 rule "Sanity check - positionTime must exist"
@@ -63,7 +63,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - positionTime must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - positionTime must exist", $fact);
+        validationService.createAlarmReport("Sanity check - positionTime must exist", $fact);
 end
 
 rule "Sanity check - reportedCourse must exist"
@@ -73,7 +73,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - reportedCourse must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - reportedCourse must exist", $fact);
+        validationService.createAlarmReport("Sanity check - reportedCourse must exist", $fact);
 end
 
 rule "Sanity check - reportedSpeed must exist"
@@ -83,7 +83,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - reportedSpeed must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - reportedSpeed must exist", $fact);
+        validationService.createAlarmReport("Sanity check - reportedSpeed must exist", $fact);
 end
 
 rule "Sanity check - source must exist"
@@ -93,7 +93,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - source must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - source must exist", $fact);
+        validationService.createAlarmReport("Sanity check - source must exist", $fact);
 end
 
 rule "Sanity check - statusCode must exist"
@@ -103,7 +103,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - statusCode must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - statusCode must exist", $fact);
+        validationService.createAlarmReport("Sanity check - statusCode must exist", $fact);
 end
 
 rule "Sanity check - activityCallback must exist"
@@ -113,7 +113,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - activityCallback must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - activityCallback must exist", $fact);
+        validationService.createAlarmReport("Sanity check - activityCallback must exist", $fact);
 end
 
 rule "Sanity check - activityMessageId must exist"
@@ -123,7 +123,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - activityMessageId must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - activityMessageId must exist", $fact);
+        validationService.createAlarmReport("Sanity check - activityMessageId must exist", $fact);
 end
 
 rule "Sanity check - activityMessageType must exist"
@@ -133,7 +133,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - activityMessageType must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - activityMessageType must exist", $fact);
+        validationService.createAlarmReport("Sanity check - activityMessageType must exist", $fact);
 end
 
 rule "Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist"
@@ -143,7 +143,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist", $fact);
+        validationService.createAlarmReport("Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist", $fact);
 end
 
 
@@ -155,7 +155,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - assetIdAssetType must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - assetIdAssetType must exist", $fact);
+        validationService.createAlarmReport("Sanity check - assetIdAssetType must exist", $fact);
 end
 
 // More rules (those that can fetch a vessel)
@@ -170,7 +170,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - altitude must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - altitude must exist", $fact);
+        validationService.createAlarmReport("Sanity check - altitude must exist", $fact);
 end
 
 
@@ -181,7 +181,7 @@ dialect "java"
     then
         logger.info("\t==> Executing RULE 'Sanity check - movementGuid must exist'");
         $fact.setOk(false);
-        rulesService.createAlarmReport("Sanity check - movementGuid must exist", $fact);
+        validationService.createAlarmReport("Sanity check - movementGuid must exist", $fact);
 end
 
 */

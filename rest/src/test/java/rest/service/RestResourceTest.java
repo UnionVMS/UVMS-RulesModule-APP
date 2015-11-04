@@ -7,6 +7,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,7 +43,10 @@ public class RestResourceTest {
     RulesRestResource SERVICE_NULL = new RulesRestResource();
 
     @Mock
-    RulesService serviceLayer;
+    RulesService rulesService;
+
+    @Mock
+    ValidationService validationService;
 
     @InjectMocks
     RulesRestResource rulesRestResource;
@@ -79,7 +83,7 @@ public class RestResourceTest {
      */
     @Test
     public void testGetVesselList() throws RulesServiceException {
-        doReturn(DTO_LIST).when(serviceLayer).getCustomRuleList();
+        doReturn(DTO_LIST).when(validationService).getCustomRuleList();
         ResponseDto result = rulesRestResource.getCustomRuleList();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
     }
@@ -102,9 +106,9 @@ public class RestResourceTest {
      */
     @Test
     public void testGetVesselByGuid() throws RulesServiceException, RulesModelMapperException, RulesFaultException {
-        doReturn(DTO).when(serviceLayer).getByGuid(GUID);
+        doReturn(DTO).when(rulesService).getByGuid(GUID);
         ResponseDto result = rulesRestResource.getByGuid(GUID);
-        Mockito.verify(serviceLayer).getByGuid(GUID);
+        Mockito.verify(rulesService).getByGuid(GUID);
         assertEquals(SUCCESS_RESULT_DTO.toString(), result.toString());
     }
 
@@ -127,7 +131,7 @@ public class RestResourceTest {
     @Test
     public void testCreateVessel() throws RulesServiceException {
         ResponseDto result = rulesRestResource.create(DTO);
-        Mockito.verify(serviceLayer).createCustomRule(DTO);
+        Mockito.verify(rulesService).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
@@ -148,7 +152,7 @@ public class RestResourceTest {
     @Test
     public void testUpdateVessel() throws RulesServiceException {
         ResponseDto result = rulesRestResource.update(DTO);
-        Mockito.verify(serviceLayer).updateCustomRule(DTO);
+        Mockito.verify(rulesService).updateCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 

@@ -28,46 +28,10 @@ public class RulesTimerBean {
     @EJB
     RulesService rulesService;
 
-    @Inject
-    RulesValidator rulesValidator;
-
     @PostConstruct
     public void postConstruct() {
         LOG.info("RulesTimerBean init");
     }
-
-    // TODO: Remove when you've verified that the other method works
-/*
-    public void updatePlugins() {
-        LOG.info("RulesTimerBean tick");
-        try {
-            // Get all previous reports from DB
-            List<PreviousReportType> previousReports = rulesService.getPreviousMovementReports();
-
-            // Map to fact, adding 2h to deadline
-            List<PreviousReportFact> previousReportFacts = new ArrayList<PreviousReportFact>();
-            for (PreviousReportType previousReport : previousReports) {
-                PreviousReportFact fact = new PreviousReportFact();
-                fact.setMovementGuid(previousReport.getMovementGuid());
-                fact.setVesselGuid(previousReport.getVesselGuid());
-
-                GregorianCalendar gregCal = previousReport.getPositionTime().toGregorianCalendar();
-                gregCal.add(GregorianCalendar.HOUR, THRESHOLD);
-                fact.setDeadline(gregCal.getTime());
-
-                previousReportFacts.add(fact);
-            }
-
-            // Evaluate previous reports
-            rulesValidator.evaluatePreviousReport(previousReportFacts);
-
-        } catch (RulesServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-*/
 
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
 //     @Schedule(second = "0", minute = "*/3", hour = "*", persistent = false)

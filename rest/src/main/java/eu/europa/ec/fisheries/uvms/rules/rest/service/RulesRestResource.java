@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,10 @@ public class RulesRestResource {
     final static Logger LOG = LoggerFactory.getLogger(RulesRestResource.class);
 
     @EJB
-    RulesService serviceLayer;
+    RulesService rulesService;
+
+    @EJB
+    ValidationService validationService;
 
     /**
      *
@@ -46,7 +50,7 @@ public class RulesRestResource {
     public ResponseDto create(final CustomRuleType customRule) {
         LOG.info("Create invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.createCustomRule(customRule), ResponseCode.OK);
+            return new ResponseDto(rulesService.createCustomRule(customRule), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when creating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -68,7 +72,7 @@ public class RulesRestResource {
     public ResponseDto getCustomRuleList() {
         LOG.info("Get list invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getCustomRuleList(), ResponseCode.OK);
+            return new ResponseDto(validationService.getCustomRuleList(), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -90,7 +94,7 @@ public class RulesRestResource {
     public ResponseDto getByGuid(@PathParam(value = "guid") final String guid) {
         LOG.info("Get custom rule by guid invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getByGuid(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.getByGuid(guid), ResponseCode.OK);
         } catch (RulesFaultException | RulesModelMapperException | RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting custom rule by guid. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -111,7 +115,7 @@ public class RulesRestResource {
     public ResponseDto update(final CustomRuleType customRuleType) {
         LOG.info("Update custom rule invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateCustomRule(customRuleType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateCustomRule(customRuleType), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

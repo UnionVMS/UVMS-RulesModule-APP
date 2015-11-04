@@ -40,7 +40,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
+//    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
     /**
      * Lists alarms by query
@@ -90,7 +90,7 @@ public interface RulesService {
      * @param fact
      * @throws RulesServiceException
      */
-    void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
+//    void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
 
     /**
      * Entry point of action performed as a result of a custom rule triggered
@@ -100,7 +100,7 @@ public interface RulesService {
      * @param action
      *            the action(s) to be performed
      */
-    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact f, String action) throws RulesServiceException;
+//    void customRuleTriggered(String ruleName, String ruleGuid, MovementFact f, String action) throws RulesServiceException;
 
     /**
      * Get a custom rule by guid

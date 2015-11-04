@@ -7,7 +7,7 @@ ruleguid
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 global org.slf4j.Logger logger;
-global eu.europa.ec.fisheries.uvms.rules.service.RulesService rulesService;
+global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
 
 template "CustomRulesTemplate"
 
@@ -16,7 +16,7 @@ when
    $fact : MovementFact(@{expression})
 then
    logger.info("\t==> Executing RULE '@{rulename}' (guid:'@{ruleguid}') with action(s) '@{action}'");
-   rulesService.customRuleTriggered("@{rulename}", "@{ruleguid}", $fact, "@{action}");
+   validationService.customRuleTriggered("@{rulename}", "@{ruleguid}", $fact, "@{action}");
 end
 
 end template

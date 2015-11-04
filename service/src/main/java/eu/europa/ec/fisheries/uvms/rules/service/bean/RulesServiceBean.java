@@ -118,24 +118,24 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     * @throws RulesServiceException
-     */
-    @Override
-    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
-        LOG.info("Get custom rule list invoked in service layer");
-        try {
-            String request = RulesDataSourceRequestMapper.mapCustomRuleList();
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
-        } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
-        }
-    }
+//    /**
+//     * {@inheritDoc}
+//     *
+//     * @return
+//     * @throws RulesServiceException
+//     */
+//    @Override
+//    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
+//        LOG.info("Get custom rule list invoked in service layer");
+//        try {
+//            String request = RulesDataSourceRequestMapper.mapCustomRuleList();
+//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
+//        } catch (RulesModelMapperException | MessageException ex) {
+//            throw new RulesServiceException(ex.getMessage());
+//        }
+//    }
 
     /**
      * {@inheritDoc}
@@ -225,157 +225,157 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    // Triggered by rule engine, no response expected
-    @Override
-    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
-        LOG.info("Create alarm invoked in service layer");
-        try {
-            // TODO: Decide who sets the guid, Rules or Exchange
-            if (fact.getRawMovementType().getGuid() == null) {
-                fact.getRawMovementType().setGuid(UUID.randomUUID().toString());
-            }
+//    // Triggered by rule engine, no response expected
+//    @Override
+//    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
+//        LOG.info("Create alarm invoked in service layer");
+//        try {
+//            // TODO: Decide who sets the guid, Rules or Exchange
+//            if (fact.getRawMovementType().getGuid() == null) {
+//                fact.getRawMovementType().setGuid(UUID.randomUUID().toString());
+//            }
+//
+//            AlarmReportType alarmReport = new AlarmReportType();
+//            alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
+//            alarmReport.setStatus(AlarmStatusType.OPEN);
+//            alarmReport.setRawMovement(fact.getRawMovementType());
+//            alarmReport.setUpdatedBy("UVMS");
+//            alarmReport.setPluginType(fact.getPluginType());
+//
+//            // TODO: Add sender, recipient and assetGuid
+//
+//            // Alarm item
+//            List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
+//            AlarmItemType alarmItem = new AlarmItemType();
+//            alarmItem.setGuid(UUID.randomUUID().toString());
+//            alarmItem.setRuleGuid(ruleName);
+//            alarmItems.add(alarmItem);
+//            alarmReport.getAlarmItem().addAll(alarmItems);
+//
+//            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
+//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//
+//            // Notify long-polling clients of the new alarm report
+//            CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
+//            alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
+//
+//        } catch (RulesModelMapperException | MessageException ex) {
+//            throw new RulesServiceException(ex.getMessage());
+//        }
+//    }
 
-            AlarmReportType alarmReport = new AlarmReportType();
-            alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
-            alarmReport.setStatus(AlarmStatusType.OPEN);
-            alarmReport.setRawMovement(fact.getRawMovementType());
-            alarmReport.setUpdatedBy("UVMS");
-            alarmReport.setPluginType(fact.getPluginType());
-
-            // TODO: Add sender, recipient and assetGuid
-
-            // Alarm item
-            List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
-            AlarmItemType alarmItem = new AlarmItemType();
-            alarmItem.setGuid(UUID.randomUUID().toString());
-            alarmItem.setRuleGuid(ruleName);
-            alarmItems.add(alarmItem);
-            alarmReport.getAlarmItem().addAll(alarmItems);
-
-            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            // Notify long-polling clients of the new alarm report
-            CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
-            alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
-
-        } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
-        }
-    }
-
-    // Triggered by rule engine, no response expected
-    @Override
-    public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException {
-        LOG.info("Creating custom event. NOT FULLY IMPLEMENTED");
-
-        // For now the actions are described as a comma separated list. Parse
-        // out the action, switch on it, and log the action and the
-        // corresponding value
-        // ACTION,VALUE;ACTION,VALUE;
-        // N.B! The .drl rule file gives the string "null" when (for instance)
-        // value is null.
-        String[] parsedActionKeyValueList = actions.split(";");
-        for (String keyValue : parsedActionKeyValueList) {
-            String[] keyValueList = keyValue.split(",");
-            String action = keyValueList[0];
-            String value = "";
-            if (keyValueList.length == 2) {
-                value = keyValueList[1];
-            }
-            switch (ActionType.valueOf(action)) {
-            case EMAIL:
-                // todo: What will the mail contain? Value=address.
-                // Is it enough with a notification, or what's in the fact?
-                // Or should I enrich the rules, and this method,
-                // to receive an additional text?
-                LOG.info("Sending email to '{}'", value);
-                sendToEmail(value, ruleName);
-                break;
-            case ON_HOLD:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                break;
-            case TICKET:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                createTicket(ruleName, ruleGuid, fact);
-                break;
-            case MANUAL_POLL:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                sendManualPoll(value);
-                break;
-            case SEND_TO_ENDPOINT:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                break;
-            case SMS:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                break;
-            case TOP_BAR_NOTIFICATION:
-                LOG.info("Performing action '{}' with value '{}'", action, value);
-                break;
-            default:
-                LOG.info("The action '{}' is not defined", action);
-                break;
-            }
-        }
-    }
-
-    private void sendManualPoll(String value) {
-        // todo: value is probably not used...
-        // But we still need plugin name, so perhaps we can use this here, but populate automatically. We'll see...
-
-        String pluginName = "";
-
-  //      String sendMovementToPluginRequest = ExchangeModuleRequestMapper.createSetCommandSendPollRequest(pluginName, PluginType.SATELLITE_RECEIVER);
-
-//        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
-//        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
-
-    }
-
-    private void sendToEmail(String emailAddress, String ruleName) {
-        // TODO: Decide on what message to send
-
-        EmailType email = new EmailType();
-        String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
-        email.setBody(body);
-        email.setFrom("No Reply");
-        email.setSubject("You've got mail!");
-        email.setTo(emailAddress);
-
-        try {
-            ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
-        } catch (ExchangeModelMapperException e) {
-            LOG.error("[ Failed to send email! ]");
-        }
-    }
-
-    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) throws RulesServiceException {
-        LOG.info("Create ticket invoked in service layer");
-        try {
-            TicketType ticket = new TicketType();
-
-            ticket.setVesselGuid(fact.getVesselGuid());
-            ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-            ticket.setRuleName(ruleName);
-            ticket.setRuleGuid(ruleGuid);
-            ticket.setStatus(TicketStatusType.OPEN);
-            ticket.setUpdatedBy("UVMS");
-            ticket.setMovementGuid(fact.getMovementGuid());
-            ticket.setGuid(UUID.randomUUID().toString());
-
-            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            // Notify long-polling clients of the new ticket
-            CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
-            ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
-
-        } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
-        }
-    }
+//    // Triggered by rule engine, no response expected
+//    @Override
+//    public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException {
+//        LOG.info("Creating custom event. NOT FULLY IMPLEMENTED");
+//
+//        // For now the actions are described as a comma separated list. Parse
+//        // out the action, switch on it, and log the action and the
+//        // corresponding value
+//        // ACTION,VALUE;ACTION,VALUE;
+//        // N.B! The .drl rule file gives the string "null" when (for instance)
+//        // value is null.
+//        String[] parsedActionKeyValueList = actions.split(";");
+//        for (String keyValue : parsedActionKeyValueList) {
+//            String[] keyValueList = keyValue.split(",");
+//            String action = keyValueList[0];
+//            String value = "";
+//            if (keyValueList.length == 2) {
+//                value = keyValueList[1];
+//            }
+//            switch (ActionType.valueOf(action)) {
+//            case EMAIL:
+//                // todo: What will the mail contain? Value=address.
+//                // Is it enough with a notification, or what's in the fact?
+//                // Or should I enrich the rules, and this method,
+//                // to receive an additional text?
+//                LOG.info("Sending email to '{}'", value);
+//                sendToEmail(value, ruleName);
+//                break;
+//            case ON_HOLD:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                break;
+//            case TICKET:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                createTicket(ruleName, ruleGuid, fact);
+//                break;
+//            case MANUAL_POLL:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                sendManualPoll(value);
+//                break;
+//            case SEND_TO_ENDPOINT:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                break;
+//            case SMS:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                break;
+//            case TOP_BAR_NOTIFICATION:
+//                LOG.info("Performing action '{}' with value '{}'", action, value);
+//                break;
+//            default:
+//                LOG.info("The action '{}' is not defined", action);
+//                break;
+//            }
+//        }
+//    }
+//
+//    private void sendManualPoll(String value) {
+//        // todo: value is probably not used...
+//        // But we still need plugin name, so perhaps we can use this here, but populate automatically. We'll see...
+//
+//        String pluginName = "";
+//
+//  //      String sendMovementToPluginRequest = ExchangeModuleRequestMapper.createSetCommandSendPollRequest(pluginName, PluginType.SATELLITE_RECEIVER);
+//
+////        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
+////        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+//
+//    }
+//
+//    private void sendToEmail(String emailAddress, String ruleName) {
+//        // TODO: Decide on what message to send
+//
+//        EmailType email = new EmailType();
+//        String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
+//        email.setBody(body);
+//        email.setFrom("No Reply");
+//        email.setSubject("You've got mail!");
+//        email.setTo(emailAddress);
+//
+//        try {
+//            ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
+//        } catch (ExchangeModelMapperException e) {
+//            LOG.error("[ Failed to send email! ]");
+//        }
+//    }
+//
+//    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) throws RulesServiceException {
+//        LOG.info("Create ticket invoked in service layer");
+//        try {
+//            TicketType ticket = new TicketType();
+//
+//            ticket.setVesselGuid(fact.getVesselGuid());
+//            ticket.setOpenDate(RulesUtil.dateToString(new Date()));
+//            ticket.setRuleName(ruleName);
+//            ticket.setRuleGuid(ruleGuid);
+//            ticket.setStatus(TicketStatusType.OPEN);
+//            ticket.setUpdatedBy("UVMS");
+//            ticket.setMovementGuid(fact.getMovementGuid());
+//            ticket.setGuid(UUID.randomUUID().toString());
+//
+//            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
+//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//
+//            // Notify long-polling clients of the new ticket
+//            CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
+//            ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
+//
+//        } catch (RulesModelMapperException | MessageException ex) {
+//            throw new RulesServiceException(ex.getMessage());
+//        }
+//    }
 
     /**
      * {@inheritDoc}
@@ -701,6 +701,7 @@ public class RulesServiceBean implements RulesService {
 
     // TODO: Something's wrong now, to many hits (query?, test data?)
     private MobileTerminalType getMobileTerminalByRawMovement(List<IdList> ids) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
+        LOG.info("Fetching mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
         MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();

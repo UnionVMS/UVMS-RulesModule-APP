@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
 
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -26,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 //@Startup
@@ -38,8 +38,11 @@ public class RulesValidator {
     private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";
     private static final String CUSTOM_RULE_DRL = "src/main/resources/rules/TemplateRules.drl";
 
-    @Inject
-    RulesService rulesService;
+//    @EJB
+//    RulesService rulesService;
+
+    @EJB
+    ValidationService validationService;
 
     private KieBase kbase;
     private KieSessionConfiguration ksconf;
@@ -92,7 +95,7 @@ public class RulesValidator {
         KieSession ksession = kbase.newKieSession(ksconf, null);
 
         // Inject beans
-        ksession.setGlobal("rulesService", rulesService);
+        ksession.setGlobal("validationService", validationService);
         ksession.setGlobal("logger", LOG);
 
         ksession.insert(fact);
@@ -108,7 +111,7 @@ public class RulesValidator {
         List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            customRules = rulesService.getCustomRuleList();
+            customRules = validationService.getCustomRuleList();
         } catch (RulesServiceException e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
@@ -126,7 +129,7 @@ public class RulesValidator {
             KieSession ksession = kcontainer.newKieSession();
 
             // Inject beans
-            ksession.setGlobal("rulesService", rulesService);
+            ksession.setGlobal("validationService", validationService);
             ksession.setGlobal("logger", LOG);
 
             ksession.insert(fact);
