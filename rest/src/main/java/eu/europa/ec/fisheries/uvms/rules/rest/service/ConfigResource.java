@@ -71,20 +71,20 @@ public class ConfigResource {
 
             SubCriteria[] subCriterias = SubCriteria.values();
             for (int j = 0; j < subCriterias.length; j++) {
-                if (mainCriterias[i].equals(MainCriteria.ROOT)) {
-                    // Add the "subCriteria" as mainCriteria
-                    mainCrit = subCriterias[j].toString();
-                } else {
+//                if (mainCriterias[i].equals(MainCriteria.ROOT)) {
+//                    // Add the "subCriteria" as mainCriteria
+//                    mainCrit = subCriterias[j].toString();
+//                } else {
                     if (subCriterias[j].getMainCriteria().equals(mainCriterias[i])) {
                         subResult.add(subCriterias[j].toString());
                     }
-                }
+//                }
                 map.put(mainCrit, subResult);
             }
         }
         return map;
     }
-
+    
     private LogicOperatorType[] getLogicOperatorType() {
         return LogicOperatorType.values();
     }
