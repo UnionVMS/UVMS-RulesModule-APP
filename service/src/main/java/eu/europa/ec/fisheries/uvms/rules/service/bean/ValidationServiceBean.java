@@ -137,26 +137,26 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
-        LOG.info("Value:{}", endpoint);
-
-        if (endpoint.equals("<BACK TO SENDER>")) {
-            endpoint = fact.getFlagState();
-        }
-
-        XMLGregorianCalendar date = null;
-        try {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(new Date());
-            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, fact.getExchangeMovement());
-        } catch (ExchangeModelMapperException e) {
-            e.printStackTrace();
-        }
+//        LOG.info("Value:{}", endpoint);
+//
+//        if (endpoint.equals("<BACK TO SENDER>")) {
+//            endpoint = fact.getFlagState();
+//        }
+//
+//        XMLGregorianCalendar date = null;
+//        try {
+//            GregorianCalendar c = new GregorianCalendar();
+//            c.setTime(new Date());
+//            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+//        } catch (DatatypeConfigurationException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, fact.getExchangeMovement());
+//        } catch (ExchangeModelMapperException e) {
+//            e.printStackTrace();
+//        }
 
 
         LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
