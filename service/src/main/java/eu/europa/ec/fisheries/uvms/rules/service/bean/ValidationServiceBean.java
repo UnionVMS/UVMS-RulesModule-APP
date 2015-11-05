@@ -1,5 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.SendMovementToPluginType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
@@ -27,6 +30,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -34,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -120,8 +123,7 @@ public class ValidationServiceBean implements ValidationService {
                     LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 case SEND_TO_ENDPOINT:
-                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
-                    // sendToEndpoint(ruleName, ruleGuid, fact, value);
+                    sendToEndpoint(ruleName, ruleGuid, fact, value);
                     break;
                 case SMS:
                     LOG.info("Placeholder for action '{}' with value '{}'", action, value);
@@ -137,12 +139,14 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
-//        LOG.info("Value:{}", endpoint);
-//
-//        if (endpoint.equals("<BACK TO SENDER>")) {
-//            endpoint = fact.getFlagState();
-//        }
-//
+        LOG.info("Value:{}", endpoint);
+
+        if (endpoint.equals(ServiceConstants.SEND_TO_CLOSEST_COUNTRY)) {
+            endpoint = fact.getClosestCountryCode();
+        }
+
+        LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
+
 //        XMLGregorianCalendar date = null;
 //        try {
 //            GregorianCalendar c = new GregorianCalendar();
@@ -153,13 +157,20 @@ public class ValidationServiceBean implements ValidationService {
 //        }
 //
 //        try {
-//            ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, fact.getExchangeMovement());
-//        } catch (ExchangeModelMapperException e) {
+//            MovementType exchangeMovement = fact.getExchangeMovement();
+//
+//            SendMovementToPluginType sendMovementToPluginType = ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement);
+//            String request = eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller.marshallJaxBObjectToString(sendMovementToPluginType);
+//
+//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//
+//            LOG.info("Endpoint response from Exchange:{}", response.getText());
+//
+//        } catch (ExchangeModelMapperException | MessageException | JMSException e) {
 //            e.printStackTrace();
 //        }
 
-
-        LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
     }
 
     private void sendToEmail(String emailAddress, String ruleName) {
@@ -170,27 +181,32 @@ public class ValidationServiceBean implements ValidationService {
         EmailType email = new EmailType();
         String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
         email.setBody(body);
-        email.setFrom("No Reply");
         email.setSubject("You've got mail!");
         email.setTo(emailAddress);
 
         LOG.info("Sending email:{}", body);
 
+        String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
-            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("eu.europa.ec.fisheries.uvms.plugins.sweagencyemail", email);
-            LOG.info("Email request to Exchange:{}", request);
+            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
+//            LOG.info("Email request to Exchange:{}", request);
 
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//            try {
+//                LOG.info("Email response from Exchange:{}", response.getText());
+//            } catch (JMSException e) {
+//                e.printStackTrace();
+//            }
 
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
 
-            LOG.info("Email response from Exchange:{}", response.getText());
+//            ExchangeModuleResponse.mapSetCommandResponse(response);
+//            för att få ut AcknowledgeType för hur det gick med Email-et.
+// Metoden kastar ExchangeValidationException (som är en ExchangeModelMapperException) - som containar "ExchangeFault.code - och ExchangeFault.message" som message om det är ett Fault, ger AcknowledgeType.OK om det gick bra AcknowledgeType.NOK om pluginen inte är startad
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ]");
-        } catch (JMSException e) {
-            e.printStackTrace();
         }
     }
 
