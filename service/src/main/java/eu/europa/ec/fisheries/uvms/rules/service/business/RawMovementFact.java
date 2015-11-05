@@ -37,15 +37,15 @@ public class RawMovementFact {
     private Double latitude;
     private Double longitude;
 
+    // Vessel
+    private String vesselConnectId;
+
     // Mobile Terminal
     private String mobileTerminalMemberNumber;
     private String mobileTerminalDnid;
     private String mobileTerminalSerialNumber;
     private String mobileTerminalType;
-    private String connectId;
-
-    // Vessel
-    private String vesselGuid;
+    private String mobileTerminalConnectId;
 
     public boolean isOk() {
         return ok;
@@ -111,12 +111,12 @@ public class RawMovementFact {
         this.reportedSpeed = reportedSpeed;
     }
 
-    public String getConnectId() {
-        return connectId;
+    public String getMobileTerminalConnectId() {
+        return mobileTerminalConnectId;
     }
 
-    public void setConnectId(String connectId) {
-        this.connectId = connectId;
+    public void setMobileTerminalConnectId(String mobileTerminalConnectId) {
+        this.mobileTerminalConnectId = mobileTerminalConnectId;
     }
 
     public String getMovementGuid() {
@@ -231,20 +231,20 @@ public class RawMovementFact {
         this.mobileTerminalDnid = mobileTerminalDnid;
     }
 
-    public String getVesselGuid() {
-        return vesselGuid;
-    }
-
-    public void setVesselGuid(String vesselGuid) {
-        this.vesselGuid = vesselGuid;
-    }
-
     public String getMobileTerminalType() {
         return mobileTerminalType;
     }
 
     public void setMobileTerminalType(String mobileTerminalType) {
         this.mobileTerminalType = mobileTerminalType;
+    }
+
+    public String getVesselConnectId() {
+        return vesselConnectId;
+    }
+
+    public void setVesselConnectId(String vesselConnectId) {
+        this.vesselConnectId = vesselConnectId;
     }
 
     @Override
@@ -255,7 +255,6 @@ public class RawMovementFact {
                 ", pluginType='" + pluginType + '\'' +
                 ", alarmGuid='" + alarmGuid + '\'' +
                 ", comChannelType='" + comChannelType + '\'' +
-                ", connectId='" + connectId + '\'' +
                 ", movementGuid='" + movementGuid + '\'' +
                 ", movementType='" + movementType + '\'' +
                 ", positionTime=" + positionTime +
@@ -270,11 +269,13 @@ public class RawMovementFact {
                 ", altitude=" + altitude +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", vesselConnectId='" + vesselConnectId + '\'' +
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
                 ", mobileTerminalType='" + mobileTerminalType + '\'' +
-                ", vesselGuid='" + vesselGuid + '\'' +
+                ", mobileTerminalConnectId='" + mobileTerminalConnectId + '\'' +
                 '}';
     }
+
 }

@@ -148,29 +148,28 @@ public class ValidationServiceBean implements ValidationService {
 
         LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
 
-//        XMLGregorianCalendar date = null;
-//        try {
-//            GregorianCalendar c = new GregorianCalendar();
-//            c.setTime(new Date());
-//            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-//        } catch (DatatypeConfigurationException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            MovementType exchangeMovement = fact.getExchangeMovement();
-//
-//            SendMovementToPluginType sendMovementToPluginType = ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement);
-//            String request = eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller.marshallJaxBObjectToString(sendMovementToPluginType);
-//
-//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//
-//            LOG.info("Endpoint response from Exchange:{}", response.getText());
-//
-//        } catch (ExchangeModelMapperException | MessageException | JMSException e) {
-//            e.printStackTrace();
-//        }
+        XMLGregorianCalendar date = null;
+        try {
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(new Date());
+            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            MovementType exchangeMovement = fact.getExchangeMovement();
+
+            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement);
+
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            LOG.info("Endpoint response from Exchange:{}", response.getText());
+
+        } catch (ExchangeModelMapperException | MessageException | JMSException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -190,15 +189,15 @@ public class ValidationServiceBean implements ValidationService {
         String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
-//            LOG.info("Email request to Exchange:{}", request);
+            LOG.info("Email request to Exchange:{}", request);
 
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//            try {
-//                LOG.info("Email response from Exchange:{}", response.getText());
-//            } catch (JMSException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                LOG.info("Email response from Exchange:{}", response.getText());
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
 
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
 

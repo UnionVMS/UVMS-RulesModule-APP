@@ -32,6 +32,7 @@ public class RulesMapper {
     private List<String> getMapperFiles() {
         List<String> files = new ArrayList<>();
         files.add("movementbasetype.xml");
+        files.add("movementtype.xml");
         return files;
     }
 

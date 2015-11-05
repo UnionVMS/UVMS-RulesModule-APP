@@ -523,14 +523,20 @@ public class RulesUtil {
                     fact.setMobileTerminalSerialNumber(attribute.getValue());
                 }
             }
-            fact.setConnectId(mobileTerminal.getConnectId());
+            fact.setMobileTerminalConnectId(mobileTerminal.getConnectId());
 
             fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
         // From Vessel
         if (vessel != null) {
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
+            fact.setVesselConnectId(vessel.getVesselId().getGuid());
+
+//            fact.setVesselCfr(vessel.getCfr());
+//            fact.setVesselImo(vessel.getImo());
+//            fact.setVesselIrcs(vessel.getIrcs());
+//            fact.setVesselName(vessel.getName());
+
         }
         return fact;
     }

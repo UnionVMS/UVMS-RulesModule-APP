@@ -375,7 +375,7 @@ public class RulesServiceBean implements RulesService {
 
             MobileTerminalType mobileTerminal = null;
             Vessel vessel = null;
-            if (rawMovementType.getComChannelType().equals(MovementComChannelType.MOBILE_TERMINAL)) {
+            if (rawMovementType.getComChannelType().name().equals(MovementComChannelType.MOBILE_TERMINAL.name())) {
                 LOG.info("myggan - type MOBILE_TERMINAL");
                 // Get Mobile Terminal
                 mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
@@ -387,14 +387,14 @@ public class RulesServiceBean implements RulesService {
                     vessel = getVesselByConnectId(connectId);
                     auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
                 }
-            } else if (rawMovementType.getComChannelType().equals(MovementComChannelType.FLUX)) {
+            } else if (rawMovementType.getComChannelType().name().equals(MovementComChannelType.FLUX.name())) {
                 LOG.info("myggan - type FLUX");
 
                 // Get Vessel
                 vessel = getVesselByAssetId(rawMovementType.getAssetId().getAssetIdList());
 
             } else {
-                LOG.info("myggan - type WRONG");
+                LOG.info("myggan - type WRONG: '{}'", rawMovementType.getComChannelType().name());
             }
 //            // Get Mobile Terminal
 //            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
@@ -421,7 +421,7 @@ public class RulesServiceBean implements RulesService {
                 LOG.info("myggan - rawFact.getMovementType():{}", rawFact.getMovementType());
                 MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovementType, MovementBaseType.class);
 
-                movementBaseType.setConnectId(rawFact.getConnectId());
+                movementBaseType.setConnectId(rawFact.getMobileTerminalConnectId());
                 LOG.info("myggan - movementBaseType.getConnectId():{}", movementBaseType.getConnectId());
 
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);

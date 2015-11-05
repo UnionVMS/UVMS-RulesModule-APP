@@ -26,14 +26,26 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - longitude must exist", $fact);
 end
 
-rule "Sanity check - connectId must exist"
+// A mobile terminal must be connected to a vessel
+rule "Sanity check - mobileTerminalConnectId must exist"
 dialect "java"
     when
-        $fact : RawMovementFact((connectId == null) && pluginType != "FLUX")
+        $fact : RawMovementFact((mobileTerminalConnectId == null) && pluginType == "SATELLITE_RECEIVER")
     then
-        logger.info("\t==> Executing RULE 'Sanity check - connectId must exist'");
+        logger.info("\t==> Executing RULE 'Sanity check - mobileTerminalConnectId must exist'");
         $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - connectId must exist", $fact);
+        validationService.createAlarmReport("Sanity check - mobileTerminalConnectId must exist", $fact);
+end
+
+// A vessel must exist
+rule "Sanity check - vesselConnectId must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(vesselConnectId == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - vesselConnectId must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - vesselConnectId must exist", $fact);
 end
 
 // If INMARSAT_C
