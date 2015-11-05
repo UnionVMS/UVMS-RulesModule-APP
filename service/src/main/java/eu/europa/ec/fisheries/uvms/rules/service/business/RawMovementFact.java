@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public class RawMovementFact {
-    // TODO: Add asset id to RawMovement for FLUX stuff. One is for some reason a list.
+    // TODO: Add asset id to RawMovement for FLUX stuff.
 
     private RawMovementType rawMovementType;
     private boolean ok = true;
@@ -16,7 +16,6 @@ public class RawMovementFact {
 
     // Base
     private String comChannelType;
-    private String connectId;
     private String movementGuid;
     private String movementType; // MovementTypeType
     private Date positionTime;
@@ -42,6 +41,8 @@ public class RawMovementFact {
     private String mobileTerminalMemberNumber;
     private String mobileTerminalDnid;
     private String mobileTerminalSerialNumber;
+    private String mobileTerminalType;
+    private String connectId;
 
     // Vessel
     private String vesselGuid;
@@ -238,6 +239,14 @@ public class RawMovementFact {
         this.vesselGuid = vesselGuid;
     }
 
+    public String getMobileTerminalType() {
+        return mobileTerminalType;
+    }
+
+    public void setMobileTerminalType(String mobileTerminalType) {
+        this.mobileTerminalType = mobileTerminalType;
+    }
+
     @Override
     public String toString() {
         return "RawMovementFact{" +
@@ -264,6 +273,7 @@ public class RawMovementFact {
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
+                ", mobileTerminalType='" + mobileTerminalType + '\'' +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 '}';
     }

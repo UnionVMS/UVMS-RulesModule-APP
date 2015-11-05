@@ -10,6 +10,7 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -141,7 +142,7 @@ public class ValidationServiceBean implements ValidationService {
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
         LOG.info("Value:{}", endpoint);
 
-        if (endpoint.equals(ServiceConstants.SEND_TO_CLOSEST_COUNTRY)) {
+        if (endpoint.equals(ReservedAreaCodeValueType.SEND_TO_CLOSEST_COUNTRY.name())) {
             endpoint = fact.getClosestCountryCode();
         }
 
@@ -201,7 +202,7 @@ public class ValidationServiceBean implements ValidationService {
 
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
 
-//            ExchangeModuleResponse.mapSetCommandResponse(response);
+//            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
 //            för att få ut AcknowledgeType för hur det gick med Email-et.
 // Metoden kastar ExchangeValidationException (som är en ExchangeModelMapperException) - som containar "ExchangeFault.code - och ExchangeFault.message" som message om det är ett Fault, ger AcknowledgeType.OK om det gick bra AcknowledgeType.NOK om pluginen inte är startad
 

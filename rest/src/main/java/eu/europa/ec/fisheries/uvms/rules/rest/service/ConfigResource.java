@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class ConfigResource {
         }
         return map;
     }
-    
+
     private LogicOperatorType[] getLogicOperatorType() {
         return LogicOperatorType.values();
     }
@@ -121,6 +122,20 @@ public class ConfigResource {
 
     private ConditionType[] getConditions() {
         return ConditionType.values();
+    }
+
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/reservedword")
+    public ResponseDto getReservedAreaCodeValue() {
+        try {
+            return new ResponseDto(ReservedAreaCodeValueType.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting reserved area code value. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+
     }
 
 }

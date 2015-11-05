@@ -1,10 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
+//import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesMapper;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MovementFact {
+    private eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement;
+//    private eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType exchangeMovement;
+
     // Base
     private Double calculatedCourse;
     private Double calculatedSpeed;
@@ -64,6 +71,23 @@ public class MovementFact {
     private Double closestPortDistance;
     private String closestPortRemoteId;
     private String closestPortName;
+
+    public MovementType getExchangeMovement() {
+        MovementType exchangeMovement = RulesMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
+        return exchangeMovement;
+    }
+
+//    public void setExchangeMovement(MovementType exchangeMovement) {
+//        this.exchangeMovement = exchangeMovement;
+//    }
+
+    public eu.europa.ec.fisheries.schema.movement.v1.MovementType getMovementMovement() {
+        return movementMovement;
+    }
+
+    public void setMovementMovement(eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement) {
+        this.movementMovement = movementMovement;
+    }
 
     public Date getPositionTime() {
         return positionTime;

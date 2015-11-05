@@ -340,6 +340,8 @@ public class RulesUtil {
 
         // TODO: Add comChannelType
 
+        fact.setMovementMovement(movement);
+
         // Base
         fact.setCalculatedCourse(movement.getCalculatedCourse());
         fact.setCalculatedSpeed(movement.getCalculatedSpeed());
@@ -523,7 +525,7 @@ public class RulesUtil {
             }
             fact.setConnectId(mobileTerminal.getConnectId());
 
-//            fact.setMobileTerminalType(mobileTerminal.getType());
+            fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
         // From Vessel

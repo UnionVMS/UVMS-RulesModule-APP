@@ -179,4 +179,10 @@
         </xsd:restriction>
     </xsd:simpleType>
 
+    <xsd:simpleType name="ReservedAreaCodeValueType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SEND_TO_CLOSEST_COUNTRY"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
 </xsd:schema>

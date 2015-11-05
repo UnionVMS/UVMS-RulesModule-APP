@@ -26,6 +26,42 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - longitude must exist", $fact);
 end
 
+rule "Sanity check - connectId must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact((connectId == null) && pluginType != "FLUX")
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - connectId must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - connectId must exist", $fact);
+end
+
+// If INMARSAT_C
+rule "Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist for INMARSAT_C"
+dialect "java"
+    when
+        $fact : RawMovementFact((mobileTerminalMemberNumber == null || mobileTerminalDnid == null) && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "INMARSAT_C")
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist for INMARSAT_C'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist for INMARSAT_C", $fact);
+end
+
+// If IRIDIUM
+rule "Sanity check - mobileTerminalSerialNumber must exist for IRIDIUM"
+dialect "java"
+    when
+        $fact : RawMovementFact((mobileTerminalSerialNumber == null) && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "IRIDIUM")
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - mobileTerminalSerialNumber must exist for IRIDIUM'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - mobileTerminalSerialNumber must exist for IRIDIUM", $fact);
+end
+
+
+
+
+
 rule "Sanity check - comChannelType must exist"
 dialect "java"
     when
@@ -34,16 +70,6 @@ dialect "java"
         logger.info("\t==> Executing RULE 'Sanity check - comChannelType must exist'");
         $fact.setOk(false);
         validationService.createAlarmReport("Sanity check - comChannelType must exist", $fact);
-end
-
-rule "Sanity check - connectId must exist"
-dialect "java"
-    when
-        $fact : RawMovementFact(connectId == null)
-    then
-        logger.info("\t==> Executing RULE 'Sanity check - connectId must exist'");
-        $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - connectId must exist", $fact);
 end
 
 rule "Sanity check - movementType must exist"
@@ -135,17 +161,6 @@ dialect "java"
         $fact.setOk(false);
         validationService.createAlarmReport("Sanity check - activityMessageType must exist", $fact);
 end
-
-rule "Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist"
-dialect "java"
-    when
-        $fact : RawMovementFact((mobileTerminalMemberNumber == null || mobileTerminalDnid == null) && pluginType == "SATELLITE_RECEIVER")
-    then
-        logger.info("\t==> Executing RULE 'Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist'");
-        $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist", $fact);
-end
-
 
 /* Temporary removed - need to test with better data
 rule "Sanity check - assetIdAssetType must exist"

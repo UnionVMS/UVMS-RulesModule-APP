@@ -11,8 +11,12 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementComChannelType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -369,17 +373,41 @@ public class RulesServiceBean implements RulesService {
             // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId (DNID/MEMBER_NUMBER)
             // assetId | mobileTerminalId -> connectId
 
-            // Get Mobile Terminal
-            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
-            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
-
-            // Get Vessel
+            MobileTerminalType mobileTerminal = null;
             Vessel vessel = null;
-            if (mobileTerminal != null) {
-                String connectId = mobileTerminal.getConnectId();
-                vessel = getVesselByConnectId(connectId);
-                auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+            if (rawMovementType.getComChannelType().equals(MovementComChannelType.MOBILE_TERMINAL)) {
+                LOG.info("myggan - type MOBILE_TERMINAL");
+                // Get Mobile Terminal
+                mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
+                auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
+
+                // Get Vessel
+                if (mobileTerminal != null) {
+                    String connectId = mobileTerminal.getConnectId();
+                    vessel = getVesselByConnectId(connectId);
+                    auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+                }
+            } else if (rawMovementType.getComChannelType().equals(MovementComChannelType.FLUX)) {
+                LOG.info("myggan - type FLUX");
+
+                // Get Vessel
+                vessel = getVesselByAssetId(rawMovementType.getAssetId().getAssetIdList());
+
+            } else {
+                LOG.info("myggan - type WRONG");
             }
+//            // Get Mobile Terminal
+//            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
+//            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
+//
+//            // Get Vessel
+//            Vessel vessel = null;
+//            if (mobileTerminal != null) {
+//                String connectId = mobileTerminal.getConnectId();
+//                vessel = getVesselByConnectId(connectId);
+//                auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+//            }
+
 
             RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, mobileTerminal, vessel, pluginType);
             LOG.info("myggan - rawFact:{}", rawFact);
@@ -513,12 +541,74 @@ public class RulesServiceBean implements RulesService {
         return  result;
     }
 
+    private Vessel getVesselByAssetId(List<AssetIdList> ids) throws VesselModelMapperException, MessageException {
+        LOG.info("Fetching mobile vessels");
+        VesselListQuery query = new VesselListQuery();
+
+        VesselListCriteria criteria = new VesselListCriteria();
+        for (AssetIdList id : ids) {
+
+            VesselListCriteriaPair crit = new VesselListCriteriaPair();
+            switch (id.getIdType()) {
+                case CFR:
+                    crit.setKey(ConfigSearchField.CFR);
+                    crit.setValue(id.getValue());
+                    criteria.getCriterias().add(crit);
+                    break;
+                case IRCS:
+                    crit.setKey(ConfigSearchField.IRCS);
+                    crit.setValue(id.getValue());
+                    criteria.getCriterias().add(crit);
+                    break;
+                case IMO:
+                    crit.setKey(ConfigSearchField.IMO);
+                    crit.setValue(id.getValue());
+                    criteria.getCriterias().add(crit);
+                    break;
+                case MMSI:
+                    crit.setKey(ConfigSearchField.MMSI);
+                    crit.setValue(id.getValue());
+                    criteria.getCriterias().add(crit);
+                    break;
+                case GUID:
+                case ID:
+                default:
+                    LOG.error("[ Unhandled AssetId: {} ]", id.getIdType());
+                    break;
+            }
+
+        }
+
+        query.setVesselSearchCriteria(criteria);
+        VesselListPagination pagination = new VesselListPagination();
+        pagination.setListSize(1);
+        pagination.setPage(1);
+        query.setPagination(pagination);
+
+        String getVesselListRequest = VesselModuleRequestMapper.createVesselListModuleRequest(query);
+        String getVesselMessageId = producer.sendDataSourceMessage(getVesselListRequest, DataSourceQueue.VESSEL);
+        TextMessage getMobileTerminalResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+
+        try {
+            LOG.info("myggan - getMobileTerminalResponse:{}", getMobileTerminalResponse.getText());
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+
+        List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getMobileTerminalResponse, getVesselMessageId);
+        LOG.info("myggan - result size:{}", resultList.size());
+        Vessel result = resultList.isEmpty()?null:resultList.get(0);
+
+        return result;
+    }
+
     // TODO: Something's wrong now, to many hits (query?, test data?). Probably in Exchange Module
     private MobileTerminalType getMobileTerminalByRawMovement(List<IdList> ids) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
         LOG.info("Fetching mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
         MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
+        boolean isInmarsatC = false;
         for (IdList id : ids) {
 
             LOG.info("myggan - key:{},value:{}", id.getType(), id.getValue());
@@ -530,18 +620,21 @@ public class RulesServiceBean implements RulesService {
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.DNID);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
+                    isInmarsatC=true;
                     break;
                 // INMARSAT_C
                 case MEMBER_NUMBER:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.MEMBER_NUMBER);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
+                    isInmarsatC=true;
                     break;
                 // IRIDIUM
                 case SERIAL_NUMBER:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
+                    isInmarsatC=false;
                     break;
                 case LES:
                 default:
@@ -549,6 +642,18 @@ public class RulesServiceBean implements RulesService {
                     break;
             }
         }
+//        // Fix for faulty MobileTerminal search
+//        String transponderType = "";
+//        if (isInmarsatC) {
+//            transponderType = "INMARSAT_C";
+//        } else {
+//            transponderType = "IRIDIUM";
+//        }
+//        eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria bonusCrit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
+//        bonusCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
+//        bonusCrit.setValue(transponderType);
+//        criteria.getCriterias().add(bonusCrit);
+
         query.setMobileTerminalSearchCriteria(criteria);
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
         // TODO: setListSize(1), this is test because the vessel search is wrong
