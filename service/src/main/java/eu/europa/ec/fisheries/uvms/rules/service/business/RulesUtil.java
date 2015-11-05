@@ -138,83 +138,84 @@ public class RulesUtil {
                     break;
                 }
                 // All subcriteria
-                switch (segment.getSubCriteria()) {
-                case VESSEL_CFR:
-                    sb.append("vesselCfr");
-                    break;
-                case VESSEL_IRCS:
-                    sb.append("vesselIrcs");
-                    break;
-                case VESSEL_NAME:
-                    sb.append("vesselName");
-                    break;
-                case MT_MEMBER_ID:
-                    sb.append("mobileTerminalMemberNumber");
-                    break;
-                case MT_SERIAL_NO:
-                    sb.append("mobileTerminalSerialNumber");
-                    break;
-                case MT_DNID:
-                    sb.append("mobileTerminalDnid");
-                    break;
-                case AREA_TYPE:
-                    sb.append("areaTypes");
-                    break;
-                case AREA_CODE:
-                    sb.append("areaCodes");
-                    break;
-                case AREA_NAME:
-                    sb.append("areaNames");
-                    break;
-                case AREA_ID:
-                    sb.append("areaRemoteIds");
-                    break;
-                case ACTIVITY_CALLBACK:
-                    sb.append("activityCallback");
-                    break;
-                case ACTIVITY_MESSAGE_ID:
-                    sb.append("activityMessageId");
-                    break;
-                case ACTIVITY_MESSAGE_TYPE:
-                    sb.append("activityMessageType");
-                    break;
-                case ASSET_ID_ASSET_TYPE:
-                    sb.append("assetIdAssetType");
-                    break;
-                case ASSET_ID_TYPE:
-                    sb.append("assetIdType");
-                    break;
-                case ASSET_ID_VALUE:
-                    sb.append("assetIdValue");
-                    break;
-                case COUNTRY_CODE:
-                    sb.append("closestCountryCode");
-                    break;
-                case COUNTRY_DISTANCE:
-                    sb.append("closestCountryDistance");
-                    break;
-                case COUNTRY_REMOTE_ID:
-                    sb.append("closestCountryRemoteId");
-                    break;
-                case COUNTRY_NAME:
-                    sb.append("closestCountryName");
-                    break;
-                case PORT_CODE:
-                    sb.append("closestPortCode");
-                    break;
-                case PORT_DISTANCE:
-                    sb.append("closestPortDistance");
-                    break;
-                case PORT_REMOTE_ID:
-                    sb.append("closestPortRemoteId");
-                    break;
-                case PORT_NAME:
-                    sb.append("closestPortName");
-                    break;
-                default:
-                    break;
+                if (segment.getSubCriteria() != null) {
+                    switch (segment.getSubCriteria()) {
+                        case VESSEL_CFR:
+                            sb.append("vesselCfr");
+                            break;
+                        case VESSEL_IRCS:
+                            sb.append("vesselIrcs");
+                            break;
+                        case VESSEL_NAME:
+                            sb.append("vesselName");
+                            break;
+                        case MT_MEMBER_ID:
+                            sb.append("mobileTerminalMemberNumber");
+                            break;
+                        case MT_SERIAL_NO:
+                            sb.append("mobileTerminalSerialNumber");
+                            break;
+                        case MT_DNID:
+                            sb.append("mobileTerminalDnid");
+                            break;
+                        case AREA_TYPE:
+                            sb.append("areaTypes");
+                            break;
+                        case AREA_CODE:
+                            sb.append("areaCodes");
+                            break;
+                        case AREA_NAME:
+                            sb.append("areaNames");
+                            break;
+                        case AREA_ID:
+                            sb.append("areaRemoteIds");
+                            break;
+                        case ACTIVITY_CALLBACK:
+                            sb.append("activityCallback");
+                            break;
+                        case ACTIVITY_MESSAGE_ID:
+                            sb.append("activityMessageId");
+                            break;
+                        case ACTIVITY_MESSAGE_TYPE:
+                            sb.append("activityMessageType");
+                            break;
+                        case ASSET_ID_ASSET_TYPE:
+                            sb.append("assetIdAssetType");
+                            break;
+                        case ASSET_ID_TYPE:
+                            sb.append("assetIdType");
+                            break;
+                        case ASSET_ID_VALUE:
+                            sb.append("assetIdValue");
+                            break;
+                        case COUNTRY_CODE:
+                            sb.append("closestCountryCode");
+                            break;
+                        case COUNTRY_DISTANCE:
+                            sb.append("closestCountryDistance");
+                            break;
+                        case COUNTRY_REMOTE_ID:
+                            sb.append("closestCountryRemoteId");
+                            break;
+                        case COUNTRY_NAME:
+                            sb.append("closestCountryName");
+                            break;
+                        case PORT_CODE:
+                            sb.append("closestPortCode");
+                            break;
+                        case PORT_DISTANCE:
+                            sb.append("closestPortDistance");
+                            break;
+                        case PORT_REMOTE_ID:
+                            sb.append("closestPortRemoteId");
+                            break;
+                        case PORT_NAME:
+                            sb.append("closestPortName");
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
                 switch (segment.getCondition()) {
                 case EQ:
                     // Different EQ if a list
@@ -337,8 +338,7 @@ public class RulesUtil {
     public static MovementFact mapMovementFact(MovementType movement, Vessel vessel, String mobileTerminalDnid, String mobileTerminalMemberNumber, String mobileTerminalSerialNumber) {
         MovementFact fact = new MovementFact();
 
-        // TODO: Add this
-        // comChannelType=null,
+        // TODO: Add comChannelType
 
         // Base
         fact.setCalculatedCourse(movement.getCalculatedCourse());
@@ -373,10 +373,7 @@ public class RulesUtil {
             fact.setVesselCfr(vessel.getCfr());
             fact.setVesselIrcs(vessel.getIrcs());
 
-            // TODO: Add these
-//            assetIdAssetType=null,
-//            assetIdType=null,
-//            assetIdValue=null,
+            // TODO: Add assetIdAssetType, assetIdType, assetIdValue
 
         }
         // Activity
@@ -525,6 +522,8 @@ public class RulesUtil {
                 }
             }
             fact.setConnectId(mobileTerminal.getConnectId());
+
+            fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
         // From Vessel

@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -12,6 +13,7 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -36,11 +38,12 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
 
 @Stateless
 public class ValidationServiceBean implements ValidationService {
@@ -117,7 +120,8 @@ public class ValidationServiceBean implements ValidationService {
                     LOG.info("Placeholder for action '{}' with value '{}'", action, value);
                     break;
                 case SEND_TO_ENDPOINT:
-                    sendToEndpoint(ruleName, ruleGuid, fact, value);
+                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
+                    // sendToEndpoint(ruleName, ruleGuid, fact, value);
                     break;
                 case SMS:
                     LOG.info("Placeholder for action '{}' with value '{}'", action, value);
@@ -133,7 +137,29 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
-        LOG.info("Sending to endpoint {} [NOT IMPLEMENTED]", endpoint);
+        LOG.info("Value:{}", endpoint);
+
+        if (endpoint.equals("<BACK TO SENDER>")) {
+            endpoint = fact.getFlagState();
+        }
+
+        XMLGregorianCalendar date = null;
+        try {
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(new Date());
+            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ExchangeModuleRequestMapper.createSendMovementToPluginType(null, PluginType.FLUX, date, ruleName, endpoint, fact.getExchangeMovement());
+        } catch (ExchangeModelMapperException e) {
+            e.printStackTrace();
+        }
+
+
+        LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
     }
 
     private void sendToEmail(String emailAddress, String ruleName) {
@@ -151,15 +177,20 @@ public class ValidationServiceBean implements ValidationService {
         LOG.info("Sending email:{}", body);
 
         try {
-            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
+            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("eu.europa.ec.fisheries.uvms.plugins.sweagencyemail", email);
             LOG.info("Email request to Exchange:{}", request);
 
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//            LOG.info("Email response from Exchange:{}", response);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+//            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
+
+            LOG.info("Email response from Exchange:{}", response.getText());
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ]");
+        } catch (JMSException e) {
+            e.printStackTrace();
         }
     }
 

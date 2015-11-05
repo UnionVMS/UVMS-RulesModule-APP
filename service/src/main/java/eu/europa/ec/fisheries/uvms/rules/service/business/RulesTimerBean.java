@@ -60,11 +60,7 @@ public class RulesTimerBean {
                     rulesService.timerRuleTriggered(ruleName, ruleGuid, fact);
                 }
 
-//                previousReportFacts.add(fact);
             }
-
-            // Evaluate previous reports
-//            rulesValidator.evaluatePreviousReport(previousReportFacts);
 
         } catch (RulesServiceException e) {
             // TODO Auto-generated catch block

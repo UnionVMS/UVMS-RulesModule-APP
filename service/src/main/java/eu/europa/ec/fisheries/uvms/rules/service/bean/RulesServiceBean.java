@@ -105,32 +105,13 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            rulesValidator.init();
+//            rulesValidator.init();
 
             return RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
     }
-
-//    /**
-//     * {@inheritDoc}
-//     *
-//     * @return
-//     * @throws RulesServiceException
-//     */
-//    @Override
-//    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
-//        LOG.info("Get custom rule list invoked in service layer");
-//        try {
-//            String request = RulesDataSourceRequestMapper.mapCustomRuleList();
-//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
-//        } catch (RulesModelMapperException | MessageException ex) {
-//            throw new RulesServiceException(ex.getMessage());
-//        }
-//    }
 
     /**
      * {@inheritDoc}
@@ -210,158 +191,6 @@ public class RulesServiceBean implements RulesService {
             throw new RulesServiceException(e.getMessage());
         }
     }
-
-//    // Triggered by rule engine, no response expected
-//    @Override
-//    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
-//        LOG.info("Create alarm invoked in service layer");
-//        try {
-//            // TODO: Decide who sets the guid, Rules or Exchange
-//            if (fact.getRawMovementType().getGuid() == null) {
-//                fact.getRawMovementType().setGuid(UUID.randomUUID().toString());
-//            }
-//
-//            AlarmReportType alarmReport = new AlarmReportType();
-//            alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
-//            alarmReport.setStatus(AlarmStatusType.OPEN);
-//            alarmReport.setRawMovement(fact.getRawMovementType());
-//            alarmReport.setUpdatedBy("UVMS");
-//            alarmReport.setPluginType(fact.getPluginType());
-//
-//            // TODO: Add sender, recipient and assetGuid
-//
-//            // Alarm item
-//            List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
-//            AlarmItemType alarmItem = new AlarmItemType();
-//            alarmItem.setGuid(UUID.randomUUID().toString());
-//            alarmItem.setRuleGuid(ruleName);
-//            alarmItems.add(alarmItem);
-//            alarmReport.getAlarmItem().addAll(alarmItems);
-//
-//            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
-//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//
-//            // Notify long-polling clients of the new alarm report
-//            CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
-//            alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
-//
-//        } catch (RulesModelMapperException | MessageException ex) {
-//            throw new RulesServiceException(ex.getMessage());
-//        }
-//    }
-
-//    // Triggered by rule engine, no response expected
-//    @Override
-//    public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) throws RulesServiceException {
-//        LOG.info("Creating custom event. NOT FULLY IMPLEMENTED");
-//
-//        // For now the actions are described as a comma separated list. Parse
-//        // out the action, switch on it, and log the action and the
-//        // corresponding value
-//        // ACTION,VALUE;ACTION,VALUE;
-//        // N.B! The .drl rule file gives the string "null" when (for instance)
-//        // value is null.
-//        String[] parsedActionKeyValueList = actions.split(";");
-//        for (String keyValue : parsedActionKeyValueList) {
-//            String[] keyValueList = keyValue.split(",");
-//            String action = keyValueList[0];
-//            String value = "";
-//            if (keyValueList.length == 2) {
-//                value = keyValueList[1];
-//            }
-//            switch (ActionType.valueOf(action)) {
-//            case EMAIL:
-//                // todo: What will the mail contain? Value=address.
-//                // Is it enough with a notification, or what's in the fact?
-//                // Or should I enrich the rules, and this method,
-//                // to receive an additional text?
-//                LOG.info("Sending email to '{}'", value);
-//                sendToEmail(value, ruleName);
-//                break;
-//            case ON_HOLD:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                break;
-//            case TICKET:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                createTicket(ruleName, ruleGuid, fact);
-//                break;
-//            case MANUAL_POLL:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                sendManualPoll(value);
-//                break;
-//            case SEND_TO_ENDPOINT:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                break;
-//            case SMS:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                break;
-//            case TOP_BAR_NOTIFICATION:
-//                LOG.info("Performing action '{}' with value '{}'", action, value);
-//                break;
-//            default:
-//                LOG.info("The action '{}' is not defined", action);
-//                break;
-//            }
-//        }
-//    }
-//
-//    private void sendManualPoll(String value) {
-//        // todo: value is probably not used...
-//        // But we still need plugin name, so perhaps we can use this here, but populate automatically. We'll see...
-//
-//        String pluginName = "";
-//
-//  //      String sendMovementToPluginRequest = ExchangeModuleRequestMapper.createSetCommandSendPollRequest(pluginName, PluginType.SATELLITE_RECEIVER);
-//
-////        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
-////        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
-//
-//    }
-//
-//    private void sendToEmail(String emailAddress, String ruleName) {
-//        // TODO: Decide on what message to send
-//
-//        EmailType email = new EmailType();
-//        String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
-//        email.setBody(body);
-//        email.setFrom("No Reply");
-//        email.setSubject("You've got mail!");
-//        email.setTo(emailAddress);
-//
-//        try {
-//            ExchangeModuleRequestMapper.createSetCommandSendEmailRequest("pluginName", email);
-//        } catch (ExchangeModelMapperException e) {
-//            LOG.error("[ Failed to send email! ]");
-//        }
-//    }
-//
-//    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) throws RulesServiceException {
-//        LOG.info("Create ticket invoked in service layer");
-//        try {
-//            TicketType ticket = new TicketType();
-//
-//            ticket.setVesselGuid(fact.getVesselGuid());
-//            ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-//            ticket.setRuleName(ruleName);
-//            ticket.setRuleGuid(ruleGuid);
-//            ticket.setStatus(TicketStatusType.OPEN);
-//            ticket.setUpdatedBy("UVMS");
-//            ticket.setMovementGuid(fact.getMovementGuid());
-//            ticket.setGuid(UUID.randomUUID().toString());
-//
-//            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-//            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-//
-//            // Notify long-polling clients of the new ticket
-//            CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
-//            ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
-//
-//        } catch (RulesModelMapperException | MessageException ex) {
-//            throw new RulesServiceException(ex.getMessage());
-//        }
-//    }
 
     /**
      * {@inheritDoc}
@@ -536,6 +365,10 @@ public class RulesServiceBean implements RulesService {
         try {
             Date auditTimestamp = new Date();
 
+            // MovementComChannelType.FLUX -> assetId
+            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId (DNID/MEMBER_NUMBER)
+            // assetId | mobileTerminalId -> connectId
+
             // Get Mobile Terminal
             MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
             auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
@@ -549,14 +382,10 @@ public class RulesServiceBean implements RulesService {
             }
 
             RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, mobileTerminal, vessel, pluginType);
+            LOG.info("myggan - rawFact:{}", rawFact);
 
             rulesValidator.evaluate(rawFact);
-//            evaluate(rawFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
-
-            // MovementComChannelType.FLUX -> assetId
-            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId (DNID/MEMBER_NUMBER)
-            // assetId | mobileTerminalId -> connectId
 
             if (rawFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
@@ -618,7 +447,7 @@ public class RulesServiceBean implements RulesService {
         String assetGroup = null;
         String vesselGuid = null;
         if (vessel != null) {
-            // TODO:
+            // TODO: get assetGroup to validate on
             assetGroup = "GO_GET_IT!!!";
 
             vesselGuid = vessel.getVesselId().getGuid();
@@ -630,21 +459,14 @@ public class RulesServiceBean implements RulesService {
             // TODO Decide if we really want to verify stuff from MobileTerminal
             // Enrich with extra mobile terminal data
 
-            // TODO:
+            // TODO: Get vecinityOf to validate on
             // ??? Maybe Movement?
             String vecinityOf = "GO_GET_IT!!!";
 
-            // TODO:
-            // Enrich with extra movement data
-
-//            MovementFact movementFact = RulesUtil.mapMovementFact(movement, externalMarking, flagState, mobileTerminalDnid, mobileTerminalMemberNumber,
-//                    mobileTerminalSerialNumber, vesselName, vesselGuid);
             MovementFact movementFact = RulesUtil.mapMovementFact(movement, vessel, mobileTerminalDnid, mobileTerminalMemberNumber, mobileTerminalSerialNumber);
-
             LOG.info("myggan - movementFact:{}", movementFact);
 
             rulesValidator.evaluate(movementFact);
-//            evaluate(movementFact);
             auditTimestamp = auditLog("Time to validate rules:", auditTimestamp);
 
             persistThisMovementReport(vesselGuid, movement);
@@ -691,7 +513,7 @@ public class RulesServiceBean implements RulesService {
         return  result;
     }
 
-    // TODO: Something's wrong now, to many hits (query?, test data?)
+    // TODO: Something's wrong now, to many hits (query?, test data?). Probably in Exchange Module
     private MobileTerminalType getMobileTerminalByRawMovement(List<IdList> ids) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
         LOG.info("Fetching mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
@@ -703,17 +525,24 @@ public class RulesServiceBean implements RulesService {
 
             eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria crit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
             switch (id.getType()) {
+                // INMARSAT_C
                 case DNID:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.DNID);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
                     break;
+                // INMARSAT_C
                 case MEMBER_NUMBER:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.MEMBER_NUMBER);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
                     break;
+                // IRIDIUM
                 case SERIAL_NUMBER:
+                    crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
+                    crit.setValue(id.getValue());
+                    criteria.getCriterias().add(crit);
+                    break;
                 case LES:
                 default:
                     LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
@@ -745,7 +574,6 @@ public class RulesServiceBean implements RulesService {
     }
 
     private void persistThisMovementReport(String vesselGuid, MovementType movement) throws MessageException, RulesModelMapperException {
-        // TODO Persist time of the movement
         // I assume we will aways have a guid for vessel
         PreviousReportType thisReport = new PreviousReportType();
         thisReport.setMovementGuid(movement.getGuid());
