@@ -523,7 +523,7 @@ public class RulesUtil {
             }
             fact.setConnectId(mobileTerminal.getConnectId());
 
-            fact.setMobileTerminalType(mobileTerminal.getType());
+//            fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
         // From Vessel
