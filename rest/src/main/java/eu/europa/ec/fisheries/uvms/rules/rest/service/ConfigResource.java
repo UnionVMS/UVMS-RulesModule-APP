@@ -99,6 +99,7 @@ public class ConfigResource {
             ActionType actionType = actionTypes[i];
             switch (actionType) {
                 case SEND_TO_ENDPOINT:
+                    needValue = true;
                     break;
                 case MANUAL_POLL:
                     break;
