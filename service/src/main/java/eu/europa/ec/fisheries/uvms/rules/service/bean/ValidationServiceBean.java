@@ -140,13 +140,11 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
-        LOG.info("Value:{}", endpoint);
-
         if (endpoint.equals(ReservedAreaCodeValueType.SEND_TO_CLOSEST_COUNTRY.name())) {
             endpoint = fact.getClosestCountryCode();
         }
 
-        LOG.info("Sending to endpoint '{}' [NOT IMPLEMENTED]", endpoint);
+        LOG.info("Sending to endpoint '{}'", endpoint);
 
         XMLGregorianCalendar date = null;
         try {
@@ -161,13 +159,12 @@ public class ValidationServiceBean implements ValidationService {
             MovementType exchangeMovement = fact.getExchangeMovement();
 
             String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement);
-
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            LOG.info("Endpoint response from Exchange:{}", response.getText());
+            // TODO: Do something with the response
 
-        } catch (ExchangeModelMapperException | MessageException | JMSException e) {
+        } catch (ExchangeModelMapperException | MessageException e) {
             e.printStackTrace();
         }
 
@@ -184,21 +181,13 @@ public class ValidationServiceBean implements ValidationService {
         email.setSubject("You've got mail!");
         email.setTo(emailAddress);
 
-        LOG.info("Sending email:{}", body);
-
         String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
-            LOG.info("Email request to Exchange:{}", request);
-
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            try {
-                LOG.info("Email response from Exchange:{}", response.getText());
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
 
+            // TODO: Do something with the response
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
 
 //            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
