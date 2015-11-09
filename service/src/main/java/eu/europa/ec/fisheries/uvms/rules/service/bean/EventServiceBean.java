@@ -77,12 +77,6 @@ public class EventServiceBean implements EventService {
                 errorEvent.fire(message);
             }
 
-            try {
-                LOG.info("myggan - incoming message from Exchange Module:{}", message.getJmsMessage().getText());
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
-
             SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
             RawMovementType rawMovementType = request.getRequest();
 
@@ -92,9 +86,7 @@ public class EventServiceBean implements EventService {
 
             exchangeResponse.setMovementRef(ref);
             String exchangeResponseText = JAXBMarshaller.marshallJaxBObjectToString(exchangeResponse);
-            LOG.info("myggan - status response sent to Exchange", exchangeResponseText);
             producer.sendModuleResponseMessage(message.getJmsMessage(), exchangeResponseText);
-
 
         } catch (RulesModelMapperException | MessageException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
@@ -103,6 +95,6 @@ public class EventServiceBean implements EventService {
 
     }
 
-    // TODO: Missing error handler for  errorEvent.fire(message);
+    // TODO: Missing error handler for errorEvent.fire(message);
 
 }

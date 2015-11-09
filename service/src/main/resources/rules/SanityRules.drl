@@ -16,7 +16,7 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - latitude must exist", $fact);
 end
 
-rule "Sanity check - Longitude must exist"
+rule "Sanity check - longitude must exist"
 dialect "java"
     when
         $fact : RawMovementFact(longitude == null)
@@ -73,7 +73,7 @@ end
 
 
 
-
+/*
 rule "Sanity check - comChannelType must exist"
 dialect "java"
     when
@@ -173,6 +173,7 @@ dialect "java"
         $fact.setOk(false);
         validationService.createAlarmReport("Sanity check - activityMessageType must exist", $fact);
 end
+*/
 
 /* Temporary removed - need to test with better data
 rule "Sanity check - assetIdAssetType must exist"

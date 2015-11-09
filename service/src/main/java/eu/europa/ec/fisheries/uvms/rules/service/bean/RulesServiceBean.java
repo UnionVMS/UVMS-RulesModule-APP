@@ -16,10 +16,8 @@ import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
@@ -32,7 +30,6 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
@@ -337,6 +334,7 @@ public class RulesServiceBean implements RulesService {
             for (AlarmReportType alarm : alarms) {
                 RawMovementType rawMovementType = alarm.getRawMovement();
 
+                // TODO: Use better type (some variaqtion of PluginType...)
                 String pluginType = alarm.getPluginType();
                 MovementRefType refType = setMovementReportReceived(rawMovementType, pluginType);
 
@@ -375,10 +373,9 @@ public class RulesServiceBean implements RulesService {
                     vessel = getVesselByConnectId(connectId);
                     auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
                 }
-            } else if (rawMovement.getComChannelType().name().equals(MovementComChannelType.FLUX.name())) {
+            } else if (rawMovement.getComChannelType().name().equals(MovementComChannelType.FLUX.name()) || rawMovement.getComChannelType().name().equals(MovementComChannelType.MANUAL.name())) {
                 // Get Vessel
-                vessel = getVesselByAssetId(rawMovement.getAssetId().getAssetIdList());
-
+                vessel = getVesselByAssetId(rawMovement.getAssetId());
             } else {
                 LOG.error("[ Unknown type {} ]", rawMovement.getComChannelType().name());
             }
@@ -498,10 +495,11 @@ public class RulesServiceBean implements RulesService {
         return  result;
     }
 
-    private Vessel getVesselByAssetId(List<AssetIdList> ids) throws VesselModelMapperException, MessageException {
+    private Vessel getVesselByAssetId(AssetId assetId) throws VesselModelMapperException, MessageException {
         LOG.info("Fetch vessel by assetId");
         VesselListQuery query = new VesselListQuery();
 
+        List<AssetIdList> ids = assetId.getAssetIdList();
         VesselListCriteria criteria = new VesselListCriteria();
         for (AssetIdList id : ids) {
 
@@ -536,6 +534,7 @@ public class RulesServiceBean implements RulesService {
 
         }
 
+        criteria.setIsDynamic(true);
         query.setVesselSearchCriteria(criteria);
         VesselListPagination pagination = new VesselListPagination();
         pagination.setListSize(1);

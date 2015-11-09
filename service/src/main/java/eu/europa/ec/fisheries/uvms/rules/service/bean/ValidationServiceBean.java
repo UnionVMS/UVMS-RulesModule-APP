@@ -221,14 +221,14 @@ public class ValidationServiceBean implements ValidationService {
             CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
             ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
 
-        } catch (RulesModelMapperException | MessageException ex) {
-            LOG.error("[ Failed to create ticket! ]");
+        } catch (RulesModelMapperException | MessageException e) {
+            LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
         }
     }
 
     // Triggered by rule engine
     @Override
-    public void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException {
+    public void createAlarmReport(String ruleName, RawMovementFact fact) {
         LOG.info("Create alarm invoked in validation service");
         try {
             // TODO: Decide who sets the guid, Rules or Exchange
@@ -242,6 +242,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmReport.setRawMovement(fact.getRawMovementType());
             alarmReport.setUpdatedBy("UVMS");
             alarmReport.setPluginType(fact.getPluginType());
+            alarmReport.setVesselGuid(fact.getVesselConnectId());
 
             // TODO: Add sender, recipient and assetGuid
 
@@ -262,8 +263,8 @@ public class ValidationServiceBean implements ValidationService {
             CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
             alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
 
-        } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
+        } catch (RulesModelMapperException | MessageException e) {
+            LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
         }
     }
 
