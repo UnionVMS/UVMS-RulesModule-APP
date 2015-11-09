@@ -15,7 +15,7 @@ rule "@{rulename}"
 when
    $fact : MovementFact(@{expression})
 then
-   logger.info("\t==> Executing RULE '@{rulename}' (guid:'@{ruleguid}') with action(s) '@{action}'");
+   logger.info("\t==> Executing RULE '@{rulename}' (rule guid:'@{ruleguid}') with action(s) '@{action}'");
    validationService.customRuleTriggered("@{rulename}", "@{ruleguid}", $fact, "@{action}");
 end
 

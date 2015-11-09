@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
@@ -298,7 +299,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public String reprocessAlarm(List<String> alarmGuids) throws RulesServiceException {
-        LOG.info("Reporcess alarms invoked in service layer");
+        LOG.info("Reprocess alarms invoked in service layer");
         try {
             AlarmQuery query = new AlarmQuery();
             ListPagination pagination = new ListPagination();
@@ -310,8 +311,6 @@ public class RulesServiceBean implements RulesService {
                 ListCriteria criteria = new ListCriteria();
                 criteria.setKey(SearchKey.ALARM_GUID);
                 criteria.setValue(alarmGuid);
-
-                LOG.info("myggan - alarmGuid:{}", alarmGuid);
 
                 query.getAlarmSearchCriteria().add(criteria);
             }
@@ -325,16 +324,8 @@ public class RulesServiceBean implements RulesService {
             query.setDynamic(true);
             String request = RulesDataSourceRequestMapper.mapAlarmList(query);
 
-            LOG.info("myggan - alarm request:{}", request);
-
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            try {
-                LOG.info("myggan - alarm response:{}", response.getText());
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
 
             if (response == null) {
                 LOG.error("[ Error when getting alarm list, response from JMS Queue is null ]");
@@ -365,20 +356,17 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public MovementRefType setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException {
+    public MovementRefType setMovementReportReceived(RawMovementType rawMovement, String pluginType) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
 
-            // MovementComChannelType.FLUX -> assetId
-            // MovementComChannelType.MOBILE_TERMINAL -> mobileTerminalId (DNID/MEMBER_NUMBER)
-            // assetId | mobileTerminalId -> connectId
-
             MobileTerminalType mobileTerminal = null;
             Vessel vessel = null;
-            if (rawMovementType.getComChannelType().name().equals(MovementComChannelType.MOBILE_TERMINAL.name())) {
-                LOG.info("myggan - type MOBILE_TERMINAL");
+
+            LOG.debug("Incoming comChannelType {}", rawMovement.getComChannelType().name());
+            if (rawMovement.getComChannelType().name().equals(MovementComChannelType.MOBILE_TERMINAL.name())) {
                 // Get Mobile Terminal
-                mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
+                mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
                 auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
 
                 // Get Vessel
@@ -387,60 +375,37 @@ public class RulesServiceBean implements RulesService {
                     vessel = getVesselByConnectId(connectId);
                     auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
                 }
-            } else if (rawMovementType.getComChannelType().name().equals(MovementComChannelType.FLUX.name())) {
-                LOG.info("myggan - type FLUX");
-
+            } else if (rawMovement.getComChannelType().name().equals(MovementComChannelType.FLUX.name())) {
                 // Get Vessel
-                vessel = getVesselByAssetId(rawMovementType.getAssetId().getAssetIdList());
+                vessel = getVesselByAssetId(rawMovement.getAssetId().getAssetIdList());
 
             } else {
-                LOG.info("myggan - type WRONG: '{}'", rawMovementType.getComChannelType().name());
+                LOG.error("[ Unknown type {} ]", rawMovement.getComChannelType().name());
             }
-//            // Get Mobile Terminal
-//            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovementType.getMobileTerminal().getMobileTerminalIdList());
-//            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
-//
-//            // Get Vessel
-//            Vessel vessel = null;
-//            if (mobileTerminal != null) {
-//                String connectId = mobileTerminal.getConnectId();
-//                vessel = getVesselByConnectId(connectId);
-//                auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
-//            }
 
+            RawMovementFact rawMovementFact = RulesUtil.mapRawMovementFact(rawMovement, mobileTerminal, vessel, pluginType);
+            LOG.debug("rawMovementFact:{}", rawMovementFact);
 
-            RawMovementFact rawFact = RulesUtil.mapRawMovementFact(rawMovementType, mobileTerminal, vessel, pluginType);
-            LOG.info("myggan - rawFact:{}", rawFact);
-
-            rulesValidator.evaluate(rawFact);
+            rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
-            if (rawFact.isOk()) {
+            if (rawMovementFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
 
-                LOG.info("myggan - rawFact.getMovementType():{}", rawFact.getMovementType());
-                MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovementType, MovementBaseType.class);
+                MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
 
-                movementBaseType.setConnectId(rawFact.getMobileTerminalConnectId());
-                LOG.info("myggan - movementBaseType.getConnectId():{}", movementBaseType.getConnectId());
+                movementBaseType.setConnectId(rawMovementFact.getMobileTerminalConnectId());
 
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
-                LOG.info("myggan - outgoing message to Movement Module:{}", createMovementRequest);
 
                 // Send to Movement
                 String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
                 auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
 
-                try {
-                    LOG.info("myggan - incoming message from Movement Module:{}", response.getText());
-                } catch (JMSException e) {
-                    e.printStackTrace();
-                }
-
                 if (response != null) {
                     MovementType createdMovement = RulesMapper.mapCreateMovementToMovementType(response);
-                    validateCreatedMovement(createdMovement, rawFact, vessel);
+                    validateCreatedMovement(createdMovement, rawMovementFact, vessel);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -454,7 +419,7 @@ public class RulesServiceBean implements RulesService {
             } else {
                 // Tell Exchange that the report caused an alarm
                 MovementRefType ref = new MovementRefType();
-                ref.setMovementRefGuid(rawFact.getMovementGuid());
+                ref.setMovementRefGuid(rawMovementFact.getMovementGuid());
                 ref.setType(REF_TYPE_ALARM);
                 return ref;
             }
@@ -489,10 +454,10 @@ public class RulesServiceBean implements RulesService {
 
             // TODO: Get vecinityOf to validate on
             // ??? Maybe Movement?
-            String vecinityOf = "GO_GET_IT!!!";
+            String vicinityOf = "GO_GET_IT!!!";
 
             MovementFact movementFact = RulesUtil.mapMovementFact(movement, vessel, mobileTerminalDnid, mobileTerminalMemberNumber, mobileTerminalSerialNumber);
-            LOG.info("myggan - movementFact:{}", movementFact);
+            LOG.debug("movementFact:{}", movementFact);
 
             rulesValidator.evaluate(movementFact);
             auditTimestamp = auditLog("Time to validate rules:", auditTimestamp);
@@ -506,7 +471,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Vessel getVesselByConnectId(String connectId) throws VesselModelMapperException, MessageException {
-        LOG.info("myggan - search vessel with connectId:{}", connectId);
+        LOG.info("Fetch vessel by connectId");
 
         VesselListQuery query = new VesselListQuery();
         VesselListCriteria criteria = new VesselListCriteria();
@@ -524,16 +489,8 @@ public class RulesServiceBean implements RulesService {
         query.setPagination(pagination);
 
         String getVesselRequest = VesselModuleRequestMapper.createVesselListModuleRequest(query);
-        LOG.info("myggan - getVesselRequest:{}", getVesselRequest);
-
         String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
         TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
-
-        try {
-            LOG.info("myggan - getVesselResponse:{}", getVesselResponse.getText());
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
 
         List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
         Vessel result = resultList.isEmpty()?null:resultList.get(0);
@@ -542,7 +499,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Vessel getVesselByAssetId(List<AssetIdList> ids) throws VesselModelMapperException, MessageException {
-        LOG.info("Fetching mobile vessels");
+        LOG.info("Fetch vessel by assetId");
         VesselListQuery query = new VesselListQuery();
 
         VesselListCriteria criteria = new VesselListCriteria();
@@ -589,52 +546,36 @@ public class RulesServiceBean implements RulesService {
         String getVesselMessageId = producer.sendDataSourceMessage(getVesselListRequest, DataSourceQueue.VESSEL);
         TextMessage getMobileTerminalResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
-        try {
-            LOG.info("myggan - getMobileTerminalResponse:{}", getMobileTerminalResponse.getText());
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-
         List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getMobileTerminalResponse, getVesselMessageId);
-        LOG.info("myggan - result size:{}", resultList.size());
         Vessel result = resultList.isEmpty()?null:resultList.get(0);
 
         return result;
     }
 
-    // TODO: Something's wrong now, to many hits (query?, test data?). Probably in Exchange Module
-    private MobileTerminalType getMobileTerminalByRawMovement(List<IdList> ids) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
-        LOG.info("Fetching mobile terminal");
+    private MobileTerminalType getMobileTerminalByRawMovement(RawMovementType rawMovement) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
+        LOG.info("Fetch mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
+        List<IdList> ids = rawMovement.getMobileTerminal().getMobileTerminalIdList();
+
         MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
-        boolean isInmarsatC = false;
         for (IdList id : ids) {
-
-            LOG.info("myggan - key:{},value:{}", id.getType(), id.getValue());
-
             eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria crit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
             switch (id.getType()) {
-                // INMARSAT_C
                 case DNID:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.DNID);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
-                    isInmarsatC=true;
                     break;
-                // INMARSAT_C
                 case MEMBER_NUMBER:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.MEMBER_NUMBER);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
-                    isInmarsatC=true;
                     break;
-                // IRIDIUM
                 case SERIAL_NUMBER:
                     crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
                     crit.setValue(id.getValue());
                     criteria.getCriterias().add(crit);
-                    isInmarsatC=false;
                     break;
                 case LES:
                 default:
@@ -642,22 +583,25 @@ public class RulesServiceBean implements RulesService {
                     break;
             }
         }
-//        // Fix for faulty MobileTerminal search
-//        String transponderType = "";
-//        if (isInmarsatC) {
-//            transponderType = "INMARSAT_C";
-//        } else {
-//            transponderType = "IRIDIUM";
-//        }
-//        eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria bonusCrit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
-//        bonusCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
-//        bonusCrit.setValue(transponderType);
-//        criteria.getCriterias().add(bonusCrit);
+
+        // If we know the transponder type from the source, use it in the search criteria
+        eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria transponderTypeCrit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
+        switch(rawMovement.getSource()) {
+            case INMARSAT_C:
+                transponderTypeCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
+                transponderTypeCrit.setValue("INMARSAT_C");
+                criteria.getCriterias().add(transponderTypeCrit);
+                break;
+            case IRIDIUM:
+                transponderTypeCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
+                transponderTypeCrit.setValue("IRIDIUM");
+                criteria.getCriterias().add(transponderTypeCrit);
+                break;
+        }
 
         query.setMobileTerminalSearchCriteria(criteria);
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
-        // TODO: setListSize(1), this is test because the vessel search is wrong
-        pagination.setListSize(10);
+        pagination.setListSize(1);
         pagination.setPage(1);
         query.setPagination(pagination);
 
@@ -665,14 +609,7 @@ public class RulesServiceBean implements RulesService {
         String getMobileTerminalMessageId = producer.sendDataSourceMessage(getMobileTerminalListRequest, DataSourceQueue.MOBILE_TERMINAL);
         TextMessage getMobileTerminalResponse = consumer.getMessage(getMobileTerminalMessageId, TextMessage.class);
 
-        try {
-            LOG.info("myggan - getMobileTerminalResponse:{}", getMobileTerminalResponse.getText());
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
-        LOG.info("myggan - result size:{}", resultList.size());
         MobileTerminalType result = resultList.isEmpty()?null:resultList.get(0);
 
         return result;
@@ -695,7 +632,6 @@ public class RulesServiceBean implements RulesService {
         LOG.info("--> AUDIT - {} {}ms", msg, duration);
         return newTimestamp;
     }
-
 
     @Override
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException {
