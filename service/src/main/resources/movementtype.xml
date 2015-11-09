@@ -4,6 +4,15 @@
           xsi:schemaLocation="http://dozer.sourceforge.net
           http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
+    <configuration>
+        <custom-converters>
+            <converter type="eu.europa.ec.fisheries.uvms.rules.service.converter.XMLGC2XMLGC">
+                <class-a>javax.xml.datatype.XMLGregorianCalendar</class-a>
+                <class-b>javax.xml.datatype.XMLGregorianCalendar</class-b>
+            </converter>
+        </custom-converters>
+    </configuration>
+
     <mapping map-null="true">
         <class-a>eu.europa.ec.fisheries.schema.movement.v1.MovementType</class-a>
         <class-b>eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType</class-b>
