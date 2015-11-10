@@ -109,7 +109,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             response.setJMSCorrelationID(message.getJMSMessageID());
             session.createProducer(message.getJMSReplyTo()).send(response);
         } catch (JMSException e) {
-            LOG.error("[ Error when returning module rules request. ] {} {}", e.getMessage(), e.getStackTrace());
+            LOG.error("[ Error when returning module rules request. ] {}", e.getMessage());
         } finally {
             disconnectQueue();
         }

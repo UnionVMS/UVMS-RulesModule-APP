@@ -6,6 +6,16 @@ global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationSer
 global org.slf4j.Logger logger;
 
 
+rule "Sanity check - positionTime must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(positionTime == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - positionTime must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - positionTime must exist", $fact);
+end
+
 rule "Sanity check - latitude must exist"
 dialect "java"
     when
@@ -70,10 +80,6 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - mobileTerminalSerialNumber must exist for IRIDIUM", $fact);
 end
 
-
-
-
-/*
 rule "Sanity check - comChannelType must exist"
 dialect "java"
     when
@@ -84,34 +90,36 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - comChannelType must exist", $fact);
 end
 
-rule "Sanity check - movementType must exist"
+rule "Sanity check - assetType must exist"
 dialect "java"
     when
-        $fact : RawMovementFact(movementType == null)
+        $fact : RawMovementFact((assetType == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
     then
-        logger.info("\t==> Executing RULE 'Sanity check - movementType must exist'");
+        logger.info("\t==> Executing RULE 'Sanity check - assetType must exist'");
         $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - movementType must exist", $fact);
+        validationService.createAlarmReport("Sanity check - assetType must exist", $fact);
 end
 
-rule "Sanity check - positionTime must exist"
+rule "Sanity check - CFR, IRCS, IMO or MMSI must exist"
 dialect "java"
     when
-        $fact : RawMovementFact(positionTime == null)
+        $fact : RawMovementFact((vesselCfr == null || vesselIrcs == null || vesselImo == null || vesselMmsi = null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
     then
-        logger.info("\t==> Executing RULE 'Sanity check - positionTime must exist'");
+        logger.info("\t==> Executing RULE 'Sanity check - CFR, IRCS, IMO or MMSI must exist'");
         $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - positionTime must exist", $fact);
+        validationService.createAlarmReport("Sanity check - CFR, IRCS, IMO or MMSI must exist", $fact);
 end
 
-rule "Sanity check - reportedCourse must exist"
+
+/*
+rule "Sanity check - statusCode must exist"
 dialect "java"
     when
-        $fact : RawMovementFact(reportedCourse == null)
+        $fact : RawMovementFact(statusCode == null)
     then
-        logger.info("\t==> Executing RULE 'Sanity check - reportedCourse must exist'");
+        logger.info("\t==> Executing RULE 'Sanity check - statusCode must exist'");
         $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - reportedCourse must exist", $fact);
+        validationService.createAlarmReport("Sanity check - statusCode must exist", $fact);
 end
 
 rule "Sanity check - reportedSpeed must exist"
@@ -124,6 +132,31 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - reportedSpeed must exist", $fact);
 end
 
+rule "Sanity check - reportedCourse must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(reportedCourse == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - reportedCourse must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - reportedCourse must exist", $fact);
+end
+
+
+
+
+
+
+rule "Sanity check - movementType must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(movementType == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - movementType must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - movementType must exist", $fact);
+end
+
 rule "Sanity check - source must exist"
 dialect "java"
     when
@@ -132,16 +165,6 @@ dialect "java"
         logger.info("\t==> Executing RULE 'Sanity check - source must exist'");
         $fact.setOk(false);
         validationService.createAlarmReport("Sanity check - source must exist", $fact);
-end
-
-rule "Sanity check - statusCode must exist"
-dialect "java"
-    when
-        $fact : RawMovementFact(statusCode == null)
-    then
-        logger.info("\t==> Executing RULE 'Sanity check - statusCode must exist'");
-        $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - statusCode must exist", $fact);
 end
 
 rule "Sanity check - activityCallback must exist"
@@ -175,20 +198,6 @@ dialect "java"
 end
 */
 
-/* Temporary removed - need to test with better data
-rule "Sanity check - assetIdAssetType must exist"
-dialect "java"
-    when
-        $fact : RawMovementFact(assetIdAssetType == null && pluginType == "FLUX")
-    then
-        logger.info("\t==> Executing RULE 'Sanity check - assetIdAssetType must exist'");
-        $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - assetIdAssetType must exist", $fact);
-end
-
-// More rules (those that can fetch a vessel)
-
-*/
 
 /*
 rule "Sanity check - Altitude must exist"

@@ -488,18 +488,23 @@ public class RulesUtil {
         }
 
         // AssetId
-//        // TODO: Fix better test data!!!
-//        List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
-//        for (AssetIdList idList : assetIdList) {
-//            fact.setAssetIdAssetType(rawMovement.getAssetId().getAssetType().name());
-//            if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-//                fact.setVesselCfr(idList.getValue());
-//            }
-//            if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-//                fact.setVesselIrcs(idList.getValue());
-//            }
-//            // TODO: If we want more, add the valid combinations here
-//        }
+        List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
+        for (AssetIdList idList : assetIdList) {
+            fact.setAssetType(rawMovement.getAssetId().getAssetType().name());
+            if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+                fact.setVesselCfr(idList.getValue());
+            }
+            if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+                fact.setVesselIrcs(idList.getValue());
+            }
+            if (idList.getIdType().equals(AssetIdType.IMO) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+                fact.setVesselImo(idList.getValue());
+            }
+            if (idList.getIdType().equals(AssetIdType.MMSI) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
+                fact.setVesselMmsi(idList.getValue());
+            }
+            // TODO: If we want more, add the valid combinations here
+        }
 
 
         // From Mobile Terminal
@@ -531,11 +536,6 @@ public class RulesUtil {
         // From Vessel
         if (vessel != null) {
             fact.setVesselConnectId(vessel.getVesselId().getGuid());
-
-//            fact.setVesselCfr(vessel.getCfr());
-//            fact.setVesselImo(vessel.getImo());
-//            fact.setVesselIrcs(vessel.getIrcs());
-//            fact.setVesselName(vessel.getName());
 
         }
         return fact;

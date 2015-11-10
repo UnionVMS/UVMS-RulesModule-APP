@@ -19,6 +19,7 @@
             <xsd:element name="sender" type="xsd:string"/>
             <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="rawMovement" type="movement:RawMovementType"/>
+            <xsd:element name="inactivatePosition" type="xsd:boolean"/>
             <xsd:element name="updated" type="xsd:string"/>
             <xsd:element name="updatedBy" type="xsd:string"/>
         </xsd:sequence>

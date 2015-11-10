@@ -32,7 +32,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
-//import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleResponseMapper;
 import eu.europa.ec.fisheries.wsdl.vessel.types.*;
@@ -289,6 +288,9 @@ public class RulesServiceBean implements RulesService {
 
                 String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
                 producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
+                TextMessage ticketResponse = consumer.getMessage(messageId, TextMessage.class);
+
+                // TODO: Do something with the response???
             }
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
@@ -442,8 +444,6 @@ public class RulesServiceBean implements RulesService {
             assetGroup = "GO_GET_IT!!!";
 
             vesselGuid = vessel.getVesselId().getGuid();
-
-//            mapGetVesselGroupsByVesselId(vessel.getVesselId().getGuid());
         }
 
         try {
@@ -469,10 +469,6 @@ public class RulesServiceBean implements RulesService {
             e.printStackTrace();
         }
     }
-
-//    private List<AssetGroup> getAssetGroupByVesselGuid(String guid) {
-//        VesselModuleRequestMapper.mapGetVesselGroupsByVesselId(guid);
-//    }
 
     private Vessel getVesselByConnectId(String connectId) throws VesselModelMapperException, MessageException {
         LOG.info("Fetch vessel by connectId");
