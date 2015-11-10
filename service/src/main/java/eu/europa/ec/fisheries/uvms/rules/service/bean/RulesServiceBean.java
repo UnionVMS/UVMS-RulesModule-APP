@@ -287,8 +287,8 @@ public class RulesServiceBean implements RulesService {
                 ticket.setGuid(UUID.randomUUID().toString());
 
                 String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-                producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
-                TextMessage ticketResponse = consumer.getMessage(messageId, TextMessage.class);
+                String ticketMessageId = producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
+                TextMessage ticketResponse = consumer.getMessage(ticketMessageId, TextMessage.class);
 
                 // TODO: Do something with the response???
             }

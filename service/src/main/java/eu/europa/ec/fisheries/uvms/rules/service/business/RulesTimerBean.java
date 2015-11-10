@@ -34,7 +34,7 @@ public class RulesTimerBean {
     }
 
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
-//     @Schedule(second = "0", minute = "*/3", hour = "*", persistent = false)
+//     @Schedule(second = "0", minute = "*/1", hour = "*", persistent = false)
     public void checkCommunication() {
         LOG.info("RulesTimerBean tick");
         try {
@@ -53,9 +53,9 @@ public class RulesTimerBean {
                 fact.setDeadline(gregCal.getTime());
 
                 if (fact.getDeadline().getTime() <= fact.getNow().getTime()) {
-                    LOG.info("\t==> Executing RULE 'DEADLINE', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid() + ", movementGuid:" + fact.getMovementGuid());
+                    LOG.info("\t==> Executing RULE 'Asset not sending', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid() + ", movementGuid:" + fact.getMovementGuid());
 
-                    String ruleName = "DEADLINE";
+                    String ruleName = "Asset not sending";
                     String ruleGuid = "DEADLINE";
                     rulesService.timerRuleTriggered(ruleName, ruleGuid, fact);
                 }
