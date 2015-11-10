@@ -488,24 +488,25 @@ public class RulesUtil {
         }
 
         // AssetId
-        List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
-        for (AssetIdList idList : assetIdList) {
-            fact.setAssetType(rawMovement.getAssetId().getAssetType().name());
-            if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-                fact.setVesselCfr(idList.getValue());
+        if (rawMovement.getAssetId() != null) {
+            List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
+            for (AssetIdList idList : assetIdList) {
+                fact.setAssetType(rawMovement.getAssetId().getAssetType().name());
+                if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
+                    fact.setVesselCfr(idList.getValue());
+                }
+                if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
+                    fact.setVesselIrcs(idList.getValue());
+                }
+                if (idList.getIdType().equals(AssetIdType.IMO) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
+                    fact.setVesselImo(idList.getValue());
+                }
+                if (idList.getIdType().equals(AssetIdType.MMSI) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
+                    fact.setVesselMmsi(idList.getValue());
+                }
+                // TODO: If we want more, add the valid combinations here
             }
-            if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-                fact.setVesselIrcs(idList.getValue());
-            }
-            if (idList.getIdType().equals(AssetIdType.IMO) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-                fact.setVesselImo(idList.getValue());
-            }
-            if (idList.getIdType().equals(AssetIdType.MMSI) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL) ) {
-                fact.setVesselMmsi(idList.getValue());
-            }
-            // TODO: If we want more, add the valid combinations here
         }
-
 
         // From Mobile Terminal
         if (mobileTerminal != null) {

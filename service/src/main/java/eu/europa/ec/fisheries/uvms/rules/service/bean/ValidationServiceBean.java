@@ -243,6 +243,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmReport.setUpdatedBy("UVMS");
             alarmReport.setPluginType(fact.getPluginType());
             alarmReport.setVesselGuid(fact.getVesselConnectId());
+            alarmReport.setInactivatePosition(false);
 
             // TODO: Add sender, recipient and assetGuid
 
