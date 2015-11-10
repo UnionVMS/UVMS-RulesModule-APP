@@ -103,7 +103,7 @@ end
 rule "Sanity check - CFR, IRCS, IMO or MMSI must exist"
 dialect "java"
     when
-        $fact : RawMovementFact((vesselCfr == null || vesselIrcs == null || vesselImo == null || vesselMmsi = null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
+        $fact : RawMovementFact((vesselCfr == null || vesselIrcs == null || vesselImo == null || vesselMmsi == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
     then
         logger.info("\t==> Executing RULE 'Sanity check - CFR, IRCS, IMO or MMSI must exist'");
         $fact.setOk(false);
