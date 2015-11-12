@@ -2,57 +2,45 @@ package eu.europa.ec.fisheries.uvms.rules.rest.dto;
 
 public enum SubCriteria {
 
-    ALTITUDE(MainCriteria.ROOT),
     ASSET_GROUP(MainCriteria.ROOT),
-    CALCULATED_COURSE(MainCriteria.ROOT),
-    CALCULATED_SPEED(MainCriteria.ROOT),
-    COMCHANNEL_TYPE(MainCriteria.ROOT),
-    CONNECT_ID(MainCriteria.ROOT),
-    EXTERNAL_MARKING(MainCriteria.ROOT),
-    FLAG_STATE(MainCriteria.ROOT),
-    LATITUDE(MainCriteria.ROOT),
-    LONGITUDE(MainCriteria.ROOT),
-    MOVEMENT_GUID(MainCriteria.ROOT),
-    MOVEMENT_TYPE(MainCriteria.ROOT),
-    POSITION_REPORT_TIME(MainCriteria.ROOT),
-    REPORTED_COURSE(MainCriteria.ROOT),
-    REPORTED_SPEED(MainCriteria.ROOT),
-    SEGMENT_TYPE(MainCriteria.ROOT),
-    STATUS_CODE(MainCriteria.ROOT),
-    SOURCE(MainCriteria.ROOT),
-    WKT(MainCriteria.ROOT),
-    VECINITY_OF(MainCriteria.ROOT),
-
-    VESSEL_CFR(MainCriteria.VESSEL),
-    VESSEL_IRCS(MainCriteria.VESSEL),
-    VESSEL_NAME(MainCriteria.VESSEL),
-
-    MT_SERIAL_NO(MainCriteria.MOBILE_TERMINAL),
-    MT_DNID(MainCriteria.MOBILE_TERMINAL),
-    MT_MEMBER_ID(MainCriteria.MOBILE_TERMINAL),
-
-    AREA_CODE(MainCriteria.AREA),
-    AREA_TYPE(MainCriteria.AREA),
-    AREA_ID(MainCriteria.AREA),
-    AREA_NAME(MainCriteria.AREA),
 
     ACTIVITY_CALLBACK(MainCriteria.ACTIVITY),
     ACTIVITY_MESSAGE_ID(MainCriteria.ACTIVITY),
     ACTIVITY_MESSAGE_TYPE(MainCriteria.ACTIVITY),
 
-    ASSET_ID_ASSET_TYPE(MainCriteria.ASSET_ID),
-    ASSET_ID_TYPE(MainCriteria.ASSET_ID),
-    ASSET_ID_VALUE(MainCriteria.ASSET_ID),
+    AREA_CODE(MainCriteria.AREA),
+    AREA_NAME(MainCriteria.AREA),
+    AREA_TYPE(MainCriteria.AREA),
+    AREA_ID(MainCriteria.AREA),
 
-    COUNTRY_CODE(MainCriteria.CLOSEST_COUNTRY),
-    COUNTRY_DISTANCE(MainCriteria.CLOSEST_COUNTRY),
-    COUNTRY_REMOTE_ID(MainCriteria.CLOSEST_COUNTRY),
-    COUNTRY_NAME(MainCriteria.CLOSEST_COUNTRY),
+    ASSET_ID_GEAR_TYPE(MainCriteria.ASSET),
+    EXTERNAL_MARKING(MainCriteria.ASSET),
+    FLAG_STATE(MainCriteria.ASSET),
+    VESSEL_CFR(MainCriteria.ASSET),
+    VESSEL_IRCS(MainCriteria.ASSET),
+    VESSEL_NAME(MainCriteria.ASSET),
 
-    PORT_CODE(MainCriteria.CLOSEST_PORT),
-    PORT_DISTANCE(MainCriteria.CLOSEST_PORT),
-    PORT_REMOTE_ID(MainCriteria.CLOSEST_PORT),
-    PORT_NAME(MainCriteria.CLOSEST_PORT);
+    COMCHANNEL_TYPE(MainCriteria.MOBILE_TERMINAL),
+    MT_TYPE(MainCriteria.MOBILE_TERMINAL),
+    MT_DNID(MainCriteria.MOBILE_TERMINAL),
+    MT_MEMBER_ID(MainCriteria.MOBILE_TERMINAL),
+    MT_SERIAL_NO(MainCriteria.MOBILE_TERMINAL),
+
+    ALTITUDE(MainCriteria.POSITION),
+    LATITUDE(MainCriteria.POSITION),
+    LONGITUDE(MainCriteria.POSITION),
+    CALCULATED_COURSE(MainCriteria.POSITION),
+    CALCULATED_SPEED(MainCriteria.POSITION),
+    MOVEMENT_TYPE(MainCriteria.POSITION),
+    POSITION_REPORT_TIME(MainCriteria.POSITION),
+    REPORTED_COURSE(MainCriteria.POSITION),
+    REPORTED_SPEED(MainCriteria.POSITION),
+    SEGMENT_TYPE(MainCriteria.POSITION),
+    SOURCE(MainCriteria.POSITION),
+    STATUS_CODE(MainCriteria.POSITION),
+    VICINITY_OF(MainCriteria.POSITION),
+    CLOSEST_COUNTRY_CODE(MainCriteria.POSITION),
+    CLOSEST_PORT_CODE(MainCriteria.POSITION);
 
     private final MainCriteria mainCriteria;
 

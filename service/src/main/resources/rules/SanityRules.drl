@@ -48,14 +48,14 @@ dialect "java"
 end
 
 // A vessel must exist
-rule "Sanity check - vesselConnectId must exist"
+rule "Sanity check - vesselGuid must exist"
 dialect "java"
     when
-        $fact : RawMovementFact(vesselConnectId == null)
+        $fact : RawMovementFact(vesselGuid == null)
     then
-        logger.info("\t==> Executing RULE 'Sanity check - vesselConnectId must exist'");
+        logger.info("\t==> Executing RULE 'Sanity check - vesselGuid must exist'");
         $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - vesselConnectId must exist", $fact);
+        validationService.createAlarmReport("Sanity check - vesselGuid must exist", $fact);
 end
 
 // If INMARSAT_C
@@ -90,16 +90,6 @@ dialect "java"
         validationService.createAlarmReport("Sanity check - comChannelType must exist", $fact);
 end
 
-rule "Sanity check - assetType must exist"
-dialect "java"
-    when
-        $fact : RawMovementFact((assetType == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
-    then
-        logger.info("\t==> Executing RULE 'Sanity check - assetType must exist'");
-        $fact.setOk(false);
-        validationService.createAlarmReport("Sanity check - assetType must exist", $fact);
-end
-
 /*
 rule "Sanity check - CFR, IRCS, IMO or MMSI must exist"
 dialect "java"
@@ -114,6 +104,16 @@ end
 
 
 /*
+rule "Sanity check - assetType must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact((assetType == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - assetType must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - assetType must exist", $fact);
+end
+
 rule "Sanity check - statusCode must exist"
 dialect "java"
     when

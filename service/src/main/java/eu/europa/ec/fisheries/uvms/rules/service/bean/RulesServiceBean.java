@@ -373,8 +373,10 @@ public class RulesServiceBean implements RulesService {
                 // Get Vessel
                 if (mobileTerminal != null) {
                     String connectId = mobileTerminal.getConnectId();
-                    vessel = getVesselByConnectId(connectId);
-                    auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+                    if (connectId != null) {
+                        vessel = getVesselByConnectId(connectId);
+                        auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+                    }
                 }
             } else if (rawMovement.getComChannelType().name().equals(MovementComChannelType.FLUX.name()) || rawMovement.getComChannelType().name().equals(MovementComChannelType.MANUAL.name())) {
                 // Get Vessel
@@ -394,18 +396,18 @@ public class RulesServiceBean implements RulesService {
 
                 MovementBaseType movementBaseType = RulesMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
 
-                movementBaseType.setConnectId(rawMovementFact.getVesselConnectId());
+                movementBaseType.setConnectId(rawMovementFact.getVesselGuid());
 
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
                 // Send to Movement
                 String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-                TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+                TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
                 auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
 
-                if (response != null) {
-                    MovementType createdMovement = RulesMapper.mapCreateMovementToMovementType(response);
-                    validateCreatedMovement(createdMovement, rawMovementFact, vessel);
+                if (movementResponse != null) {
+                    MovementType createdMovement = RulesMapper.mapCreateMovementToMovementType(movementResponse);
+                    validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -413,8 +415,8 @@ public class RulesServiceBean implements RulesService {
                     ref.setType(REF_TYPE_MOVEMENT);
                     return ref;
                 } else {
-                    LOG.error("[ Error when getting movement from Movement , response from JMS Queue is null ]");
-                    throw new RulesServiceException("[ Error when getting movement from Movement , response from JMS Queue is null ]");
+                    LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
+                    throw new RulesServiceException("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
                 }
             } else {
                 // Tell Exchange that the report caused an alarm
@@ -428,13 +430,8 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private void validateCreatedMovement(MovementType movement, RawMovementFact rawFact, Vessel vessel) {
+    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, RawMovementType rawMovement) {
         Date auditTimestamp = new Date();
-
-        // Mobile Terminal
-        String mobileTerminalDnid = rawFact.getMobileTerminalDnid();
-        String mobileTerminalMemberNumber = rawFact.getMobileTerminalMemberNumber();
-        String mobileTerminalSerialNumber = rawFact.getMobileTerminalSerialNumber();
 
         // Vessel
         String assetGroup = null;
@@ -449,14 +446,16 @@ public class RulesServiceBean implements RulesService {
         try {
             LOG.info("Validating movement from Movement Module");
 
-            // TODO Decide if we really want to verify stuff from MobileTerminal
-            // Enrich with extra mobile terminal data
-
-            // TODO: Get vecinityOf to validate on
+            // TODO: Get vicinityOf to validate on
             // ??? Maybe Movement?
             String vicinityOf = "GO_GET_IT!!!";
 
-            MovementFact movementFact = RulesUtil.mapMovementFact(movement, vessel, mobileTerminalDnid, mobileTerminalMemberNumber, mobileTerminalSerialNumber);
+            String comChannelType = null;
+            if (rawMovement.getComChannelType() != null) {
+                comChannelType = rawMovement.getComChannelType().name();
+            }
+
+            MovementFact movementFact = RulesUtil.mapMovementFact(movement, mobileTerminal, vessel, comChannelType);
             LOG.debug("movementFact:{}", movementFact);
 
             rulesValidator.evaluate(movementFact);
@@ -471,7 +470,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Vessel getVesselByConnectId(String connectId) throws VesselModelMapperException, MessageException {
-        LOG.info("Fetch vessel by connectId");
+        LOG.info("Fetch vessel by connectId '{}'", connectId);
 
         VesselListQuery query = new VesselListQuery();
         VesselListCriteria criteria = new VesselListCriteria();
@@ -546,9 +545,9 @@ public class RulesServiceBean implements RulesService {
 
         String getVesselListRequest = VesselModuleRequestMapper.createVesselListModuleRequest(query);
         String getVesselMessageId = producer.sendDataSourceMessage(getVesselListRequest, DataSourceQueue.VESSEL);
-        TextMessage getMobileTerminalResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
-        List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getMobileTerminalResponse, getVesselMessageId);
+        List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
         Vessel result = resultList.isEmpty()?null:resultList.get(0);
 
         return result;

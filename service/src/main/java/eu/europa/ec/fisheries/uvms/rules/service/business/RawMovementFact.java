@@ -29,20 +29,15 @@ public class RawMovementFact {
     private String activityMessageId;
     private String activityMessageType;
 
-    // AssetType
-    private String assetType;
-
     // Position
     private Double altitude;
     private Double latitude;
     private Double longitude;
 
     // Vessel
-    private String vesselConnectId;
+    private String vesselGuid;
     private String vesselCfr;
     private String vesselIrcs;
-    private String vesselImo;
-    private String vesselMmsi;
 
     // Mobile Terminal
     private String mobileTerminalMemberNumber;
@@ -203,14 +198,6 @@ public class RawMovementFact {
         this.activityMessageType = activityMessageType;
     }
 
-    public String getAssetType() {
-        return assetType;
-    }
-
-    public void setAssetType(String assetType) {
-        this.assetType = assetType;
-    }
-
     public String getMobileTerminalMemberNumber() {
         return mobileTerminalMemberNumber;
     }
@@ -243,12 +230,12 @@ public class RawMovementFact {
         this.mobileTerminalType = mobileTerminalType;
     }
 
-    public String getVesselConnectId() {
-        return vesselConnectId;
+    public String getVesselGuid() {
+        return vesselGuid;
     }
 
-    public void setVesselConnectId(String vesselConnectId) {
-        this.vesselConnectId = vesselConnectId;
+    public void setVesselGuid(String vesselGuid) {
+        this.vesselGuid = vesselGuid;
     }
 
     public String getVesselCfr() {
@@ -265,22 +252,6 @@ public class RawMovementFact {
 
     public void setVesselIrcs(String vesselIrcs) {
         this.vesselIrcs = vesselIrcs;
-    }
-
-    public String getVesselImo() {
-        return vesselImo;
-    }
-
-    public void setVesselImo(String vesselImo) {
-        this.vesselImo = vesselImo;
-    }
-
-    public String getVesselMmsi() {
-        return vesselMmsi;
-    }
-
-    public void setVesselMmsi(String vesselMmsi) {
-        this.vesselMmsi = vesselMmsi;
     }
 
     @Override
@@ -301,15 +272,12 @@ public class RawMovementFact {
                 ", activityCallback='" + activityCallback + '\'' +
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +
-                ", assetType='" + assetType + '\'' +
                 ", altitude=" + altitude +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", vesselConnectId='" + vesselConnectId + '\'' +
+                ", vesselGuid='" + vesselGuid + '\'' +
                 ", vesselCfr='" + vesselCfr + '\'' +
                 ", vesselIrcs='" + vesselIrcs + '\'' +
-                ", vesselImo='" + vesselImo + '\'' +
-                ", vesselMmsi='" + vesselMmsi + '\'' +
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +

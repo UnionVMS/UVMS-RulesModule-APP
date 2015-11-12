@@ -12,6 +12,8 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
+import eu.europa.ec.fisheries.wsdl.vessel.types.VesselId;
+import eu.europa.ec.fisheries.wsdl.vessel.types.VesselIdType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -48,128 +50,26 @@ public class RulesUtil {
             for (CustomRuleSegmentType segment : segments) {
                 sb.append(segment.getStartOperator());
 
-                // All criteria without subcriteria
-                switch (segment.getCriteria()) {
-//                case VESSEL:
-//                    sb.append("vessel");
-//                    break;
-//                case MOBILE_TERMINAL:
-//                    sb.append("mobileTerminal");
-//                    break;
-                case AREA:
-                    // If list and NE
-                    if (segment.getCondition().equals(ConditionType.NE)) {
-                        sb.append("!");
+                // Criteria
+                if (segment.getCriteria() != null) {
+                    switch (segment.getCriteria()) {
+                        case AREA:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            break;
+                        case ASSET_GROUP:
+                            // TODO: Implement
+                            break;
+                        default:
+                            break;
                     }
-//                    sb.append("area");
-                    break;
-                case EXTERNAL_MARKING:
-                    sb.append("externalMarking");
-                    break;
-                case FLAG_STATE:
-                    sb.append("flagState");
-                    break;
-                case POSITION_REPORT_TIME:
-                    sb.append("positionTime");
-                    break;
-                case STATUS_CODE:
-                    sb.append("statusCode");
-                    break;
-                case CALCULATED_SPEED:
-                    sb.append("calculatedSpeed");
-                    break;
-//                case ACTIVITY:
-//                    sb.append("activity");
-//                    break;
-                case ALTITUDE:
-                    sb.append("altitude");
-                    break;
-//                case ASSET_ID:
-//                    sb.append("assetId");
-//                    break;
-                case CALCULATED_COURSE:
-                    sb.append("calculatedCourse");
-                    break;
-//                case CLOSEST_COUNTRY:
-//                    sb.append("closestCountry");
-//                    break;
-//                case CLOSEST_PORT:
-//                    sb.append("closestPort");
-//                    break;
-                case COMCHANNEL_TYPE:
-                    sb.append("comChannelType");
-                    break;
-                case CONNECT_ID:
-                    sb.append("connectId");
-                    break;
-                case LATITUDE:
-                    sb.append("latitude");
-                    break;
-                case LONGITUDE:
-                    sb.append("longitude");
-                    break;
-                case MOVEMENT_GUID:
-                    sb.append("movementGuid");
-                    break;
-                case MOVEMENT_TYPE:
-                    sb.append("movementType");
-                    break;
-                case REPORTED_COURSE:
-                    sb.append("reportedCourse");
-                    break;
-                case REPORTED_SPEED:
-                    sb.append("reportedSpeed");
-                    break;
-                case SEGMENT_TYPE:
-                    sb.append("fromSegmentType");
-                    break;
-                case SOURCE:
-                    sb.append("source");
-                    break;
-                case WKT:
-                    sb.append("wkt");
-                    break;
-
-                case VECINITY_OF:
-                    break;
-                case ASSET_GROUP:
-                    break;
-                default:
-                    break;
                 }
                 // All subcriteria
                 if (segment.getSubCriteria() != null) {
                     switch (segment.getSubCriteria()) {
-                        case VESSEL_CFR:
-                            sb.append("vesselCfr");
-                            break;
-                        case VESSEL_IRCS:
-                            sb.append("vesselIrcs");
-                            break;
-                        case VESSEL_NAME:
-                            sb.append("vesselName");
-                            break;
-                        case MT_MEMBER_ID:
-                            sb.append("mobileTerminalMemberNumber");
-                            break;
-                        case MT_SERIAL_NO:
-                            sb.append("mobileTerminalSerialNumber");
-                            break;
-                        case MT_DNID:
-                            sb.append("mobileTerminalDnid");
-                            break;
-                        case AREA_TYPE:
-                            sb.append("areaTypes");
-                            break;
-                        case AREA_CODE:
-                            sb.append("areaCodes");
-                            break;
-                        case AREA_NAME:
-                            sb.append("areaNames");
-                            break;
-                        case AREA_ID:
-                            sb.append("areaRemoteIds");
-                            break;
+                        // ACTIVITY
                         case ACTIVITY_CALLBACK:
                             sb.append("activityCallback");
                             break;
@@ -179,38 +79,119 @@ public class RulesUtil {
                         case ACTIVITY_MESSAGE_TYPE:
                             sb.append("activityMessageType");
                             break;
-                        case ASSET_ID_ASSET_TYPE:
-                            sb.append("assetIdAssetType");
+
+                        // AREA
+                        case AREA_CODE:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("areaCodes");
                             break;
-                        case ASSET_ID_TYPE:
-                            sb.append("assetIdType");
+                        case AREA_NAME:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("areaNames");
                             break;
-                        case ASSET_ID_VALUE:
-                            sb.append("assetIdValue");
+                        case AREA_TYPE:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("areaTypes");
                             break;
-                        case COUNTRY_CODE:
+                        case AREA_ID:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("areaRemoteIds");
+                            break;
+
+                        // ASSET
+                        case ASSET_ID_GEAR_TYPE:
+                            sb.append("assetIdGearType");
+                            break;
+                        case EXTERNAL_MARKING:
+                            sb.append("externalMarking");
+                            break;
+                        case FLAG_STATE:
+                            sb.append("flagState");
+                            break;
+                        case VESSEL_CFR:
+                            sb.append("vesselCfr");
+                            break;
+                        case VESSEL_IRCS:
+                            sb.append("vesselIrcs");
+                            break;
+                        case VESSEL_NAME:
+                            sb.append("vesselName");
+                            break;
+
+                        // MOBILE_TERMINAL
+                        case COMCHANNEL_TYPE:
+                            sb.append("comChannelType");
+                            break;
+                        case MT_TYPE:
+                            sb.append("mobileTerminalType");
+                            break;
+                        case MT_DNID:
+                            sb.append("mobileTerminalDnid");
+                            break;
+                        case MT_MEMBER_ID:
+                            sb.append("mobileTerminalMemberNumber");
+                            break;
+                        case MT_SERIAL_NO:
+                            sb.append("mobileTerminalSerialNumber");
+                            break;
+
+                        // POSITION
+                        case ALTITUDE:
+                            sb.append("altitude");
+                            break;
+                        case LATITUDE:
+                            sb.append("latitude");
+                            break;
+                        case LONGITUDE:
+                            sb.append("longitude");
+                            break;
+                        case CALCULATED_COURSE:
+                            sb.append("calculatedCourse");
+                            break;
+                        case CALCULATED_SPEED:
+                            sb.append("calculatedSpeed");
+                            break;
+                        case MOVEMENT_TYPE:
+                            sb.append("movementType");
+                            break;
+                        case POSITION_REPORT_TIME:
+                            sb.append("positionTime");
+                            break;
+                        case REPORTED_COURSE:
+                            sb.append("reportedCourse");
+                            break;
+                        case REPORTED_SPEED:
+                            sb.append("reportedSpeed");
+                            break;
+                        case SEGMENT_TYPE:
+                            sb.append("segmentType");
+                            break;
+                        case SOURCE:
+                            sb.append("source");
+                            break;
+                        case STATUS_CODE:
+                            sb.append("statusCode");
+                            break;
+                        case VICINITY_OF:
+                            // TODO: Implement
+                            break;
+                        case CLOSEST_COUNTRY_CODE:
                             sb.append("closestCountryCode");
                             break;
-                        case COUNTRY_DISTANCE:
-                            sb.append("closestCountryDistance");
-                            break;
-                        case COUNTRY_REMOTE_ID:
-                            sb.append("closestCountryRemoteId");
-                            break;
-                        case COUNTRY_NAME:
-                            sb.append("closestCountryName");
-                            break;
-                        case PORT_CODE:
+                        case CLOSEST_PORT_CODE:
                             sb.append("closestPortCode");
-                            break;
-                        case PORT_DISTANCE:
-                            sb.append("closestPortDistance");
-                            break;
-                        case PORT_REMOTE_ID:
-                            sb.append("closestPortRemoteId");
-                            break;
-                        case PORT_NAME:
-                            sb.append("closestPortName");
                             break;
                         default:
                             break;
@@ -335,50 +316,17 @@ public class RulesUtil {
         return sb.toString();
     }
 
-    public static MovementFact mapMovementFact(MovementType movement, Vessel vessel, String mobileTerminalDnid, String mobileTerminalMemberNumber, String mobileTerminalSerialNumber) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType) {
         MovementFact fact = new MovementFact();
 
-        // TODO: Add comChannelType
-
         fact.setMovementMovement(movement);
-
-        // Base
-        fact.setCalculatedCourse(movement.getCalculatedCourse());
-        fact.setCalculatedSpeed(movement.getCalculatedSpeed());
-        if (movement.getComChannelType() != null) {
-            fact.setComChannelType(movement.getComChannelType().name());
-        }
-        fact.setConnectId(movement.getConnectId());
-        fact.setMobileTerminalDnid(mobileTerminalDnid);
-        fact.setMobileTerminalMemberNumber(mobileTerminalMemberNumber);
-        fact.setMobileTerminalSerialNumber(mobileTerminalSerialNumber);
         fact.setMovementGuid(movement.getGuid());
-        if (movement.getMovementType() != null) {
-            fact.setMovementType(movement.getMovementType().name());
-        }
-        if (movement.getPositionTime() != null) {
-            fact.setPositionTime(movement.getPositionTime().toGregorianCalendar().getTime());
-        }
-        fact.setReportedCourse(movement.getReportedCourse());
-        fact.setReportedSpeed(movement.getReportedSpeed());
-        if (movement.getSource() != null) {
-            fact.setSource(movement.getSource().name());
-        }
-        fact.setStatusCode(movement.getStatus());
-        fact.setWkt(movement.getWkt());
 
-        if (vessel != null) {
-            fact.setExternalMarking(vessel.getExternalMarking());
-            fact.setFlagState(vessel.getCountryCode());
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
-            fact.setVesselName(vessel.getName());
-            fact.setVesselCfr(vessel.getCfr());
-            fact.setVesselIrcs(vessel.getIrcs());
+        // ROOT
+        // TODO
+//        fact.setAssetGroup(assetGroup);
 
-            // TODO: Add assetIdAssetType, assetIdType, assetIdValue
-
-        }
-        // Activity
+        // ACTIVITY
         if (movement.getActivity() != null) {
             fact.setActivityCallback(movement.getActivity().getCallback());
             fact.setActivityMessageId(movement.getActivity().getMessageId());
@@ -387,62 +335,86 @@ public class RulesUtil {
             }
         }
 
-        // AssetId - this is wrong, we don't get anything from Movement. Probably Vessel or MobileTerminal
-        if (movement.getAssetId() != null) {
-            fact.setAssetIdAssetType(movement.getAssetId().getAssetType().name());
-            if (movement.getAssetId().getIdType() != null) {
-                fact.setAssetIdType(movement.getAssetId().getIdType().name());
-            }
-            fact.setAssetIdValue(movement.getAssetId().getValue());
-            if (movement.getAssetId().getAssetType() == AssetType.VESSEL && movement.getAssetId().getIdType() == AssetIdType.CFR) {
-                fact.setVesselCfr(movement.getAssetId().getValue());
-            }
-            if (movement.getAssetId().getAssetType() == AssetType.VESSEL && movement.getAssetId().getIdType() == AssetIdType.IRCS) {
-                fact.setVesselIrcs(movement.getAssetId().getValue());
+        // AREA
+        if (movement.getMetaData() != null) {
+            List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
+            for (MovementMetaDataAreaType area : areas) {
+                fact.getAreaCodes().add(area.getCode());
+                fact.getAreaNames().add(area.getName());
+                fact.getAreaTypes().add(area.getAreaType());
+                fact.getAreaRemoteIds().add(area.getRemoteId());
             }
         }
 
-        // Position
+        // ASSET
+        if (vessel != null) {
+            fact.setAssetIdGearType(vessel.getGearType());
+            fact.setExternalMarking(vessel.getExternalMarking());
+            fact.setFlagState(vessel.getCountryCode());
+            fact.setVesselCfr(vessel.getCfr());
+            fact.setVesselIrcs(vessel.getIrcs());
+            fact.setVesselName(vessel.getName());
+            fact.setVesselGuid(vessel.getVesselId().getGuid());
+        }
+
+        // MOBILE_TERMINAL
+        fact.setComChannelType(comChannelType);
+        if (mobileTerminal != null) {
+            fact.setMobileTerminalType(mobileTerminal.getType());
+            List<ComChannelType> channels = mobileTerminal.getChannels();
+            for (ComChannelType channel : channels) {
+                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
+                for (ComChannelAttribute chanAttribute : chanAttributes) {
+                    if (chanAttribute.getType().equals("DNID")) {
+                        fact.setMobileTerminalDnid(chanAttribute.getValue());
+                    }
+                    if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
+                        fact.setMobileTerminalMemberNumber(chanAttribute.getValue());
+                    }
+                }
+            }
+            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
+            for (MobileTerminalAttribute attribute : attributes) {
+                if (attribute.getType().equals("SERIAL_NUMBER")) {
+                    fact.setMobileTerminalSerialNumber(attribute.getValue());
+                }
+            }
+        }
+
+        // POSITION
         if (movement.getPosition() != null) {
             fact.setAltitude(movement.getPosition().getAltitude());
             fact.setLatitude(movement.getPosition().getLatitude());
             fact.setLongitude(movement.getPosition().getLongitude());
         }
-
-        // Meta data
+        fact.setCalculatedCourse(movement.getCalculatedCourse());
+        fact.setCalculatedSpeed(movement.getCalculatedSpeed());
+        if (movement.getMovementType() != null) {
+            fact.setMovementType(movement.getMovementType().name());
+        }
+        if (movement.getPositionTime() != null) {
+            fact.setPositionTime(movement.getPositionTime().toGregorianCalendar().getTime());
+        }
+        fact.setReportedCourse(movement.getReportedCourse());
+        fact.setReportedSpeed(movement.getReportedSpeed());
         if (movement.getMetaData() != null) {
-            // Meta data base
-            // fact.setPreviousMovementId(movement.getMetaData().getPreviousMovementId());
             if (movement.getMetaData().getFromSegmentType() != null) {
-                fact.setFromSegmentType(movement.getMetaData().getFromSegmentType().name());
+                fact.setSegmentType(movement.getMetaData().getFromSegmentType().name());
             }
-
-            // Areas
-            List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
-            for (MovementMetaDataAreaType area : areas) {
-                fact.getAreaCodes().add(area.getCode());
-                fact.getAreaRemoteIds().add(area.getRemoteId());
-                fact.getAreaTypes().add(area.getAreaType());
-                fact.getAreaNames().add(area.getName());
-            }
-
-            // Country
             if (movement.getMetaData().getClosestCountry() != null) {
                 fact.setClosestCountryCode(movement.getMetaData().getClosestCountry().getCode());
-                fact.setClosestCountryDistance(movement.getMetaData().getClosestCountry().getDistance());
-                fact.setClosestCountryRemoteId(movement.getMetaData().getClosestCountry().getRemoteId());
-                fact.setClosestCountryName(movement.getMetaData().getClosestCountry().getName());
             }
-
-            // Port
             if (movement.getMetaData().getClosestPort() != null) {
                 fact.setClosestPortCode(movement.getMetaData().getClosestPort().getCode());
-                fact.setClosestPortDistance(movement.getMetaData().getClosestPort().getDistance());
-                fact.setClosestPortRemoteId(movement.getMetaData().getClosestPort().getRemoteId());
-                fact.setClosestPortName(movement.getMetaData().getClosestPort().getName());
             }
-
         }
+        if (movement.getSource() != null) {
+            fact.setSource(movement.getSource().name());
+        }
+        fact.setStatusCode(movement.getStatus());
+        // TODO
+//        fact.setVicinityOf(vicinityOf);
+
 
         return fact;
     }
@@ -487,25 +459,10 @@ public class RulesUtil {
             fact.setLongitude(rawMovement.getPosition().getLongitude());
         }
 
-        // AssetId
-        if (rawMovement.getAssetId() != null) {
-            List<AssetIdList> assetIdList = rawMovement.getAssetId().getAssetIdList();
-            for (AssetIdList idList : assetIdList) {
-                fact.setAssetType(rawMovement.getAssetId().getAssetType().name());
-                if (idList.getIdType().equals(AssetIdType.CFR) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
-                    fact.setVesselCfr(idList.getValue());
-                }
-                if (idList.getIdType().equals(AssetIdType.IRCS) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
-                    fact.setVesselIrcs(idList.getValue());
-                }
-                if (idList.getIdType().equals(AssetIdType.IMO) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
-                    fact.setVesselImo(idList.getValue());
-                }
-                if (idList.getIdType().equals(AssetIdType.MMSI) && rawMovement.getAssetId().getAssetType().equals(AssetType.VESSEL)) {
-                    fact.setVesselMmsi(idList.getValue());
-                }
-                // TODO: If we want more, add the valid combinations here
-            }
+        if (vessel != null) {
+            fact.setVesselGuid(vessel.getVesselId().getGuid());
+            fact.setVesselCfr(vessel.getCfr());
+            fact.setVesselIrcs(vessel.getIrcs());
         }
 
         // From Mobile Terminal
@@ -522,7 +479,6 @@ public class RulesUtil {
                     }
                 }
             }
-
             List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
             for (MobileTerminalAttribute attribute : attributes) {
                 if (attribute.getType().equals("SERIAL_NUMBER")) {
@@ -530,15 +486,9 @@ public class RulesUtil {
                 }
             }
             fact.setMobileTerminalConnectId(mobileTerminal.getConnectId());
-
             fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
-        // From Vessel
-        if (vessel != null) {
-            fact.setVesselConnectId(vessel.getVesselId().getGuid());
-
-        }
         return fact;
     }
 
