@@ -502,7 +502,7 @@ public class RulesUtilTest {
         segment30.setValue("CLOSEST_COUNTRY_CODE");
         segment30.setEndOperator("");
         segment30.setLogicBoolOperator(LogicOperatorType.OR);
-        segment30.setOrder("31");
+        segment30.setOrder("30");
         customRule.getDefinitions().add(segment30);
 
         // CLOSEST_PORT_CODE
@@ -512,33 +512,39 @@ public class RulesUtilTest {
         segment31.setSubCriteria(SubCriteriaType.CLOSEST_PORT_CODE);
         segment31.setCondition(ConditionType.EQ);
         segment31.setValue("CLOSEST_PORT_CODE");
-        segment31.setEndOperator(")");
-        segment31.setLogicBoolOperator(LogicOperatorType.NONE);
-        segment31.setOrder("32");
+        segment31.setEndOperator("");
+        segment31.setLogicBoolOperator(LogicOperatorType.OR);
+        segment31.setOrder("31");
         customRule.getDefinitions().add(segment31);
 
         // ASSET_GROUP
+        CustomRuleSegmentType segment32 = new CustomRuleSegmentType();
+        segment32.setStartOperator("");
+        segment32.setCriteria(CriteriaType.ASSET_GROUP);
+        segment32.setSubCriteria(null);
+        segment32.setCondition(ConditionType.EQ);
+        segment32.setValue("ASSET_GROUP");
+        segment32.setEndOperator("");
+        segment32.setLogicBoolOperator(LogicOperatorType.OR);
+        segment32.setOrder("32");
+        customRule.getDefinitions().add(segment32);
 
         // VICINITY_OF
-//        CustomRuleSegmentType segment30 = new CustomRuleSegmentType();
-//        segment30.setStartOperator("");
-//        segment30.setCriteria(CriteriaType.POSITION);
-//        segment30.setSubCriteria(SubCriteriaType.VICINITY_OF);
-//        segment30.setCondition(ConditionType.EQ);
-//        segment30.setValue("VICINITY_OF");
-//        segment30.setEndOperator("");
-//        segment30.setLogicBoolOperator(LogicOperatorType.OR);
-//        segment30.setOrder("30");
-//        customRule.getDefinitions().add(segment30);
-
-
-
+        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
+        segment33.setStartOperator("");
+        segment33.setCriteria(CriteriaType.POSITION);
+        segment33.setSubCriteria(SubCriteriaType.VICINITY_OF);
+        segment33.setCondition(ConditionType.EQ);
+        segment33.setValue("VICINITY_OF");
+        segment33.setEndOperator(")");
+        segment33.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment33.setOrder("33");
+        customRule.getDefinitions().add(segment33);
 
         // Action
         CustomRuleActionType action = new CustomRuleActionType();
         action.setAction(ActionType.TICKET);
         customRule.getActions().add(action);
-
 
         rawRules.add(customRule);
 
@@ -575,7 +581,9 @@ public class RulesUtilTest {
         sb.append("source == \"SOURCE\" || ");
         sb.append("statusCode == \"STATUS_CODE\" || ");
         sb.append("closestCountryCode == \"CLOSEST_COUNTRY_CODE\" || ");
-        sb.append("closestPortCode == \"CLOSEST_PORT_CODE\"");
+        sb.append("closestPortCode == \"CLOSEST_PORT_CODE\" || ");
+        sb.append("assetGroup == \"ASSET_GROUP\" || ");
+        sb.append("vicinityOf == \"VICINITY_OF\"");
         sb.append(")");
 
         String expectedRule = sb.toString();

@@ -10,6 +10,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementComChannelType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
@@ -31,6 +32,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleResponseMapper;
@@ -385,11 +388,16 @@ public class RulesServiceBean implements RulesService {
                 LOG.error("[ Unknown type {} ]", rawMovement.getComChannelType().name());
             }
 
-            RawMovementFact rawMovementFact = RulesUtil.mapRawMovementFact(rawMovement, mobileTerminal, vessel, pluginType);
+            RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, vessel, pluginType);
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
+
+            if (vessel != null && vessel.getVesselId().getGuid() != null && rawMovement.getPositionTime() != null) {
+                persistLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
+            }
 
             if (rawMovementFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
@@ -425,7 +433,7 @@ public class RulesServiceBean implements RulesService {
                 ref.setType(REF_TYPE_ALARM);
                 return ref;
             }
-        } catch (MessageException |MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | VesselModelMapperException e) {
+        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | VesselModelMapperException | RulesModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -455,14 +463,11 @@ public class RulesServiceBean implements RulesService {
                 comChannelType = rawMovement.getComChannelType().name();
             }
 
-            MovementFact movementFact = RulesUtil.mapMovementFact(movement, mobileTerminal, vessel, comChannelType);
+            MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, vessel, comChannelType);
             LOG.debug("movementFact:{}", movementFact);
 
             rulesValidator.evaluate(movementFact);
             auditTimestamp = auditLog("Time to validate rules:", auditTimestamp);
-
-            persistThisMovementReport(vesselGuid, movement);
-            auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -616,11 +621,10 @@ public class RulesServiceBean implements RulesService {
         return result;
     }
 
-    private void persistThisMovementReport(String vesselGuid, MovementType movement) throws MessageException, RulesModelMapperException {
-        // I assume we will aways have a guid for vessel
+    private void persistLastCommunication(String vesselGuid, XMLGregorianCalendar positionTime) throws MessageException, RulesModelMapperException {
         PreviousReportType thisReport = new PreviousReportType();
-        thisReport.setMovementGuid(movement.getGuid());
-        thisReport.setPositionTime(movement.getPositionTime());
+
+        thisReport.setPositionTime(positionTime);
         thisReport.setVesselGuid(vesselGuid);
 
         String upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);

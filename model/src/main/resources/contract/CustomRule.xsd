@@ -72,7 +72,6 @@
             <xsd:enumeration value="AREA_TYPE"/>
             <xsd:enumeration value="AREA_ID"/>
             <!-- ASSET -->
-            <!--<xsd:enumeration value="ASSET_ID_ASSET_TYPE"/>-->
             <xsd:enumeration value="ASSET_ID_GEAR_TYPE"/>
             <xsd:enumeration value="EXTERNAL_MARKING"/>
             <xsd:enumeration value="FLAG_STATE"/>
@@ -85,7 +84,6 @@
             <xsd:enumeration value="MT_DNID"/>
             <xsd:enumeration value="MT_MEMBER_ID"/>
             <xsd:enumeration value="MT_SERIAL_NO"/>
-
             <!-- POSITION-->
             <xsd:enumeration value="ALTITUDE"/>
             <xsd:enumeration value="LATITUDE"/>

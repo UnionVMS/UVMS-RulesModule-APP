@@ -4,16 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttribute;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
-import eu.europa.ec.fisheries.wsdl.vessel.types.VesselId;
-import eu.europa.ec.fisheries.wsdl.vessel.types.VesselIdType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -21,10 +11,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetIdType;
-import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
@@ -61,6 +47,7 @@ public class RulesUtil {
                             break;
                         case ASSET_GROUP:
                             // TODO: Implement
+                            sb.append("assetGroup");
                             break;
                         default:
                             break;
@@ -185,7 +172,7 @@ public class RulesUtil {
                             sb.append("statusCode");
                             break;
                         case VICINITY_OF:
-                            // TODO: Implement
+                            sb.append("vicinityOf");
                             break;
                         case CLOSEST_COUNTRY_CODE:
                             sb.append("closestCountryCode");
@@ -314,182 +301,6 @@ public class RulesUtil {
             sb.append("\")");
         }
         return sb.toString();
-    }
-
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType) {
-        MovementFact fact = new MovementFact();
-
-        fact.setMovementMovement(movement);
-        fact.setMovementGuid(movement.getGuid());
-
-        // ROOT
-        // TODO
-//        fact.setAssetGroup(assetGroup);
-
-        // ACTIVITY
-        if (movement.getActivity() != null) {
-            fact.setActivityCallback(movement.getActivity().getCallback());
-            fact.setActivityMessageId(movement.getActivity().getMessageId());
-            if (movement.getActivity().getMessageType() != null) {
-                fact.setActivityMessageType(movement.getActivity().getMessageType().name());
-            }
-        }
-
-        // AREA
-        if (movement.getMetaData() != null) {
-            List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
-            for (MovementMetaDataAreaType area : areas) {
-                fact.getAreaCodes().add(area.getCode());
-                fact.getAreaNames().add(area.getName());
-                fact.getAreaTypes().add(area.getAreaType());
-                fact.getAreaRemoteIds().add(area.getRemoteId());
-            }
-        }
-
-        // ASSET
-        if (vessel != null) {
-            fact.setAssetIdGearType(vessel.getGearType());
-            fact.setExternalMarking(vessel.getExternalMarking());
-            fact.setFlagState(vessel.getCountryCode());
-            fact.setVesselCfr(vessel.getCfr());
-            fact.setVesselIrcs(vessel.getIrcs());
-            fact.setVesselName(vessel.getName());
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
-        }
-
-        // MOBILE_TERMINAL
-        fact.setComChannelType(comChannelType);
-        if (mobileTerminal != null) {
-            fact.setMobileTerminalType(mobileTerminal.getType());
-            List<ComChannelType> channels = mobileTerminal.getChannels();
-            for (ComChannelType channel : channels) {
-                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
-                for (ComChannelAttribute chanAttribute : chanAttributes) {
-                    if (chanAttribute.getType().equals("DNID")) {
-                        fact.setMobileTerminalDnid(chanAttribute.getValue());
-                    }
-                    if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
-                        fact.setMobileTerminalMemberNumber(chanAttribute.getValue());
-                    }
-                }
-            }
-            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
-            for (MobileTerminalAttribute attribute : attributes) {
-                if (attribute.getType().equals("SERIAL_NUMBER")) {
-                    fact.setMobileTerminalSerialNumber(attribute.getValue());
-                }
-            }
-        }
-
-        // POSITION
-        if (movement.getPosition() != null) {
-            fact.setAltitude(movement.getPosition().getAltitude());
-            fact.setLatitude(movement.getPosition().getLatitude());
-            fact.setLongitude(movement.getPosition().getLongitude());
-        }
-        fact.setCalculatedCourse(movement.getCalculatedCourse());
-        fact.setCalculatedSpeed(movement.getCalculatedSpeed());
-        if (movement.getMovementType() != null) {
-            fact.setMovementType(movement.getMovementType().name());
-        }
-        if (movement.getPositionTime() != null) {
-            fact.setPositionTime(movement.getPositionTime().toGregorianCalendar().getTime());
-        }
-        fact.setReportedCourse(movement.getReportedCourse());
-        fact.setReportedSpeed(movement.getReportedSpeed());
-        if (movement.getMetaData() != null) {
-            if (movement.getMetaData().getFromSegmentType() != null) {
-                fact.setSegmentType(movement.getMetaData().getFromSegmentType().name());
-            }
-            if (movement.getMetaData().getClosestCountry() != null) {
-                fact.setClosestCountryCode(movement.getMetaData().getClosestCountry().getCode());
-            }
-            if (movement.getMetaData().getClosestPort() != null) {
-                fact.setClosestPortCode(movement.getMetaData().getClosestPort().getCode());
-            }
-        }
-        if (movement.getSource() != null) {
-            fact.setSource(movement.getSource().name());
-        }
-        fact.setStatusCode(movement.getStatus());
-        // TODO
-//        fact.setVicinityOf(vicinityOf);
-
-
-        return fact;
-    }
-
-    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Vessel vessel, String pluginType) {
-        RawMovementFact fact = new RawMovementFact();
-        fact.setRawMovementType(rawMovement);
-        fact.setOk(true);
-        fact.setPluginType(pluginType);
-
-        // Base
-        if (rawMovement.getComChannelType() != null) {
-            fact.setComChannelType(rawMovement.getComChannelType().name());
-        }
-        fact.setMovementGuid(UUID.randomUUID().toString());
-        if (rawMovement.getMovementType() != null) {
-            fact.setMovementType(rawMovement.getMovementType().name());
-        }
-        if (rawMovement.getPositionTime() != null) {
-            fact.setPositionTime(rawMovement.getPositionTime().toGregorianCalendar().getTime());
-        }
-        fact.setReportedCourse(rawMovement.getReportedCourse());
-        fact.setReportedSpeed(rawMovement.getReportedSpeed());
-        if (rawMovement.getSource() != null) {
-            fact.setSource(rawMovement.getSource().name());
-        }
-        fact.setStatusCode(rawMovement.getStatus());
-
-        // Activity
-        if (rawMovement.getActivity() != null) {
-            fact.setActivityCallback(rawMovement.getActivity().getCallback());
-            fact.setActivityMessageId(rawMovement.getActivity().getMessageId());
-            if (rawMovement.getActivity().getMessageType() != null) {
-                fact.setActivityMessageType(rawMovement.getActivity().getMessageType().name());
-            }
-        }
-
-        // Position
-        if (rawMovement.getPosition() != null) {
-            fact.setAltitude(rawMovement.getPosition().getAltitude());
-            fact.setLatitude(rawMovement.getPosition().getLatitude());
-            fact.setLongitude(rawMovement.getPosition().getLongitude());
-        }
-
-        if (vessel != null) {
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
-            fact.setVesselCfr(vessel.getCfr());
-            fact.setVesselIrcs(vessel.getIrcs());
-        }
-
-        // From Mobile Terminal
-        if (mobileTerminal != null) {
-            List<ComChannelType> channels = mobileTerminal.getChannels();
-            for (ComChannelType channel : channels) {
-                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
-                for (ComChannelAttribute chanAttribute : chanAttributes) {
-                    if (chanAttribute.getType().equals("DNID")) {
-                        fact.setMobileTerminalDnid(chanAttribute.getValue());
-                    }
-                    if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
-                        fact.setMobileTerminalMemberNumber(chanAttribute.getValue());
-                    }
-                }
-            }
-            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
-            for (MobileTerminalAttribute attribute : attributes) {
-                if (attribute.getType().equals("SERIAL_NUMBER")) {
-                    fact.setMobileTerminalSerialNumber(attribute.getValue());
-                }
-            }
-            fact.setMobileTerminalConnectId(mobileTerminal.getConnectId());
-            fact.setMobileTerminalType(mobileTerminal.getType());
-        }
-
-        return fact;
     }
 
     final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
