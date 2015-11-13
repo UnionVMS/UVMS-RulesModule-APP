@@ -251,7 +251,7 @@ public class ValidationServiceBean implements ValidationService {
             List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
-            alarmItem.setRuleGuid(ruleName);
+            alarmItem.setRuleGuid("sanity rule - " + ruleName);
             alarmItem.setRuleName(ruleName);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);

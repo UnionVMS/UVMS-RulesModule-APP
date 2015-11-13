@@ -367,25 +367,19 @@ public class RulesServiceBean implements RulesService {
             MobileTerminalType mobileTerminal = null;
             Vessel vessel = null;
 
-            LOG.debug("Incoming comChannelType {}", rawMovement.getComChannelType().name());
-            if (rawMovement.getComChannelType().name().equals(MovementComChannelType.MOBILE_TERMINAL.name())) {
-                // Get Mobile Terminal
-                mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
-                auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
+            // Get Mobile Terminal if it exists
+            mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
+            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
 
-                // Get Vessel
-                if (mobileTerminal != null) {
-                    String connectId = mobileTerminal.getConnectId();
-                    if (connectId != null) {
-                        vessel = getVesselByConnectId(connectId);
-                        auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
-                    }
+            // Get Vessel
+            if (mobileTerminal != null) {
+                String connectId = mobileTerminal.getConnectId();
+                if (connectId != null) {
+                    vessel = getVesselByConnectId(connectId);
+                    auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
                 }
-            } else if (rawMovement.getComChannelType().name().equals(MovementComChannelType.FLUX.name()) || rawMovement.getComChannelType().name().equals(MovementComChannelType.MANUAL.name())) {
-                // Get Vessel
-                vessel = getVesselByAssetId(rawMovement.getAssetId());
             } else {
-                LOG.error("[ Unknown type {} ]", rawMovement.getComChannelType().name());
+                vessel = getVesselByAssetId(rawMovement.getAssetId());
             }
 
             RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, vessel, pluginType);
@@ -488,7 +482,8 @@ public class RulesServiceBean implements RulesService {
         query.setVesselSearchCriteria(criteria);
 
         VesselListPagination pagination = new VesselListPagination();
-        pagination.setListSize(1);
+        // To leave room to find erroneous results - it must be only one in the list
+        pagination.setListSize(2);
         pagination.setPage(1);
         query.setPagination(pagination);
 
@@ -497,7 +492,7 @@ public class RulesServiceBean implements RulesService {
         TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
         List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
-        Vessel result = resultList.isEmpty()?null:resultList.get(0);
+        Vessel result = resultList.size() != 1 ? null : resultList.get(0);
 
         return  result;
     }
@@ -506,6 +501,11 @@ public class RulesServiceBean implements RulesService {
         LOG.info("Fetch vessel by assetId");
         VesselListQuery query = new VesselListQuery();
 
+        // If no asset information exists, don't look for one
+        if (assetId == null || assetId.getAssetIdList() == null) {
+            return null;
+        }
+
         List<AssetIdList> ids = assetId.getAssetIdList();
         VesselListCriteria criteria = new VesselListCriteria();
         for (AssetIdList id : ids) {
@@ -513,24 +513,32 @@ public class RulesServiceBean implements RulesService {
             VesselListCriteriaPair crit = new VesselListCriteriaPair();
             switch (id.getIdType()) {
                 case CFR:
-                    crit.setKey(ConfigSearchField.CFR);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(ConfigSearchField.CFR);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case IRCS:
-                    crit.setKey(ConfigSearchField.IRCS);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(ConfigSearchField.IRCS);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case IMO:
-                    crit.setKey(ConfigSearchField.IMO);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(ConfigSearchField.IMO);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case MMSI:
-                    crit.setKey(ConfigSearchField.MMSI);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(ConfigSearchField.MMSI);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case GUID:
                 case ID:
@@ -541,10 +549,16 @@ public class RulesServiceBean implements RulesService {
 
         }
 
+        // If no valid criterias, don't look for an asset
+        if (criteria.getCriterias().isEmpty()) {
+            return null;
+        }
+
         criteria.setIsDynamic(true);
         query.setVesselSearchCriteria(criteria);
         VesselListPagination pagination = new VesselListPagination();
-        pagination.setListSize(1);
+        // To leave room to find erroneous results - it must be only one in the list
+        pagination.setListSize(2);
         pagination.setPage(1);
         query.setPagination(pagination);
 
@@ -553,7 +567,7 @@ public class RulesServiceBean implements RulesService {
         TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
         List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
-        Vessel result = resultList.isEmpty()?null:resultList.get(0);
+        Vessel result = resultList.size() != 1 ? null : resultList.get(0);
 
         return result;
     }
@@ -562,6 +576,11 @@ public class RulesServiceBean implements RulesService {
         LOG.info("Fetch mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
+        // If no mobile terminal information exists, don't look for one
+        if (rawMovement.getMobileTerminal() == null || rawMovement.getMobileTerminal().getMobileTerminalIdList() == null) {
+            return null;
+        }
+
         List<IdList> ids = rawMovement.getMobileTerminal().getMobileTerminalIdList();
 
         MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
@@ -569,25 +588,36 @@ public class RulesServiceBean implements RulesService {
             eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria crit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
             switch (id.getType()) {
                 case DNID:
-                    crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.DNID);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.DNID);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case MEMBER_NUMBER:
-                    crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.MEMBER_NUMBER);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.MEMBER_NUMBER);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case SERIAL_NUMBER:
-                    crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
-                    crit.setValue(id.getValue());
-                    criteria.getCriterias().add(crit);
+                    if (id.getValue() != null) {
+                        crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
+                        crit.setValue(id.getValue());
+                        criteria.getCriterias().add(crit);
+                    }
                     break;
                 case LES:
                 default:
                     LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
                     break;
             }
+        }
+
+        // If no valid criterias, don't look for a mobile terminal
+        if (criteria.getCriterias().isEmpty()) {
+            return null;
         }
 
         // If we know the transponder type from the source, use it in the search criteria
@@ -607,7 +637,8 @@ public class RulesServiceBean implements RulesService {
 
         query.setMobileTerminalSearchCriteria(criteria);
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
-        pagination.setListSize(1);
+        // To leave room to find erroneous results - it must be only one in the list
+        pagination.setListSize(2);
         pagination.setPage(1);
         query.setPagination(pagination);
 
@@ -616,7 +647,7 @@ public class RulesServiceBean implements RulesService {
         TextMessage getMobileTerminalResponse = consumer.getMessage(getMobileTerminalMessageId, TextMessage.class);
 
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
-        MobileTerminalType result = resultList.isEmpty()?null:resultList.get(0);
+        MobileTerminalType result = resultList.size() != 1 ? null : resultList.get(0);
 
         return result;
     }

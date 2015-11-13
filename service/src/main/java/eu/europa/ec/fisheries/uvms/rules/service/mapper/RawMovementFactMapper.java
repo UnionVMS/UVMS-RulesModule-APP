@@ -4,6 +4,9 @@ import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttribute;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
+import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
@@ -52,34 +55,52 @@ public class RawMovementFactMapper {
             fact.setLongitude(rawMovement.getPosition().getLongitude());
         }
 
-        if (vessel != null) {
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
-            fact.setVesselCfr(vessel.getCfr());
-            fact.setVesselIrcs(vessel.getIrcs());
+        if (rawMovement.getAssetId() != null) {
+            List<AssetIdList> assetIds = rawMovement.getAssetId().getAssetIdList();
+            for (AssetIdList assetId : assetIds) {
+                switch (assetId.getIdType()) {
+                    case CFR:
+                        fact.setVesselCfr(assetId.getValue());
+                        break;
+                    case IRCS:
+                        fact.setVesselIrcs(assetId.getValue());
+                        break;
+                    case ID:
+                    case IMO:
+                    case MMSI:
+                    case GUID:
+                }
+            }
+        }
+
+        if (rawMovement.getMobileTerminal() != null) {
+            List<IdList> mobileTerminalIds = rawMovement.getMobileTerminal().getMobileTerminalIdList();
+            for (IdList mobileTerminalId : mobileTerminalIds) {
+                switch(mobileTerminalId.getType()) {
+                    case DNID:
+                        fact.setMobileTerminalDnid(mobileTerminalId.getValue());
+                        break;
+                    case MEMBER_NUMBER:
+                        fact.setMobileTerminalMemberNumber(mobileTerminalId.getValue());
+                        break;
+                    case SERIAL_NUMBER:
+                        fact.setMobileTerminalSerialNumber(mobileTerminalId.getValue());
+                        break;
+                    case LES:
+                        break;
+                }
+            }
         }
 
         // From Mobile Terminal
         if (mobileTerminal != null) {
-            List<ComChannelType> channels = mobileTerminal.getChannels();
-            for (ComChannelType channel : channels) {
-                List<ComChannelAttribute> chanAttributes = channel.getAttributes();
-                for (ComChannelAttribute chanAttribute : chanAttributes) {
-                    if (chanAttribute.getType().equals("DNID")) {
-                        fact.setMobileTerminalDnid(chanAttribute.getValue());
-                    }
-                    if (chanAttribute.getType().equals("MEMBER_NUMBER")) {
-                        fact.setMobileTerminalMemberNumber(chanAttribute.getValue());
-                    }
-                }
-            }
-            List<MobileTerminalAttribute> attributes = mobileTerminal.getAttributes();
-            for (MobileTerminalAttribute attribute : attributes) {
-                if (attribute.getType().equals("SERIAL_NUMBER")) {
-                    fact.setMobileTerminalSerialNumber(attribute.getValue());
-                }
-            }
             fact.setMobileTerminalConnectId(mobileTerminal.getConnectId());
             fact.setMobileTerminalType(mobileTerminal.getType());
+        }
+
+        // From Vessel
+        if (vessel != null) {
+            fact.setVesselGuid(vessel.getVesselId().getGuid());
         }
 
         return fact;
