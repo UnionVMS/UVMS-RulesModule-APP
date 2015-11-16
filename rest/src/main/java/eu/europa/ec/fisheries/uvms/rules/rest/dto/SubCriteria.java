@@ -2,7 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest.dto;
 
 public enum SubCriteria {
 
-    ASSET_GROUP(MainCriteria.ROOT),
+    ASSET_GROUP(MainCriteria.ASSET_GROUP),
 
     ACTIVITY_CALLBACK(MainCriteria.ACTIVITY),
     ACTIVITY_MESSAGE_ID(MainCriteria.ACTIVITY),
@@ -44,7 +44,7 @@ public enum SubCriteria {
 
     private final MainCriteria mainCriteria;
 
-    private SubCriteria(MainCriteria mainCriteria) {
+    SubCriteria(MainCriteria mainCriteria) {
         this.mainCriteria = mainCriteria;
     }
 

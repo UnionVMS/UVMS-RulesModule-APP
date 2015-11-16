@@ -9,8 +9,6 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
-//import eu.europa.ec.fisheries.uvms.rules.service.exception.MobileTerminalServiceMapperException;
-
 public class ErrorHandler {
 
     public static ResponseDto getFault(Exception ex) {

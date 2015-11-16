@@ -27,6 +27,7 @@
                     <!-- Actions triggered by user -->
                     <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="UPDATE_CUSTOM_RULE_LAST_TRIGGERED"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES"/>
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
@@ -101,7 +102,6 @@
                 </xsd:complexType>
             </xsd:element>
             
-            
             <!-- Get custom rule request by guid-->
             <xsd:element name="GetCustomRuleRequest">
                 <xsd:complexType>
@@ -123,7 +123,7 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+
 
             <!-- Update custom rule request -->
             <xsd:element name="UpdateCustomRuleRequest">
@@ -137,9 +137,31 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Update custom rule response -->
             <xsd:element name="UpdateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule last triggered request -->
+            <xsd:element name="UpdateCustomRuleLastTriggeredRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="customRuleGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule last triggered response -->
+            <xsd:element name="UpdateCustomRuleLastTriggeredResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
@@ -467,14 +489,21 @@
     <message name="CreateCustomRuleResponse">
         <part name="body" element="source:CreateCustomRuleResponse"/>
     </message>
-    
+
     <message name="UpdateCustomRuleRequest">
         <part name="body" element="source:UpdateCustomRuleRequest"/>
     </message>
     <message name="UpdateCustomRuleResponse">
         <part name="body" element="source:UpdateCustomRuleResponse"/>
     </message>
-    
+
+    <message name="UpdateCustomRuleLastTriggeredRequest">
+        <part name="body" element="source:UpdateCustomRuleLastTriggeredRequest"/>
+    </message>
+    <message name="UpdateCustomRuleLastTriggeredResponse">
+        <part name="body" element="source:UpdateCustomRuleLastTriggeredResponse"/>
+    </message>
+
     <message name="GetCustomRuleListRequest">
         <part name="body" element="source:GetCustomRuleListRequest"/>
     </message>
@@ -601,6 +630,12 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
+        <operation name="UpdateCustomRuleLastTriggered">
+            <input message="source:UpdateCustomRuleLastTriggeredRequest"/>
+            <output message="source:UpdateCustomRuleLastTriggeredResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
         <operation name="GetCustomRuleList">
             <input message="source:GetCustomRuleListRequest"/>
             <output message="source:GetCustomRuleListResponse"/>
@@ -714,6 +749,18 @@
         </operation>
 
         <operation name="UpdateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateCustomRuleLastTriggered">
             <input>
                 <soap:body use="literal"/>
             </input>

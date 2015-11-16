@@ -1,8 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-//import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +12,7 @@ public class MovementFact {
     private String movementGuid;
 
     // ROOT
-    private String assetGroup;
+    private List<String> assetGroups;
 
     // ACTIVITY
     private String activityCallback;
@@ -60,7 +59,7 @@ public class MovementFact {
     private String closestPortCode;
 
     public MovementType getExchangeMovement() {
-        MovementType exchangeMovement = RulesMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
+        MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
         return exchangeMovement;
     }
 
@@ -80,12 +79,15 @@ public class MovementFact {
         this.movementGuid = movementGuid;
     }
 
-    public String getAssetGroup() {
-        return assetGroup;
+    public List<String> getAssetGroups() {
+        if (this.assetGroups== null) {
+            this.assetGroups = new ArrayList<>();
+        }
+        return assetGroups;
     }
 
-    public void setAssetGroup(String assetGroup) {
-        this.assetGroup = assetGroup;
+    public void setAssetGroups(List<String> assetGroups) {
+        this.assetGroups = assetGroups;
     }
 
     public String getActivityCallback() {
@@ -377,7 +379,6 @@ public class MovementFact {
         return "MovementFact{" +
                 "movementMovement=" + movementMovement +
                 ", movementGuid='" + movementGuid + '\'' +
-                ", assetGroup='" + assetGroup + '\'' +
                 ", activityCallback='" + activityCallback + '\'' +
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +

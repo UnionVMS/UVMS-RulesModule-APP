@@ -10,10 +10,6 @@ public class PreviousReportFact {
     private String movementGuid;
     private String vesselGuid;
 
-    public Date getNow() {
-        return RulesUtil.nowUTC().toDate();
-    }
-
     public Date getDeadline() {
         return deadline;
     }

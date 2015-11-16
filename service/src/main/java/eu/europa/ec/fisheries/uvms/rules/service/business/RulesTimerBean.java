@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,6 @@ public class RulesTimerBean {
             List<PreviousReportType> previousReports = rulesService.getPreviousMovementReports();
 
             // Map to fact, adding 2h to deadline
-            List<PreviousReportFact> previousReportFacts = new ArrayList<PreviousReportFact>();
             for (PreviousReportType previousReport : previousReports) {
                 PreviousReportFact fact = new PreviousReportFact();
                 fact.setMovementGuid(previousReport.getMovementGuid());
@@ -52,7 +53,7 @@ public class RulesTimerBean {
                 gregCal.add(GregorianCalendar.HOUR, THRESHOLD);
                 fact.setDeadline(gregCal.getTime());
 
-                if (fact.getDeadline().getTime() <= fact.getNow().getTime()) {
+                if (fact.getDeadline().getTime() <= new Date().getTime()) {
                     LOG.info("\t==> Executing RULE 'Asset not sending', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid() + ", movementGuid:" + fact.getMovementGuid());
 
                     String ruleName = "Asset not sending";
@@ -63,6 +64,9 @@ public class RulesTimerBean {
             }
 
         } catch (RulesServiceException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RulesFaultException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

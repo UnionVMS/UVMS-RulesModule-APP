@@ -7,8 +7,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.jms.JMSException;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -92,14 +95,14 @@ public class RulesValidator {
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
             customRules = validationService.getCustomRuleList();
-        } catch (RulesServiceException e) {
+        } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
         }
 
         if (customRules != null && !customRules.isEmpty()) {
             // Load custom rules
-            List<CustomRuleDto> rules = RulesUtil.parseRules(customRules);
+            List<CustomRuleDto> rules = CustomRuleParser.parseRules(customRules);
             String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
             kfs.write(CUSTOM_RULE_DRL_FILE, drl);
         }
@@ -129,14 +132,14 @@ public class RulesValidator {
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
             customRules = validationService.getCustomRuleList();
-        } catch (RulesServiceException e) {
+        } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
         }
 
         if (customRules != null && !customRules.isEmpty()) {
             // Add custom rules
-            rules = RulesUtil.parseRules(customRules);
+            rules = CustomRuleParser.parseRules(customRules);
             String drl = generateDrl(CUSTOM_RULE_TEMPLATE, rules);
             kfs.write(CUSTOM_RULE_DRL_FILE, drl);
 
@@ -176,7 +179,7 @@ public class RulesValidator {
         listener.finishSheet();
         String drl = listener.renderDRL();
 
-        LOG.info("Custom rule file:\n{}", drl);
+        LOG.debug("Custom rule file:\n{}", drl);
 
         return drl;
     }

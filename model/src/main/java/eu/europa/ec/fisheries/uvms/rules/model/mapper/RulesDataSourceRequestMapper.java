@@ -47,6 +47,13 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapUpdateCustomRuleLastTriggered(String ruleGuid) throws RulesModelMapperException {
+        UpdateCustomRuleLastTriggeredRequest request = new UpdateCustomRuleLastTriggeredRequest();
+        request.setCustomRuleGuid(ruleGuid);
+        request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE_LAST_TRIGGERED);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     // Alarm
     public static String mapCreateAlarmReport(AlarmReportType alarm) throws RulesModelMapperException {
         CreateAlarmReportRequest request = new CreateAlarmReportRequest();

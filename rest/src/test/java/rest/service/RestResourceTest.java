@@ -26,6 +26,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
 
+import javax.jms.JMSException;
+
 public class RestResourceTest {
 
     private static final Long ID = 1L;
@@ -82,7 +84,7 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselList() throws RulesServiceException {
+    public void testGetCustomRuleList() throws RulesServiceException, RulesFaultException, JMSException {
         doReturn(DTO_LIST).when(validationService).getCustomRuleList();
         ResponseDto result = rulesRestResource.getCustomRuleList();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
@@ -94,7 +96,7 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselListNull() throws RulesServiceException {
+    public void testGetCustomRuleListNull() throws RulesServiceException {
         ResponseDto result = SERVICE_NULL.getCustomRuleList();
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
@@ -129,7 +131,7 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testCreateVessel() throws RulesServiceException {
+    public void testCustomRule() throws RulesServiceException, RulesFaultException {
         ResponseDto result = rulesRestResource.create(DTO);
         Mockito.verify(rulesService).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
@@ -150,7 +152,7 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testUpdateVessel() throws RulesServiceException {
+    public void testUpdateCustomRule() throws RulesServiceException, RulesFaultException {
         ResponseDto result = rulesRestResource.update(DTO);
         Mockito.verify(rulesService).updateCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());

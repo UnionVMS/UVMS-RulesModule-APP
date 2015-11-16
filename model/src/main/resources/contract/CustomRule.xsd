@@ -62,6 +62,8 @@
 
     <xsd:simpleType name="SubCriteriaType">
         <xsd:restriction base="xsd:string">
+            <!-- ASSET_GROUP -->
+            <xsd:enumeration value="ASSET_GROUP"/>
             <!-- ACTIVITY -->
             <xsd:enumeration value="ACTIVITY_CALLBACK"/>
             <xsd:enumeration value="ACTIVITY_MESSAGE_ID"/>

@@ -14,18 +14,18 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.JAXBMarshaller;
 
-public class RulesMapper {
+public class RulesDozerMapper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RulesMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesDozerMapper.class);
 
     private static final DozerBeanMapper mapper = new DozerBeanMapper();
-    private static final RulesMapper INSTANCE = new RulesMapper();
+    private static final RulesDozerMapper INSTANCE = new RulesDozerMapper();
 
-    public static RulesMapper getInstance() {
+    public static RulesDozerMapper getInstance() {
         return INSTANCE;
     }
 
-    private RulesMapper() {
+    private RulesDozerMapper() {
         mapper.setMappingFiles(getMapperFiles());
     }
 

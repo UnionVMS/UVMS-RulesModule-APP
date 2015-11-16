@@ -7,20 +7,22 @@ import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.wsdl.vessel.group.VesselGroup;
 import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
 
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups) {
         MovementFact fact = new MovementFact();
 
         fact.setMovementMovement(movement);
         fact.setMovementGuid(movement.getGuid());
 
         // ROOT
-        // TODO
-//        fact.setAssetGroup(assetGroup);
+        for (VesselGroup assetGroup : assetGroups) {
+            fact.getAssetGroups().add(assetGroup.getGuid());
+        }
 
         // ACTIVITY
         if (movement.getActivity() != null) {

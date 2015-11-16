@@ -1,28 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/customrules")
 @Stateless
@@ -51,9 +44,9 @@ public class RulesRestResource {
         LOG.info("Create invoked in rest layer");
         try {
             return new ResponseDto(rulesService.createCustomRule(customRule), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when creating. ] {} ", ex.getStackTrace());
-            return ErrorHandler.getFault(ex);
+        } catch (RulesServiceException | NullPointerException | RulesFaultException e) {
+            LOG.error("[ Error when creating. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
         }
     }
 
@@ -73,7 +66,7 @@ public class RulesRestResource {
         LOG.info("Get list invoked in rest layer");
         try {
             return new ResponseDto(validationService.getCustomRuleList(), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | RulesFaultException | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
@@ -116,9 +109,9 @@ public class RulesRestResource {
         LOG.info("Update custom rule invoked in rest layer");
         try {
             return new ResponseDto(rulesService.updateCustomRule(customRuleType), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when updating. ] {} ", ex.getStackTrace());
-            return ErrorHandler.getFault(ex);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
         }
     }
 

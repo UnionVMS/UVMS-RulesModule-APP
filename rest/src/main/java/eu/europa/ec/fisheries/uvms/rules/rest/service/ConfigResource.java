@@ -1,8 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
+import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
+import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.MainCriteria;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.SubCriteria;
+import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -10,21 +20,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.MainCriteria;
-import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
-import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.SubCriteria;
-import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("/config")
 @Stateless
@@ -44,7 +42,7 @@ public class ConfigResource {
         try {
             Map map = new HashMap();
 
-            Map<String, ArrayList<String>> crit = getCriterias();
+            Map<String, HashMap<String, ArrayList<String>>> crit = getCriterias();
             ConditionType[] con = getConditions();
             Map act = getActions();
             LogicOperatorType[] log = getLogicOperatorType();
@@ -61,19 +59,21 @@ public class ConfigResource {
         }
     }
 
-    private Map<String, ArrayList<String>> getCriterias() {
-        Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+    private Map<String, HashMap<String, ArrayList<String>>> getCriterias() {
+        Map<String, HashMap<String, ArrayList<String>>> map = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
         MainCriteria[] mainCriterias = MainCriteria.values();
         for (int i = 0; i < mainCriterias.length; i++) {
 
-            ArrayList<String> subResult = new ArrayList<String>();
+            HashMap<String, ArrayList<String>> subResult = new HashMap<String, ArrayList<String>>();
+
             String mainCrit = mainCriterias[i].toString();
 
             SubCriteria[] subCriterias = SubCriteria.values();
             for (int j = 0; j < subCriterias.length; j++) {
                 if (subCriterias[j].getMainCriteria().equals(mainCriterias[i])) {
-                    subResult.add(subCriterias[j].toString());
+                    getConditionsByCriteria(subCriterias[j]);
+                    subResult.put(subCriterias[j].toString(), getConditionsByCriteria(subCriterias[j]));
                 }
                 if (!mainCriterias[i].equals(MainCriteria.ROOT)) {
                     map.put(mainCrit, subResult);
@@ -120,6 +120,60 @@ public class ConfigResource {
 
     private ConditionType[] getConditions() {
         return ConditionType.values();
+    }
+
+    private ArrayList<String> getConditionsByCriteria(SubCriteria subCriteria) {
+        ArrayList<String> conditions = new ArrayList<>();
+        switch (subCriteria) {
+            case ACTIVITY_CALLBACK:
+            case ACTIVITY_MESSAGE_ID:
+            case ACTIVITY_MESSAGE_TYPE:
+            case AREA_CODE:
+            case AREA_NAME:
+            case AREA_TYPE:
+            case AREA_ID:
+            case ASSET_ID_GEAR_TYPE:
+            case EXTERNAL_MARKING:
+            case VESSEL_NAME:
+            case COMCHANNEL_TYPE:
+            case MT_TYPE:
+            case FLAG_STATE:
+            case MOVEMENT_TYPE:
+            case SEGMENT_TYPE:
+            case SOURCE:
+            case VICINITY_OF:
+            case CLOSEST_COUNTRY_CODE:
+            case CLOSEST_PORT_CODE:
+            case ASSET_GROUP:
+                conditions.add(ConditionType.EQ.name());
+                conditions.add(ConditionType.NE.name());
+                break;
+
+            case VESSEL_CFR:
+            case VESSEL_IRCS:
+            case MT_DNID:
+            case MT_MEMBER_ID:
+            case MT_SERIAL_NO:
+            case ALTITUDE:
+            case LATITUDE:
+            case LONGITUDE:
+            case POSITION_REPORT_TIME:
+            case STATUS_CODE:
+            case REPORTED_COURSE:
+            case REPORTED_SPEED:
+            case CALCULATED_COURSE:
+            case CALCULATED_SPEED:
+            default:
+                conditions.add(ConditionType.EQ.name());
+                conditions.add(ConditionType.NE.name());
+                conditions.add(ConditionType.LT.name());
+                conditions.add(ConditionType.GT.name());
+                conditions.add(ConditionType.LE.name());
+                conditions.add(ConditionType.GE.name());
+                break;
+        }
+
+        return conditions;
     }
 
     @GET

@@ -72,9 +72,22 @@ public class RulesDataSourceResponseMapper {
 
     }
 
-    public static CustomRuleType mapToCreateCustomRuleFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static CustomRuleType mapToCreateCustomRuleFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         CreateCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, CreateCustomRuleResponse.class);
         return response.getCustomRule();
+    }
+
+    public static TicketType mapSingleTicketFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        SingleTicketResponse singleTicketResponse = JAXBMarshaller.unmarshallTextMessage(message, SingleTicketResponse.class);
+        return singleTicketResponse.getTicket();
+    }
+
+    public static AlarmReportType mapSingleAlarmFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        SingleAlarmResponse singleTicketResponse = JAXBMarshaller.unmarshallTextMessage(message, SingleAlarmResponse.class);
+        return singleTicketResponse.getAlarm();
     }
 
     public static String createCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
@@ -84,23 +97,25 @@ public class RulesDataSourceResponseMapper {
     }
 
     public static String updateCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
-
         UpdateCustomRuleResponse response = new UpdateCustomRuleResponse();
         response.setCustomRule(customRule);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static CustomRuleType mapToUpdateCustomRuleFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static CustomRuleType mapToUpdateCustomRuleFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         UpdateCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, UpdateCustomRuleResponse.class);
         return response.getCustomRule();
     }
 
-    public static TicketType mapToSetTicketStatusFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static TicketType mapToSetTicketStatusFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         SetTicketStatusResponse response = JAXBMarshaller.unmarshallTextMessage(message, SetTicketStatusResponse.class);
         return response.getTicket();
     }
 
-    public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
         return response.getCustomRules();
     }
@@ -112,9 +127,9 @@ public class RulesDataSourceResponseMapper {
     }
 
     public static String getCustomRuleResponse(CustomRuleType customRuleType) throws RulesModelMarshallException{
-    	GetCustomRuleResponse response = new GetCustomRuleResponse(); 
-    	response.setCustomRule(customRuleType);
-    	return JAXBMarshaller.marshallJaxBObjectToString(response);
+        GetCustomRuleResponse response = new GetCustomRuleResponse(); 
+        response.setCustomRule(customRuleType);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
     
     public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
@@ -123,7 +138,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetAlarmListByQueryResponse mapToAlarmListFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static GetAlarmListByQueryResponse mapToAlarmListFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         GetAlarmListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmListByQueryResponse.class);
         return response;
     }
@@ -136,7 +152,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetTicketListByQueryResponse mapToTicketListFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static GetTicketListByQueryResponse mapToTicketListFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         GetTicketListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketListByQueryResponse.class);
         return response;
     }
@@ -155,7 +172,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static AlarmReportType mapToSetAlarmStatusFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static AlarmReportType mapToSetAlarmStatusFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         SetAlarmStatusResponse response = JAXBMarshaller.unmarshallTextMessage(message, SetAlarmStatusResponse.class);
         return response.getAlarm();
     }
@@ -166,7 +184,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static List<PreviousReportType> mapToGetPreviousReportResponse(TextMessage message) throws RulesModelMapperException {
+    public static List<PreviousReportType> mapToGetPreviousReportResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         GetPreviousReportResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportResponse.class);
         return response.getPreviousReport();
     }
@@ -177,7 +196,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetTicketByVesselGuidResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message) throws RulesModelMapperException {
+    public static GetTicketByVesselGuidResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
         GetTicketByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketByVesselGuidResponse.class);
         return response;
     }

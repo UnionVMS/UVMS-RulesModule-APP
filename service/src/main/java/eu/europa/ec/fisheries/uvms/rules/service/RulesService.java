@@ -32,7 +32,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException;
+    CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists (all) custom rules
@@ -48,7 +48,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws RulesServiceException;
+    GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists tickets by query
@@ -56,7 +56,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException;
+    GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException, RulesFaultException;
 
     /**
      * Update a ticket status
@@ -64,7 +64,7 @@ public interface RulesService {
      * @param ticket
      * @throws RulesServiceException
      */
-    TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException;
+    TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException;
 
     /**
      * Get an object by id
@@ -81,7 +81,7 @@ public interface RulesService {
      * @param customRuleType
      * @throws RulesServiceException
      */
-    CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException;
+    CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException, RulesFaultException;
 
     /**
      * Creates an error report
@@ -111,13 +111,13 @@ public interface RulesService {
      */
     CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
-    AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException;
+    AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException, RulesFaultException;
 
-    List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException;
+    List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException;
 
-    void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException;
+    void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException, RulesFaultException;
 
-    String reprocessAlarm(List<String> alarms) throws RulesServiceException;
+    String reprocessAlarm(List<String> alarms) throws RulesServiceException, RulesFaultException;
 
     MovementRefType setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException;
 
@@ -126,13 +126,13 @@ public interface RulesService {
      * @return an alarm
      * @throws RulesServiceException if unsuccessful
      */
-    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException;
+    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
     /**
      * @param guid the GUID of a ticket
      * @return a ticket
      * @throws RulesServiceException if unsuccessful
      */
-    public TicketType getTicketByGuid(String guid) throws RulesServiceException;
+    public TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
 }

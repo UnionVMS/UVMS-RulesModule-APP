@@ -1,30 +1,17 @@
 package eu.europa.fisheries.uvms.rules.service.business;
 
-import static org.junit.Assert.assertEquals;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.CustomRuleDto;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
+import org.junit.*;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.MockitoAnnotations;
+import static org.junit.Assert.assertEquals;
 
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubCriteriaType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.CustomRuleDto;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
-
-public class RulesUtilTest {
+public class CustomRuleParserTest {
     @BeforeClass
     public static void setUpClass() {
     }
@@ -119,7 +106,7 @@ public class RulesUtilTest {
         // String expectedRule =
         // "(vesselCfr == \"SWE111222\" || vesselCfr == \"SWE111333\") && mobileTerminalMemberNumber == \"ABC99\"";
 
-        List<CustomRuleDto> rules = RulesUtil.parseRules(rawRules);
+        List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0)
                 .getExpression());
         assertEquals("EMAIL,user@company.se;SMS,+46111111111;", rules.get(0).getAction());
@@ -186,7 +173,7 @@ public class RulesUtilTest {
         segment4.setStartOperator("");
         segment4.setCriteria(CriteriaType.AREA);
         segment4.setSubCriteria(SubCriteriaType.AREA_NAME);
-        segment4.setCondition(ConditionType.EQ);
+        segment4.setCondition(ConditionType.NE);
         segment4.setValue("AREA_NAME");
         segment4.setEndOperator("");
         segment4.setLogicBoolOperator(LogicOperatorType.OR);
@@ -198,7 +185,7 @@ public class RulesUtilTest {
         segment5.setStartOperator("");
         segment5.setCriteria(CriteriaType.AREA);
         segment5.setSubCriteria(SubCriteriaType.AREA_TYPE);
-        segment5.setCondition(ConditionType.EQ);
+        segment5.setCondition(ConditionType.NE);
         segment5.setValue("AREA_TYPE");
         segment5.setEndOperator("");
         segment5.setLogicBoolOperator(LogicOperatorType.OR);
@@ -210,7 +197,7 @@ public class RulesUtilTest {
         segment6.setStartOperator("");
         segment6.setCriteria(CriteriaType.AREA);
         segment6.setSubCriteria(SubCriteriaType.AREA_ID);
-        segment6.setCondition(ConditionType.EQ);
+        segment6.setCondition(ConditionType.NE);
         segment6.setValue("AREA_ID");
         segment6.setEndOperator("");
         segment6.setLogicBoolOperator(LogicOperatorType.OR);
@@ -390,7 +377,7 @@ public class RulesUtilTest {
         segment21.setStartOperator("");
         segment21.setCriteria(CriteriaType.POSITION);
         segment21.setSubCriteria(SubCriteriaType.CALCULATED_COURSE);
-        segment21.setCondition(ConditionType.EQ);
+        segment21.setCondition(ConditionType.LE);
         segment21.setValue("CALCULATED_COURSE");
         segment21.setEndOperator("");
         segment21.setLogicBoolOperator(LogicOperatorType.OR);
@@ -402,7 +389,7 @@ public class RulesUtilTest {
         segment22.setStartOperator("");
         segment22.setCriteria(CriteriaType.POSITION);
         segment22.setSubCriteria(SubCriteriaType.CALCULATED_SPEED);
-        segment22.setCondition(ConditionType.EQ);
+        segment22.setCondition(ConditionType.GE);
         segment22.setValue("CALCULATED_SPEED");
         segment22.setEndOperator("");
         segment22.setLogicBoolOperator(LogicOperatorType.OR);
@@ -438,7 +425,7 @@ public class RulesUtilTest {
         segment25.setStartOperator("");
         segment25.setCriteria(CriteriaType.POSITION);
         segment25.setSubCriteria(SubCriteriaType.REPORTED_COURSE);
-        segment25.setCondition(ConditionType.EQ);
+        segment25.setCondition(ConditionType.LT);
         segment25.setValue("REPORTED_COURSE");
         segment25.setEndOperator("");
         segment25.setLogicBoolOperator(LogicOperatorType.OR);
@@ -450,7 +437,7 @@ public class RulesUtilTest {
         segment26.setStartOperator("");
         segment26.setCriteria(CriteriaType.POSITION);
         segment26.setSubCriteria(SubCriteriaType.REPORTED_SPEED);
-        segment26.setCondition(ConditionType.EQ);
+        segment26.setCondition(ConditionType.GT);
         segment26.setValue("REPORTED_SPEED");
         segment26.setEndOperator("");
         segment26.setLogicBoolOperator(LogicOperatorType.OR);
@@ -462,7 +449,7 @@ public class RulesUtilTest {
         segment27.setStartOperator("");
         segment27.setCriteria(CriteriaType.POSITION);
         segment27.setSubCriteria(SubCriteriaType.SEGMENT_TYPE);
-        segment27.setCondition(ConditionType.EQ);
+        segment27.setCondition(ConditionType.NE);
         segment27.setValue("SEGMENT_TYPE");
         segment27.setEndOperator("");
         segment27.setLogicBoolOperator(LogicOperatorType.OR);
@@ -521,8 +508,8 @@ public class RulesUtilTest {
         CustomRuleSegmentType segment32 = new CustomRuleSegmentType();
         segment32.setStartOperator("");
         segment32.setCriteria(CriteriaType.ASSET_GROUP);
-        segment32.setSubCriteria(null);
-        segment32.setCondition(ConditionType.EQ);
+        segment32.setSubCriteria(SubCriteriaType.ASSET_GROUP);
+        segment32.setCondition(ConditionType.NE);
         segment32.setValue("ASSET_GROUP");
         segment32.setEndOperator("");
         segment32.setLogicBoolOperator(LogicOperatorType.OR);
@@ -554,9 +541,9 @@ public class RulesUtilTest {
         sb.append("activityMessageId == \"ACTIVITY_MESSAGE_ID\" || ");
         sb.append("activityMessageType == \"ACTIVITY_MESSAGE_TYPE\" || ");
         sb.append("areaCodes.contains(\"AREA_CODE\") || ");
-        sb.append("areaNames.contains(\"AREA_NAME\") || ");
-        sb.append("areaTypes.contains(\"AREA_TYPE\") || ");
-        sb.append("areaRemoteIds.contains(\"AREA_ID\") || ");
+        sb.append("!areaNames.contains(\"AREA_NAME\") || ");
+        sb.append("!areaTypes.contains(\"AREA_TYPE\") || ");
+        sb.append("!areaRemoteIds.contains(\"AREA_ID\") || ");
         sb.append("assetIdGearType == \"ASSET_ID_GEAR_TYPE\" || ");
         sb.append("externalMarking == \"EXTERNAL_MARKING\" || ");
         sb.append("flagState == \"FLAG_STATE\" || ");
@@ -571,24 +558,24 @@ public class RulesUtilTest {
         sb.append("altitude == \"ALTITUDE\" || ");
         sb.append("latitude == \"LATITUDE\" || ");
         sb.append("longitude == \"LONGITUDE\" || ");
-        sb.append("calculatedCourse == \"CALCULATED_COURSE\" || ");
-        sb.append("calculatedSpeed == \"CALCULATED_SPEED\" || ");
+        sb.append("calculatedCourse <= \"CALCULATED_COURSE\" || ");
+        sb.append("calculatedSpeed >= \"CALCULATED_SPEED\" || ");
         sb.append("movementType == \"MOVEMENT_TYPE\" || ");
         sb.append("positionTime == \"POSITION_REPORT_TIME\" || ");
-        sb.append("reportedCourse == \"REPORTED_COURSE\" || ");
-        sb.append("reportedSpeed == \"REPORTED_SPEED\" || ");
-        sb.append("segmentType == \"SEGMENT_TYPE\" || ");
+        sb.append("reportedCourse < \"REPORTED_COURSE\" || ");
+        sb.append("reportedSpeed > \"REPORTED_SPEED\" || ");
+        sb.append("segmentType != \"SEGMENT_TYPE\" || ");
         sb.append("source == \"SOURCE\" || ");
         sb.append("statusCode == \"STATUS_CODE\" || ");
         sb.append("closestCountryCode == \"CLOSEST_COUNTRY_CODE\" || ");
         sb.append("closestPortCode == \"CLOSEST_PORT_CODE\" || ");
-        sb.append("assetGroup == \"ASSET_GROUP\" || ");
+        sb.append("!assetGroups.contains(\"ASSET_GROUP\") || ");
         sb.append("vicinityOf == \"VICINITY_OF\"");
         sb.append(")");
 
         String expectedRule = sb.toString();
 
-        List<CustomRuleDto> rules = RulesUtil.parseRules(rawRules);
+        List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0).getExpression());
         assertEquals("TICKET,null;", rules.get(0).getAction());
 

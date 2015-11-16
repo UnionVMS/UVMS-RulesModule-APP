@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +51,9 @@ public class AlarmRestResource {
         LOG.info("Get alarm list invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.getAlarmList(query), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when geting list. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
+        } catch (RulesServiceException | NullPointerException | RulesFaultException  e) {
+            LOG.error("[ Error when geting list. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
         }
     }
 
@@ -71,19 +72,27 @@ public class AlarmRestResource {
         LOG.info("Update alarm status invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.updateAlarmStatus(alarmReportType), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when updating. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            LOG.error("[ Error when updating. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 Alarm fetched by GUID
+     * @responseMessage 500 No alarm fetched
+     *
+     * @summary Update an alarm status
+     *
+     */
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/{guid}")
     public ResponseDto getAlarmReportByGuid(@PathParam("guid") String guid) {
         try {
             return new ResponseDto(serviceLayer.getAlarmReportByGuid(guid), ResponseCode.OK);
-        } catch (RulesServiceException e) {
+        } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting alarm by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
@@ -105,9 +114,9 @@ public class AlarmRestResource {
         LOG.info("Reprocess alarm invoked in rest layer");
         try {
             return new ResponseDto(serviceLayer.reprocessAlarm(alarmGuidList), ResponseCode.OK);
-        } catch (RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when reprocessing. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
         }
     }
 

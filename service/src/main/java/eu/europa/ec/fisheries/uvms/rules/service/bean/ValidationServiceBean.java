@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
@@ -75,15 +76,15 @@ public class ValidationServiceBean implements ValidationService {
      * @throws RulesServiceException
      */
     @Override
-    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException {
+    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException, RulesFaultException {
         LOG.info("Get custom rule list invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapCustomRuleList();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response);
-        } catch (RulesModelMapperException | MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
+            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
         }
     }
 
@@ -92,9 +93,10 @@ public class ValidationServiceBean implements ValidationService {
     public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) {
         LOG.info("Performing actions on triggered user rules [NOT FULLY IMPLEMENTED]");
 
-        // For now the actions are described as a comma separated list. Parse
-        // out the action, switch on it, and log the action and the
-        // corresponding value
+        // Update last update
+        updateLastTriggered(ruleGuid);
+
+        // Actions list format:
         // ACTION,VALUE;ACTION,VALUE;
         // N.B! The .drl rule file gives the string "null" when (for instance)
         // value is null.
@@ -114,29 +116,42 @@ public class ValidationServiceBean implements ValidationService {
                     // to receive an additional text?
                     sendToEmail(value, ruleName);
                     break;
-                case ON_HOLD:
-                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
+                case SEND_TO_ENDPOINT:
+                    sendToEndpoint(ruleName, ruleGuid, fact, value);
                     break;
                 case TICKET:
                     createTicket(ruleName, ruleGuid, fact);
                     break;
+
                 case MANUAL_POLL:
-                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
+                    LOG.info("NOT IMPLEMENTED!");
                     break;
-                case SEND_TO_ENDPOINT:
-                    sendToEndpoint(ruleName, ruleGuid, fact, value);
-                    break;
-                case SMS:
-                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
+
+                case ON_HOLD:
+                    LOG.info("NOT IMPLEMENTED!");
                     break;
                 case TOP_BAR_NOTIFICATION:
-                    LOG.info("Placeholder for action '{}' with value '{}'", action, value);
+                    LOG.info("NOT IMPLEMENTED!");
+                    break;
+                case SMS:
+                    LOG.info("NOT IMPLEMENTED!");
                     break;
                 default:
                     LOG.info("The action '{}' is not defined", action);
                     break;
             }
         }
+    }
+
+    private void updateLastTriggered(String ruleGuid) {
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRuleLastTriggered(ruleGuid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+        } catch (RulesModelMapperException | MessageException e) {
+            LOG.warn("[ Failed to update last triggered date for rule {} ]", ruleGuid);
+        }
+
     }
 
     private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
