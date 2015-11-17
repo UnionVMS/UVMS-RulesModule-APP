@@ -1,32 +1,26 @@
 package rest.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-
-import java.util.List;
-
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.CustomRulesRestResource;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
+import org.junit.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
-
 import javax.jms.JMSException;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 
 public class RestResourceTest {
 
@@ -42,7 +36,7 @@ public class RestResourceTest {
     private final ResponseDto SUCCESS_RESULT_LIST;
     private final ResponseDto SUCCESS_RESULT_DTO;
 
-    RulesRestResource SERVICE_NULL = new RulesRestResource();
+    CustomRulesRestResource SERVICE_NULL = new CustomRulesRestResource();
 
     @Mock
     RulesService rulesService;
@@ -51,7 +45,7 @@ public class RestResourceTest {
     ValidationService validationService;
 
     @InjectMocks
-    RulesRestResource rulesRestResource;
+    CustomRulesRestResource customRulesRestResource;
 
     public RestResourceTest() {
         ERROR_RESULT = new ResponseDto(null, ResponseCode.UNDEFINED_ERROR);
@@ -86,7 +80,7 @@ public class RestResourceTest {
     @Test
     public void testGetCustomRuleList() throws RulesServiceException, RulesFaultException, JMSException {
         doReturn(DTO_LIST).when(validationService).getCustomRuleList();
-        ResponseDto result = rulesRestResource.getCustomRuleList();
+        ResponseDto result = customRulesRestResource.getCustomRuleList();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
     }
 
@@ -107,10 +101,10 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselByGuid() throws RulesServiceException, RulesModelMapperException, RulesFaultException {
-        doReturn(DTO).when(rulesService).getByGuid(GUID);
-        ResponseDto result = rulesRestResource.getByGuid(GUID);
-        Mockito.verify(rulesService).getByGuid(GUID);
+    public void testCustomRuleByGuid() throws RulesServiceException, RulesModelMapperException, RulesFaultException {
+        doReturn(DTO).when(rulesService).getCustomRuleByGuid(GUID);
+        ResponseDto result = customRulesRestResource.getCustomRuleByGuid(GUID);
+        Mockito.verify(rulesService).getCustomRuleByGuid(GUID);
         assertEquals(SUCCESS_RESULT_DTO.toString(), result.toString());
     }
 
@@ -120,8 +114,8 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testGetVesselByIdNull() throws RulesServiceException {
-        ResponseDto result = SERVICE_NULL.getByGuid(GUID);
+    public void testCustomRuleByGuidNull() throws RulesServiceException {
+        ResponseDto result = SERVICE_NULL.getCustomRuleByGuid(GUID);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 
@@ -131,8 +125,8 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testCustomRule() throws RulesServiceException, RulesFaultException {
-        ResponseDto result = rulesRestResource.create(DTO);
+    public void testCreateCustomRule() throws RulesServiceException, RulesFaultException {
+        ResponseDto result = customRulesRestResource.create(DTO);
         Mockito.verify(rulesService).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
@@ -141,7 +135,7 @@ public class RestResourceTest {
      * Test create when the injected EJB is null
      */
     @Test
-    public void testCreateVesselNull() {
+    public void testCreateCustomRuleNull() {
         ResponseDto result = SERVICE_NULL.create(DTO);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
@@ -153,7 +147,7 @@ public class RestResourceTest {
      */
     @Test
     public void testUpdateCustomRule() throws RulesServiceException, RulesFaultException {
-        ResponseDto result = rulesRestResource.update(DTO);
+        ResponseDto result = customRulesRestResource.update(DTO);
         Mockito.verify(rulesService).updateCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
@@ -162,7 +156,7 @@ public class RestResourceTest {
      * Test update when the injected EJB is null
      */
     @Test
-    public void testUpdateVesselNull() {
+    public void testUpdateCustomRuleNull() {
         ResponseDto result = SERVICE_NULL.update(DTO);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }

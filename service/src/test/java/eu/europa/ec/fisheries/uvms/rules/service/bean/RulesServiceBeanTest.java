@@ -18,6 +18,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,18 +54,15 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest({RulesDataSourceRequestMapper.class, RulesDataSourceResponseMapper.class})
 public class RulesServiceBeanTest {
 
-    @InjectMocks
-    RulesServiceBean rulesServiceBean;
-
     @Mock
     RulesMessageProducer mockProducer;
     @Mock
     RulesResponseConsumer mockConsumer;
     @Mock
-    LoggerContext mockLoggerContext;
-    @Mock
-    private Event<NotificationMessage> ticketEvent;
+    Event<NotificationMessage> ticketEvent;
 
+    @InjectMocks
+    RulesServiceBean rulesServiceBean;
 
     @Before
     public void initMocks() {
@@ -202,8 +200,7 @@ public class RulesServiceBeanTest {
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
-    @Ignore
-    @Test
+    @Test (expected = RulesServiceException.class)
     public void testGetAlarmListThrowsExceptionWhenResponseIsNull() throws Exception {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
@@ -267,8 +264,7 @@ public class RulesServiceBeanTest {
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
-    @Ignore
-    @Test
+    @Test (expected = RulesServiceException.class)
     public void testGetTicketListThrowsExceptionWhenResponseIsNull() throws Exception {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
@@ -299,9 +295,6 @@ public class RulesServiceBeanTest {
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
-
-    @Produces
-
 
     @Ignore // Not working
     @Test
@@ -336,6 +329,8 @@ public class RulesServiceBeanTest {
 
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
+//        verify(ticketEvent, times(1)).fire(any(NotificationMessage.class));
+//        ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
     }
 
     @Ignore // Not working

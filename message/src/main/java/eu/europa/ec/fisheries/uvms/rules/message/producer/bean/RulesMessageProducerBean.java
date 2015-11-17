@@ -1,27 +1,25 @@
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Observes;
+import javax.jms.*;
 
 @Stateless
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
@@ -142,5 +140,24 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             throw new ConfigMessageException("[ Error when sending config message. ]");
         }
     }
+
+    @Override
+    public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
+        try {
+            connectQueue();
+            LOG.debug("Sending error message back from Rules module to recipient om JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
+
+            String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
+
+            TextMessage response = session.createTextMessage(data);
+            response.setJMSCorrelationID(message.getJmsMessage().getJMSMessageID());
+            session.createProducer(message.getJmsMessage().getJMSReplyTo()).send(response);
+        } catch (RulesModelMarshallException | JMSException e) {
+            LOG.error("Error when returning Error message to recipient");
+        } finally {
+            disconnectQueue();
+        }
+    }
+
 
 }

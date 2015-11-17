@@ -1,5 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
@@ -9,20 +20,6 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 
 @MessageDriven(mappedName = MessageConstants.RULES_MESSAGE_IN_QUEUE, activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -75,22 +72,17 @@ public class RulesEventConsumerBean implements MessageListener {
             	getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
             default:
                 LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
-
-                // ???:
-                // errorEvent.fire(new EventMessage(textMessage,
-                // "[ Request method " + request.getMethod().name() +
-                // "  is not implemented ]"));
+                errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));
                 break;
             }
-            // if (request.getMethod() == null) {
-            // LOG.error("[ Request method is null ]");
-            // errorEvent.fire(new EventMessage(textMessage,
-            // "Error when receiving message in movement: "));
-            // }
+             if (request.getMethod() == null) {
+                 LOG.error("[ Request method is null ]");
+                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
+             }
 
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
-            errorEvent.fire(new EventMessage(textMessage, "Error when receiving message in rules: " + e.getMessage()));
+            errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
         }
     }
 

@@ -1,28 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/tickets")
 @Stateless
@@ -76,6 +69,14 @@ public class TicketRestResource {
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 Selected ticket fetched
+     * @responseMessage 500 No tickets fetched
+     *
+     * @summary Get a ticket by GUID
+     *
+     */
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/{guid}")

@@ -1,27 +1,29 @@
 package eu.europa.ec.fisheries.uvms.rules.message.event.carrier;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
+
 import javax.jms.TextMessage;
 
 public class EventMessage {
 
     private TextMessage jmsMessage;
-    private String errorMessage;
+    private RulesFault fault;
 
     public EventMessage(TextMessage jmsMessage) {
         this.jmsMessage = jmsMessage;
     }
 
-    public EventMessage(TextMessage jmsMessage, String errorMessage) {
+    public EventMessage(TextMessage jmsMessage, RulesFault fault) {
         this.jmsMessage = jmsMessage;
-        this.errorMessage = errorMessage;
+        this.fault = fault;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public RulesFault getFault() {
+        return fault;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setFault(RulesFault fault) {
+        this.fault = fault;
     }
 
     public TextMessage getJmsMessage() {

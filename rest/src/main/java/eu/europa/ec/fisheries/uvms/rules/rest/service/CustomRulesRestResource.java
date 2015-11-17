@@ -19,9 +19,9 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/customrules")
 @Stateless
-public class RulesRestResource {
+public class CustomRulesRestResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesRestResource.class);
+    final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
 
     @EJB
     RulesService rulesService;
@@ -77,17 +77,17 @@ public class RulesRestResource {
      * @responseMessage 200 [Success]
      * @responseMessage 500 [Error]
      *
-     * @summary [Description]
+     * @summary Get a custom rule by GUID
      *
      */
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(value = "{guid}")
-    public ResponseDto getByGuid(@PathParam(value = "guid") final String guid) {
+    public ResponseDto getCustomRuleByGuid(@PathParam(value = "guid") final String guid) {
         LOG.info("Get custom rule by guid invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.getByGuid(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.getCustomRuleByGuid(guid), ResponseCode.OK);
         } catch (RulesFaultException | RulesModelMapperException | RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when geting custom rule by guid. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

@@ -31,9 +31,14 @@ public class ConfigResource {
 
     final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);
 
-    // TODO:
-    // Is it possible (in an easy way) to map permitted operators to a specific (sub)criteria?
-
+    /**
+     *
+     * @responseMessage 200 Get all config for custom rules
+     * @responseMessage 500 No config fetched
+     *
+     * @summary Get a map of all config for populating drop downs in custom rule
+     *
+     */
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
@@ -74,9 +79,6 @@ public class ConfigResource {
                 if (subCriterias[j].getMainCriteria().equals(mainCriterias[i])) {
                     getConditionsByCriteria(subCriterias[j]);
                     subResult.put(subCriterias[j].toString(), getConditionsByCriteria(subCriterias[j]));
-                }
-                if (!mainCriterias[i].equals(MainCriteria.ROOT)) {
-                    map.put(mainCrit, subResult);
                 }
             }
         }
@@ -176,6 +178,14 @@ public class ConfigResource {
         return conditions;
     }
 
+    /**
+     *
+     * @responseMessage 200 All reserved words fetched
+     * @responseMessage 500 No reserved words fetched
+     *
+     * @summary Get special reserved words used as variables in custom rules
+     *
+     */
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })

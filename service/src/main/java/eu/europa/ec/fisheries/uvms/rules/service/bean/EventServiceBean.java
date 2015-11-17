@@ -1,5 +1,25 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.EventService;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -7,42 +27,17 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.jms.JMSException;
-
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.service.EventService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 
 @Stateless
 public class EventServiceBean implements EventService {
     final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
 
-    // TODO: Where is the observer of this?
     @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
     @EJB
     RulesMessageProducer producer;
-
-    @EJB
-    RulesResponseConsumer consumer;
 
     @EJB
     RulesService rulesService;
@@ -72,9 +67,10 @@ public class EventServiceBean implements EventService {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
 
             if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
-                message.setErrorMessage(" [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
-                        + baseRequest.getMethod().name() + " ]");
-                errorEvent.fire(message);
+                String s = " [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
+                        + baseRequest.getMethod().name() + " ]";
+                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, s)));
+
             }
 
             SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
@@ -94,7 +90,5 @@ public class EventServiceBean implements EventService {
         }
 
     }
-
-    // TODO: Missing error handler for errorEvent.fire(message);
 
 }

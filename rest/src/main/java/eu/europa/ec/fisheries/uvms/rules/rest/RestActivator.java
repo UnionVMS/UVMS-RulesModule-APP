@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.uvms.rules.rest.constants.RestConstants;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.AlarmRestResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.ConfigResource;
-import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesRestResource;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.CustomRulesRestResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.TicketRestResource;
 
 @ApplicationPath(RestConstants.MODULE_REST)
@@ -24,7 +24,7 @@ public class RestActivator extends Application {
     private final Set<Class<?>> set = new HashSet<>();
 
     public RestActivator() {
-        set.add(RulesRestResource.class);
+        set.add(CustomRulesRestResource.class);
         set.add(AlarmRestResource.class);
         set.add(TicketRestResource.class);
         set.add(ConfigResource.class);
