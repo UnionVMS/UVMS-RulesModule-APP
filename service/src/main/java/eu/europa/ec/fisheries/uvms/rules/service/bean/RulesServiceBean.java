@@ -1,36 +1,48 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
-import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
-import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
-import eu.europa.ec.fisheries.schema.rules.search.v1.SearchKey;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleResponseMapper;
@@ -39,31 +51,16 @@ import eu.europa.ec.fisheries.wsdl.vessel.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
-import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -119,6 +116,49 @@ public class RulesServiceBean implements RulesService {
     /**
      * {@inheritDoc}
      *
+     * @param guid
+     * @return
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType getCustomRuleByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException {
+        LOG.info("Get Custom Rule by guid invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetCustomRule(guid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.getCustomRuleResponse(response, messageId);
+        } catch (MessageException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        } catch (JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param customRule
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType updateCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException {
+        LOG.info("Update custom rule invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return
      * @throws RulesServiceException
      */
@@ -134,6 +174,7 @@ public class RulesServiceBean implements RulesService {
                 LOG.error("[ Error when getting list, response from JMS Queue is null ]");
                 throw new RulesServiceException("[ Error when getting list, response from JMS Queue is null ]");
             }
+
             return RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException  ex) {
             throw new RulesServiceException(ex.getMessage());
@@ -147,10 +188,12 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapTicketList(query);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
             if (response == null) {
                 LOG.error("[ Error when getting list, response from JMS Queue is null ]");
                 throw new RulesServiceException("[ Error when getting list, response from JMS Queue is null ]");
             }
+
             return RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException ex) {
             throw new RulesServiceException(ex.getMessage());
@@ -195,60 +238,6 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param id
-     * @return
-     * @throws RulesServiceException
-     */
-    @Override
-    public CustomRuleType getById(Long id) throws RulesServiceException {
-        LOG.info("Update invoked in service layer");
-        throw new RulesServiceException("Update not implemented in service layer");
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param guid
-     * @return
-     * @throws RulesServiceException
-     */
-    @Override
-    public CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException {
-        LOG.info("Get by id invoked in service layer");
-        try {
-            String request = RulesDataSourceRequestMapper.mapGetCustomRule(guid);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.getCustomRuleResponse(response, messageId);
-        } catch (MessageException ex) {
-            throw new RulesServiceException(ex.getMessage());
-        } catch (JMSException e) {
-            throw new RulesServiceException(e.getMessage());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param customRule
-     * @throws RulesServiceException
-     */
-    @Override
-    public CustomRuleType updateCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update custom rule invoked in service layer");
-        try {
-            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
-            throw new RulesServiceException(e.getMessage());
-        }
-    }
-
     // Triggered by RulesTimerBean
     @Override
     public List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException {
@@ -257,6 +246,7 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapGetPreviousReport();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
             return RulesDataSourceResponseMapper.mapToGetPreviousReportResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
@@ -295,6 +285,34 @@ public class RulesServiceBean implements RulesService {
             }
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException {
+        try {
+            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmByGuid(guid);
+            String messageId = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting alarm by GUID ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting alarm by GUID. ]");
+        }
+    }
+
+    @Override
+    public TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException {
+        try {
+            String getTicketReportRequest = RulesDataSourceRequestMapper.mapGetTicketByGuid(guid);
+            String messageId = producer.sendDataSourceMessage(getTicketReportRequest, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapSingleTicketFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting ticket by GUID ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting ticket by GUID. ]");
         }
     }
 
@@ -349,7 +367,7 @@ public class RulesServiceBean implements RulesService {
                 }
             }
 
-            // TODO: Better......................
+            // TODO: AcknowledgeType
             return "OK";
 
         } catch (RulesModelMapperException | MessageException | JMSException  e) {
@@ -674,34 +692,6 @@ public class RulesServiceBean implements RulesService {
         long duration = newTimestamp.getTime() - lastTimestamp.getTime();
         LOG.info("--> AUDIT - {} {}ms", msg, duration);
         return newTimestamp;
-    }
-
-    @Override
-    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException {
-        try {
-            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmByGuid(guid);
-            String messageId = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            return RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(response, messageId);
-        } catch (MessageException | JMSException | RulesModelMapperException e) {
-            LOG.error("[ Error when getting alarm by GUID ] {}", e.getMessage());
-            throw new RulesServiceException("[ Error when getting alarm by GUID. ]");
-        }
-    }
-
-    @Override
-    public TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException {
-        try {
-            String getTicketReportRequest = RulesDataSourceRequestMapper.mapGetTicketByGuid(guid);
-            String messageId = producer.sendDataSourceMessage(getTicketReportRequest, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            return RulesDataSourceResponseMapper.mapSingleTicketFromResponse(response, messageId);
-        } catch (MessageException | JMSException | RulesModelMapperException e) {
-            LOG.error("[ Error when getting ticket by GUID ] {}", e.getMessage());
-            throw new RulesServiceException("[ Error when getting ticket by GUID. ]");
-        }
     }
 
 }

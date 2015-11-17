@@ -1,9 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import java.util.List;
-
-import javax.ejb.Local;
-
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
@@ -16,10 +12,11 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRespons
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+
+import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface RulesService {
@@ -67,15 +64,6 @@ public interface RulesService {
     TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException;
 
     /**
-     * Get an object by id
-     *
-     * @param id
-     * @return
-     * @throws RulesServiceException
-     */
-    CustomRuleType getById(Long id) throws RulesServiceException;
-
-    /**
      * Update an object
      *
      * @param customRuleType
@@ -109,7 +97,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException, RulesModelMapperException, RulesFaultException
      */
-    CustomRuleType getByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
+    CustomRuleType getCustomRuleByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
     AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException, RulesFaultException;
 
