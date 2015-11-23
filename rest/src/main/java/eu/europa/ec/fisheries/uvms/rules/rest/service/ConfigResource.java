@@ -80,6 +80,9 @@ public class ConfigResource {
                     getConditionsByCriteria(subCriterias[j]);
                     subResult.put(subCriterias[j].toString(), getConditionsByCriteria(subCriterias[j]));
                 }
+                if (!mainCriterias[i].equals(MainCriteria.ROOT)) {
+                    map.put(mainCrit, subResult);
+                }
             }
         }
         return map;
