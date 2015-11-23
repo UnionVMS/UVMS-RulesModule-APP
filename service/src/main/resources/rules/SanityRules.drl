@@ -121,6 +121,16 @@ dialect "java"
         validationService.createAlarmReport("Plugin Type missing", $fact);
 end
 
+rule "Sanity rule 12 - Time in the future"
+dialect "java"
+    when
+        $fact : RawMovementFact(positionTime != null && positionTime.getTime() > new Date().getTime())
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 12 - Time in the future'" + "[" + $fact.getPositionTime() + " > " + new Date() + "]");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Time in future", $fact);
+end
+
 
 /*
 rule "Sanity check - statusCode must exist"
