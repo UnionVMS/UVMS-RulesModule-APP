@@ -57,6 +57,7 @@
             <xsd:enumeration value="ASSET_GROUP"/>
             <xsd:enumeration value="MOBILE_TERMINAL"/>
             <xsd:enumeration value="POSITION"/>
+            <xsd:enumeration value="REPORT"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -70,9 +71,7 @@
             <xsd:enumeration value="ACTIVITY_MESSAGE_TYPE"/>
             <!-- AREA -->
             <xsd:enumeration value="AREA_CODE"/>
-            <xsd:enumeration value="AREA_NAME"/>
             <xsd:enumeration value="AREA_TYPE"/>
-            <xsd:enumeration value="AREA_ID"/>
             <!-- ASSET -->
             <xsd:enumeration value="ASSET_ID_GEAR_TYPE"/>
             <xsd:enumeration value="EXTERNAL_MARKING"/>
@@ -99,10 +98,15 @@
             <xsd:enumeration value="SEGMENT_TYPE"/>
             <xsd:enumeration value="SOURCE"/>
             <xsd:enumeration value="STATUS_CODE"/>
-            <xsd:enumeration value="VICINITY_OF"/>
             <xsd:enumeration value="CLOSEST_COUNTRY_CODE"/>
             <xsd:enumeration value="CLOSEST_PORT_CODE"/>
 
+            <xsd:enumeration value="TIME_DIFF_POSITION_REPORT"/>
+            <xsd:enumeration value="SUM_POSITION_REPORT"/>
+
+            <!-- NOT IMPLEMENTED YET
+            <xsd:enumeration value="VICINITY_OF"/>
+            -->
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -159,19 +163,24 @@
     <xsd:simpleType name="ActionType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="SEND_TO_ENDPOINT"/>
+            <xsd:enumeration value="TICKET"/>
+            <xsd:enumeration value="EMAIL"/>
+
+            <!-- NOT IMPLEMENTED YET
             <xsd:enumeration value="MANUAL_POLL"/>
             <xsd:enumeration value="ON_HOLD"/>
-            <xsd:enumeration value="TICKET"/>
-            <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
-            <xsd:enumeration value="EMAIL"/>
             <xsd:enumeration value="SMS"/>
+            <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
+            -->
         </xsd:restriction>
     </xsd:simpleType>
 
+    <!-- TODO: REMOVE?
     <xsd:simpleType name="ReservedAreaCodeValueType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="SEND_TO_CLOSEST_COUNTRY"/>
         </xsd:restriction>
     </xsd:simpleType>
+    -->
 
 </xsd:schema>

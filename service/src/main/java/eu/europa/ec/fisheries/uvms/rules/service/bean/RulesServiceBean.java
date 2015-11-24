@@ -36,6 +36,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
@@ -88,6 +89,9 @@ public class RulesServiceBean implements RulesService {
 
     @EJB
     RulesValidator rulesValidator;
+
+    @EJB
+    ValidationService validationService;
 
     /**
      * {@inheritDoc}
@@ -243,11 +247,11 @@ public class RulesServiceBean implements RulesService {
     public List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException {
         LOG.info("Get previous movement reports invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapGetPreviousReport();
+            String request = RulesDataSourceRequestMapper.mapGetPreviousReports();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            return RulesDataSourceResponseMapper.mapToGetPreviousReportResponse(response, messageId);
+            return RulesDataSourceResponseMapper.mapToGetPreviousReportsResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -317,6 +321,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
+    // public GetAlarmListByQueryResponse reprocessAlarm(List<String> alarmGuids) throws RulesServiceException, RulesFaultException {
     public String reprocessAlarm(List<String> alarmGuids) throws RulesServiceException, RulesFaultException {
         LOG.info("Reprocess alarms invoked in service layer");
         try {
@@ -341,8 +346,8 @@ public class RulesServiceBean implements RulesService {
             query.getAlarmSearchCriteria().add(openCrit);
 
             query.setDynamic(true);
-            String request = RulesDataSourceRequestMapper.mapAlarmList(query);
 
+            String request = RulesDataSourceRequestMapper.mapAlarmList(query);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -356,7 +361,7 @@ public class RulesServiceBean implements RulesService {
             for (AlarmReportType alarm : alarms) {
                 RawMovementType rawMovementType = alarm.getRawMovement();
 
-                // TODO: Use better type (some variaqtion of PluginType...)
+                // TODO: Use better type (some variation of PluginType...)
                 String pluginType = alarm.getPluginType();
                 MovementRefType refType = setMovementReportReceived(rawMovementType, pluginType);
 
@@ -367,12 +372,34 @@ public class RulesServiceBean implements RulesService {
                 }
             }
 
-            // TODO: AcknowledgeType
+//            return RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
+            // TODO: Better
             return "OK";
 
         } catch (RulesModelMapperException | MessageException | JMSException  e) {
             throw new RulesServiceException(e.getMessage());
         }
+    }
+
+    private Long getTimeDiffFromLastCommunication(String vesselGuid, XMLGregorianCalendar thisTime) {
+        LOG.info("Get previous movement report by vessel guid invoked in service layer");
+
+        Long timeDiff = null;
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetPreviousReportByVesselGuid(vesselGuid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            PreviousReportType previousReport = RulesDataSourceResponseMapper.mapToGetPreviousReportByVesselGuidResponse(response, messageId);
+
+            XMLGregorianCalendar previousTime = previousReport.getPositionTime();
+
+            timeDiff = thisTime.toGregorianCalendar().getTimeInMillis() - previousTime.toGregorianCalendar().getTimeInMillis();
+        } catch (Exception e) {
+            // If something goes wrong, continue with the other validation
+            LOG.warn("[ Could not find previous position report ]");
+        }
+        return timeDiff;
     }
 
     @Override
@@ -403,7 +430,12 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
+            Long timeDiffInSeconds = null;
             if (vessel != null && vessel.getVesselId().getGuid() != null && rawMovement.getPositionTime() != null) {
+                Long timeDiff = getTimeDiffFromLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
+                LOG.debug("timeDiffInSeconds:{}", timeDiffInSeconds);
+
                 persistLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
                 auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
             }
@@ -424,7 +456,12 @@ public class RulesServiceBean implements RulesService {
 
                 if (movementResponse != null) {
                     MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
-                    validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement);
+                    validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement, timeDiffInSeconds);
+
+                    // TODO: This will not be used. It's still here pending final confirmation.
+                    // Forwarding rule
+//                    validationService.sendToEndpoint(createdMovement, vessel.getCountryCode());
+//                    auditTimestamp = auditLog("Time to forward movement:", auditTimestamp);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -447,7 +484,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, RawMovementType rawMovement) {
+    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, RawMovementType rawMovement, Long timeDiffInSeconds) {
         Date auditTimestamp = new Date();
         List<VesselGroup> assetGroup = null;
         try {
@@ -465,8 +502,7 @@ public class RulesServiceBean implements RulesService {
 
         // TODO: Get vicinityOf to validate on
         // ??? Maybe Movement?
-        String vicinityOf = "GO_GET_IT!!!";
-
+//        String vicinityOf = "GO_GET_IT!!!";
 
         LOG.info("Validating movement from Movement Module");
 
@@ -475,7 +511,7 @@ public class RulesServiceBean implements RulesService {
             comChannelType = rawMovement.getComChannelType().name();
         }
 
-        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, vessel, comChannelType, assetGroup);
+        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, vessel, comChannelType, assetGroup, timeDiffInSeconds);
         LOG.debug("movementFact:{}", movementFact);
 
         rulesValidator.evaluate(movementFact);

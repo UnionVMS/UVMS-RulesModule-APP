@@ -44,6 +44,7 @@
                     <xsd:enumeration value="CREATE_TICKET"/>
                     <xsd:enumeration value="GET_TICKET_BY_VESSEL_GUID"/>
                     <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
+                    <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_VESSEL_GUID"/>
 
                     <!-- Actions triggered by timer -->
                     <xsd:enumeration value="GET_PREVIOUS_REPORTS"/>
@@ -349,8 +350,8 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get previous report request -->
-            <xsd:element name="GetPreviousReportRequest">
+            <!-- Get previous reports request -->
+            <xsd:element name="GetPreviousReportsRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest"/>
@@ -359,10 +360,32 @@
             </xsd:element>
 
             <!-- Get previous report response -->
-            <xsd:element name="GetPreviousReportResponse">
+            <xsd:element name="GetPreviousReportsResponse">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="previousReport" type="previous:PreviousReportType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="previousReports" type="previous:PreviousReportType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report by vessel guid request -->
+            <xsd:element name="GetPreviousReportByVesselGuidRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="vesselGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report by vessel guid response -->
+            <xsd:element name="GetPreviousReportByVesselGuidResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReport" type="previous:PreviousReportType" />
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -574,11 +597,18 @@
         <part name="body" element="source:PingResponse"/>
     </message>
 
-    <message name="GetPreviousReportRequest">
-        <part name="body" element="source:GetPreviousReportRequest"/>
+    <message name="GetPreviousReportsRequest">
+        <part name="body" element="source:GetPreviousReportsRequest"/>
     </message>
-    <message name="GetPreviousReportResponse">
-        <part name="body" element="source:GetPreviousReportResponse"/>
+    <message name="GetPreviousReportsResponse">
+        <part name="body" element="source:GetPreviousReportsResponse"/>
+    </message>
+
+    <message name="GetPreviousReportByVesselGuidRequest">
+        <part name="body" element="source:GetPreviousReportByVesselGuidRequest"/>
+    </message>
+    <message name="GetPreviousReportByVesselGuidResponse">
+        <part name="body" element="source:GetPreviousReportByVesselGuidResponse"/>
     </message>
 
     <message name="GetTicketByVesselGuidRequest">
@@ -695,9 +725,15 @@
             <output message="source:PingResponse"/>
         </operation>
 
-        <operation name="GetPreviousReport">
-            <input message="source:GetPreviousReportRequest"/>
-            <output message="source:GetPreviousReportResponse"/>
+        <operation name="GetPreviousReports">
+            <input message="source:GetPreviousReportsRequest"/>
+            <output message="source:GetPreviousReportsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetPreviousReportByVesselGuid">
+            <input message="source:GetPreviousReportByVesselGuidRequest"/>
+            <output message="source:GetPreviousReportByVesselGuidResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -889,7 +925,7 @@
             </output>
         </operation>
         
-        <operation name="GetPreviousReport">
+        <operation name="GetPreviousReports">
             <input>
                 <soap:body use="literal"/>
             </input>

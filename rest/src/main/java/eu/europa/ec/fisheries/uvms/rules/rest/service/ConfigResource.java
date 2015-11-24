@@ -3,7 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
+//import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.MainCriteria;
@@ -48,12 +48,12 @@ public class ConfigResource {
             Map map = new HashMap();
 
             Map<String, HashMap<String, ArrayList<String>>> crit = getCriterias();
-            ConditionType[] con = getConditions();
+//            ConditionType[] con = getConditions();
             Map act = getActions();
             LogicOperatorType[] log = getLogicOperatorType();
 
             map.put("CRITERIA", crit);
-            map.put("CONDITIONS", con);
+//            map.put("CONDITIONS", con);
             map.put("ACTIONS", act);
             map.put("LOGIC_OPERATORS", log);
 
@@ -103,29 +103,29 @@ public class ConfigResource {
                 case SEND_TO_ENDPOINT:
                     needValue = true;
                     break;
-                case MANUAL_POLL:
-                    break;
-                case ON_HOLD:
-                    break;
                 case TICKET:
-                    break;
-                case TOP_BAR_NOTIFICATION:
                     break;
                 case EMAIL:
                     needValue = true;
                     break;
-                case SMS:
-                    needValue = true;
-                    break;
+//                case MANUAL_POLL:
+//                    break;
+//                case ON_HOLD:
+//                    break;
+//                case TOP_BAR_NOTIFICATION:
+//                    break;
+//                case SMS:
+//                    needValue = true;
+//                    break;
             }
             map.put(actionType, needValue);
         }
         return map;
     }
 
-    private ConditionType[] getConditions() {
-        return ConditionType.values();
-    }
+//    private ConditionType[] getConditions() {
+//        return ConditionType.values();
+//    }
 
     private ArrayList<String> getConditionsByCriteria(SubCriteria subCriteria) {
         ArrayList<String> conditions = new ArrayList<>();
@@ -134,9 +134,7 @@ public class ConfigResource {
             case ACTIVITY_MESSAGE_ID:
             case ACTIVITY_MESSAGE_TYPE:
             case AREA_CODE:
-            case AREA_NAME:
             case AREA_TYPE:
-            case AREA_ID:
             case ASSET_ID_GEAR_TYPE:
             case EXTERNAL_MARKING:
             case VESSEL_NAME:
@@ -146,7 +144,6 @@ public class ConfigResource {
             case MOVEMENT_TYPE:
             case SEGMENT_TYPE:
             case SOURCE:
-            case VICINITY_OF:
             case CLOSEST_COUNTRY_CODE:
             case CLOSEST_PORT_CODE:
             case ASSET_GROUP:
@@ -154,6 +151,7 @@ public class ConfigResource {
                 conditions.add(ConditionType.NE.name());
                 break;
 
+//            case VICINITY_OF:
             case VESSEL_CFR:
             case VESSEL_IRCS:
             case MT_DNID:
@@ -168,6 +166,8 @@ public class ConfigResource {
             case REPORTED_SPEED:
             case CALCULATED_COURSE:
             case CALCULATED_SPEED:
+            case TIME_DIFF_POSITION_REPORT:
+            case SUM_POSITION_REPORT:
             default:
                 conditions.add(ConditionType.EQ.name());
                 conditions.add(ConditionType.NE.name());
@@ -189,18 +189,18 @@ public class ConfigResource {
      * @summary Get special reserved words used as variables in custom rules
      *
      */
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/reservedword")
-    public ResponseDto getReservedAreaCodeValue() {
-        try {
-            return new ResponseDto(ReservedAreaCodeValueType.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting reserved area code value. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-
-    }
+//    @GET
+//    @Consumes(value = { MediaType.APPLICATION_JSON })
+//    @Produces(value = { MediaType.APPLICATION_JSON })
+//    @Path(value = "/reservedword")
+//    public ResponseDto getReservedAreaCodeValue() {
+//        try {
+//            return new ResponseDto(ReservedAreaCodeValueType.values(), ResponseCode.OK);
+//        } catch (Exception ex) {
+//            LOG.error("[ Error when getting reserved area code value. ] {} ", ex.getMessage());
+//            return ErrorHandler.getFault(ex);
+//        }
+//
+//    }
 
 }

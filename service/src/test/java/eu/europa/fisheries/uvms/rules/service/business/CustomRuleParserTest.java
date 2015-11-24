@@ -39,18 +39,6 @@ public class CustomRuleParserTest {
         CustomRuleType customRule = new CustomRuleType();
         customRule.setName("DummyName");
 
-        // First action
-        CustomRuleActionType action1 = new CustomRuleActionType();
-        action1.setAction(ActionType.EMAIL);
-        action1.setValue("user@company.se");
-        customRule.getActions().add(action1);
-
-        // Second action
-        CustomRuleActionType action2 = new CustomRuleActionType();
-        action2.setAction(ActionType.SMS);
-        action2.setValue("+46111111111");
-        customRule.getActions().add(action2);
-
         // First part of rule
         CustomRuleSegmentType segment1 = new CustomRuleSegmentType();
         segment1.setStartOperator("(");
@@ -99,6 +87,17 @@ public class CustomRuleParserTest {
         interval2.setEnd("2016-12-31 01:00:00 +0100");
         customRule.getTimeIntervals().add(interval2);
 
+        // First action
+        CustomRuleActionType action1 = new CustomRuleActionType();
+        action1.setAction(ActionType.EMAIL);
+        action1.setValue("user@company.se");
+        customRule.getActions().add(action1);
+
+        // Second action
+        CustomRuleActionType action2 = new CustomRuleActionType();
+        action2.setAction(ActionType.TICKET);
+        customRule.getActions().add(action2);
+
         rawRules.add(customRule);
 
         String expectedRule =
@@ -109,7 +108,7 @@ public class CustomRuleParserTest {
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0)
                 .getExpression());
-        assertEquals("EMAIL,user@company.se;SMS,+46111111111;", rules.get(0).getAction());
+        assertEquals("EMAIL,user@company.se;TICKET,null;", rules.get(0).getAction());
 
     }
 
@@ -168,365 +167,341 @@ public class CustomRuleParserTest {
         segment3.setOrder("3");
         customRule.getDefinitions().add(segment3);
 
-        // AREA_NAME
+        // AREA_TYPE
         CustomRuleSegmentType segment4 = new CustomRuleSegmentType();
         segment4.setStartOperator("");
         segment4.setCriteria(CriteriaType.AREA);
-        segment4.setSubCriteria(SubCriteriaType.AREA_NAME);
+        segment4.setSubCriteria(SubCriteriaType.AREA_TYPE);
         segment4.setCondition(ConditionType.NE);
-        segment4.setValue("AREA_NAME");
+        segment4.setValue("AREA_TYPE");
         segment4.setEndOperator("");
         segment4.setLogicBoolOperator(LogicOperatorType.OR);
         segment4.setOrder("4");
         customRule.getDefinitions().add(segment4);
 
-        // AREA_TYPE
+        // ASSET_ID_GEAR_TYPE
         CustomRuleSegmentType segment5 = new CustomRuleSegmentType();
         segment5.setStartOperator("");
-        segment5.setCriteria(CriteriaType.AREA);
-        segment5.setSubCriteria(SubCriteriaType.AREA_TYPE);
-        segment5.setCondition(ConditionType.NE);
-        segment5.setValue("AREA_TYPE");
+        segment5.setCriteria(CriteriaType.ASSET);
+        segment5.setSubCriteria(SubCriteriaType.ASSET_ID_GEAR_TYPE);
+        segment5.setCondition(ConditionType.EQ);
+        segment5.setValue("ASSET_ID_GEAR_TYPE");
         segment5.setEndOperator("");
         segment5.setLogicBoolOperator(LogicOperatorType.OR);
         segment5.setOrder("5");
         customRule.getDefinitions().add(segment5);
 
-        // AREA_ID
+        // EXTERNAL_MARKING
         CustomRuleSegmentType segment6 = new CustomRuleSegmentType();
         segment6.setStartOperator("");
-        segment6.setCriteria(CriteriaType.AREA);
-        segment6.setSubCriteria(SubCriteriaType.AREA_ID);
-        segment6.setCondition(ConditionType.NE);
-        segment6.setValue("AREA_ID");
+        segment6.setCriteria(CriteriaType.ASSET);
+        segment6.setSubCriteria(SubCriteriaType.EXTERNAL_MARKING);
+        segment6.setCondition(ConditionType.EQ);
+        segment6.setValue("EXTERNAL_MARKING");
         segment6.setEndOperator("");
         segment6.setLogicBoolOperator(LogicOperatorType.OR);
         segment6.setOrder("6");
         customRule.getDefinitions().add(segment6);
 
-        // ASSET_ID_GEAR_TYPE
+        // FLAG_STATE
         CustomRuleSegmentType segment7 = new CustomRuleSegmentType();
         segment7.setStartOperator("");
         segment7.setCriteria(CriteriaType.ASSET);
-        segment7.setSubCriteria(SubCriteriaType.ASSET_ID_GEAR_TYPE);
+        segment7.setSubCriteria(SubCriteriaType.FLAG_STATE);
         segment7.setCondition(ConditionType.EQ);
-        segment7.setValue("ASSET_ID_GEAR_TYPE");
+        segment7.setValue("FLAG_STATE");
         segment7.setEndOperator("");
         segment7.setLogicBoolOperator(LogicOperatorType.OR);
         segment7.setOrder("7");
         customRule.getDefinitions().add(segment7);
 
-        // EXTERNAL_MARKING
+        // VESSEL_CFR
         CustomRuleSegmentType segment8 = new CustomRuleSegmentType();
         segment8.setStartOperator("");
         segment8.setCriteria(CriteriaType.ASSET);
-        segment8.setSubCriteria(SubCriteriaType.EXTERNAL_MARKING);
+        segment8.setSubCriteria(SubCriteriaType.VESSEL_CFR);
         segment8.setCondition(ConditionType.EQ);
-        segment8.setValue("EXTERNAL_MARKING");
+        segment8.setValue("VESSEL_CFR");
         segment8.setEndOperator("");
         segment8.setLogicBoolOperator(LogicOperatorType.OR);
         segment8.setOrder("8");
         customRule.getDefinitions().add(segment8);
 
-        // FLAG_STATE
+        // VESSEL_IRCS
         CustomRuleSegmentType segment9 = new CustomRuleSegmentType();
         segment9.setStartOperator("");
         segment9.setCriteria(CriteriaType.ASSET);
-        segment9.setSubCriteria(SubCriteriaType.FLAG_STATE);
+        segment9.setSubCriteria(SubCriteriaType.VESSEL_IRCS);
         segment9.setCondition(ConditionType.EQ);
-        segment9.setValue("FLAG_STATE");
+        segment9.setValue("VESSEL_IRCS");
         segment9.setEndOperator("");
         segment9.setLogicBoolOperator(LogicOperatorType.OR);
         segment9.setOrder("9");
         customRule.getDefinitions().add(segment9);
 
-        // VESSEL_CFR
+        // VESSEL_NAME
         CustomRuleSegmentType segment10 = new CustomRuleSegmentType();
         segment10.setStartOperator("");
         segment10.setCriteria(CriteriaType.ASSET);
-        segment10.setSubCriteria(SubCriteriaType.VESSEL_CFR);
+        segment10.setSubCriteria(SubCriteriaType.VESSEL_NAME);
         segment10.setCondition(ConditionType.EQ);
-        segment10.setValue("VESSEL_CFR");
+        segment10.setValue("VESSEL_NAME");
         segment10.setEndOperator("");
         segment10.setLogicBoolOperator(LogicOperatorType.OR);
         segment10.setOrder("10");
         customRule.getDefinitions().add(segment10);
 
-        // VESSEL_IRCS
+        // COMCHANNEL_TYPE
         CustomRuleSegmentType segment11 = new CustomRuleSegmentType();
         segment11.setStartOperator("");
-        segment11.setCriteria(CriteriaType.ASSET);
-        segment11.setSubCriteria(SubCriteriaType.VESSEL_IRCS);
+        segment11.setCriteria(CriteriaType.MOBILE_TERMINAL);
+        segment11.setSubCriteria(SubCriteriaType.COMCHANNEL_TYPE);
         segment11.setCondition(ConditionType.EQ);
-        segment11.setValue("VESSEL_IRCS");
+        segment11.setValue("COMCHANNEL_TYPE");
         segment11.setEndOperator("");
         segment11.setLogicBoolOperator(LogicOperatorType.OR);
         segment11.setOrder("11");
         customRule.getDefinitions().add(segment11);
 
-        // VESSEL_NAME
+        // MT_TYPE
         CustomRuleSegmentType segment12 = new CustomRuleSegmentType();
         segment12.setStartOperator("");
-        segment12.setCriteria(CriteriaType.ASSET);
-        segment12.setSubCriteria(SubCriteriaType.VESSEL_NAME);
+        segment12.setCriteria(CriteriaType.MOBILE_TERMINAL);
+        segment12.setSubCriteria(SubCriteriaType.MT_TYPE);
         segment12.setCondition(ConditionType.EQ);
-        segment12.setValue("VESSEL_NAME");
+        segment12.setValue("MT_TYPE");
         segment12.setEndOperator("");
         segment12.setLogicBoolOperator(LogicOperatorType.OR);
         segment12.setOrder("12");
         customRule.getDefinitions().add(segment12);
 
-        // COMCHANNEL_TYPE
+        // MT_DNID
         CustomRuleSegmentType segment13 = new CustomRuleSegmentType();
         segment13.setStartOperator("");
         segment13.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment13.setSubCriteria(SubCriteriaType.COMCHANNEL_TYPE);
+        segment13.setSubCriteria(SubCriteriaType.MT_DNID);
         segment13.setCondition(ConditionType.EQ);
-        segment13.setValue("COMCHANNEL_TYPE");
+        segment13.setValue("MT_DNID");
         segment13.setEndOperator("");
         segment13.setLogicBoolOperator(LogicOperatorType.OR);
         segment13.setOrder("13");
         customRule.getDefinitions().add(segment13);
 
-        // MT_TYPE
+        // MT_MEMBER_ID
         CustomRuleSegmentType segment14 = new CustomRuleSegmentType();
         segment14.setStartOperator("");
         segment14.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment14.setSubCriteria(SubCriteriaType.MT_TYPE);
+        segment14.setSubCriteria(SubCriteriaType.MT_MEMBER_ID);
         segment14.setCondition(ConditionType.EQ);
-        segment14.setValue("MT_TYPE");
+        segment14.setValue("MT_MEMBER_ID");
         segment14.setEndOperator("");
         segment14.setLogicBoolOperator(LogicOperatorType.OR);
         segment14.setOrder("14");
         customRule.getDefinitions().add(segment14);
 
-        // MT_DNID
+        // MT_SERIAL_NO
         CustomRuleSegmentType segment15 = new CustomRuleSegmentType();
         segment15.setStartOperator("");
         segment15.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment15.setSubCriteria(SubCriteriaType.MT_DNID);
+        segment15.setSubCriteria(SubCriteriaType.MT_SERIAL_NO);
         segment15.setCondition(ConditionType.EQ);
-        segment15.setValue("MT_DNID");
+        segment15.setValue("MT_SERIAL_NO");
         segment15.setEndOperator("");
         segment15.setLogicBoolOperator(LogicOperatorType.OR);
         segment15.setOrder("15");
         customRule.getDefinitions().add(segment15);
 
-        // MT_MEMBER_ID
+        // ALTITUDE
         CustomRuleSegmentType segment16 = new CustomRuleSegmentType();
         segment16.setStartOperator("");
-        segment16.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment16.setSubCriteria(SubCriteriaType.MT_MEMBER_ID);
+        segment16.setCriteria(CriteriaType.POSITION);
+        segment16.setSubCriteria(SubCriteriaType.ALTITUDE);
         segment16.setCondition(ConditionType.EQ);
-        segment16.setValue("MT_MEMBER_ID");
+        segment16.setValue("ALTITUDE");
         segment16.setEndOperator("");
         segment16.setLogicBoolOperator(LogicOperatorType.OR);
         segment16.setOrder("16");
         customRule.getDefinitions().add(segment16);
 
-        // MT_SERIAL_NO
+        // LATITUDE
         CustomRuleSegmentType segment17 = new CustomRuleSegmentType();
         segment17.setStartOperator("");
-        segment17.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment17.setSubCriteria(SubCriteriaType.MT_SERIAL_NO);
+        segment17.setCriteria(CriteriaType.POSITION);
+        segment17.setSubCriteria(SubCriteriaType.LATITUDE);
         segment17.setCondition(ConditionType.EQ);
-        segment17.setValue("MT_SERIAL_NO");
+        segment17.setValue("LATITUDE");
         segment17.setEndOperator("");
         segment17.setLogicBoolOperator(LogicOperatorType.OR);
         segment17.setOrder("17");
         customRule.getDefinitions().add(segment17);
 
-        // ALTITUDE
+        // LONGITUDE
         CustomRuleSegmentType segment18 = new CustomRuleSegmentType();
         segment18.setStartOperator("");
         segment18.setCriteria(CriteriaType.POSITION);
-        segment18.setSubCriteria(SubCriteriaType.ALTITUDE);
+        segment18.setSubCriteria(SubCriteriaType.LONGITUDE);
         segment18.setCondition(ConditionType.EQ);
-        segment18.setValue("ALTITUDE");
+        segment18.setValue("LONGITUDE");
         segment18.setEndOperator("");
         segment18.setLogicBoolOperator(LogicOperatorType.OR);
         segment18.setOrder("18");
         customRule.getDefinitions().add(segment18);
 
-        // LATITUDE
+        // CALCULATED_COURSE
         CustomRuleSegmentType segment19 = new CustomRuleSegmentType();
         segment19.setStartOperator("");
         segment19.setCriteria(CriteriaType.POSITION);
-        segment19.setSubCriteria(SubCriteriaType.LATITUDE);
-        segment19.setCondition(ConditionType.EQ);
-        segment19.setValue("LATITUDE");
+        segment19.setSubCriteria(SubCriteriaType.CALCULATED_COURSE);
+        segment19.setCondition(ConditionType.LE);
+        segment19.setValue("CALCULATED_COURSE");
         segment19.setEndOperator("");
         segment19.setLogicBoolOperator(LogicOperatorType.OR);
         segment19.setOrder("19");
         customRule.getDefinitions().add(segment19);
 
-        // LONGITUDE
+        // CALCULATED_SPEED
         CustomRuleSegmentType segment20 = new CustomRuleSegmentType();
         segment20.setStartOperator("");
         segment20.setCriteria(CriteriaType.POSITION);
-        segment20.setSubCriteria(SubCriteriaType.LONGITUDE);
-        segment20.setCondition(ConditionType.EQ);
-        segment20.setValue("LONGITUDE");
+        segment20.setSubCriteria(SubCriteriaType.CALCULATED_SPEED);
+        segment20.setCondition(ConditionType.GE);
+        segment20.setValue("CALCULATED_SPEED");
         segment20.setEndOperator("");
         segment20.setLogicBoolOperator(LogicOperatorType.OR);
         segment20.setOrder("20");
         customRule.getDefinitions().add(segment20);
 
-        // CALCULATED_COURSE
+        // MOVEMENT_TYPE
         CustomRuleSegmentType segment21 = new CustomRuleSegmentType();
         segment21.setStartOperator("");
         segment21.setCriteria(CriteriaType.POSITION);
-        segment21.setSubCriteria(SubCriteriaType.CALCULATED_COURSE);
-        segment21.setCondition(ConditionType.LE);
-        segment21.setValue("CALCULATED_COURSE");
+        segment21.setSubCriteria(SubCriteriaType.MOVEMENT_TYPE);
+        segment21.setCondition(ConditionType.EQ);
+        segment21.setValue("MOVEMENT_TYPE");
         segment21.setEndOperator("");
         segment21.setLogicBoolOperator(LogicOperatorType.OR);
         segment21.setOrder("21");
         customRule.getDefinitions().add(segment21);
 
-        // CALCULATED_SPEED
+        // POSITION_REPORT_TIME
         CustomRuleSegmentType segment22 = new CustomRuleSegmentType();
         segment22.setStartOperator("");
         segment22.setCriteria(CriteriaType.POSITION);
-        segment22.setSubCriteria(SubCriteriaType.CALCULATED_SPEED);
-        segment22.setCondition(ConditionType.GE);
-        segment22.setValue("CALCULATED_SPEED");
+        segment22.setSubCriteria(SubCriteriaType.POSITION_REPORT_TIME);
+        segment22.setCondition(ConditionType.EQ);
+        segment22.setValue("POSITION_REPORT_TIME");
         segment22.setEndOperator("");
         segment22.setLogicBoolOperator(LogicOperatorType.OR);
         segment22.setOrder("22");
         customRule.getDefinitions().add(segment22);
 
-        // MOVEMENT_TYPE
+        // REPORTED_COURSE
         CustomRuleSegmentType segment23 = new CustomRuleSegmentType();
         segment23.setStartOperator("");
         segment23.setCriteria(CriteriaType.POSITION);
-        segment23.setSubCriteria(SubCriteriaType.MOVEMENT_TYPE);
-        segment23.setCondition(ConditionType.EQ);
-        segment23.setValue("MOVEMENT_TYPE");
+        segment23.setSubCriteria(SubCriteriaType.REPORTED_COURSE);
+        segment23.setCondition(ConditionType.LT);
+        segment23.setValue("REPORTED_COURSE");
         segment23.setEndOperator("");
         segment23.setLogicBoolOperator(LogicOperatorType.OR);
         segment23.setOrder("23");
         customRule.getDefinitions().add(segment23);
 
-        // POSITION_REPORT_TIME
+        // REPORTED_SPEED
         CustomRuleSegmentType segment24 = new CustomRuleSegmentType();
         segment24.setStartOperator("");
         segment24.setCriteria(CriteriaType.POSITION);
-        segment24.setSubCriteria(SubCriteriaType.POSITION_REPORT_TIME);
-        segment24.setCondition(ConditionType.EQ);
-        segment24.setValue("POSITION_REPORT_TIME");
+        segment24.setSubCriteria(SubCriteriaType.REPORTED_SPEED);
+        segment24.setCondition(ConditionType.GT);
+        segment24.setValue("REPORTED_SPEED");
         segment24.setEndOperator("");
         segment24.setLogicBoolOperator(LogicOperatorType.OR);
         segment24.setOrder("24");
         customRule.getDefinitions().add(segment24);
 
-        // REPORTED_COURSE
+        // SEGMENT_TYPE
         CustomRuleSegmentType segment25 = new CustomRuleSegmentType();
         segment25.setStartOperator("");
         segment25.setCriteria(CriteriaType.POSITION);
-        segment25.setSubCriteria(SubCriteriaType.REPORTED_COURSE);
-        segment25.setCondition(ConditionType.LT);
-        segment25.setValue("REPORTED_COURSE");
+        segment25.setSubCriteria(SubCriteriaType.SEGMENT_TYPE);
+        segment25.setCondition(ConditionType.NE);
+        segment25.setValue("SEGMENT_TYPE");
         segment25.setEndOperator("");
         segment25.setLogicBoolOperator(LogicOperatorType.OR);
         segment25.setOrder("25");
         customRule.getDefinitions().add(segment25);
 
-        // REPORTED_SPEED
+        // SOURCE
         CustomRuleSegmentType segment26 = new CustomRuleSegmentType();
         segment26.setStartOperator("");
         segment26.setCriteria(CriteriaType.POSITION);
-        segment26.setSubCriteria(SubCriteriaType.REPORTED_SPEED);
-        segment26.setCondition(ConditionType.GT);
-        segment26.setValue("REPORTED_SPEED");
+        segment26.setSubCriteria(SubCriteriaType.SOURCE);
+        segment26.setCondition(ConditionType.EQ);
+        segment26.setValue("SOURCE");
         segment26.setEndOperator("");
         segment26.setLogicBoolOperator(LogicOperatorType.OR);
         segment26.setOrder("26");
         customRule.getDefinitions().add(segment26);
 
-        // SEGMENT_TYPE
+        // STATUS_CODE
         CustomRuleSegmentType segment27 = new CustomRuleSegmentType();
         segment27.setStartOperator("");
         segment27.setCriteria(CriteriaType.POSITION);
-        segment27.setSubCriteria(SubCriteriaType.SEGMENT_TYPE);
-        segment27.setCondition(ConditionType.NE);
-        segment27.setValue("SEGMENT_TYPE");
+        segment27.setSubCriteria(SubCriteriaType.STATUS_CODE);
+        segment27.setCondition(ConditionType.EQ);
+        segment27.setValue("STATUS_CODE");
         segment27.setEndOperator("");
         segment27.setLogicBoolOperator(LogicOperatorType.OR);
         segment27.setOrder("27");
         customRule.getDefinitions().add(segment27);
 
-        // SOURCE
+        // CLOSEST_COUNTRY_CODE
         CustomRuleSegmentType segment28 = new CustomRuleSegmentType();
         segment28.setStartOperator("");
         segment28.setCriteria(CriteriaType.POSITION);
-        segment28.setSubCriteria(SubCriteriaType.SOURCE);
+        segment28.setSubCriteria(SubCriteriaType.CLOSEST_COUNTRY_CODE);
         segment28.setCondition(ConditionType.EQ);
-        segment28.setValue("SOURCE");
+        segment28.setValue("CLOSEST_COUNTRY_CODE");
         segment28.setEndOperator("");
         segment28.setLogicBoolOperator(LogicOperatorType.OR);
         segment28.setOrder("28");
         customRule.getDefinitions().add(segment28);
 
-        // STATUS_CODE
+        // CLOSEST_PORT_CODE
         CustomRuleSegmentType segment29 = new CustomRuleSegmentType();
         segment29.setStartOperator("");
         segment29.setCriteria(CriteriaType.POSITION);
-        segment29.setSubCriteria(SubCriteriaType.STATUS_CODE);
+        segment29.setSubCriteria(SubCriteriaType.CLOSEST_PORT_CODE);
         segment29.setCondition(ConditionType.EQ);
-        segment29.setValue("STATUS_CODE");
+        segment29.setValue("CLOSEST_PORT_CODE");
         segment29.setEndOperator("");
         segment29.setLogicBoolOperator(LogicOperatorType.OR);
         segment29.setOrder("29");
         customRule.getDefinitions().add(segment29);
 
-        // CLOSEST_COUNTRY_CODE
+        // ASSET_GROUP
         CustomRuleSegmentType segment30 = new CustomRuleSegmentType();
         segment30.setStartOperator("");
-        segment30.setCriteria(CriteriaType.POSITION);
-        segment30.setSubCriteria(SubCriteriaType.CLOSEST_COUNTRY_CODE);
-        segment30.setCondition(ConditionType.EQ);
-        segment30.setValue("CLOSEST_COUNTRY_CODE");
-        segment30.setEndOperator("");
-        segment30.setLogicBoolOperator(LogicOperatorType.OR);
+        segment30.setCriteria(CriteriaType.ASSET_GROUP);
+        segment30.setSubCriteria(SubCriteriaType.ASSET_GROUP);
+        segment30.setCondition(ConditionType.NE);
+        segment30.setValue("ASSET_GROUP");
+        segment30.setEndOperator(")");
+        segment30.setLogicBoolOperator(LogicOperatorType.NONE);
         segment30.setOrder("30");
         customRule.getDefinitions().add(segment30);
 
-        // CLOSEST_PORT_CODE
-        CustomRuleSegmentType segment31 = new CustomRuleSegmentType();
-        segment31.setStartOperator("");
-        segment31.setCriteria(CriteriaType.POSITION);
-        segment31.setSubCriteria(SubCriteriaType.CLOSEST_PORT_CODE);
-        segment31.setCondition(ConditionType.EQ);
-        segment31.setValue("CLOSEST_PORT_CODE");
-        segment31.setEndOperator("");
-        segment31.setLogicBoolOperator(LogicOperatorType.OR);
-        segment31.setOrder("31");
-        customRule.getDefinitions().add(segment31);
-
-        // ASSET_GROUP
-        CustomRuleSegmentType segment32 = new CustomRuleSegmentType();
-        segment32.setStartOperator("");
-        segment32.setCriteria(CriteriaType.ASSET_GROUP);
-        segment32.setSubCriteria(SubCriteriaType.ASSET_GROUP);
-        segment32.setCondition(ConditionType.NE);
-        segment32.setValue("ASSET_GROUP");
-        segment32.setEndOperator("");
-        segment32.setLogicBoolOperator(LogicOperatorType.OR);
-        segment32.setOrder("32");
-        customRule.getDefinitions().add(segment32);
-
         // VICINITY_OF
-        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
-        segment33.setStartOperator("");
-        segment33.setCriteria(CriteriaType.POSITION);
-        segment33.setSubCriteria(SubCriteriaType.VICINITY_OF);
-        segment33.setCondition(ConditionType.EQ);
-        segment33.setValue("VICINITY_OF");
-        segment33.setEndOperator(")");
-        segment33.setLogicBoolOperator(LogicOperatorType.NONE);
-        segment33.setOrder("33");
-        customRule.getDefinitions().add(segment33);
+//        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
+//        segment33.setStartOperator("");
+//        segment33.setCriteria(CriteriaType.POSITION);
+//        segment33.setSubCriteria(SubCriteriaType.VICINITY_OF);
+//        segment33.setCondition(ConditionType.EQ);
+//        segment33.setValue("VICINITY_OF");
+//        segment33.setEndOperator(")");
+//        segment33.setLogicBoolOperator(LogicOperatorType.NONE);
+//        segment33.setOrder("33");
+//        customRule.getDefinitions().add(segment33);
 
         // Action
         CustomRuleActionType action = new CustomRuleActionType();
@@ -541,9 +516,7 @@ public class CustomRuleParserTest {
         sb.append("activityMessageId == \"ACTIVITY_MESSAGE_ID\" || ");
         sb.append("activityMessageType == \"ACTIVITY_MESSAGE_TYPE\" || ");
         sb.append("areaCodes.contains(\"AREA_CODE\") || ");
-        sb.append("!areaNames.contains(\"AREA_NAME\") || ");
         sb.append("!areaTypes.contains(\"AREA_TYPE\") || ");
-        sb.append("!areaRemoteIds.contains(\"AREA_ID\") || ");
         sb.append("assetIdGearType == \"ASSET_ID_GEAR_TYPE\" || ");
         sb.append("externalMarking == \"EXTERNAL_MARKING\" || ");
         sb.append("flagState == \"FLAG_STATE\" || ");
@@ -569,8 +542,8 @@ public class CustomRuleParserTest {
         sb.append("statusCode == \"STATUS_CODE\" || ");
         sb.append("closestCountryCode == \"CLOSEST_COUNTRY_CODE\" || ");
         sb.append("closestPortCode == \"CLOSEST_PORT_CODE\" || ");
-        sb.append("!assetGroups.contains(\"ASSET_GROUP\") || ");
-        sb.append("vicinityOf == \"VICINITY_OF\"");
+        sb.append("!assetGroups.contains(\"ASSET_GROUP\")");
+//        sb.append("vicinityOf == \"VICINITY_OF\"");
         sb.append(")");
 
         String expectedRule = sb.toString();

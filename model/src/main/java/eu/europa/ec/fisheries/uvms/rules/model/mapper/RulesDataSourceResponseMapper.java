@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,18 +15,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SingleAlarmResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SingleTicketResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportsResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
@@ -184,15 +174,27 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static List<PreviousReportType> mapToGetPreviousReportResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static List<PreviousReportType> mapToGetPreviousReportsResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
-        GetPreviousReportResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportResponse.class);
+        GetPreviousReportsResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportsResponse.class);
+        return response.getPreviousReports();
+    }
+
+    public static PreviousReportType mapToGetPreviousReportByVesselGuidResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetPreviousReportByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportByVesselGuidResponse.class);
         return response.getPreviousReport();
     }
 
     public static String mapToGetPreviousReportResponse(List<PreviousReportType> previousReports) throws RulesModelMapperException {
-        GetPreviousReportResponse response = new GetPreviousReportResponse();
-        response.getPreviousReport().addAll(previousReports);
+        GetPreviousReportsResponse response = new GetPreviousReportsResponse();
+        response.getPreviousReports().addAll(previousReports);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String mapToGetPreviousReportByVesselGuidResponse(PreviousReportType previousReport) throws RulesModelMapperException {
+        GetPreviousReportByVesselGuidResponse response = new GetPreviousReportByVesselGuidResponse();
+        response.setPreviousReport(previousReport);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

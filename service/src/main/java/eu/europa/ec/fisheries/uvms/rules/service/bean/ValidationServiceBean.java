@@ -1,23 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SendMovementToPluginType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
+//import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -32,10 +30,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,12 +115,13 @@ public class ValidationServiceBean implements ValidationService {
                     sendToEmail(value, ruleName);
                     break;
                 case SEND_TO_ENDPOINT:
-                    sendToEndpoint(ruleName, ruleGuid, fact, value);
+                    sendToEndpoint(ruleName, fact, value);
                     break;
                 case TICKET:
                     createTicket(ruleName, ruleGuid, fact);
                     break;
 
+                /*
                 case MANUAL_POLL:
                     LOG.info("NOT IMPLEMENTED!");
                     break;
@@ -136,6 +135,7 @@ public class ValidationServiceBean implements ValidationService {
                 case SMS:
                     LOG.info("NOT IMPLEMENTED!");
                     break;
+                    */
                 default:
                     LOG.info("The action '{}' is not defined", action);
                     break;
@@ -154,10 +154,48 @@ public class ValidationServiceBean implements ValidationService {
 
     }
 
-    private void sendToEndpoint(String ruleName, String ruleGuid, MovementFact fact, String endpoint) {
-        if (endpoint.equals(ReservedAreaCodeValueType.SEND_TO_CLOSEST_COUNTRY.name())) {
-            endpoint = fact.getClosestCountryCode();
+// TODO: This is unused and should probably be deleted
+/*
+    @Override
+    public void sendToEndpoint(eu.europa.ec.fisheries.schema.movement.v1.MovementType createdMovement, String countryCode) throws MessageException, ExchangeModelMapperException {
+        if (createdMovement.getMetaData() != null) {
+            List<MovementMetaDataAreaType> areas = createdMovement.getMetaData().getAreas();
+            MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(createdMovement, MovementType.class);
+
+            for (MovementMetaDataAreaType area : areas) {
+                String ruleName = "Automatic Forwarding Rule";
+
+                XMLGregorianCalendar date = null;
+                try {
+                    GregorianCalendar c = new GregorianCalendar();
+                    c.setTime(new Date());
+                    date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+                } catch (DatatypeConfigurationException e) {
+                    e.printStackTrace();
+                }
+
+                if ("EEZ".equals(area.getAreaType()) || "RFMO".equals(area.getAreaType())) {
+                    String destination = area.getCode();
+
+                    // Make sure you don't send to flag state since it already has it (it this one that we are forwarding here)
+                    if (!countryCode.equals(destination)) {
+                        LOG.info("Forwarding movement '{}' to {}", exchangeMovement.getGuid(), destination);
+                        String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, destination, exchangeMovement);
+                        String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+                        TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+                        // TODO: Do something with the response
+                    }
+                }
+            }
         }
+    }
+*/
+
+    private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
+//        if (endpoint.equals(ReservedAreaCodeValueType.SEND_TO_CLOSEST_COUNTRY.name())) {
+//            endpoint = fact.getClosestCountryCode();
+//        }
 
         LOG.info("Sending to endpoint '{}'", endpoint);
 

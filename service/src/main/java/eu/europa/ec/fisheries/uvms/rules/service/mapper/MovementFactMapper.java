@@ -13,7 +13,7 @@ import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups, Long timeDiffInSeconds) {
         MovementFact fact = new MovementFact();
 
         fact.setMovementMovement(movement);
@@ -38,9 +38,7 @@ public class MovementFactMapper {
             List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
             for (MovementMetaDataAreaType area : areas) {
                 fact.getAreaCodes().add(area.getCode());
-                fact.getAreaNames().add(area.getName());
                 fact.getAreaTypes().add(area.getAreaType());
-                fact.getAreaRemoteIds().add(area.getRemoteId());
             }
         }
 
@@ -112,6 +110,10 @@ public class MovementFactMapper {
         fact.setStatusCode(movement.getStatus());
         // TODO
 //        fact.setVicinityOf(vicinityOf);
+
+        // REPORT
+        fact.setTimeDiffPositionReport(timeDiffInSeconds);
+        fact.setSumPositionReport("");
 
         return fact;
     }

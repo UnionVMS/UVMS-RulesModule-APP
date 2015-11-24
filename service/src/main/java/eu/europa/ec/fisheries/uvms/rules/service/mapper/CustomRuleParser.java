@@ -61,14 +61,8 @@ public class CustomRuleParser {
                         case AREA_CODE:
                             sb.append("areaCodes");
                             break;
-                        case AREA_NAME:
-                            sb.append("areaNames");
-                            break;
                         case AREA_TYPE:
                             sb.append("areaTypes");
-                            break;
-                        case AREA_ID:
-                            sb.append("areaRemoteIds");
                             break;
 
                         // ASSET
@@ -145,15 +139,24 @@ public class CustomRuleParser {
                         case STATUS_CODE:
                             sb.append("statusCode");
                             break;
-                        case VICINITY_OF:
-                            sb.append("vicinityOf");
-                            break;
+//                        case VICINITY_OF:
+//                            sb.append("vicinityOf");
+//                            break;
                         case CLOSEST_COUNTRY_CODE:
                             sb.append("closestCountryCode");
                             break;
                         case CLOSEST_PORT_CODE:
                             sb.append("closestPortCode");
                             break;
+
+                        // REPORT
+                        case SUM_POSITION_REPORT:
+                            sb.append("sumPositionReport");
+                            break;
+                        case TIME_DIFF_POSITION_REPORT:
+                            sb.append("timeDiffPositionReport");
+                            break;
+
                         default:
                             break;
                     }

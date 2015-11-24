@@ -21,9 +21,7 @@ public class MovementFact {
 
     // AREA
     List<String> areaCodes;
-    List<String> areaNames;
     List<String> areaTypes;
-    List<String> areaRemoteIds;
 
     // ASSET
     private String vesselGuid;
@@ -57,6 +55,10 @@ public class MovementFact {
     private String vicinityOf;
     private String closestCountryCode;
     private String closestPortCode;
+
+    // REPORT
+    private Long timeDiffPositionReport;
+    private String sumPositionReport;
 
     public MovementType getExchangeMovement() {
         MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
@@ -125,17 +127,6 @@ public class MovementFact {
         this.areaCodes = areaCodes;
     }
 
-    public List<String> getAreaNames() {
-        if (this.areaNames == null) {
-            this.areaNames = new ArrayList<>();
-        }
-        return areaNames;
-    }
-
-    public void setAreaNames(List<String> areaNames) {
-        this.areaNames = areaNames;
-    }
-
     public List<String> getAreaTypes() {
         if (this.areaTypes == null) {
             this.areaTypes = new ArrayList<>();
@@ -145,17 +136,6 @@ public class MovementFact {
 
     public void setAreaTypes(List<String> areaTypes) {
         this.areaTypes = areaTypes;
-    }
-
-    public List<String> getAreaRemoteIds() {
-        if (this.areaRemoteIds == null) {
-            this.areaRemoteIds = new ArrayList<>();
-        }
-        return areaRemoteIds;
-    }
-
-    public void setAreaRemoteIds(List<String> areaRemoteIds) {
-        this.areaRemoteIds = areaRemoteIds;
     }
 
     public String getVesselGuid() {
@@ -374,6 +354,22 @@ public class MovementFact {
         this.closestPortCode = closestPortCode;
     }
 
+    public String getSumPositionReport() {
+        return sumPositionReport;
+    }
+
+    public void setSumPositionReport(String sumPositionReport) {
+        this.sumPositionReport = sumPositionReport;
+    }
+
+    public Long getTimeDiffPositionReport() {
+        return timeDiffPositionReport;
+    }
+
+    public void setTimeDiffPositionReport(Long timeDiffPositionReport) {
+        this.timeDiffPositionReport = timeDiffPositionReport;
+    }
+
     @Override
     public String toString() {
         return "MovementFact{" +
@@ -383,9 +379,7 @@ public class MovementFact {
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +
                 ", areaCodes=" + areaCodes +
-                ", areaNames=" + areaNames +
                 ", areaTypes=" + areaTypes +
-                ", areaRemoteIds=" + areaRemoteIds +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +
@@ -413,6 +407,8 @@ public class MovementFact {
                 ", vicinityOf='" + vicinityOf + '\'' +
                 ", closestCountryCode='" + closestCountryCode + '\'' +
                 ", closestPortCode='" + closestPortCode + '\'' +
+                ", timeDiffPositionReport=" + timeDiffPositionReport +
+                ", sumPositionReport='" + sumPositionReport + '\'' +
                 '}';
     }
 }

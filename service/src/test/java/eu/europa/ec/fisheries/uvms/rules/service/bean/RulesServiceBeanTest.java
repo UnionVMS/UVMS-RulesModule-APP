@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import ch.qos.logback.classic.LoggerContext;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
@@ -28,15 +27,11 @@ import org.mockito.InjectMocks;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.CapturesArguments;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Produces;
 import javax.jms.TextMessage;
 
 import java.util.ArrayList;
@@ -373,7 +368,7 @@ public class RulesServiceBeanTest {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapGetPreviousReport()).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapGetPreviousReports()).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -383,17 +378,17 @@ public class RulesServiceBeanTest {
 
         mockStatic(RulesDataSourceResponseMapper.class);
         List<PreviousReportType> result = new ArrayList<>();
-        when(RulesDataSourceResponseMapper.mapToGetPreviousReportResponse(response, messageId)).thenReturn(result);
+        when(RulesDataSourceResponseMapper.mapToGetPreviousReportsResponse(response, messageId)).thenReturn(result);
 
         // Act
         rulesServiceBean.getPreviousMovementReports();
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapGetPreviousReport();
+        RulesDataSourceRequestMapper.mapGetPreviousReports();
 
         verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetPreviousReportResponse(response, messageId);
+        RulesDataSourceResponseMapper.mapToGetPreviousReportsResponse(response, messageId);
 
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);

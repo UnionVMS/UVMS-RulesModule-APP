@@ -26,7 +26,6 @@
         </xsd:sequence>
     </xsd:complexType>
 
-<!-- TODO: Is this necessary? Or reuse AlarmQuery? -->
     <xsd:complexType name="TicketQuery">
         <xsd:sequence>
             <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>

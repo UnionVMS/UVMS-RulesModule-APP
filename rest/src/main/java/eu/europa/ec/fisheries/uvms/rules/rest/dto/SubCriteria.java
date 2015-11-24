@@ -9,9 +9,7 @@ public enum SubCriteria {
     ACTIVITY_MESSAGE_TYPE(MainCriteria.ACTIVITY),
 
     AREA_CODE(MainCriteria.AREA),
-    AREA_NAME(MainCriteria.AREA),
     AREA_TYPE(MainCriteria.AREA),
-    AREA_ID(MainCriteria.AREA),
 
     ASSET_ID_GEAR_TYPE(MainCriteria.ASSET),
     EXTERNAL_MARKING(MainCriteria.ASSET),
@@ -38,9 +36,12 @@ public enum SubCriteria {
     SEGMENT_TYPE(MainCriteria.POSITION),
     SOURCE(MainCriteria.POSITION),
     STATUS_CODE(MainCriteria.POSITION),
-    VICINITY_OF(MainCriteria.POSITION),
+//    VICINITY_OF(MainCriteria.POSITION), // NOT IMPLEMENTED YET
     CLOSEST_COUNTRY_CODE(MainCriteria.POSITION),
-    CLOSEST_PORT_CODE(MainCriteria.POSITION);
+    CLOSEST_PORT_CODE(MainCriteria.POSITION),
+
+    TIME_DIFF_POSITION_REPORT(MainCriteria.REPORT),
+    SUM_POSITION_REPORT(MainCriteria.REPORT);
 
     private final MainCriteria mainCriteria;
 
