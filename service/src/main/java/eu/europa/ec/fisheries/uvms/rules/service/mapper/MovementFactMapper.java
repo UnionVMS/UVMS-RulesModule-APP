@@ -13,7 +13,7 @@ import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups, Long timeDiffInSeconds) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
         MovementFact fact = new MovementFact();
 
         fact.setMovementMovement(movement);
@@ -113,7 +113,7 @@ public class MovementFactMapper {
 
         // REPORT
         fact.setTimeDiffPositionReport(timeDiffInSeconds);
-        fact.setSumPositionReport("");
+        fact.setSumPositionReport(numberOfReportsLast24Hours);
 
         return fact;
     }

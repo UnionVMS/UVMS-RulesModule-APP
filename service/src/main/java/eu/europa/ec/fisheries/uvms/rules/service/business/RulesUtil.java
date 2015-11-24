@@ -9,6 +9,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 public class RulesUtil {
     final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
@@ -30,6 +34,22 @@ public class RulesUtil {
             dateString = df.format(date);
         }
         return dateString;
+    }
+
+    public static String xmlGregorianToString(XMLGregorianCalendar timestamp) {
+        if (timestamp == null) {
+            return null;
+        } else {
+            return dateToString(timestamp.toGregorianCalendar().getTime());
+        }
+    }
+
+    public static String gregorianToString(GregorianCalendar timestamp) {
+        if (timestamp == null) {
+            return null;
+        } else {
+            return dateToString(timestamp.getTime());
+        }
     }
 
 }

@@ -58,7 +58,7 @@ public class MovementFact {
 
     // REPORT
     private Long timeDiffPositionReport;
-    private String sumPositionReport;
+    private Integer sumPositionReport;
 
     public MovementType getExchangeMovement() {
         MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
@@ -354,11 +354,11 @@ public class MovementFact {
         this.closestPortCode = closestPortCode;
     }
 
-    public String getSumPositionReport() {
+    public Integer getSumPositionReport() {
         return sumPositionReport;
     }
 
-    public void setSumPositionReport(String sumPositionReport) {
+    public void setSumPositionReport(Integer sumPositionReport) {
         this.sumPositionReport = sumPositionReport;
     }
 

@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.movement.search.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
@@ -15,6 +16,9 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
+import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
+import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
+import eu.europa.ec.fisheries.schema.rules.search.v1.SearchKey;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -24,8 +28,10 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminal
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -60,6 +66,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -381,8 +388,8 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private Long getTimeDiffFromLastCommunication(String vesselGuid, XMLGregorianCalendar thisTime) {
-        LOG.info("Get previous movement report by vessel guid invoked in service layer");
+    private Long timeDiffFromLastCommunication(String vesselGuid, XMLGregorianCalendar thisTime) {
+        LOG.info("Fetching time difference to previous movement report");
 
         Long timeDiff = null;
         try {
@@ -397,9 +404,57 @@ public class RulesServiceBean implements RulesService {
             timeDiff = thisTime.toGregorianCalendar().getTimeInMillis() - previousTime.toGregorianCalendar().getTimeInMillis();
         } catch (Exception e) {
             // If something goes wrong, continue with the other validation
-            LOG.warn("[ Could not find previous position report ]");
+            LOG.warn("[ Error when fetching time difference of previous movement reports ]");
         }
         return timeDiff;
+    }
+
+    private Integer numberOfReportsLast24Hours(String vesselGuid, XMLGregorianCalendar thisTime) {
+        LOG.info("Fetching number of reports last 24 hours");
+        Integer numberOfMovements = null;
+
+        MovementQuery query = new MovementQuery();
+
+        // Range
+        RangeCriteria dateRangeCriteria = new RangeCriteria();
+        dateRangeCriteria.setKey(RangeKeyType.DATE);
+        GregorianCalendar twentyFourHoursAgo = thisTime.toGregorianCalendar();
+        twentyFourHoursAgo.add(GregorianCalendar.HOUR, -24);
+        String from = RulesUtil.gregorianToString(twentyFourHoursAgo);
+        dateRangeCriteria.setFrom(from);
+        String to = RulesUtil.xmlGregorianToString(thisTime);
+        dateRangeCriteria.setTo(to);
+        query.getMovementRangeSearchCriteria().add(dateRangeCriteria);
+
+        // Id
+        eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria idCriteria = new eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria();
+        idCriteria.setKey(eu.europa.ec.fisheries.schema.movement.search.v1.SearchKey.CONNECT_ID);
+        idCriteria.setValue(vesselGuid);
+        query.getMovementSearchCriteria().add(idCriteria);
+
+        try {
+            String request = MovementModuleRequestMapper.mapToGetMovementMapByQueryRequest(query);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            List<MovementMapResponseType> result = MovementModuleResponseMapper.mapToMovementMapResponse(response);
+
+            List<MovementType> movements;
+            if (result != null && result.size() == 1 && vesselGuid.equals(result.get(0).getKey())) {
+                movements = result.get(0).getMovements();
+            } else {
+                // If result is ambiguous or erroneous in some other way
+                LOG.warn("[ Error when fetching sum of previous movement reports:Faulty result ]");
+                return null;
+            }
+
+            numberOfMovements = movements != null ? movements.size() : 0;
+        } catch (Exception e) {
+            // If something goes wrong, continue with the other validation
+            LOG.warn("[ Error when fetching sum of previous movement reports:{} ]", e.getMessage());
+        }
+
+        return numberOfMovements;
     }
 
     @Override
@@ -431,10 +486,14 @@ public class RulesServiceBean implements RulesService {
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             Long timeDiffInSeconds = null;
+            Integer numberOfReportsLast24Hours = null;
             if (vessel != null && vessel.getVesselId().getGuid() != null && rawMovement.getPositionTime() != null) {
-                Long timeDiff = getTimeDiffFromLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                Long timeDiff = timeDiffFromLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
                 timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
-                LOG.debug("timeDiffInSeconds:{}", timeDiffInSeconds);
+                auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
+
+                numberOfReportsLast24Hours = numberOfReportsLast24Hours(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
 
                 persistLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
                 auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
@@ -456,7 +515,7 @@ public class RulesServiceBean implements RulesService {
 
                 if (movementResponse != null) {
                     MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
-                    validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement, timeDiffInSeconds);
+                    validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours);
 
                     // TODO: This will not be used. It's still here pending final confirmation.
                     // Forwarding rule
@@ -484,7 +543,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, RawMovementType rawMovement, Long timeDiffInSeconds) {
+    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, RawMovementType rawMovement, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
         Date auditTimestamp = new Date();
         List<VesselGroup> assetGroup = null;
         try {
@@ -511,7 +570,7 @@ public class RulesServiceBean implements RulesService {
             comChannelType = rawMovement.getComChannelType().name();
         }
 
-        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, vessel, comChannelType, assetGroup, timeDiffInSeconds);
+        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, vessel, comChannelType, assetGroup, timeDiffInSeconds, numberOfReportsLast24Hours);
         LOG.debug("movementFact:{}", movementFact);
 
         rulesValidator.evaluate(movementFact);
