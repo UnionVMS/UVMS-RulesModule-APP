@@ -28,7 +28,6 @@
         <vessel.model.version>1.0.10-SNAPSHOT</vessel.model.version>
         <mobileterminal.model.version>1.0.7-SNAPSHOT</mobileterminal.model.version>
         <usm4uvms.version>0.0.12-SNAPSHOT</usm4uvms.version>
-        <spatial.model.version>1.0-SNAPSHOT</spatial.model.version>
     </properties>
 
     <dependencies>
