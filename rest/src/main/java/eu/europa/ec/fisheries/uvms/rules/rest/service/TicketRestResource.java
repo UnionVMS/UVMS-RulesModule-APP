@@ -89,4 +89,24 @@ public class TicketRestResource {
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 Number of open tickets
+     * @responseMessage 500 No result
+     *
+     * @summary Get number of open tickets
+     *
+     */
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/countopen")
+    public ResponseDto getNumberOfOpenAlarmReports() {
+        try {
+            return new ResponseDto(serviceLayer.getNumberOfOpenTickets(), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException e) {
+            LOG.error("[ Error when getting number of open tickets. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
 }

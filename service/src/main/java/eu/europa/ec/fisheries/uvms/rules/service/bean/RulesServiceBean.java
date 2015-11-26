@@ -28,7 +28,6 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminal
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
@@ -310,6 +309,34 @@ public class RulesServiceBean implements RulesService {
         } catch (MessageException | JMSException | RulesModelMapperException e) {
             LOG.error("[ Error when getting alarm by GUID ] {}", e.getMessage());
             throw new RulesServiceException("[ Error when getting alarm by GUID. ]");
+        }
+    }
+
+    @Override
+    public long getNumberOfOpenAlarmReports() throws RulesServiceException, RulesFaultException {
+        try {
+            String request = RulesDataSourceRequestMapper.getNumberOfOpenAlarmReports();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapGetNumberOfOpenAlarmReportsFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting number of open alarms ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
+        }
+    }
+
+    @Override
+    public long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException {
+        try {
+            String request = RulesDataSourceRequestMapper.getNumberOfOpenTickets();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapGetNumberOfOpenTicketsFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting number of open tickets ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
         }
     }
 

@@ -36,6 +36,8 @@
                     <xsd:enumeration value="GET_CUSTOM_RULE"/>
                     <xsd:enumeration value="GET_ALARM"/>
                     <xsd:enumeration value="GET_TICKET"/>
+                    <xsd:enumeration value="GET_NUMBER_OF_OPEN_TICKETS"/>
+                    <xsd:enumeration value="GET_NUMBER_OF_OPEN_ALARMS"/>
 
                     <xsd:enumeration value="REPROCESS_ALARMS"/>
 
@@ -498,6 +500,44 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get number of open alarms request -->
+            <xsd:element name="GetNumberOfOpenAlarmsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open alarms response -->
+            <xsd:element name="GetNumberOfOpenAlarmsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open tickets request -->
+            <xsd:element name="GetNumberOfOpenTicketsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open tickets response -->
+            <xsd:element name="GetNumberOfOpenTicketsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
 
         </xsd:schema>
     </types>
@@ -646,6 +686,20 @@
         <part name="body" element="source:ReprocessAlarmResponse"/>
     </message>
 
+    <message name="GetNumberOfOpenAlarmsRequest">
+        <part name="body" element="source:GetNumberOfOpenAlarmsRequest"/>
+    </message>
+    <message name="GetNumberOfOpenAlarmsResponse">
+        <part name="body" element="source:GetNumberOfOpenAlarmsResponse"/>
+    </message>
+
+    <message name="GetNumberOfOpenTicketsRequest">
+        <part name="body" element="source:GetNumberOfOpenTicketsRequest"/>
+    </message>
+    <message name="GetNumberOfOpenTicketsResponse">
+        <part name="body" element="source:GetNumberOfOpenTicketsResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -764,6 +818,18 @@
         <operation name="ReprocessAlarmReport">
             <input message="source:ReprocessAlarmRequest"/>
             <output message="source:ReprocessAlarmResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfOpenAlarms">
+            <input message="source:GetNumberOfOpenAlarmsRequest"/>
+            <output message="source:GetNumberOfOpenAlarmsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfOpenTickets">
+            <input message="source:GetNumberOfOpenTicketsRequest"/>
+            <output message="source:GetNumberOfOpenTicketsResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -986,6 +1052,30 @@
         </operation>
 
         <operation name="ReprocessAlarmReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfOpenAlarms">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfOpenTickets">
             <input>
                 <soap:body use="literal"/>
             </input>

@@ -140,6 +140,18 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String getNumberOfOpenAlarmReports() throws RulesModelMarshallException {
+        GetNumberOfOpenAlarmsRequest request = new GetNumberOfOpenAlarmsRequest();
+        request.setMethod(RulesDataSourceMethod.GET_NUMBER_OF_OPEN_ALARMS);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String getNumberOfOpenTickets() throws RulesModelMarshallException {
+        GetNumberOfOpenTicketsRequest request = new GetNumberOfOpenTicketsRequest();
+        request.setMethod(RulesDataSourceMethod.GET_NUMBER_OF_OPEN_TICKETS);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapReprocessAlarms(List<String> alarmGuids) throws RulesModelMapperException {
         ReprocessAlarmRequest request = new ReprocessAlarmRequest();
         request.getAlarmReportGuid().addAll(alarmGuids);

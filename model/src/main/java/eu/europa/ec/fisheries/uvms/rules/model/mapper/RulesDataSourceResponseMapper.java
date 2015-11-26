@@ -80,6 +80,18 @@ public class RulesDataSourceResponseMapper {
         return singleTicketResponse.getAlarm();
     }
 
+    public static long mapGetNumberOfOpenAlarmReportsFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetNumberOfOpenAlarmsResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetNumberOfOpenAlarmsResponse.class);
+        return response.getResponse();
+    }
+
+    public static long mapGetNumberOfOpenTicketsFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetNumberOfOpenTicketsResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetNumberOfOpenTicketsResponse.class);
+        return response.getResponse();
+    }
+
     public static String createCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
         CreateCustomRuleResponse response = new CreateCustomRuleResponse();
         response.setCustomRule(customRule);
@@ -231,6 +243,18 @@ public class RulesDataSourceResponseMapper {
     public static String toSingleTicketResponse(TicketType ticket) throws RulesModelMarshallException {
         SingleTicketResponse response = new SingleTicketResponse();
         response.setTicket(ticket);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String toNumberOfOpenAlarmsResponse(long alarmCount) throws RulesModelMarshallException {
+        GetNumberOfOpenAlarmsResponse response = new GetNumberOfOpenAlarmsResponse();
+        response.setResponse(alarmCount);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String toNumberOfOpenTicketsResponse(long ticketCount) throws RulesModelMarshallException {
+        GetNumberOfOpenTicketsResponse response = new GetNumberOfOpenTicketsResponse();
+        response.setResponse(ticketCount);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

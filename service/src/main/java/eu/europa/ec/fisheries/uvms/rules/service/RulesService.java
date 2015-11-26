@@ -117,6 +117,18 @@ public interface RulesService {
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
     /**
+     * @return number of open alarms
+     * @throws RulesServiceException if unsuccessful
+     */
+    long getNumberOfOpenAlarmReports() throws RulesServiceException, RulesFaultException;
+
+    /**
+     * @return number of open tickets
+     * @throws RulesServiceException if unsuccessful
+     */
+    long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException;
+
+    /**
      * @param guid the GUID of a ticket
      * @return a ticket
      * @throws RulesServiceException if unsuccessful

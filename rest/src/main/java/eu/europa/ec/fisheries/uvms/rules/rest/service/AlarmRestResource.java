@@ -120,4 +120,24 @@ public class AlarmRestResource {
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 Number of open alarms
+     * @responseMessage 500 No result
+     *
+     * @summary Get number of open alarms
+     *
+     */
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/countopen")
+    public ResponseDto getNumberOfOpenAlarmReports() {
+        try {
+            return new ResponseDto(serviceLayer.getNumberOfOpenAlarmReports(), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException e) {
+            LOG.error("[ Error when getting number of open alarms. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
 }
