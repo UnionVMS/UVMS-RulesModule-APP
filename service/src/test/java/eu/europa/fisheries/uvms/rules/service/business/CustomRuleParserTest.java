@@ -389,7 +389,7 @@ public class CustomRuleParserTest {
         segment22.setCriteria(CriteriaType.POSITION);
         segment22.setSubCriteria(SubCriteriaType.POSITION_REPORT_TIME);
         segment22.setCondition(ConditionType.EQ);
-        segment22.setValue("POSITION_REPORT_TIME");
+        segment22.setValue("2000-10-30 01:00:00 +0100");
         segment22.setEndOperator("");
         segment22.setLogicBoolOperator(LogicOperatorType.OR);
         segment22.setOrder("22");
@@ -558,7 +558,7 @@ public class CustomRuleParserTest {
         sb.append("calculatedCourse <= \"CALCULATED_COURSE\" || ");
         sb.append("calculatedSpeed >= \"CALCULATED_SPEED\" || ");
         sb.append("movementType == \"MOVEMENT_TYPE\" || ");
-        sb.append("positionTime == \"POSITION_REPORT_TIME\" || ");
+        sb.append("positionTime == RulesUtil.stringToDate(\"2000-10-30 01:00:00 +0100\") || ");
         sb.append("reportedCourse < \"REPORTED_COURSE\" || ");
         sb.append("reportedSpeed > \"REPORTED_SPEED\" || ");
         sb.append("segmentType != \"SEGMENT_TYPE\" || ");

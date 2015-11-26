@@ -189,9 +189,15 @@ public class CustomRuleParser {
                         break;
 
                 }
-                sb.append("\"");
-                sb.append(segment.getValue());
-                sb.append("\"");
+                if (segment.getSubCriteria().equals(SubCriteriaType.POSITION_REPORT_TIME)) {
+                    sb.append("RulesUtil.stringToDate(\"");
+                    sb.append(segment.getValue());
+                    sb.append("\")");
+                } else  {
+                    sb.append("\"");
+                    sb.append(segment.getValue());
+                    sb.append("\"");
+                }
 
                 // If list, end "contains" with parenthesis
                 if ((segment.getCriteria().equals(CriteriaType.AREA) || segment.getCriteria().equals(CriteriaType.ASSET_GROUP))
