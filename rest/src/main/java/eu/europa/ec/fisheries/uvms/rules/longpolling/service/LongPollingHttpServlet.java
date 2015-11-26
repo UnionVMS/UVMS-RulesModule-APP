@@ -17,10 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.longpolling.constants.LongPollingConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 
-@WebServlet(asyncSupported = true, urlPatterns = { LongPollingConstants.ALARM_REPORT_PATH, LongPollingConstants.TICKET_UPDATE_PATH })
+@WebServlet(asyncSupported = true, urlPatterns = { LongPollingConstants.ALARM_REPORT_PATH, LongPollingConstants.TICKET_UPDATE_PATH, LongPollingConstants.TICKET_COUNT_PATH, LongPollingConstants.ALARM_REPORT_COUNT_PATH })
 public class LongPollingHttpServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +58,16 @@ public class LongPollingHttpServlet extends HttpServlet {
         completePoll(LongPollingConstants.TICKET_UPDATE_PATH, createJsonMessage(guid));
     }
 
+    public void observeTicketCount(@Observes @AlarmReportCountEvent NotificationMessage message) throws IOException {
+        long alarmCount = (long) message.getProperties().get("alarmCount");
+        completePoll(LongPollingConstants.ALARM_REPORT_COUNT_PATH, createJsonMessageCount(alarmCount));
+    }
+
+    public void observeAlarmReportCount(@Observes @TicketCountEvent NotificationMessage message) throws IOException {
+        long ticketCount = (long) message.getProperties().get("ticketCount");
+        completePoll(LongPollingConstants.TICKET_COUNT_PATH, createJsonMessageCount(ticketCount));
+    }
+
     private String createJsonMessage(String guid) {
         JsonArrayBuilder array = Json.createArrayBuilder();
         if (guid != null) {
@@ -63,6 +75,10 @@ public class LongPollingHttpServlet extends HttpServlet {
         }
 
         return Json.createObjectBuilder().add("ids", array).build().toString();
+    }
+
+    private String createJsonMessageCount(long value) {
+        return Json.createObjectBuilder().add("count", value).build().toString();
     }
 
     private void completePoll(String resourcePath, String message) throws IOException {

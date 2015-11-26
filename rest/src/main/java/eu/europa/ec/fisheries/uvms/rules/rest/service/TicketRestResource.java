@@ -8,6 +8,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,10 @@ public class TicketRestResource {
     final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
 
     @EJB
-    RulesService serviceLayer;
+    RulesService rulesService;
+
+    @EJB
+    ValidationService validationService;
 
     /**
      *
@@ -41,7 +45,7 @@ public class TicketRestResource {
     public ResponseDto<TicketListResponseDto> getTicketList(TicketQuery query) {
         LOG.info("Get tickets list invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getTicketList(query), ResponseCode.OK);
+            return new ResponseDto(rulesService.getTicketList(query), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException  | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -62,7 +66,7 @@ public class TicketRestResource {
     public ResponseDto updateTicketStatus(final TicketType ticketType) {
         LOG.info("Update ticket status invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateTicketStatus(ticketType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateTicketStatus(ticketType), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
@@ -82,7 +86,7 @@ public class TicketRestResource {
     @Path("/{guid}")
     public ResponseDto getTicketByGuid(@PathParam("guid") String guid) {
         try {
-            return new ResponseDto(serviceLayer.getTicketByGuid(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.getTicketByGuid(guid), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting ticket by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -100,9 +104,9 @@ public class TicketRestResource {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/countopen")
-    public ResponseDto getNumberOfOpenAlarmReports() {
+    public ResponseDto getNumberOfOpenTicketReports() {
         try {
-            return new ResponseDto(serviceLayer.getNumberOfOpenTickets(), ResponseCode.OK);
+            return new ResponseDto(validationService.getNumberOfOpenTickets(), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting number of open tickets. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);

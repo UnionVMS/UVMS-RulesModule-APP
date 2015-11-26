@@ -20,4 +20,15 @@ public interface ValidationService {
     // Triggered by rule engine
     void createAlarmReport(String ruleName, RawMovementFact fact) throws RulesServiceException;
 
+    /**
+     * @return number of open alarms
+     * @throws RulesServiceException if unsuccessful
+     */
+    long getNumberOfOpenAlarmReports() throws RulesServiceException, RulesFaultException;
+
+    /**
+     * @return number of open tickets
+     * @throws RulesServiceException if unsuccessful
+     */
+    long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException;
 }

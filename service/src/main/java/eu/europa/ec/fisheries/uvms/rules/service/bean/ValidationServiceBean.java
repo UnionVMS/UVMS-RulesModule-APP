@@ -3,13 +3,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-//import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -30,10 +28,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +65,14 @@ public class ValidationServiceBean implements ValidationService {
     @Inject
     @AlarmReportEvent
     private Event<NotificationMessage> alarmReportEvent;
+
+    @Inject
+    @AlarmReportCountEvent
+    private Event<NotificationMessage> alarmReportCountEvent;
+
+    @Inject
+    @TicketCountEvent
+    private Event<NotificationMessage> ticketCountEvent;
 
     /**
      * {@inheritDoc}
@@ -193,10 +200,6 @@ public class ValidationServiceBean implements ValidationService {
 */
 
     private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
-//        if (endpoint.equals(ReservedAreaCodeValueType.SEND_TO_CLOSEST_COUNTRY.name())) {
-//            endpoint = fact.getClosestCountryCode();
-//        }
-
         LOG.info("Sending to endpoint '{}'", endpoint);
 
         XMLGregorianCalendar date = null;
@@ -274,7 +277,11 @@ public class ValidationServiceBean implements ValidationService {
             CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
             ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
 
-        } catch (RulesModelMapperException | MessageException e) {
+            long ticketCount = this.getNumberOfOpenTickets();
+            // Notify long-polling clients of the change
+            ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
+
+        } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
             LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
         }
     }
@@ -317,8 +324,40 @@ public class ValidationServiceBean implements ValidationService {
             CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
             alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
 
-        } catch (RulesModelMapperException | MessageException e) {
+            long ticketCount = this.getNumberOfOpenAlarmReports();
+            // Notify long-polling clients of the change
+            ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
+
+        } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
             LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
+        }
+    }
+
+    @Override
+    public long getNumberOfOpenAlarmReports() throws RulesServiceException, RulesFaultException {
+        try {
+            String request = RulesDataSourceRequestMapper.getNumberOfOpenAlarmReports();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapGetNumberOfOpenAlarmReportsFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting number of open alarms ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
+        }
+    }
+
+    @Override
+    public long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException {
+        try {
+            String request = RulesDataSourceRequestMapper.getNumberOfOpenTickets();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapGetNumberOfOpenTicketsFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting number of open tickets ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
         }
     }
 

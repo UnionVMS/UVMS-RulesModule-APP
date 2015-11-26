@@ -55,6 +55,10 @@ public class RulesServiceBeanTest {
     RulesResponseConsumer mockConsumer;
     @Mock
     Event<NotificationMessage> ticketEvent;
+    @Mock
+    Event<NotificationMessage> ticketCountEvent;
+    @Mock
+    ValidationServiceBean mockValidationServiceBean;
 
     @InjectMocks
     RulesServiceBean rulesServiceBean;
@@ -291,7 +295,7 @@ public class RulesServiceBeanTest {
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
-    @Ignore // Not working
+    @Ignore // Mocking events not working
     @Test
     public void testUpdateTicketStatus() throws Exception {
         // Setup
@@ -328,7 +332,7 @@ public class RulesServiceBeanTest {
 //        ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
     }
 
-    @Ignore // Not working
+    @Ignore // Mocking events not working
     @Test
     public void testUpdateAlarmStatus() throws Exception {
         // Setup
@@ -430,6 +434,7 @@ public class RulesServiceBeanTest {
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
+    @Ignore // Mocking events not working
     @Test
     public void testTimerRuleTriggeredNoTicketCreated() throws Exception {
         // Setup
@@ -452,6 +457,11 @@ public class RulesServiceBeanTest {
         GetTicketByVesselGuidResponse ticketResponse = new GetTicketByVesselGuidResponse();
         ticketResponse.setTicket(null);
         when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
+
+        Long ticketCount = 5L;
+        when(mockValidationServiceBean.getNumberOfOpenTickets()).thenReturn(ticketCount);
+
+//        ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
 
         // Act
         String ruleName = "ruleName";

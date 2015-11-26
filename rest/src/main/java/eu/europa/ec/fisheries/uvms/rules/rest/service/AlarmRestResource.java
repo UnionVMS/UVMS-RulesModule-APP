@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,10 @@ public class AlarmRestResource {
     final static Logger LOG = LoggerFactory.getLogger(AlarmRestResource.class);
 
     @EJB
-    RulesService serviceLayer;
+    RulesService rulesService;
+
+    @EJB
+    ValidationService validationService;
 
     /**
      *
@@ -50,7 +54,7 @@ public class AlarmRestResource {
     public ResponseDto<AlarmListResponseDto> getCustomRuleList(AlarmQuery query) {
         LOG.info("Get alarm list invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.getAlarmList(query), ResponseCode.OK);
+            return new ResponseDto(rulesService.getAlarmList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException  e) {
             LOG.error("[ Error when geting list. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -71,7 +75,7 @@ public class AlarmRestResource {
     public ResponseDto updateAlarmStatus(final AlarmReportType alarmReportType) {
         LOG.info("Update alarm status invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.updateAlarmStatus(alarmReportType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateAlarmStatus(alarmReportType), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -83,7 +87,7 @@ public class AlarmRestResource {
      * @responseMessage 200 Alarm fetched by GUID
      * @responseMessage 500 No alarm fetched
      *
-     * @summary Update an alarm status
+     * @summary Get an alarm by GUID
      *
      */
     @GET
@@ -91,7 +95,7 @@ public class AlarmRestResource {
     @Path("/{guid}")
     public ResponseDto getAlarmReportByGuid(@PathParam("guid") String guid) {
         try {
-            return new ResponseDto(serviceLayer.getAlarmReportByGuid(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.getAlarmReportByGuid(guid), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting alarm by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -113,7 +117,7 @@ public class AlarmRestResource {
     public ResponseDto reprocessAlarm(final List<String> alarmGuidList) {
         LOG.info("Reprocess alarm invoked in rest layer");
         try {
-            return new ResponseDto(serviceLayer.reprocessAlarm(alarmGuidList), ResponseCode.OK);
+            return new ResponseDto(rulesService.reprocessAlarm(alarmGuidList), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -133,7 +137,7 @@ public class AlarmRestResource {
     @Path("/countopen")
     public ResponseDto getNumberOfOpenAlarmReports() {
         try {
-            return new ResponseDto(serviceLayer.getNumberOfOpenAlarmReports(), ResponseCode.OK);
+            return new ResponseDto(validationService.getNumberOfOpenAlarmReports(), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting number of open alarms. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
