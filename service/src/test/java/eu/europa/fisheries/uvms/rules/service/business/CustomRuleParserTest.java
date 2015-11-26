@@ -486,10 +486,34 @@ public class CustomRuleParserTest {
         segment30.setSubCriteria(SubCriteriaType.ASSET_GROUP);
         segment30.setCondition(ConditionType.NE);
         segment30.setValue("ASSET_GROUP");
-        segment30.setEndOperator(")");
-        segment30.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment30.setEndOperator("");
+        segment30.setLogicBoolOperator(LogicOperatorType.OR);
         segment30.setOrder("30");
         customRule.getDefinitions().add(segment30);
+
+        // REPORT
+        CustomRuleSegmentType segment31 = new CustomRuleSegmentType();
+        segment31.setStartOperator("");
+        segment31.setCriteria(CriteriaType.REPORT);
+        segment31.setSubCriteria(SubCriteriaType.SUM_POSITION_REPORT);
+        segment31.setCondition(ConditionType.GT);
+        segment31.setValue("10");
+        segment31.setEndOperator("");
+        segment31.setLogicBoolOperator(LogicOperatorType.OR);
+        segment31.setOrder("31");
+        customRule.getDefinitions().add(segment31);
+
+        // REPORT
+        CustomRuleSegmentType segment32 = new CustomRuleSegmentType();
+        segment32.setStartOperator("");
+        segment32.setCriteria(CriteriaType.REPORT);
+        segment32.setSubCriteria(SubCriteriaType.TIME_DIFF_POSITION_REPORT);
+        segment32.setCondition(ConditionType.LT);
+        segment32.setValue("60");
+        segment32.setEndOperator(")");
+        segment32.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment32.setOrder("32");
+        customRule.getDefinitions().add(segment32);
 
         // VICINITY_OF
 //        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
@@ -542,7 +566,9 @@ public class CustomRuleParserTest {
         sb.append("statusCode == \"STATUS_CODE\" || ");
         sb.append("closestCountryCode == \"CLOSEST_COUNTRY_CODE\" || ");
         sb.append("closestPortCode == \"CLOSEST_PORT_CODE\" || ");
-        sb.append("!assetGroups.contains(\"ASSET_GROUP\")");
+        sb.append("!assetGroups.contains(\"ASSET_GROUP\") || ");
+        sb.append("sumPositionReport > \"10\" || ");
+        sb.append("timeDiffPositionReport < \"60\"");
 //        sb.append("vicinityOf == \"VICINITY_OF\"");
         sb.append(")");
 
