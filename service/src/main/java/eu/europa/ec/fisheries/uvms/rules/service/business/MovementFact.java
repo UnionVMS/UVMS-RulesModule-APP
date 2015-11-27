@@ -4,6 +4,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -375,11 +376,12 @@ public class MovementFact {
         return "MovementFact{" +
                 "movementMovement=" + movementMovement +
                 ", movementGuid='" + movementGuid + '\'' +
+                ", assetGroups=" + Arrays.toString(assetGroups.toArray()) +
                 ", activityCallback='" + activityCallback + '\'' +
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +
-                ", areaCodes=" + areaCodes +
-                ", areaTypes=" + areaTypes +
+                ", areaCodes=" + Arrays.toString(areaCodes.toArray()) +
+                ", areaTypes=" + Arrays.toString(areaTypes.toArray()) +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +
@@ -408,7 +410,7 @@ public class MovementFact {
                 ", closestCountryCode='" + closestCountryCode + '\'' +
                 ", closestPortCode='" + closestPortCode + '\'' +
                 ", timeDiffPositionReport=" + timeDiffPositionReport +
-                ", sumPositionReport='" + sumPositionReport + '\'' +
+                ", sumPositionReport=" + sumPositionReport +
                 '}';
     }
 }
