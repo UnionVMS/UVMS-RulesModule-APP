@@ -430,6 +430,10 @@ public class RulesServiceBean implements RulesService {
             List<AlarmReportType> alarms = RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId).getAlarms();
 
             for (AlarmReportType alarm : alarms) {
+                // Cannot reprocess without a movement (i.e. "Asset not sending" alarm)
+                if (alarm.getRawMovement() == null) {
+                    continue;
+                }
 
                 // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm with the items remaining.
                 alarm.setStatus(AlarmStatusType.REPROCESSED);

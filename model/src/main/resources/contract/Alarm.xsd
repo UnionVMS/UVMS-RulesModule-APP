@@ -16,7 +16,6 @@
             <xsd:element name="status" type="alarm:AlarmStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="recipient" type="xsd:string"/>
-            <xsd:element name="sender" type="xsd:string"/>
             <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="rawMovement" type="movement:RawMovementType"/>
             <xsd:element name="inactivatePosition" type="xsd:boolean"/>
@@ -36,7 +35,6 @@
     <xsd:simpleType name="AlarmStatusType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="OPEN"/>
-            <xsd:enumeration value="CLOSED"/>
             <xsd:enumeration value="REJECTED"/>
             <xsd:enumeration value="REPROCESSED"/>
         </xsd:restriction>
