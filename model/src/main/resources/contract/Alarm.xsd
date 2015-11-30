@@ -38,6 +38,7 @@
             <xsd:enumeration value="OPEN"/>
             <xsd:enumeration value="CLOSED"/>
             <xsd:enumeration value="REJECTED"/>
+            <xsd:enumeration value="REPROCESSED"/>
         </xsd:restriction>
     </xsd:simpleType>
 

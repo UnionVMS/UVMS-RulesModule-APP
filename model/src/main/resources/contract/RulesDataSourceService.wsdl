@@ -45,6 +45,7 @@
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
                     <xsd:enumeration value="GET_TICKET_BY_VESSEL_GUID"/>
+                    <xsd:enumeration value="GET_ALARM_REPORT_BY_VESSEL_GUID"/>
                     <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
                     <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_VESSEL_GUID"/>
 
@@ -414,6 +415,28 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get alarm by vessel guid request -->
+            <xsd:element name="GetAlarmReportByVesselGuidRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="vesselGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get alarm by vessel guid response -->
+            <xsd:element name="GetAlarmReportByVesselGuidResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Upsert previous report request -->
             <xsd:element name="UpsertPreviousReportRequest">
                 <xsd:complexType>
@@ -658,6 +681,13 @@
         <part name="body" element="source:GetTicketByVesselGuidResponse"/>
     </message>
 
+    <message name="GetAlarmReportByVesselGuidRequest">
+        <part name="body" element="source:GetAlarmReportByVesselGuidRequest"/>
+    </message>
+    <message name="GetAlarmReportByVesselGuidResponse">
+        <part name="body" element="source:GetAlarmReportByVesselGuidResponse"/>
+    </message>
+
     <message name="UpsertPreviousReportRequest">
         <part name="body" element="source:UpsertPreviousReportRequest"/>
     </message>
@@ -791,9 +821,15 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
-        <operation name="GetTicketByVesselGuidReport">
+        <operation name="GetTicketByVesselGuid">
             <input message="source:GetTicketByVesselGuidRequest"/>
             <output message="source:GetTicketByVesselGuidResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarmReportByVesselGuid">
+            <input message="source:GetAlarmReportByVesselGuidRequest"/>
+            <output message="source:GetAlarmReportByVesselGuidResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1003,7 +1039,19 @@
             </fault>
         </operation>
 
-        <operation name="GetTicketByVesselGuidReport">
+        <operation name="GetTicketByVesselGuid">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarmReportByVesselGuid">
             <input>
                 <soap:body use="literal"/>
             </input>

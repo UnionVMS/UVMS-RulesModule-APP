@@ -216,9 +216,21 @@ public class RulesDataSourceResponseMapper {
         return response;
     }
 
+    public static GetAlarmReportByVesselGuidResponse mapToGetAlarmReportByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetAlarmReportByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmReportByVesselGuidResponse.class);
+        return response;
+    }
+
     public static String getTicketByVesselGuidResponse(TicketType ticketType) throws RulesModelMapperException {
         GetTicketByVesselGuidResponse response = new GetTicketByVesselGuidResponse();
         response.setTicket(ticketType);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String getAlarmReportByVesselGuidResponse(AlarmReportType alarmReportType) throws RulesModelMapperException {
+        GetAlarmReportByVesselGuidResponse response = new GetAlarmReportByVesselGuidResponse();
+        response.setAlarm(alarmReportType);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

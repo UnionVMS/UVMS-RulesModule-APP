@@ -72,6 +72,11 @@
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.user</groupId>
+            <artifactId>user-model</artifactId>
+            <version>${user.model.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>

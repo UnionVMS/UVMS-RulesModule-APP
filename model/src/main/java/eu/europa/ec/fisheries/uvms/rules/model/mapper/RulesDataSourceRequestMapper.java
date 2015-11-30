@@ -105,6 +105,13 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapGetAlarmReportByVesselGuid(String vesselGuid) throws RulesModelMapperException {
+        GetAlarmReportByVesselGuidRequest request = new GetAlarmReportByVesselGuidRequest();
+        request.setVesselGuid(vesselGuid);
+        request.setMethod(RulesDataSourceMethod.GET_ALARM_REPORT_BY_VESSEL_GUID);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     // Previous reports
     public static String mapGetPreviousReports() throws RulesModelMapperException {
         GetPreviousReportsRequest request = new GetPreviousReportsRequest();

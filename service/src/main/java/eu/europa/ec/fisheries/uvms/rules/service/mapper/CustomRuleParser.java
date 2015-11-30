@@ -189,13 +189,15 @@ public class CustomRuleParser {
                         break;
 
                 }
+                // Remove quotations (event though there shouldn't be any) from the value, since it totally messes up the rule engine
+                String value = segment.getValue().replace("\"","");
                 if (segment.getSubCriteria().equals(SubCriteriaType.POSITION_REPORT_TIME)) {
                     sb.append("RulesUtil.stringToDate(\"");
-                    sb.append(segment.getValue());
+                    sb.append(value);
                     sb.append("\")");
                 } else  {
                     sb.append("\"");
-                    sb.append(segment.getValue());
+                    sb.append(value);
                     sb.append("\"");
                 }
 
@@ -241,7 +243,7 @@ public class CustomRuleParser {
 
             rulesDto.setExpression(sb.toString());
 
-            // Format as of now: "ACTION,VALUE;ACTION,VALUE;ACTION,VALUE;"
+            // Format: "ACTION,VALUE;ACTION,VALUE;ACTION,VALUE;"
             List<CustomRuleActionType> actions = rawRule.getActions();
             sb = new StringBuilder();
             for (CustomRuleActionType action : actions) {

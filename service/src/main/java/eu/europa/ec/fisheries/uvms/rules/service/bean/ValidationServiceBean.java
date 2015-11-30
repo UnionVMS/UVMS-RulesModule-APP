@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
@@ -214,7 +215,15 @@ public class ValidationServiceBean implements ValidationService {
         try {
             MovementType exchangeMovement = fact.getExchangeMovement();
 
-            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement);
+
+            // TODO: Get this from user module
+            RecipientInfoType recipientInfo = new RecipientInfoType();
+            recipientInfo.setKey("dummyKey");
+            recipientInfo.setValue("dummyValue");
+            List<RecipientInfoType> recipientInfoList = new ArrayList<>();
+            recipientInfoList.add(recipientInfo);
+
+            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -268,6 +277,12 @@ public class ValidationServiceBean implements ValidationService {
             ticket.setUpdatedBy("UVMS");
             ticket.setMovementGuid(fact.getMovementGuid());
             ticket.setGuid(UUID.randomUUID().toString());
+
+            for (int i = 0; i < fact.getAreaTypes().size(); i++) {
+                if ("EEZ".equals(fact.getAreaTypes().get(i))) {
+                    ticket.setRecipient(fact.getAreaCodes().get(i));
+                }
+            }
 
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
@@ -324,9 +339,9 @@ public class ValidationServiceBean implements ValidationService {
             CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
             alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
 
-            long ticketCount = this.getNumberOfOpenAlarmReports();
+            long alarmCount = this.getNumberOfOpenAlarmReports();
             // Notify long-polling clients of the change
-            ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
+            alarmReportCountEvent.fire(new NotificationMessage("alarmCount", alarmCount));
 
         } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
             LOG.error("[ Failed to create alarm! {} ]", e.getMessage());

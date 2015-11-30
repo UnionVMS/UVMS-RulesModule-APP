@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByVesselGuidResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -413,10 +414,15 @@ public class RulesServiceBeanTest {
         TextMessage response = mock(TextMessage.class);
         when(mockConsumer.getMessage(messageId, TextMessage.class)).thenReturn(response);
 
+//        mockStatic(RulesDataSourceResponseMapper.class);
+//        GetTicketByVesselGuidResponse ticketResponse = new GetTicketByVesselGuidResponse();
+//        ticketResponse.setTicket(new TicketType());
+//        when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
+
         mockStatic(RulesDataSourceResponseMapper.class);
-        GetTicketByVesselGuidResponse ticketResponse = new GetTicketByVesselGuidResponse();
-        ticketResponse.setTicket(new TicketType());
-        when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
+        GetAlarmReportByVesselGuidResponse alarmReportResponse = new GetAlarmReportByVesselGuidResponse();
+        alarmReportResponse.setAlarm(new AlarmReportType());
+        when(RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(response, messageId)).thenReturn(alarmReportResponse);
 
         // Act
         String ruleName = "ruleName";
@@ -425,10 +431,12 @@ public class RulesServiceBeanTest {
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid());
+//        RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid());
+        RulesDataSourceRequestMapper.mapGetAlarmReportByVesselGuid(fact.getVesselGuid());
 
         verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId);
+//        RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId);
+        RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(response, messageId);
 
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
