@@ -29,6 +29,7 @@
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE_LAST_TRIGGERED"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES"/>
+                    <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
@@ -105,7 +106,31 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+
+            <!-- Custom rule QueryList request -->
+            <xsd:element name="GetCustomRuleListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:CustomRuleQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rule QueryList response -->
+            <xsd:element name="GetCustomRuleListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Get custom rule request by guid-->
             <xsd:element name="GetCustomRuleRequest">
                 <xsd:complexType>
@@ -596,7 +621,14 @@
     <message name="GetCustomRuleListResponse">
         <part name="body" element="source:GetCustomRuleListResponse"/>
     </message>
-    
+
+    <message name="GetCustomRuleListByQueryRequest">
+        <part name="body" element="source:GetCustomRuleListByQueryRequest"/>
+    </message>
+    <message name="GetCustomRuleListByQueryResponse">
+        <part name="body" element="source:GetCustomRuleListByQueryResponse"/>
+    </message>
+
     <message name="GetCustomRuleRequest">
         <part name="body" element="source:GetCustomRuleRequest"/>
     </message>
@@ -755,7 +787,13 @@
             <output message="source:GetCustomRuleListResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
-        
+
+        <operation name="GetCustomRuleListByQuery">
+            <input message="source:GetCustomRuleListByQueryRequest"/>
+            <output message="source:GetCustomRuleListByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
         <operation name="GetCustomRule">
             <input message="source:GetCustomRuleRequest"/>
             <output message="source:GetCustomRuleResponse"/>
@@ -921,7 +959,19 @@
                 <soap:fault name="RulesException" use="literal"/>
             </fault>
         </operation>
-        
+
+        <operation name="GetCustomRuleListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
         <operation name="GetCustomRule">
             <input>
                 <soap:body use="literal"/>

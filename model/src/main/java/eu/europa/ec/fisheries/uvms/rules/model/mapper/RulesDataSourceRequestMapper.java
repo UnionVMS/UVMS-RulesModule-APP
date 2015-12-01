@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,14 @@ public class RulesDataSourceRequestMapper {
         request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
-    
+
+    public static String mapCustomRuleListByQuery(CustomRuleQuery query) throws RulesModelMapperException {
+        GetCustomRuleListByQueryRequest request = new GetCustomRuleListByQueryRequest();
+        request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES_BY_QUERY);
+        request.setQuery(query);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapGetCustomRule(String guid) throws RulesModelMapperException {
         GetCustomRuleRequest request = new GetCustomRuleRequest();
         request.setMethod(RulesDataSourceMethod.GET_CUSTOM_RULE);

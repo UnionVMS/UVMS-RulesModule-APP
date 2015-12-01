@@ -6,6 +6,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +122,13 @@ public class RulesDataSourceResponseMapper {
         GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
         return response.getCustomRules();
     }
-    
+
+    public static GetCustomRuleListByQueryResponse mapToCustomRuleListByQueryFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetCustomRuleListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListByQueryResponse.class);
+        return response;
+    }
+
     public static CustomRuleType getCustomRuleResponse(TextMessage message, String correlationId) throws RulesModelMapperException, JMSException, RulesFaultException {
         validateResponse(message, correlationId);
         GetCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleResponse.class);
@@ -133,10 +140,18 @@ public class RulesDataSourceResponseMapper {
         response.setCustomRule(customRuleType);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
-    
+
     public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
         GetCustomRuleListResponse response = new GetCustomRuleListResponse();
         response.getCustomRules().addAll(customRules);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String getCustomRuleListByQueryResponse(CustomRuleListResponseDto responseDto) throws RulesModelMapperException {
+        GetCustomRuleListByQueryResponse response = new GetCustomRuleListByQueryResponse();
+        response.getCustomRules().addAll(responseDto.getCustomRuleList());
+        response.setCurrentPage(responseDto.getCurrentPage());
+        response.setTotalNumberOfPages(responseDto.getTotalNumberOfPages());
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
@@ -61,13 +62,35 @@ public class CustomRulesRestResource {
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("list")
-    public ResponseDto getCustomRuleList() {
-        LOG.info("Get list invoked in rest layer");
+    @Path("listAll")
+    public ResponseDto getAllCustomRules() {
+        LOG.info("Get all custom rules invoked in rest layer");
         try {
-            return new ResponseDto(validationService.getCustomRuleList(), ResponseCode.OK);
+            return new ResponseDto(validationService.getAllCustomRules(), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException ex) {
-            LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
+            LOG.error("[ Error when getting all custom rules. ] {} ", ex.getStackTrace());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 [Success]
+     * @responseMessage 500 [Error]
+     *
+     * @summary Get a list of custom rules by query
+     *
+     */
+    @POST
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("listByQuery")
+    public ResponseDto getCustomRulesByQuery(CustomRuleQuery query) {
+        LOG.info("Get custom rules by query invoked in rest layer");
+        try {
+            return new ResponseDto(validationService.getCustomRulesByQuery(query), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException ex) {
+            LOG.error("[ Error when getting custom rules by query. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
     }

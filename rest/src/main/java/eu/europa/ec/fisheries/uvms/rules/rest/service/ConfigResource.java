@@ -1,9 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-//import eu.europa.ec.fisheries.schema.rules.customrule.v1.ReservedAreaCodeValueType;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.MainCriteria;
@@ -48,18 +49,16 @@ public class ConfigResource {
             Map map = new HashMap();
 
             Map<String, HashMap<String, ArrayList<String>>> crit = getCriterias();
-//            ConditionType[] con = getConditions();
             Map act = getActions();
             LogicOperatorType[] log = getLogicOperatorType();
 
             map.put("CRITERIA", crit);
-//            map.put("CONDITIONS", con);
             map.put("ACTIONS", act);
             map.put("LOGIC_OPERATORS", log);
 
             return new ResponseDto(map, ResponseCode.OK);
         } catch (Exception ex) {
-            LOG.error("[ Error when getting actions. ] {} ", ex.getMessage());
+            LOG.error("[ Error when getting config. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }
@@ -104,6 +103,7 @@ public class ConfigResource {
                     needValue = true;
                     break;
                 case TICKET:
+                    needValue = true;
                     break;
                 case EMAIL:
                     needValue = true;
@@ -122,10 +122,6 @@ public class ConfigResource {
         }
         return map;
     }
-
-//    private ConditionType[] getConditions() {
-//        return ConditionType.values();
-//    }
 
     private ArrayList<String> getConditionsByCriteria(SubCriteria subCriteria) {
         ArrayList<String> conditions = new ArrayList<>();
@@ -183,24 +179,44 @@ public class ConfigResource {
 
     /**
      *
-     * @responseMessage 200 All reserved words fetched
-     * @responseMessage 500 No reserved words fetched
+     * @responseMessage 200 Alarm statuses fetched
+     * @responseMessage 500 No config fetched
      *
-     * @summary Get special reserved words used as variables in custom rules
+     * @summary Get alarm statuses
      *
      */
-//    @GET
-//    @Consumes(value = { MediaType.APPLICATION_JSON })
-//    @Produces(value = { MediaType.APPLICATION_JSON })
-//    @Path(value = "/reservedword")
-//    public ResponseDto getReservedAreaCodeValue() {
-//        try {
-//            return new ResponseDto(ReservedAreaCodeValueType.values(), ResponseCode.OK);
-//        } catch (Exception ex) {
-//            LOG.error("[ Error when getting reserved area code value. ] {} ", ex.getMessage());
-//            return ErrorHandler.getFault(ex);
-//        }
-//
-//    }
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/alarmstatus")
+    public ResponseDto getAlarmStatuses() {
+        try {
+            return new ResponseDto(AlarmStatusType.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting alarm statuses. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Ticket statuses fetched
+     * @responseMessage 500 No config fetched
+     *
+     * @summary Get ticket statuses
+     *
+     */
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/ticketstatus")
+    public ResponseDto getTicketStatuses() {
+        try {
+            return new ResponseDto(TicketStatusType.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting ticket statuses. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
 
 }

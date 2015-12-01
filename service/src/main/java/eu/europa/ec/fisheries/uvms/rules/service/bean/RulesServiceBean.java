@@ -17,9 +17,7 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
-import eu.europa.ec.fisheries.schema.rules.search.v1.ListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
-import eu.europa.ec.fisheries.schema.rules.search.v1.SearchKey;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -403,16 +401,16 @@ public class RulesServiceBean implements RulesService {
             query.setPagination(pagination);
 
             for (String alarmGuid : alarmGuids) {
-                ListCriteria criteria = new ListCriteria();
-                criteria.setKey(SearchKey.ALARM_GUID);
+                AlarmListCriteria criteria = new AlarmListCriteria();
+                criteria.setKey(AlarmSearchKey.ALARM_GUID);
                 criteria.setValue(alarmGuid);
 
                 query.getAlarmSearchCriteria().add(criteria);
             }
 
             // We only want open alarms
-            ListCriteria openCrit = new ListCriteria();
-            openCrit.setKey(SearchKey.STATUS);
+            AlarmListCriteria openCrit = new AlarmListCriteria();
+            openCrit.setKey(AlarmSearchKey.STATUS);
             openCrit.setValue(AlarmStatusType.OPEN.name());
             query.getAlarmSearchCriteria().add(openCrit);
 

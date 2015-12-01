@@ -79,8 +79,8 @@ public class RestResourceTest {
      */
     @Test
     public void testGetCustomRuleList() throws RulesServiceException, RulesFaultException, JMSException {
-        doReturn(DTO_LIST).when(validationService).getCustomRuleList();
-        ResponseDto result = customRulesRestResource.getCustomRuleList();
+        doReturn(DTO_LIST).when(validationService).getAllCustomRules();
+        ResponseDto result = customRulesRestResource.getAllCustomRules();
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
     }
 
@@ -91,7 +91,7 @@ public class RestResourceTest {
      */
     @Test
     public void testGetCustomRuleListNull() throws RulesServiceException {
-        ResponseDto result = SERVICE_NULL.getCustomRuleList();
+        ResponseDto result = SERVICE_NULL.getAllCustomRules();
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 

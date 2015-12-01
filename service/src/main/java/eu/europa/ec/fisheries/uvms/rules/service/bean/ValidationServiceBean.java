@@ -9,8 +9,10 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
@@ -82,13 +84,27 @@ public class ValidationServiceBean implements ValidationService {
      * @throws RulesServiceException
      */
     @Override
-    public List<CustomRuleType> getCustomRuleList() throws RulesServiceException, RulesFaultException {
-        LOG.info("Get custom rule list invoked in service layer");
+    public List<CustomRuleType> getAllCustomRules() throws RulesServiceException, RulesFaultException {
+        LOG.info("Get all custom rules invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapCustomRuleList();
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public GetCustomRuleListByQueryResponse getCustomRulesByQuery(CustomRuleQuery query) throws RulesServiceException, RulesFaultException {
+        LOG.info("Get custom rules by query invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapCustomRuleListByQuery(query);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapToCustomRuleListByQueryFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -126,7 +142,7 @@ public class ValidationServiceBean implements ValidationService {
                     sendToEndpoint(ruleName, fact, value);
                     break;
                 case TICKET:
-                    createTicket(ruleName, ruleGuid, fact);
+                    createTicket(ruleName, ruleGuid, fact, value);
                     break;
 
                 /*
@@ -264,7 +280,7 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) {
+    private void createTicket(String ruleName, String ruleGuid, MovementFact fact, String user) {
         LOG.info("Create ticket invoked in service layer");
         try {
             TicketType ticket = new TicketType();
@@ -274,7 +290,7 @@ public class ValidationServiceBean implements ValidationService {
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
-            ticket.setUpdatedBy("UVMS");
+            ticket.setUpdatedBy(user);
             ticket.setMovementGuid(fact.getMovementGuid());
             ticket.setGuid(UUID.randomUUID().toString());
 

@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.jms.JMSException;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
@@ -94,7 +93,7 @@ public class RulesValidator {
         // Fetch custom rules from DB
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            customRules = validationService.getCustomRuleList();
+            customRules = validationService.getAllCustomRules();
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
@@ -131,7 +130,7 @@ public class RulesValidator {
         List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            customRules = validationService.getCustomRuleList();
+            customRules = validationService.getAllCustomRules();
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
