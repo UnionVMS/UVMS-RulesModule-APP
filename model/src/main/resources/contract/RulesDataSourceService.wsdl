@@ -27,6 +27,7 @@
                     <!-- Actions triggered by user -->
                     <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="DELETE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE_LAST_TRIGGERED"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
@@ -153,7 +154,6 @@
                 </xsd:complexType>
             </xsd:element>
 
-
             <!-- Update custom rule request -->
             <xsd:element name="UpdateCustomRuleRequest">
                 <xsd:complexType>
@@ -169,6 +169,28 @@
 
             <!-- Update custom rule response -->
             <xsd:element name="UpdateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Delete custom rule request -->
+            <xsd:element name="DeleteCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Delete custom rule response -->
+            <xsd:element name="DeleteCustomRuleResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
@@ -608,6 +630,13 @@
         <part name="body" element="source:UpdateCustomRuleResponse"/>
     </message>
 
+    <message name="DeleteCustomRuleRequest">
+        <part name="body" element="source:DeleteCustomRuleRequest"/>
+    </message>
+    <message name="DeleteCustomRuleResponse">
+        <part name="body" element="source:DeleteCustomRuleResponse"/>
+    </message>
+
     <message name="UpdateCustomRuleLastTriggeredRequest">
         <part name="body" element="source:UpdateCustomRuleLastTriggeredRequest"/>
     </message>
@@ -776,6 +805,12 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
+        <operation name="DeleteCustomRule">
+            <input message="source:DeleteCustomRuleRequest"/>
+            <output message="source:DeleteCustomRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
         <operation name="UpdateCustomRuleLastTriggered">
             <input message="source:UpdateCustomRuleLastTriggeredRequest"/>
             <output message="source:UpdateCustomRuleLastTriggeredResponse"/>
@@ -925,6 +960,18 @@
         </operation>
 
         <operation name="UpdateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="DeleteCustomRule">
             <input>
                 <soap:body use="literal"/>
             </input>

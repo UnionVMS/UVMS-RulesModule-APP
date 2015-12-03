@@ -46,6 +46,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
@@ -170,6 +171,30 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param guid
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType deleteCustomRule(String guid) throws RulesServiceException, RulesFaultException {
+        LOG.info("Deleting custom rule by guid: {}.", guid);
+        if (guid == null) {
+            throw new InputArgumentException("No custom rule to remove");
+        }
+
+        try {
+            String request = RulesDataSourceRequestMapper.mapDeleteCustomRule(guid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -337,29 +362,29 @@ public class RulesServiceBean implements RulesService {
         alarmReportCountEvent.fire(new NotificationMessage("alarmCount", alarmCount));
     }
 
-    private void createTicket(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException {
-        TicketType ticket = new TicketType();
-
-        ticket.setVesselGuid(fact.getVesselGuid());
-        ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-        ticket.setRuleName(ruleName);
-        ticket.setRuleGuid(ruleGuid);
-        ticket.setUpdatedBy("UVMS");
-        ticket.setStatus(TicketStatusType.OPEN);
-        ticket.setMovementGuid(fact.getMovementGuid());
-        ticket.setGuid(UUID.randomUUID().toString());
-
-        String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-        String ticketMessageId = producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
-        TextMessage ticketResponse = consumer.getMessage(ticketMessageId, TextMessage.class);
-
-        // TODO: Do something with the response???
-
-        long ticketCount = validationService.getNumberOfOpenTickets();
-        // Notify long-polling clients of the change
-        ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
-
-    }
+//    private void createTicket(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException {
+//        TicketType ticket = new TicketType();
+//
+//        ticket.setVesselGuid(fact.getVesselGuid());
+//        ticket.setOpenDate(RulesUtil.dateToString(new Date()));
+//        ticket.setRuleName(ruleName);
+//        ticket.setRuleGuid(ruleGuid);
+//        ticket.setUpdatedBy("UVMS");
+//        ticket.setStatus(TicketStatusType.OPEN);
+//        ticket.setMovementGuid(fact.getMovementGuid());
+//        ticket.setGuid(UUID.randomUUID().toString());
+//
+//        String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
+//        String ticketMessageId = producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
+//        TextMessage ticketResponse = consumer.getMessage(ticketMessageId, TextMessage.class);
+//
+//        // TODO: Do something with the response???
+//
+//        long ticketCount = validationService.getNumberOfOpenTickets();
+//        // Notify long-polling clients of the change
+//        ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
+//
+//    }
 
     @Override
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException {

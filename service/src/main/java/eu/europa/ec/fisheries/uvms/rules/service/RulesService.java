@@ -39,6 +39,8 @@ public interface RulesService {
      */
 //    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
+    CustomRuleType deleteCustomRule(String guid) throws RulesServiceException, RulesFaultException;
+
     /**
      * Lists alarms by query
      *

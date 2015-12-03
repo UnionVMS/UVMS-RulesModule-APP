@@ -113,7 +113,7 @@ public class ValidationServiceBean implements ValidationService {
     // Triggered by rule engine
     @Override
     public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) {
-        LOG.info("Performing actions on triggered user rules [NOT FULLY IMPLEMENTED]");
+        LOG.info("Performing actions on triggered user rules");
 
         // Update last update
         updateLastTriggered(ruleGuid);

@@ -55,6 +55,13 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapDeleteCustomRule(String guid) throws RulesModelMapperException {
+        DeleteCustomRuleRequest request = new DeleteCustomRuleRequest();
+        request.setGuid(guid);
+        request.setMethod(RulesDataSourceMethod.DELETE_CUSTOM_RULE);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapUpdateCustomRuleLastTriggered(String ruleGuid) throws RulesModelMapperException {
         UpdateCustomRuleLastTriggeredRequest request = new UpdateCustomRuleLastTriggeredRequest();
         request.setCustomRuleGuid(ruleGuid);

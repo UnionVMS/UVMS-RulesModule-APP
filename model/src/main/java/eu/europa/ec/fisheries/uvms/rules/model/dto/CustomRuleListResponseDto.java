@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.model.dto;
 
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 
 import java.io.Serializable;

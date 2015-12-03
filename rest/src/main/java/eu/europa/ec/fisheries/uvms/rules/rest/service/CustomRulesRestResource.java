@@ -138,4 +138,24 @@ public class CustomRulesRestResource {
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 [Success]
+     * @responseMessage 500 [Error]
+     *
+     * @summary Archive a custom rule
+     *
+     */
+    @DELETE
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public ResponseDto deleteCustomRule(@PathParam(value = "guid") final String guid) {
+        LOG.info("Delete custom rule invoked in rest layer");
+        try {
+            return new ResponseDto(rulesService.deleteCustomRule(guid), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            LOG.error("[ Error when deleteing custom rule. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
 }

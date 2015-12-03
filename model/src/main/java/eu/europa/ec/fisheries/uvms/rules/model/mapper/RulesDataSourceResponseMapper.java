@@ -105,9 +105,21 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
+    public static String deleteCustomRuleResponse(CustomRuleType customRule) throws RulesModelMapperException {
+        DeleteCustomRuleResponse response = new DeleteCustomRuleResponse();
+        response.setCustomRule(customRule);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
     public static CustomRuleType mapToUpdateCustomRuleFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
         UpdateCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, UpdateCustomRuleResponse.class);
+        return response.getCustomRule();
+    }
+
+    public static CustomRuleType mapToDeleteCustomRuleFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        DeleteCustomRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, DeleteCustomRuleResponse.class);
         return response.getCustomRule();
     }
 

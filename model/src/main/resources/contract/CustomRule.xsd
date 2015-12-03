@@ -12,6 +12,7 @@
             <xsd:element name="type" type="customrule:RuleType"/>
             <xsd:element name="availability" type="customrule:AvailabilityType"/>
             <xsd:element name="active" type="xsd:boolean"/>
+            <xsd:element name="archived" type="xsd:boolean"/>
             <xsd:element name="description" type="xsd:string"/>
             <xsd:element name="timeIntervals" type="customrule:CustomRuleIntervalType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="definitions" type="customrule:CustomRuleSegmentType" minOccurs="1" maxOccurs="unbounded"/>
