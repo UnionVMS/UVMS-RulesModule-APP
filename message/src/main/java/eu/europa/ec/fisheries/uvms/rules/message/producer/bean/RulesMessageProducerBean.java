@@ -24,7 +24,7 @@ import javax.jms.*;
 @Stateless
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
     @Resource(mappedName = MessageConstants.QUEUE_DATASOURCE_INTERNAL)
     private Queue localDbQueue;

@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebFilter(asyncSupported = true, urlPatterns = {"/*"})
 public class RequestFilter implements Filter {
 
-    final static Logger LOG = LoggerFactory.getLogger(RequestFilter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RequestFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

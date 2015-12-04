@@ -14,7 +14,9 @@ import java.util.List;
 
 @Local
 public interface ValidationService {
-    List<CustomRuleType> getAllCustomRules() throws RulesServiceException, RulesFaultException;
+    List<CustomRuleType> getCustomRulesByUser(String userName) throws RulesServiceException, RulesFaultException;
+
+    List<CustomRuleType> getRunnableCustomRules() throws RulesServiceException, RulesFaultException;
 
     GetCustomRuleListByQueryResponse getCustomRulesByQuery(CustomRuleQuery query) throws RulesServiceException, RulesFaultException;
 

@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 @Stateless
 public class EventServiceBean implements EventService {
-    final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(EventServiceBean.class);
 
     @Inject
     @ErrorEvent

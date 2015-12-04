@@ -46,14 +46,13 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 @Stateless
 public class ValidationServiceBean implements ValidationService {
 
-    final static Logger LOG = LoggerFactory.getLogger(ValidationServiceBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ValidationServiceBean.class);
 
     @EJB
     RulesResponseConsumer consumer;
@@ -84,13 +83,32 @@ public class ValidationServiceBean implements ValidationService {
      * @throws RulesServiceException
      */
     @Override
-    public List<CustomRuleType> getAllCustomRules() throws RulesServiceException, RulesFaultException {
+    public List<CustomRuleType> getCustomRulesByUser(String userName) throws RulesServiceException, RulesFaultException {
         LOG.info("Get all custom rules invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapCustomRuleList();
+            String request = RulesDataSourceRequestMapper.mapGetCustomRulesByUser(userName);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToCustomRuleListFromResponse(response, messageId);
+            return RulesDataSourceResponseMapper.mapToGetCustomRulesFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     * @throws RulesServiceException
+     */
+    @Override
+    public List<CustomRuleType> getRunnableCustomRules() throws RulesServiceException, RulesFaultException {
+        LOG.info("Get all valid custom rules invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetRunnableCustomRules();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToGetRunnableCustomRulesFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -219,17 +237,10 @@ public class ValidationServiceBean implements ValidationService {
     private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
         LOG.info("Sending to endpoint '{}'", endpoint);
 
-        XMLGregorianCalendar date = null;
-        try {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(new Date());
-            date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
-        }
-
         try {
             MovementType exchangeMovement = fact.getExchangeMovement();
+
+            XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
 
 
             // TODO: Get this from user module
@@ -245,8 +256,8 @@ public class ValidationServiceBean implements ValidationService {
 
             // TODO: Do something with the response
 
-        } catch (ExchangeModelMapperException | MessageException e) {
-            e.printStackTrace();
+        } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException e) {
+            LOG.error("[ Failed to send to endpoint! {} ]", e.getMessage());
         }
 
     }
@@ -276,7 +287,7 @@ public class ValidationServiceBean implements ValidationService {
 // Metoden kastar ExchangeValidationException (som är en ExchangeModelMapperException) - som containar "ExchangeFault.code - och ExchangeFault.message" som message om det är ett Fault, ger AcknowledgeType.OK om det gick bra AcknowledgeType.NOK om pluginen inte är startad
 
         } catch (ExchangeModelMapperException | MessageException e) {
-            LOG.error("[ Failed to send email! ]");
+            LOG.error("[ Failed to send email! {} ]", e.getMessage());
         }
     }
 
@@ -339,7 +350,7 @@ public class ValidationServiceBean implements ValidationService {
             // TODO: Add sender, recipient and assetGuid
 
             // Alarm item
-            List<AlarmItemType> alarmItems = new ArrayList<AlarmItemType>();
+            List<AlarmItemType> alarmItems = new ArrayList<>();
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
             alarmItem.setRuleGuid("sanity rule - " + ruleName);

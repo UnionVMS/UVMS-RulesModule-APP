@@ -79,8 +79,8 @@ public class RestResourceTest {
      */
     @Test
     public void testGetCustomRuleList() throws RulesServiceException, RulesFaultException, JMSException {
-        doReturn(DTO_LIST).when(validationService).getAllCustomRules();
-        ResponseDto result = customRulesRestResource.getAllCustomRules();
+        doReturn(DTO_LIST).when(validationService).getCustomRulesByUser("dummyUser");
+        ResponseDto result = customRulesRestResource.getCustomRulesByUser("dummyUser");
         assertEquals(SUCCESS_RESULT_LIST.toString(), result.toString());
     }
 
@@ -91,7 +91,7 @@ public class RestResourceTest {
      */
     @Test
     public void testGetCustomRuleListNull() throws RulesServiceException {
-        ResponseDto result = SERVICE_NULL.getAllCustomRules();
+        ResponseDto result = SERVICE_NULL.getCustomRulesByUser("dummyUser");
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 
@@ -126,7 +126,7 @@ public class RestResourceTest {
      */
     @Test
     public void testCreateCustomRule() throws RulesServiceException, RulesFaultException {
-        ResponseDto result = customRulesRestResource.create(DTO);
+        ResponseDto result = customRulesRestResource.createCustomRule(DTO);
         Mockito.verify(rulesService).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
@@ -136,7 +136,7 @@ public class RestResourceTest {
      */
     @Test
     public void testCreateCustomRuleNull() {
-        ResponseDto result = SERVICE_NULL.create(DTO);
+        ResponseDto result = SERVICE_NULL.createCustomRule(DTO);
         assertEquals(ERROR_RESULT.toString(), result.toString());
     }
 

@@ -29,7 +29,8 @@
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
                     <xsd:enumeration value="DELETE_CUSTOM_RULE"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE_LAST_TRIGGERED"/>
-                    <xsd:enumeration value="LIST_CUSTOM_RULES"/>
+                    <xsd:enumeration value="GET_RUNNABLE_CUSTOM_RULES"/>
+                    <xsd:enumeration value="LIST_CUSTOM_RULES_BY_USER"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
@@ -87,18 +88,43 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- List custom rules request -->
-            <xsd:element name="GetCustomRuleListRequest">
+            <!-- Custom rules for rule engine request -->
+            <xsd:element name="GetRunnableCustomRulesRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="userName" type="xsd:string"/>
+                            </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
-            <!-- List custom rules response -->
-            <xsd:element name="GetCustomRuleListResponse">
+
+            <!-- Custom rules for rule engine response -->
+            <xsd:element name="GetRunnableCustomRulesResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules by user request -->
+            <xsd:element name="GetCustomRulesByUserRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="userName" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules by user response -->
+            <xsd:element name="GetCustomRulesByUserResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
@@ -644,11 +670,18 @@
         <part name="body" element="source:UpdateCustomRuleLastTriggeredResponse"/>
     </message>
 
-    <message name="GetCustomRuleListRequest">
-        <part name="body" element="source:GetCustomRuleListRequest"/>
+    <message name="GetRunnableCustomRulesRequest">
+        <part name="body" element="source:GetRunnableCustomRulesRequest"/>
     </message>
-    <message name="GetCustomRuleListResponse">
-        <part name="body" element="source:GetCustomRuleListResponse"/>
+    <message name="GetRunnableCustomRulesResponse">
+        <part name="body" element="source:GetRunnableCustomRulesResponse"/>
+    </message>
+
+    <message name="GetCustomRulesByUserRequest">
+        <part name="body" element="source:GetCustomRulesByUserRequest"/>
+    </message>
+    <message name="GetCustomRulesByUserResponse">
+        <part name="body" element="source:GetCustomRulesByUserResponse"/>
     </message>
 
     <message name="GetCustomRuleListByQueryRequest">
@@ -817,9 +850,15 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
-        <operation name="GetCustomRuleList">
-            <input message="source:GetCustomRuleListRequest"/>
-            <output message="source:GetCustomRuleListResponse"/>
+        <operation name="GetRunnableCustomRules">
+            <input message="source:GetRunnableCustomRulesRequest"/>
+            <output message="source:GetRunnableCustomRulesResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRulesByUser">
+            <input message="source:GetCustomRulesByUserRequest"/>
+            <output message="source:GetCustomRulesByUserResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -995,7 +1034,19 @@
             </fault>
         </operation>
 
-        <operation name="GetCustomRuleList">
+        <operation name="GetRunnableCustomRules">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRulesByUser">
             <input>
                 <soap:body use="literal"/>
             </input>

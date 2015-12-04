@@ -30,7 +30,7 @@ import java.util.Map;
 @RequiresFeature(UnionVMSFeature.viewMovements)
 public class ConfigResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);
 
     /**
      *

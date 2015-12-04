@@ -31,7 +31,7 @@ import java.util.List;
 @Stateless
 public class AlarmRestResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(AlarmRestResource.class);
+    private final static Logger LOG = LoggerFactory.getLogger(AlarmRestResource.class);
 
     @EJB
     RulesService rulesService;

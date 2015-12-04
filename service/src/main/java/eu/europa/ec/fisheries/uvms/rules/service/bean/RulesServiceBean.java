@@ -74,7 +74,7 @@ import java.util.UUID;
 @Stateless
 public class RulesServiceBean implements RulesService {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
     public static final String REF_TYPE_MOVEMENT = "MOVEMENT";
     public static final String REF_TYPE_ALARM = "ALARM";
 

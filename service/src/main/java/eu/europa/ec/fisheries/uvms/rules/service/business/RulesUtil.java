@@ -52,4 +52,12 @@ public class RulesUtil {
         }
     }
 
+    public static XMLGregorianCalendar dateToXmlGregorian(Date timestamp) throws DatatypeConfigurationException {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(timestamp);
+        XMLGregorianCalendar xmlCalendar = null;
+        xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+        return xmlCalendar;
+    }
+
 }

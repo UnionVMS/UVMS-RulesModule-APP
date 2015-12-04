@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 @Stateless
 public class TicketRestResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
+    private final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
 
     @EJB
     RulesService rulesService;

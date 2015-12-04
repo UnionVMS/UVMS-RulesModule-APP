@@ -25,7 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 public class RulesTimerBean {
     private static final int THRESHOLD = 2;
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
 
     @EJB
     RulesService rulesService;
@@ -63,12 +63,8 @@ public class RulesTimerBean {
 
             }
 
-        } catch (RulesServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RulesFaultException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (RulesServiceException | RulesFaultException e) {
+            LOG.error("[ Error when running check communication timer ]");
         }
 
     }

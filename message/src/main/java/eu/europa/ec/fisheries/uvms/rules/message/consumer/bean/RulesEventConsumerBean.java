@@ -27,7 +27,7 @@ import javax.jms.TextMessage;
 })
 public class RulesEventConsumerBean implements MessageListener {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesEventConsumerBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesEventConsumerBean.class);
 
     @Inject
     @SetMovementReportReceivedEvent
@@ -69,7 +69,8 @@ public class RulesEventConsumerBean implements MessageListener {
                 pingReceivedEvent.fire(new EventMessage(textMessage));
                 break;
             case GET_CUSTOM_RULE: 
-            	getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
+                getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
+                break;
             default:
                 LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));

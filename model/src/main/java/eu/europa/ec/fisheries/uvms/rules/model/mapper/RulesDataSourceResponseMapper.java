@@ -26,7 +26,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 
 public class RulesDataSourceResponseMapper {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceResponseMapper.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceResponseMapper.class);
 
     /**
      * Validates a response
@@ -129,9 +129,15 @@ public class RulesDataSourceResponseMapper {
         return response.getTicket();
     }
 
-    public static List<CustomRuleType> mapToCustomRuleListFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static List<CustomRuleType> mapToGetCustomRulesFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
-        GetCustomRuleListResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListResponse.class);
+        GetCustomRulesByUserResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRulesByUserResponse.class);
+        return response.getCustomRules();
+    }
+
+    public static List<CustomRuleType> mapToGetRunnableCustomRulesFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetRunnableCustomRulesResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetRunnableCustomRulesResponse.class);
         return response.getCustomRules();
     }
 
@@ -153,8 +159,14 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String getCustomRuleListResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
-        GetCustomRuleListResponse response = new GetCustomRuleListResponse();
+    public static String getCustomRulesByUserResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
+        GetCustomRulesByUserResponse response = new GetCustomRulesByUserResponse();
+        response.getCustomRules().addAll(customRules);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String getRunnableCustomRulesResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
+        GetRunnableCustomRulesResponse response = new GetRunnableCustomRulesResponse();
         response.getCustomRules().addAll(customRules);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }

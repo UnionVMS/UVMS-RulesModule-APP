@@ -376,12 +376,12 @@ public class MovementFact {
         return "MovementFact{" +
                 "movementMovement=" + movementMovement +
                 ", movementGuid='" + movementGuid + '\'' +
-                ", assetGroups=" + Arrays.toString(assetGroups.toArray()) +
+                ", assetGroups=" + (assetGroups != null ? Arrays.toString(assetGroups.toArray()) : null) +
                 ", activityCallback='" + activityCallback + '\'' +
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +
-                ", areaCodes=" + Arrays.toString(areaCodes.toArray()) +
-                ", areaTypes=" + Arrays.toString(areaTypes.toArray()) +
+                ", areaCodes=" + (areaCodes != null ? Arrays.toString(areaCodes.toArray()) : null) +
+                ", areaTypes=" + (areaTypes != null ? Arrays.toString(areaTypes.toArray()) : null) +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +

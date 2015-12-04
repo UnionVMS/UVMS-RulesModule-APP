@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 @Stateless
 public class CustomRulesRestResource {
 
-    final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
 
     @EJB
     RulesService rulesService;
@@ -41,7 +41,7 @@ public class CustomRulesRestResource {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public ResponseDto create(final CustomRuleType customRule) {
+    public ResponseDto createCustomRule(final CustomRuleType customRule) {
         LOG.info("Create invoked in rest layer");
         try {
             return new ResponseDto(rulesService.createCustomRule(customRule), ResponseCode.OK);
@@ -62,11 +62,11 @@ public class CustomRulesRestResource {
     @GET
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("listAll")
-    public ResponseDto getAllCustomRules() {
+    @Path(value = "listAll/{userName}")
+    public ResponseDto getCustomRulesByUser(@PathParam(value = "userName") final String userName) {
         LOG.info("Get all custom rules invoked in rest layer");
         try {
-            return new ResponseDto(validationService.getAllCustomRules(), ResponseCode.OK);
+            return new ResponseDto(validationService.getCustomRulesByUser(userName), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException ex) {
             LOG.error("[ Error when getting all custom rules. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
@@ -148,12 +148,13 @@ public class CustomRulesRestResource {
      */
     @DELETE
     @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/{guid}")
     public ResponseDto deleteCustomRule(@PathParam(value = "guid") final String guid) {
         LOG.info("Delete custom rule invoked in rest layer");
         try {
             return new ResponseDto(rulesService.deleteCustomRule(guid), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
-            LOG.error("[ Error when deleteing custom rule. ] {} ", e.getStackTrace());
+            LOG.error("[ Error when deleting custom rule. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
         }
     }

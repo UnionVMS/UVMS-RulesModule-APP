@@ -93,7 +93,7 @@ public class RulesValidator {
         // Fetch custom rules from DB
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            customRules = validationService.getAllCustomRules();
+            customRules = validationService.getRunnableCustomRules();
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???
@@ -130,7 +130,7 @@ public class RulesValidator {
         List<CustomRuleDto> rules = new ArrayList<CustomRuleDto>();
         List<CustomRuleType> customRules = new ArrayList<CustomRuleType>();
         try {
-            customRules = validationService.getAllCustomRules();
+            customRules = validationService.getRunnableCustomRules();
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting rules ]");
             // TODO: Throw exception???

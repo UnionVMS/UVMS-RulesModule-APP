@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 @Stateless
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
     private final static long TEN_SECONDS = 10000;
 

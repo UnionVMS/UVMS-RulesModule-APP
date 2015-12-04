@@ -18,7 +18,7 @@ import java.util.List;
 
 public class RulesDataSourceRequestMapper {
 
-    final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceRequestMapper.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceRequestMapper.class);
 
     // Custom rule
     public static String mapCreateCustomRule(CustomRuleType customRule) throws RulesModelMapperException {
@@ -28,9 +28,16 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapCustomRuleList() throws RulesModelMapperException {
-        GetCustomRuleListRequest request = new GetCustomRuleListRequest();
-        request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES);
+    public static String mapGetCustomRulesByUser(String userName) throws RulesModelMapperException {
+        GetCustomRulesByUserRequest request = new GetCustomRulesByUserRequest();
+        request.setUserName(userName);
+        request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES_BY_USER);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapGetRunnableCustomRules() throws RulesModelMapperException {
+        GetRunnableCustomRulesRequest request = new GetRunnableCustomRulesRequest();
+        request.setMethod(RulesDataSourceMethod.GET_RUNNABLE_CUSTOM_RULES);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
