@@ -73,6 +73,7 @@
             <!-- AREA -->
             <xsd:enumeration value="AREA_CODE"/>
             <xsd:enumeration value="AREA_TYPE"/>
+            <xsd:enumeration value="AREA_MOVEMENT_TYPE"/>
             <!-- ASSET -->
             <xsd:enumeration value="ASSET_ID_GEAR_TYPE"/>
             <xsd:enumeration value="EXTERNAL_MARKING"/>
@@ -80,12 +81,14 @@
             <xsd:enumeration value="VESSEL_CFR"/>
             <xsd:enumeration value="VESSEL_IRCS"/>
             <xsd:enumeration value="VESSEL_NAME"/>
+            <xsd:enumeration value="VESSEL_STATUS"/>
             <!-- MOBILE_TERMINAL -->
             <xsd:enumeration value="COMCHANNEL_TYPE"/>
             <xsd:enumeration value="MT_TYPE"/>
             <xsd:enumeration value="MT_DNID"/>
             <xsd:enumeration value="MT_MEMBER_ID"/>
             <xsd:enumeration value="MT_SERIAL_NO"/>
+            <xsd:enumeration value="MT_STATUS"/>
             <!-- POSITION-->
             <xsd:enumeration value="ALTITUDE"/>
             <xsd:enumeration value="LATITUDE"/>
@@ -176,12 +179,26 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <!-- TODO: REMOVE?
-    <xsd:simpleType name="ReservedAreaCodeValueType">
+    <xsd:simpleType name="MobileTerminalStatus">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="SEND_TO_CLOSEST_COUNTRY"/>
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="INACTIVE"/>
         </xsd:restriction>
     </xsd:simpleType>
-    -->
+
+    <xsd:simpleType name="AssetStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="INACTIVE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AreaMovementType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="POS"/>
+            <xsd:enumeration value="EXT"/>
+            <xsd:enumeration value="EXT"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

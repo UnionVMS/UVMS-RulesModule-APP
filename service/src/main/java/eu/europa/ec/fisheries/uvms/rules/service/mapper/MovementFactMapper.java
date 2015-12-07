@@ -39,6 +39,9 @@ public class MovementFactMapper {
             for (MovementMetaDataAreaType area : areas) {
                 fact.getAreaCodes().add(area.getCode());
                 fact.getAreaTypes().add(area.getAreaType());
+
+                // TODO: wait for movement to send relevant info
+//                fact.getAreaMovementType().add(area.getAreaMovementType());
             }
         }
 
@@ -51,6 +54,7 @@ public class MovementFactMapper {
             fact.setVesselIrcs(vessel.getIrcs());
             fact.setVesselName(vessel.getName());
             fact.setVesselGuid(vessel.getVesselId().getGuid());
+            fact.setVesselStatus(vessel.isActive() ? "ACTIVE":"INACTIVE");
         }
 
         // MOBILE_TERMINAL
@@ -75,6 +79,7 @@ public class MovementFactMapper {
                     fact.setMobileTerminalSerialNumber(attribute.getValue());
                 }
             }
+            fact.setMobileTerminalStatus(mobileTerminal.isInactive() ? "INACTIVE":"ACTIVE");
         }
 
         // POSITION

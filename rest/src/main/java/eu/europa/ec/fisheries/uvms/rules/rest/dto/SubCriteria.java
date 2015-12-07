@@ -10,6 +10,7 @@ public enum SubCriteria {
 
     AREA_CODE(MainCriteria.AREA),
     AREA_TYPE(MainCriteria.AREA),
+    AREA_MOVEMENT_TYPE(MainCriteria.AREA),
 
     ASSET_ID_GEAR_TYPE(MainCriteria.ASSET),
     EXTERNAL_MARKING(MainCriteria.ASSET),
@@ -17,12 +18,14 @@ public enum SubCriteria {
     VESSEL_CFR(MainCriteria.ASSET),
     VESSEL_IRCS(MainCriteria.ASSET),
     VESSEL_NAME(MainCriteria.ASSET),
+    VESSEL_STATUS(MainCriteria.ASSET),
 
     COMCHANNEL_TYPE(MainCriteria.MOBILE_TERMINAL),
     MT_TYPE(MainCriteria.MOBILE_TERMINAL),
     MT_DNID(MainCriteria.MOBILE_TERMINAL),
     MT_MEMBER_ID(MainCriteria.MOBILE_TERMINAL),
     MT_SERIAL_NO(MainCriteria.MOBILE_TERMINAL),
+    MT_STATUS(MainCriteria.MOBILE_TERMINAL),
 
     ALTITUDE(MainCriteria.POSITION),
     LATITUDE(MainCriteria.POSITION),

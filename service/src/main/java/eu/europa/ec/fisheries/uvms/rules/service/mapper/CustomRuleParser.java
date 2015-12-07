@@ -59,6 +59,13 @@ public class CustomRuleParser {
                             }
                             sb.append("areaTypes");
                             break;
+                        case AREA_MOVEMENT_TYPE:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("areaMovementType");
+                            break;
 
                         // ASSET
                         case ASSET_ID_GEAR_TYPE:
@@ -79,6 +86,9 @@ public class CustomRuleParser {
                         case VESSEL_NAME:
                             sb.append("vesselName");
                             break;
+                        case VESSEL_STATUS:
+                            sb.append("vesselStatus");
+                            break;
 
                         // MOBILE_TERMINAL
                         case COMCHANNEL_TYPE:
@@ -95,6 +105,9 @@ public class CustomRuleParser {
                             break;
                         case MT_SERIAL_NO:
                             sb.append("mobileTerminalSerialNumber");
+                            break;
+                        case MT_STATUS:
+                            sb.append("mobileTerminalStatus");
                             break;
 
                         // POSITION
@@ -159,7 +172,7 @@ public class CustomRuleParser {
                 switch (segment.getCondition()) {
                     case EQ:
                         // Different EQ if a list
-                        if (SubCriteriaType.AREA_CODE.equals(segment.getSubCriteria()) || SubCriteriaType.AREA_TYPE.equals(segment.getSubCriteria()) || SubCriteriaType.ASSET_GROUP.equals(segment.getSubCriteria())) {
+                        if (isListCriteria(segment.getSubCriteria())) {
                             sb.append(".contains(");
                         } else {
                             sb.append(" == ");
@@ -167,7 +180,7 @@ public class CustomRuleParser {
                         break;
                     case NE:
                         // Different NE if a list
-                        if (SubCriteriaType.AREA_CODE.equals(segment.getSubCriteria()) || SubCriteriaType.AREA_TYPE.equals(segment.getSubCriteria()) || SubCriteriaType.ASSET_GROUP.equals(segment.getSubCriteria())) {
+                        if (isListCriteria(segment.getSubCriteria())) {
                             sb.append(".contains(");
                         } else {
                             sb.append(" != ");
@@ -259,6 +272,13 @@ public class CustomRuleParser {
         }
 
         return rules;
+    }
+
+    private static boolean isListCriteria(SubCriteriaType subcriteria) {
+        return SubCriteriaType.AREA_CODE.equals(subcriteria) ||
+                SubCriteriaType.AREA_TYPE.equals(subcriteria) ||
+                SubCriteriaType.AREA_MOVEMENT_TYPE.equals(subcriteria) ||
+                SubCriteriaType.ASSET_GROUP.equals(subcriteria);
     }
 
     private static String createInterval(CustomRuleIntervalType interval) {

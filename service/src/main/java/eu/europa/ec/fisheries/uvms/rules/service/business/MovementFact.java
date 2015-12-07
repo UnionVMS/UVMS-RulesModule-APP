@@ -23,6 +23,7 @@ public class MovementFact {
     // AREA
     List<String> areaCodes;
     List<String> areaTypes;
+    List<String> areaMovementType;
 
     // ASSET
     private String vesselGuid;
@@ -32,6 +33,7 @@ public class MovementFact {
     private String vesselCfr;
     private String vesselIrcs;
     private String vesselName;
+    private String vesselStatus;
 
     // MOBILE_TERMINAL
     private String comChannelType;
@@ -39,6 +41,7 @@ public class MovementFact {
     private String mobileTerminalDnid;
     private String mobileTerminalMemberNumber;
     private String mobileTerminalSerialNumber;
+    private String mobileTerminalStatus;
 
     // POSITION
     private Double altitude;
@@ -139,6 +142,14 @@ public class MovementFact {
         this.areaTypes = areaTypes;
     }
 
+    public List<String> getAreaMovementType() {
+        return areaMovementType;
+    }
+
+    public void setAreaMovementType(List<String> areaMovementType) {
+        this.areaMovementType = areaMovementType;
+    }
+
     public String getVesselGuid() {
         return vesselGuid;
     }
@@ -195,6 +206,14 @@ public class MovementFact {
         this.vesselName = vesselName;
     }
 
+    public String getVesselStatus() {
+        return vesselStatus;
+    }
+
+    public void setVesselStatus(String vesselStatus) {
+        this.vesselStatus = vesselStatus;
+    }
+
     public String getComChannelType() {
         return comChannelType;
     }
@@ -233,6 +252,14 @@ public class MovementFact {
 
     public void setMobileTerminalSerialNumber(String mobileTerminalSerialNumber) {
         this.mobileTerminalSerialNumber = mobileTerminalSerialNumber;
+    }
+
+    public String getMobileTerminalStatus() {
+        return mobileTerminalStatus;
+    }
+
+    public void setMobileTerminalStatus(String mobileTerminalStatus) {
+        this.mobileTerminalStatus = mobileTerminalStatus;
     }
 
     public Double getAltitude() {
@@ -382,6 +409,7 @@ public class MovementFact {
                 ", activityMessageType='" + activityMessageType + '\'' +
                 ", areaCodes=" + (areaCodes != null ? Arrays.toString(areaCodes.toArray()) : null) +
                 ", areaTypes=" + (areaTypes != null ? Arrays.toString(areaTypes.toArray()) : null) +
+                ", areaMovementType=" + (areaMovementType != null ? Arrays.toString(areaMovementType.toArray()) : null) +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +
@@ -389,11 +417,13 @@ public class MovementFact {
                 ", vesselCfr='" + vesselCfr + '\'' +
                 ", vesselIrcs='" + vesselIrcs + '\'' +
                 ", vesselName='" + vesselName + '\'' +
+                ", vesselStatus='" + vesselStatus + '\'' +
                 ", comChannelType='" + comChannelType + '\'' +
                 ", mobileTerminalType='" + mobileTerminalType + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +
+                ", mobileTerminalStatus='" + mobileTerminalStatus + '\'' +
                 ", altitude=" + altitude +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +

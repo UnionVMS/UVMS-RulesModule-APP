@@ -154,7 +154,7 @@ public class ValidationServiceBean implements ValidationService {
                     // Is it enough with a notification, or what's in the fact?
                     // Or should I enrich the rules, and this method,
                     // to receive an additional text?
-                    sendToEmail(value, ruleName);
+                    sendToEmail(value, ruleName, fact);
                     break;
                 case SEND_TO_ENDPOINT:
                     sendToEndpoint(ruleName, fact, value);
@@ -242,7 +242,6 @@ public class ValidationServiceBean implements ValidationService {
 
             XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
 
-
             // TODO: Get this from user module
             RecipientInfoType recipientInfo = new RecipientInfoType();
             recipientInfo.setKey("dummyKey");
@@ -250,7 +249,7 @@ public class ValidationServiceBean implements ValidationService {
             List<RecipientInfoType> recipientInfoList = new ArrayList<>();
             recipientInfoList.add(recipientInfo);
 
-            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList);
+            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getVesselName(), fact.getVesselIrcs());
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -262,17 +261,31 @@ public class ValidationServiceBean implements ValidationService {
 
     }
 
-    private void sendToEmail(String emailAddress, String ruleName) {
+    private void sendToEmail(String emailAddress, String ruleName, MovementFact fact) {
         // TODO: Decide on what message to send
 
         LOG.info("Sending email to '{}'", emailAddress);
 
         EmailType email = new EmailType();
-        String body = "A rule has been triggered in UVMS: '" + ruleName + "'";
-        email.setBody(body);
-        email.setSubject("You've got mail!");
+
+
+        String subject = buildSubject(ruleName);
+        email.setSubject(subject);
+
+        String assetString = buildAsset(fact);
+        String positionString = buildPosition(fact);
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder
+                .append(subject)
+                .append("\n")
+                .append(assetString)
+                .append("\n")
+                .append(positionString);
+        email.setBody(bodyBuilder.toString());
+
         email.setTo(emailAddress);
 
+        // TODO: Hard coded...
         String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
@@ -289,6 +302,71 @@ public class ValidationServiceBean implements ValidationService {
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! {} ]", e.getMessage());
         }
+    }
+
+    private String buildAsset(MovementFact fact) {
+        StringBuilder assetBuilder = new StringBuilder();
+        assetBuilder.append("Asset:")
+                .append("\n\tName: ")
+                .append(fact.getVesselName())
+                .append("\n\tIRCS: ")
+                .append(fact.getVesselIrcs())
+                .append("\n\tCFR: ")
+                .append(fact.getVesselCfr());
+
+        return assetBuilder.toString();
+    }
+
+    private String buildPosition(MovementFact fact) {
+        StringBuilder positionBuilder = new StringBuilder();
+        positionBuilder.append("Position report:")
+                .append("\n\tReport timestamp: ")
+                .append(fact.getPositionTime())
+                .append("\n\tLongitude: ")
+                .append(fact.getLongitude())
+                .append("\n\tLatitude: ")
+                .append(fact.getLatitude())
+                .append("\n\tStatus code: ")
+                .append(fact.getStatusCode())
+                .append("\n\tReported speed: ")
+                .append(fact.getReportedSpeed())
+                .append("\n\tReported course: ")
+                .append(fact.getReportedCourse())
+                .append("\n\tCalculated speed: ")
+                .append(fact.getCalculatedSpeed())
+                .append("\n\tCom channel type: ")
+                .append(fact.getComChannelType())
+                .append("\n\tSegment type: ")
+                .append(fact.getSegmentType())
+                .append("\n\tSource: ")
+                .append(fact.getSource())
+                .append("\n\tMovement type: ")
+                .append(fact.getMovementType())
+                .append("\n\tActivity type: ")
+                .append(fact.getActivityMessageType())
+                .append("\n\tClosest port: ")
+                .append(fact.getClosestPortCode())
+                .append("\n\tClosest country: ")
+                .append(fact.getClosestCountryCode());
+
+        positionBuilder.append("\n\tAreas:");
+        for (int i = 0; i < fact.getAreaCodes().size(); i++) {
+            positionBuilder.append("\n\t\t")
+                    .append(fact.getAreaCodes().get(i))
+                    .append(" (")
+                    .append(fact.getAreaTypes().get(i))
+                    .append(")");
+        }
+
+        return positionBuilder.toString();
+    }
+
+    private String buildSubject(String ruleName) {
+        StringBuilder subjectBuilder = new StringBuilder();
+        subjectBuilder.append("Rule '")
+                .append(ruleName)
+                .append("' has been triggered.");
+        return subjectBuilder.toString();
     }
 
     private void createTicket(String ruleName, String ruleGuid, MovementFact fact, String user) {

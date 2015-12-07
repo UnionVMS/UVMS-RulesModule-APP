@@ -510,10 +510,49 @@ public class CustomRuleParserTest {
         segment32.setSubCriteria(SubCriteriaType.TIME_DIFF_POSITION_REPORT);
         segment32.setCondition(ConditionType.LT);
         segment32.setValue("60");
-        segment32.setEndOperator(")");
-        segment32.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment32.setEndOperator("");
+        segment32.setLogicBoolOperator(LogicOperatorType.OR);
         segment32.setOrder("32");
         customRule.getDefinitions().add(segment32);
+
+
+        // AREA_MOVEMENT_TYPE
+        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
+        segment33.setStartOperator("");
+        segment33.setCriteria(CriteriaType.AREA);
+        segment33.setSubCriteria(SubCriteriaType.AREA_MOVEMENT_TYPE);
+        segment33.setCondition(ConditionType.EQ);
+        segment33.setValue("EXT");
+        segment33.setEndOperator("");
+        segment33.setLogicBoolOperator(LogicOperatorType.OR);
+        segment33.setOrder("33");
+        customRule.getDefinitions().add(segment33);
+
+        // VESSEL_STATUS
+        CustomRuleSegmentType segment34 = new CustomRuleSegmentType();
+        segment34.setStartOperator("");
+        segment34.setCriteria(CriteriaType.ASSET);
+        segment34.setSubCriteria(SubCriteriaType.VESSEL_STATUS);
+        segment34.setCondition(ConditionType.EQ);
+        segment34.setValue("ACTIVE");
+        segment34.setEndOperator("");
+        segment34.setLogicBoolOperator(LogicOperatorType.OR);
+        segment34.setOrder("34");
+        customRule.getDefinitions().add(segment34);
+
+        // MT_STATUS
+        CustomRuleSegmentType segment35 = new CustomRuleSegmentType();
+        segment35.setStartOperator("");
+        segment35.setCriteria(CriteriaType.MOBILE_TERMINAL);
+        segment35.setSubCriteria(SubCriteriaType.MT_STATUS);
+        segment35.setCondition(ConditionType.NE);
+        segment35.setValue("INACTIVE");
+        segment35.setEndOperator(")");
+        segment35.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment35.setOrder("35");
+        customRule.getDefinitions().add(segment35);
+
+
 
         // VICINITY_OF
 //        CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
@@ -568,7 +607,10 @@ public class CustomRuleParserTest {
         sb.append("closestPortCode == \"CLOSEST_PORT_CODE\" || ");
         sb.append("!assetGroups.contains(\"ASSET_GROUP\") || ");
         sb.append("sumPositionReport > \"10\" || ");
-        sb.append("timeDiffPositionReport < \"60\"");
+        sb.append("timeDiffPositionReport < \"60\" || ");
+        sb.append("areaMovementType.contains(\"EXT\") || ");
+        sb.append("vesselStatus == \"ACTIVE\" || ");
+        sb.append("mobileTerminalStatus != \"INACTIVE\"");
 //        sb.append("vicinityOf == \"VICINITY_OF\"");
         sb.append(")");
 

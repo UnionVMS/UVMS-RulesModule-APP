@@ -1,9 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
@@ -143,6 +141,9 @@ public class ConfigResource {
             case CLOSEST_COUNTRY_CODE:
             case CLOSEST_PORT_CODE:
             case ASSET_GROUP:
+            case AREA_MOVEMENT_TYPE:
+            case VESSEL_STATUS:
+            case MT_STATUS:
                 conditions.add(ConditionType.EQ.name());
                 conditions.add(ConditionType.NE.name());
                 break;
@@ -215,6 +216,69 @@ public class ConfigResource {
             return new ResponseDto(TicketStatusType.values(), ResponseCode.OK);
         } catch (Exception ex) {
             LOG.error("[ Error when getting ticket statuses. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Mobile terminal statuses fetched
+     * @responseMessage 500 No config fetched
+     *
+     * @summary Get mobile terminal statuses
+     *
+     */
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/mobileterminalstatus")
+    public ResponseDto getMobileTerminalStatuses() {
+        try {
+            return new ResponseDto(MobileTerminalStatus.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting mobile terminal statuses. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Asset statuses fetched
+     * @responseMessage 500 No config fetched
+     *
+     * @summary Get asset statuses
+     *
+     */
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/assetstatus")
+    public ResponseDto getAssetStatuses() {
+        try {
+            return new ResponseDto(AssetStatus.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting asset statuses. ] {} ", ex.getMessage());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Area movement types fetched
+     * @responseMessage 500 No config fetched
+     *
+     * @summary Get area movement types
+     *
+     */
+    @GET
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(value = "/areamovementtypes")
+    public ResponseDto getAreaMovementTypes() {
+        try {
+            return new ResponseDto(AssetStatus.values(), ResponseCode.OK);
+        } catch (Exception ex) {
+            LOG.error("[ Error when getting area movement types. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }
