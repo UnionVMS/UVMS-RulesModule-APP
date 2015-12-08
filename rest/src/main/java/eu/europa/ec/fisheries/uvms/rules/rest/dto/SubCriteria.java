@@ -12,6 +12,11 @@ public enum SubCriteria {
     AREA_TYPE(MainCriteria.AREA),
     AREA_MOVEMENT_TYPE(MainCriteria.AREA),
 
+    AREA_CODE_ENT(MainCriteria.AREA),
+    AREA_TYPE_ENT(MainCriteria.AREA),
+    AREA_CODE_EXT(MainCriteria.AREA),
+    AREA_TYPE_EXT(MainCriteria.AREA),
+
     ASSET_ID_GEAR_TYPE(MainCriteria.ASSET),
     EXTERNAL_MARKING(MainCriteria.ASSET),
     FLAG_STATE(MainCriteria.ASSET),

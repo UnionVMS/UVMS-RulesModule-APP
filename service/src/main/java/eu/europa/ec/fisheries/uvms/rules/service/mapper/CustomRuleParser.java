@@ -59,6 +59,34 @@ public class CustomRuleParser {
                             }
                             sb.append("areaTypes");
                             break;
+                        case AREA_CODE_ENT:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("entAreaCodes");
+                            break;
+                        case AREA_TYPE_ENT:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("entAreaTypes");
+                            break;
+                        case AREA_CODE_EXT:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("extAreaCodes");
+                            break;
+                        case AREA_TYPE_EXT:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("extAreaTypes");
+                            break;
                         case AREA_MOVEMENT_TYPE:
                             // If list and NE
                             if (segment.getCondition().equals(ConditionType.NE)) {
@@ -278,6 +306,10 @@ public class CustomRuleParser {
         return SubCriteriaType.AREA_CODE.equals(subcriteria) ||
                 SubCriteriaType.AREA_TYPE.equals(subcriteria) ||
                 SubCriteriaType.AREA_MOVEMENT_TYPE.equals(subcriteria) ||
+                SubCriteriaType.AREA_CODE_ENT.equals(subcriteria) ||
+                SubCriteriaType.AREA_TYPE_ENT.equals(subcriteria) ||
+                SubCriteriaType.AREA_CODE_EXT.equals(subcriteria) ||
+                SubCriteriaType.AREA_TYPE_EXT.equals(subcriteria) ||
                 SubCriteriaType.ASSET_GROUP.equals(subcriteria);
     }
 

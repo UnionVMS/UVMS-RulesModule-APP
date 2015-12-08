@@ -24,6 +24,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
@@ -36,6 +37,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
+import eu.europa.ec.fisheries.wsdl.user.module.FindOrganisationsResponse;
+import eu.europa.ec.fisheries.wsdl.user.types.EndPoint;
+import eu.europa.ec.fisheries.wsdl.user.types.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,20 +248,32 @@ public class ValidationServiceBean implements ValidationService {
 
             XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
 
-            // TODO: Get this from user module
-            RecipientInfoType recipientInfo = new RecipientInfoType();
-            recipientInfo.setKey("dummyKey");
-            recipientInfo.setValue("dummyValue");
-            List<RecipientInfoType> recipientInfoList = new ArrayList<>();
-            recipientInfoList.add(recipientInfo);
+            String userRequest = UserModuleRequestMapper.mapToFindOrganisationsRequest(endpoint);
+            String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+            TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
 
-            String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getVesselName(), fact.getVesselIrcs());
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+            FindOrganisationsResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, FindOrganisationsResponse.class);
+
+            List<RecipientInfoType> recipientInfoList = new ArrayList<>();
+
+            List<Organisation> organisations = userResponse.getOrganisation();
+            for (Organisation organisation : organisations) {
+                List<EndPoint> endPoints = organisation.getEndPoints();
+                for (EndPoint endPoint : endPoints) {
+                    RecipientInfoType recipientInfo = new RecipientInfoType();
+                    recipientInfo.setKey(endPoint.getName());
+                    recipientInfo.setValue(endPoint.getUri());
+                    recipientInfoList.add(recipientInfo);
+                }
+            }
+
+            String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getVesselName(), fact.getVesselIrcs());
+            String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             // TODO: Do something with the response
 
-        } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException e) {
+        } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! {} ]", e.getMessage());
         }
 
@@ -268,21 +286,8 @@ public class ValidationServiceBean implements ValidationService {
 
         EmailType email = new EmailType();
 
-
-        String subject = buildSubject(ruleName);
-        email.setSubject(subject);
-
-        String assetString = buildAsset(fact);
-        String positionString = buildPosition(fact);
-        StringBuilder bodyBuilder = new StringBuilder();
-        bodyBuilder
-                .append(subject)
-                .append("\n")
-                .append(assetString)
-                .append("\n")
-                .append(positionString);
-        email.setBody(bodyBuilder.toString());
-
+        email.setSubject(buildSubject(ruleName));
+        email.setBody(buildBody(ruleName, fact));
         email.setTo(emailAddress);
 
         // TODO: Hard coded...
@@ -304,54 +309,96 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private String buildAsset(MovementFact fact) {
+    private String buildSubject(String ruleName) {
+        StringBuilder subjectBuilder = new StringBuilder();
+        subjectBuilder.append("Rule '")
+                .append(ruleName)
+                .append("' has been triggered.");
+        return subjectBuilder.toString();
+    }
+
+    private String buildBody(String ruleName, MovementFact fact) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>")
+                .append(buildSubject(ruleName))
+                .append("<br><br>")
+                .append(buildAssetHtml(fact))
+                .append(buildPositionHtml(fact))
+                .append("</html>");
+
+        return sb.toString();
+    }
+
+    private String buildAssetHtml(MovementFact fact) {
         StringBuilder assetBuilder = new StringBuilder();
-        assetBuilder.append("Asset:")
-                .append("\n\tName: ")
+        assetBuilder.append("<b>Asset:</b>")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Name: ")
                 .append(fact.getVesselName())
-                .append("\n\tIRCS: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("IRCS: ")
                 .append(fact.getVesselIrcs())
-                .append("\n\tCFR: ")
-                .append(fact.getVesselCfr());
+                .append("<br>&nbsp;&nbsp;")
+                .append("CFR: ")
+                .append(fact.getVesselCfr())
+                .append("<br>");
 
         return assetBuilder.toString();
     }
 
-    private String buildPosition(MovementFact fact) {
+    private String buildPositionHtml(MovementFact fact) {
         StringBuilder positionBuilder = new StringBuilder();
-        positionBuilder.append("Position report:")
-                .append("\n\tReport timestamp: ")
+        positionBuilder.append("<b>Position report:</b>")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Report timestamp: ")
                 .append(fact.getPositionTime())
-                .append("\n\tLongitude: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Longitude: ")
                 .append(fact.getLongitude())
-                .append("\n\tLatitude: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Latitude: ")
                 .append(fact.getLatitude())
-                .append("\n\tStatus code: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Status code: ")
                 .append(fact.getStatusCode())
-                .append("\n\tReported speed: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Reported speed: ")
                 .append(fact.getReportedSpeed())
-                .append("\n\tReported course: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Reported course: ")
                 .append(fact.getReportedCourse())
-                .append("\n\tCalculated speed: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Calculated speed: ")
                 .append(fact.getCalculatedSpeed())
-                .append("\n\tCom channel type: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Calculated course: ")
+                .append(fact.getCalculatedCourse())
+                .append("<br>&nbsp;&nbsp;")
+                .append("Com channel type: ")
                 .append(fact.getComChannelType())
-                .append("\n\tSegment type: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Segment type: ")
                 .append(fact.getSegmentType())
-                .append("\n\tSource: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Source: ")
                 .append(fact.getSource())
-                .append("\n\tMovement type: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Movement type: ")
                 .append(fact.getMovementType())
-                .append("\n\tActivity type: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Activity type: ")
                 .append(fact.getActivityMessageType())
-                .append("\n\tClosest port: ")
+                .append("<br>&nbsp;&nbsp;")
+                .append("Closest port: ")
                 .append(fact.getClosestPortCode())
-                .append("\n\tClosest country: ")
-                .append(fact.getClosestCountryCode());
+                .append("<br>&nbsp;&nbsp;")
+                .append("Closest country: ")
+                .append(fact.getClosestCountryCode())
+                .append("<br>&nbsp;&nbsp;");
 
-        positionBuilder.append("\n\tAreas:");
+        positionBuilder.append("Areas:");
         for (int i = 0; i < fact.getAreaCodes().size(); i++) {
-            positionBuilder.append("\n\t\t")
+            positionBuilder.append("<br>&nbsp;&nbsp;&nbsp;&nbsp;")
                     .append(fact.getAreaCodes().get(i))
                     .append(" (")
                     .append(fact.getAreaTypes().get(i))
@@ -359,14 +406,6 @@ public class ValidationServiceBean implements ValidationService {
         }
 
         return positionBuilder.toString();
-    }
-
-    private String buildSubject(String ruleName) {
-        StringBuilder subjectBuilder = new StringBuilder();
-        subjectBuilder.append("Rule '")
-                .append(ruleName)
-                .append("' has been triggered.");
-        return subjectBuilder.toString();
     }
 
     private void createTicket(String ruleName, String ruleGuid, MovementFact fact, String user) {

@@ -141,9 +141,14 @@ public class ConfigResource {
             case CLOSEST_COUNTRY_CODE:
             case CLOSEST_PORT_CODE:
             case ASSET_GROUP:
-            case AREA_MOVEMENT_TYPE:
             case VESSEL_STATUS:
             case MT_STATUS:
+            case AREA_MOVEMENT_TYPE:
+
+            case AREA_CODE_ENT:
+            case AREA_TYPE_ENT:
+            case AREA_CODE_EXT:
+            case AREA_TYPE_EXT:
                 conditions.add(ConditionType.EQ.name());
                 conditions.add(ConditionType.NE.name());
                 break;

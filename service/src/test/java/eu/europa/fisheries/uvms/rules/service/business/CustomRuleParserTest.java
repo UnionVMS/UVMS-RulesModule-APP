@@ -121,7 +121,7 @@ public class CustomRuleParserTest {
 
         // ACTIVITY_CALLBACK
         CustomRuleSegmentType segment0 = new CustomRuleSegmentType();
-        segment0.setStartOperator("(");
+        segment0.setStartOperator("");
         segment0.setCriteria(CriteriaType.ACTIVITY);
         segment0.setSubCriteria(SubCriteriaType.ACTIVITY_CALLBACK);
         segment0.setCondition(ConditionType.EQ);
@@ -516,41 +516,89 @@ public class CustomRuleParserTest {
         customRule.getDefinitions().add(segment32);
 
 
-        // AREA_MOVEMENT_TYPE
+        // AREA_CODE_ENT
         CustomRuleSegmentType segment33 = new CustomRuleSegmentType();
         segment33.setStartOperator("");
         segment33.setCriteria(CriteriaType.AREA);
-        segment33.setSubCriteria(SubCriteriaType.AREA_MOVEMENT_TYPE);
+        segment33.setSubCriteria(SubCriteriaType.AREA_CODE_ENT);
         segment33.setCondition(ConditionType.EQ);
-        segment33.setValue("EXT");
+        segment33.setValue("DNK");
         segment33.setEndOperator("");
         segment33.setLogicBoolOperator(LogicOperatorType.OR);
         segment33.setOrder("33");
         customRule.getDefinitions().add(segment33);
 
-        // VESSEL_STATUS
+        // AREA_TYPE_ENT
         CustomRuleSegmentType segment34 = new CustomRuleSegmentType();
         segment34.setStartOperator("");
-        segment34.setCriteria(CriteriaType.ASSET);
-        segment34.setSubCriteria(SubCriteriaType.VESSEL_STATUS);
-        segment34.setCondition(ConditionType.EQ);
-        segment34.setValue("ACTIVE");
+        segment34.setCriteria(CriteriaType.AREA);
+        segment34.setSubCriteria(SubCriteriaType.AREA_TYPE_ENT);
+        segment34.setCondition(ConditionType.NE);
+        segment34.setValue("EEZ");
         segment34.setEndOperator("");
         segment34.setLogicBoolOperator(LogicOperatorType.OR);
         segment34.setOrder("34");
         customRule.getDefinitions().add(segment34);
 
-        // MT_STATUS
+        // AREA_CODE_EXT
         CustomRuleSegmentType segment35 = new CustomRuleSegmentType();
         segment35.setStartOperator("");
-        segment35.setCriteria(CriteriaType.MOBILE_TERMINAL);
-        segment35.setSubCriteria(SubCriteriaType.MT_STATUS);
-        segment35.setCondition(ConditionType.NE);
-        segment35.setValue("INACTIVE");
-        segment35.setEndOperator(")");
-        segment35.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment35.setCriteria(CriteriaType.AREA);
+        segment35.setSubCriteria(SubCriteriaType.AREA_CODE_EXT);
+        segment35.setCondition(ConditionType.EQ);
+        segment35.setValue("SWE");
+        segment35.setEndOperator("");
+        segment35.setLogicBoolOperator(LogicOperatorType.OR);
         segment35.setOrder("35");
         customRule.getDefinitions().add(segment35);
+
+        // AREA_TYPE_EXT
+        CustomRuleSegmentType segment36 = new CustomRuleSegmentType();
+        segment36.setStartOperator("");
+        segment36.setCriteria(CriteriaType.AREA);
+        segment36.setSubCriteria(SubCriteriaType.AREA_TYPE_EXT);
+        segment36.setCondition(ConditionType.NE);
+        segment36.setValue("EEZ");
+        segment36.setEndOperator("");
+        segment36.setLogicBoolOperator(LogicOperatorType.OR);
+        segment36.setOrder("36");
+        customRule.getDefinitions().add(segment36);
+
+        // VESSEL_STATUS
+        CustomRuleSegmentType segment37 = new CustomRuleSegmentType();
+        segment37.setStartOperator("");
+        segment37.setCriteria(CriteriaType.ASSET);
+        segment37.setSubCriteria(SubCriteriaType.VESSEL_STATUS);
+        segment37.setCondition(ConditionType.EQ);
+        segment37.setValue("ACTIVE");
+        segment37.setEndOperator("");
+        segment37.setLogicBoolOperator(LogicOperatorType.OR);
+        segment37.setOrder("37");
+        customRule.getDefinitions().add(segment37);
+
+        // MT_STATUS
+        CustomRuleSegmentType segment38 = new CustomRuleSegmentType();
+        segment38.setStartOperator("");
+        segment38.setCriteria(CriteriaType.MOBILE_TERMINAL);
+        segment38.setSubCriteria(SubCriteriaType.MT_STATUS);
+        segment38.setCondition(ConditionType.NE);
+        segment38.setValue("INACTIVE");
+        segment38.setEndOperator("");
+        segment38.setLogicBoolOperator(LogicOperatorType.OR);
+        segment38.setOrder("38");
+        customRule.getDefinitions().add(segment38);
+
+        // AREA_MOVEMENT_TYPE
+        CustomRuleSegmentType segment39 = new CustomRuleSegmentType();
+        segment39.setStartOperator("");
+        segment39.setCriteria(CriteriaType.AREA);
+        segment39.setSubCriteria(SubCriteriaType.AREA_MOVEMENT_TYPE);
+        segment39.setCondition(ConditionType.EQ);
+        segment39.setValue("EXT");
+        segment39.setEndOperator("");
+        segment39.setLogicBoolOperator(LogicOperatorType.NONE);
+        segment39.setOrder("39");
+        customRule.getDefinitions().add(segment39);
 
 
 
@@ -574,7 +622,6 @@ public class CustomRuleParserTest {
         rawRules.add(customRule);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
         sb.append("activityCallback == \"ACTIVITY_CALLBACK\" || ");
         sb.append("activityMessageId == \"ACTIVITY_MESSAGE_ID\" || ");
         sb.append("activityMessageType == \"ACTIVITY_MESSAGE_TYPE\" || ");
@@ -608,11 +655,14 @@ public class CustomRuleParserTest {
         sb.append("!assetGroups.contains(\"ASSET_GROUP\") || ");
         sb.append("sumPositionReport > \"10\" || ");
         sb.append("timeDiffPositionReport < \"60\" || ");
-        sb.append("areaMovementType.contains(\"EXT\") || ");
+        sb.append("entAreaCodes.contains(\"DNK\") || ");
+        sb.append("!entAreaTypes.contains(\"EEZ\") || ");
+        sb.append("extAreaCodes.contains(\"SWE\") || ");
+        sb.append("!extAreaTypes.contains(\"EEZ\") || ");
         sb.append("vesselStatus == \"ACTIVE\" || ");
-        sb.append("mobileTerminalStatus != \"INACTIVE\"");
+        sb.append("mobileTerminalStatus != \"INACTIVE\" || ");
+        sb.append("areaMovementType.contains(\"EXT\")");
 //        sb.append("vicinityOf == \"VICINITY_OF\"");
-        sb.append(")");
 
         String expectedRule = sb.toString();
 

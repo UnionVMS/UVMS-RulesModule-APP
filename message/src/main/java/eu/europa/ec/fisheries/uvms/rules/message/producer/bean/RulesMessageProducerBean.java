@@ -47,6 +47,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE)
     private Queue exchangeQueue;
 
+    @Resource(mappedName = MessageConstants.USER_MESSAGE_IN_QUEUE)
+    private Queue userQueue;
+
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
@@ -65,25 +68,28 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             message.setText(text);
 
             switch (queue) {
-            case INTERNAL:
-                session.createProducer(localDbQueue).send(message);
-                break;
-            case MOVEMENT:
-                session.createProducer(movementQueue).send(message);
-                break;
-            case CONFIG:
-                session.createProducer(configQueue).send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, CONFIG_TTL);
-                break;
-            case VESSEL:
-                session.createProducer(vesselQueue).send(message);
-                break;
-            case MOBILE_TERMINAL:
-                session.createProducer(mobileTerminalQueue).send(message);
-                break;
-            case EXCHANGE:
-                session.createProducer(exchangeQueue).send(message);
-                break;
-            default:
+                case INTERNAL:
+                    session.createProducer(localDbQueue).send(message);
+                    break;
+                case MOVEMENT:
+                    session.createProducer(movementQueue).send(message);
+                    break;
+                case CONFIG:
+                    session.createProducer(configQueue).send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, CONFIG_TTL);
+                    break;
+                case VESSEL:
+                    session.createProducer(vesselQueue).send(message);
+                    break;
+                case MOBILE_TERMINAL:
+                    session.createProducer(mobileTerminalQueue).send(message);
+                    break;
+                case EXCHANGE:
+                    session.createProducer(exchangeQueue).send(message);
+                    break;
+                case USER:
+                    session.createProducer(userQueue).send(message);
+                    break;
+                default:
                 break;
             }
 

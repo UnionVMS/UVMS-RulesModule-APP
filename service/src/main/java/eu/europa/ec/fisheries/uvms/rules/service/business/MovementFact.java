@@ -25,6 +25,11 @@ public class MovementFact {
     List<String> areaTypes;
     List<String> areaMovementType;
 
+    List<String> entAreaCodes;
+    List<String> entAreaTypes;
+    List<String> extAreaCodes;
+    List<String> extAreaTypes;
+
     // ASSET
     private String vesselGuid;
     private String assetIdGearType;
@@ -148,6 +153,38 @@ public class MovementFact {
 
     public void setAreaMovementType(List<String> areaMovementType) {
         this.areaMovementType = areaMovementType;
+    }
+
+    public List<String> getEntAreaCodes() {
+        return entAreaCodes;
+    }
+
+    public void setEntAreaCodes(List<String> entAreaCodes) {
+        this.entAreaCodes = entAreaCodes;
+    }
+
+    public List<String> getEntAreaTypes() {
+        return entAreaTypes;
+    }
+
+    public void setEntAreaTypes(List<String> entAreaTypes) {
+        this.entAreaTypes = entAreaTypes;
+    }
+
+    public List<String> getExtAreaCodes() {
+        return extAreaCodes;
+    }
+
+    public void setExtAreaCodes(List<String> extAreaCodes) {
+        this.extAreaCodes = extAreaCodes;
+    }
+
+    public List<String> getExtAreaTypes() {
+        return extAreaTypes;
+    }
+
+    public void setExtAreaTypes(List<String> extAreaTypes) {
+        this.extAreaTypes = extAreaTypes;
     }
 
     public String getVesselGuid() {
@@ -410,6 +447,10 @@ public class MovementFact {
                 ", areaCodes=" + (areaCodes != null ? Arrays.toString(areaCodes.toArray()) : null) +
                 ", areaTypes=" + (areaTypes != null ? Arrays.toString(areaTypes.toArray()) : null) +
                 ", areaMovementType=" + (areaMovementType != null ? Arrays.toString(areaMovementType.toArray()) : null) +
+                ", entAreaCodes=" + (entAreaCodes != null ? Arrays.toString(entAreaCodes.toArray()) : null) +
+                ", entAreaTypes=" + (entAreaTypes != null ? Arrays.toString(entAreaTypes.toArray()) : null) +
+                ", extAreaCodes=" + (extAreaCodes != null ? Arrays.toString(extAreaCodes.toArray()) : null) +
+                ", extAreaTypes=" + (extAreaTypes != null ? Arrays.toString(extAreaTypes.toArray()) : null) +
                 ", vesselGuid='" + vesselGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +
