@@ -15,6 +15,7 @@ public class MessageConstants {
     public static final String MOBILE_TERMINAL_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSMobileTerminalEvent";
     public static final String EXCHANGE_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSExchangeEvent";
     public static final String USER_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSUserEvent";
+    public static final String AUDIT_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSAuditEvent";
 
     public static final String MODULE_NAME = "rules";
 }

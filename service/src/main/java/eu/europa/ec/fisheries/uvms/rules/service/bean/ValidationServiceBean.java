@@ -15,6 +15,8 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
+import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
@@ -22,6 +24,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
@@ -271,7 +275,9 @@ public class ValidationServiceBean implements ValidationService {
             String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            // TODO: Do something with the response
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, endpoint);
+
+            // TODO: Do something with the response???
 
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! {} ]", e.getMessage());
@@ -297,7 +303,9 @@ public class ValidationServiceBean implements ValidationService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            // TODO: Do something with the response
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, emailAddress);
+
+            // TODO: Do something with the response???
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
 
 //            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
@@ -322,14 +330,14 @@ public class ValidationServiceBean implements ValidationService {
         sb.append("<html>")
                 .append(buildSubject(ruleName))
                 .append("<br><br>")
-                .append(buildAssetHtml(fact))
-                .append(buildPositionHtml(fact))
+                .append(buildAssetBodyPart(fact))
+                .append(buildPositionBodyPart(fact))
                 .append("</html>");
 
         return sb.toString();
     }
 
-    private String buildAssetHtml(MovementFact fact) {
+    private String buildAssetBodyPart(MovementFact fact) {
         StringBuilder assetBuilder = new StringBuilder();
         assetBuilder.append("<b>Asset:</b>")
                 .append("<br>&nbsp;&nbsp;")
@@ -346,7 +354,7 @@ public class ValidationServiceBean implements ValidationService {
         return assetBuilder.toString();
     }
 
-    private String buildPositionHtml(MovementFact fact) {
+    private String buildPositionBodyPart(MovementFact fact) {
         StringBuilder positionBuilder = new StringBuilder();
         positionBuilder.append("<b>Position report:</b>")
                 .append("<br>&nbsp;&nbsp;")
@@ -440,6 +448,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change
             ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
 
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid());
         } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
             LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
         }
@@ -487,6 +496,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", alarmCount));
 
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid());
         } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
             LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
         }
@@ -520,4 +530,13 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject) {
+        try {
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
+            producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+        }
+        catch (AuditModelMarshallException | MessageException e) {
+            LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
+        }
+    }
 }

@@ -22,6 +22,8 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
+import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
@@ -35,6 +37,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
@@ -127,7 +131,9 @@ public class RulesServiceBean implements RulesService {
 
 //            rulesValidator.init();
 
-            return RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
+            CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid());
+            return customRuleType;
         } catch (RulesModelMapperException | MessageException | JMSException  ex) {
             throw new RulesServiceException(ex.getMessage());
         }
@@ -159,18 +165,21 @@ public class RulesServiceBean implements RulesService {
     /**
      * {@inheritDoc}
      *
-     * @param customRule
+     * @param oldCustomRule
      * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType updateCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException {
+    public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
         LOG.info("Update custom rule invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+            CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid());
+            return newCustomRule;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -194,7 +203,9 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            return RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
+            CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, customRuleType.getGuid());
+            return customRuleType;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -260,6 +271,8 @@ public class RulesServiceBean implements RulesService {
             // Notify long-polling clients of the change
             ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
 
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid());
+
             return updatedTicket;
 
         } catch (RulesModelMapperException | MessageException | JMSException e) {
@@ -283,6 +296,8 @@ public class RulesServiceBean implements RulesService {
             long alarmCount = validationService.getNumberOfOpenAlarmReports();
             // Notify long-polling clients of the change
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", alarmCount));
+
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, updatedAlarm.getGuid());
 
             return updatedAlarm;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
@@ -334,7 +349,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private void createAssetNotSendingAlarm(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException {
+    private void createAssetNotSendingAlarm(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
         AlarmReportType alarmReportType = new AlarmReportType();
 
         alarmReportType.setStatus(AlarmStatusType.OPEN);
@@ -353,9 +368,11 @@ public class RulesServiceBean implements RulesService {
 
         String createAlarmReportRequest = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReportType);
         String alarmReportMessageId = producer.sendDataSourceMessage(createAlarmReportRequest, DataSourceQueue.INTERNAL);
-        TextMessage ticketResponse = consumer.getMessage(alarmReportMessageId, TextMessage.class);
+        TextMessage alarmResponse = consumer.getMessage(alarmReportMessageId, TextMessage.class);
 
-        // TODO: Do something with the response???
+        AlarmReportType updatedAlarm = RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(alarmResponse, alarmReportMessageId);
+
+        sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, updatedAlarm.getGuid());
 
         long alarmCount = validationService.getNumberOfOpenAlarmReports();
         // Notify long-polling clients of the change
@@ -461,6 +478,8 @@ public class RulesServiceBean implements RulesService {
                 // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm with the items remaining.
                 alarm.setStatus(AlarmStatusType.REPROCESSED);
                 alarm = updateAlarmStatus(alarm);
+
+                sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, alarm.getGuid());
 
                 RawMovementType rawMovementType = alarm.getRawMovement();
 
@@ -877,6 +896,16 @@ public class RulesServiceBean implements RulesService {
         long duration = newTimestamp.getTime() - lastTimestamp.getTime();
         LOG.info("--> AUDIT - {} {}ms", msg, duration);
         return newTimestamp;
+    }
+
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject) {
+        try {
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
+            producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+        }
+        catch (AuditModelMarshallException | MessageException e) {
+            LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
+        }
     }
 
 }

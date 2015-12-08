@@ -77,6 +77,11 @@
             <artifactId>user-model</artifactId>
             <version>${user.model.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.audit</groupId>
+            <artifactId>audit-model</artifactId>
+            <version>${audit.model.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>

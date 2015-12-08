@@ -50,6 +50,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.USER_MESSAGE_IN_QUEUE)
     private Queue userQueue;
 
+    @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
+    private Queue auditQueue;
+
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
@@ -88,6 +91,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     break;
                 case USER:
                     session.createProducer(userQueue).send(message);
+                    break;
+                case AUDIT:
+                    session.createProducer(auditQueue).send(message);
                     break;
                 default:
                 break;
