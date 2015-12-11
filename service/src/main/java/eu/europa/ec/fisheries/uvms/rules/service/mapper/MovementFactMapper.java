@@ -37,11 +37,25 @@ public class MovementFactMapper {
         if (movement.getMetaData() != null) {
             List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
             for (MovementMetaDataAreaType area : areas) {
+
+                // TODO: REMOVE!!! wait for movement to send relevant info ->
                 fact.getAreaCodes().add(area.getCode());
                 fact.getAreaTypes().add(area.getAreaType());
+                // <-
 
-                // TODO: wait for movement to send relevant info
-//                fact.getAreaMovementType().add(area.getAreaMovementType());
+//                // TODO: wait for movement to send relevant info
+//                if (area.getAreaTransitionType().equals(AreaTransitionType.POS) || area.getAreaMovementType().equals(AreaTransitionType.ENT)) {
+//                    fact.getAreaCodes().add(area.getCode());
+//                    fact.getAreaTypes().add(area.getAreaType());
+//                }
+//                if (area.getAreaTransitionType().equals(AreaTransitionType.ENT)) {
+//                    fact.getEntAreaCodes().add(area.getCode());
+//                    fact.getEntAreaTypes().add(area.getAreaType());
+//                }
+//                if (area.getAreaTransitionType().equals(AreaTransitionType.EXT)) {
+//                    fact.getExtAreaCodes().add(area.getCode());
+//                    fact.getExtAreaTypes().add(area.getAreaType());
+//                }
             }
         }
 

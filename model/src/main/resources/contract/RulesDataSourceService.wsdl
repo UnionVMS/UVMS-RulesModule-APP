@@ -390,6 +390,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
+                                <xsd:element name="loggedInUser" type="xsd:string"/>
                                 <xsd:element name="query" type="search:TicketQuery"/>
                             </xsd:sequence>
                         </xsd:extension>

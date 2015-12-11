@@ -101,7 +101,7 @@ public class ConfigResource {
                     needValue = true;
                     break;
                 case TICKET:
-                    needValue = true;
+                    needValue = false;
                     break;
                 case EMAIL:
                     needValue = true;
@@ -263,27 +263,6 @@ public class ConfigResource {
             return new ResponseDto(AssetStatus.values(), ResponseCode.OK);
         } catch (Exception ex) {
             LOG.error("[ Error when getting asset statuses. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    /**
-     *
-     * @responseMessage 200 Area movement types fetched
-     * @responseMessage 500 No config fetched
-     *
-     * @summary Get area movement types
-     *
-     */
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/areamovementtypes")
-    public ResponseDto getAreaMovementTypes() {
-        try {
-            return new ResponseDto(AssetStatus.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting area movement types. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }

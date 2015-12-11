@@ -87,13 +87,6 @@ public class CustomRuleParser {
                             }
                             sb.append("extAreaTypes");
                             break;
-                        case AREA_MOVEMENT_TYPE:
-                            // If list and NE
-                            if (segment.getCondition().equals(ConditionType.NE)) {
-                                sb.append("!");
-                            }
-                            sb.append("areaMovementType");
-                            break;
 
                         // ASSET
                         case ASSET_ID_GEAR_TYPE:
@@ -305,7 +298,6 @@ public class CustomRuleParser {
     private static boolean isListCriteria(SubCriteriaType subcriteria) {
         return SubCriteriaType.AREA_CODE.equals(subcriteria) ||
                 SubCriteriaType.AREA_TYPE.equals(subcriteria) ||
-                SubCriteriaType.AREA_MOVEMENT_TYPE.equals(subcriteria) ||
                 SubCriteriaType.AREA_CODE_ENT.equals(subcriteria) ||
                 SubCriteriaType.AREA_TYPE_ENT.equals(subcriteria) ||
                 SubCriteriaType.AREA_CODE_EXT.equals(subcriteria) ||

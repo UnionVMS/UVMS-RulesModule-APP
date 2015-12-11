@@ -170,7 +170,7 @@ public class ValidationServiceBean implements ValidationService {
                     sendToEndpoint(ruleName, fact, value);
                     break;
                 case TICKET:
-                    createTicket(ruleName, ruleGuid, fact, value);
+                    createTicket(ruleName, ruleGuid, fact);
                     break;
 
                 /*
@@ -255,7 +255,6 @@ public class ValidationServiceBean implements ValidationService {
             String userRequest = UserModuleRequestMapper.mapToFindOrganisationsRequest(endpoint);
             String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
             TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
-
             FindOrganisationsResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, FindOrganisationsResponse.class);
 
             List<RecipientInfoType> recipientInfoList = new ArrayList<>();
@@ -416,7 +415,7 @@ public class ValidationServiceBean implements ValidationService {
         return positionBuilder.toString();
     }
 
-    private void createTicket(String ruleName, String ruleGuid, MovementFact fact, String user) {
+    private void createTicket(String ruleName, String ruleGuid, MovementFact fact) {
         LOG.info("Create ticket invoked in service layer");
         try {
             TicketType ticket = new TicketType();
@@ -426,7 +425,7 @@ public class ValidationServiceBean implements ValidationService {
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
-            ticket.setUpdatedBy(user);
+            ticket.setUpdatedBy("UVMS");
             ticket.setMovementGuid(fact.getMovementGuid());
             ticket.setGuid(UUID.randomUUID().toString());
 

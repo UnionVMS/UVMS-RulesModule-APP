@@ -157,7 +157,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
         try {
             connectQueue();
-            LOG.debug("Sending error message back from Rules module to recipient om JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
+            LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
 
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
 

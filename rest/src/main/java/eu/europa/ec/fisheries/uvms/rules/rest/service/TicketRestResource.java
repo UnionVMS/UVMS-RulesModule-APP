@@ -41,11 +41,11 @@ public class TicketRestResource {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("/list")
-    public ResponseDto<TicketListResponseDto> getTicketList(TicketQuery query) {
+    @Path("/list/{loggedInUser}")
+    public ResponseDto<TicketListResponseDto> getTicketList(@PathParam("loggedInUser") String loggedInUser, TicketQuery query) {
         LOG.info("Get tickets list invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.getTicketList(query), ResponseCode.OK);
+            return new ResponseDto(rulesService.getTicketList(loggedInUser, query), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException  | NullPointerException ex) {
             LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);

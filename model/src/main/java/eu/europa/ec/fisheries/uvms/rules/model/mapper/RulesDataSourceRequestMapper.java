@@ -92,9 +92,10 @@ public class RulesDataSourceRequestMapper {
     }
 
     // Tickets
-    public static String mapTicketList(TicketQuery query) throws RulesModelMapperException {
+    public static String mapTicketList(String loggedInUser, TicketQuery query) throws RulesModelMapperException {
         GetTicketListByQueryRequest request = new GetTicketListByQueryRequest();
         request.setMethod(RulesDataSourceMethod.LIST_TICKETS);
+        request.setLoggedInUser(loggedInUser);
         request.setQuery(query);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }

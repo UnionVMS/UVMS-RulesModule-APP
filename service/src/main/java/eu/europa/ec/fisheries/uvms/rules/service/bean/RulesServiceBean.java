@@ -12,6 +12,9 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriberType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriberType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -20,7 +23,6 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
@@ -41,6 +43,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
@@ -55,9 +58,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
+import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.exception.VesselModelMapperException;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.vessel.model.mapper.VesselModuleResponseMapper;
+import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.vessel.group.VesselGroup;
 import eu.europa.ec.fisheries.wsdl.vessel.types.*;
 import org.slf4j.Logger;
@@ -125,6 +130,18 @@ public class RulesServiceBean implements RulesService {
     public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException {
         LOG.info("Create invoked in service layer");
         try {
+            // Get organisation of user
+            String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(customRule.getUpdatedBy());
+            String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+            TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+            GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
+
+            if (userResponse != null && userResponse.getContactDetails() != null) {
+                customRule.setOrganisation(userResponse.getContactDetails().getOrganisationName());
+            } else {
+                LOG.warn("User {} is not connected to any organisation!", customRule.getUpdatedBy());
+            }
+
             String request = RulesDataSourceRequestMapper.mapCreateCustomRule(customRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
@@ -134,8 +151,11 @@ public class RulesServiceBean implements RulesService {
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid());
             return customRuleType;
-        } catch (RulesModelMapperException | MessageException | JMSException  ex) {
-            throw new RulesServiceException(ex.getMessage());
+
+        } catch (RulesModelMapperException | JMSException | MessageException  e) {
+            throw new RulesServiceException(e.getMessage());
+        } catch (eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
+            throw new RulesServiceException(e.getMessage());
         }
     }
 
@@ -172,6 +192,46 @@ public class RulesServiceBean implements RulesService {
     public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
         LOG.info("Update custom rule invoked in service layer");
         try {
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid());
+            return newCustomRule;
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param updateSubscriberType
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType updateSubscriber(UpdateSubscriberType updateSubscriberType) throws RulesServiceException, RulesFaultException {
+        LOG.info("Update subscriber invoked in service layer");
+        try {
+            // Get the rule to update
+            CustomRuleType oldCustomRule = getCustomRuleByGuid(updateSubscriberType.getRuleGuid());
+
+            if (SubscritionOperationType.ADD.equals(updateSubscriberType.getOperation()))  {
+                SubscriberType subscriberType = new SubscriberType();
+                subscriberType.setName(updateSubscriberType.getSubscriber().getName());
+                oldCustomRule.getSubscribers().add(subscriberType);
+            } else if (SubscritionOperationType.REMOVE.equals(updateSubscriberType.getOperation())) {
+                List<SubscriberType> subscribers = oldCustomRule.getSubscribers();
+                for (int i = 0; i < subscribers.size(); i++) {
+                    if (subscribers.get(i).getName().equals(updateSubscriberType.getSubscriber().getName())) {
+                        oldCustomRule.getSubscribers().remove(i);
+                        break;
+                    }
+                }
+            }
+
             String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
@@ -237,10 +297,10 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public GetTicketListByQueryResponse getTicketList(TicketQuery query) throws RulesServiceException, RulesFaultException {
+    public GetTicketListByQueryResponse getTicketList(String loggedInUser, TicketQuery query) throws RulesServiceException, RulesFaultException {
         LOG.info("Get ticket list invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapTicketList(query);
+            String request = RulesDataSourceRequestMapper.mapTicketList(loggedInUser, query);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 

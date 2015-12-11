@@ -161,18 +161,18 @@ public class RulesValidator {
 
     }
 
-    private String generateDrl(String template, List<CustomRuleDto> rules) {
+    private String generateDrl(String template, List<CustomRuleDto> ruleDtos) {
         InputStream templateStream = this.getClass().getResourceAsStream(template);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
         TemplateDataListener listener = new TemplateDataListener(tc);
 
         int rowNum = 0;
-        for (CustomRuleDto rule : rules) {
+        for (CustomRuleDto ruleDto : ruleDtos) {
             listener.newRow(rowNum, 0);
-            listener.newCell(rowNum, 0, rule.getRuleName(), 0);
-            listener.newCell(rowNum, 1, rule.getExpression(), 0);
-            listener.newCell(rowNum, 2, rule.getAction(), 0);
-            listener.newCell(rowNum, 3, rule.getRuleGuid(), 0);
+            listener.newCell(rowNum, 0, ruleDto.getRuleName(), 0);
+            listener.newCell(rowNum, 1, ruleDto.getExpression(), 0);
+            listener.newCell(rowNum, 2, ruleDto.getAction(), 0);
+            listener.newCell(rowNum, 3, ruleDto.getRuleGuid(), 0);
             rowNum++;
         }
         listener.finishSheet();

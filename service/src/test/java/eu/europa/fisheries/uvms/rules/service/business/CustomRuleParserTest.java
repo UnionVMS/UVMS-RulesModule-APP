@@ -38,6 +38,7 @@ public class CustomRuleParserTest {
 
         CustomRuleType customRule = new CustomRuleType();
         customRule.setName("DummyName");
+        customRule.setAvailability(AvailabilityType.PRIVATE);
 
         // First part of rule
         CustomRuleSegmentType segment1 = new CustomRuleSegmentType();
@@ -118,6 +119,7 @@ public class CustomRuleParserTest {
 
         CustomRuleType customRule = new CustomRuleType();
         customRule.setName("DummyName");
+        customRule.setAvailability(AvailabilityType.PRIVATE);
 
         // ACTIVITY_CALLBACK
         CustomRuleSegmentType segment0 = new CustomRuleSegmentType();
@@ -584,21 +586,9 @@ public class CustomRuleParserTest {
         segment38.setCondition(ConditionType.NE);
         segment38.setValue("INACTIVE");
         segment38.setEndOperator("");
-        segment38.setLogicBoolOperator(LogicOperatorType.OR);
+        segment38.setLogicBoolOperator(LogicOperatorType.NONE);
         segment38.setOrder("38");
         customRule.getDefinitions().add(segment38);
-
-        // AREA_MOVEMENT_TYPE
-        CustomRuleSegmentType segment39 = new CustomRuleSegmentType();
-        segment39.setStartOperator("");
-        segment39.setCriteria(CriteriaType.AREA);
-        segment39.setSubCriteria(SubCriteriaType.AREA_MOVEMENT_TYPE);
-        segment39.setCondition(ConditionType.EQ);
-        segment39.setValue("EXT");
-        segment39.setEndOperator("");
-        segment39.setLogicBoolOperator(LogicOperatorType.NONE);
-        segment39.setOrder("39");
-        customRule.getDefinitions().add(segment39);
 
 
 
@@ -660,8 +650,7 @@ public class CustomRuleParserTest {
         sb.append("extAreaCodes.contains(\"SWE\") || ");
         sb.append("!extAreaTypes.contains(\"EEZ\") || ");
         sb.append("vesselStatus == \"ACTIVE\" || ");
-        sb.append("mobileTerminalStatus != \"INACTIVE\" || ");
-        sb.append("areaMovementType.contains(\"EXT\")");
+        sb.append("mobileTerminalStatus != \"INACTIVE\"");
 //        sb.append("vicinityOf == \"VICINITY_OF\"");
 
         String expectedRule = sb.toString();

@@ -70,7 +70,7 @@
             <xsd:enumeration value="STATUS"/>
             <xsd:enumeration value="FROM_DATE"/>
             <xsd:enumeration value="TO_DATE"/>
-            <xsd:enumeration value="USER"/>
+            <xsd:enumeration value="UPDATED_BY"/>
         </xsd:restriction>
     </xsd:simpleType>
 
