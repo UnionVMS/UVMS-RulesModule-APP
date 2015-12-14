@@ -9,6 +9,8 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionTypeType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
@@ -43,7 +45,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleResponseMapper;
 import eu.europa.ec.fisheries.wsdl.user.module.FindOrganisationsResponse;
+import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.EndPoint;
 import eu.europa.ec.fisheries.wsdl.user.types.Organisation;
 import org.slf4j.Logger;
@@ -146,6 +150,11 @@ public class ValidationServiceBean implements ValidationService {
         // Update last update
         updateLastTriggered(ruleGuid);
 
+        // Always create a ticket
+        createTicket(ruleName, ruleGuid, fact);
+
+        sendMailToSubscribers(ruleGuid, ruleName, fact);
+
         // Actions list format:
         // ACTION,VALUE;ACTION,VALUE;
         // N.B! The .drl rule file gives the string "null" when (for instance)
@@ -160,18 +169,15 @@ public class ValidationServiceBean implements ValidationService {
             }
             switch (ActionType.valueOf(action)) {
                 case EMAIL:
-                    // todo: What will the mail contain? Value=address.
-                    // Is it enough with a notification, or what's in the fact?
-                    // Or should I enrich the rules, and this method,
-                    // to receive an additional text?
+                    // Value=address.
                     sendToEmail(value, ruleName, fact);
                     break;
                 case SEND_TO_ENDPOINT:
                     sendToEndpoint(ruleName, fact, value);
                     break;
-                case TICKET:
-                    createTicket(ruleName, ruleGuid, fact);
-                    break;
+//                case TICKET:
+//                    createTicket(ruleName, ruleGuid, fact);
+//                    break;
 
                 /*
                 case MANUAL_POLL:
@@ -191,6 +197,39 @@ public class ValidationServiceBean implements ValidationService {
                 default:
                     LOG.info("The action '{}' is not defined", action);
                     break;
+            }
+        }
+    }
+
+    private void sendMailToSubscribers(String ruleGuid, String ruleName, MovementFact fact) {
+        CustomRuleType customRuleType = null;
+        try {
+            // Get email subscribers
+            String customRuleRequest = RulesDataSourceRequestMapper.mapGetCustomRule(ruleGuid);
+            String customRuleMessageId = producer.sendDataSourceMessage(customRuleRequest, DataSourceQueue.INTERNAL);
+            TextMessage customRuleMessage = consumer.getMessage(customRuleMessageId, TextMessage.class);
+            customRuleType = RulesDataSourceResponseMapper.getCustomRuleResponse(customRuleMessage, customRuleMessageId);
+        } catch (RulesModelMapperException | RulesFaultException | MessageException | JMSException e) {
+            LOG.error("[ Failed to fetch rule when sending email to subscribers! {} ]", e.getMessage());
+        }
+
+        List<SubscriptionType> subscriptions = customRuleType.getSubscriptions();
+        for (SubscriptionType subscription : subscriptions) {
+            if (SubscriptionTypeType.EMAIL.equals(subscription.getType())) {
+                try {
+                    // Find current email address
+                    String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(subscription.getOwner());
+                    String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+                    TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+                    GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
+
+                    String emailAddress = userResponse.getContactDetails().getEMail();
+
+                    sendToEmail(emailAddress, ruleName, fact);
+                } catch (Exception e) {
+                    // If a mail attempt fails, proceed with the rest
+                    LOG.error("Could not send email to user '{}'", subscription.getOwner());
+                }
             }
         }
     }
@@ -443,12 +482,11 @@ public class ValidationServiceBean implements ValidationService {
             CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
             ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
 
-            long ticketCount = this.getNumberOfOpenTickets();
-            // Notify long-polling clients of the change
-            ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
+            // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
+            ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid());
-        } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
+        } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
         }
     }
@@ -491,12 +529,11 @@ public class ValidationServiceBean implements ValidationService {
             CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
             alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
 
-            long alarmCount = this.getNumberOfOpenAlarmReports();
-            // Notify long-polling clients of the change
-            alarmReportCountEvent.fire(new NotificationMessage("alarmCount", alarmCount));
+            // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
+            alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
             sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid());
-        } catch (RulesModelMapperException | MessageException | RulesServiceException | RulesFaultException e) {
+        } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
         }
     }

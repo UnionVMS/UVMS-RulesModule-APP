@@ -1,8 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriberType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriberType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -151,13 +150,13 @@ public class CustomRulesRestResource {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("/subscriber")
-    public ResponseDto updateSubscriber(UpdateSubscriberType updateSubscriberType) {
-        LOG.info("Update subscriber invoked in rest layer");
+    @Path("/subscription")
+    public ResponseDto updateSubscription(UpdateSubscriptionType updateSubscriptionType) {
+        LOG.info("Update subscription invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateSubscriber(updateSubscriberType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateSubscription(updateSubscriptionType), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
-            LOG.error("[ Error when updating subscriber. ] {} ", e.getStackTrace());
+            LOG.error("[ Error when updating subscription. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
         }
     }

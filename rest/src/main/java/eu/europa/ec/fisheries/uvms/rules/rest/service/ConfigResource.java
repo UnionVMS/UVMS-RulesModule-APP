@@ -100,12 +100,12 @@ public class ConfigResource {
                 case SEND_TO_ENDPOINT:
                     needValue = true;
                     break;
-                case TICKET:
-                    needValue = false;
-                    break;
                 case EMAIL:
                     needValue = true;
                     break;
+//                case TICKET:
+//                    needValue = false;
+//                    break;
 //                case MANUAL_POLL:
 //                    break;
 //                case ON_HOLD:

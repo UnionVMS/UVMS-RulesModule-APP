@@ -41,6 +41,7 @@
                     <xsd:enumeration value="GET_TICKET"/>
                     <xsd:enumeration value="GET_NUMBER_OF_OPEN_TICKETS"/>
                     <xsd:enumeration value="GET_NUMBER_OF_OPEN_ALARMS"/>
+                    <xsd:enumeration value="UPDATE_CUSTOM_RULE_SUBSCRIPTION"/>
 
                     <xsd:enumeration value="REPROCESS_ALARMS"/>
 
@@ -195,6 +196,28 @@
 
             <!-- Update custom rule response -->
             <xsd:element name="UpdateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule subscription request -->
+            <xsd:element name="UpdateCustomRuleSubscriptionRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="subscription" type="customrule:UpdateSubscriptionType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule subscription response -->
+            <xsd:element name="UpdateCustomRuleSubscriptionResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
@@ -657,6 +680,13 @@
         <part name="body" element="source:UpdateCustomRuleResponse"/>
     </message>
 
+    <message name="UpdateCustomRuleSubscriptionRequest">
+        <part name="body" element="source:UpdateCustomRuleSubscriptionRequest"/>
+    </message>
+    <message name="UpdateCustomRuleSubscriptionResponse">
+        <part name="body" element="source:UpdateCustomRuleSubscriptionResponse"/>
+    </message>
+
     <message name="DeleteCustomRuleRequest">
         <part name="body" element="source:DeleteCustomRuleRequest"/>
     </message>
@@ -839,6 +869,12 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
+        <operation name="UpdateCustomRuleSubscription">
+            <input message="source:UpdateCustomRuleSubscriptionRequest"/>
+            <output message="source:UpdateCustomRuleSubscriptionResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
         <operation name="DeleteCustomRule">
             <input message="source:DeleteCustomRuleRequest"/>
             <output message="source:DeleteCustomRuleResponse"/>
@@ -1000,6 +1036,18 @@
         </operation>
 
         <operation name="UpdateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateCustomRuleSubscription">
             <input>
                 <soap:body use="literal"/>
             </input>

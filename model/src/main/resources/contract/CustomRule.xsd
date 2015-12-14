@@ -16,7 +16,7 @@
             <xsd:element name="timeIntervals" type="customrule:CustomRuleIntervalType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="definitions" type="customrule:CustomRuleSegmentType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="actions" type="customrule:CustomRuleActionType" minOccurs="1" maxOccurs="unbounded"/>
-            <xsd:element name="subscribers" type="customrule:SubscriberType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="subscriptions" type="customrule:SubscriptionType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="lastTriggered" type="xsd:string"/>
             <xsd:element name="organisation" type="xsd:string"/>
             <xsd:element name="updated" type="xsd:string"/>
@@ -162,17 +162,23 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="SubscriberType">
+    <xsd:complexType name="SubscriptionType">
         <xsd:sequence>
-            <!-- TODO: Perhaps add type, to include email -->
-            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="owner" type="xsd:string"/>
+            <xsd:element name="type" type="customrule:SubscriptionTypeType"/>
         </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:simpleType name="SubscriptionTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TICKET"/>
+            <xsd:enumeration value="EMAIL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <xsd:simpleType name="ActionType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="SEND_TO_ENDPOINT"/>
-            <xsd:enumeration value="TICKET"/>
             <xsd:enumeration value="EMAIL"/>
 
             <!-- NOT IMPLEMENTED YET
@@ -200,11 +206,11 @@
 
 
 
-    <xsd:complexType name="UpdateSubscriberType">
+    <xsd:complexType name="UpdateSubscriptionType">
         <xsd:sequence>
             <xsd:element name="ruleGuid" type="xsd:string"/>
             <xsd:element name="operation" type="customrule:SubscritionOperationType"/>
-            <xsd:element name="subscriber" type="customrule:SubscriberType"/>
+            <xsd:element name="subscription" type="customrule:SubscriptionType"/>
         </xsd:sequence>
     </xsd:complexType>
 

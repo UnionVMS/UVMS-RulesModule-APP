@@ -96,7 +96,8 @@ public class CustomRuleParserTest {
 
         // Second action
         CustomRuleActionType action2 = new CustomRuleActionType();
-        action2.setAction(ActionType.TICKET);
+        action2.setAction(ActionType.SEND_TO_ENDPOINT);
+        action2.setValue("DNK");
         customRule.getActions().add(action2);
 
         rawRules.add(customRule);
@@ -109,7 +110,7 @@ public class CustomRuleParserTest {
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0)
                 .getExpression());
-        assertEquals("EMAIL,user@company.se;TICKET,null;", rules.get(0).getAction());
+        assertEquals("EMAIL,user@company.se;SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
 
     }
 
@@ -606,7 +607,9 @@ public class CustomRuleParserTest {
 
         // Action
         CustomRuleActionType action = new CustomRuleActionType();
-        action.setAction(ActionType.TICKET);
+        action.setAction(ActionType.SEND_TO_ENDPOINT);
+        action.setValue("DNK");
+        action.setOrder("0");
         customRule.getActions().add(action);
 
         rawRules.add(customRule);
@@ -657,7 +660,7 @@ public class CustomRuleParserTest {
 
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0).getExpression());
-        assertEquals("TICKET,null;", rules.get(0).getAction());
+        assertEquals("SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
 
     }
 

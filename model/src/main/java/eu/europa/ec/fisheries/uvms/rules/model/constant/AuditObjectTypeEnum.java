@@ -5,7 +5,8 @@ public enum AuditObjectTypeEnum {
     CUSTOM_RULE("Custom Rule"),
     TICKET("Ticket"),
     ALARM("Alarm"),
-    CUSTOM_RULE_ACTION("Custom Rule Action Triggered");
+    CUSTOM_RULE_ACTION("Custom Rule Action Triggered"),
+    CUSTOM_RULE_SUBSCRIPTION("Custom Rule Subscription");
 
     private String value;
 

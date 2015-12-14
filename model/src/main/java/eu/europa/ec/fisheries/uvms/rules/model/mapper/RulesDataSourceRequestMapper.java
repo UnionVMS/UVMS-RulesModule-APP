@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import org.slf4j.Logger;
@@ -73,6 +74,13 @@ public class RulesDataSourceRequestMapper {
         UpdateCustomRuleLastTriggeredRequest request = new UpdateCustomRuleLastTriggeredRequest();
         request.setCustomRuleGuid(ruleGuid);
         request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE_LAST_TRIGGERED);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapUpdateSubscription(UpdateSubscriptionType updateSubscriptionType) throws RulesModelMapperException {
+        UpdateCustomRuleSubscriptionRequest request = new UpdateCustomRuleSubscriptionRequest();
+        request.setSubscription(updateSubscriptionType);
+        request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE_SUBSCRIPTION);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

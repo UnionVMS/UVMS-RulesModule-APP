@@ -59,13 +59,11 @@ public class LongPollingHttpServlet extends HttpServlet {
     }
 
     public void observeTicketCount(@Observes @AlarmReportCountEvent NotificationMessage message) throws IOException {
-        long alarmCount = (long) message.getProperties().get("alarmCount");
-        completePoll(LongPollingConstants.ALARM_REPORT_COUNT_PATH, createJsonMessageCount(alarmCount));
+        completePoll(LongPollingConstants.ALARM_REPORT_COUNT_PATH, createJsonMessageCount(true));
     }
 
     public void observeAlarmReportCount(@Observes @TicketCountEvent NotificationMessage message) throws IOException {
-        long ticketCount = (long) message.getProperties().get("ticketCount");
-        completePoll(LongPollingConstants.TICKET_COUNT_PATH, createJsonMessageCount(ticketCount));
+        completePoll(LongPollingConstants.TICKET_COUNT_PATH, createJsonMessageCount(true));
     }
 
     private String createJsonMessage(String guid) {
@@ -77,8 +75,8 @@ public class LongPollingHttpServlet extends HttpServlet {
         return Json.createObjectBuilder().add("ids", array).build().toString();
     }
 
-    private String createJsonMessageCount(long value) {
-        return Json.createObjectBuilder().add("count", value).build().toString();
+    private String createJsonMessageCount(boolean value) {
+        return Json.createObjectBuilder().add("updated", value).build().toString();
     }
 
     private void completePoll(String resourcePath, String message) throws IOException {
