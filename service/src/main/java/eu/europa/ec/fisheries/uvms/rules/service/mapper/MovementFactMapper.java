@@ -64,11 +64,11 @@ public class MovementFactMapper {
             fact.setAssetIdGearType(vessel.getGearType());
             fact.setExternalMarking(vessel.getExternalMarking());
             fact.setFlagState(vessel.getCountryCode());
-            fact.setVesselCfr(vessel.getCfr());
-            fact.setVesselIrcs(vessel.getIrcs());
-            fact.setVesselName(vessel.getName());
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
-            fact.setVesselStatus(vessel.isActive() ? "ACTIVE":"INACTIVE");
+            fact.setCfr(vessel.getCfr());
+            fact.setIrcs(vessel.getIrcs());
+            fact.setAssetName(vessel.getName());
+            fact.setAssetGuid(vessel.getVesselId().getGuid());
+            fact.setAssetStatus(vessel.isActive() ? "ACTIVE":"INACTIVE");
         }
 
         // MOBILE_TERMINAL

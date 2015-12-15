@@ -31,14 +31,14 @@ public class MovementFact {
     List<String> extAreaTypes;
 
     // ASSET
-    private String vesselGuid;
+    private String assetGuid;
     private String assetIdGearType;
     private String externalMarking;
     private String flagState;
-    private String vesselCfr;
-    private String vesselIrcs;
-    private String vesselName;
-    private String vesselStatus;
+    private String cfr;
+    private String ircs;
+    private String assetName;
+    private String assetStatus;
 
     // MOBILE_TERMINAL
     private String comChannelType;
@@ -187,12 +187,12 @@ public class MovementFact {
         this.extAreaTypes = extAreaTypes;
     }
 
-    public String getVesselGuid() {
-        return vesselGuid;
+    public String getAssetGuid() {
+        return assetGuid;
     }
 
-    public void setVesselGuid(String vesselGuid) {
-        this.vesselGuid = vesselGuid;
+    public void setAssetGuid(String assetGuid) {
+        this.assetGuid = assetGuid;
     }
 
     public String getAssetIdGearType() {
@@ -219,36 +219,36 @@ public class MovementFact {
         this.flagState = flagState;
     }
 
-    public String getVesselCfr() {
-        return vesselCfr;
+    public String getCfr() {
+        return cfr;
     }
 
-    public void setVesselCfr(String vesselCfr) {
-        this.vesselCfr = vesselCfr;
+    public void setCfr(String cfr) {
+        this.cfr = cfr;
     }
 
-    public String getVesselIrcs() {
-        return vesselIrcs;
+    public String getIrcs() {
+        return ircs;
     }
 
-    public void setVesselIrcs(String vesselIrcs) {
-        this.vesselIrcs = vesselIrcs;
+    public void setIrcs(String ircs) {
+        this.ircs = ircs;
     }
 
-    public String getVesselName() {
-        return vesselName;
+    public String getAssetName() {
+        return assetName;
     }
 
-    public void setVesselName(String vesselName) {
-        this.vesselName = vesselName;
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
     }
 
-    public String getVesselStatus() {
-        return vesselStatus;
+    public String getAssetStatus() {
+        return assetStatus;
     }
 
-    public void setVesselStatus(String vesselStatus) {
-        this.vesselStatus = vesselStatus;
+    public void setAssetStatus(String assetStatus) {
+        this.assetStatus = assetStatus;
     }
 
     public String getComChannelType() {
@@ -451,14 +451,14 @@ public class MovementFact {
                 ", entAreaTypes=" + (entAreaTypes != null ? Arrays.toString(entAreaTypes.toArray()) : null) +
                 ", extAreaCodes=" + (extAreaCodes != null ? Arrays.toString(extAreaCodes.toArray()) : null) +
                 ", extAreaTypes=" + (extAreaTypes != null ? Arrays.toString(extAreaTypes.toArray()) : null) +
-                ", vesselGuid='" + vesselGuid + '\'' +
+                ", assetGuid='" + assetGuid + '\'' +
                 ", assetIdGearType='" + assetIdGearType + '\'' +
                 ", externalMarking='" + externalMarking + '\'' +
                 ", flagState='" + flagState + '\'' +
-                ", vesselCfr='" + vesselCfr + '\'' +
-                ", vesselIrcs='" + vesselIrcs + '\'' +
-                ", vesselName='" + vesselName + '\'' +
-                ", vesselStatus='" + vesselStatus + '\'' +
+                ", cfr='" + cfr + '\'' +
+                ", ircs='" + ircs + '\'' +
+                ", assetName='" + assetName + '\'' +
+                ", assetStatus='" + assetStatus + '\'' +
                 ", comChannelType='" + comChannelType + '\'' +
                 ", mobileTerminalType='" + mobileTerminalType + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +

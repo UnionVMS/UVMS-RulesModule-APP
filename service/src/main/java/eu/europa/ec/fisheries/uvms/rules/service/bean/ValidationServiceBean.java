@@ -175,9 +175,6 @@ public class ValidationServiceBean implements ValidationService {
                 case SEND_TO_ENDPOINT:
                     sendToEndpoint(ruleName, fact, value);
                     break;
-//                case TICKET:
-//                    createTicket(ruleName, ruleGuid, fact);
-//                    break;
 
                 /*
                 case MANUAL_POLL:
@@ -245,44 +242,6 @@ public class ValidationServiceBean implements ValidationService {
 
     }
 
-// TODO: This is unused and should probably be deleted
-/*
-    @Override
-    public void sendToEndpoint(eu.europa.ec.fisheries.schema.movement.v1.MovementType createdMovement, String countryCode) throws MessageException, ExchangeModelMapperException {
-        if (createdMovement.getMetaData() != null) {
-            List<MovementMetaDataAreaType> areas = createdMovement.getMetaData().getAreas();
-            MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(createdMovement, MovementType.class);
-
-            for (MovementMetaDataAreaType area : areas) {
-                String ruleName = "Automatic Forwarding Rule";
-
-                XMLGregorianCalendar date = null;
-                try {
-                    GregorianCalendar c = new GregorianCalendar();
-                    c.setTime(new Date());
-                    date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-                } catch (DatatypeConfigurationException e) {
-                    e.printStackTrace();
-                }
-
-                if ("EEZ".equals(area.getAreaType()) || "RFMO".equals(area.getAreaType())) {
-                    String destination = area.getCode();
-
-                    // Make sure you don't send to flag state since it already has it (it this one that we are forwarding here)
-                    if (!countryCode.equals(destination)) {
-                        LOG.info("Forwarding movement '{}' to {}", exchangeMovement.getGuid(), destination);
-                        String request = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, destination, exchangeMovement);
-                        String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-                        TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-                        // TODO: Do something with the response
-                    }
-                }
-            }
-        }
-    }
-*/
-
     private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
         LOG.info("Sending to endpoint '{}'", endpoint);
 
@@ -309,11 +268,11 @@ public class ValidationServiceBean implements ValidationService {
                 }
             }
 
-            String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getVesselName(), fact.getVesselIrcs());
+            String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs());
             String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, endpoint);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
 
             // TODO: Do something with the response???
 
@@ -341,7 +300,7 @@ public class ValidationServiceBean implements ValidationService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, emailAddress);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress);
 
             // TODO: Do something with the response???
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
@@ -380,13 +339,13 @@ public class ValidationServiceBean implements ValidationService {
         assetBuilder.append("<b>Asset:</b>")
                 .append("<br>&nbsp;&nbsp;")
                 .append("Name: ")
-                .append(fact.getVesselName())
+                .append(fact.getAssetName())
                 .append("<br>&nbsp;&nbsp;")
                 .append("IRCS: ")
-                .append(fact.getVesselIrcs())
+                .append(fact.getIrcs())
                 .append("<br>&nbsp;&nbsp;")
                 .append("CFR: ")
-                .append(fact.getVesselCfr())
+                .append(fact.getCfr())
                 .append("<br>");
 
         return assetBuilder.toString();
@@ -459,7 +418,7 @@ public class ValidationServiceBean implements ValidationService {
         try {
             TicketType ticket = new TicketType();
 
-            ticket.setVesselGuid(fact.getVesselGuid());
+            ticket.setVesselGuid(fact.getAssetGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);
@@ -485,7 +444,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
         }
@@ -507,7 +466,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmReport.setRawMovement(fact.getRawMovementType());
             alarmReport.setUpdatedBy("UVMS");
             alarmReport.setPluginType(fact.getPluginType());
-            alarmReport.setVesselGuid(fact.getVesselGuid());
+            alarmReport.setVesselGuid(fact.getAssetGuid());
             alarmReport.setInactivatePosition(false);
 
             // TODO: Add sender, recipient and assetGuid
@@ -532,7 +491,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
         }
@@ -566,9 +525,9 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject) {
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment) {
         try {
-            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         }
         catch (AuditModelMarshallException | MessageException e) {

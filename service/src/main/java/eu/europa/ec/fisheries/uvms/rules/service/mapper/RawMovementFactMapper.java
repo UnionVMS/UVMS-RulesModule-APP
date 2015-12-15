@@ -39,6 +39,10 @@ public class RawMovementFactMapper {
         }
         fact.setStatusCode(rawMovement.getStatus());
 
+        fact.setAssetName(rawMovement.getAssetName());
+        fact.setFlagState(rawMovement.getFlagState());
+        fact.setExternalMarking(rawMovement.getExternalMarking());
+
         // Activity
         if (rawMovement.getActivity() != null) {
             fact.setActivityCallback(rawMovement.getActivity().getCallback());
@@ -60,10 +64,10 @@ public class RawMovementFactMapper {
             for (AssetIdList assetId : assetIds) {
                 switch (assetId.getIdType()) {
                     case CFR:
-                        fact.setVesselCfr(assetId.getValue());
+                        fact.setCfr(assetId.getValue());
                         break;
                     case IRCS:
-                        fact.setVesselIrcs(assetId.getValue());
+                        fact.setIrcs(assetId.getValue());
                         break;
                     case ID:
                     case IMO:
@@ -100,7 +104,7 @@ public class RawMovementFactMapper {
 
         // From Vessel
         if (vessel != null) {
-            fact.setVesselGuid(vessel.getVesselId().getGuid());
+            fact.setAssetGuid(vessel.getVesselId().getGuid());
         }
 
         return fact;

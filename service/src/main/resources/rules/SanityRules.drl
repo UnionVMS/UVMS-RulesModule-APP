@@ -36,7 +36,7 @@ dialect "java"
         validationService.createAlarmReport("Long missing", $fact);
 end
 
-// A mobile terminal must be connected to a vessel
+// A mobile terminal must be connected to a asset
 rule "Sanity rule 4 - Transponder not found"
 dialect "java"
     when
@@ -47,11 +47,11 @@ dialect "java"
         validationService.createAlarmReport("Transponder not found", $fact);
 end
 
-// A vessel must exist
+// A asset must exist
 rule "Sanity rule 5 - Asset not found"
 dialect "java"
     when
-        $fact : RawMovementFact(vesselGuid == null)
+        $fact : RawMovementFact(assetGuid == null)
     then
         logger.info("\t==> Executing RULE 'Sanity rule 5 - Asset not found'");
         $fact.setOk(false);
@@ -104,7 +104,7 @@ end
 rule "Sanity rule 10 - CFR and IRCS missing"
 dialect "java"
     when
-        $fact : RawMovementFact((vesselCfr == null && vesselIrcs == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
+        $fact : RawMovementFact((cfr == null && ircs == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
     then
         logger.info("\t==> Executing RULE 'Sanity rule 10 - CFR and IRCS missing'");
         $fact.setOk(false);

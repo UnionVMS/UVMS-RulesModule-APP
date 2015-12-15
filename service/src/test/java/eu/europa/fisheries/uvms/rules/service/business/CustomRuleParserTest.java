@@ -103,9 +103,7 @@ public class CustomRuleParserTest {
         rawRules.add(customRule);
 
         String expectedRule =
-                "(vesselCfr == \"SWE111111\" || vesselCfr == \"SWE222222\") && mobileTerminalMemberNumber == \"ABC99\" && (RulesUtil.stringToDate(\"2000-10-01 02:00:00 +0200\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2000-10-30 01:00:00 +0100\") || RulesUtil.stringToDate(\"2015-01-01 01:00:00 +0100\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2016-12-31 01:00:00 +0100\"))";
-        // String expectedRule =
-        // "(vesselCfr == \"SWE111222\" || vesselCfr == \"SWE111333\") && mobileTerminalMemberNumber == \"ABC99\"";
+                "(cfr == \"SWE111111\" || cfr == \"SWE222222\") && mobileTerminalMemberNumber == \"ABC99\" && (RulesUtil.stringToDate(\"2000-10-01 02:00:00 +0200\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2000-10-30 01:00:00 +0100\") || RulesUtil.stringToDate(\"2015-01-01 01:00:00 +0100\") <= positionTime && positionTime <= RulesUtil.stringToDate(\"2016-12-31 01:00:00 +0100\"))";
 
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0)
@@ -623,9 +621,9 @@ public class CustomRuleParserTest {
         sb.append("assetIdGearType == \"ASSET_ID_GEAR_TYPE\" || ");
         sb.append("externalMarking == \"GE-49\" || ");
         sb.append("flagState == \"SWE\" || ");
-        sb.append("vesselCfr == \"GBR000A11447\" || ");
-        sb.append("vesselIrcs == \"SECT\" || ");
-        sb.append("vesselName == \"SETTE MARI\" || ");
+        sb.append("cfr == \"GBR000A11447\" || ");
+        sb.append("ircs == \"SECT\" || ");
+        sb.append("assetName == \"SETTE MARI\" || ");
         sb.append("comChannelType == \"VMS\" || ");
         sb.append("mobileTerminalType == \"MT_TYPE\" || ");
         sb.append("mobileTerminalDnid == \"MT_DNID\" || ");
@@ -652,7 +650,7 @@ public class CustomRuleParserTest {
         sb.append("!entAreaTypes.contains(\"EEZ\") || ");
         sb.append("extAreaCodes.contains(\"SWE\") || ");
         sb.append("!extAreaTypes.contains(\"EEZ\") || ");
-        sb.append("vesselStatus == \"ACTIVE\" || ");
+        sb.append("assetStatus == \"ACTIVE\" || ");
         sb.append("mobileTerminalStatus != \"INACTIVE\"");
 //        sb.append("vicinityOf == \"VICINITY_OF\"");
 

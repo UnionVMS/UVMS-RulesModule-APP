@@ -99,16 +99,16 @@ public class CustomRuleParser {
                             sb.append("flagState");
                             break;
                         case VESSEL_CFR:
-                            sb.append("vesselCfr");
+                            sb.append("cfr");
                             break;
                         case VESSEL_IRCS:
-                            sb.append("vesselIrcs");
+                            sb.append("ircs");
                             break;
                         case VESSEL_NAME:
-                            sb.append("vesselName");
+                            sb.append("assetName");
                             break;
                         case VESSEL_STATUS:
-                            sb.append("vesselStatus");
+                            sb.append("assetStatus");
                             break;
 
                         // MOBILE_TERMINAL

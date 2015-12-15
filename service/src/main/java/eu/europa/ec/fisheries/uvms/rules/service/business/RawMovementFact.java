@@ -34,10 +34,13 @@ public class RawMovementFact {
     private Double latitude;
     private Double longitude;
 
-    // Vessel
-    private String vesselGuid;
-    private String vesselCfr;
-    private String vesselIrcs;
+    // Asset
+    private String assetGuid;
+    private String cfr;
+    private String ircs;
+    private String assetName;         // from FLUX/MANUAL
+    private String flagState;         // from FLUX/MANUAL
+    private String externalMarking;   // from FLUX/MANUAL
 
     // Mobile Terminal
     private String mobileTerminalMemberNumber;
@@ -92,6 +95,30 @@ public class RawMovementFact {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getAssetName() {
+        return assetName;
+    }
+
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
+    }
+
+    public String getFlagState() {
+        return flagState;
+    }
+
+    public void setFlagState(String flagState) {
+        this.flagState = flagState;
+    }
+
+    public String getExternalMarking() {
+        return externalMarking;
+    }
+
+    public void setExternalMarking(String externalMarking) {
+        this.externalMarking = externalMarking;
     }
 
     public Double getReportedCourse() {
@@ -230,28 +257,28 @@ public class RawMovementFact {
         this.mobileTerminalType = mobileTerminalType;
     }
 
-    public String getVesselGuid() {
-        return vesselGuid;
+    public String getAssetGuid() {
+        return assetGuid;
     }
 
-    public void setVesselGuid(String vesselGuid) {
-        this.vesselGuid = vesselGuid;
+    public void setAssetGuid(String assetGuid) {
+        this.assetGuid = assetGuid;
     }
 
-    public String getVesselCfr() {
-        return vesselCfr;
+    public String getCfr() {
+        return cfr;
     }
 
-    public void setVesselCfr(String vesselCfr) {
-        this.vesselCfr = vesselCfr;
+    public void setCfr(String cfr) {
+        this.cfr = cfr;
     }
 
-    public String getVesselIrcs() {
-        return vesselIrcs;
+    public String getIrcs() {
+        return ircs;
     }
 
-    public void setVesselIrcs(String vesselIrcs) {
-        this.vesselIrcs = vesselIrcs;
+    public void setIrcs(String ircs) {
+        this.ircs = ircs;
     }
 
     @Override
@@ -269,15 +296,18 @@ public class RawMovementFact {
                 ", reportedSpeed=" + reportedSpeed +
                 ", source='" + source + '\'' +
                 ", statusCode='" + statusCode + '\'' +
+                ", assetName='" + assetName + '\'' +
+                ", flagState='" + flagState + '\'' +
+                ", externalMarking='" + externalMarking + '\'' +
                 ", activityCallback='" + activityCallback + '\'' +
                 ", activityMessageId='" + activityMessageId + '\'' +
                 ", activityMessageType='" + activityMessageType + '\'' +
                 ", altitude=" + altitude +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", vesselGuid='" + vesselGuid + '\'' +
-                ", vesselCfr='" + vesselCfr + '\'' +
-                ", vesselIrcs='" + vesselIrcs + '\'' +
+                ", assetGuid='" + assetGuid + '\'' +
+                ", cfr='" + cfr + '\'' +
+                ", ircs='" + ircs + '\'' +
                 ", mobileTerminalMemberNumber='" + mobileTerminalMemberNumber + '\'' +
                 ", mobileTerminalDnid='" + mobileTerminalDnid + '\'' +
                 ", mobileTerminalSerialNumber='" + mobileTerminalSerialNumber + '\'' +

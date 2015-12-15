@@ -49,10 +49,12 @@ public class ConfigResource {
             Map<String, HashMap<String, ArrayList<String>>> crit = getCriterias();
             Map act = getActions();
             LogicOperatorType[] log = getLogicOperatorType();
+            AvailabilityType[] availability = getAvailability();
 
             map.put("CRITERIA", crit);
             map.put("ACTIONS", act);
             map.put("LOGIC_OPERATORS", log);
+            map.put("AVAILABILITY", availability);
 
             return new ResponseDto(map, ResponseCode.OK);
         } catch (Exception ex) {
@@ -87,6 +89,10 @@ public class ConfigResource {
 
     private LogicOperatorType[] getLogicOperatorType() {
         return LogicOperatorType.values();
+    }
+
+    private AvailabilityType[] getAvailability() {
+        return AvailabilityType.values();
     }
 
     private Map getActions() {

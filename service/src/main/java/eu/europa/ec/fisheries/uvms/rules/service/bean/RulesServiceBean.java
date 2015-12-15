@@ -11,6 +11,7 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
@@ -149,7 +150,7 @@ public class RulesServiceBean implements RulesService {
 //            rulesValidator.init();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid(), null);
             return customRuleType;
 
         } catch (RulesModelMapperException | JMSException | MessageException  e) {
@@ -197,8 +198,8 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid());
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid(), null);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid(), null);
             return newCustomRule;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
@@ -225,10 +226,10 @@ public class RulesServiceBean implements RulesService {
 
             if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation()))  {
                 // TODO: Don't log rule guid, log subscription guid?
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, updateSubscriptionType.getRuleGuid());
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, null, updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
             } else if (SubscritionOperationType.REMOVE.equals(updateSubscriptionType.getOperation())) {
                 // TODO: Don't log rule guid, log subscription guid?
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.DELETE, updateSubscriptionType.getRuleGuid());
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.DELETE, null, updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
             }
 
             return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
@@ -256,7 +257,7 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, customRuleType.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, customRuleType.getGuid(), null);
             return customRuleType;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
@@ -322,7 +323,7 @@ public class RulesServiceBean implements RulesService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), null);
 
             return updatedTicket;
 
@@ -347,7 +348,7 @@ public class RulesServiceBean implements RulesService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, updatedAlarm.getGuid());
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, updatedAlarm.getGuid(), null);
 
             return updatedAlarm;
         } catch (RulesModelMapperException | MessageException | JMSException e) {
@@ -375,12 +376,6 @@ public class RulesServiceBean implements RulesService {
     public void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
-//            // Check if ticket already is created for this vessel
-//            String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid());
-//            String messageIdTicket = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
-//            TextMessage ticketResponse = consumer.getMessage(messageIdTicket, TextMessage.class);
-//            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(ticketResponse, messageIdTicket).getTicket() == null;
-
             // Check if alarm already is created for this vessel
             String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByVesselGuid(fact.getVesselGuid());
             String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
@@ -390,10 +385,6 @@ public class RulesServiceBean implements RulesService {
             if (noAlarmCreated) {
                 createAssetNotSendingAlarm(ruleName, ruleGuid, fact);
             }
-
-//            if (noTicketCreated) {
-//                createTicket(ruleName, ruleGuid, fact);
-//            }
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -422,34 +413,11 @@ public class RulesServiceBean implements RulesService {
 
         AlarmReportType updatedAlarm = RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(alarmResponse, alarmReportMessageId);
 
-        sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, updatedAlarm.getGuid());
+        sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, updatedAlarm.getGuid(), null);
 
         // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
         alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
     }
-
-//    private void createTicket(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException {
-//        TicketType ticket = new TicketType();
-//
-//        ticket.setVesselGuid(fact.getVesselGuid());
-//        ticket.setOpenDate(RulesUtil.dateToString(new Date()));
-//        ticket.setRuleName(ruleName);
-//        ticket.setRuleGuid(ruleGuid);
-//        ticket.setUpdatedBy("UVMS");
-//        ticket.setStatus(TicketStatusType.OPEN);
-//        ticket.setMovementGuid(fact.getMovementGuid());
-//        ticket.setGuid(UUID.randomUUID().toString());
-//
-//        String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-//        String ticketMessageId = producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
-//        TextMessage ticketResponse = consumer.getMessage(ticketMessageId, TextMessage.class);
-//
-//        // TODO: Do something with the response???
-//
-//        // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
-//        ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
-//
-//    }
 
     @Override
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException {
@@ -527,7 +495,7 @@ public class RulesServiceBean implements RulesService {
                 alarm.setStatus(AlarmStatusType.REPROCESSED);
                 alarm = updateAlarmStatus(alarm);
 
-                sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, alarm.getGuid());
+                sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.UPDATE, alarm.getGuid(), null);
 
                 RawMovementType rawMovementType = alarm.getRawMovement();
 
@@ -642,26 +610,26 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
-            Long timeDiffInSeconds = null;
-            Integer numberOfReportsLast24Hours = null;
-            if (vessel != null && vessel.getVesselId().getGuid() != null && rawMovement.getPositionTime() != null) {
-                Long timeDiff = timeDiffFromLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
-                timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
-                auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
-
-                numberOfReportsLast24Hours = numberOfReportsLast24Hours(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
-                auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
-
-                persistLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
-                auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
-            }
-
             if (rawMovementFact.isOk()) {
                 LOG.info("Send the validated raw position to Movement");
 
+                Long timeDiffInSeconds = null;
+                Integer numberOfReportsLast24Hours = null;
+                if (vessel != null && vessel.getVesselId().getGuid() != null && rawMovement.getPositionTime() != null) {
+                    Long timeDiff = timeDiffFromLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                    timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
+                    auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
+
+                    numberOfReportsLast24Hours = numberOfReportsLast24Hours(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                    auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
+
+                    persistLastCommunication(vessel.getVesselId().getGuid(), rawMovement.getPositionTime());
+                    auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
+                }
+
                 MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
 
-                movementBaseType.setConnectId(rawMovementFact.getVesselGuid());
+                movementBaseType.setConnectId(rawMovementFact.getAssetGuid());
 
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
 
@@ -673,11 +641,6 @@ public class RulesServiceBean implements RulesService {
                 if (movementResponse != null) {
                     MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
                     validateCreatedMovement(createdMovement, mobileTerminal, vessel, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours);
-
-                    // TODO: This will not be used. It's still here pending final confirmation.
-                    // Forwarding rule
-//                    validationService.sendToEndpoint(createdMovement, vessel.getCountryCode());
-//                    auditTimestamp = auditLog("Time to forward movement:", auditTimestamp);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -709,12 +672,6 @@ public class RulesServiceBean implements RulesService {
             LOG.warn("[ Failed while fetching asset groups ]", e.getMessage());
         }
         auditTimestamp = auditLog("Time to get asset groups:", auditTimestamp);
-
-        // Vessel
-        String vesselGuid = null;
-        if (vessel != null) {
-            vesselGuid = vessel.getVesselId().getGuid();
-        }
 
         // TODO: Get vicinityOf to validate on
         // ??? Maybe Movement?
@@ -776,78 +733,57 @@ public class RulesServiceBean implements RulesService {
         return resultList.size() != 1 ? null : resultList.get(0);
     }
 
-    private Vessel getVesselByAssetId(AssetId assetId) throws VesselModelMapperException, MessageException {
+    private Vessel getVesselByAssetId(AssetId assetId) {
         LOG.info("Fetch vessel by assetId");
-        VesselListQuery query = new VesselListQuery();
 
-        // If no asset information exists, don't look for one
-        if (assetId == null || assetId.getAssetIdList() == null) {
-            return null;
-        }
-
-        List<AssetIdList> ids = assetId.getAssetIdList();
-        VesselListCriteria criteria = new VesselListCriteria();
-        for (AssetIdList id : ids) {
-
-            VesselListCriteriaPair crit = new VesselListCriteriaPair();
-            switch (id.getIdType()) {
-                case CFR:
-                    if (id.getValue() != null) {
-                        crit.setKey(ConfigSearchField.CFR);
-                        crit.setValue(id.getValue());
-                        criteria.getCriterias().add(crit);
-                    }
-                    break;
-                case IRCS:
-                    if (id.getValue() != null) {
-                        crit.setKey(ConfigSearchField.IRCS);
-                        crit.setValue(id.getValue());
-                        criteria.getCriterias().add(crit);
-                    }
-                    break;
-                case IMO:
-                    if (id.getValue() != null) {
-                        crit.setKey(ConfigSearchField.IMO);
-                        crit.setValue(id.getValue());
-                        criteria.getCriterias().add(crit);
-                    }
-                    break;
-                case MMSI:
-                    if (id.getValue() != null) {
-                        crit.setKey(ConfigSearchField.MMSI);
-                        crit.setValue(id.getValue());
-                        criteria.getCriterias().add(crit);
-                    }
-                    break;
-                case GUID:
-                case ID:
-                default:
-                    LOG.error("[ Unhandled AssetId: {} ]", id.getIdType());
-                    break;
+        Vessel vessel = null;
+        try {
+            // If no asset information exists, don't look for one
+            if (assetId == null || assetId.getAssetIdList() == null) {
+                LOG.warn("No asset information exists!");
+                return null;
             }
 
+            List<AssetIdList> ids = assetId.getAssetIdList();
+
+            String cfr = null;
+            String ircs = null;
+
+            // Get possible search parameters
+            for (AssetIdList id : ids) {
+                if (id.getIdType().equals(AssetIdType.CFR)) {
+                    cfr = id.getValue();
+                }
+                if (id.getIdType().equals(AssetIdType.IRCS)) {
+                    ircs = id.getValue();
+                }
+            }
+
+            if (ircs != null && cfr != null) {
+                vessel = getVessel(VesselIdType.CFR, cfr);
+                // If the vessel matches on ircs as well we have a winner
+                if (vessel != null && vessel.getIrcs().equals(ircs)) {
+                    return vessel;
+                }
+            } else if (cfr != null && ircs == null) {
+                return getVessel(VesselIdType.CFR, cfr);
+            } else if (cfr == null && ircs != null) {
+                return getVessel(VesselIdType.IRCS, ircs);
+            }
+
+        } catch (Exception e) {
+            // Log and continue validation
+            LOG.warn("Could not find asset!");
         }
+        return null;
+    }
 
-        // If no valid criterias, don't look for an asset
-        if (criteria.getCriterias().isEmpty()) {
-            return null;
-        }
-
-        criteria.setIsDynamic(true);
-        query.setVesselSearchCriteria(criteria);
-        VesselListPagination pagination = new VesselListPagination();
-        // To leave room to find erroneous results - it must be only one in the list
-        pagination.setListSize(2);
-        pagination.setPage(1);
-        query.setPagination(pagination);
-
-        String getVesselListRequest = VesselModuleRequestMapper.createVesselListModuleRequest(query);
+    private Vessel getVessel(VesselIdType type, String value) throws VesselModelMapperException, MessageException {
+        String getVesselListRequest = VesselModuleRequestMapper.createGetVesselModuleRequest(value, type);
         String getVesselMessageId = producer.sendDataSourceMessage(getVesselListRequest, DataSourceQueue.VESSEL);
         TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
-        List<Vessel> resultList = VesselModuleResponseMapper.mapToVesselListFromResponse(getVesselResponse, getVesselMessageId);
-
-        return resultList.size() != 1 ? null : resultList.get(0);
+        return VesselModuleResponseMapper.mapToVesselFromResponse(getVesselResponse, getVesselMessageId);
     }
 
     private MobileTerminalType getMobileTerminalByRawMovement(RawMovementType rawMovement) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
@@ -946,9 +882,9 @@ public class RulesServiceBean implements RulesService {
         return newTimestamp;
     }
 
-    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject) {
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment) {
         try {
-            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         }
         catch (AuditModelMarshallException | MessageException e) {
