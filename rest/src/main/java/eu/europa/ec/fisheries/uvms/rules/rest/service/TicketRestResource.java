@@ -76,7 +76,7 @@ public class TicketRestResource {
     /**
      *
      * @responseMessage 200 Selected ticket fetched
-     * @responseMessage 500 No tickets fetched
+     * @responseMessage 500 Error
      *
      * @summary Get a ticket by GUID
      *
@@ -95,18 +95,18 @@ public class TicketRestResource {
 
     /**
      *
-     * @responseMessage 200 Number of open tickets
-     * @responseMessage 500 No result
+     * @responseMessage 200 Number of open tickets for logged in user
+     * @responseMessage 500 Error
      *
      * @summary Get number of open tickets
      *
      */
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path("/countopen")
-    public ResponseDto getNumberOfOpenTicketReports() {
+    @Path("/countopen/{loggedInUser}")
+    public ResponseDto getNumberOfOpenTicketReports(@PathParam(value = "loggedInUser") final String loggedInUser) {
         try {
-            return new ResponseDto(validationService.getNumberOfOpenTickets(), ResponseCode.OK);
+            return new ResponseDto(validationService.getNumberOfOpenTickets(loggedInUser), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting number of open tickets. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);

@@ -644,6 +644,9 @@
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="userName" type="xsd:string"/>
+                            </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>

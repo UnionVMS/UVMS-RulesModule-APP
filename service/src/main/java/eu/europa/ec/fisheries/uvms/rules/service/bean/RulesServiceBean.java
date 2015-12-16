@@ -13,7 +13,6 @@ import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
@@ -226,10 +225,10 @@ public class RulesServiceBean implements RulesService {
 
             if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation()))  {
                 // TODO: Don't log rule guid, log subscription guid?
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, null, updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, updateSubscriptionType.getRuleGuid(), updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
             } else if (SubscritionOperationType.REMOVE.equals(updateSubscriptionType.getOperation())) {
                 // TODO: Don't log rule guid, log subscription guid?
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.DELETE, null, updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.DELETE, updateSubscriptionType.getRuleGuid(), updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType());
             }
 
             return RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);

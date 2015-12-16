@@ -23,7 +23,6 @@ public class MovementFact {
     // AREA
     List<String> areaCodes;
     List<String> areaTypes;
-    List<String> areaMovementType;
 
     List<String> entAreaCodes;
     List<String> entAreaTypes;
@@ -147,15 +146,10 @@ public class MovementFact {
         this.areaTypes = areaTypes;
     }
 
-    public List<String> getAreaMovementType() {
-        return areaMovementType;
-    }
-
-    public void setAreaMovementType(List<String> areaMovementType) {
-        this.areaMovementType = areaMovementType;
-    }
-
     public List<String> getEntAreaCodes() {
+        if (this.entAreaCodes== null) {
+            this.entAreaCodes = new ArrayList<>();
+        }
         return entAreaCodes;
     }
 
@@ -164,6 +158,9 @@ public class MovementFact {
     }
 
     public List<String> getEntAreaTypes() {
+        if (this.entAreaTypes== null) {
+            this.entAreaTypes = new ArrayList<>();
+        }
         return entAreaTypes;
     }
 
@@ -172,6 +169,9 @@ public class MovementFact {
     }
 
     public List<String> getExtAreaCodes() {
+        if (this.extAreaCodes== null) {
+            this.extAreaCodes = new ArrayList<>();
+        }
         return extAreaCodes;
     }
 
@@ -180,6 +180,9 @@ public class MovementFact {
     }
 
     public List<String> getExtAreaTypes() {
+        if (this.extAreaTypes== null) {
+            this.extAreaTypes = new ArrayList<>();
+        }
         return extAreaTypes;
     }
 
@@ -446,7 +449,6 @@ public class MovementFact {
                 ", activityMessageType='" + activityMessageType + '\'' +
                 ", areaCodes=" + (areaCodes != null ? Arrays.toString(areaCodes.toArray()) : null) +
                 ", areaTypes=" + (areaTypes != null ? Arrays.toString(areaTypes.toArray()) : null) +
-                ", areaMovementType=" + (areaMovementType != null ? Arrays.toString(areaMovementType.toArray()) : null) +
                 ", entAreaCodes=" + (entAreaCodes != null ? Arrays.toString(entAreaCodes.toArray()) : null) +
                 ", entAreaTypes=" + (entAreaTypes != null ? Arrays.toString(entAreaTypes.toArray()) : null) +
                 ", extAreaCodes=" + (extAreaCodes != null ? Arrays.toString(extAreaCodes.toArray()) : null) +

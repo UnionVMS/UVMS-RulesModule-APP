@@ -36,5 +36,5 @@ public interface ValidationService {
      * @return number of open tickets
      * @throws RulesServiceException if unsuccessful
      */
-    long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException;
+    long getNumberOfOpenTickets(String userName) throws RulesServiceException, RulesFaultException;
 }

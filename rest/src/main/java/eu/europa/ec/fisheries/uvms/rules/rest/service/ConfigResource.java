@@ -50,11 +50,15 @@ public class ConfigResource {
             Map act = getActions();
             LogicOperatorType[] log = getLogicOperatorType();
             AvailabilityType[] availability = getAvailability();
+            MobileTerminalStatus[] mobileTerminalStatuses = getMobileTerminalStatuses();
+            AssetStatus[] assetStatuses = getAssetStatuses();
 
             map.put("CRITERIA", crit);
             map.put("ACTIONS", act);
             map.put("LOGIC_OPERATORS", log);
             map.put("AVAILABILITY", availability);
+            map.put("MOBILETERMINAL_STATUSES", mobileTerminalStatuses);
+            map.put("ASSET_STATUSES", assetStatuses);
 
             return new ResponseDto(map, ResponseCode.OK);
         } catch (Exception ex) {
@@ -94,6 +98,15 @@ public class ConfigResource {
     private AvailabilityType[] getAvailability() {
         return AvailabilityType.values();
     }
+
+    private MobileTerminalStatus[] getMobileTerminalStatuses() {
+        return MobileTerminalStatus.values();
+    }
+
+    private AssetStatus[] getAssetStatuses() {
+        return AssetStatus.values();
+    }
+
 
     private Map getActions() {
         Map map = new HashMap();
@@ -149,8 +162,6 @@ public class ConfigResource {
             case ASSET_GROUP:
             case VESSEL_STATUS:
             case MT_STATUS:
-            case AREA_MOVEMENT_TYPE:
-
             case AREA_CODE_ENT:
             case AREA_TYPE_ENT:
             case AREA_CODE_EXT:
@@ -227,48 +238,6 @@ public class ConfigResource {
             return new ResponseDto(TicketStatusType.values(), ResponseCode.OK);
         } catch (Exception ex) {
             LOG.error("[ Error when getting ticket statuses. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    /**
-     *
-     * @responseMessage 200 Mobile terminal statuses fetched
-     * @responseMessage 500 No config fetched
-     *
-     * @summary Get mobile terminal statuses
-     *
-     */
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/mobileterminalstatus")
-    public ResponseDto getMobileTerminalStatuses() {
-        try {
-            return new ResponseDto(MobileTerminalStatus.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting mobile terminal statuses. ] {} ", ex.getMessage());
-            return ErrorHandler.getFault(ex);
-        }
-    }
-
-    /**
-     *
-     * @responseMessage 200 Asset statuses fetched
-     * @responseMessage 500 No config fetched
-     *
-     * @summary Get asset statuses
-     *
-     */
-    @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Path(value = "/assetstatus")
-    public ResponseDto getAssetStatuses() {
-        try {
-            return new ResponseDto(AssetStatus.values(), ResponseCode.OK);
-        } catch (Exception ex) {
-            LOG.error("[ Error when getting asset statuses. ] {} ", ex.getMessage());
             return ErrorHandler.getFault(ex);
         }
     }

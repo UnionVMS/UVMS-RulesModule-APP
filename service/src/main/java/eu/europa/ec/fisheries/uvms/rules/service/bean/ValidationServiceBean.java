@@ -304,10 +304,7 @@ public class ValidationServiceBean implements ValidationService {
 
             // TODO: Do something with the response???
 //            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
-
 //            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
-//            för att få ut AcknowledgeType för hur det gick med Email-et.
-// Metoden kastar ExchangeValidationException (som är en ExchangeModelMapperException) - som containar "ExchangeFault.code - och ExchangeFault.message" som message om det är ett Fault, ger AcknowledgeType.OK om det gick bra AcknowledgeType.NOK om pluginen inte är startad
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! {} ]", e.getMessage());
@@ -512,9 +509,9 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     @Override
-    public long getNumberOfOpenTickets() throws RulesServiceException, RulesFaultException {
+    public long getNumberOfOpenTickets(String userName) throws RulesServiceException, RulesFaultException {
         try {
-            String request = RulesDataSourceRequestMapper.getNumberOfOpenTickets();
+            String request = RulesDataSourceRequestMapper.getNumberOfOpenTickets(userName);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 

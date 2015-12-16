@@ -10,8 +10,6 @@ public enum SubCriteria {
 
     AREA_CODE(MainCriteria.AREA),
     AREA_TYPE(MainCriteria.AREA),
-    AREA_MOVEMENT_TYPE(MainCriteria.AREA),
-
     AREA_CODE_ENT(MainCriteria.AREA),
     AREA_TYPE_ENT(MainCriteria.AREA),
     AREA_CODE_EXT(MainCriteria.AREA),

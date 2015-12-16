@@ -184,8 +184,9 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String getNumberOfOpenTickets() throws RulesModelMarshallException {
+    public static String getNumberOfOpenTickets(String userName) throws RulesModelMarshallException {
         GetNumberOfOpenTicketsRequest request = new GetNumberOfOpenTicketsRequest();
+        request.setUserName(userName);
         request.setMethod(RulesDataSourceMethod.GET_NUMBER_OF_OPEN_TICKETS);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }

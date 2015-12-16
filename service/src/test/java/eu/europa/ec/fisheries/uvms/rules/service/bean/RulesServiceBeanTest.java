@@ -470,7 +470,7 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
         Long ticketCount = 5L;
-        when(mockValidationServiceBean.getNumberOfOpenTickets()).thenReturn(ticketCount);
+        when(mockValidationServiceBean.getNumberOfOpenTickets("userName")).thenReturn(ticketCount);
 
 //        ticketCountEvent.fire(new NotificationMessage("ticketCount", ticketCount));
 

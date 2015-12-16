@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttri
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.wsdl.vessel.group.VesselGroup;
 import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
@@ -37,25 +38,18 @@ public class MovementFactMapper {
         if (movement.getMetaData() != null) {
             List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
             for (MovementMetaDataAreaType area : areas) {
-
-                // TODO: REMOVE!!! wait for movement to send relevant info ->
-                fact.getAreaCodes().add(area.getCode());
-                fact.getAreaTypes().add(area.getAreaType());
-                // <-
-
-//                // TODO: wait for movement to send relevant info
-//                if (area.getAreaTransitionType().equals(AreaTransitionType.POS) || area.getAreaMovementType().equals(AreaTransitionType.ENT)) {
-//                    fact.getAreaCodes().add(area.getCode());
-//                    fact.getAreaTypes().add(area.getAreaType());
-//                }
-//                if (area.getAreaTransitionType().equals(AreaTransitionType.ENT)) {
-//                    fact.getEntAreaCodes().add(area.getCode());
-//                    fact.getEntAreaTypes().add(area.getAreaType());
-//                }
-//                if (area.getAreaTransitionType().equals(AreaTransitionType.EXT)) {
-//                    fact.getExtAreaCodes().add(area.getCode());
-//                    fact.getExtAreaTypes().add(area.getAreaType());
-//                }
+                if (MovementTypeType.POS.equals(area.getTransitionType()) || MovementTypeType.ENT.equals(area.getTransitionType())) {
+                    fact.getAreaCodes().add(area.getCode());
+                    fact.getAreaTypes().add(area.getAreaType());
+                }
+                if (MovementTypeType.ENT.equals(area.getTransitionType())) {
+                    fact.getEntAreaCodes().add(area.getCode());
+                    fact.getEntAreaTypes().add(area.getAreaType());
+                }
+                if (MovementTypeType.EXI.equals(area.getTransitionType())) {
+                    fact.getExtAreaCodes().add(area.getCode());
+                    fact.getExtAreaTypes().add(area.getAreaType());
+                }
             }
         }
 
