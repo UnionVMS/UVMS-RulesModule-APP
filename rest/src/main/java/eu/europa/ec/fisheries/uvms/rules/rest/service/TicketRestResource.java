@@ -101,7 +101,7 @@ public class TicketRestResource {
      * @summary Get number of open tickets
      *
      */
-    @POST
+    @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/countopen/{loggedInUser}")
     public ResponseDto getNumberOfOpenTicketReports(@PathParam(value = "loggedInUser") final String loggedInUser) {
