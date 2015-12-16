@@ -43,6 +43,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
@@ -118,6 +119,19 @@ public class RulesServiceBean implements RulesService {
     @EJB
     ValidationService validationService;
 
+    private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
+        String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
+        String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+        TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+        GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
+
+        if (userResponse != null && userResponse.getContactDetails() != null) {
+            return userResponse.getContactDetails().getOrganisationName();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -131,13 +145,9 @@ public class RulesServiceBean implements RulesService {
         LOG.info("Create invoked in service layer");
         try {
             // Get organisation of user
-            String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(customRule.getUpdatedBy());
-            String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
-            TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
-            GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
-
-            if (userResponse != null && userResponse.getContactDetails() != null) {
-                customRule.setOrganisation(userResponse.getContactDetails().getOrganisationName());
+            String organisationName = getOrganisationName(customRule.getUpdatedBy());
+            if (organisationName != null) {
+                customRule.setOrganisation(organisationName);
             } else {
                 LOG.warn("User {} is not connected to any organisation!", customRule.getUpdatedBy());
             }
@@ -192,6 +202,14 @@ public class RulesServiceBean implements RulesService {
     public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
         LOG.info("Update custom rule invoked in service layer");
         try {
+            // Get organisation of user
+            String organisationName = getOrganisationName(oldCustomRule.getUpdatedBy());
+            if (organisationName != null) {
+                oldCustomRule.setOrganisation(organisationName);
+            } else {
+                LOG.warn("User {} is not connected to any organisation!", oldCustomRule.getUpdatedBy());
+            }
+
             String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
@@ -200,7 +218,7 @@ public class RulesServiceBean implements RulesService {
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid(), null);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid(), null);
             return newCustomRule;
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
+        } catch (RulesModelMapperException | MessageException | JMSException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
