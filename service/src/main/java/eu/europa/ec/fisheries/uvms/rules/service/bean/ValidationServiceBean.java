@@ -207,7 +207,7 @@ public class ValidationServiceBean implements ValidationService {
             TextMessage customRuleMessage = consumer.getMessage(customRuleMessageId, TextMessage.class);
             customRuleType = RulesDataSourceResponseMapper.getCustomRuleResponse(customRuleMessage, customRuleMessageId);
         } catch (RulesModelMapperException | RulesFaultException | MessageException | JMSException e) {
-            LOG.error("[ Failed to fetch rule when sending email to subscribers! {} ]", e.getMessage());
+            LOG.error("[ Failed to fetch rule when sending email to subscribers! ] {}", e.getMessage());
         }
 
         List<SubscriptionType> subscriptions = customRuleType.getSubscriptions();
@@ -277,7 +277,7 @@ public class ValidationServiceBean implements ValidationService {
             // TODO: Do something with the response???
 
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
-            LOG.error("[ Failed to send to endpoint! {} ]", e.getMessage());
+            LOG.error("[ Failed to send to endpoint! ] {}", e.getMessage());
         }
 
     }
@@ -307,7 +307,7 @@ public class ValidationServiceBean implements ValidationService {
 //            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
 
         } catch (ExchangeModelMapperException | MessageException e) {
-            LOG.error("[ Failed to send email! {} ]", e.getMessage());
+            LOG.error("[ Failed to send email! ] {}", e.getMessage());
         }
     }
 
@@ -443,7 +443,7 @@ public class ValidationServiceBean implements ValidationService {
 
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
-            LOG.error("[ Failed to create ticket! {} ]", e.getMessage());
+            LOG.error("[ Failed to create ticket! ] {}", e.getMessage());
         }
     }
 
@@ -490,7 +490,7 @@ public class ValidationServiceBean implements ValidationService {
 
             sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
-            LOG.error("[ Failed to create alarm! {} ]", e.getMessage());
+            LOG.error("[ Failed to create alarm! ] {}", e.getMessage());
         }
     }
 
