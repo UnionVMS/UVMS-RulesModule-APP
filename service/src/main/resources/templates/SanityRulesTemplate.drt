@@ -1,0 +1,22 @@
+template header
+rulename
+expression
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import java.util.Date;
+global org.slf4j.Logger logger;
+global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
+
+template "SanityRulesTemplate"
+
+rule "@{rulename}"
+when
+    $fact : RawMovementFact(@{expression})
+then
+    logger.info("\t==> Executing SANITY RULE '@{rulename}'");
+    $fact.setOk(false);
+    validationService.createAlarmReport("@{rulename}", $fact);
+end
+
+end template

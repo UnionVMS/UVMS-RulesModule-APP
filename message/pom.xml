@@ -25,6 +25,20 @@
 	        <artifactId>uvms-config</artifactId>
 	        <version>${uvms.config.version}</version>
         </dependency>
+<!--
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
+			<version>5.12.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-camel</artifactId>
+	        <version>${camel.version}</version>
+		</dependency>
+		
+-->
     </dependencies>
 
     <build>
