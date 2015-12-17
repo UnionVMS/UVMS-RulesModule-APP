@@ -47,7 +47,7 @@ dialect "java"
         validationService.createAlarmReport("Transponder not found", $fact);
 end
 
-// A asset must exist
+// An asset must exist
 rule "Sanity rule 5 - Asset not found"
 dialect "java"
     when
@@ -84,7 +84,7 @@ end
 rule "Sanity rule 8 - Serial No. missing"
 dialect "java"
     when
-        $fact : RawMovementFact((mobileTerminalSerialNumber == null) && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "IRIDIUM")
+        $fact : RawMovementFact(mobileTerminalSerialNumber == null && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "IRIDIUM")
     then
         logger.info("\t==> Executing RULE 'Sanity rule 8 - Serial No. missing'");
         $fact.setOk(false);

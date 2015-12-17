@@ -54,11 +54,10 @@ public class RulesTimerBean {
                 fact.setDeadline(gregCal.getTime());
 
                 if (fact.getDeadline().getTime() <= new Date().getTime()) {
-                    LOG.info("\t==> Executing RULE 'Asset not sending', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid() + ", movementGuid:" + fact.getMovementGuid());
+                    LOG.info("\t==> Executing RULE 'Asset not sending', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid());
 
                     String ruleName = "Asset not sending";
-                    String ruleGuid = "DEADLINE";
-                    rulesService.timerRuleTriggered(ruleName, ruleGuid, fact);
+                    rulesService.timerRuleTriggered(ruleName, fact);
                 }
 
             }

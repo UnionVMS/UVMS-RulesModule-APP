@@ -390,7 +390,7 @@ public class RulesServiceBean implements RulesService {
 
     // Triggered by timer rule
     @Override
-    public void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
+    public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
             // Check if alarm already is created for this vessel
@@ -400,14 +400,14 @@ public class RulesServiceBean implements RulesService {
             boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
 
             if (noAlarmCreated) {
-                createAssetNotSendingAlarm(ruleName, ruleGuid, fact);
+                createAssetNotSendingAlarm(ruleName, fact);
             }
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
 
-    private void createAssetNotSendingAlarm(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
+    private void createAssetNotSendingAlarm(String ruleName, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
         AlarmReportType alarmReportType = new AlarmReportType();
 
         alarmReportType.setStatus(AlarmStatusType.OPEN);
@@ -419,8 +419,8 @@ public class RulesServiceBean implements RulesService {
 
         AlarmItemType alarmItem = new AlarmItemType();
         alarmItem.setGuid(UUID.randomUUID().toString());
-        alarmItem.setRuleGuid(ruleGuid);
         alarmItem.setRuleName(ruleName);
+        alarmItem.setRuleGuid(ruleName);
 
         alarmReportType.getAlarmItem().add(alarmItem);
 
@@ -615,11 +615,11 @@ public class RulesServiceBean implements RulesService {
                 String connectId = mobileTerminal.getConnectId();
                 if (connectId != null) {
                     vessel = getVesselByConnectId(connectId);
-                    auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
                 }
             } else {
-                vessel = getVesselByAssetId(rawMovement.getAssetId());
+                vessel = getVesselByCfrIrcs(rawMovement.getAssetId());
             }
+            auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
 
             RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, vessel, pluginType);
             LOG.debug("rawMovementFact:{}", rawMovementFact);
@@ -750,7 +750,7 @@ public class RulesServiceBean implements RulesService {
         return resultList.size() != 1 ? null : resultList.get(0);
     }
 
-    private Vessel getVesselByAssetId(AssetId assetId) {
+    private Vessel getVesselByCfrIrcs(AssetId assetId) {
         LOG.info("Fetch vessel by assetId");
 
         Vessel vessel = null;

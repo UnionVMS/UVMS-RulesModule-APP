@@ -430,8 +430,7 @@ public class RulesServiceBeanTest {
 
         // Act
         String ruleName = "ruleName";
-        String ruleGuid = "ruleGuid";
-        rulesServiceBean.timerRuleTriggered(ruleName, ruleGuid, fact);
+        rulesServiceBean.timerRuleTriggered(ruleName, fact);
 
         // Verify
         verifyStatic();
@@ -477,8 +476,7 @@ public class RulesServiceBeanTest {
 
         // Act
         String ruleName = "ruleName";
-        String ruleGuid = "ruleGuid";
-        rulesServiceBean.timerRuleTriggered(ruleName, ruleGuid, fact);
+        rulesServiceBean.timerRuleTriggered(ruleName, fact);
 
         // Verify
         verifyStatic();
@@ -496,11 +494,10 @@ public class RulesServiceBeanTest {
         RulesDataSourceRequestMapper.mapCreateTicket(argument.capture());
         TicketType ticket = argument.getValue();
         assertEquals(ruleName, ticket.getRuleName());
-        assertEquals(ruleGuid, ticket.getRuleGuid());
+        assertEquals(ruleName, ticket.getRuleGuid());
         assertEquals(TicketStatusType.OPEN, ticket.getStatus());
         assertEquals(fact.getMovementGuid(), ticket.getMovementGuid());
         assertEquals(fact.getVesselGuid(), ticket.getVesselGuid());
-
     }
 
     @Test

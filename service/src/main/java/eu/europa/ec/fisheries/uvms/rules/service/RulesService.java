@@ -108,7 +108,7 @@ public interface RulesService {
 
     List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException;
 
-    void timerRuleTriggered(String ruleName, String ruleGuid, PreviousReportFact fact) throws RulesServiceException, RulesFaultException;
+    void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException;
 
     String reprocessAlarm(List<String> alarms) throws RulesServiceException, RulesFaultException;
 

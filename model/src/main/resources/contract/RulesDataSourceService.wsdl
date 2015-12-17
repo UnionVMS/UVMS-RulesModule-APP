@@ -52,6 +52,7 @@
                     <xsd:enumeration value="GET_ALARM_REPORT_BY_VESSEL_GUID"/>
                     <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
                     <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_VESSEL_GUID"/>
+                    <xsd:enumeration value="GET_SANITY_RULES"/>
 
                     <!-- Actions triggered by timer -->
                     <xsd:enumeration value="GET_PREVIOUS_REPORTS"/>
@@ -95,7 +96,6 @@
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="userName" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -107,6 +107,27 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Sanity rules request -->
+            <xsd:element name="GetSanityRulesRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Sanity rules response -->
+            <xsd:element name="GetSanityRulesResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="sanityRules" type="customrule:SanityRuleType" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -711,6 +732,13 @@
         <part name="body" element="source:GetRunnableCustomRulesResponse"/>
     </message>
 
+    <message name="GetSanityRulesRequest">
+        <part name="body" element="source:GetSanityRulesRequest"/>
+    </message>
+    <message name="GetSanityRulesResponse">
+        <part name="body" element="source:GetSanityRulesResponse"/>
+    </message>
+
     <message name="GetCustomRulesByUserRequest">
         <part name="body" element="source:GetCustomRulesByUserRequest"/>
     </message>
@@ -893,6 +921,12 @@
         <operation name="GetRunnableCustomRules">
             <input message="source:GetRunnableCustomRulesRequest"/>
             <output message="source:GetRunnableCustomRulesResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetSanityRules">
+            <input message="source:GetSanityRulesRequest"/>
+            <output message="source:GetSanityRulesResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1087,6 +1121,18 @@
         </operation>
 
         <operation name="GetRunnableCustomRules">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetSanityRules">
             <input>
                 <soap:body use="literal"/>
             </input>

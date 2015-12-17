@@ -5,6 +5,7 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import org.slf4j.Logger;
@@ -141,6 +142,12 @@ public class RulesDataSourceResponseMapper {
         return response.getCustomRules();
     }
 
+    public static List<SanityRuleType> mapToGetSanityRulesFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetSanityRulesResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetSanityRulesResponse.class);
+        return response.getSanityRules();
+    }
+
     public static GetCustomRuleListByQueryResponse mapToCustomRuleListByQueryFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
         GetCustomRuleListByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRuleListByQueryResponse.class);
@@ -168,6 +175,12 @@ public class RulesDataSourceResponseMapper {
     public static String getRunnableCustomRulesResponse(List<CustomRuleType> customRules) throws RulesModelMapperException {
         GetRunnableCustomRulesResponse response = new GetRunnableCustomRulesResponse();
         response.getCustomRules().addAll(customRules);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String getSanityRulesResponse(List<SanityRuleType> sanityRules) throws RulesModelMapperException {
+        GetSanityRulesResponse response = new GetSanityRulesResponse();
+        response.getSanityRules().addAll(sanityRules);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

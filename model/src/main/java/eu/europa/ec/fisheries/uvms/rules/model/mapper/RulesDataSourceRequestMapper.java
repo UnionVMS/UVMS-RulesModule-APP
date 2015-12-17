@@ -42,6 +42,12 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapGetSanityRules() throws RulesModelMapperException {
+        GetRunnableCustomRulesRequest request = new GetRunnableCustomRulesRequest();
+        request.setMethod(RulesDataSourceMethod.GET_SANITY_RULES);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapCustomRuleListByQuery(CustomRuleQuery query) throws RulesModelMapperException {
         GetCustomRuleListByQueryRequest request = new GetCustomRuleListByQueryRequest();
         request.setMethod(RulesDataSourceMethod.LIST_CUSTOM_RULES_BY_QUERY);

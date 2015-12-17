@@ -7,10 +7,7 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionTypeType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
@@ -123,6 +120,25 @@ public class ValidationServiceBean implements ValidationService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             return RulesDataSourceResponseMapper.mapToGetRunnableCustomRulesFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     * @throws RulesServiceException
+     */
+    @Override
+    public List<SanityRuleType> getSanityRules() throws RulesServiceException, RulesFaultException {
+        LOG.info("Get all sanity rules invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetSanityRules();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            return RulesDataSourceResponseMapper.mapToGetSanityRulesFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -472,8 +488,8 @@ public class ValidationServiceBean implements ValidationService {
             List<AlarmItemType> alarmItems = new ArrayList<>();
             AlarmItemType alarmItem = new AlarmItemType();
             alarmItem.setGuid(UUID.randomUUID().toString());
-            alarmItem.setRuleGuid("sanity rule - " + ruleName);
             alarmItem.setRuleName(ruleName);
+            alarmItem.setRuleGuid(ruleName);
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 

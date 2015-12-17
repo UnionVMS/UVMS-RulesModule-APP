@@ -47,7 +47,7 @@ public class TicketRestResource {
         try {
             return new ResponseDto(rulesService.getTicketList(loggedInUser, query), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException  | NullPointerException ex) {
-            LOG.error("[ Error when geting list. ] {} ", ex.getStackTrace());
+            LOG.error("[ Error when getting list. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
     }

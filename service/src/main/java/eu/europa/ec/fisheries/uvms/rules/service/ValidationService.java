@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryResponse;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -17,6 +18,8 @@ public interface ValidationService {
     List<CustomRuleType> getCustomRulesByUser(String userName) throws RulesServiceException, RulesFaultException;
 
     List<CustomRuleType> getRunnableCustomRules() throws RulesServiceException, RulesFaultException;
+
+    List<SanityRuleType> getSanityRules() throws RulesServiceException, RulesFaultException;
 
     GetCustomRuleListByQueryResponse getCustomRulesByQuery(CustomRuleQuery query) throws RulesServiceException, RulesFaultException;
 

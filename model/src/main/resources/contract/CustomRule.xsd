@@ -223,4 +223,18 @@
 
 
 
+    <!-- SANITY RULES -->
+    <xsd:complexType name="SanityRuleType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="expression" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+
 </xsd:schema>

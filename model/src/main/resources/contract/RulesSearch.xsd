@@ -41,6 +41,7 @@
             <xsd:enumeration value="FROM_DATE"/>
             <xsd:enumeration value="TO_DATE"/>
             <xsd:enumeration value="RULE_GUID"/>
+            <xsd:enumeration value="RULE_NAME"/>
         </xsd:restriction>
     </xsd:simpleType>
 
