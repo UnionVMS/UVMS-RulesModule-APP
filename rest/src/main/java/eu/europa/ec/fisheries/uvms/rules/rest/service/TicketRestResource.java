@@ -1,6 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -63,10 +64,33 @@ public class TicketRestResource {
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/status")
     public ResponseDto updateTicketStatus(final TicketType ticketType) {
         LOG.info("Update ticket status invoked in rest layer");
         try {
             return new ResponseDto(rulesService.updateTicketStatus(ticketType), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 Selected tickets updated
+     * @responseMessage 500 No tickets updated
+     *
+     * @summary Update ticket status
+     *
+     */
+    @POST
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/status/{loggedInUser}/{status}")
+    public ResponseDto updateTicketStatusByQuery(@PathParam("loggedInUser") String loggedInUser, TicketQuery query, @PathParam("status") TicketStatusType status) {
+        LOG.info("Update ticket status invoked in rest layer");
+        try {
+            return new ResponseDto(rulesService.updateTicketStatusByQuery(loggedInUser, query, status), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);

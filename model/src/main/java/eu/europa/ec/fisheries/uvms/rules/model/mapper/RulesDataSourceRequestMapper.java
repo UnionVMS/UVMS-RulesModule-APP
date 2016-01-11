@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,6 +126,15 @@ public class RulesDataSourceRequestMapper {
         SetTicketStatusRequest request = new SetTicketStatusRequest();
         request.setTicket(ticket);
         request.setMethod(RulesDataSourceMethod.SET_TICKET_STATUS);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapUpdateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesModelMapperException {
+        UpdateTicketStatusByQueryRequest request = new UpdateTicketStatusByQueryRequest();
+        request.setLoggedInUser(loggedInUser);
+        request.setStatus(status);
+        request.setQuery(query);
+        request.setMethod(RulesDataSourceMethod.UPDATE_TICKET_STATUS_BY_QUERY);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

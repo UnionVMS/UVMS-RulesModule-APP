@@ -10,6 +10,7 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -119,13 +120,14 @@ public interface RulesService {
      * @return an alarm
      * @throws RulesServiceException if unsuccessful
      */
-    public AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException;
+    AlarmReportType getAlarmReportByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
     /**
      * @param guid the GUID of a ticket
      * @return a ticket
      * @throws RulesServiceException if unsuccessful
      */
-    public TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException;
+    TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
+    List<TicketType> updateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesServiceException, RulesFaultException;
 }

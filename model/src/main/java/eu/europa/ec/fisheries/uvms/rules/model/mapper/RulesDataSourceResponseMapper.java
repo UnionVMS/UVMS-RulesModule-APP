@@ -130,6 +130,12 @@ public class RulesDataSourceResponseMapper {
         return response.getTicket();
     }
 
+    public static List<TicketType> mapToUpdateTicketStatusByQueryFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        UpdateTicketStatusByQueryResponse response = JAXBMarshaller.unmarshallTextMessage(message, UpdateTicketStatusByQueryResponse.class);
+        return response.getTickets();
+    }
+
     public static List<CustomRuleType> mapToGetCustomRulesFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
         GetCustomRulesByUserResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetCustomRulesByUserResponse.class);
@@ -223,6 +229,12 @@ public class RulesDataSourceResponseMapper {
     public static String setTicketStatusResponse(TicketType ticket) throws RulesModelMapperException {
         SetTicketStatusResponse response = new SetTicketStatusResponse();
         response.setTicket(ticket);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String updateTicketStatusByQueryResponse(List<TicketType> tickets) throws RulesModelMapperException {
+        UpdateTicketStatusByQueryResponse response = new UpdateTicketStatusByQueryResponse();
+        response.getTickets().addAll(tickets);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

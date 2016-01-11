@@ -339,12 +339,37 @@ public class RulesServiceBean implements RulesService {
             // Notify long-polling clients of the update
             ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
 
-            // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
+            // Notify long-polling clients of the change (no value since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), null);
 
             return updatedTicket;
+
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<TicketType> updateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesServiceException, RulesFaultException {
+        LOG.info("Update all ticket status invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateTicketStatusByQuery(loggedInUser, query, status);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            List<TicketType> updatedTickets = RulesDataSourceResponseMapper.mapToUpdateTicketStatusByQueryFromResponse(response, messageId);
+
+            // Notify long-polling clients of the update
+            for (TicketType updatedTicket : updatedTickets) {
+                ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+                sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), null);
+            }
+
+            // Notify long-polling clients of the change (no value since FE will need to fetch it)
+            ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
+
+            return updatedTickets;
 
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());

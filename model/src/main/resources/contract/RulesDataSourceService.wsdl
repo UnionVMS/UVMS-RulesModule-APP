@@ -33,6 +33,7 @@
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_USER"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
+                    <xsd:enumeration value="UPDATE_TICKET_STATUS_BY_QUERY"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
@@ -332,6 +333,29 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update ticket status by query request -->
+            <xsd:element name="UpdateTicketStatusByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="loggedInUser" type="xsd:string"/>
+                                <xsd:element name="query" type="search:TicketQuery"/>
+                                <xsd:element name="status" type="ticket:TicketStatusType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateTicketStatusByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="1" maxOccurs="unbounded"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -776,6 +800,13 @@
         <part name="body" element="source:SetTicketStatusResponse"/>
     </message>
 
+    <message name="UpdateTicketStatusByQueryRequest">
+        <part name="body" element="source:UpdateTicketStatusByQueryRequest"/>
+    </message>
+    <message name="UpdateTicketStatusByQueryResponse">
+        <part name="body" element="source:UpdateTicketStatusByQueryResponse"/>
+    </message>
+
     <message name="SetAlarmStatusRequest">
         <part name="body" element="source:SetAlarmStatusRequest"/>
     </message>
@@ -959,6 +990,12 @@
         <operation name="SetTicketStatus">
             <input message="source:SetTicketStatusRequest"/>
             <output message="source:SetTicketStatusResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateTicketStatusByQuery">
+            <input message="source:UpdateTicketStatusByQueryRequest"/>
+            <output message="source:UpdateTicketStatusByQueryResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1195,6 +1232,18 @@
         </operation>
 
         <operation name="SetTicketStatus">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateTicketStatusByQuery">
             <input>
                 <soap:body use="literal"/>
             </input>
