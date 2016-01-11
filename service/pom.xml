@@ -58,9 +58,9 @@
             <version>${movement.model.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.vessel</groupId>
-            <artifactId>vessel-model</artifactId>
-            <version>${vessel.model.version}</version>
+            <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+            <artifactId>asset-model</artifactId>
+            <version>${asset.model.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>

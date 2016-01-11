@@ -8,20 +8,19 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
-import eu.europa.ec.fisheries.wsdl.vessel.group.VesselGroup;
-import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
-
+import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Vessel vessel, String comChannelType, List<VesselGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
         MovementFact fact = new MovementFact();
 
         fact.setMovementMovement(movement);
         fact.setMovementGuid(movement.getGuid());
 
         // ROOT
-        for (VesselGroup assetGroup : assetGroups) {
+        for (AssetGroup assetGroup : assetGroups) {
             fact.getAssetGroups().add(assetGroup.getGuid());
         }
 
@@ -54,15 +53,15 @@ public class MovementFactMapper {
         }
 
         // ASSET
-        if (vessel != null) {
-            fact.setAssetIdGearType(vessel.getGearType());
-            fact.setExternalMarking(vessel.getExternalMarking());
-            fact.setFlagState(vessel.getCountryCode());
-            fact.setCfr(vessel.getCfr());
-            fact.setIrcs(vessel.getIrcs());
-            fact.setAssetName(vessel.getName());
-            fact.setAssetGuid(vessel.getVesselId().getGuid());
-            fact.setAssetStatus(vessel.isActive() ? "ACTIVE":"INACTIVE");
+        if (asset != null) {
+            fact.setAssetIdGearType(asset.getGearType());
+            fact.setExternalMarking(asset.getExternalMarking());
+            fact.setFlagState(asset.getCountryCode());
+            fact.setCfr(asset.getCfr());
+            fact.setIrcs(asset.getIrcs());
+            fact.setAssetName(asset.getName());
+            fact.setAssetGuid(asset.getAssetId().getGuid());
+            fact.setAssetStatus(asset.isActive() ? "ACTIVE":"INACTIVE");
         }
 
         // MOBILE_TERMINAL

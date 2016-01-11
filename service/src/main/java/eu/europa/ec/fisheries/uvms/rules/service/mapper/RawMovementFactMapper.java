@@ -1,21 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttribute;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
-import eu.europa.ec.fisheries.wsdl.vessel.types.Vessel;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 
 import java.util.List;
 import java.util.UUID;
 
 public class RawMovementFactMapper {
-    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Vessel vessel, String pluginType) {
+    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Asset vessel, String pluginType) {
         RawMovementFact fact = new RawMovementFact();
         fact.setRawMovementType(rawMovement);
         fact.setOk(true);
@@ -104,7 +100,7 @@ public class RawMovementFactMapper {
 
         // From Vessel
         if (vessel != null) {
-            fact.setAssetGuid(vessel.getVesselId().getGuid());
+            fact.setAssetGuid(vessel.getAssetId().getGuid());
         }
 
         return fact;

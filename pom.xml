@@ -25,7 +25,7 @@
         <uvms.common.version>1.4-SNAPSHOT</uvms.common.version>
         <movement.model.version>1.0.6-SNAPSHOT</movement.model.version>
         <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
-        <vessel.model.version>1.0.10-SNAPSHOT</vessel.model.version>
+        <asset.model.version>1.0.10-SNAPSHOT</asset.model.version>
         <mobileterminal.model.version>1.0.7-SNAPSHOT</mobileterminal.model.version>
         <user.model.version>1.1.0-SNAPSHOT</user.model.version>
         <usm4uvms.version>0.0.12-SNAPSHOT</usm4uvms.version>
