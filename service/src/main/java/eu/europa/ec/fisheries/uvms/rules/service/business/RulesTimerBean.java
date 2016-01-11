@@ -10,9 +10,9 @@ import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +38,16 @@ public class RulesTimerBean {
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
 //     @Schedule(second = "0", minute = "*/2", hour = "*", persistent = false)
     public void checkCommunication() {
-        LOG.info("RulesTimerBean tick");
-        try {
+        LOG.debug("RulesTimerBean tick");
             // Get all previous reports from DB
-            List<PreviousReportType> previousReports = rulesService.getPreviousMovementReports();
+         List<PreviousReportType> previousReports = new ArrayList<>();
+         try {
+             previousReports = rulesService.getPreviousMovementReports();
+         } catch (RulesServiceException | RulesFaultException e) {
+             LOG.warn("No previous movement report found");
+         }
 
+         try {
             // Map to fact, adding 2h to deadline
             for (PreviousReportType previousReport : previousReports) {
                 PreviousReportFact fact = new PreviousReportFact();
@@ -54,18 +59,15 @@ public class RulesTimerBean {
                 fact.setDeadline(gregCal.getTime());
 
                 if (fact.getDeadline().getTime() <= new Date().getTime()) {
-                    LOG.info("\t==> Executing RULE 'Asset not sending', deadline:" + fact.getDeadline() + ", vesselGuid:" + fact.getVesselGuid());
+                    LOG.info("\t==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getVesselGuid());
 
-                    String ruleName = "Asset not sending";
+                    String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
                     rulesService.timerRuleTriggered(ruleName, fact);
                 }
-
             }
-
         } catch (RulesServiceException | RulesFaultException e) {
-            LOG.error("[ Error when running check communication timer ]");
+            LOG.error("[ Error when running checkCommunication timer ] {}", e.getMessage());
         }
-
     }
 
 }

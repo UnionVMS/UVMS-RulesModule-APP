@@ -393,11 +393,11 @@ public class RulesServiceBean implements RulesService {
     public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
-            // Check if alarm already is created for this vessel
-            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByVesselGuid(fact.getVesselGuid());
+            // Check if alarm already is created for this asset
+            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
             String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
             TextMessage alarmResponse = consumer.getMessage(messageIdAlarm, TextMessage.class);
-            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
+            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
 
             if (noAlarmCreated) {
                 createAssetNotSendingAlarm(ruleName, fact);

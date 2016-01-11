@@ -142,10 +142,11 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapGetAlarmReportByVesselGuid(String vesselGuid) throws RulesModelMapperException {
-        GetAlarmReportByVesselGuidRequest request = new GetAlarmReportByVesselGuidRequest();
-        request.setVesselGuid(vesselGuid);
-        request.setMethod(RulesDataSourceMethod.GET_ALARM_REPORT_BY_VESSEL_GUID);
+    public static String mapGetAlarmReportByAssetAndRule(String assetGuid, String ruleGuid) throws RulesModelMapperException {
+        GetAlarmReportByAssetAndRuleRequest request = new GetAlarmReportByAssetAndRuleRequest();
+        request.setAssetGuid(assetGuid);
+        request.setRuleGuid(ruleGuid);
+        request.setMethod(RulesDataSourceMethod.GET_ALARM_REPORT_BY_ASSET_AND_RULE);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

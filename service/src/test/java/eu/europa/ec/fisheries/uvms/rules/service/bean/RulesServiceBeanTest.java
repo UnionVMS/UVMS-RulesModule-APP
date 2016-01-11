@@ -6,7 +6,7 @@ import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByVesselGuidResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByAssetAndRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByVesselGuidResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -18,6 +18,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -408,7 +409,7 @@ public class RulesServiceBeanTest {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
         PreviousReportFact fact = new PreviousReportFact();
-        fact.setVesselGuid("vessetGuid");
+        fact.setVesselGuid("vesselGuid");
         String request = "request";
         when(RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid())).thenReturn(request);
 
@@ -424,22 +425,22 @@ public class RulesServiceBeanTest {
 //        when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
         mockStatic(RulesDataSourceResponseMapper.class);
-        GetAlarmReportByVesselGuidResponse alarmReportResponse = new GetAlarmReportByVesselGuidResponse();
+        GetAlarmReportByAssetAndRuleResponse alarmReportResponse = new GetAlarmReportByAssetAndRuleResponse();
         alarmReportResponse.setAlarm(new AlarmReportType());
-        when(RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(response, messageId)).thenReturn(alarmReportResponse);
+        when(RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(response, messageId)).thenReturn(alarmReportResponse);
 
         // Act
-        String ruleName = "ruleName";
+        String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
         rulesServiceBean.timerRuleTriggered(ruleName, fact);
 
         // Verify
         verifyStatic();
 //        RulesDataSourceRequestMapper.mapGetTicketByVesselGuid(fact.getVesselGuid());
-        RulesDataSourceRequestMapper.mapGetAlarmReportByVesselGuid(fact.getVesselGuid());
+        RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
 
         verifyStatic();
 //        RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId);
-        RulesDataSourceResponseMapper.mapToGetAlarmReportByVesselGuidFromResponse(response, messageId);
+        RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(response, messageId);
 
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);

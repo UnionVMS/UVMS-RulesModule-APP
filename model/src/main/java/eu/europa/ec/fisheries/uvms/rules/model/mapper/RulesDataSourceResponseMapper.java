@@ -268,9 +268,9 @@ public class RulesDataSourceResponseMapper {
         return response;
     }
 
-    public static GetAlarmReportByVesselGuidResponse mapToGetAlarmReportByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static GetAlarmReportByAssetAndRuleResponse mapToGetAlarmReportByAssetAndRuleFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
-        GetAlarmReportByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmReportByVesselGuidResponse.class);
+        GetAlarmReportByAssetAndRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetAlarmReportByAssetAndRuleResponse.class);
         return response;
     }
 
@@ -280,8 +280,8 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String getAlarmReportByVesselGuidResponse(AlarmReportType alarmReportType) throws RulesModelMapperException {
-        GetAlarmReportByVesselGuidResponse response = new GetAlarmReportByVesselGuidResponse();
+    public static String getAlarmReportByAssetAndRuleResponse(AlarmReportType alarmReportType) throws RulesModelMapperException {
+        GetAlarmReportByAssetAndRuleResponse response = new GetAlarmReportByAssetAndRuleResponse();
         response.setAlarm(alarmReportType);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }

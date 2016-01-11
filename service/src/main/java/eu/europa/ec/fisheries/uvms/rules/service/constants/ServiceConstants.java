@@ -2,11 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
 public class ServiceConstants {
 
-    public static final String FIND_BY_NAME = "Parameter.findByName";
-
-    // Reserved words for rule actions
-    public static final String SEND_TO_CLOSEST_COUNTRY = "<SEND TO CLOSEST COUNTRY>";
-
-
+    // Rule GUID for Asset not sending rule
+    public static final String ASSET_NOT_SENDING_RULE = "Asset not sending";
 
 }
