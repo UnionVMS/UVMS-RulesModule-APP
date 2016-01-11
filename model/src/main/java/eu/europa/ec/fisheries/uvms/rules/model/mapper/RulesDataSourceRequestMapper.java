@@ -135,10 +135,11 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapGetTicketByVesselGuid(String vesselGuid) throws RulesModelMapperException {
-        GetTicketByVesselGuidRequest request = new GetTicketByVesselGuidRequest();
-        request.setVesselGuid(vesselGuid);
-        request.setMethod(RulesDataSourceMethod.GET_TICKET_BY_VESSEL_GUID);
+    public static String mapGetTicketByAssetAndRule(String assetGuid, String ruleGuid) throws RulesModelMapperException {
+        GetTicketByAssetAndRuleRequest request = new GetTicketByAssetAndRuleRequest();
+        request.setAssetGuid(assetGuid);
+        request.setRuleGuid(ruleGuid);
+        request.setMethod(RulesDataSourceMethod.GET_TICKET_BY_ASSET_AND_RULE);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

@@ -262,9 +262,9 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetTicketByVesselGuidResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static GetTicketByAssetAndRuleResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
-        GetTicketByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketByVesselGuidResponse.class);
+        GetTicketByAssetAndRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketByAssetAndRuleResponse.class);
         return response;
     }
 
@@ -274,8 +274,8 @@ public class RulesDataSourceResponseMapper {
         return response;
     }
 
-    public static String getTicketByVesselGuidResponse(TicketType ticketType) throws RulesModelMapperException {
-        GetTicketByVesselGuidResponse response = new GetTicketByVesselGuidResponse();
+    public static String getTicketByAssetAndRuleResponse(TicketType ticketType) throws RulesModelMapperException {
+        GetTicketByAssetAndRuleResponse response = new GetTicketByAssetAndRuleResponse();
         response.setTicket(ticketType);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }

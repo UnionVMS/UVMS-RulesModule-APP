@@ -48,7 +48,7 @@
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
                     <xsd:enumeration value="CREATE_TICKET"/>
-                    <xsd:enumeration value="GET_TICKET_BY_VESSEL_GUID"/>
+                    <xsd:enumeration value="GET_TICKET_BY_ASSET_AND_RULE"/>
                     <xsd:enumeration value="GET_ALARM_REPORT_BY_ASSET_AND_RULE"/>
                     <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
                     <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_VESSEL_GUID"/>
@@ -512,12 +512,13 @@
             </xsd:element>
 
             <!-- Get ticket by vessel guid request -->
-            <xsd:element name="GetTicketByVesselGuidRequest">
+            <xsd:element name="GetTicketByAssetAndRuleRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="vesselGuid" type="xsd:string"/>
+                                <xsd:element name="assetGuid" type="xsd:string"/>
+                                <xsd:element name="ruleGuid" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -525,7 +526,7 @@
             </xsd:element>
 
             <!-- Get ticket by vessel guid response -->
-            <xsd:element name="GetTicketByVesselGuidResponse">
+            <xsd:element name="GetTicketByAssetAndRuleResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ticket" type="ticket:TicketType"/>
@@ -831,11 +832,11 @@
         <part name="body" element="source:GetPreviousReportByVesselGuidResponse"/>
     </message>
 
-    <message name="GetTicketByVesselGuidRequest">
-        <part name="body" element="source:GetTicketByVesselGuidRequest"/>
+    <message name="GetTicketByAssetAndRuleRequest">
+        <part name="body" element="source:GetTicketByAssetAndRuleRequest"/>
     </message>
-    <message name="GetTicketByVesselGuidResponse">
-        <part name="body" element="source:GetTicketByVesselGuidResponse"/>
+    <message name="GetTicketByAssetAndRuleResponse">
+        <part name="body" element="source:GetTicketByAssetAndRuleResponse"/>
     </message>
 
     <message name="GetAlarmReportByAssetAndRuleRequest">
@@ -1008,9 +1009,9 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
-        <operation name="GetTicketByVesselGuid">
-            <input message="source:GetTicketByVesselGuidRequest"/>
-            <output message="source:GetTicketByVesselGuidResponse"/>
+        <operation name="GetTicketByAssetAndRule">
+            <input message="source:GetTicketByAssetAndRuleRequest"/>
+            <output message="source:GetTicketByAssetAndRuleResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1286,7 +1287,7 @@
             </fault>
         </operation>
 
-        <operation name="GetTicketByVesselGuid">
+        <operation name="GetTicketByAssetAndRule">
             <input>
                 <soap:body use="literal"/>
             </input>

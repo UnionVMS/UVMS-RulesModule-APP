@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
@@ -393,14 +394,23 @@ public class RulesServiceBean implements RulesService {
     public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
-            // Check if alarm already is created for this asset
-            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
-            String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
-            TextMessage alarmResponse = consumer.getMessage(messageIdAlarm, TextMessage.class);
-            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
+//            // Check if alarm already is created for this asset
+//            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
+//            String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
+//            TextMessage alarmResponse = consumer.getMessage(messageIdAlarm, TextMessage.class);
+//            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
+//            if (noAlarmCreated) {
+//                createAssetNotSendingAlarm(ruleName, fact);
+//            }
 
-            if (noAlarmCreated) {
-                createAssetNotSendingAlarm(ruleName, fact);
+            // Check if ticket already is created for this asset
+            String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName);
+            String messageIdTicket = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
+            TextMessage ticketResponse = consumer.getMessage(messageIdTicket, TextMessage.class);
+            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(ticketResponse, messageIdTicket).getTicket() == null;
+
+            if (noTicketCreated) {
+                createAssetNotSendingTicket(ruleName, fact);
             }
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
@@ -432,8 +442,32 @@ public class RulesServiceBean implements RulesService {
 
         sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, updatedAlarm.getGuid(), null);
 
-        // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
+        // Notify long-polling clients of the change (no value since FE will need to fetch it)
         alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
+    }
+
+    private void createAssetNotSendingTicket(String ruleName, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
+        TicketType ticket = new TicketType();
+
+        ticket.setVesselGuid(fact.getVesselGuid());
+        ticket.setOpenDate(RulesUtil.dateToString(new Date()));
+        ticket.setRuleName(ruleName);
+        ticket.setRuleGuid(ruleName);
+        ticket.setUpdatedBy("UVMS");
+        ticket.setStatus(TicketStatusType.OPEN);
+        ticket.setMovementGuid(fact.getMovementGuid());
+        ticket.setGuid(UUID.randomUUID().toString());
+
+        String createTicketRequest = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
+        String ticketMessageId = producer.sendDataSourceMessage(createTicketRequest, DataSourceQueue.INTERNAL);
+        TextMessage ticketResponse = consumer.getMessage(ticketMessageId, TextMessage.class);
+
+        TicketType createdTicket = RulesDataSourceResponseMapper.mapSingleTicketFromResponse(ticketResponse, ticketMessageId);
+
+        sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createdTicket.getGuid(), null);
+
+        // Notify long-polling clients of the change
+        ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
     }
 
     @Override
