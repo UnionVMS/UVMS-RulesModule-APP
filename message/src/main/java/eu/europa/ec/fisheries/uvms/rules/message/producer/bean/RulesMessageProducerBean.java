@@ -38,7 +38,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = ConfigConstants.CONFIG_MESSAGE_IN_QUEUE)
     private Queue configQueue;
 
-    @Resource(mappedName = MessageConstants.VESSEL_MESSAGE_IN_QUEUE)
+    @Resource(mappedName = MessageConstants.ASSET_MESSAGE_IN_QUEUE)
     private Queue vesselQueue;
 
     @Resource(mappedName = MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE)
@@ -80,7 +80,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 case CONFIG:
                     session.createProducer(configQueue).send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, CONFIG_TTL);
                     break;
-                case VESSEL:
+                case ASSET:
                     session.createProducer(vesselQueue).send(message);
                     break;
                 case MOBILE_TERMINAL:

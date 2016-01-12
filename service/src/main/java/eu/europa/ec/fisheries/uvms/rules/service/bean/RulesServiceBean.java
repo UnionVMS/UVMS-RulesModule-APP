@@ -776,7 +776,7 @@ public class RulesServiceBean implements RulesService {
         }
 
         String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(asset.getAssetId().getGuid());
-        String getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.VESSEL);
+        String getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
         TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
 
         return  AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
@@ -802,7 +802,7 @@ public class RulesServiceBean implements RulesService {
         query.setPagination(pagination);
 
         String getVesselRequest = AssetModuleRequestMapper.createAssetListModuleRequest(query);
-        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.VESSEL);
+        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.ASSET);
         TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
 
         List<Asset> resultList = AssetModuleResponseMapper.mapToAssetListFromResponse(getVesselResponse, getVesselMessageId);
@@ -857,7 +857,7 @@ public class RulesServiceBean implements RulesService {
 
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
         String getAssetListRequest = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
-        String getAssetMessageId = producer.sendDataSourceMessage(getAssetListRequest, DataSourceQueue.VESSEL);
+        String getAssetMessageId = producer.sendDataSourceMessage(getAssetListRequest, DataSourceQueue.ASSET);
         TextMessage getVesselResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
 
         return AssetModuleResponseMapper.mapToAssetFromResponse(getVesselResponse, getAssetMessageId);
