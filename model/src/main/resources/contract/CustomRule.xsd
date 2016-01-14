@@ -102,7 +102,7 @@
             <xsd:enumeration value="STATUS_CODE"/>
             <xsd:enumeration value="CLOSEST_COUNTRY_CODE"/>
             <xsd:enumeration value="CLOSEST_PORT_CODE"/>
-
+            <!-- REPORT -->
             <xsd:enumeration value="TIME_DIFF_POSITION_REPORT"/>
             <xsd:enumeration value="SUM_POSITION_REPORT"/>
 

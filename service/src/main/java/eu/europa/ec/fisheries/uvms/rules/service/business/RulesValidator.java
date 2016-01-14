@@ -64,7 +64,7 @@ public class RulesValidator {
 
         kfs = kservices.newKieFileSystem();
 //        kfs.write(ResourceFactory.newClassPathResource(SANITY_RESOURCE_DRL_FILE));
-        loadSanityRules();
+        loadSanityRules();  // TODO: Move this so it always runs? In case it fails on bean startup.
 
 //        loadRules();
 
