@@ -12,8 +12,8 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.*;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
@@ -67,6 +67,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -828,10 +829,10 @@ public class RulesServiceBean implements RulesService {
 
             // Get possible search parameters
             for (AssetIdList id : ids) {
-                if (id.getIdType().equals(AssetIdType.CFR)) {
+                if (id.getIdType().equals(eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.CFR)) {
                     cfr = id.getValue();
                 }
-                if (id.getIdType().equals(AssetIdType.IRCS)) {
+                if (id.getIdType().equals(eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.IRCS)) {
                     ircs = id.getValue();
                 }
             }
