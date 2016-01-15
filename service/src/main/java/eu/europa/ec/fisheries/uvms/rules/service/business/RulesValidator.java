@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -32,7 +33,8 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 //@Startup
-@Singleton
+//@Singleton
+@Stateless
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
 //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
@@ -78,7 +80,7 @@ public class RulesValidator {
 
         // Get the Release ID (mvn style: groupId, artifactId,version)
         ReleaseId releaseId = kbuilder.getKieModule().getReleaseId();
-        LOG.info("GroupId:{}, Artifact:{}, Version:{}", releaseId.getGroupId(), releaseId.getArtifactId(), releaseId.getVersion());
+        LOG.debug("GroupId:{}, Artifact:{}, Version:{}", releaseId.getGroupId(), releaseId.getArtifactId(), releaseId.getVersion());
 
         // Create the Container, wrapping the KieModule with the given ReleaseId
         kcontainer = kservices.newKieContainer(releaseId);
