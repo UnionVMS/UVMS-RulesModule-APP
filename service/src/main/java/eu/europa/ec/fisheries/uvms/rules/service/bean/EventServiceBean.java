@@ -27,6 +27,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import org.slf4j.MDC;
+
+import java.util.UUID;
 
 @Stateless
 public class EventServiceBean implements EventService {
@@ -64,6 +67,9 @@ public class EventServiceBean implements EventService {
         LOG.info("Validating movement from Exchange Module");
         try {
 
+            String id = UUID.randomUUID().toString();
+            MDC.put("clientName", id);
+
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
 
             if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
@@ -87,6 +93,8 @@ public class EventServiceBean implements EventService {
         } catch (RulesModelMapperException | MessageException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
             errorEvent.fire(message);
+        } finally {
+            MDC.remove("clientName");
         }
 
     }
