@@ -664,6 +664,7 @@ public class RulesServiceBean implements RulesService {
     public MovementRefType setMovementReportReceived(RawMovementType rawMovement, String pluginType) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
+            Date auditTotalTimestamp = new Date();
 
             Asset asset = null;
 
@@ -689,8 +690,6 @@ public class RulesServiceBean implements RulesService {
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
-                LOG.info("Send the validated raw position to Movement");
-
                 Long timeDiffInSeconds = null;
                 Integer numberOfReportsLast24Hours = null;
                 if (asset != null && asset.getAssetId().getGuid() != null && rawMovement.getPositionTime() != null) {
@@ -704,6 +703,8 @@ public class RulesServiceBean implements RulesService {
                     persistLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
                     auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
                 }
+
+                LOG.info("Send the validated raw position to Movement");
 
                 MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
 
@@ -719,6 +720,8 @@ public class RulesServiceBean implements RulesService {
                 if (movementResponse != null) {
                     MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
                     validateCreatedMovement(createdMovement, mobileTerminal, asset, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours);
+
+                    auditLog("Rules total time:", auditTotalTimestamp);
 
                     // Tell Exchange that a movement was persisted in Movement
                     MovementRefType ref = new MovementRefType();
@@ -766,8 +769,6 @@ public class RulesServiceBean implements RulesService {
         LOG.debug("movementFact:{}", movementFact);
 
         rulesValidator.evaluate(movementFact);
-        auditTimestamp = auditLog("Time to validate rules:", auditTimestamp);
-
     }
 
     private List<AssetGroup> getAssetGroup(Asset asset) throws AssetModelMapperException, MessageException {

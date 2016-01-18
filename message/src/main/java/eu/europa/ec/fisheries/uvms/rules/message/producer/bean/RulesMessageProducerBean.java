@@ -64,6 +64,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
+        LOG.debug("Sending message to {}", queue.name());
+
         try {
             connectQueue();
             TextMessage message = session.createTextMessage();
@@ -96,7 +98,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     session.createProducer(auditQueue).send(message);
                     break;
                 default:
-                break;
+                    break;
             }
 
             return message.getJMSMessageID();

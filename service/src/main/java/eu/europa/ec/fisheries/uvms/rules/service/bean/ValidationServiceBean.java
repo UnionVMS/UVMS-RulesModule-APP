@@ -163,13 +163,18 @@ public class ValidationServiceBean implements ValidationService {
     public void customRuleTriggered(String ruleName, String ruleGuid, MovementFact fact, String actions) {
         LOG.info("Performing actions on triggered user rules");
 
+        Date auditTimestamp = new Date();
+
         // Update last update
         updateLastTriggered(ruleGuid);
+        auditTimestamp = auditLog("Time to update last triggered:", auditTimestamp);
 
         // Always create a ticket
         createTicket(ruleName, ruleGuid, fact);
+        auditTimestamp = auditLog("Time to create ticket:", auditTimestamp);
 
         sendMailToSubscribers(ruleGuid, ruleName, fact);
+        auditTimestamp = auditLog("Time to send email to subscribers:", auditTimestamp);
 
         // Actions list format:
         // ACTION,VALUE;ACTION,VALUE;
@@ -187,9 +192,11 @@ public class ValidationServiceBean implements ValidationService {
                 case EMAIL:
                     // Value=address.
                     sendToEmail(value, ruleName, fact);
+                    auditTimestamp = auditLog("Time to send (action) email:", auditTimestamp);
                     break;
                 case SEND_TO_ENDPOINT:
                     sendToEndpoint(ruleName, fact, value);
+                    auditTimestamp = auditLog("Time to send to endpoint:", auditTimestamp);
                     break;
 
                 /*
@@ -547,4 +554,12 @@ public class ValidationServiceBean implements ValidationService {
             LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
     }
+
+    private Date auditLog(String msg, Date lastTimestamp) {
+        Date newTimestamp = new Date();
+        long duration = newTimestamp.getTime() - lastTimestamp.getTime();
+        LOG.info("--> AUDIT - {} {}ms", msg, duration);
+        return newTimestamp;
+    }
+
 }

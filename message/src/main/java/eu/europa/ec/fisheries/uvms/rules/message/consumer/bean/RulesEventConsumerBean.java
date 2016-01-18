@@ -54,44 +54,44 @@ public class RulesEventConsumerBean implements MessageListener {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message message) {
+        LOG.info("Message received in rules");
 
         String id = UUID.randomUUID().toString();
-        MDC.put("clientName", id);
+        MDC.put(MessageConstants.MDC_IDENTIFIER, id);
 
         TextMessage textMessage = (TextMessage) message;
-        LOG.info("Message received in rules");
         try {
 
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
 
             switch (request.getMethod()) {
-            case SET_MOVEMENT_REPORT:
-                setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
-                break;
-            case VALIDATE_MOVEMENT_REPORT:
-                setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
-                break;
-            case PING:
-                pingReceivedEvent.fire(new EventMessage(textMessage));
-                break;
-            case GET_CUSTOM_RULE: 
-                getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
-                break;
-            default:
-                LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
-                errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));
-                break;
+                case SET_MOVEMENT_REPORT:
+                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case VALIDATE_MOVEMENT_REPORT:
+                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case PING:
+                    pingReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case GET_CUSTOM_RULE:
+                    getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
+                    break;
+                default:
+                    LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
+                    errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));
+                    break;
             }
-             if (request.getMethod() == null) {
-                 LOG.error("[ Request method is null ]");
-                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
-             }
+            if (request.getMethod() == null) {
+                LOG.error("[ Request method is null ]");
+                errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
+            }
 
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
             errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
         } finally {
-            MDC.remove("clientName");
+            MDC.remove(MessageConstants.MDC_IDENTIFIER);
         }
     }
 

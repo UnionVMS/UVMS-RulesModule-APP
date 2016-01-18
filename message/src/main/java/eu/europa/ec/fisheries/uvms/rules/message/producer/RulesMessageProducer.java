@@ -12,9 +12,9 @@ import javax.jms.TextMessage;
 @Local
 public interface RulesMessageProducer {
 
-    public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException;
+    String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException;
 
-    public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
+    void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
 
     void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message);
 }

@@ -17,5 +17,7 @@ public class MessageConstants {
     public static final String USER_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSUserEvent";
     public static final String AUDIT_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSAuditEvent";
 
+    public static final String MDC_IDENTIFIER = "clientName";
+
     public static final String MODULE_NAME = "rules";
 }
