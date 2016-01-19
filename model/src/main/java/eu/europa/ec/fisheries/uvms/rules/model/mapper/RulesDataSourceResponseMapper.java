@@ -226,6 +226,18 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
+    public static GetTicketListByMovementsResponse mapToTicketsByMovementsFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        GetTicketListByMovementsResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketListByMovementsResponse.class);
+        return response;
+    }
+
+    public static String createTicketsByMovementsResponse(TicketListResponseDto responseDto) throws RulesModelMapperException {
+        GetTicketListByMovementsResponse response = new GetTicketListByMovementsResponse();
+        response.getTickets().addAll(responseDto.getTicketList());
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
     public static String setTicketStatusResponse(TicketType ticket) throws RulesModelMapperException {
         SetTicketStatusResponse response = new SetTicketStatusResponse();
         response.setTicket(ticket);

@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
@@ -323,6 +324,25 @@ public class RulesServiceBean implements RulesService {
             }
 
             return RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public GetTicketListByMovementsResponse getTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException {
+        LOG.info("Get tickets by movements invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapTicketsByMovements(movements);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            if (response == null) {
+                LOG.error("[ Error when getting tickets by movements, response from JMS Queue is null ]");
+                throw new RulesServiceException("[ Error when getting tickets by movements, response from JMS Queue is null ]");
+            }
+
+            return RulesDataSourceResponseMapper.mapToTicketsByMovementsFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException ex) {
             throw new RulesServiceException(ex.getMessage());
         }

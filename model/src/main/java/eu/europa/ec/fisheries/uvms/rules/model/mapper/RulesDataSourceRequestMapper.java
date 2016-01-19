@@ -115,6 +115,13 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapTicketsByMovements(List<String> movements) throws RulesModelMapperException {
+        GetTicketListByMovementsRequest request = new GetTicketListByMovementsRequest();
+        request.setMethod(RulesDataSourceMethod.GET_TICKETS_BY_MOVEMENTS);
+        request.getMovementGuids().addAll(movements);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapCreateTicket(TicketType ticket) throws RulesModelMapperException {
         CreateTicketRequest request = new CreateTicketRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_TICKET);

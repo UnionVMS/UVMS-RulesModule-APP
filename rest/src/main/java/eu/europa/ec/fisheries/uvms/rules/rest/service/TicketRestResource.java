@@ -18,6 +18,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/tickets")
 @Stateless
@@ -49,6 +50,28 @@ public class TicketRestResource {
             return new ResponseDto(rulesService.getTicketList(loggedInUser, query), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException  | NullPointerException ex) {
             LOG.error("[ Error when getting list. ] {} ", ex.getStackTrace());
+            return ErrorHandler.getFault(ex);
+        }
+    }
+
+    /**
+     *
+     * @responseMessage 200 All tickets for provided movement guids
+     * @responseMessage 500 No tickets fetched
+     *
+     * @summary Get a list of all tickets for provided movement guids
+     *
+     */
+    @POST
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/listByMovements")
+    public ResponseDto<TicketListResponseDto> getTicketsByMovements(List<String> movements) {
+        LOG.info("Get tickets by movements invoked in rest layer");
+        try {
+            return new ResponseDto(rulesService.getTicketsByMovements(movements), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException  | NullPointerException ex) {
+            LOG.error("[ Error when getting list by movements. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
     }

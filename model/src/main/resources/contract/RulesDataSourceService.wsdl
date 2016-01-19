@@ -35,6 +35,7 @@
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
                     <xsd:enumeration value="UPDATE_TICKET_STATUS_BY_QUERY"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
+                    <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
                     <xsd:enumeration value="GET_CUSTOM_RULE"/>
@@ -451,7 +452,7 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Tickets QueryList request -->
             <xsd:element name="GetTicketListByQueryRequest">
                 <xsd:complexType>
@@ -465,7 +466,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Ticket QueryList response -->
             <xsd:element name="GetTicketListByQueryResponse">
                 <xsd:complexType>
@@ -473,6 +474,27 @@
                         <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                         <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get tickets by movements -->
+            <xsd:element name="GetTicketListByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketListByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -834,14 +856,21 @@
     <message name="GetAlarmListByQueryResponse">
         <part name="body" element="source:GetAlarmListByQueryResponse"/>
     </message>
-    
+
     <message name="GetTicketListByQueryRequest">
         <part name="body" element="source:GetTicketListByQueryRequest"/>
     </message>
     <message name="GetTicketListByQueryResponse">
         <part name="body" element="source:GetTicketListByQueryResponse"/>
     </message>
-    
+
+    <message name="GetTicketListByMovementsRequest">
+        <part name="body" element="source:GetTicketListByMovementsRequest"/>
+    </message>
+    <message name="GetTicketListByMovementsResponse">
+        <part name="body" element="source:GetTicketListByMovementsResponse"/>
+    </message>
+
     <message name="PingRequest">
         <part name="body" element="source:PingRequest"/>
     </message>
@@ -1026,6 +1055,12 @@
         <operation name="GetTicketListByQuery">
             <input message="source:GetTicketListByQueryRequest"/>
             <output message="source:GetTicketListByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketListByMovements">
+            <input message="source:GetTicketListByMovementsRequest"/>
+            <output message="source:GetTicketListByMovementsResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1304,6 +1339,18 @@
         </operation>
 
         <operation name="GetTicketListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketListByMovements">
             <input>
                 <soap:body use="literal"/>
             </input>

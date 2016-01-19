@@ -54,10 +54,10 @@ public class RulesEventConsumerBean implements MessageListener {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message message) {
-        LOG.info("Message received in rules");
-
         String id = UUID.randomUUID().toString();
         MDC.put(MessageConstants.MDC_IDENTIFIER, id);
+
+        LOG.info("Message received in rules");
 
         TextMessage textMessage = (TextMessage) message;
         try {
