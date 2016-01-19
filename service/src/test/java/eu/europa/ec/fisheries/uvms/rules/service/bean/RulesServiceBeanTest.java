@@ -6,7 +6,6 @@ import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByAssetAndRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -409,10 +408,10 @@ public class RulesServiceBeanTest {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
         PreviousReportFact fact = new PreviousReportFact();
-        fact.setVesselGuid("vesselGuid");
+        fact.setAssetGuid("assetGuid");
         String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName)).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -423,17 +422,17 @@ public class RulesServiceBeanTest {
         mockStatic(RulesDataSourceResponseMapper.class);
         GetTicketByAssetAndRuleResponse ticketResponse = new GetTicketByAssetAndRuleResponse();
         ticketResponse.setTicket(new TicketType());
-        when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
+        when(RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
         // Act
         rulesServiceBean.timerRuleTriggered(ruleName, fact);
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName);
+        RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
 
         verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId);
+        RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId);
 
         verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer).getMessage(messageId, TextMessage.class);
@@ -444,10 +443,10 @@ public class RulesServiceBeanTest {
 //        // Setup
 //        mockStatic(RulesDataSourceRequestMapper.class);
 //        PreviousReportFact fact = new PreviousReportFact();
-//        fact.setVesselGuid("vesselGuid");
+//        fact.setAssetGuid("assetGuid");
 //        String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
 //        String request = "request";
-//        when(RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName)).thenReturn(request);
+//        when(RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getAssetGuid(), ruleName)).thenReturn(request);
 //
 //        String messageId = "messageId";
 //        when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -465,7 +464,7 @@ public class RulesServiceBeanTest {
 //
 //        // Verify
 //        verifyStatic();
-//        RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
+//        RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getAssetGuid(), ruleName);
 //
 //        verifyStatic();
 //        RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(response, messageId);
@@ -480,11 +479,11 @@ public class RulesServiceBeanTest {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
         PreviousReportFact fact = new PreviousReportFact();
-        fact.setVesselGuid("vesselGuid");
+        fact.setAssetGuid("assetGuid");
         fact.setMovementGuid("movementGuid");
         String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName)).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -497,7 +496,7 @@ public class RulesServiceBeanTest {
 
         GetTicketByAssetAndRuleResponse ticketResponse = new GetTicketByAssetAndRuleResponse();
         ticketResponse.setTicket(null);
-        when(RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
+        when(RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
         Long ticketCount = 5L;
         when(mockValidationServiceBean.getNumberOfOpenTickets("userName")).thenReturn(ticketCount);
@@ -509,10 +508,10 @@ public class RulesServiceBeanTest {
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName);
+        RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
 
         verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(response, messageId);
+        RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId);
 
         verify(mockProducer, times(2)).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
         verify(mockConsumer, times(2)).getMessage(messageId, TextMessage.class);
@@ -526,7 +525,7 @@ public class RulesServiceBeanTest {
         assertEquals(ruleName, ticket.getRuleGuid());
         assertEquals(TicketStatusType.OPEN, ticket.getStatus());
         assertEquals(fact.getMovementGuid(), ticket.getMovementGuid());
-        assertEquals(fact.getVesselGuid(), ticket.getVesselGuid());
+        assertEquals(fact.getAssetGuid(), ticket.getAssetGuid());
     }
 
     @Test

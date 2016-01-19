@@ -44,7 +44,7 @@ public class CustomRuleParserTest {
         CustomRuleSegmentType segment1 = new CustomRuleSegmentType();
         segment1.setStartOperator("(");
         segment1.setCriteria(CriteriaType.ASSET);
-        segment1.setSubCriteria(SubCriteriaType.VESSEL_CFR);
+        segment1.setSubCriteria(SubCriteriaType.ASSET_CFR);
         segment1.setCondition(ConditionType.EQ);
         segment1.setValue("\"SWE111111\"");  // Test that quotation is removed
         segment1.setEndOperator("");
@@ -56,7 +56,7 @@ public class CustomRuleParserTest {
         CustomRuleSegmentType segment2 = new CustomRuleSegmentType();
         segment2.setStartOperator("");
         segment2.setCriteria(CriteriaType.ASSET);
-        segment2.setSubCriteria(SubCriteriaType.VESSEL_CFR);
+        segment2.setSubCriteria(SubCriteriaType.ASSET_CFR);
         segment2.setCondition(ConditionType.EQ);
         segment2.setValue("SWE222222");
         segment2.setEndOperator(")");
@@ -216,11 +216,11 @@ public class CustomRuleParserTest {
         segment7.setOrder("7");
         customRule.getDefinitions().add(segment7);
 
-        // VESSEL_CFR
+        // ASSET_CFR
         CustomRuleSegmentType segment8 = new CustomRuleSegmentType();
         segment8.setStartOperator("");
         segment8.setCriteria(CriteriaType.ASSET);
-        segment8.setSubCriteria(SubCriteriaType.VESSEL_CFR);
+        segment8.setSubCriteria(SubCriteriaType.ASSET_CFR);
         segment8.setCondition(ConditionType.EQ);
         segment8.setValue("GBR000A11447");
         segment8.setEndOperator("");
@@ -228,11 +228,11 @@ public class CustomRuleParserTest {
         segment8.setOrder("8");
         customRule.getDefinitions().add(segment8);
 
-        // VESSEL_IRCS
+        // ASSET_IRCS
         CustomRuleSegmentType segment9 = new CustomRuleSegmentType();
         segment9.setStartOperator("");
         segment9.setCriteria(CriteriaType.ASSET);
-        segment9.setSubCriteria(SubCriteriaType.VESSEL_IRCS);
+        segment9.setSubCriteria(SubCriteriaType.ASSET_IRCS);
         segment9.setCondition(ConditionType.EQ);
         segment9.setValue("SECT");
         segment9.setEndOperator("");
@@ -240,11 +240,11 @@ public class CustomRuleParserTest {
         segment9.setOrder("9");
         customRule.getDefinitions().add(segment9);
 
-        // VESSEL_NAME
+        // ASSET_NAME
         CustomRuleSegmentType segment10 = new CustomRuleSegmentType();
         segment10.setStartOperator("");
         segment10.setCriteria(CriteriaType.ASSET);
-        segment10.setSubCriteria(SubCriteriaType.VESSEL_NAME);
+        segment10.setSubCriteria(SubCriteriaType.ASSET_NAME);
         segment10.setCondition(ConditionType.EQ);
         segment10.setValue("SETTE MARI");
         segment10.setEndOperator("");
@@ -565,11 +565,11 @@ public class CustomRuleParserTest {
         segment36.setOrder("36");
         customRule.getDefinitions().add(segment36);
 
-        // VESSEL_STATUS
+        // ASSET_STATUS
         CustomRuleSegmentType segment37 = new CustomRuleSegmentType();
         segment37.setStartOperator("");
         segment37.setCriteria(CriteriaType.ASSET);
-        segment37.setSubCriteria(SubCriteriaType.VESSEL_STATUS);
+        segment37.setSubCriteria(SubCriteriaType.ASSET_STATUS);
         segment37.setCondition(ConditionType.EQ);
         segment37.setValue("ACTIVE");
         segment37.setEndOperator("");

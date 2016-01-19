@@ -52,14 +52,14 @@ public class RulesTimerBean {
             for (PreviousReportType previousReport : previousReports) {
                 PreviousReportFact fact = new PreviousReportFact();
                 fact.setMovementGuid(previousReport.getMovementGuid());
-                fact.setVesselGuid(previousReport.getVesselGuid());
+                fact.setAssetGuid(previousReport.getAssetGuid());
 
                 GregorianCalendar gregCal = previousReport.getPositionTime().toGregorianCalendar();
                 gregCal.add(GregorianCalendar.HOUR, THRESHOLD);
                 fact.setDeadline(gregCal.getTime());
 
                 if (fact.getDeadline().getTime() <= new Date().getTime()) {
-                    LOG.info("\t==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getVesselGuid());
+                    LOG.info("\t==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getAssetGuid());
 
                     String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
                     rulesService.timerRuleTriggered(ruleName, fact);

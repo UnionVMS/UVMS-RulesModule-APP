@@ -98,16 +98,16 @@ public class CustomRuleParser {
                         case FLAG_STATE:
                             sb.append("flagState");
                             break;
-                        case VESSEL_CFR:
+                        case ASSET_CFR:
                             sb.append("cfr");
                             break;
-                        case VESSEL_IRCS:
+                        case ASSET_IRCS:
                             sb.append("ircs");
                             break;
-                        case VESSEL_NAME:
+                        case ASSET_NAME:
                             sb.append("assetName");
                             break;
-                        case VESSEL_STATUS:
+                        case ASSET_STATUS:
                             sb.append("assetStatus");
                             break;
 

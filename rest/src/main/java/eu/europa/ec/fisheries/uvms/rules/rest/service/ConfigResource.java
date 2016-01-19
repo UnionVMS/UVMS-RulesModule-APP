@@ -150,7 +150,7 @@ public class ConfigResource {
             case AREA_TYPE:
             case ASSET_ID_GEAR_TYPE:
             case EXTERNAL_MARKING:
-            case VESSEL_NAME:
+            case ASSET_NAME:
             case COMCHANNEL_TYPE:
             case MT_TYPE:
             case FLAG_STATE:
@@ -160,7 +160,7 @@ public class ConfigResource {
             case CLOSEST_COUNTRY_CODE:
             case CLOSEST_PORT_CODE:
             case ASSET_GROUP:
-            case VESSEL_STATUS:
+            case ASSET_STATUS:
             case MT_STATUS:
             case AREA_CODE_ENT:
             case AREA_TYPE_ENT:
@@ -171,8 +171,8 @@ public class ConfigResource {
                 break;
 
 //            case VICINITY_OF:
-            case VESSEL_CFR:
-            case VESSEL_IRCS:
+            case ASSET_CFR:
+            case ASSET_IRCS:
             case MT_DNID:
             case MT_MEMBER_ID:
             case MT_SERIAL_NO:

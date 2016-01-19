@@ -42,7 +42,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleResponseMapper;
 import eu.europa.ec.fisheries.wsdl.user.module.FindOrganisationsResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.EndPoint;
@@ -438,7 +437,7 @@ public class ValidationServiceBean implements ValidationService {
         try {
             TicketType ticket = new TicketType();
 
-            ticket.setVesselGuid(fact.getAssetGuid());
+            ticket.setAssetGuid(fact.getAssetGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);
@@ -486,7 +485,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmReport.setRawMovement(fact.getRawMovementType());
             alarmReport.setUpdatedBy("UVMS");
             alarmReport.setPluginType(fact.getPluginType());
-            alarmReport.setVesselGuid(fact.getAssetGuid());
+            alarmReport.setAssetGuid(fact.getAssetGuid());
             alarmReport.setInactivatePosition(false);
 
             // TODO: Add sender, recipient and assetGuid

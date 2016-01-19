@@ -8,7 +8,7 @@ public class PreviousReportFact {
     private String assetIdType;
     private String assetIdValue;
     private String movementGuid;
-    private String vesselGuid;
+    private String assetGuid;
 
     public Date getDeadline() {
         return deadline;
@@ -42,12 +42,12 @@ public class PreviousReportFact {
         this.movementGuid = movementGuid;
     }
 
-    public String getVesselGuid() {
-        return vesselGuid;
+    public String getAssetGuid() {
+        return assetGuid;
     }
 
-    public void setVesselGuid(String vesselGuid) {
-        this.vesselGuid = vesselGuid;
+    public void setAssetGuid(String assetGuid) {
+        this.assetGuid = assetGuid;
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class RawMovementFactMapper {
-    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Asset vessel, String pluginType) {
+    public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Asset asset, String pluginType) {
         RawMovementFact fact = new RawMovementFact();
         fact.setRawMovementType(rawMovement);
         fact.setOk(true);
@@ -98,9 +98,9 @@ public class RawMovementFactMapper {
             fact.setMobileTerminalType(mobileTerminal.getType());
         }
 
-        // From Vessel
-        if (vessel != null) {
-            fact.setAssetGuid(vessel.getAssetId().getGuid());
+        // From Asset
+        if (asset != null) {
+            fact.setAssetGuid(asset.getAssetId().getGuid());
         }
 
         return fact;

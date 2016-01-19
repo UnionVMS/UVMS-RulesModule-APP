@@ -442,7 +442,7 @@ public class RulesServiceBean implements RulesService {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
 //            // Check if alarm already is created for this asset
-//            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getVesselGuid(), ruleName);
+//            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getAssetGuid(), ruleName);
 //            String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
 //            TextMessage alarmResponse = consumer.getMessage(messageIdAlarm, TextMessage.class);
 //            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
@@ -451,10 +451,10 @@ public class RulesServiceBean implements RulesService {
 //            }
 
             // Check if ticket already is created for this asset
-            String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getVesselGuid(), ruleName);
+            String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
             String messageIdTicket = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
             TextMessage ticketResponse = consumer.getMessage(messageIdTicket, TextMessage.class);
-            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByVesselGuidFromResponse(ticketResponse, messageIdTicket).getTicket() == null;
+            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(ticketResponse, messageIdTicket).getTicket() == null;
 
             if (noTicketCreated) {
                 createAssetNotSendingTicket(ruleName, fact);
@@ -472,7 +472,7 @@ public class RulesServiceBean implements RulesService {
         alarmReportType.setInactivatePosition(false);
         alarmReportType.setOpenDate(RulesUtil.dateToString(new Date()));
         alarmReportType.setUpdatedBy("UVMS");
-        alarmReportType.setVesselGuid(fact.getVesselGuid());
+        alarmReportType.setAssetGuid(fact.getAssetGuid());
 
         AlarmItemType alarmItem = new AlarmItemType();
         alarmItem.setGuid(UUID.randomUUID().toString());
@@ -496,7 +496,7 @@ public class RulesServiceBean implements RulesService {
     private void createAssetNotSendingTicket(String ruleName, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
         TicketType ticket = new TicketType();
 
-        ticket.setVesselGuid(fact.getVesselGuid());
+        ticket.setAssetGuid(fact.getAssetGuid());
         ticket.setOpenDate(RulesUtil.dateToString(new Date()));
         ticket.setRuleName(ruleName);
         ticket.setRuleGuid(ruleName);
@@ -611,16 +611,16 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private Long timeDiffFromLastCommunication(String vesselGuid, XMLGregorianCalendar thisTime) {
+    private Long timeDiffFromLastCommunication(String assetGuid, XMLGregorianCalendar thisTime) {
         LOG.info("Fetching time difference to previous movement report");
 
         Long timeDiff = null;
         try {
-            String request = RulesDataSourceRequestMapper.mapGetPreviousReportByVesselGuid(vesselGuid);
+            String request = RulesDataSourceRequestMapper.mapGetPreviousReportByAssetGuid(assetGuid);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            PreviousReportType previousReport = RulesDataSourceResponseMapper.mapToGetPreviousReportByVesselGuidResponse(response, messageId);
+            PreviousReportType previousReport = RulesDataSourceResponseMapper.mapToGetPreviousReportByAssetGuidResponse(response, messageId);
 
             XMLGregorianCalendar previousTime = previousReport.getPositionTime();
 
@@ -632,7 +632,7 @@ public class RulesServiceBean implements RulesService {
         return timeDiff;
     }
 
-    private Integer numberOfReportsLast24Hours(String vesselGuid, XMLGregorianCalendar thisTime) {
+    private Integer numberOfReportsLast24Hours(String assetGuid, XMLGregorianCalendar thisTime) {
         LOG.info("Fetching number of reports last 24 hours");
         Integer numberOfMovements = null;
 
@@ -652,7 +652,7 @@ public class RulesServiceBean implements RulesService {
         // Id
         eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria idCriteria = new eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria();
         idCriteria.setKey(eu.europa.ec.fisheries.schema.movement.search.v1.SearchKey.CONNECT_ID);
-        idCriteria.setValue(vesselGuid);
+        idCriteria.setValue(assetGuid);
         query.getMovementSearchCriteria().add(idCriteria);
 
         try {
@@ -663,7 +663,7 @@ public class RulesServiceBean implements RulesService {
             List<MovementMapResponseType> result = MovementModuleResponseMapper.mapToMovementMapResponse(response);
 
             List<MovementType> movements;
-            if (result != null && result.size() == 1 && vesselGuid.equals(result.get(0).getKey())) {
+            if (result != null && result.size() == 1 && assetGuid.equals(result.get(0).getKey())) {
                 movements = result.get(0).getMovements();
             } else {
                 // If result is ambiguous or erroneous in some other way
@@ -692,7 +692,7 @@ public class RulesServiceBean implements RulesService {
             MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
             auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
 
-            // Get Vessel
+            // Get Asset
             if (mobileTerminal != null) {
                 String connectId = mobileTerminal.getConnectId();
                 if (connectId != null) {
@@ -701,7 +701,7 @@ public class RulesServiceBean implements RulesService {
             } else {
                 asset = getAssetByCfrIrcs(rawMovement.getAssetId());
             }
-            auditTimestamp = auditLog("Time to fetch from Vessel Module:", auditTimestamp);
+            auditTimestamp = auditLog("Time to fetch from Asset Module:", auditTimestamp);
 
             RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, asset, pluginType);
             LOG.debug("rawMovementFact:{}", rawMovementFact);
@@ -805,7 +805,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Asset getAssetByConnectId(String connectId) throws AssetModelMapperException, MessageException {
-        LOG.info("Fetch vessel by connectId '{}'", connectId);
+        LOG.info("Fetch asset by connectId '{}'", connectId);
 
         AssetListQuery query = new AssetListQuery();
         AssetListCriteria criteria = new AssetListCriteria();
@@ -823,11 +823,11 @@ public class RulesServiceBean implements RulesService {
         pagination.setPage(1);
         query.setPagination(pagination);
 
-        String getVesselRequest = AssetModuleRequestMapper.createAssetListModuleRequest(query);
-        String getVesselMessageId = producer.sendDataSourceMessage(getVesselRequest, DataSourceQueue.ASSET);
-        TextMessage getVesselResponse = consumer.getMessage(getVesselMessageId, TextMessage.class);
+        String getAssetRequest = AssetModuleRequestMapper.createAssetListModuleRequest(query);
+        String getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
+        TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
 
-        List<Asset> resultList = AssetModuleResponseMapper.mapToAssetListFromResponse(getVesselResponse, getVesselMessageId);
+        List<Asset> resultList = AssetModuleResponseMapper.mapToAssetListFromResponse(getAssetResponse, getAssetMessageId);
 
         return resultList.size() != 1 ? null : resultList.get(0);
     }
@@ -880,9 +880,9 @@ public class RulesServiceBean implements RulesService {
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
         String getAssetListRequest = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
         String getAssetMessageId = producer.sendDataSourceMessage(getAssetListRequest, DataSourceQueue.ASSET);
-        TextMessage getVesselResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+        TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
 
-        return AssetModuleResponseMapper.mapToAssetFromResponse(getVesselResponse, getAssetMessageId);
+        return AssetModuleResponseMapper.mapToAssetFromResponse(getAssetResponse, getAssetMessageId);
     }
 
     private MobileTerminalType getMobileTerminalByRawMovement(RawMovementType rawMovement) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
@@ -964,11 +964,11 @@ public class RulesServiceBean implements RulesService {
         return resultList.size() != 1 ? null : resultList.get(0);
     }
 
-    private void persistLastCommunication(String vesselGuid, XMLGregorianCalendar positionTime) throws MessageException, RulesModelMapperException {
+    private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) throws MessageException, RulesModelMapperException {
         PreviousReportType thisReport = new PreviousReportType();
 
         thisReport.setPositionTime(positionTime);
-        thisReport.setVesselGuid(vesselGuid);
+        thisReport.setAssetGuid(assetGuid);
 
         String upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);
         producer.sendDataSourceMessage(upsertPreviousReportequest, DataSourceQueue.INTERNAL);

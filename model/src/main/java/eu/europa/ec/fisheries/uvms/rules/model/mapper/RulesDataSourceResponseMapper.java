@@ -15,7 +15,6 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleListResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportsResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
@@ -268,9 +267,9 @@ public class RulesDataSourceResponseMapper {
         return response.getPreviousReports();
     }
 
-    public static PreviousReportType mapToGetPreviousReportByVesselGuidResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static PreviousReportType mapToGetPreviousReportByAssetGuidResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
-        GetPreviousReportByVesselGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportByVesselGuidResponse.class);
+        GetPreviousReportByAssetGuidResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetPreviousReportByAssetGuidResponse.class);
         return response.getPreviousReport();
     }
 
@@ -280,13 +279,13 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToGetPreviousReportByVesselGuidResponse(PreviousReportType previousReport) throws RulesModelMapperException {
-        GetPreviousReportByVesselGuidResponse response = new GetPreviousReportByVesselGuidResponse();
+    public static String mapToGetPreviousReportByAssetGuidResponse(PreviousReportType previousReport) throws RulesModelMapperException {
+        GetPreviousReportByAssetGuidResponse response = new GetPreviousReportByAssetGuidResponse();
         response.setPreviousReport(previousReport);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetTicketByAssetAndRuleResponse mapToGetTicketByVesselGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+    public static GetTicketByAssetAndRuleResponse mapToGetTicketByAssetGuidFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
         validateResponse(message, correlationId);
         GetTicketByAssetAndRuleResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketByAssetAndRuleResponse.class);
         return response;

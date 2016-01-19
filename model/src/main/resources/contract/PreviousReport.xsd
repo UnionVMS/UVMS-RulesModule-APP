@@ -8,7 +8,7 @@
     <xsd:complexType name="PreviousReportType">
         <xsd:sequence>
             <xsd:element name="movementGuid" type="xsd:string"/>
-            <xsd:element name="vesselGuid" type="xsd:string"/>
+            <xsd:element name="assetGuid" type="xsd:string"/>
             <xsd:element name="positionTime" type="xsd:dateTime"/>
         </xsd:sequence>
     </xsd:complexType>

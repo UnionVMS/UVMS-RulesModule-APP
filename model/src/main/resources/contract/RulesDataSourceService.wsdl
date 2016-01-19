@@ -53,7 +53,7 @@
                     <xsd:enumeration value="GET_TICKET_BY_ASSET_AND_RULE"/>
                     <xsd:enumeration value="GET_ALARM_REPORT_BY_ASSET_AND_RULE"/>
                     <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
-                    <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_VESSEL_GUID"/>
+                    <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_ASSET_GUID"/>
                     <xsd:enumeration value="GET_SANITY_RULES"/>
 
                     <!-- Actions triggered by timer -->
@@ -535,21 +535,21 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get previous report by vessel guid request -->
-            <xsd:element name="GetPreviousReportByVesselGuidRequest">
+            <!-- Get previous report by asset guid request -->
+            <xsd:element name="GetPreviousReportByAssetGuidRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="vesselGuid" type="xsd:string"/>
+                                <xsd:element name="assetGuid" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get previous report by vessel guid response -->
-            <xsd:element name="GetPreviousReportByVesselGuidResponse">
+            <!-- Get previous report by asset guid response -->
+            <xsd:element name="GetPreviousReportByAssetGuidResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="previousReport" type="previous:PreviousReportType" />
@@ -557,7 +557,7 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get ticket by vessel guid request -->
+            <!-- Get ticket by asset guid request -->
             <xsd:element name="GetTicketByAssetAndRuleRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
@@ -571,7 +571,7 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get ticket by vessel guid response -->
+            <!-- Get ticket by asset guid response -->
             <xsd:element name="GetTicketByAssetAndRuleResponse">
                 <xsd:complexType>
                     <xsd:sequence>
@@ -580,7 +580,7 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get alarm by vessel guid request -->
+            <!-- Get alarm by asset guid request -->
             <xsd:element name="GetAlarmReportByAssetAndRuleRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
@@ -594,7 +594,7 @@
                 </xsd:complexType>
             </xsd:element>
 
-            <!-- Get alarm by vessel guid response -->
+            <!-- Get alarm by asset guid response -->
             <xsd:element name="GetAlarmReportByAssetAndRuleResponse">
                 <xsd:complexType>
                     <xsd:sequence>
@@ -885,11 +885,11 @@
         <part name="body" element="source:GetPreviousReportsResponse"/>
     </message>
 
-    <message name="GetPreviousReportByVesselGuidRequest">
-        <part name="body" element="source:GetPreviousReportByVesselGuidRequest"/>
+    <message name="GetPreviousReportByAssetGuidRequest">
+        <part name="body" element="source:GetPreviousReportByAssetGuidRequest"/>
     </message>
-    <message name="GetPreviousReportByVesselGuidResponse">
-        <part name="body" element="source:GetPreviousReportByVesselGuidResponse"/>
+    <message name="GetPreviousReportByAssetGuidResponse">
+        <part name="body" element="source:GetPreviousReportByAssetGuidResponse"/>
     </message>
 
     <message name="GetTicketByAssetAndRuleRequest">
@@ -1075,9 +1075,9 @@
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
-        <operation name="GetPreviousReportByVesselGuid">
-            <input message="source:GetPreviousReportByVesselGuidRequest"/>
-            <output message="source:GetPreviousReportByVesselGuidResponse"/>
+        <operation name="GetPreviousReportByAssetGuid">
+            <input message="source:GetPreviousReportByAssetGuidRequest"/>
+            <output message="source:GetPreviousReportByAssetGuidResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 

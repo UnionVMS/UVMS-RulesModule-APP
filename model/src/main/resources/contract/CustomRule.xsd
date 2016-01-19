@@ -76,10 +76,10 @@
             <xsd:enumeration value="ASSET_ID_GEAR_TYPE"/>
             <xsd:enumeration value="EXTERNAL_MARKING"/>
             <xsd:enumeration value="FLAG_STATE"/>
-            <xsd:enumeration value="VESSEL_CFR"/>
-            <xsd:enumeration value="VESSEL_IRCS"/>
-            <xsd:enumeration value="VESSEL_NAME"/>
-            <xsd:enumeration value="VESSEL_STATUS"/>
+            <xsd:enumeration value="ASSET_CFR"/>
+            <xsd:enumeration value="ASSET_IRCS"/>
+            <xsd:enumeration value="ASSET_NAME"/>
+            <xsd:enumeration value="ASSET_STATUS"/>
             <!-- MOBILE_TERMINAL -->
             <xsd:enumeration value="COMCHANNEL_TYPE"/>
             <xsd:enumeration value="MT_TYPE"/>

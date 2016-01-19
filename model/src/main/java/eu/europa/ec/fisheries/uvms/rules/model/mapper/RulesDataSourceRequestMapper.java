@@ -175,10 +175,10 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapGetPreviousReportByVesselGuid(String vesselGuid) throws RulesModelMapperException {
-        GetPreviousReportByVesselGuidRequest request = new GetPreviousReportByVesselGuidRequest();
-        request.setMethod(RulesDataSourceMethod.GET_PREVIOUS_REPORT_BY_VESSEL_GUID);
-        request.setVesselGuid(vesselGuid);
+    public static String mapGetPreviousReportByAssetGuid(String assetGuid) throws RulesModelMapperException {
+        GetPreviousReportByAssetGuidRequest request = new GetPreviousReportByAssetGuidRequest();
+        request.setMethod(RulesDataSourceMethod.GET_PREVIOUS_REPORT_BY_ASSET_GUID);
+        request.setAssetGuid(assetGuid);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
