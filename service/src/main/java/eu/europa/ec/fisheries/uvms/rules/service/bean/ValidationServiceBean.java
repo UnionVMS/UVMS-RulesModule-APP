@@ -320,7 +320,7 @@ public class ValidationServiceBean implements ValidationService {
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress);
 

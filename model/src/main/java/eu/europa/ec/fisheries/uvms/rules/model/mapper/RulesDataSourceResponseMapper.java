@@ -231,9 +231,21 @@ public class RulesDataSourceResponseMapper {
         return response;
     }
 
+    public static long mapToCountTicketsByMovementsFromResponse(TextMessage message, String correlationId) throws RulesModelMapperException, RulesFaultException, JMSException {
+        validateResponse(message, correlationId);
+        CountTicketListByMovementsResponse response = JAXBMarshaller.unmarshallTextMessage(message, CountTicketListByMovementsResponse.class);
+        return response.getCount();
+    }
+
     public static String createTicketsByMovementsResponse(TicketListResponseDto responseDto) throws RulesModelMapperException {
         GetTicketListByMovementsResponse response = new GetTicketListByMovementsResponse();
         response.getTickets().addAll(responseDto.getTicketList());
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String createCountTicketsByMovementsResponse(long count) throws RulesModelMapperException {
+        CountTicketListByMovementsResponse response = new CountTicketListByMovementsResponse();
+        response.setCount(count);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

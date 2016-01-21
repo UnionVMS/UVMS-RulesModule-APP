@@ -78,6 +78,27 @@ public class TicketRestResource {
 
     /**
      *
+     * @responseMessage 200 Number of tickets for provided movement guids
+     * @responseMessage 500 Error
+     *
+     * @summary Get number of tickets for provided movement guids
+     *
+     */
+    @POST
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/countByMovements")
+    public ResponseDto countTicketsByMovements(List<String> movements) {
+        try {
+            return new ResponseDto(rulesService.countTicketsByMovements(movements), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException e) {
+            LOG.error("[ Error when getting number of open tickets. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
+    /**
+     *
      * @responseMessage 200 Selected tickets updated
      * @responseMessage 500 No tickets updated
      *

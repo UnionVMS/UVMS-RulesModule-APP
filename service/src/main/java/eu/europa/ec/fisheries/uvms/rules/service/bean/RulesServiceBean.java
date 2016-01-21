@@ -349,6 +349,20 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
+    public long countTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException {
+        LOG.info("Get number of tickets by movements invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapCountTicketsByMovements(movements);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapToCountTicketsByMovementsFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException | JMSException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    @Override
     public TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException {
         LOG.info("Update ticket status invoked in service layer");
         try {

@@ -36,6 +36,7 @@
                     <xsd:enumeration value="UPDATE_TICKET_STATUS_BY_QUERY"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
                     <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
+                    <xsd:enumeration value="COUNT_TICKETS_BY_MOVEMENTS"/>
                     <xsd:enumeration value="SET_ALARM_STATUS"/>
                     <xsd:enumeration value="LIST_ALARMS"/>
                     <xsd:enumeration value="GET_CUSTOM_RULE"/>
@@ -499,6 +500,27 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Count tickets by movements -->
+            <xsd:element name="CountTicketListByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CountTicketListByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="count" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Ping request -->
             <xsd:element name="PingRequest">
                 <xsd:complexType>
@@ -871,6 +893,13 @@
         <part name="body" element="source:GetTicketListByMovementsResponse"/>
     </message>
 
+    <message name="CountTicketListByMovementsRequest">
+        <part name="body" element="source:CountTicketListByMovementsRequest"/>
+    </message>
+    <message name="CountTicketListByMovementsResponse">
+        <part name="body" element="source:CountTicketListByMovementsResponse"/>
+    </message>
+
     <message name="PingRequest">
         <part name="body" element="source:PingRequest"/>
     </message>
@@ -1061,6 +1090,12 @@
         <operation name="GetTicketListByMovements">
             <input message="source:GetTicketListByMovementsRequest"/>
             <output message="source:GetTicketListByMovementsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="CountTicketListByMovements">
+            <input message="source:CountTicketListByMovementsRequest"/>
+            <output message="source:CountTicketListByMovementsResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1351,6 +1386,18 @@
         </operation>
 
         <operation name="GetTicketListByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CountTicketListByMovements">
             <input>
                 <soap:body use="literal"/>
             </input>

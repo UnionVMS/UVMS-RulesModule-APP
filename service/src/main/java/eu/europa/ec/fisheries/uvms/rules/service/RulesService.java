@@ -64,6 +64,8 @@ public interface RulesService {
 
     GetTicketListByMovementsResponse getTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException;
 
+    long countTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException;
+
     /**
      * Update a ticket status
      *
