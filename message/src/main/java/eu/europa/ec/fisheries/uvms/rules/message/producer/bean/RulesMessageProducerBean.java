@@ -14,7 +14,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -53,13 +56,30 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
     private Queue auditQueue;
 
-    @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
-    private ConnectionFactory connectionFactory;
+//    @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
+//    private ConnectionFactory connectionFactory;
 
-    private Connection connection = null;
-    private Session session = null;
+    @EJB
+    JMSConnectorBean connector;
+
+//    private Connection connection;
+//    private Session session;
 
     private static final int CONFIG_TTL = 30000;
+
+//    @PostConstruct
+//    public void init() {
+//        try {
+//            connectQueue();
+//        } catch (JMSException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @PreDestroy
+//    public void destroy() {
+//        disconnectQueue();
+//    }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -67,7 +87,10 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         LOG.debug("Sending message to {}", queue.name());
 
         try {
-            connectQueue();
+
+            Session session = connector.getNewSession();
+
+//            connectQueue();
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
@@ -105,8 +128,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
-        } finally {
-            disconnectQueue();
+//        } finally {
+//            disconnectQueue();
         }
     }
 
@@ -116,33 +139,36 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         try {
             LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(),
                     message.getJMSReplyTo());
-            connectQueue();
+
+            Session session = connector.getNewSession();
+
+//            connectQueue();
             TextMessage response = session.createTextMessage(text);
             response.setJMSCorrelationID(message.getJMSMessageID());
             session.createProducer(message.getJMSReplyTo()).send(response);
         } catch (JMSException e) {
             LOG.error("[ Error when returning module rules request. ] {}", e.getMessage());
-        } finally {
-            disconnectQueue();
+//        } finally {
+//            disconnectQueue();
         }
     }
 
-    private void connectQueue() throws JMSException {
-        connection = connectionFactory.createConnection();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        connection.start();
-    }
-
-    private void disconnectQueue() {
-        try {
-            if (connection != null) {
-                connection.stop();
-                connection.close();
-            }
-        } catch (JMSException e) {
-            LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
-        }
-    }
+//    private void connectQueue() throws JMSException {
+//        connection = connectionFactory.createConnection();
+//        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+//        connection.start();
+//    }
+//
+//    private void disconnectQueue() {
+//        try {
+//            if (connection != null) {
+//                connection.stop();
+//                connection.close();
+//            }
+//        } catch (JMSException e) {
+//            LOG.error("[ Error when closing JMS connection ] {}", e.getMessage());
+//        }
+//    }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -158,7 +184,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Override
     public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
         try {
-            connectQueue();
+            Session session = connector.getNewSession();
+
+//            connectQueue();
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
 
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
@@ -168,8 +196,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             session.createProducer(message.getJmsMessage().getJMSReplyTo()).send(response);
         } catch (RulesModelMarshallException | JMSException e) {
             LOG.error("Error when returning Error message to recipient");
-        } finally {
-            disconnectQueue();
+//        } finally {
+//            disconnectQueue();
         }
     }
 
