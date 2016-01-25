@@ -28,10 +28,10 @@ public class JMSConnectorBean {
     private void connectToQueue() {
         LOG.debug("Open connection to JMS broker");
         try {
-//            pooledConnectionFactory = new PooledConnectionFactory();
-//            pooledConnectionFactory.setConnectionFactory(connectionFactory);
-//            connection = pooledConnectionFactory.createConnection();
-            connection = connectionFactory.createConnection();
+            pooledConnectionFactory = new PooledConnectionFactory();
+            pooledConnectionFactory.setConnectionFactory(connectionFactory);
+            connection = pooledConnectionFactory.createConnection();
+//            connection = connectionFactory.createConnection();
             connection.start();
         } catch (JMSException ex) {
             LOG.error("Error when open connection to JMS broker");
