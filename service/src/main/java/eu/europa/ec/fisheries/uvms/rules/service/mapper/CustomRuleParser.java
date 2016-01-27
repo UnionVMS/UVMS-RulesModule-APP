@@ -20,7 +20,9 @@ public class CustomRuleParser {
             StringBuilder sb = new StringBuilder();
 
             for (CustomRuleSegmentType segment : segments) {
-                sb.append(segment.getStartOperator());
+                if (segment.getStartOperator() != null) {
+                    sb.append(segment.getStartOperator());
+                }
 
                 // All subcriteria
                 if (segment.getSubCriteria() != null) {
@@ -241,7 +243,10 @@ public class CustomRuleParser {
                     sb.append(")");
                 }
 
-                sb.append(segment.getEndOperator());
+                if (segment.getEndOperator() != null) {
+                    sb.append(segment.getEndOperator());
+                }
+
                 switch (segment.getLogicBoolOperator()) {
                     case AND:
                         sb.append(" && ");

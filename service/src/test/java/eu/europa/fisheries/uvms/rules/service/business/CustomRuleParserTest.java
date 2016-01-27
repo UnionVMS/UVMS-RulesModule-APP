@@ -662,4 +662,42 @@ public class CustomRuleParserTest {
 
     }
 
+    @Test
+    public void testNullStartAndEndOperator() throws Exception {
+        List<CustomRuleType> rawRules = new ArrayList<CustomRuleType>();
+
+        CustomRuleType customRule = new CustomRuleType();
+        customRule.setName("DummyName");
+        customRule.setAvailability(AvailabilityType.PRIVATE);
+
+        // ACTIVITY_CALLBACK
+        CustomRuleSegmentType segment0 = new CustomRuleSegmentType();
+        segment0.setCriteria(CriteriaType.ACTIVITY);
+        segment0.setSubCriteria(SubCriteriaType.ACTIVITY_CALLBACK);
+        segment0.setCondition(ConditionType.EQ);
+        segment0.setValue("ACTIVITY_CALLBACK");
+        segment0.setLogicBoolOperator(LogicOperatorType.OR);
+        segment0.setOrder("0");
+        customRule.getDefinitions().add(segment0);
+
+        // Action
+        CustomRuleActionType action = new CustomRuleActionType();
+        action.setAction(ActionType.SEND_TO_ENDPOINT);
+        action.setValue("DNK");
+        action.setOrder("0");
+        customRule.getActions().add(action);
+
+        rawRules.add(customRule);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("activityCallback == \"ACTIVITY_CALLBACK\" || ");
+
+        String expectedRule = sb.toString();
+
+        List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
+        assertEquals(expectedRule, rules.get(0).getExpression());
+        assertEquals("SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
+
+    }
+
 }
