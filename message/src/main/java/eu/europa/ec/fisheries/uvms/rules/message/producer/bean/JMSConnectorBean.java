@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import org.apache.activemq.jms.pool.PooledConnectionFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
@@ -21,17 +20,13 @@ public class JMSConnectorBean {
     @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
-    private PooledConnectionFactory pooledConnectionFactory;
     private Connection connection;
 
     @PostConstruct
     private void connectToQueue() {
         LOG.debug("Open connection to JMS broker");
         try {
-            pooledConnectionFactory = new PooledConnectionFactory();
-            pooledConnectionFactory.setConnectionFactory(connectionFactory);
-            connection = pooledConnectionFactory.createConnection();
-//            connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
             connection.start();
         } catch (JMSException ex) {
             LOG.error("Error when open connection to JMS broker");
