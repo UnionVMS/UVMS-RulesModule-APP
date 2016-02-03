@@ -65,6 +65,7 @@ public class MovementFactMapper {
         }
 
         // MOBILE_TERMINAL
+        fact.setMobileTerminalGuid(mobileTerminal.getMobileTerminalId().getGuid());
         fact.setComChannelType(comChannelType);
         if (mobileTerminal != null) {
             fact.setMobileTerminalType(mobileTerminal.getType());

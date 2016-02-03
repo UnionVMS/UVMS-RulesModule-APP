@@ -11,6 +11,7 @@
             <xsd:element name="status" type="ticket:TicketStatusType"/>
             <xsd:element name="openDate" type="xsd:string"/>
             <xsd:element name="assetGuid" type="xsd:string"/>
+            <xsd:element name="mobileTerminalGuid" type="xsd:string"/>
             <xsd:element name="ruleGuid" type="xsd:string"/>
             <xsd:element name="ruleName" type="xsd:string"/>
             <xsd:element name="movementGuid" type="xsd:string"/>

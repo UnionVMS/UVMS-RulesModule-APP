@@ -40,6 +40,7 @@ public class MovementFact {
     private String assetStatus;
 
     // MOBILE_TERMINAL
+    private String mobileTerminalGuid;
     private String comChannelType;
     private String mobileTerminalType;
     private String mobileTerminalDnid;
@@ -252,6 +253,14 @@ public class MovementFact {
 
     public void setAssetStatus(String assetStatus) {
         this.assetStatus = assetStatus;
+    }
+
+    public String getMobileTerminalGuid() {
+        return mobileTerminalGuid;
+    }
+
+    public void setMobileTerminalGuid(String mobileTerminalGuid) {
+        this.mobileTerminalGuid = mobileTerminalGuid;
     }
 
     public String getComChannelType() {
