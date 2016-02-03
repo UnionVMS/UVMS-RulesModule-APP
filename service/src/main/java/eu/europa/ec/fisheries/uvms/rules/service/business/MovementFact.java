@@ -11,6 +11,7 @@ import java.util.List;
 public class MovementFact {
     private eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement;
     private String movementGuid;
+    private String channelGuid;
 
     // ROOT
     private List<String> assetGroups;
@@ -88,6 +89,14 @@ public class MovementFact {
 
     public void setMovementGuid(String movementGuid) {
         this.movementGuid = movementGuid;
+    }
+
+    public String getChannelGuid() {
+        return channelGuid;
+    }
+
+    public void setChannelGuid(String channelGuid) {
+        this.channelGuid = channelGuid;
     }
 
     public List<String> getAssetGroups() {

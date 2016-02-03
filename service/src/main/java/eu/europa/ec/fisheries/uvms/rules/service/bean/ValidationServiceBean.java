@@ -439,6 +439,7 @@ public class ValidationServiceBean implements ValidationService {
 
             ticket.setAssetGuid(fact.getAssetGuid());
             ticket.setMobileTerminalGuid(fact.getMobileTerminalGuid());
+            ticket.setChannelGuid(fact.getChannelGuid());
             ticket.setOpenDate(RulesUtil.dateToString(new Date()));
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);

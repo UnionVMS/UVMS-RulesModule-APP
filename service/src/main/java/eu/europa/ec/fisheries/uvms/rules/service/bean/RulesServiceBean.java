@@ -1,8 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementQuery;
 import eu.europa.ec.fisheries.schema.movement.search.v1.RangeCriteria;
@@ -22,6 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
+import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
@@ -699,6 +698,7 @@ public class RulesServiceBean implements RulesService {
         try {
             Date auditTimestamp = new Date();
             Date auditTotalTimestamp = new Date();
+            String channelGuid = "";
 
             Asset asset = null;
 
@@ -752,8 +752,13 @@ public class RulesServiceBean implements RulesService {
                 auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
 
                 if (movementResponse != null) {
+                    // Get channel guid
+                    if (mobileTerminal != null) {
+                        channelGuid = getChannelGuid(mobileTerminal, rawMovement);
+                    }
+
                     MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
-                    validateCreatedMovement(createdMovement, mobileTerminal, asset, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours);
+                    validateCreatedMovement(createdMovement, mobileTerminal, asset, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
 
                     auditLog("Rules total time:", auditTotalTimestamp);
 
@@ -778,7 +783,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, RawMovementType rawMovement, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
+    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, RawMovementType rawMovement, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) {
         Date auditTimestamp = new Date();
         List<AssetGroup> assetGroup = null;
         try {
@@ -799,7 +804,7 @@ public class RulesServiceBean implements RulesService {
             comChannelType = rawMovement.getComChannelType().name();
         }
 
-        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, asset, comChannelType, assetGroup, timeDiffInSeconds, numberOfReportsLast24Hours);
+        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, asset, comChannelType, assetGroup, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
         LOG.debug("movementFact:{}", movementFact);
 
         rulesValidator.evaluate(movementFact);
@@ -975,7 +980,87 @@ public class RulesServiceBean implements RulesService {
 
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
 
-        return resultList.size() != 1 ? null : resultList.get(0);
+        MobileTerminalType mobileTerminal = resultList.size() != 1 ? null : resultList.get(0);
+
+        return mobileTerminal;
+    }
+
+    // TODO: Implement for IRIDIUM as well (if needed)
+    private String getChannelGuid(MobileTerminalType mobileTerminal, RawMovementType rawMovement) {
+        String dnid = "";
+        String memberNumber = "";
+        String channelGuid = "";
+
+        List<IdList> ids = rawMovement.getMobileTerminal().getMobileTerminalIdList();
+
+        MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
+        for (IdList id : ids) {
+            eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria crit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
+            switch (id.getType()) {
+                case DNID:
+                    if (id.getValue() != null) {
+                        dnid = id.getValue();
+                    }
+                    break;
+                case MEMBER_NUMBER:
+                    if (id.getValue() != null) {
+                        memberNumber = id.getValue();
+                    }
+                    break;
+                case SERIAL_NUMBER:
+//                    if (id.getValue() != null) {
+//                        crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
+//                        crit.setValue(id.getValue());
+//                        criteria.getCriterias().add(crit);
+//                    }
+//                    break;
+                case LES:
+                default:
+                    LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
+                    break;
+            }
+        }
+
+        // Get the channel guid
+        boolean correctDnid = false;
+        boolean correctMemberNumber = false;
+        List<ComChannelType> channels = mobileTerminal.getChannels();
+        for (ComChannelType channel : channels) {
+
+            List<ComChannelAttribute> attributes = channel.getAttributes();
+
+            for (ComChannelAttribute attribute : attributes) {
+                String type = attribute.getType();
+                String value = attribute.getValue();
+
+                LOG.debug("myggan - type:{}", type);
+                LOG.debug("myggan - value:{}", value);
+
+                if ("DNID".equals(type)) {
+                    if (value.equals(dnid)) {
+                        correctDnid = true;
+                    } else {
+                        correctDnid = false;
+                    }
+
+                }
+                if ("MEMBER_NUMBER".equals(type)) {
+                    if (value.equals(memberNumber)) {
+                        correctMemberNumber = true;
+                    } else {
+                        correctMemberNumber = false;
+                    }
+                }
+            }
+
+            if (correctDnid && correctMemberNumber) {
+                channelGuid = channel.getGuid();
+            }
+
+        }
+
+        LOG.debug("myggan - channelGuid:{}", channelGuid);
+        return channelGuid;
     }
 
     private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) throws MessageException, RulesModelMapperException {

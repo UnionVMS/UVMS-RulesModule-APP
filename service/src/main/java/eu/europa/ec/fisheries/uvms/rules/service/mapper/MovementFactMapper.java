@@ -13,8 +13,10 @@ import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) {
         MovementFact fact = new MovementFact();
+
+        fact.setChannelGuid(channelGuid);
 
         fact.setMovementMovement(movement);
         fact.setMovementGuid(movement.getGuid());
