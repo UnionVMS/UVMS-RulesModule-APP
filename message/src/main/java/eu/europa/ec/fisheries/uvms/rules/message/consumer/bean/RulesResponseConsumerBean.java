@@ -4,11 +4,7 @@ import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.Session;
+import javax.jms.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +44,6 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             }
             connectToQueue();
             T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(60000);
-
             if (response == null) {
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }

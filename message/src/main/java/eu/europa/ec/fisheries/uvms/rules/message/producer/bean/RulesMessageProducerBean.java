@@ -72,36 +72,52 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
+            MessageProducer producer;
 
             switch (queue) {
                 case INTERNAL:
-                    session.createProducer(localDbQueue).send(message);
+                    producer = session.createProducer(localDbQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case MOVEMENT:
-                    session.createProducer(movementQueue).send(message);
+                    producer = session.createProducer(movementQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case CONFIG:
-                    session.createProducer(configQueue).send(message);
+                    producer = session.createProducer(configQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case ASSET:
-                    session.createProducer(assetQueue).send(message);
+                    producer = session.createProducer(assetQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case MOBILE_TERMINAL:
-                    session.createProducer(mobileTerminalQueue).send(message);
+                    producer = session.createProducer(mobileTerminalQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case EXCHANGE:
-                    session.createProducer(exchangeQueue).send(message);
+                    producer = session.createProducer(exchangeQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case USER:
-                    session.createProducer(userQueue).send(message);
+                    producer = session.createProducer(userQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 case AUDIT:
-                    session.createProducer(auditQueue).send(message);
+                    producer = session.createProducer(auditQueue);
+                    producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+                    producer.send(message);
                     break;
                 default:
                     break;
             }
-
             return message.getJMSMessageID();
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
@@ -118,7 +134,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             Session session = connector.getNewSession();
             TextMessage response = session.createTextMessage(text);
             response.setJMSCorrelationID(message.getJMSMessageID());
-            session.createProducer(message.getJMSReplyTo()).send(response);
+            MessageProducer producer = session.createProducer(message.getJMSReplyTo());
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            producer.send(response);
         } catch (JMSException e) {
             LOG.error("[ Error when returning module rules request. ] {}", e.getMessage());
         }
@@ -144,7 +162,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
             TextMessage response = session.createTextMessage(data);
             response.setJMSCorrelationID(message.getJmsMessage().getJMSMessageID());
-            session.createProducer(message.getJmsMessage().getJMSReplyTo()).send(response);
+            MessageProducer producer = session.createProducer(message.getJmsMessage().getJMSReplyTo());
+            producer.send(response);
         } catch (RulesModelMarshallException | JMSException e) {
             LOG.error("Error when returning Error message to recipient");
         }

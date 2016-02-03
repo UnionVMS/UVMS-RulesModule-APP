@@ -292,7 +292,7 @@ public class ValidationServiceBean implements ValidationService {
 
             String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs());
             String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
 
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
 
