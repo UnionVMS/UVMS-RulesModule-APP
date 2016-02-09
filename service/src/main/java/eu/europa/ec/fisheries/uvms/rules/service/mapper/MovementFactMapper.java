@@ -64,6 +64,7 @@ public class MovementFactMapper {
             fact.setAssetName(asset.getName());
             fact.setAssetGuid(asset.getAssetId().getGuid());
             fact.setAssetStatus(asset.isActive() ? "ACTIVE":"INACTIVE");
+            fact.setMmsiNo(asset.getMmsiNo());
         }
 
         // MOBILE_TERMINAL

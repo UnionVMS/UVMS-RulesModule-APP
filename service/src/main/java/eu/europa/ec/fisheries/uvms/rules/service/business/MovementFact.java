@@ -39,6 +39,7 @@ public class MovementFact {
     private String ircs;
     private String assetName;
     private String assetStatus;
+    private String mmsiNo;
 
     // MOBILE_TERMINAL
     private String mobileTerminalGuid;
@@ -455,6 +456,13 @@ public class MovementFact {
     public void setTimeDiffPositionReport(Long timeDiffPositionReport) {
         this.timeDiffPositionReport = timeDiffPositionReport;
     }
+    public String getMmsiNo() {
+        return mmsiNo;
+    }
+
+    public void setMmsiNo(String mmsiNo) {
+        this.mmsiNo = mmsiNo;
+    }
 
     @Override
     public String toString() {
@@ -477,6 +485,7 @@ public class MovementFact {
                 ", flagState='" + flagState + '\'' +
                 ", cfr='" + cfr + '\'' +
                 ", ircs='" + ircs + '\'' +
+                ", mmsiNo='" + mmsiNo + '\'' +
                 ", assetName='" + assetName + '\'' +
                 ", assetStatus='" + assetStatus + '\'' +
                 ", comChannelType='" + comChannelType + '\'' +
