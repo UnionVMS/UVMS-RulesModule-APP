@@ -14,18 +14,15 @@
     
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>provided</scope>
+            <version>${rules.model.version}</version>
         </dependency>
-
         <dependency>
-	        <groupId>eu.europa.ec.fisheries</groupId>
+	        <groupId>eu.europa.ec.fisheries.uvms</groupId>
 	        <artifactId>uvms-config</artifactId>
 	        <version>${uvms.config.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

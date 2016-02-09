@@ -16,18 +16,12 @@
         <!-- EJB DEPENDENCS -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-model</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>rules-service</artifactId>
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.mare.usm</groupId>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
         </dependency>

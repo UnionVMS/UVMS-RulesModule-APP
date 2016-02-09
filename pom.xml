@@ -9,7 +9,8 @@
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
-        <release.branch.name>salome</release.branch.name>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <release.branch.name>uvms-1.0.0</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
@@ -21,15 +22,17 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <dozer.version>5.5.1</dozer.version>
-        <uvms.config.version>0.1-SNAPSHOT</uvms.config.version>
-        <uvms.common.version>1.4-SNAPSHOT</uvms.common.version>
-        <movement.model.version>1.0.6-SNAPSHOT</movement.model.version>
+        <uvms.config.version>1.0.0</uvms.config.version>
+        <uvms.common.version>1.5</uvms.common.version>
+        <movement.model.version>1.0.0</movement.model.version>
         <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
-        <asset.model.version>1.0.10-SNAPSHOT</asset.model.version>
-        <mobileterminal.model.version>1.0.7-SNAPSHOT</mobileterminal.model.version>
-        <user.model.version>1.1.0-SNAPSHOT</user.model.version>
-        <usm4uvms.version>0.0.12-SNAPSHOT</usm4uvms.version>
-        <audit.model.version>1.0.4-SNAPSHOT</audit.model.version>
+        <asset.model.version>1.0.0</asset.model.version>
+        <mobileterminal.model.version>1.0.0</mobileterminal.model.version>
+        <user.model.version>1.2.0</user.model.version>
+        <usm4uvms.version>1.0.0</usm4uvms.version>
+        <audit.model.version>1.0.0</audit.model.version>
+        <maven.plugins.version>3.4</maven.plugins.version>
+        <rules.model.version>1.0.1-SNAPSHOT</rules.model.version>
     </properties>
 
     <dependencies>
@@ -82,8 +85,6 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 		</dependency>
-
-
     </dependencies>
 
     <distributionManagement>
@@ -100,7 +101,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP</connection>       
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP</connection>
     </scm>
 
     <build>
@@ -108,7 +109,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.4</version>
+                <version>${maven.plugins.version}</version>
                 <configuration>
                     <goalPrefix>plugin</goalPrefix>
                     <outputDirectory>target/dir</outputDirectory>
@@ -120,7 +121,6 @@
         <module>rest</module>
         <module>service</module>
         <module>message</module>
-        <module>model</module>
         <module>module</module>
     </modules>
 </project>

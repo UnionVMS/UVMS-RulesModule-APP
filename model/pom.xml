@@ -2,22 +2,77 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+    <version>1.0.1-SNAPSHOT</version>
     <artifactId>rules-model</artifactId>
-    <name>${project.parent.artifactId}-model</name>   
+    <name>rules-model</name>
     <packaging>ejb</packaging>
     <description>This module shall have interfaces, XSD, and DTOs</description>
 
-    <parent>
-        <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-    </parent>
-
     <properties>
-        <!-- the name of the wsdlfiles wothout fileending -->
+        <release.branch.name>uvms-1.0.0</release.branch.name>
+        <!-- the name of the wsdl files without file ending -->
         <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
         <wsdl.source.name>RulesDataSourceService</wsdl.source.name>
+        <javaee.version>7.0</javaee.version>
+        <sl4j.version>1.7.7</sl4j.version>
+        <logback.version>1.1.2</logback.version>
+        <logback.core.version>1.1.2</logback.core.version>
+        <junit.version>4.10</junit.version>
+        <mockito.version>1.10.19</mockito.version>
+        <powermock.version>1.6.2</powermock.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>${javaee.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- LOGGING DEPENDENCIES -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${sl4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.core.version}</version>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>digit-releases</id>
+            <name>DG DIGIT Repository</name>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare/</url>
+        </repository>
+        <snapshotRepository>
+            <id>digit-snapshots</id>
+            <name>DG DIGIT Snapshot Repository</name>
+            <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP/model</connection>
+    </scm>
 
     <profiles>
         <profile>
