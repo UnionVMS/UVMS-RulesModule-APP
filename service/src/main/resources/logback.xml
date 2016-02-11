@@ -54,7 +54,7 @@
         </filter>
     </appender>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="ERROR"/>
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
