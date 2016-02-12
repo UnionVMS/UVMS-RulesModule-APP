@@ -411,6 +411,22 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
+    public long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException {
+        try {
+            String request = RulesDataSourceRequestMapper.getNumberOfAssetsNotSending();
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            return RulesDataSourceResponseMapper.mapToGetNumberOfAssetsNotSendingFromResponse(response, messageId);
+        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            LOG.error("[ Error when getting number of open tickets ] {}", e.getMessage());
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
+        }
+    }
+
+
+
+    @Override
     public AlarmReportType updateAlarmStatus(AlarmReportType alarm) throws RulesServiceException, RulesFaultException {
         LOG.info("Update alarm status invoked in service layer");
         try {
@@ -1033,9 +1049,6 @@ public class RulesServiceBean implements RulesService {
                 String type = attribute.getType();
                 String value = attribute.getValue();
 
-                LOG.debug("myggan - type:{}", type);
-                LOG.debug("myggan - value:{}", value);
-
                 if ("DNID".equals(type)) {
                     if (value.equals(dnid)) {
                         correctDnid = true;
@@ -1059,7 +1072,6 @@ public class RulesServiceBean implements RulesService {
 
         }
 
-        LOG.debug("myggan - channelGuid:{}", channelGuid);
         return channelGuid;
     }
 

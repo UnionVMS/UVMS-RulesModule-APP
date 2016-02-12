@@ -181,4 +181,24 @@ public class TicketRestResource {
         }
     }
 
+    /**
+     *
+     * @responseMessage 200 Number of open tickets for logged in user
+     * @responseMessage 500 Error
+     *
+     * @summary Get number of not sending transponders by user (used by dashboard widget)
+     *
+     */
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path("/countAssetsNotSending")
+    public ResponseDto getNumberOfAssetsNotSending() {
+        try {
+            return new ResponseDto(rulesService.getNumberOfAssetsNotSending(), ResponseCode.OK);
+        } catch (RulesServiceException | RulesFaultException e) {
+            LOG.error("[ Error when getting number of assets not sending. ] {} ", e.getMessage());
+            return ErrorHandler.getFault(e);
+        }
+    }
+
 }

@@ -62,6 +62,10 @@
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
+
+                    <!-- Actions triggered by widget -->
+                    <xsd:enumeration value="GET_NUMBER_OF_ASSETS_NOT_SENDING"/>
+
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -752,6 +756,24 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get number of assets not sending request -->
+            <xsd:element name="GetNumberOfAssetsNotSendingRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of assets not sending response -->
+            <xsd:element name="GetNumberOfAssetsNotSendingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
 
         </xsd:schema>
     </types>
@@ -977,6 +999,13 @@
         <part name="body" element="source:GetNumberOfOpenTicketsResponse"/>
     </message>
 
+    <message name="GetNumberOfAssetsNotSendingRequest">
+        <part name="body" element="source:GetNumberOfAssetsNotSendingRequest"/>
+    </message>
+    <message name="GetNumberOfAssetsNotSendingResponse">
+        <part name="body" element="source:GetNumberOfAssetsNotSendingResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -1161,6 +1190,12 @@
         <operation name="GetNumberOfOpenTickets">
             <input message="source:GetNumberOfOpenTicketsRequest"/>
             <output message="source:GetNumberOfOpenTicketsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfAssetsNotSending">
+            <input message="source:GetNumberOfAssetsNotSendingRequest"/>
+            <output message="source:GetNumberOfAssetsNotSendingResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1515,6 +1550,18 @@
         </operation>
 
         <operation name="GetNumberOfOpenTickets">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfAssetsNotSending">
             <input>
                 <soap:body use="literal"/>
             </input>

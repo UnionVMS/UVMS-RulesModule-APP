@@ -357,4 +357,16 @@ public class RulesDataSourceResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
+    public static long mapToGetNumberOfAssetsNotSendingFromResponse(TextMessage message, String correlationId) throws JMSException, RulesFaultException, RulesModelMapperException {
+        validateResponse(message, correlationId);
+        GetNumberOfAssetsNotSendingResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetNumberOfAssetsNotSendingResponse.class);
+        return response.getResponse();
+    }
+
+    public static String toNumberOfAssetsNotSendingResponse(long count) throws RulesModelMarshallException {
+        GetNumberOfAssetsNotSendingResponse response = new GetNumberOfAssetsNotSendingResponse();
+        response.setResponse(count);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
 }

@@ -135,4 +135,7 @@ public interface RulesService {
     TicketType getTicketByGuid(String guid) throws RulesServiceException, RulesFaultException;
 
     List<TicketType> updateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesServiceException, RulesFaultException;
+
+    long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException;
+
 }

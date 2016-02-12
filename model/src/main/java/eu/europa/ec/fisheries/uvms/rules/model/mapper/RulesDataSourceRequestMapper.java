@@ -230,4 +230,9 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String getNumberOfAssetsNotSending() throws RulesModelMarshallException {
+        GetNumberOfAssetsNotSendingRequest request = new GetNumberOfAssetsNotSendingRequest();
+        request.setMethod(RulesDataSourceMethod.GET_NUMBER_OF_ASSETS_NOT_SENDING);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
 }
