@@ -88,6 +88,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -664,6 +665,136 @@ public class RulesServiceBean implements RulesService {
         return timeDiff;
     }
 
+    @Override
+    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType) throws RulesServiceException {
+        try {
+            Date auditTimestamp = new Date();
+            Date auditTotalTimestamp = new Date();
+
+            Asset asset = null;
+
+            // Get Mobile Terminal if it exists
+            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
+            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
+
+            // Get Asset
+            if (mobileTerminal != null) {
+                String connectId = mobileTerminal.getConnectId();
+                if (connectId != null) {
+                    asset = getAssetByConnectId(connectId);
+                }
+            } else {
+                asset = getAssetByCfrIrcs(rawMovement.getAssetId());
+            }
+            auditTimestamp = auditLog("Time to fetch from Asset Module:", auditTimestamp);
+
+            RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, asset, pluginType);
+            LOG.debug("rawMovementFact:{}", rawMovementFact);
+
+            rulesValidator.evaluate(rawMovementFact);
+            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
+
+            if (rawMovementFact.isOk()) {
+                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement);
+
+                LOG.info("Validating movement from Movement Module");
+                rulesValidator.evaluate(movementFact);
+
+                auditLog("Rules total time:", auditTotalTimestamp);
+
+                // Tell Exchange that a movement was persisted in Movement
+                sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT);
+            } else {
+                // Tell Exchange that the report caused an alarm
+                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM);
+            }
+//        } catch (Exception e) {
+//            throw new RulesServiceException(e.getMessage());
+//        }
+        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
+        Date auditTimestamp = new Date();
+
+        // This needs to be done before persisting last report
+        Long timeDiffInSeconds = null;
+        Long timeDiff = timeDiffFromLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
+        timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
+        auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
+
+        // TODO: Perhaps also log mobile terminal id, so we can log communication when one or the other exists
+        // This as fire and forget, so no need to parallelize
+        persistLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
+        auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
+
+        int threadNum = 2;
+        ExecutorService executor = Executors.newFixedThreadPool(threadNum);
+        FutureTask<Integer> numberOfReportsLast24HoursTask = null;
+        Integer numberOfReportsLast24Hours = null;
+        final String assetGuid = asset.getAssetId().getGuid();
+
+        final XMLGregorianCalendar positionTime = rawMovement.getPositionTime();
+
+        numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
+            @Override
+            public Integer call() {
+                return numberOfReportsLast24Hours(assetGuid, positionTime);
+            }
+        });
+        executor.execute(numberOfReportsLast24HoursTask);
+
+        FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
+            @Override
+            public MovementType call() {
+                return sendToMovement(assetGuid, rawMovement);
+            }
+        });
+        executor.execute(sendToMovementTask);
+
+        FutureTask<List<AssetGroup>> assetGroupTask = new FutureTask<>(new Callable<List<AssetGroup>>() {
+            @Override
+            public List<AssetGroup> call() {
+
+                return getAssetGroup(assetGuid);
+            }
+        });
+        executor.execute(assetGroupTask);
+
+        // Get channel guid
+        String channelGuid = "";
+        if (mobileTerminal != null) {
+            channelGuid = getChannelGuid(mobileTerminal, rawMovement);
+        }
+
+        // Get channel type
+        String comChannelType = null;
+        if (rawMovement.getComChannelType() != null) {
+            comChannelType = rawMovement.getComChannelType().name();
+        }
+
+        // TODO: Get vicinityOf to validate on
+        // ??? Maybe Movement?
+//        String vicinityOf = "GO_GET_IT!!!";
+
+        // Get data from parallel tasks
+        List<AssetGroup> assetGroups = assetGroupTask.get();
+        auditTimestamp = auditLog("Time to get asset groups:", auditTimestamp);
+
+        numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
+        auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
+
+        MovementType createdMovement = sendToMovementTask.get();
+        auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
+
+        MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
+        LOG.debug("movementFact:{}", movementFact);
+
+        return movementFact;
+    }
+
     private Integer numberOfReportsLast24Hours(String assetGuid, XMLGregorianCalendar thisTime) {
         LOG.info("Fetching number of reports last 24 hours");
         Integer numberOfMovements = null;
@@ -712,88 +843,41 @@ public class RulesServiceBean implements RulesService {
         return numberOfMovements;
     }
 
-    @Override
-    public void setMovementReportReceived(RawMovementType rawMovement, String pluginType) throws RulesServiceException {
+    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement) {
+        LOG.info("Send the validated raw position to Movement");
+
+        MovementType createdMovement = null;
         try {
-            Date auditTimestamp = new Date();
-            Date auditTotalTimestamp = new Date();
-            String channelGuid = "";
+            MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
+            movementBaseType.setConnectId(assetGuid);
+            String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
+            String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
+            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
 
-            Asset asset = null;
-
-            // Get Mobile Terminal if it exists
-            MobileTerminalType mobileTerminal = getMobileTerminalByRawMovement(rawMovement);
-            auditTimestamp = auditLog("Time to fetch from Mobile Terminal Module:", auditTimestamp);
-
-            // Get Asset
-            if (mobileTerminal != null) {
-                String connectId = mobileTerminal.getConnectId();
-                if (connectId != null) {
-                    asset = getAssetByConnectId(connectId);
-                }
-            } else {
-                asset = getAssetByCfrIrcs(rawMovement.getAssetId());
-            }
-            auditTimestamp = auditLog("Time to fetch from Asset Module:", auditTimestamp);
-
-            RawMovementFact rawMovementFact = RawMovementFactMapper.mapRawMovementFact(rawMovement, mobileTerminal, asset, pluginType);
-            LOG.debug("rawMovementFact:{}", rawMovementFact);
-
-            rulesValidator.evaluate(rawMovementFact);
-            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
-
-            if (rawMovementFact.isOk()) {
-                Long timeDiffInSeconds = null;
-                Integer numberOfReportsLast24Hours = null;
-                if (asset != null && asset.getAssetId().getGuid() != null && rawMovement.getPositionTime() != null) {
-                    Long timeDiff = timeDiffFromLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
-                    timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
-                    auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
-
-                    numberOfReportsLast24Hours = numberOfReportsLast24Hours(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
-                    auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
-
-                    persistLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
-                    auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
-                }
-
-                LOG.info("Send the validated raw position to Movement");
-
-                MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
-
-                movementBaseType.setConnectId(rawMovementFact.getAssetGuid());
-
-                String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
-
-                // Send to Movement
-                String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-                TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
-                auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
-
-                if (movementResponse != null) {
-                    // Get channel guid
-                    if (mobileTerminal != null) {
-                        channelGuid = getChannelGuid(mobileTerminal, rawMovement);
-                    }
-
-                    MovementType createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
-                    validateCreatedMovement(createdMovement, mobileTerminal, asset, rawMovement, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
-
-                    auditLog("Rules total time:", auditTotalTimestamp);
-
-                    // Tell Exchange that a movement was persisted in Movement
-                    sendBackToExchange(createdMovement.getGuid(), rawMovement, MovementRefTypeType.MOVEMENT);
-                } else {
-                    LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
-                    throw new RulesServiceException("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
-                }
-            } else {
-                // Tell Exchange that the report caused an alarm
-                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM);
-            }
-        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | AssetModelMapperException | RulesModelMapperException e) {
-            throw new RulesServiceException(e.getMessage());
+            createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
+        } catch (ModelMarshallException | MessageException e) {
+            LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
         }
+
+        return createdMovement;
+    }
+
+    private List<AssetGroup> getAssetGroup(String assetGuid) {
+        LOG.info("Fetch asset groups from Asset");
+
+        TextMessage getAssetResponse = null;
+        String getAssetMessageId = null;
+        List<AssetGroup> assetGroups = null;
+        try {
+            String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(assetGuid);
+            getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
+            getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+
+            assetGroups = AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
+        } catch (AssetModelMapperException | MessageException e) {
+            LOG.warn("[ Failed while fetching asset groups ]", e.getMessage());
+        }
+        return assetGroups;
     }
 
     private void sendBackToExchange(String guid, RawMovementType rawMovement, MovementRefTypeType status) throws RulesModelMarshallException, MessageException {
@@ -814,47 +898,6 @@ public class RulesServiceBean implements RulesService {
         } catch (ExchangeModelMapperException e) {
             e.printStackTrace();
         }
-
-    }
-
-    private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, RawMovementType rawMovement, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) {
-        Date auditTimestamp = new Date();
-        List<AssetGroup> assetGroup = null;
-        try {
-            assetGroup = getAssetGroup(asset);
-        } catch (AssetModelMapperException | MessageException e) {
-            LOG.warn("[ Failed while fetching asset groups ]", e.getMessage());
-        }
-        auditTimestamp = auditLog("Time to get asset groups:", auditTimestamp);
-
-        // TODO: Get vicinityOf to validate on
-        // ??? Maybe Movement?
-//        String vicinityOf = "GO_GET_IT!!!";
-
-        LOG.info("Validating movement from Movement Module");
-
-        String comChannelType = null;
-        if (rawMovement.getComChannelType() != null) {
-            comChannelType = rawMovement.getComChannelType().name();
-        }
-
-        MovementFact movementFact = MovementFactMapper.mapMovementFact(movement, mobileTerminal, asset, comChannelType, assetGroup, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
-        LOG.debug("movementFact:{}", movementFact);
-
-        rulesValidator.evaluate(movementFact);
-    }
-
-    private List<AssetGroup> getAssetGroup(Asset asset) throws AssetModelMapperException, MessageException {
-        // Don't bother searching if no valid asset guid
-        if (asset == null || asset.getAssetId() == null || asset.getAssetId().getGuid() == null) {
-            return null;
-        }
-
-        String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(asset.getAssetId().getGuid());
-        String getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
-        TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
-
-        return  AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
     }
 
     private Asset getAssetByConnectId(String connectId) throws AssetModelMapperException, MessageException {
@@ -1027,9 +1070,7 @@ public class RulesServiceBean implements RulesService {
 
         List<IdList> ids = rawMovement.getMobileTerminal().getMobileTerminalIdList();
 
-        MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
         for (IdList id : ids) {
-            eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria crit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
             switch (id.getType()) {
                 case DNID:
                     if (id.getValue() != null) {
@@ -1042,12 +1083,7 @@ public class RulesServiceBean implements RulesService {
                     }
                     break;
                 case SERIAL_NUMBER:
-//                    if (id.getValue() != null) {
-//                        crit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.SERIAL_NUMBER);
-//                        crit.setValue(id.getValue());
-//                        criteria.getCriterias().add(crit);
-//                    }
-//                    break;
+                    // IRIDIUM
                 case LES:
                 default:
                     LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
@@ -1068,26 +1104,16 @@ public class RulesServiceBean implements RulesService {
                 String value = attribute.getValue();
 
                 if ("DNID".equals(type)) {
-                    if (value.equals(dnid)) {
-                        correctDnid = true;
-                    } else {
-                        correctDnid = false;
-                    }
-
+                    correctDnid = value.equals(dnid);
                 }
                 if ("MEMBER_NUMBER".equals(type)) {
-                    if (value.equals(memberNumber)) {
-                        correctMemberNumber = true;
-                    } else {
-                        correctMemberNumber = false;
-                    }
+                    correctMemberNumber = value.equals(memberNumber);
                 }
             }
 
             if (correctDnid && correctMemberNumber) {
                 channelGuid = channel.getGuid();
             }
-
         }
 
         return channelGuid;
