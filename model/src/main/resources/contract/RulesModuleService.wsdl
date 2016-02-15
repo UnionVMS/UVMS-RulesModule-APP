@@ -55,14 +55,6 @@
                 </xsd:complexType>
             </xsd:element>
             
-            <xsd:element name="SetMovementReportResponse">
-                <xsd:complexType>
-                    <xsd:sequence>
-                        <xsd:element name="movementRef" type="movement:MovementRefType" minOccurs="1" maxOccurs="1"/>
-                    </xsd:sequence>
-                </xsd:complexType>
-            </xsd:element>
-
             <!-- Create custom rule request -->
             <xsd:element name="CreateCustomRuleRequest">
                 <xsd:complexType>
@@ -295,9 +287,6 @@
     <message name="SetMovementReportRequest">
         <part name="body" element="module:SetMovementReportRequest"/>
     </message>
-    <message name="SetMovementReportResponse">
-        <part name="body" element="module:SetMovementReportResponse"/>
-    </message>
     
     <message name="PingRequest">
         <part name="body" element="module:PingRequest"/>
@@ -352,7 +341,6 @@
 
         <operation name="SetMovementReport">
             <input message="module:SetMovementReportRequest"/>
-            <output message="module:SetMovementReportResponse"/>
             <fault name="RulesException" message="module:RulesException"/>
         </operation>
         <operation name="Ping">
@@ -453,9 +441,6 @@
             <input>
                 <soap:body use="literal"/>
             </input>
-            <output>
-                <soap:body use="literal"/>
-            </output>
             <fault name="RulesException">
                 <soap:fault name="RulesException" use="literal"/>
             </fault>

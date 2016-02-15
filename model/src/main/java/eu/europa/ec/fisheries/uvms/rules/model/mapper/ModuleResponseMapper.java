@@ -1,8 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportResponse;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -43,21 +41,5 @@ public class ModuleResponseMapper {
         return fault;
     }
 
-    public static MovementRefType mapSetMovementReportResponse(TextMessage response, String correlationId) throws RulesModelMapperException {
-        try {
-            validateResponse(response, correlationId);
-            SetMovementReportResponse unmarshalledResponse = JAXBMarshaller.unmarshallTextMessage(response, SetMovementReportResponse.class);
-            return unmarshalledResponse.getMovementRef();
-        } catch (RulesModelMapperException | JMSException | RulesFaultException e) {
-            //TODO take care of exception
-            // TODO Don't catch RulesFaultException. For now, Exchange uses this method, so changes needs to be done there as well
-            throw new RulesModelMapperException("FIX ME");
-        }
-    }
 
-    public static String createSetMovementReportResponse(MovementRefType movementRefType) throws RulesModelMarshallException {
-        SetMovementReportResponse response = new SetMovementReportResponse();
-        response.setMovementRef(movementRefType);
-        return JAXBMarshaller.marshallJaxBObjectToString(response);
-    }
 }

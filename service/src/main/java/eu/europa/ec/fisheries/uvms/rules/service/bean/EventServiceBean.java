@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
@@ -59,8 +58,6 @@ public class EventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
-        SetMovementReportResponse exchangeResponse = new SetMovementReportResponse();
-
         LOG.info("Validating movement from Exchange Module");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
@@ -77,13 +74,8 @@ public class EventServiceBean implements EventService {
 
             String pluginType = request.getType().name();
 
-            MovementRefType ref = rulesService.setMovementReportReceived(rawMovementType, pluginType);
-
-            exchangeResponse.setMovementRef(ref);
-            String exchangeResponseText = JAXBMarshaller.marshallJaxBObjectToString(exchangeResponse);
-            producer.sendModuleResponseMessage(message.getJmsMessage(), exchangeResponseText);
-
-        } catch (RulesModelMapperException | MessageException | RulesServiceException e) {
+            rulesService.setMovementReportReceived(rawMovementType, pluginType);
+        } catch (RulesModelMapperException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
             errorEvent.fire(message);
         }

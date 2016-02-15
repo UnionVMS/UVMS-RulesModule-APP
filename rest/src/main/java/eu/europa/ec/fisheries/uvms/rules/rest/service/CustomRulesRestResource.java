@@ -113,7 +113,7 @@ public class CustomRulesRestResource {
         try {
             return new ResponseDto(rulesService.getCustomRuleByGuid(guid), ResponseCode.OK);
         } catch (RulesFaultException | RulesModelMapperException | RulesServiceException | NullPointerException ex) {
-            LOG.error("[ Error when geting custom rule by guid. ] {} ", ex.getStackTrace());
+            LOG.error("[ Error when getting custom rule by guid. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }
     }

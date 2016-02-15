@@ -10,16 +10,13 @@
     <xsd:import namespace="urn:asset.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Asset.xsd"/>
     <xsd:import namespace="urn:mobileterminal.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminal.xsd"/>
 
-    <xsd:complexType name="MovementRefType">
-        <xsd:sequence>
-            <xsd:element name="movementRefGuid" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-            <xsd:element name="type" type="xsd:string" minOccurs="1" maxOccurs="1"/> <!-- MOVEMENT, RULES (holding) -->
-        </xsd:sequence>
-    </xsd:complexType>
-
     <!-- Type received in UNIONVMS -->
     <xsd:complexType name="RawMovementType">
         <xsd:sequence>
+            <xsd:element name="dateRecieved" type="xsd:dateTime"/>
+            <xsd:element name="pluginType" type="xsd:string"/>
+            <xsd:element name="pluginName" type="xsd:string"/>
+
             <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="assetId" type="asset:AssetId"/>

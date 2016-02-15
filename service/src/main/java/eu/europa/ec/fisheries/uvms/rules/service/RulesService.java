@@ -1,9 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
@@ -118,7 +118,7 @@ public interface RulesService {
 
     String reprocessAlarm(List<String> alarms) throws RulesServiceException, RulesFaultException;
 
-    MovementRefType setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException;
+    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm

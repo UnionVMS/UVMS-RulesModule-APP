@@ -186,7 +186,7 @@ public class TicketRestResource {
      * @responseMessage 200 Number of open tickets for logged in user
      * @responseMessage 500 Error
      *
-     * @summary Get number of not sending transponders by user (used by dashboard widget)
+     * @summary Get number of not sending transponders (used by dashboard widget)
      *
      */
     @GET

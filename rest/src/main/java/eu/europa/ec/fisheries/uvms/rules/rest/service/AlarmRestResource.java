@@ -56,7 +56,7 @@ public class AlarmRestResource {
         try {
             return new ResponseDto(rulesService.getAlarmList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException  e) {
-            LOG.error("[ Error when geting list. ] {} ", e.getMessage());
+            LOG.error("[ Error when getting list. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
     }

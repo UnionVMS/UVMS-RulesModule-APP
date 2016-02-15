@@ -1,5 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementQuery;
@@ -10,13 +13,12 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.*;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
@@ -32,6 +34,8 @@ import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -61,6 +65,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
@@ -88,8 +93,6 @@ import java.util.UUID;
 public class RulesServiceBean implements RulesService {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
-    public static final String REF_TYPE_MOVEMENT = "MOVEMENT";
-    public static final String REF_TYPE_ALARM = "ALARM";
 
     @EJB
     ParameterService parameterService;
@@ -710,7 +713,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public MovementRefType setMovementReportReceived(RawMovementType rawMovement, String pluginType) throws RulesServiceException {
+    public void setMovementReportReceived(RawMovementType rawMovement, String pluginType) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
             Date auditTotalTimestamp = new Date();
@@ -779,24 +782,39 @@ public class RulesServiceBean implements RulesService {
                     auditLog("Rules total time:", auditTotalTimestamp);
 
                     // Tell Exchange that a movement was persisted in Movement
-                    MovementRefType ref = new MovementRefType();
-                    ref.setMovementRefGuid(createdMovement.getGuid());
-                    ref.setType(REF_TYPE_MOVEMENT);
-                    return ref;
+                    sendBackToExchange(createdMovement.getGuid(), rawMovement, MovementRefTypeType.MOVEMENT);
                 } else {
                     LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
                     throw new RulesServiceException("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
                 }
             } else {
                 // Tell Exchange that the report caused an alarm
-                MovementRefType ref = new MovementRefType();
-                ref.setMovementRefGuid(rawMovementFact.getMovementGuid());
-                ref.setType(REF_TYPE_ALARM);
-                return ref;
+                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM);
             }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException |  ModelMarshallException | AssetModelMapperException | RulesModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         }
+    }
+
+    private void sendBackToExchange(String guid, RawMovementType rawMovement, MovementRefTypeType status) throws RulesModelMarshallException, MessageException {
+        LOG.info("Sending back processed movement to exchange");
+
+        // Map response
+        MovementRefType movementRef = new MovementRefType();
+        movementRef.setMovementRefGuid(guid);
+        movementRef.setType(status);
+
+        // Map movement
+        SetReportMovementType setReportMovementType = ExchangeMovementMapper.mapExchangeMovement(rawMovement);
+
+        try {
+            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponse(setReportMovementType, movementRef);
+//            String exchangeResponseText = eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller.marshallJaxBObjectToString(ExchangeModuleRequestMapper.mapToProcessedMovementResopnse(setReportMovementType, movementRef));
+            producer.sendDataSourceMessage(exchangeResponseText, DataSourceQueue.EXCHANGE);
+        } catch (ExchangeModelMapperException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void validateCreatedMovement(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, RawMovementType rawMovement, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) {

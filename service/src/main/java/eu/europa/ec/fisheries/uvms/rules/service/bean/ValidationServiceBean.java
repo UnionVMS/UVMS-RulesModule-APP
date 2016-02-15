@@ -261,7 +261,6 @@ public class ValidationServiceBean implements ValidationService {
         } catch (RulesModelMapperException | MessageException e) {
             LOG.warn("[ Failed to update last triggered date for rule {} ]", ruleGuid);
         }
-
     }
 
     private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
@@ -293,10 +292,9 @@ public class ValidationServiceBean implements ValidationService {
             String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
             String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            // TODO: Do something with the response??? Or don't send response from Exchange
 
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
-
-            // TODO: Do something with the response???
 
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! ] {}", e.getMessage());
@@ -305,8 +303,6 @@ public class ValidationServiceBean implements ValidationService {
     }
 
     private void sendToEmail(String emailAddress, String ruleName, MovementFact fact) {
-        // TODO: Decide on what message to send
-
         LOG.info("Sending email to '{}'", emailAddress);
 
         EmailType email = new EmailType();
@@ -319,14 +315,9 @@ public class ValidationServiceBean implements ValidationService {
         String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
-//            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress);
-
-            // TODO: Do something with the response???
-//            xxx = ExchangeModuleResponseMapper.mapSetCommandSendEmailResponse(response);
-//            ExchangeModuleResponseMapper.mapSetCommandResponse(response);
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ] {}", e.getMessage());
