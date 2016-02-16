@@ -284,12 +284,17 @@ public class CustomRuleParser {
 
             // Format: "ACTION,VALUE;ACTION,VALUE;ACTION,VALUE;"
             List<CustomRuleActionType> actions = rawRule.getActions();
+            
             sb = new StringBuilder();
-            for (CustomRuleActionType action : actions) {
-                sb.append(action.getAction());
-                sb.append(",");
-                sb.append(action.getValue());
+            if (actions.isEmpty()) {
                 sb.append(";");
+            } else {
+                for (CustomRuleActionType action : actions) {
+                    sb.append(action.getAction());
+                    sb.append(",");
+                    sb.append(action.getValue());
+                    sb.append(";");
+                }
             }
 
             rulesDto.setAction(sb.toString());
