@@ -13,6 +13,7 @@
     <!-- Type received in UNIONVMS -->
     <xsd:complexType name="RawMovementType">
         <xsd:sequence>
+            <xsd:element name="ackResponseMessageID" type="xsd:string"/>
             <xsd:element name="dateRecieved" type="xsd:dateTime"/>
             <xsd:element name="pluginType" type="xsd:string"/>
             <xsd:element name="pluginName" type="xsd:string"/>

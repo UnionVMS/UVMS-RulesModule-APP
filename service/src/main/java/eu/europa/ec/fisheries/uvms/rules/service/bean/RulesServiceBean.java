@@ -1,7 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
@@ -35,7 +33,6 @@ import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -719,26 +716,23 @@ public class RulesServiceBean implements RulesService {
     private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
         Date auditTimestamp = new Date();
 
-        // This needs to be done before persisting last report
-        Long timeDiffInSeconds = null;
-        Long timeDiff = timeDiffFromLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
-        timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
-        auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
 
-        // TODO: Perhaps also log mobile terminal id, so we can log communication when one or the other exists
-        // This as fire and forget, so no need to parallelize
-        persistLastCommunication(asset.getAssetId().getGuid(), rawMovement.getPositionTime());
-        auditTimestamp = auditLog("Time to persist the position time:", auditTimestamp);
-
-        int threadNum = 2;
+        int threadNum = 4;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
-        FutureTask<Integer> numberOfReportsLast24HoursTask = null;
         Integer numberOfReportsLast24Hours = null;
         final String assetGuid = asset.getAssetId().getGuid();
 
         final XMLGregorianCalendar positionTime = rawMovement.getPositionTime();
 
-        numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
+        FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
+            @Override
+            public Long call() {
+                return timeDiffAndPersistMovement(assetGuid, positionTime);
+            }
+        });
+        executor.execute(timeDiffAndPersistMovementTask);
+
+        FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() {
                 return numberOfReportsLast24Hours(assetGuid, positionTime);
@@ -757,7 +751,6 @@ public class RulesServiceBean implements RulesService {
         FutureTask<List<AssetGroup>> assetGroupTask = new FutureTask<>(new Callable<List<AssetGroup>>() {
             @Override
             public List<AssetGroup> call() {
-
                 return getAssetGroup(assetGuid);
             }
         });
@@ -780,14 +773,13 @@ public class RulesServiceBean implements RulesService {
 //        String vicinityOf = "GO_GET_IT!!!";
 
         // Get data from parallel tasks
+        // TODO: Decide optimal order
+        Date auditParallelTimestamp = new Date();
+        Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
         List<AssetGroup> assetGroups = assetGroupTask.get();
-        auditTimestamp = auditLog("Time to get asset groups:", auditTimestamp);
-
         numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
-        auditTimestamp = auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
-
         MovementType createdMovement = sendToMovementTask.get();
-        auditTimestamp = auditLog("Time to get movement from Movement Module:", auditTimestamp);
+        auditLog("Total time for parallel tasks:", auditParallelTimestamp);
 
         MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
         LOG.debug("movementFact:{}", movementFact);
@@ -795,10 +787,28 @@ public class RulesServiceBean implements RulesService {
         return movementFact;
     }
 
+    private Long timeDiffAndPersistMovement(String assetGuid, XMLGregorianCalendar positionTime) {
+        Date auditTimestamp = new Date();
+
+        // This needs to be done before persisting last report
+        Long timeDiffInSeconds = null;
+        Long timeDiff = timeDiffFromLastCommunication(assetGuid, positionTime);
+        timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
+        auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
+
+        // TODO: Perhaps also log mobile terminal id, so we can log communication when one or the other exists
+        persistLastCommunication(assetGuid, positionTime);
+        auditLog("Time to persist the position time:", auditTimestamp);
+
+        return timeDiffInSeconds;
+    }
+
     private Integer numberOfReportsLast24Hours(String assetGuid, XMLGregorianCalendar thisTime) {
         LOG.info("Fetching number of reports last 24 hours");
-        Integer numberOfMovements = null;
 
+        Date auditTimestamp = new Date();
+
+        Integer numberOfMovements = null;
         MovementQuery query = new MovementQuery();
 
         // Range
@@ -840,11 +850,15 @@ public class RulesServiceBean implements RulesService {
             LOG.warn("[ Error when fetching sum of previous movement reports:{} ]", e.getMessage());
         }
 
+        auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
+
         return numberOfMovements;
     }
 
     private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement) {
         LOG.info("Send the validated raw position to Movement");
+
+        Date auditTimestamp = new Date();
 
         MovementType createdMovement = null;
         try {
@@ -859,11 +873,15 @@ public class RulesServiceBean implements RulesService {
             LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
         }
 
+        auditLog("Time to get movement from Movement Module:", auditTimestamp);
+
         return createdMovement;
     }
 
     private List<AssetGroup> getAssetGroup(String assetGuid) {
         LOG.info("Fetch asset groups from Asset");
+
+        Date auditTimestamp = new Date();
 
         TextMessage getAssetResponse = null;
         String getAssetMessageId = null;
@@ -877,6 +895,9 @@ public class RulesServiceBean implements RulesService {
         } catch (AssetModelMapperException | MessageException e) {
             LOG.warn("[ Failed while fetching asset groups ]", e.getMessage());
         }
+
+        auditLog("Time to get asset groups:", auditTimestamp);
+
         return assetGroups;
     }
 
@@ -887,6 +908,7 @@ public class RulesServiceBean implements RulesService {
         MovementRefType movementRef = new MovementRefType();
         movementRef.setMovementRefGuid(guid);
         movementRef.setType(status);
+        movementRef.setAckResponseMessageID(rawMovement.getAckResponseMessageID());
 
         // Map movement
         SetReportMovementType setReportMovementType = ExchangeMovementMapper.mapExchangeMovement(rawMovement);
@@ -1119,14 +1141,20 @@ public class RulesServiceBean implements RulesService {
         return channelGuid;
     }
 
-    private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) throws MessageException, RulesModelMapperException {
+    private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) {
         PreviousReportType thisReport = new PreviousReportType();
 
         thisReport.setPositionTime(positionTime);
         thisReport.setAssetGuid(assetGuid);
 
-        String upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);
-        producer.sendDataSourceMessage(upsertPreviousReportequest, DataSourceQueue.INTERNAL);
+        String upsertPreviousReportequest = null;
+        try {
+            upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);
+            producer.sendDataSourceMessage(upsertPreviousReportequest, DataSourceQueue.INTERNAL);
+        } catch (RulesModelMapperException | MessageException e) {
+            LOG.error("[ Error persisting report. ] {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private Date auditLog(String msg, Date lastTimestamp) {
