@@ -836,12 +836,18 @@ public class RulesServiceBean implements RulesService {
             List<MovementMapResponseType> result = MovementModuleResponseMapper.mapToMovementMapResponse(response);
 
             List<MovementType> movements;
-            if (result != null && result.size() == 1 && assetGuid.equals(result.get(0).getKey())) {
-                movements = result.get(0).getMovements();
-            } else {
-                // If result is ambiguous or erroneous in some other way
-                LOG.warn("[ Error when fetching sum of previous movement reports:Faulty result ]");
+
+            if (result == null || result.isEmpty()) {
+                LOG.warn("[ Error when fetching sum of previous movement reports: No result found");
                 return null;
+            } else if (result.size() != 1) {
+                LOG.warn("[ Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
+                return null;
+            } else if (!assetGuid.equals(result.get(0).getKey())) {
+                LOG.warn("[ Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
+                return null;
+            } else {
+                movements = result.get(0).getMovements();
             }
 
             numberOfMovements = movements != null ? movements.size() : 0;
