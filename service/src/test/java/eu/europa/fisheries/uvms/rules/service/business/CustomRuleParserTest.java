@@ -96,9 +96,15 @@ public class CustomRuleParserTest {
 
         // Second action
         CustomRuleActionType action2 = new CustomRuleActionType();
-        action2.setAction(ActionType.SEND_TO_ENDPOINT);
+        action2.setAction(ActionType.SEND_TO_FLUX);
         action2.setValue("DNK");
         customRule.getActions().add(action2);
+
+        // Third action
+        CustomRuleActionType action3 = new CustomRuleActionType();
+        action3.setAction(ActionType.SEND_TO_NAF);
+        action3.setValue("DNK");
+        customRule.getActions().add(action3);
 
         rawRules.add(customRule);
 
@@ -108,7 +114,7 @@ public class CustomRuleParserTest {
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0)
                 .getExpression());
-        assertEquals("EMAIL,user@company.se;SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
+        assertEquals("EMAIL,user@company.se;SEND_TO_FLUX,DNK;SEND_TO_NAF,DNK;", rules.get(0).getAction());
 
     }
 
@@ -605,7 +611,7 @@ public class CustomRuleParserTest {
 
         // Action
         CustomRuleActionType action = new CustomRuleActionType();
-        action.setAction(ActionType.SEND_TO_ENDPOINT);
+        action.setAction(ActionType.SEND_TO_FLUX);
         action.setValue("DNK");
         action.setOrder("0");
         customRule.getActions().add(action);
@@ -658,7 +664,7 @@ public class CustomRuleParserTest {
 
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0).getExpression());
-        assertEquals("SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
+        assertEquals("SEND_TO_FLUX,DNK;", rules.get(0).getAction());
 
     }
 
@@ -682,7 +688,7 @@ public class CustomRuleParserTest {
 
         // Action
         CustomRuleActionType action = new CustomRuleActionType();
-        action.setAction(ActionType.SEND_TO_ENDPOINT);
+        action.setAction(ActionType.SEND_TO_FLUX);
         action.setValue("DNK");
         action.setOrder("0");
         customRule.getActions().add(action);
@@ -696,7 +702,7 @@ public class CustomRuleParserTest {
 
         List<CustomRuleDto> rules = CustomRuleParser.parseRules(rawRules);
         assertEquals(expectedRule, rules.get(0).getExpression());
-        assertEquals("SEND_TO_ENDPOINT,DNK;", rules.get(0).getAction());
+        assertEquals("SEND_TO_FLUX,DNK;", rules.get(0).getAction());
 
     }
 

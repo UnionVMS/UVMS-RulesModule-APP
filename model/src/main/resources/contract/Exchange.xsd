@@ -12,6 +12,7 @@
             <xsd:enumeration value="SATELLITE_RECEIVER"/>
             <xsd:enumeration value="FLUX"/>
             <xsd:enumeration value="OTHER"/>
+            <xsd:enumeration value="NAF"/>
         </xsd:restriction>
     </xsd:simpleType>
     

@@ -178,7 +178,8 @@
 
     <xsd:simpleType name="ActionType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="SEND_TO_ENDPOINT"/>
+            <xsd:enumeration value="SEND_TO_FLUX"/>
+            <xsd:enumeration value="SEND_TO_NAF"/>
             <xsd:enumeration value="EMAIL"/>
 
             <!-- NOT IMPLEMENTED YET

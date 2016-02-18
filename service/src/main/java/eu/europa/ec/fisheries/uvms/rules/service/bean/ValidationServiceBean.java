@@ -4,6 +4,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceResponseType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -17,7 +18,9 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -193,8 +196,12 @@ public class ValidationServiceBean implements ValidationService {
                     sendToEmail(value, ruleName, fact);
                     auditTimestamp = auditLog("Time to send (action) email:", auditTimestamp);
                     break;
-                case SEND_TO_ENDPOINT:
-                    sendToEndpoint(ruleName, fact, value);
+                case SEND_TO_FLUX:
+                    sendToEndpointFlux(ruleName, fact, value);
+                    auditTimestamp = auditLog("Time to send to endpoint:", auditTimestamp);
+                    break;
+                case SEND_TO_NAF:
+                    sendToEndpointNaf(ruleName, fact, value);
                     auditTimestamp = auditLog("Time to send to endpoint:", auditTimestamp);
                     break;
 
@@ -262,8 +269,8 @@ public class ValidationServiceBean implements ValidationService {
             LOG.warn("[ Failed to update last triggered date for rule {} ]", ruleGuid);
         }
     }
-
-    private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint) {
+    
+    private void sendToEndpoint(String ruleName, MovementFact fact, String endpoint, PluginType pluginType) {
         LOG.info("Sending to endpoint '{}'", endpoint);
 
         try {
@@ -288,18 +295,39 @@ public class ValidationServiceBean implements ValidationService {
                     recipientInfoList.add(recipientInfo);
                 }
             }
+            
+            List<ServiceResponseType> pluginList = getPluginList(pluginType);
+            if (pluginList != null && !pluginList.isEmpty()) {
+                ServiceResponseType service = pluginList.get(0);
+                String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
+                String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
+                TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(null, PluginType.FLUX, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
-            String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            // TODO: Do something with the response??? Or don't send response from Exchange
-
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
+                // TODO: Do something with the response??? Or don't send response from Exchange
+            }
 
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! ] {}", e.getMessage());
         }
+        
+    }
 
+    private List<ServiceResponseType> getPluginList(PluginType pluginType) throws ExchangeModelMapperException, MessageException {
+        ArrayList<PluginType> types = new ArrayList<>();
+        types.add(pluginType);
+        String serviceListRequest = ExchangeModuleRequestMapper.createGetServiceListRequest(types);
+        String serviceListRequestId = producer.sendDataSourceMessage(serviceListRequest, DataSourceQueue.EXCHANGE);
+        TextMessage serviceListResponse = consumer.getMessage(serviceListRequestId, TextMessage.class);
+        return ExchangeDataSourceResponseMapper.mapToServiceTypeListFromModuleResponse(serviceListResponse, serviceListRequestId);
+    }
+
+    private void sendToEndpointFlux(String ruleName, MovementFact fact, String endpoint) {
+        sendToEndpoint(ruleName, fact, endpoint, PluginType.FLUX);
+    }
+
+    private void sendToEndpointNaf(String ruleName, MovementFact fact, String endpoint) {
+        sendToEndpoint(ruleName, fact, endpoint, PluginType.NAF);
     }
 
     private void sendToEmail(String emailAddress, String ruleName, MovementFact fact) {
