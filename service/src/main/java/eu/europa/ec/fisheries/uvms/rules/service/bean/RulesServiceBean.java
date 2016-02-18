@@ -160,7 +160,8 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-//            rulesValidator.init();
+            // TODO: Rewrite so rules are loaded when changed
+//            rulesValidator.reloadRules();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid(), null);
@@ -217,6 +218,9 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            // TODO: Rewrite so rules are loaded when changed
+//            rulesValidator.reloadRules();
 
             CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid(), null);
@@ -276,6 +280,9 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapDeleteCustomRule(guid);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            // TODO: Rewrite so rules are loaded when changed
+//            rulesValidator.reloadRules();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, customRuleType.getGuid(), null);
@@ -425,8 +432,6 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-
-
     @Override
     public AlarmReportType updateAlarmStatus(AlarmReportType alarm) throws RulesServiceException, RulesFaultException {
         LOG.info("Update alarm status invoked in service layer");
@@ -471,15 +476,6 @@ public class RulesServiceBean implements RulesService {
     public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
         LOG.info("Timer rule triggered invoked in service layer");
         try {
-//            // Check if alarm already is created for this asset
-//            String getAlarmReportRequest = RulesDataSourceRequestMapper.mapGetAlarmReportByAssetAndRule(fact.getAssetGuid(), ruleName);
-//            String messageIdAlarm = producer.sendDataSourceMessage(getAlarmReportRequest, DataSourceQueue.INTERNAL);
-//            TextMessage alarmResponse = consumer.getMessage(messageIdAlarm, TextMessage.class);
-//            boolean noAlarmCreated = RulesDataSourceResponseMapper.mapToGetAlarmReportByAssetAndRuleFromResponse(alarmResponse, messageIdAlarm).getAlarm() == null;
-//            if (noAlarmCreated) {
-//                createAssetNotSendingAlarm(ruleName, fact);
-//            }
-
             // Check if ticket already is created for this asset
             String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
             String messageIdTicket = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
@@ -492,35 +488,6 @@ public class RulesServiceBean implements RulesService {
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
-    }
-
-    private void createAssetNotSendingAlarm(String ruleName, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
-        AlarmReportType alarmReportType = new AlarmReportType();
-
-        alarmReportType.setStatus(AlarmStatusType.OPEN);
-        alarmReportType.setGuid(UUID.randomUUID().toString());
-        alarmReportType.setInactivatePosition(false);
-        alarmReportType.setOpenDate(RulesUtil.dateToString(new Date()));
-        alarmReportType.setUpdatedBy("UVMS");
-        alarmReportType.setAssetGuid(fact.getAssetGuid());
-
-        AlarmItemType alarmItem = new AlarmItemType();
-        alarmItem.setGuid(UUID.randomUUID().toString());
-        alarmItem.setRuleName(ruleName);
-        alarmItem.setRuleGuid(ruleName);
-
-        alarmReportType.getAlarmItem().add(alarmItem);
-
-        String createAlarmReportRequest = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReportType);
-        String alarmReportMessageId = producer.sendDataSourceMessage(createAlarmReportRequest, DataSourceQueue.INTERNAL);
-        TextMessage alarmResponse = consumer.getMessage(alarmReportMessageId, TextMessage.class);
-
-        AlarmReportType updatedAlarm = RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(alarmResponse, alarmReportMessageId);
-
-        sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, updatedAlarm.getGuid(), null);
-
-        // Notify long-polling clients of the change (no value since FE will need to fetch it)
-        alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
     }
 
     private void createAssetNotSendingTicket(String ruleName, PreviousReportFact fact) throws RulesModelMapperException, MessageException, RulesFaultException, RulesServiceException, JMSException {
@@ -576,7 +543,6 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    // public GetAlarmListByQueryResponse reprocessAlarm(List<String> alarmGuids) throws RulesServiceException, RulesFaultException {
     public String reprocessAlarm(List<String> alarmGuids) throws RulesServiceException, RulesFaultException {
         LOG.info("Reprocess alarms invoked in service layer");
         try {
@@ -619,7 +585,7 @@ public class RulesServiceBean implements RulesService {
                     continue;
                 }
 
-                // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm with the items remaining.
+                // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm (if still wrong) with the items remaining.
                 alarm.setStatus(AlarmStatusType.REPROCESSED);
                 alarm = updateAlarmStatus(alarm);
 
@@ -639,27 +605,6 @@ public class RulesServiceBean implements RulesService {
         } catch (RulesModelMapperException | MessageException | JMSException  e) {
             throw new RulesServiceException(e.getMessage());
         }
-    }
-
-    private Long timeDiffFromLastCommunication(String assetGuid, XMLGregorianCalendar thisTime) {
-        LOG.info("Fetching time difference to previous movement report");
-
-        Long timeDiff = null;
-        try {
-            String request = RulesDataSourceRequestMapper.mapGetPreviousReportByAssetGuid(assetGuid);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            PreviousReportType previousReport = RulesDataSourceResponseMapper.mapToGetPreviousReportByAssetGuidResponse(response, messageId);
-
-            XMLGregorianCalendar previousTime = previousReport.getPositionTime();
-
-            timeDiff = thisTime.toGregorianCalendar().getTimeInMillis() - previousTime.toGregorianCalendar().getTimeInMillis();
-        } catch (Exception e) {
-            // If something goes wrong, continue with the other validation
-            LOG.warn("[ Error when fetching time difference of previous movement reports ]");
-        }
-        return timeDiff;
     }
 
     @Override
@@ -705,18 +650,12 @@ public class RulesServiceBean implements RulesService {
                 // Tell Exchange that the report caused an alarm
                 sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM);
             }
-//        } catch (Exception e) {
-//            throw new RulesServiceException(e.getMessage());
-//        }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
 
     private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
-        Date auditTimestamp = new Date();
-
-
         int threadNum = 4;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
@@ -773,7 +712,6 @@ public class RulesServiceBean implements RulesService {
 //        String vicinityOf = "GO_GET_IT!!!";
 
         // Get data from parallel tasks
-        // TODO: Decide optimal order
         Date auditParallelTimestamp = new Date();
         Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
         List<AssetGroup> assetGroups = assetGroupTask.get();
@@ -796,11 +734,47 @@ public class RulesServiceBean implements RulesService {
         timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
         auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
 
-        // TODO: Perhaps also log mobile terminal id, so we can log communication when one or the other exists
         persistLastCommunication(assetGuid, positionTime);
         auditLog("Time to persist the position time:", auditTimestamp);
 
         return timeDiffInSeconds;
+    }
+
+    private Long timeDiffFromLastCommunication(String assetGuid, XMLGregorianCalendar thisTime) {
+        LOG.info("Fetching time difference to previous movement report");
+
+        Long timeDiff = null;
+        try {
+            String request = RulesDataSourceRequestMapper.mapGetPreviousReportByAssetGuid(assetGuid);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            PreviousReportType previousReport = RulesDataSourceResponseMapper.mapToGetPreviousReportByAssetGuidResponse(response, messageId);
+
+            XMLGregorianCalendar previousTime = previousReport.getPositionTime();
+
+            timeDiff = thisTime.toGregorianCalendar().getTimeInMillis() - previousTime.toGregorianCalendar().getTimeInMillis();
+        } catch (Exception e) {
+            // If something goes wrong, continue with the other validation
+            LOG.warn("[ Error when fetching time difference of previous movement reports ]");
+        }
+        return timeDiff;
+    }
+
+    private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) {
+        PreviousReportType thisReport = new PreviousReportType();
+
+        thisReport.setPositionTime(positionTime);
+        thisReport.setAssetGuid(assetGuid);
+
+        String upsertPreviousReportequest = null;
+        try {
+            upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);
+            producer.sendDataSourceMessage(upsertPreviousReportequest, DataSourceQueue.INTERNAL);
+        } catch (RulesModelMapperException | MessageException e) {
+            LOG.error("[ Error persisting report. ] {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private Integer numberOfReportsLast24Hours(String assetGuid, XMLGregorianCalendar thisTime) {
@@ -1145,22 +1119,6 @@ public class RulesServiceBean implements RulesService {
         }
 
         return channelGuid;
-    }
-
-    private void persistLastCommunication(String assetGuid, XMLGregorianCalendar positionTime) {
-        PreviousReportType thisReport = new PreviousReportType();
-
-        thisReport.setPositionTime(positionTime);
-        thisReport.setAssetGuid(assetGuid);
-
-        String upsertPreviousReportequest = null;
-        try {
-            upsertPreviousReportequest = RulesDataSourceRequestMapper.mapUpsertPreviousReport(thisReport);
-            producer.sendDataSourceMessage(upsertPreviousReportequest, DataSourceQueue.INTERNAL);
-        } catch (RulesModelMapperException | MessageException e) {
-            LOG.error("[ Error persisting report. ] {}", e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private Date auditLog(String msg, Date lastTimestamp) {
