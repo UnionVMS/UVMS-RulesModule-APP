@@ -4,13 +4,13 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.branch.name>uvms-1.0.0</release.branch.name>
+        <release.branch.name>aragorn</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
@@ -101,7 +101,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP</connection>
     </scm>
 
     <build>
@@ -122,6 +122,5 @@
         <module>service</module>
         <module>message</module>
         <module>module</module>
-        <module>model</module>
     </modules>
 </project>
