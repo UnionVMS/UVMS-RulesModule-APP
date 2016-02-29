@@ -24,15 +24,15 @@
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>1.0.1-SNAPSHOT</uvms.config.version>
         <uvms.common.version>1.5</uvms.common.version>
-        <movement.model.version>1.0.1-SNAPSHOT</movement.model.version>
-        <exchange.model.version>1.0.1-SNAPSHOT</exchange.model.version>
+        <movement.model.version>1.0.2-SNAPSHOT</movement.model.version>
+        <exchange.model.version>1.0.2-SNAPSHOT</exchange.model.version>
         <asset.model.version>1.0.0</asset.model.version>
-        <mobileterminal.model.version>1.0.1-SNAPSHOT</mobileterminal.model.version>
+        <mobileterminal.model.version>1.0.2-SNAPSHOT</mobileterminal.model.version>
         <user.model.version>1.2.0</user.model.version>
         <usm4uvms.version>1.0.0</usm4uvms.version>
-        <audit.model.version>1.0.1-SNAPSHOT</audit.model.version>
+        <audit.model.version>1.0.2-SNAPSHOT</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>1.0.1-SNAPSHOT</rules.model.version>
+        <rules.model.version>1.0.2-SNAPSHOT</rules.model.version>
     </properties>
 
     <dependencies>

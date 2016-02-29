@@ -35,6 +35,8 @@
             <xsd:element name="assetName" type="xsd:string"/>
             <xsd:element name="flagState" type="xsd:string"/>
             <xsd:element name="externalMarking" type="xsd:string"/>
+            <xsd:element name="tripNumber" type="xsd:double" nillable="true"/>
+            <xsd:element name="internalReferenceNumber" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 
