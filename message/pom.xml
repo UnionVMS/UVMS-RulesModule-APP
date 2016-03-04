@@ -9,14 +9,14 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
     
     <dependencies>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
-            <version>${rules.model.version}</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
 	        <groupId>eu.europa.ec.fisheries.uvms</groupId>

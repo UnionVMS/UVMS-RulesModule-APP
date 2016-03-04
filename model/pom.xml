@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <artifactId>rules-model</artifactId>
     <name>rules-model</name>
     <packaging>ejb</packaging>
     <description>This module shall have interfaces, XSD, and DTOs</description>
 
     <properties>
-        <release.branch.name>aragorn</release.branch.name>
+        <release.branch.name><!-- INSERT BRANCH NAME --></release.branch.name>
         <!-- the name of the wsdl files without file ending -->
         <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
         <wsdl.source.name>RulesDataSourceService</wsdl.source.name>
