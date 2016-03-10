@@ -29,7 +29,6 @@
                 <version>${drools.version}</version>
                 <scope>import</scope>
             </dependency>
-           
         </dependencies>
     </dependencyManagement>
   

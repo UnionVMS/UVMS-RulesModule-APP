@@ -7,6 +7,7 @@
              xmlns:previous="urn:previous.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:ticketrule="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -20,6 +21,7 @@
             <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
             <xsd:import namespace="urn:previous.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="PreviousReport.xsd"/>
+            <xsd:import namespace="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="TicketAndRule.xsd"/>
 
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesDataSourceMethod">
@@ -45,8 +47,8 @@
                     <xsd:enumeration value="GET_NUMBER_OF_OPEN_TICKETS"/>
                     <xsd:enumeration value="GET_NUMBER_OF_OPEN_ALARMS"/>
                     <xsd:enumeration value="UPDATE_CUSTOM_RULE_SUBSCRIPTION"/>
-
                     <xsd:enumeration value="REPROCESS_ALARMS"/>
+                    <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
 
                     <!-- Actions triggered by rule engine -->
                     <xsd:enumeration value="CREATE_ALARM_REPORT"/>
@@ -775,6 +777,27 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get tickets and rules by movements -->
+            <xsd:element name="GetTicketsAndRulesByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketsAndRulesByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticketsAndRules" type="ticketrule:TicketAndRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
         </xsd:schema>
     </types>
 
@@ -1006,6 +1029,13 @@
         <part name="body" element="source:GetNumberOfAssetsNotSendingResponse"/>
     </message>
 
+    <message name="GetTicketsAndRulesByMovementsRequest">
+        <part name="body" element="source:GetTicketsAndRulesByMovementsRequest"/>
+    </message>
+    <message name="GetTicketsAndRulesByMovementsResponse">
+        <part name="body" element="source:GetTicketsAndRulesByMovementsResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -1196,6 +1226,12 @@
         <operation name="GetNumberOfAssetsNotSending">
             <input message="source:GetNumberOfAssetsNotSendingRequest"/>
             <output message="source:GetNumberOfAssetsNotSendingResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
+            <input message="source:GetTicketsAndRulesByMovementsRequest"/>
+            <output message="source:GetTicketsAndRulesByMovementsResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 
@@ -1562,6 +1598,18 @@
         </operation>
 
         <operation name="GetNumberOfAssetsNotSending">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
             <input>
                 <soap:body use="literal"/>
             </input>

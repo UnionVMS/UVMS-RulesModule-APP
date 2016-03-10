@@ -6,7 +6,16 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.*;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketsAndRulesByMovementsResponse;
+import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportsResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
@@ -366,6 +374,18 @@ public class RulesDataSourceResponseMapper {
     public static String toNumberOfAssetsNotSendingResponse(long count) throws RulesModelMarshallException {
         GetNumberOfAssetsNotSendingResponse response = new GetNumberOfAssetsNotSendingResponse();
         response.setResponse(count);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String getTicketsAndRulesByMovementsResponse(List<TicketAndRuleType> ticketAndRuleType) throws RulesModelMapperException {
+        GetTicketsAndRulesByMovementsResponse response = new GetTicketsAndRulesByMovementsResponse();
+        response.getTicketsAndRules().addAll(ticketAndRuleType);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String mapToGetTicketsAndRulesByMovementsResponse(List<TicketAndRuleType> ticketAndRuleTypes) throws RulesModelMarshallException {
+        GetTicketsAndRulesByMovementsResponse response = new GetTicketsAndRulesByMovementsResponse();
+        response.getTicketsAndRules().addAll(ticketAndRuleTypes);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

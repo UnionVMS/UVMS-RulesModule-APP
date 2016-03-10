@@ -34,10 +34,22 @@ public class RulesEventConsumerBean implements MessageListener {
     @Inject
     @SetMovementReportReceivedEvent
     Event<EventMessage> setMovementReportRecievedEvent;
-    
+
+    @Inject
+    @GetTicketsByMovementsEvent
+    Event<EventMessage> getTicketsByMovementsEvent;
+
+    @Inject
+    @CountTicketsByMovementsEvent
+    Event<EventMessage> countTicketByMovementsEvent;
+
     @Inject
     @GetCustomRuleReceivedEvent
     Event<EventMessage> getCustomRuleRecievedEvent;
+
+    @Inject
+    @GetTicketsAndRulesByMovementsEvent
+    Event<EventMessage> getTicketsAndRulesByMovementsEvent;
 
     @Inject
     @ValidateMovementReportReceivedEvent
@@ -76,6 +88,15 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case GET_CUSTOM_RULE:
                     getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case GET_TICKETS_BY_MOVEMENTS:
+                    getTicketsByMovementsEvent.fire(new EventMessage(textMessage));
+                    break;
+                case COUNT_TICKETS_BY_MOVEMENTS:
+                    countTicketByMovementsEvent.fire(new EventMessage(textMessage));
+                    break;
+                case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
+                    getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());

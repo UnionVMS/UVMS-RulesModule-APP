@@ -235,4 +235,12 @@ public class RulesDataSourceRequestMapper {
         request.setMethod(RulesDataSourceMethod.GET_NUMBER_OF_ASSETS_NOT_SENDING);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
+
+    public static String mapTicketsAndRulesByMovements(List<String> movements) throws RulesModelMapperException {
+        GetTicketsAndRulesByMovementsRequest request = new GetTicketsAndRulesByMovementsRequest();
+        request.setMethod(RulesDataSourceMethod.GET_TICKETS_AND_RULES_BY_MOVEMENTS);
+        request.getMovementGuids().addAll(movements);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
 }

@@ -8,6 +8,7 @@
              xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:movement="urn:movement.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:exchange="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:ticketrule="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -22,17 +23,23 @@
             <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
             <xsd:import namespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
             <xsd:import namespace="urn:exchange.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Exchange.xsd"/>
-            
+            <xsd:import namespace="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="TicketAndRule.xsd"/>
+
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesModuleMethod">
                 <xsd:restriction base="xsd:string">
                     <!-- Receive position report -->
                     <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
                     <xsd:enumeration value="VALIDATE_MOVEMENT_REPORT"/>
-                    <xsd:enumeration value="GET_CUSTOM_RULE"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
+
+                    <xsd:enumeration value="GET_CUSTOM_RULE"/>
+                    <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
+                    <xsd:enumeration value="COUNT_TICKETS_BY_MOVEMENTS"/>
+                    <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
+
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -228,6 +235,91 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <!-- Get tickets by movements -->
+            <xsd:element name="GetTicketsByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketsByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Count tickets by movements -->
+            <xsd:element name="CountTicketsByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CountTicketsByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="count" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get custom rule request by guid-->
+            <xsd:element name="GetCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get custom rule by guid response -->
+            <xsd:element name="GetCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get tickets and rules by movements -->
+            <xsd:element name="GetTicketsAndRulesByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketsAndRulesByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticketsAndRules" type="ticketrule:TicketAndRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
         </xsd:schema>
     </types>
 
@@ -295,6 +387,34 @@
         <part name="body" element="module:PingResponse"/>
     </message>
 
+    <message name="GetTicketsByMovementsRequest">
+        <part name="body" element="module:GetTicketsByMovementsRequest"/>
+    </message>
+    <message name="GetTicketsByMovementsResponse">
+        <part name="body" element="module:GetTicketsByMovementsResponse"/>
+    </message>
+
+    <message name="CountTicketsByMovementsRequest">
+        <part name="body" element="module:CountTicketsByMovementsRequest"/>
+    </message>
+    <message name="CountTicketsByMovementsResponse">
+        <part name="body" element="module:CountTicketsByMovementsResponse"/>
+    </message>
+
+    <message name="GetCustomRuleRequest">
+        <part name="body" element="module:GetCustomRuleRequest"/>
+    </message>
+    <message name="GetCustomRuleResponse">
+        <part name="body" element="module:GetCustomRuleResponse"/>
+    </message>
+
+    <message name="GetTicketsAndRulesByMovementsRequest">
+        <part name="body" element="module:GetTicketsAndRulesByMovementsRequest"/>
+    </message>
+    <message name="GetTicketsAndRulesByMovementsResponse">
+        <part name="body" element="module:GetTicketsAndRulesByMovementsResponse"/>
+    </message>
+
     <portType name="RulesModulePortType">
     
         <operation name="CreateCustomRule">
@@ -346,6 +466,30 @@
         <operation name="Ping">
             <input message="module:PingRequest"/>
             <output message="module:PingResponse"/>
+        </operation>
+
+        <operation name="GetTicketsByMovements">
+            <input message="module:GetTicketsByMovementsRequest"/>
+            <output message="module:GetTicketsByMovementsResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="CountTicketsByMovements">
+            <input message="module:CountTicketsByMovementsRequest"/>
+            <output message="module:CountTicketsByMovementsResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRule">
+            <input message="module:GetCustomRuleRequest"/>
+            <output message="module:GetCustomRuleResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
+            <input message="module:GetTicketsAndRulesByMovementsRequest"/>
+            <output message="module:GetTicketsAndRulesByMovementsResponse"/>
+            <fault name="RulesException" message="module:RulesException"/>
         </operation>
 
     </portType>
@@ -453,6 +597,54 @@
             <output>
                 <soap:body use="literal"/>
             </output>
+        </operation>
+
+        <operation name="GetTicketsByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CountTicketsByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
         </operation>
 
     </binding>

@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
@@ -50,9 +51,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.*;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
@@ -81,10 +80,7 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Stateless
@@ -351,6 +347,27 @@ public class RulesServiceBean implements RulesService {
 
             return RulesDataSourceResponseMapper.mapToTicketsByMovementsFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException ex) {
+            throw new RulesServiceException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException {
+        LOG.info("Get tickets and rules by movements invoked in service layer");
+
+        try {
+            String request = RulesDataSourceRequestMapper.mapTicketsAndRulesByMovements(movements);
+
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            if (response == null) {
+                LOG.error("[ Error when getting tickets and rules by movements, response from JMS Queue is null ]");
+                throw new RulesServiceException("[ Error when getting tickets and rules by movements, response from JMS Queue is null ]");
+            }
+
+            return RulesModuleResponseMapper.mapToGetTicketsAndRulesByMovementsFromResponse(response, messageId);
+        } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
     }

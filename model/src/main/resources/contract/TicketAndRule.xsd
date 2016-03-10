@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ticketrule="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
+            targetNamespace="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
+    <xsd:import namespace="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
+
+    <xsd:complexType name="TicketAndRuleType">
+        <xsd:sequence>
+            <xsd:element name="ticket" type="ticket:TicketType"/>
+            <xsd:element name="rule" type="customrule:CustomRuleType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

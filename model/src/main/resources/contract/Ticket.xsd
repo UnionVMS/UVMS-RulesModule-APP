@@ -30,5 +30,5 @@
             <xsd:enumeration value="NONE"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
 </xsd:schema>
