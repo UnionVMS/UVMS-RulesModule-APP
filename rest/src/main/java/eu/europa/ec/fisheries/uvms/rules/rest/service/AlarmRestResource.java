@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -38,6 +40,9 @@ public class AlarmRestResource {
 
     @EJB
     ValidationService validationService;
+
+    @Context
+    private HttpServletRequest request;
 
     /**
      *
@@ -117,7 +122,7 @@ public class AlarmRestResource {
     public ResponseDto reprocessAlarm(final List<String> alarmGuidList) {
         LOG.info("Reprocess alarm invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.reprocessAlarm(alarmGuidList), ResponseCode.OK);
+            return new ResponseDto(rulesService.reprocessAlarm(alarmGuidList, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);

@@ -6,6 +6,7 @@
         <class>eu.europa.ec.fisheries.uvms.config.service.entity.Parameter</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <!--property name="hibernate.dialect" value="org.hibernate.dialect.Oracle8iDialect"/-->
             <!-- <property name="hibernate.hbm2ddl.auto" value="validate"/> -->
             <!-- <property name="hibernate.show_sql" value="true"/> -->
             <!-- <property name="hibernate.format_sql" value="true"/> -->

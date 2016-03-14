@@ -559,7 +559,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public String reprocessAlarm(List<String> alarmGuids) throws RulesServiceException, RulesFaultException {
+    public String reprocessAlarm(List<String> alarmGuids, String username) throws RulesServiceException, RulesFaultException {
         LOG.info("Reprocess alarms invoked in service layer");
         try {
             AlarmQuery query = new AlarmQuery();
@@ -611,7 +611,8 @@ public class RulesServiceBean implements RulesService {
 
                 // TODO: Use better type (some variation of PluginType...)
                 String pluginType = alarm.getPluginType();
-                setMovementReportReceived(rawMovementType, pluginType);
+                //NHI
+                setMovementReportReceived(rawMovementType, pluginType, username);
             }
 
 //            return RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
@@ -624,7 +625,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType) throws RulesServiceException {
+    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType, String username) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
             Date auditTotalTimestamp = new Date();
@@ -653,7 +654,7 @@ public class RulesServiceBean implements RulesService {
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
-                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement);
+                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
 
                 LOG.info("Validating movement from Movement Module");
                 rulesValidator.evaluate(movementFact);
@@ -661,17 +662,17 @@ public class RulesServiceBean implements RulesService {
                 auditLog("Rules total time:", auditTotalTimestamp);
 
                 // Tell Exchange that a movement was persisted in Movement
-                sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT);
+                sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT, username);
             } else {
                 // Tell Exchange that the report caused an alarm
-                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM);
+                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
             }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
 
-    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
+    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
         int threadNum = 4;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
@@ -698,7 +699,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
-                return sendToMovement(assetGuid, rawMovement);
+                return sendToMovement(assetGuid, rawMovement, username);
             }
         });
         executor.execute(sendToMovementTask);
@@ -851,7 +852,7 @@ public class RulesServiceBean implements RulesService {
         return numberOfMovements;
     }
 
-    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement) {
+    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement, String username) {
         LOG.info("Send the validated raw position to Movement");
 
         Date auditTimestamp = new Date();
@@ -860,7 +861,7 @@ public class RulesServiceBean implements RulesService {
         try {
             MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
             movementBaseType.setConnectId(assetGuid);
-            String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType);
+            String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
 
@@ -897,7 +898,7 @@ public class RulesServiceBean implements RulesService {
         return assetGroups;
     }
 
-    private void sendBackToExchange(String guid, RawMovementType rawMovement, MovementRefTypeType status) throws RulesModelMarshallException, MessageException {
+    private void sendBackToExchange(String guid, RawMovementType rawMovement, MovementRefTypeType status, String username) throws RulesModelMarshallException, MessageException {
         LOG.info("Sending back processed movement to exchange");
 
         // Map response
@@ -910,7 +911,7 @@ public class RulesServiceBean implements RulesService {
         SetReportMovementType setReportMovementType = ExchangeMovementMapper.mapExchangeMovement(rawMovement);
 
         try {
-            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponse(setReportMovementType, movementRef);
+            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponse(setReportMovementType, movementRef, username);
 //            String exchangeResponseText = eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller.marshallJaxBObjectToString(ExchangeModuleRequestMapper.mapToProcessedMovementResopnse(setReportMovementType, movementRef));
             producer.sendDataSourceMessage(exchangeResponseText, DataSourceQueue.EXCHANGE);
         } catch (ExchangeModelMapperException e) {

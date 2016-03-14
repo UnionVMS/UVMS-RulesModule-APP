@@ -24,8 +24,8 @@
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>1.0.2</uvms.config.version>
         <uvms.common.version>1.5</uvms.common.version>
-        <movement.model.version>1.0.2</movement.model.version>
-        <exchange.model.version>1.0.2</exchange.model.version>
+        <movement.model.version>1.0.3-SNAPSHOT</movement.model.version>
+        <exchange.model.version>1.0.3-SNAPSHOT</exchange.model.version>
         <asset.model.version>1.0.0</asset.model.version>
         <mobileterminal.model.version>1.0.2</mobileterminal.model.version>
         <user.model.version>1.2.0</user.model.version>

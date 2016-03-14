@@ -80,11 +80,12 @@ public class ExchangeMovementMapper {
         return setReportMovementType;
     }
 
-    public static String mapToProcessedMovementResponse(SetReportMovementType orgRequest, MovementRefType movementRef) throws ExchangeModelMapperException {
+    public static String mapToProcessedMovementResponse(SetReportMovementType orgRequest, MovementRefType movementRef, String username) throws ExchangeModelMapperException {
         ProcessedMovementResponse response = new ProcessedMovementResponse();
         response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT);
         response.setOrgRequest(orgRequest);
         response.setMovementRefType(movementRef);
+        response.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 

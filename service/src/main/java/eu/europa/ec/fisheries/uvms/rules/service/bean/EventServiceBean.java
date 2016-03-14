@@ -72,6 +72,7 @@ public class EventServiceBean implements EventService {
         LOG.info("Validating movement from Exchange Module");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            String username = baseRequest.getUsername();
 
             if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
                 String s = " [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
@@ -84,7 +85,7 @@ public class EventServiceBean implements EventService {
 
             String pluginType = request.getType().name();
 
-            rulesService.setMovementReportReceived(rawMovementType, pluginType);
+            rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
         } catch (RulesModelMapperException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
             errorEvent.fire(message);

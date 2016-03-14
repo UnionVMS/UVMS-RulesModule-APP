@@ -117,9 +117,9 @@ public interface RulesService {
 
     void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException;
 
-    String reprocessAlarm(List<String> alarms) throws RulesServiceException, RulesFaultException;
+    String reprocessAlarm(List<String> alarms, String username) throws RulesServiceException, RulesFaultException;
 
-    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType) throws RulesServiceException;
+    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm
