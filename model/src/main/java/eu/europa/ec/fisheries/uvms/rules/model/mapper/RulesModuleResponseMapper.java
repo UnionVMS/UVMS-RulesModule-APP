@@ -37,8 +37,7 @@ public class RulesModuleResponseMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static GetTicketsAndRulesByMovementsResponse mapToGetTicketsAndRulesByMovementsFromResponse(TextMessage message, String correlationId) throws RulesModelMarshallException {
-//        validateResponse(message, correlationId);
+    public static GetTicketsAndRulesByMovementsResponse mapToGetTicketsAndRulesByMovementsFromResponse(TextMessage message) throws RulesModelMarshallException {
         GetTicketsAndRulesByMovementsResponse response = JAXBMarshaller.unmarshallTextMessage(message, GetTicketsAndRulesByMovementsResponse.class);
         return response;
     }

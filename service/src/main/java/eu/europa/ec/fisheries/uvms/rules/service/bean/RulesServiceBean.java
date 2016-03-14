@@ -8,7 +8,6 @@ import eu.europa.ec.fisheries.schema.movement.search.v1.RangeCriteria;
 import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
@@ -366,7 +365,7 @@ public class RulesServiceBean implements RulesService {
                 throw new RulesServiceException("[ Error when getting tickets and rules by movements, response from JMS Queue is null ]");
             }
 
-            return RulesModuleResponseMapper.mapToGetTicketsAndRulesByMovementsFromResponse(response, messageId);
+            return RulesModuleResponseMapper.mapToGetTicketsAndRulesByMovementsFromResponse(response);
         } catch (RulesModelMapperException | MessageException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
