@@ -12,10 +12,11 @@ import java.util.List;
 
 public class RulesModuleRequestMapper {
 
-    public static String createSetMovementReportRequest(PluginType type, RawMovementType rawMovementType) throws RulesModelMapperException {
+    public static String createSetMovementReportRequest(PluginType type, RawMovementType rawMovementType, String username) throws RulesModelMapperException {
         SetMovementReportRequest request = new SetMovementReportRequest();
         request.setMethod(RulesModuleMethod.SET_MOVEMENT_REPORT);
         request.setType(type);
+        request.setUsername(username);
         request.setRequest(rawMovementType);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }

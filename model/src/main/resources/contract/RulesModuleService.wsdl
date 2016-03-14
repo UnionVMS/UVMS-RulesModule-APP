@@ -46,6 +46,7 @@
             <xsd:complexType name="RulesBaseRequest" abstract="true">
                 <xsd:sequence>
                     <xsd:element name="method" type="module:RulesModuleMethod"/>
+                    <xsd:element name="username" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:complexType>
 
@@ -60,6 +61,7 @@
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
+
             </xsd:element>
             
             <!-- Create custom rule request -->
