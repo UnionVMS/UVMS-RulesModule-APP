@@ -97,6 +97,8 @@
             <xsd:enumeration value="IRIDIUM"/>
             <xsd:enumeration value="AIS"/>
             <xsd:enumeration value="MANUAL"/>
+            <xsd:enumeration value="OTHER"/>
+            <xsd:enumeration value="NAF"/>
         </xsd:restriction>
     </xsd:simpleType>
     
