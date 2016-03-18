@@ -79,7 +79,7 @@ public class RulesServiceBeanTest {
         mockStatic(RulesDataSourceRequestMapper.class);
         CustomRuleType customRule = new CustomRuleType();
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapCreateCustomRule(customRule, "TEST")).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapCreateCustomRule(customRule)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -92,11 +92,11 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId)).thenReturn(result);
 
         // Act
-        rulesServiceBean.createCustomRule(customRule, "TEST");
+        rulesServiceBean.createCustomRule(customRule);
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapCreateCustomRule(customRule, "TEST");
+        RulesDataSourceRequestMapper.mapCreateCustomRule(customRule);
 
         verifyStatic();
         RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
@@ -144,7 +144,7 @@ public class RulesServiceBeanTest {
         mockStatic(RulesDataSourceRequestMapper.class);
         CustomRuleType customRule = new CustomRuleType();
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule, "TEST")).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -157,11 +157,11 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId)).thenReturn(result);
 
         // Act
-        rulesServiceBean.updateCustomRule(customRule, "TEST");
+        rulesServiceBean.updateCustomRule(customRule);
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule, "TEST");
+        RulesDataSourceRequestMapper.mapUpdateCustomRule(customRule);
 
         verifyStatic();
         RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
@@ -307,7 +307,7 @@ public class RulesServiceBeanTest {
         mockStatic(RulesDataSourceRequestMapper.class);
         TicketType ticket = new TicketType();
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket, "TEST")).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -322,11 +322,11 @@ public class RulesServiceBeanTest {
 //        ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
 
         // Act
-        rulesServiceBean.updateTicketStatus(ticket, "TEST");
+        rulesServiceBean.updateTicketStatus(ticket);
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket, "TEST");
+        RulesDataSourceRequestMapper.mapUpdateTicketStatus(ticket);
 
         verifyStatic();
         RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId);
@@ -344,7 +344,7 @@ public class RulesServiceBeanTest {
         mockStatic(RulesDataSourceRequestMapper.class);
         AlarmReportType alarm = new AlarmReportType();
         String request = "request";
-        when(RulesDataSourceRequestMapper.mapUpdateAlarmStatus(alarm, "TEST")).thenReturn(request);
+        when(RulesDataSourceRequestMapper.mapUpdateAlarmStatus(alarm)).thenReturn(request);
 
         String messageId = "messageId";
         when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
@@ -359,11 +359,11 @@ public class RulesServiceBeanTest {
 //        alarmReportEvent.fire(new NotificationMessage("guid", result.getGuid()));
 
         // Act
-        rulesServiceBean.updateAlarmStatus(alarm, "TEST");
+        rulesServiceBean.updateAlarmStatus(alarm);
 
         // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapUpdateAlarmStatus(alarm, "TEST");
+        RulesDataSourceRequestMapper.mapUpdateAlarmStatus(alarm);
 
         verifyStatic();
         RulesDataSourceResponseMapper.mapToSetAlarmStatusFromResponse(response, messageId);
@@ -519,7 +519,7 @@ public class RulesServiceBeanTest {
         // A ticket is created. Capture to verify data
         verifyStatic();
         ArgumentCaptor<TicketType> argument = ArgumentCaptor.forClass(TicketType.class);
-        RulesDataSourceRequestMapper.mapCreateTicket(argument.capture(), "TEST");
+        RulesDataSourceRequestMapper.mapCreateTicket(argument.capture());
         TicketType ticket = argument.getValue();
         assertEquals(ruleName, ticket.getRuleName());
         assertEquals(ruleName, ticket.getRuleGuid());

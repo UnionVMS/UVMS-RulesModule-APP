@@ -80,7 +80,7 @@ public class AlarmRestResource {
     public ResponseDto updateAlarmStatus(final AlarmReportType alarmReportType) {
         LOG.info("Update alarm status invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateAlarmStatus(alarmReportType, request.getRemoteUser()), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateAlarmStatus(alarmReportType), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);

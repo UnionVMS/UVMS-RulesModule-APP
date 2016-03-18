@@ -16,9 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -33,9 +31,6 @@ public class TicketRestResource {
 
     @EJB
     ValidationService validationService;
-
-    @Context
-    private HttpServletRequest request;
 
     /**
      *
@@ -117,7 +112,7 @@ public class TicketRestResource {
     public ResponseDto updateTicketStatus(final TicketType ticketType) {
         LOG.info("Update ticket status invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateTicketStatus(ticketType, request.getRemoteUser()), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateTicketStatus(ticketType), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);

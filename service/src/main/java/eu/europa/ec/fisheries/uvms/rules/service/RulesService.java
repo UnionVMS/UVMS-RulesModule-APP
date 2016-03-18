@@ -33,9 +33,9 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    CustomRuleType createCustomRule(CustomRuleType customRule, String username) throws RulesServiceException, RulesFaultException;
+    CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException;
 
-    CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType, String username) throws RulesServiceException, RulesFaultException;
+    CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists (all) custom rules
@@ -45,7 +45,7 @@ public interface RulesService {
      */
 //    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
-    CustomRuleType deleteCustomRule(String guid, String username) throws RulesServiceException, RulesFaultException;
+    CustomRuleType deleteCustomRule(String guid) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists alarms by query
@@ -73,7 +73,7 @@ public interface RulesService {
      * @param ticket
      * @throws RulesServiceException
      */
-    TicketType updateTicketStatus(TicketType ticket, String username) throws RulesServiceException, RulesFaultException;
+    TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException;
 
     /**
      * Update an object
@@ -81,7 +81,7 @@ public interface RulesService {
      * @param customRuleType
      * @throws RulesServiceException
      */
-    CustomRuleType updateCustomRule(CustomRuleType customRuleType, String username) throws RulesServiceException, RulesFaultException;
+    CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException, RulesFaultException;
 
     /**
      * Creates an error report
@@ -111,7 +111,7 @@ public interface RulesService {
      */
     CustomRuleType getCustomRuleByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
-    AlarmReportType updateAlarmStatus(AlarmReportType ticket, String username) throws RulesServiceException, RulesFaultException;
+    AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException, RulesFaultException;
 
     List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException;
 

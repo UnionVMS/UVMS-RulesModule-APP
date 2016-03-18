@@ -168,7 +168,7 @@ public class ValidationServiceBean implements ValidationService {
         Date auditTimestamp = new Date();
 
         // Update last update
-        updateLastTriggered(ruleGuid, "Triggered by rule: " + ruleName);
+        updateLastTriggered(ruleGuid);
         auditTimestamp = auditLog("Time to update last triggered:", auditTimestamp);
 
         // Always create a ticket
@@ -260,9 +260,9 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void updateLastTriggered(String ruleGuid, String username) {
+    private void updateLastTriggered(String ruleGuid) {
         try {
-            String request = RulesDataSourceRequestMapper.mapUpdateCustomRuleLastTriggered(ruleGuid, username);
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRuleLastTriggered(ruleGuid);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
         } catch (RulesModelMapperException | MessageException e) {
@@ -303,7 +303,7 @@ public class ValidationServiceBean implements ValidationService {
                 String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "Triggerd by rule: " + ruleName);
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
                 // TODO: Do something with the response??? Or don't send response from Exchange
             }
 
@@ -345,7 +345,7 @@ public class ValidationServiceBean implements ValidationService {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
             producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "Triggered by rule: " + ruleName);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress);
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ] {}", e.getMessage());
@@ -463,7 +463,7 @@ public class ValidationServiceBean implements ValidationService {
             ticket.setRuleName(ruleName);
             ticket.setRuleGuid(ruleGuid);
             ticket.setStatus(TicketStatusType.OPEN);
-            ticket.setUpdatedBy("Triggered by rule: " + ruleName);
+            ticket.setUpdatedBy("UVMS");
             ticket.setMovementGuid(fact.getMovementGuid());
             ticket.setGuid(UUID.randomUUID().toString());
 
@@ -473,7 +473,7 @@ public class ValidationServiceBean implements ValidationService {
                 }
             }
 
-            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket, "Triggered by rule: " + ruleName);
+            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -484,7 +484,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null, "Triggered by rule: " + ruleName);
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create ticket! ] {}", e.getMessage());
         }
@@ -504,7 +504,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmReport.setOpenDate(RulesUtil.dateToString(new Date()));
             alarmReport.setStatus(AlarmStatusType.OPEN);
             alarmReport.setRawMovement(fact.getRawMovementType());
-            alarmReport.setUpdatedBy("Triggered by rule: " + ruleName);
+            alarmReport.setUpdatedBy("UVMS");
             alarmReport.setPluginType(fact.getPluginType());
             alarmReport.setAssetGuid(fact.getAssetGuid());
             alarmReport.setInactivatePosition(false);
@@ -520,7 +520,7 @@ public class ValidationServiceBean implements ValidationService {
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 
-            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport,"Triggered by rule: " + ruleName);
+            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -531,7 +531,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null, "Triggered by rule:" + ruleName);
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null);
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create alarm! ] {}", e.getMessage());
         }
@@ -565,9 +565,9 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment) {
         try {
-            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, username);
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         }
         catch (AuditModelMarshallException | MessageException e) {

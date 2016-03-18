@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.jms.JMSException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -47,9 +46,6 @@ public class RestResourceTest {
 
     @InjectMocks
     CustomRulesRestResource customRulesRestResource;
-
-    @Mock
-    private HttpServletRequest request;
 
     public RestResourceTest() {
         ERROR_RESULT = new ResponseDto(null, ResponseCode.UNDEFINED_ERROR);
@@ -131,7 +127,7 @@ public class RestResourceTest {
     @Test
     public void testCreateCustomRule() throws RulesServiceException, RulesFaultException {
         ResponseDto result = customRulesRestResource.createCustomRule(DTO);
-        Mockito.verify(rulesService).createCustomRule(DTO, null);
+        Mockito.verify(rulesService).createCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
@@ -152,7 +148,7 @@ public class RestResourceTest {
     @Test
     public void testUpdateCustomRule() throws RulesServiceException, RulesFaultException {
         ResponseDto result = customRulesRestResource.update(DTO);
-        Mockito.verify(rulesService).updateCustomRule(DTO, null);
+        Mockito.verify(rulesService).updateCustomRule(DTO);
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
