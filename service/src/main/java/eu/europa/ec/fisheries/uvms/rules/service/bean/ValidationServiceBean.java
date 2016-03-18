@@ -303,7 +303,7 @@ public class ValidationServiceBean implements ValidationService {
                 String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
                 TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint);
+                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
                 // TODO: Do something with the response??? Or don't send response from Exchange
             }
 
@@ -345,7 +345,7 @@ public class ValidationServiceBean implements ValidationService {
             String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
             producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
 
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ] {}", e.getMessage());
@@ -484,7 +484,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null);
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null, ticket.getUpdatedBy());
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create ticket! ] {}", e.getMessage());
         }
@@ -531,7 +531,7 @@ public class ValidationServiceBean implements ValidationService {
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null);
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null, alarmReport.getUpdatedBy());
         } catch (RulesModelMapperException | MessageException e) {
             LOG.error("[ Failed to create alarm! ] {}", e.getMessage());
         }
@@ -565,9 +565,9 @@ public class ValidationServiceBean implements ValidationService {
         }
     }
 
-    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment) {
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {
-            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject);
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         }
         catch (AuditModelMarshallException | MessageException e) {

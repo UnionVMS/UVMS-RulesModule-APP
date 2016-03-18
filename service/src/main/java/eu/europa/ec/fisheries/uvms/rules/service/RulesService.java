@@ -35,7 +35,7 @@ public interface RulesService {
      */
     CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException;
 
-    CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType) throws RulesServiceException, RulesFaultException;
+    CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType, String username) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists (all) custom rules
@@ -45,7 +45,7 @@ public interface RulesService {
      */
 //    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
-    CustomRuleType deleteCustomRule(String guid) throws RulesServiceException, RulesFaultException;
+    CustomRuleType deleteCustomRule(String guid, String username) throws RulesServiceException, RulesFaultException;
 
     /**
      * Lists alarms by query

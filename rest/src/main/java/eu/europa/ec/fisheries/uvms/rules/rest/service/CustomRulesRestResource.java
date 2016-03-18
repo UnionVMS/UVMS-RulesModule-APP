@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 @Path("/customrules")
@@ -31,6 +33,8 @@ public class CustomRulesRestResource {
     @EJB
     ValidationService validationService;
 
+    @Context
+    private HttpServletRequest request;
     /**
      *
      * @responseMessage 200 A custom rule successfully created
@@ -154,7 +158,7 @@ public class CustomRulesRestResource {
     public ResponseDto updateSubscription(UpdateSubscriptionType updateSubscriptionType) {
         LOG.info("Update subscription invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateSubscription(updateSubscriptionType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateSubscription(updateSubscriptionType, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating subscription. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
@@ -175,7 +179,7 @@ public class CustomRulesRestResource {
     public ResponseDto deleteCustomRule(@PathParam(value = "guid") final String guid) {
         LOG.info("Delete custom rule invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.deleteCustomRule(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.deleteCustomRule(guid, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when deleting custom rule. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
