@@ -70,9 +70,10 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapDeleteCustomRule(String guid) throws RulesModelMapperException {
+    public static String mapDeleteCustomRule(String guid, String username) throws RulesModelMapperException {
         DeleteCustomRuleRequest request = new DeleteCustomRuleRequest();
         request.setGuid(guid);
+        request.setUsername(username);
         request.setMethod(RulesDataSourceMethod.DELETE_CUSTOM_RULE);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }

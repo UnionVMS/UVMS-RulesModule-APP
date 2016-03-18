@@ -262,6 +262,7 @@
                         <xsd:extension base="source:RulesBaseRequest">
                             <xsd:sequence>
                                 <xsd:element name="guid" type="xsd:string"/>
+                                <xsd:element name="username" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
