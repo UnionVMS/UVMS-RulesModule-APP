@@ -74,6 +74,7 @@
             <xsd:complexType name="RulesBaseRequest" abstract="true">
                 <xsd:sequence>
                     <xsd:element name="method" type="source:RulesDataSourceMethod"/>
+                    <xsd:element name="username" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:complexType>
 

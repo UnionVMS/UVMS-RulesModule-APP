@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 @Path("/customrules")
@@ -30,6 +32,9 @@ public class CustomRulesRestResource {
 
     @EJB
     ValidationService validationService;
+
+    @Context
+    private HttpServletRequest request;
 
     /**
      *
@@ -45,7 +50,7 @@ public class CustomRulesRestResource {
     public ResponseDto createCustomRule(final CustomRuleType customRule) {
         LOG.info("Create invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.createCustomRule(customRule), ResponseCode.OK);
+            return new ResponseDto(rulesService.createCustomRule(customRule, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException e) {
             LOG.error("[ Error when creating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
@@ -132,7 +137,7 @@ public class CustomRulesRestResource {
     public ResponseDto update(final CustomRuleType customRuleType) {
         LOG.info("Update custom rule invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateCustomRule(customRuleType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateCustomRule(customRuleType, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
@@ -154,7 +159,7 @@ public class CustomRulesRestResource {
     public ResponseDto updateSubscription(UpdateSubscriptionType updateSubscriptionType) {
         LOG.info("Update subscription invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateSubscription(updateSubscriptionType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateSubscription(updateSubscriptionType, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating subscription. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
@@ -175,7 +180,7 @@ public class CustomRulesRestResource {
     public ResponseDto deleteCustomRule(@PathParam(value = "guid") final String guid) {
         LOG.info("Delete custom rule invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.deleteCustomRule(guid), ResponseCode.OK);
+            return new ResponseDto(rulesService.deleteCustomRule(guid, request.getRemoteUser()), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when deleting custom rule. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);

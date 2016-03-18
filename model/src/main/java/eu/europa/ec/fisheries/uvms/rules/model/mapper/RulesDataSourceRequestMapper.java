@@ -23,10 +23,11 @@ public class RulesDataSourceRequestMapper {
     private final static Logger LOG = LoggerFactory.getLogger(RulesDataSourceRequestMapper.class);
 
     // Custom rule
-    public static String mapCreateCustomRule(CustomRuleType customRule) throws RulesModelMapperException {
+    public static String mapCreateCustomRule(CustomRuleType customRule, String username) throws RulesModelMapperException {
         CreateCustomRuleRequest request = new CreateCustomRuleRequest();
         request.setCustomRule(customRule);
         request.setMethod(RulesDataSourceMethod.CREATE_CUSTOM_RULE);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -63,39 +64,44 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpdateCustomRule(CustomRuleType customRule) throws RulesModelMapperException {
+    public static String mapUpdateCustomRule(CustomRuleType customRule, String username) throws RulesModelMapperException {
         UpdateCustomRuleRequest request = new UpdateCustomRuleRequest();
         request.setCustomRule(customRule);
         request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapDeleteCustomRule(String guid) throws RulesModelMapperException {
+    public static String mapDeleteCustomRule(String guid, String username) throws RulesModelMapperException {
         DeleteCustomRuleRequest request = new DeleteCustomRuleRequest();
         request.setGuid(guid);
+        request.setUsername(username);
         request.setMethod(RulesDataSourceMethod.DELETE_CUSTOM_RULE);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpdateCustomRuleLastTriggered(String ruleGuid) throws RulesModelMapperException {
+    public static String mapUpdateCustomRuleLastTriggered(String ruleGuid, String username) throws RulesModelMapperException {
         UpdateCustomRuleLastTriggeredRequest request = new UpdateCustomRuleLastTriggeredRequest();
         request.setCustomRuleGuid(ruleGuid);
         request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE_LAST_TRIGGERED);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpdateSubscription(UpdateSubscriptionType updateSubscriptionType) throws RulesModelMapperException {
+    public static String mapUpdateSubscription(UpdateSubscriptionType updateSubscriptionType, String username) throws RulesModelMapperException {
         UpdateCustomRuleSubscriptionRequest request = new UpdateCustomRuleSubscriptionRequest();
         request.setSubscription(updateSubscriptionType);
         request.setMethod(RulesDataSourceMethod.UPDATE_CUSTOM_RULE_SUBSCRIPTION);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
     // Alarm
-    public static String mapCreateAlarmReport(AlarmReportType alarm) throws RulesModelMapperException {
+    public static String mapCreateAlarmReport(AlarmReportType alarm, String username) throws RulesModelMapperException {
         CreateAlarmReportRequest request = new CreateAlarmReportRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_ALARM_REPORT);
         request.setAlarm(alarm);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -129,17 +135,19 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapCreateTicket(TicketType ticket) throws RulesModelMapperException {
+    public static String mapCreateTicket(TicketType ticket, String username) throws RulesModelMapperException {
         CreateTicketRequest request = new CreateTicketRequest();
         request.setMethod(RulesDataSourceMethod.CREATE_TICKET);
         request.setTicket(ticket);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpdateTicketStatus(TicketType ticket) throws RulesModelMapperException {
+    public static String mapUpdateTicketStatus(TicketType ticket, String username) throws RulesModelMapperException {
         SetTicketStatusRequest request = new SetTicketStatusRequest();
         request.setTicket(ticket);
         request.setMethod(RulesDataSourceMethod.SET_TICKET_STATUS);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -149,13 +157,15 @@ public class RulesDataSourceRequestMapper {
         request.setStatus(status);
         request.setQuery(query);
         request.setMethod(RulesDataSourceMethod.UPDATE_TICKET_STATUS_BY_QUERY);
+        request.setUsername(loggedInUser);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpdateAlarmStatus(AlarmReportType alarm) throws RulesModelMapperException {
+    public static String mapUpdateAlarmStatus(AlarmReportType alarm, String username) throws RulesModelMapperException {
         SetAlarmStatusRequest request = new SetAlarmStatusRequest();
         request.setAlarm(alarm);
         request.setMethod(RulesDataSourceMethod.SET_ALARM_STATUS);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -189,10 +199,11 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapUpsertPreviousReport(PreviousReportType report) throws RulesModelMapperException {
+    public static String mapUpsertPreviousReport(PreviousReportType report, String username) throws RulesModelMapperException {
         UpsertPreviousReportRequest request = new UpsertPreviousReportRequest();
         request.setMethod(RulesDataSourceMethod.UPSERT_PREVIOUS_REPORT);
         request.setPreviousReport(report);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
@@ -223,10 +234,11 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String mapReprocessAlarms(List<String> alarmGuids) throws RulesModelMapperException {
+    public static String mapReprocessAlarms(List<String> alarmGuids, String username) throws RulesModelMapperException {
         ReprocessAlarmRequest request = new ReprocessAlarmRequest();
         request.getAlarmReportGuid().addAll(alarmGuids);
         request.setMethod(RulesDataSourceMethod.REPROCESS_ALARMS);
+        request.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
