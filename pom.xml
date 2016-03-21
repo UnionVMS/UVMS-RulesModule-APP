@@ -23,7 +23,7 @@
         <drools.version>6.2.0.Final</drools.version>
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>1.0.2</uvms.config.version>
-        <uvms.common.version>1.6-SNAPSHOT</uvms.common.version>
+        <uvms.common.version>1.7.2-SNAPSHOT</uvms.common.version>
         <movement.model.version>1.0.3-SNAPSHOT</movement.model.version>
         <exchange.model.version>1.0.3-SNAPSHOT</exchange.model.version>
         <asset.model.version>1.0.3-SNAPSHOT</asset.model.version>
