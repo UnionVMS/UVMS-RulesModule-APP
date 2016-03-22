@@ -10,6 +10,7 @@
     <description>This module shall have interfaces, XSD, and DTOs</description>
 
     <properties>
+        <additionalparam>-Xdoclint:none</additionalparam> <!-- * JAVADOC ignore warning for missing documentations -->
         <release.branch.name><!-- INSERT BRANCH NAME --></release.branch.name>
         <!-- the name of the wsdl files without file ending -->
         <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
