@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
     <artifactId>rules-model</artifactId>
     <name>rules-model</name>
     <packaging>ejb</packaging>
@@ -71,7 +71,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/rules-model-1.0.3</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP/model</connection>
     </scm>
 
     <profiles>
