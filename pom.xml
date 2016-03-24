@@ -23,16 +23,16 @@
         <drools.version>6.2.0.Final</drools.version>
         <dozer.version>5.5.1</dozer.version>
         <uvms.config.version>1.0.2</uvms.config.version>
-        <uvms.common.version>1.7.3-SNAPSHOT</uvms.common.version>
-        <movement.model.version>1.0.4-SNAPSHOT</movement.model.version>
-        <exchange.model.version>1.0.4-SNAPSHOT</exchange.model.version>
-        <asset.model.version>1.0.4-SNAPSHOT</asset.model.version>
-        <mobileterminal.model.version>1.0.4-SNAPSHOT</mobileterminal.model.version>
+        <uvms.common.version>1.7.2</uvms.common.version>
+        <movement.model.version>1.0.3</movement.model.version>
+        <exchange.model.version>1.0.3</exchange.model.version>
+        <asset.model.version>1.0.3</asset.model.version>
+        <mobileterminal.model.version>1.0.3</mobileterminal.model.version>
         <user.model.version>1.2.0</user.model.version>
         <usm4uvms.version>1.0.0</usm4uvms.version>
-        <audit.model.version>1.0.4-SNAPSHOT</audit.model.version>
+        <audit.model.version>1.0.3</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>1.0.4-SNAPSHOT</rules.model.version>
+        <rules.model.version>1.0.3</rules.model.version>
     </properties>
 
     <dependencies>
