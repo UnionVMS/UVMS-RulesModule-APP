@@ -190,7 +190,7 @@ public class EventServiceBean implements EventService {
             List<String> movements = request.getMovementGuids();
 
             GetTicketsAndRulesByMovementsResponse response = rulesService.getTicketsAndRulesByMovements(movements);
-            String responseString = RulesDataSourceResponseMapper.mapToGetTicketsAndRulesByMovementsResponse(response.getTicketsAndRules());
+            String responseString = RulesModuleResponseMapper.getTicketsAndRulesByMovementsResponse(response.getTicketsAndRules());
 
             producer.sendModuleResponseMessage(message.getJmsMessage(), responseString);
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
