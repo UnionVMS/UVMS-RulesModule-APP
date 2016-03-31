@@ -62,7 +62,7 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>${rules.model.version}</version>
             <type>ejb</type>
         </dependency>
         <dependency>
