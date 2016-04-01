@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <artifactId>rules-model</artifactId>
     <name>rules-model</name>
     <packaging>ejb</packaging>
     <description>This module shall have interfaces, XSD, and DTOs</description>
 
     <properties>
-        <release.branch.name><!-- INSERT BRANCH NAME --></release.branch.name>
-        <!-- the name of the wsdl files without file ending -->
+        <release.branch.name>uvms-1.0.3-auto-test</release.branch.name>
+        
         <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
         <wsdl.source.name>RulesDataSourceService</wsdl.source.name>
         <javaee.version>7.0</javaee.version>
@@ -31,7 +30,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- LOGGING DEPENDENCIES -->
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -48,7 +47,7 @@
             <version>${logback.core.version}</version>
         </dependency>
 
-        <!-- TEST -->
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -71,7 +70,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP/model</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP/model</connection>
     </scm>
 
     <profiles>
@@ -111,7 +110,7 @@
                                     <sourceRoot>${basedir}/src/main/java/</sourceRoot>
                                     <wsdlOptions>
                                         <wsdlOption>
-                                            <!-- This is for incoming and outgoing messages to the module -->
+                                            
                                             <wsdl>${basedir}/src/main/resources/contract/${wsdl.contract.name}.wsdl</wsdl>
                                             <bindingFiles>
                                                 <bindingFile>${basedir}/src/main/resources/binding.xml</bindingFile>
@@ -130,7 +129,7 @@
                                     <sourceRoot>${basedir}/src/main/java/</sourceRoot>
                                     <wsdlOptions>
                                         <wsdlOption>
-                                            <!-- This is for incoming and outgoing messages to the proxy services and local database -->
+                                            
                                             <wsdl>${basedir}/src/main/resources/contract/${wsdl.source.name}.wsdl</wsdl>
                                             <bindingFiles>
                                                 <bindingFile>${basedir}/src/main/resources/binding.xml</bindingFile>
