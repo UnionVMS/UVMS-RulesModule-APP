@@ -24,14 +24,14 @@
         <uvms.config.version>2.0.0</uvms.config.version>
         <uvms.common.version>2.0.0</uvms.common.version>
         <movement.model.version>2.0.0</movement.model.version>
-        <exchange.model.version>2.0.0</exchange.model.version>
+        <exchange.model.version>2.0.1-SNAPSHOT</exchange.model.version>
         <asset.model.version>2.0.0</asset.model.version>
         <mobileterminal.model.version>2.0.0</mobileterminal.model.version>
         <user.model.version>1.2.0</user.model.version>
         <usm4uvms.version>2.0.0</usm4uvms.version>
         <audit.model.version>2.0.0</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>2.0.0</rules.model.version>
+        <rules.model.version>2.0.1-SNAPSHOT</rules.model.version>
     </properties>
 
     <dependencies>

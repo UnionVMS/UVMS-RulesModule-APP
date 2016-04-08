@@ -672,7 +672,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException {
+    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException, RulesServiceException {
         int threadNum = 4;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;

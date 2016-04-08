@@ -342,7 +342,7 @@ public class ValidationServiceBean implements ValidationService {
         // TODO: Hard coded...
         String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
-            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email);
+            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email, ruleName);
             producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");

@@ -8,12 +8,16 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementMetaDataAreaType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import java.util.List;
 
 public class MovementFactMapper {
-    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) {
+    public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid) throws RulesServiceException {
+        if (movement == null) {
+            throw new RulesServiceException("Movement was null, asset: " + asset + ", mobileTerminal: " + mobileTerminal);
+        }
         MovementFact fact = new MovementFact();
 
         fact.setChannelGuid(channelGuid);
