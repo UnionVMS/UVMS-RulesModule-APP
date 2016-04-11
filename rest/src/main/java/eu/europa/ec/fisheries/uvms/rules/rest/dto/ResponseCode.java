@@ -12,7 +12,8 @@ public enum ResponseCode {
 
     SERVICE_ERROR(521),
     MODEL_ERROR(522),
-    DOMAIN_ERROR(523);
+    DOMAIN_ERROR(523),
+    FORBIDDEN(403);
 
     private final int code;
 

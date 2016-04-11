@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mockdata;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 
 public class MockData {
@@ -16,7 +17,8 @@ public class MockData {
     public static CustomRuleType getDto(Long id) {
         CustomRuleType dto = new CustomRuleType();
         dto.setName("DummyRule" + id);
-        return null;
+        dto.setAvailability(AvailabilityType.PUBLIC);
+        return dto;
     }
 
     /**
@@ -30,7 +32,7 @@ public class MockData {
         for (int i = 0; i < amount; i++) {
             dtoList.add(getDto(Long.valueOf(i)));
         }
-        return null;
+        return dtoList;
     }
 
 }

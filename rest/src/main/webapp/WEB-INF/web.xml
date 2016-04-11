@@ -8,5 +8,13 @@
         <param-name>resteasy.scan</param-name>
         <param-value>true</param-value>
     </context-param>
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>eu.europa.ec.fisheries.uvms.rest.security.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
     
 </web-app>

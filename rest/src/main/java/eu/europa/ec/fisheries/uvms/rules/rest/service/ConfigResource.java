@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Path("/config")
 @Stateless
-@RequiresFeature(UnionVMSFeature.viewMovements)
+@RequiresFeature(UnionVMSFeature.viewAlarmRules)
 public class ConfigResource {
 
     private final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);

@@ -9,6 +9,8 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
+import java.nio.file.AccessDeniedException;
+
 public class ErrorHandler {
 
     public static ResponseDto getFault(Exception ex) {
@@ -40,6 +42,10 @@ public class ErrorHandler {
             if (ex instanceof RulesModelMarshallException) {
                 return new ResponseDto<String>(ex.getMessage(), ResponseCode.MAPPING_ERROR);
             }
+        }
+
+        if(ex instanceof AccessDeniedException){
+            return new ResponseDto<String>(ex.getMessage(), ResponseCode.FORBIDDEN);
         }
 
         return new ResponseDto<String>(ex.getMessage(), ResponseCode.UNDEFINED_ERROR);

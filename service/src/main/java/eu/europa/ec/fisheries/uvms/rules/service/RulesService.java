@@ -14,12 +14,15 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsRes
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 import javax.ejb.Local;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Local
@@ -33,7 +36,7 @@ public interface RulesService {
      * @return
      * @throws RulesServiceException
      */
-    CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException;
+    CustomRuleType createCustomRule(CustomRuleType customRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException;
 
     CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType, String username) throws RulesServiceException, RulesFaultException;
 
@@ -45,7 +48,7 @@ public interface RulesService {
      */
 //    List<CustomRuleType> getCustomRuleList() throws RulesServiceException;
 
-    CustomRuleType deleteCustomRule(String guid, String username) throws RulesServiceException, RulesFaultException;
+    CustomRuleType deleteCustomRule(String guid, String username, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException;
 
     /**
      * Lists alarms by query
@@ -81,7 +84,7 @@ public interface RulesService {
      * @param customRuleType
      * @throws RulesServiceException
      */
-    CustomRuleType updateCustomRule(CustomRuleType customRuleType) throws RulesServiceException, RulesFaultException;
+    CustomRuleType updateCustomRule(CustomRuleType customRuleType, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException;
 
     /**
      * Creates an error report
@@ -140,5 +143,6 @@ public interface RulesService {
     long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException;
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
+
 
 }

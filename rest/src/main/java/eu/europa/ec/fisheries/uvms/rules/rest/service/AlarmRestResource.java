@@ -13,6 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
+import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
+import java.security.Principal;
 import java.util.List;
 
 @Path("/alarms")
@@ -56,6 +59,7 @@ public class AlarmRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/list")
+    @RequiresFeature(UnionVMSFeature.viewAlarmsHoldingTable)
     public ResponseDto<AlarmListResponseDto> getCustomRuleList(AlarmQuery query) {
         LOG.info("Get alarm list invoked in rest layer");
         try {
@@ -77,6 +81,7 @@ public class AlarmRestResource {
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
+    @RequiresFeature(UnionVMSFeature.manageAlarmsHoldingTable)
     public ResponseDto updateAlarmStatus(final AlarmReportType alarmReportType) {
         LOG.info("Update alarm status invoked in rest layer");
         try {
@@ -98,6 +103,7 @@ public class AlarmRestResource {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/{guid}")
+    @RequiresFeature(UnionVMSFeature.viewAlarmsHoldingTable)
     public ResponseDto getAlarmReportByGuid(@PathParam("guid") String guid) {
         try {
             return new ResponseDto(rulesService.getAlarmReportByGuid(guid), ResponseCode.OK);
@@ -119,6 +125,7 @@ public class AlarmRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/reprocess")
+    @RequiresFeature(UnionVMSFeature.manageAlarmsHoldingTable)
     public ResponseDto reprocessAlarm(final List<String> alarmGuidList) {
         LOG.info("Reprocess alarm invoked in rest layer");
         try {
@@ -140,7 +147,10 @@ public class AlarmRestResource {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/countopen")
+    @RequiresFeature(UnionVMSFeature.viewAlarmsHoldingTable)
     public ResponseDto getNumberOfOpenAlarmReports() {
+        Principal userPrincipal = request.getUserPrincipal();
+
         try {
             return new ResponseDto(validationService.getNumberOfOpenAlarmReports(), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {

@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeatureFilter;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class RestActivator extends Application {
         set.add(AlarmRestResource.class);
         set.add(TicketRestResource.class);
         set.add(ConfigResource.class);
-        set.add(SanityRulesRestResource.class);
+        set.add(UnionVMSFeatureFilter.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 

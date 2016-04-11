@@ -1,10 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
+import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
+import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
@@ -16,10 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
 
 @Path("/customrules")
 @Stateless
@@ -27,11 +34,18 @@ public class CustomRulesRestResource {
 
     private final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
 
+    private static String UNION_VMS_APPLICATION = "Union-VMS";
+
+    @Context
+    private ServletContext servletContext;
+
     @EJB
     RulesService rulesService;
 
     @EJB
     ValidationService validationService;
+
+
 
     @Context
     private HttpServletRequest request;
@@ -46,12 +60,16 @@ public class CustomRulesRestResource {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
+    @RequiresFeature(UnionVMSFeature.manageAlarmRules)
     public ResponseDto createCustomRule(final CustomRuleType customRule) {
         LOG.info("Create invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.createCustomRule(customRule), ResponseCode.OK);
+            return new ResponseDto(rulesService.createCustomRule(customRule, UnionVMSFeature.manageGlobalAlarmsRules.name(), getApplicationName(servletContext)), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException e) {
             LOG.error("[ Error when creating. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
+        } catch (AccessDeniedException e) {
+            LOG.error("[ User has no right to create global alarm rules ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
         }
     }
@@ -68,6 +86,7 @@ public class CustomRulesRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(value = "listAll/{userName}")
+    @RequiresFeature(UnionVMSFeature.viewAlarmRules)
     public ResponseDto getCustomRulesByUser(@PathParam(value = "userName") final String userName) {
         LOG.info("Get all custom rules invoked in rest layer");
         try {
@@ -90,6 +109,7 @@ public class CustomRulesRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("listByQuery")
+    @RequiresFeature(UnionVMSFeature.viewAlarmRules)
     public ResponseDto getCustomRulesByQuery(CustomRuleQuery query) {
         LOG.info("Get custom rules by query invoked in rest layer");
         try {
@@ -112,6 +132,7 @@ public class CustomRulesRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(value = "{guid}")
+    @RequiresFeature(UnionVMSFeature.viewAlarmRules)
     public ResponseDto getCustomRuleByGuid(@PathParam(value = "guid") final String guid) {
         LOG.info("Get custom rule by guid invoked in rest layer");
         try {
@@ -133,12 +154,16 @@ public class CustomRulesRestResource {
     @PUT
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
+    @RequiresFeature(UnionVMSFeature.manageAlarmRules)
     public ResponseDto update(final CustomRuleType customRuleType) {
         LOG.info("Update custom rule invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateCustomRule(customRuleType), ResponseCode.OK);
+            return new ResponseDto(rulesService.updateCustomRule(customRuleType, UnionVMSFeature.manageGlobalAlarmsRules.name(), getApplicationName(servletContext)), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
+            return ErrorHandler.getFault(e);
+        } catch (AccessDeniedException e) {
+            LOG.error("Forbidden access", e.getMessage());
             return ErrorHandler.getFault(e);
         }
     }
@@ -155,6 +180,7 @@ public class CustomRulesRestResource {
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/subscription")
+    @RequiresFeature(UnionVMSFeature.manageAlarmRules)
     public ResponseDto updateSubscription(UpdateSubscriptionType updateSubscriptionType) {
         LOG.info("Update subscription invoked in rest layer");
         try {
@@ -176,14 +202,28 @@ public class CustomRulesRestResource {
     @DELETE
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path("/{guid}")
+    @RequiresFeature(UnionVMSFeature.manageAlarmRules)
     public ResponseDto deleteCustomRule(@PathParam(value = "guid") final String guid) {
         LOG.info("Delete custom rule invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.deleteCustomRule(guid, request.getRemoteUser()), ResponseCode.OK);
+            return new ResponseDto(rulesService.deleteCustomRule(guid, request.getRemoteUser(),UnionVMSFeature.manageGlobalAlarmsRules.name(), getApplicationName(servletContext)), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
             LOG.error("[ Error when deleting custom rule. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
+        } catch (AccessDeniedException e) {
+            LOG.error("Forbidden access", e.getMessage());
+            return ErrorHandler.getFault(e);
         }
     }
+
+    public String getApplicationName(ServletContext servletContext) {
+        String cfgName = servletContext.getInitParameter("usmApplication");
+        if (cfgName == null) {
+            cfgName = UNION_VMS_APPLICATION;
+        }
+        return cfgName;
+    }
+
+
 
 }

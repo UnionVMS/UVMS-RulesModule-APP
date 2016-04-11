@@ -92,7 +92,7 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId)).thenReturn(result);
 
         // Act
-        rulesServiceBean.createCustomRule(customRule);
+        rulesServiceBean.createCustomRule(customRule, "manageGlobalAlarmsRules", "Union-VMS");
 
         // Verify
         verifyStatic();
@@ -157,7 +157,7 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId)).thenReturn(result);
 
         // Act
-        rulesServiceBean.updateCustomRule(customRule);
+        rulesServiceBean.updateCustomRule(customRule, "manageGlobalAlarmsRules", "Union-VMS");
 
         // Verify
         verifyStatic();

@@ -1,6 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementQuery;
@@ -12,6 +14,7 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
@@ -50,7 +53,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.*;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
@@ -67,8 +73,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
+import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
+import eu.europa.ec.fisheries.wsdl.user.types.Feature;
+import eu.europa.ec.fisheries.wsdl.user.types.UserContext;
+import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,13 +88,19 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
+import java.nio.file.AccessDeniedException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
+
+
 
     @EJB
     ParameterService parameterService;
@@ -140,7 +155,7 @@ public class RulesServiceBean implements RulesService {
      *
      */
     @Override
-    public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesServiceException, RulesFaultException {
+    public CustomRuleType createCustomRule(CustomRuleType customRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
         LOG.info("Create invoked in service layer");
         try {
             // Get organisation of user
@@ -149,6 +164,12 @@ public class RulesServiceBean implements RulesService {
                 customRule.setOrganisation(organisationName);
             } else {
                 LOG.warn("User {} is not connected to any organisation!", customRule.getUpdatedBy());
+            }
+            if(customRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+                UserContext userContext = getFullUserContext(customRule.getUpdatedBy(), applicationName);
+                if(!hasFeature(userContext, featureName)){
+                    throw new AccessDeniedException("Forbidden access");
+                }
             }
 
             String request = RulesDataSourceRequestMapper.mapCreateCustomRule(customRule);
@@ -199,7 +220,7 @@ public class RulesServiceBean implements RulesService {
      * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
+    public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
         LOG.info("Update custom rule invoked in service layer");
         try {
             // Get organisation of user
@@ -208,6 +229,13 @@ public class RulesServiceBean implements RulesService {
                 oldCustomRule.setOrganisation(organisationName);
             } else {
                 LOG.warn("User {} is not connected to any organisation!", oldCustomRule.getUpdatedBy());
+            }
+
+            if(oldCustomRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+                UserContext userContext = getFullUserContext(oldCustomRule.getUpdatedBy(), applicationName);
+                if(!hasFeature(userContext, featureName)){
+                    throw new AccessDeniedException("Forbidden access");
+                }
             }
 
             String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
@@ -265,13 +293,20 @@ public class RulesServiceBean implements RulesService {
      * @throws RulesServiceException
      */
     @Override
-    public CustomRuleType deleteCustomRule(String guid, String username) throws RulesServiceException, RulesFaultException {
+    public CustomRuleType deleteCustomRule(String guid, String username, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
         LOG.info("Deleting custom rule by guid: {}.", guid);
         if (guid == null) {
             throw new InputArgumentException("No custom rule to remove");
         }
 
         try {
+            CustomRuleType customRuleFromDb = getCustomRuleByGuid(guid);
+            if(customRuleFromDb.getAvailability().equals(AvailabilityType.GLOBAL)){
+                UserContext userContext = getFullUserContext(username, applicationName);
+                if(!hasFeature(userContext, featureName)){
+                    throw new AccessDeniedException("Forbidden access");
+                }
+            }
             String request = RulesDataSourceRequestMapper.mapDeleteCustomRule(guid, username);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
@@ -1153,6 +1188,47 @@ public class RulesServiceBean implements RulesService {
         catch (AuditModelMarshallException | MessageException e) {
             LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
+    }
+
+    private UserContext getFullUserContext(String remoteUser, String applicationName) throws RulesServiceException, RulesModelMarshallException {
+        LOG.debug("Request getFullUserContext({}, {})", remoteUser, applicationName);
+        UserContext userContext = null;
+        UserContextId contextId = new UserContextId();
+        contextId.setApplicationName(applicationName);
+        contextId.setUserName(remoteUser);
+        String userRequest;
+        try {
+            userRequest = UserModuleRequestMapper.mapToGetUserContextRequest(contextId);
+            String messageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+            LOG.debug("JMS message with ID: {} is sent to USM.", messageId);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            if (response != null) {
+                GetUserContextResponse userContextResponse = JAXBMarshaller.unmarshallTextMessage(response, GetUserContextResponse.class);
+                LOG.debug("Response concerning message with ID: {} is received.", messageId);
+                userContext = userContextResponse.getContext();
+            } else {
+                LOG.error("Error occurred while receiving JMS response for message ID: {}", messageId);
+                throw new RulesServiceException("Unable to receive a response from USM.");
+            }
+        } catch (eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
+            throw new RulesModelMarshallException("Unexpected exception while trying to get user context.", e);
+        } catch (MessageException e) {
+            LOG.error("Unable to receive a response from USM.");
+            throw new RulesServiceException("Unable to receive a response from USM.");
+        }
+        return userContext;
+    }
+
+    private boolean hasFeature(UserContext userContext, String featureName) {
+        for (eu.europa.ec.fisheries.wsdl.user.types.Context c : userContext.getContextSet().getContexts()) {
+            for (Feature f : c.getRole().getFeature()) {
+                if (featureName.equals(f.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

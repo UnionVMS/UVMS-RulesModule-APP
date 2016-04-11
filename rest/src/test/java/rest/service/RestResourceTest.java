@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.jms.JMSException;
+import javax.servlet.ServletContext;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -43,6 +45,12 @@ public class RestResourceTest {
 
     @Mock
     ValidationService validationService;
+
+    @Mock
+    private ServletContext servletContext;
+
+    @Mock
+    private CustomRulesRestResource customRulesRestResourceMock;
 
     @InjectMocks
     CustomRulesRestResource customRulesRestResource;
@@ -125,9 +133,10 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testCreateCustomRule() throws RulesServiceException, RulesFaultException {
+    public void testCreateCustomRule() throws RulesServiceException, RulesFaultException, AccessDeniedException {
+        doReturn("Union-VMS").when(customRulesRestResourceMock).getApplicationName(servletContext);
         ResponseDto result = customRulesRestResource.createCustomRule(DTO);
-        Mockito.verify(rulesService).createCustomRule(DTO);
+        Mockito.verify(rulesService).createCustomRule(DTO, "manageGlobalAlarmsRules", "Union-VMS");
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
@@ -146,9 +155,10 @@ public class RestResourceTest {
      * @throws RulesServiceException
      */
     @Test
-    public void testUpdateCustomRule() throws RulesServiceException, RulesFaultException {
+    public void testUpdateCustomRule() throws RulesServiceException, RulesFaultException, AccessDeniedException {
+        doReturn("Union-VMS").when(customRulesRestResourceMock).getApplicationName(servletContext);
         ResponseDto result = customRulesRestResource.update(DTO);
-        Mockito.verify(rulesService).updateCustomRule(DTO);
+        Mockito.verify(rulesService).updateCustomRule(DTO, "manageGlobalAlarmsRules", "Union-VMS");
         assertEquals(SUCCESS_RESULT.toString(), result.toString());
     }
 
