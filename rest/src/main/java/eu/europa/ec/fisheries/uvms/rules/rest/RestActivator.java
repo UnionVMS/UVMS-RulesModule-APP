@@ -27,6 +27,7 @@ public class RestActivator extends Application {
         set.add(TicketRestResource.class);
         set.add(ConfigResource.class);
         set.add(UnionVMSFeatureFilter.class);
+        set.add(SanityRulesRestResource.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 

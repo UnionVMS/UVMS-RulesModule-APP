@@ -1,5 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
+import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
+import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
@@ -11,11 +13,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/sanityrules")
 @Stateless
+@RequiresFeature(UnionVMSFeature.viewAlarmRules)
 public class SanityRulesRestResource {
 
     private final static Logger LOG = LoggerFactory.getLogger(SanityRulesRestResource.class);
