@@ -101,6 +101,7 @@ public class RawMovementFactMapper {
         // From Asset
         if (asset != null) {
             fact.setAssetGuid(asset.getAssetId().getGuid());
+            fact.setAssetName(asset.getName());
         }
 
         return fact;

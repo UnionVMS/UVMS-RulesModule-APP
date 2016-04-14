@@ -66,10 +66,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
@@ -679,6 +676,10 @@ public class RulesServiceBean implements RulesService {
                 }
             } else {
                 asset = getAssetByCfrIrcs(rawMovement.getAssetId());
+            }
+            if (rawMovement.getAssetId() == null && asset != null) {
+                AssetId assetId = AssetAssetIdMapper.mapAssetToAssetId(asset);
+                rawMovement.setAssetId(assetId);
             }
             auditTimestamp = auditLog("Time to fetch from Asset Module:", auditTimestamp);
 
