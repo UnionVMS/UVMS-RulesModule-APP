@@ -88,7 +88,7 @@ public class EventServiceBean implements EventService {
             rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
         } catch (RulesModelMapperException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
-            errorEvent.fire(message);
+            errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MODEL_EXCEPTION, "Could not create a movement")));
         }
 
     }
