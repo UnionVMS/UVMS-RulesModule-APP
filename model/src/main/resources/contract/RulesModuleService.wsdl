@@ -30,7 +30,6 @@
                 <xsd:restriction base="xsd:string">
                     <!-- Receive position report -->
                     <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
-                    <xsd:enumeration value="VALIDATE_MOVEMENT_REPORT"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>

@@ -7,11 +7,16 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
+import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
+import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.event.*;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.JMSConnectorBean;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -77,7 +82,8 @@ public class EventServiceBean implements EventService {
             if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
                 String s = " [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
                         + baseRequest.getMethod().name() + " ]";
-                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, s)));
+                LOG.error(s);
+                //sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.CREATE, baseRequest.getMethod().name(), s, username);
             }
 
             SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
@@ -88,7 +94,7 @@ public class EventServiceBean implements EventService {
             rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
         } catch (RulesModelMapperException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
-            errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MODEL_EXCEPTION, "Could not create a movement")));
+            //sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.CREATE, RulesModuleMethod.SET_MOVEMENT_REPORT.name(), "Error when creating movement", "UVMS");
         }
 
     }
@@ -196,6 +202,16 @@ public class EventServiceBean implements EventService {
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
             LOG.error("[ Error when fetching tickets and rules by movements ] {}", e.getMessage());
             errorEvent.fire(message);
+        }
+    }
+
+    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
+        try {
+            String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
+            producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+        }
+        catch (AuditModelMarshallException | MessageException e) {
+            LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
     }
 

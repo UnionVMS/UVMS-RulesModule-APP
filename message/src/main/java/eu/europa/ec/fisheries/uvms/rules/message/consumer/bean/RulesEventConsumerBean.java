@@ -80,9 +80,6 @@ public class RulesEventConsumerBean implements MessageListener {
                 case SET_MOVEMENT_REPORT:
                     setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
                     break;
-                case VALIDATE_MOVEMENT_REPORT:
-                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
-                    break;
                 case PING:
                     pingReceivedEvent.fire(new EventMessage(textMessage));
                     break;
