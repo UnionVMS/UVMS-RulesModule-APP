@@ -79,6 +79,14 @@ public interface RulesService {
     TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException;
 
     /**
+     * Update a ticket count, for Asset not sending tickets
+     *
+     * @param ticket
+     * @throws RulesServiceException
+     */
+    TicketType updateTicketCount(TicketType ticket) throws RulesServiceException, RulesFaultException;
+
+    /**
      * Update an object
      *
      * @param customRuleType

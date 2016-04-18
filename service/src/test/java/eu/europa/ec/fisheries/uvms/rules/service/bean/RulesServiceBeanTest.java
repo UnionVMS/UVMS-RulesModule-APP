@@ -331,8 +331,8 @@ public class RulesServiceBeanTest {
         verifyStatic();
         RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId);
 
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
+        verify(mockProducer, times(2)).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
+        verify(mockConsumer, times(2)).getMessage(messageId, TextMessage.class);
 //        verify(ticketEvent, times(1)).fire(any(NotificationMessage.class));
 //        ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
     }
@@ -424,6 +424,8 @@ public class RulesServiceBeanTest {
         ticketResponse.setTicket(new TicketType());
         when(RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
+        when(RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId)).thenReturn(new TicketType());
+
         // Act
         rulesServiceBean.timerRuleTriggered(ruleName, fact);
 
@@ -434,8 +436,8 @@ public class RulesServiceBeanTest {
         verifyStatic();
         RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId);
 
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
+        verify(mockProducer, times(2)).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
+        verify(mockConsumer, times(2)).getMessage(messageId, TextMessage.class);
     }
 
 //    @Test

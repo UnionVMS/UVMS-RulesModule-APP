@@ -144,6 +144,13 @@ public class RulesDataSourceRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String mapUpdateTicketCount(TicketType ticket) throws RulesModelMapperException {
+        UpdateTicketCountRequest request = new UpdateTicketCountRequest();
+        request.setTicket(ticket);
+        request.setMethod(RulesDataSourceMethod.UPDATE_TICKET_COUNT);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String mapUpdateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesModelMapperException {
         UpdateTicketStatusByQueryRequest request = new UpdateTicketStatusByQueryRequest();
         request.setLoggedInUser(loggedInUser);

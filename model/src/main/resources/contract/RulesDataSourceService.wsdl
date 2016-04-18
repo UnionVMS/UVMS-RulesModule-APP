@@ -35,6 +35,7 @@
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_USER"/>
                     <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
                     <xsd:enumeration value="SET_TICKET_STATUS"/>
+                    <xsd:enumeration value="UPDATE_TICKET_COUNT"/>
                     <xsd:enumeration value="UPDATE_TICKET_STATUS_BY_QUERY"/>
                     <xsd:enumeration value="LIST_TICKETS"/>
                     <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
@@ -339,6 +340,28 @@
             
             <!-- Set ticket status response -->
             <xsd:element name="SetTicketStatusResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status request -->
+            <xsd:element name="UpdateTicketCountRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status response -->
+            <xsd:element name="UpdateTicketCountResponse">
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="ticket" type="ticket:TicketType"/>
@@ -890,6 +913,13 @@
         <part name="body" element="source:SetTicketStatusResponse"/>
     </message>
 
+    <message name="UpdateTicketCountRequest">
+        <part name="body" element="source:UpdateTicketCountRequest"/>
+    </message>
+    <message name="UpdateTicketCountResponse">
+        <part name="body" element="source:UpdateTicketCountResponse"/>
+    </message>
+
     <message name="UpdateTicketStatusByQueryRequest">
         <part name="body" element="source:UpdateTicketStatusByQueryRequest"/>
     </message>
@@ -1108,6 +1138,12 @@
         <operation name="SetTicketStatus">
             <input message="source:SetTicketStatusRequest"/>
             <output message="source:SetTicketStatusResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateTicketCount">
+            <input message="source:UpdateTicketCountRequest"/>
+            <output message="source:UpdateTicketCountResponse"/>
             <fault name="RulesException" message="source:RulesException"/>
         </operation>
 

@@ -31,7 +31,7 @@
         <usm4uvms.version>2.0.1</usm4uvms.version>
         <audit.model.version>2.0.0</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>2.0.1</rules.model.version>
+        <rules.model.version>2.0.2-SNAPSHOT</rules.model.version>
     </properties>
 
     <dependencies>

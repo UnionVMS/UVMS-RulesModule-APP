@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
@@ -528,10 +529,17 @@ public class RulesServiceBean implements RulesService {
             String getTicketRequest = RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
             String messageIdTicket = producer.sendDataSourceMessage(getTicketRequest, DataSourceQueue.INTERNAL);
             TextMessage ticketResponse = consumer.getMessage(messageIdTicket, TextMessage.class);
-            boolean noTicketCreated = RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(ticketResponse, messageIdTicket).getTicket() == null;
+            GetTicketByAssetAndRuleResponse ticketByAssetAndRuleResponse = RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(ticketResponse, messageIdTicket);
+            TicketType ticket = ticketByAssetAndRuleResponse.getTicket();
 
-            if (noTicketCreated) {
+            if (ticket == null) {
                 createAssetNotSendingTicket(ruleName, fact);
+            } else if (ticket.getTicketCount() != null){
+                ticket.setTicketCount(ticket.getTicketCount() + 1);
+                updateTicketCount(ticket);
+            } else {
+                ticket.setTicketCount(2L);
+                updateTicketCount(ticket);
             }
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
@@ -560,6 +568,30 @@ public class RulesServiceBean implements RulesService {
 
         // Notify long-polling clients of the change
         ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
+    }
+
+    @Override
+    public TicketType updateTicketCount(TicketType ticket) throws RulesServiceException, RulesFaultException {
+        LOG.info("Update ticket count invoked in service layer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateTicketCount(ticket);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            TicketType updatedTicket = RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId);
+
+            // Notify long-polling clients of the update
+            ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+
+            // Notify long-polling clients of the change (no value since FE will need to fetch it)
+            ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
+
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), null, ticket.getUpdatedBy());
+
+            return updatedTicket;
+
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@
             <xsd:element name="recipient" type="xsd:string"/>
             <xsd:element name="updated" type="xsd:string"/>
             <xsd:element name="updatedBy" type="xsd:string"/>
+            <xsd:element name="ticketCount" type="xsd:long" nillable="true"/>
         </xsd:sequence>
     </xsd:complexType>
     
