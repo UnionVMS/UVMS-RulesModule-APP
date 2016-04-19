@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
@@ -10,6 +11,8 @@ import eu.europa.ec.fisheries.schema.movement.search.v1.RangeCriteria;
 import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
@@ -933,8 +936,9 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
 
-            createdMovement = RulesDozerMapper.mapCreateMovementToMovementType(movementResponse);
-        } catch (ModelMarshallException | MessageException e) {
+            CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
+            createdMovement = createMovementResponse.getMovement();
+        } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
             LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
         }
 
