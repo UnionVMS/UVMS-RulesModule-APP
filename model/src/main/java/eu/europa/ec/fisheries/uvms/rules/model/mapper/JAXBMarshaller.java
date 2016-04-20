@@ -57,7 +57,7 @@ public class JAXBMarshaller {
             StringReader sr = new StringReader(textMessage.getText());
             return (R) unmarshaller.unmarshal(sr);
         } catch (JMSException | JAXBException ex) {
-            throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper ]", ex);
+            throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper. Expected class was " + clazz.getName() + " ]", ex);
         }
     }
 

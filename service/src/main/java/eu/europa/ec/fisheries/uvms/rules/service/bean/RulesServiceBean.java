@@ -402,7 +402,7 @@ public class RulesServiceBean implements RulesService {
             }
 
             return RulesModuleResponseMapper.mapToGetTicketsAndRulesByMovementsFromResponse(response);
-        } catch (RulesModelMapperException | MessageException ex) {
+        } catch (RulesModelMapperException | MessageException | JMSException | RulesFaultException ex) {
             throw new RulesServiceException(ex.getMessage());
         }
     }

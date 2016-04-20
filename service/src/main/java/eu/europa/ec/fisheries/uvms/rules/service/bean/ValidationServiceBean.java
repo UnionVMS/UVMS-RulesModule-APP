@@ -298,13 +298,18 @@ public class ValidationServiceBean implements ValidationService {
             
             List<ServiceResponseType> pluginList = getPluginList(pluginType);
             if (pluginList != null && !pluginList.isEmpty()) {
-                ServiceResponseType service = pluginList.get(0);
-                String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
-                String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
-                TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+                for (ServiceResponseType service : pluginList) {
+                    if (!service.isActive()) {
+                        LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
+                        continue;
+                    }
+                    String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
+                    String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
+                    TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-                sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
-                // TODO: Do something with the response??? Or don't send response from Exchange
+                    sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
+                    // TODO: Do something with the response??? Or don't send response from Exchange
+                }
             }
 
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
@@ -339,14 +344,20 @@ public class ValidationServiceBean implements ValidationService {
         email.setBody(buildBody(ruleName, fact));
         email.setTo(emailAddress);
 
-        // TODO: Hard coded...
-        String pluginName = "eu.europa.ec.fisheries.uvms.plugins.sweagencyemail";
         try {
-            String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(pluginName, email, ruleName);
-            producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+            List<ServiceResponseType> pluginList = getPluginList(PluginType.EMAIL);
+            if (pluginList != null && !pluginList.isEmpty()) {
+                for (ServiceResponseType service : pluginList) {
+                    if (!service.isActive()) {
+                        LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
+                        continue;
+                    }
+                    String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(service.getName(), email, ruleName);
+                    producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
-            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
-
+                    sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
+                }
+            }
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ] {}", e.getMessage());
         }
