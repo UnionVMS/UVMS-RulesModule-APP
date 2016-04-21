@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceResponseType;
+import eu.europa.ec.fisheries.schema.exchange.service.v1.StatusType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -299,7 +300,7 @@ public class ValidationServiceBean implements ValidationService {
             List<ServiceResponseType> pluginList = getPluginList(pluginType);
             if (pluginList != null && !pluginList.isEmpty()) {
                 for (ServiceResponseType service : pluginList) {
-                    if (!service.isActive()) {
+                    if (StatusType.STOPPED.equals(service.getStatus())) {
                         LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
                         continue;
                     }
@@ -309,9 +310,11 @@ public class ValidationServiceBean implements ValidationService {
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
                     // TODO: Do something with the response??? Or don't send response from Exchange
+                    return;
                 }
             }
 
+            LOG.info("[ No plugin of the correct type found. Nothing was sent ]");
         } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! ] {}", e.getMessage());
         }
@@ -348,7 +351,7 @@ public class ValidationServiceBean implements ValidationService {
             List<ServiceResponseType> pluginList = getPluginList(PluginType.EMAIL);
             if (pluginList != null && !pluginList.isEmpty()) {
                 for (ServiceResponseType service : pluginList) {
-                    if (!service.isActive()) {
+                    if (StatusType.STOPPED.equals(service.getStatus())) {
                         LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
                         continue;
                     }
@@ -356,8 +359,10 @@ public class ValidationServiceBean implements ValidationService {
                     producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
+                    return;
                 }
             }
+            LOG.info("[ No plugin of the correct type found. Nothing was sent ]");
         } catch (ExchangeModelMapperException | MessageException e) {
             LOG.error("[ Failed to send email! ] {}", e.getMessage());
         }
