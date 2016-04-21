@@ -580,7 +580,7 @@ public class RulesServiceBean implements RulesService {
             String request = RulesDataSourceRequestMapper.mapUpdateTicketCount(ticket);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            TicketType updatedTicket = RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId);
+            TicketType updatedTicket = RulesDataSourceResponseMapper.mapToUpdateTicketCountFromResponse(response, messageId);
 
             // Notify long-polling clients of the update
             ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));

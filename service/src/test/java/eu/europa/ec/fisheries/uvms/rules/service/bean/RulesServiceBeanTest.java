@@ -424,7 +424,7 @@ public class RulesServiceBeanTest {
         ticketResponse.setTicket(new TicketType());
         when(RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId)).thenReturn(ticketResponse);
 
-        when(RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId)).thenReturn(new TicketType());
+        when(RulesDataSourceResponseMapper.mapToUpdateTicketCountFromResponse(response, messageId)).thenReturn(new TicketType());
 
         // Act
         rulesServiceBean.timerRuleTriggered(ruleName, fact);

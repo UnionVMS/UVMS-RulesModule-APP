@@ -36,7 +36,7 @@ public class RulesTimerBean {
     }
 
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
-//     @Schedule(second = "0", minute = "*/2", hour = "*", persistent = false)
+//    @Schedule(second = "0", minute = "*/2", hour = "*", persistent = false)
     public void checkCommunication() {
         LOG.debug("RulesTimerBean tick");
             // Get all previous reports from DB
