@@ -32,6 +32,10 @@
         <audit.model.version>2.0.0</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
         <rules.model.version>2.0.2-SNAPSHOT</rules.model.version>
+
+        <!-- Test -->
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+        <javax.json.version>1.0.4</javax.json.version>
     </properties>
 
     <dependencies>

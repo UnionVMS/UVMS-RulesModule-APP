@@ -12,4 +12,12 @@ public class LongPollingConstants {
 
     public static final long ASYNC_TIMEOUT = 30000;
 
+    public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+
+    public static final String PROPERTY_IDS = "ids";
+    
+    public static final String PROPERTY_GUD = "guid";
+    
+    public static final String ACTION_UPDATED = "updated";
+
 }

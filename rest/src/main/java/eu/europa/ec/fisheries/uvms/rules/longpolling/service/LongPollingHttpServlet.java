@@ -6,6 +6,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
@@ -49,13 +50,13 @@ public class LongPollingHttpServlet extends HttpServlet {
     }
 
     public void observeAlarmCreated(@Observes @AlarmReportEvent NotificationMessage message) throws IOException {
-        String guid = (String) message.getProperties().get("guid");
+        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUD);
         completePoll(LongPollingConstants.ALARM_REPORT_PATH, createJsonMessage(guid));
     }
 
     public void observeTicketUpdate(@Observes @TicketEvent NotificationMessage message) throws IOException {
-        String guid = (String) message.getProperties().get("guid");
-        completePoll(LongPollingConstants.TICKET_UPDATE_PATH, createJsonMessage(guid));
+        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUD);
+        completePoll(LongPollingConstants.TICKET_UPDATE_PATH, createJsonMessage(guid, LongPollingConstants.ACTION_UPDATED));
     }
 
     public void observeTicketCount(@Observes @AlarmReportCountEvent NotificationMessage message) throws IOException {
@@ -66,28 +67,39 @@ public class LongPollingHttpServlet extends HttpServlet {
         completePoll(LongPollingConstants.TICKET_COUNT_PATH, createJsonMessageCount(true));
     }
 
-    private String createJsonMessage(String guid) {
-        JsonArrayBuilder array = Json.createArrayBuilder();
+    protected String createJsonMessage(String guid) {
+        return createJsonMessage(guid, null);
+    }
+
+    protected String createJsonMessage(String guid, String action) {
+        JsonArrayBuilder ids = Json.createArrayBuilder();
         if (guid != null) {
-            array.add(guid);
+            ids.add(guid);
         }
 
-        return Json.createObjectBuilder().add("ids", array).build().toString();
+        JsonObjectBuilder message = Json.createObjectBuilder();
+        message.add(LongPollingConstants.PROPERTY_IDS, ids);
+
+        if (action != null) {
+            message = Json.createObjectBuilder().add(action, message);
+        }
+
+        return message.build().toString();
     }
 
-    private String createJsonMessageCount(boolean value) {
-        return Json.createObjectBuilder().add("updated", value).build().toString();
+    protected String createJsonMessageCount(boolean value) {
+        return Json.createObjectBuilder().add(LongPollingConstants.ACTION_UPDATED, value).build().toString();
     }
 
-    private void completePoll(String resourcePath, String message) throws IOException {
+    protected void completePoll(String resourcePath, String message) throws IOException {
         AsyncContext ctx = null;
         while ((ctx = asyncContexts.popContext(resourcePath)) != null) {
             completePoll(ctx, message);
         }
     }
 
-    private void completePoll(AsyncContext ctx, String jsonMessage) throws IOException {
-        ctx.getResponse().setContentType("application/json");
+    protected void completePoll(AsyncContext ctx, String jsonMessage) throws IOException {
+        ctx.getResponse().setContentType(LongPollingConstants.CONTENT_TYPE_APPLICATION_JSON);
         ctx.getResponse().getWriter().write(jsonMessage);
         ctx.complete();
     }
