@@ -68,6 +68,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
@@ -120,6 +121,10 @@ public class RulesServiceBean implements RulesService {
     @TicketEvent
     private Event<NotificationMessage> ticketEvent;
 
+    @Inject
+    @TicketUpdateEvent
+    private Event<NotificationMessage> ticketUpdateEvent;
+    
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
@@ -431,7 +436,7 @@ public class RulesServiceBean implements RulesService {
             TicketType updatedTicket = RulesDataSourceResponseMapper.mapToSetTicketStatusFromResponse(response, messageId);
 
             // Notify long-polling clients of the update
-            ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+            ticketUpdateEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
 
             // Notify long-polling clients of the change (no value since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
@@ -456,7 +461,7 @@ public class RulesServiceBean implements RulesService {
 
             // Notify long-polling clients of the update
             for (TicketType updatedTicket : updatedTickets) {
-                ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+                ticketUpdateEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
                 sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), null, loggedInUser);
             }
 
@@ -583,7 +588,7 @@ public class RulesServiceBean implements RulesService {
             TicketType updatedTicket = RulesDataSourceResponseMapper.mapToUpdateTicketCountFromResponse(response, messageId);
 
             // Notify long-polling clients of the update
-            ticketEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
+            ticketUpdateEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
 
             // Notify long-polling clients of the change (no value since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));

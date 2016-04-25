@@ -16,8 +16,10 @@ public class LongPollingConstants {
 
     public static final String PROPERTY_IDS = "ids";
     
-    public static final String PROPERTY_GUD = "guid";
-    
+    public static final String PROPERTY_GUID = "guid";
+
+    public static final String ACTION_CREATED = "created";
+
     public static final String ACTION_UPDATED = "updated";
 
 }

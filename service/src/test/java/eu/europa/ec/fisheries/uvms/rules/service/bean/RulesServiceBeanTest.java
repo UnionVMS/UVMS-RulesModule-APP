@@ -57,6 +57,8 @@ public class RulesServiceBeanTest {
     @Mock
     Event<NotificationMessage> ticketEvent;
     @Mock
+    Event<NotificationMessage> ticketUpdateEvent;
+    @Mock
     Event<NotificationMessage> ticketCountEvent;
     @Mock
     ValidationServiceBean mockValidationServiceBean;

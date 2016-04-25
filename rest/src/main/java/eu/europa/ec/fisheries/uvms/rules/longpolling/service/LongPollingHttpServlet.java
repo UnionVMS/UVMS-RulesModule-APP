@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 
 @WebServlet(asyncSupported = true, urlPatterns = { LongPollingConstants.ALARM_REPORT_PATH, LongPollingConstants.TICKET_UPDATE_PATH, LongPollingConstants.TICKET_COUNT_PATH, LongPollingConstants.ALARM_REPORT_COUNT_PATH })
 public class LongPollingHttpServlet extends HttpServlet {
@@ -50,12 +51,17 @@ public class LongPollingHttpServlet extends HttpServlet {
     }
 
     public void observeAlarmCreated(@Observes @AlarmReportEvent NotificationMessage message) throws IOException {
-        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUD);
+        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUID);
         completePoll(LongPollingConstants.ALARM_REPORT_PATH, createJsonMessage(guid));
     }
 
     public void observeTicketUpdate(@Observes @TicketEvent NotificationMessage message) throws IOException {
-        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUD);
+        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUID);
+        completePoll(LongPollingConstants.TICKET_UPDATE_PATH, createJsonMessage(guid, LongPollingConstants.ACTION_CREATED));
+    }
+
+    public void observeTicketUpdateEvent(@Observes @TicketUpdateEvent NotificationMessage message) throws IOException {
+        String guid = (String) message.getProperties().get(LongPollingConstants.PROPERTY_GUID);
         completePoll(LongPollingConstants.TICKET_UPDATE_PATH, createJsonMessage(guid, LongPollingConstants.ACTION_UPDATED));
     }
 
