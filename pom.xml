@@ -21,7 +21,7 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <dozer.version>5.5.1</dozer.version>
-        <uvms.config.version>2.0.0</uvms.config.version>
+        <uvms.config.version>2.0.2-SNAPSHOT</uvms.config.version>
         <uvms.common.version>2.0.0</uvms.common.version>
         <movement.model.version>2.0.2-SNAPSHOT</movement.model.version>
         <exchange.model.version>2.0.1</exchange.model.version>

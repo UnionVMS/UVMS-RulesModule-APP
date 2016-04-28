@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -52,6 +53,16 @@ public class JAXBMarshaller {
      */
     public static <R> R unmarshallTextMessage(TextMessage textMessage, Class clazz) throws RulesModelMarshallException {
         try {
+            JAXBContext jc = JAXBContext.newInstance(RulesFault.class);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            StringReader sr = new StringReader(textMessage.getText());
+            RulesFault fault = (RulesFault) unmarshaller.unmarshal(sr);
+            throw new RulesModelMarshallException("[RulesFault received. " + fault.getCode() + ": " + fault.getMessage());
+        } catch (JMSException | JAXBException ex) {
+            // Expected error
+        }
+        try {
+
             JAXBContext jc = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             StringReader sr = new StringReader(textMessage.getText());
