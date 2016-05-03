@@ -183,7 +183,7 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             // TODO: Rewrite so rules are loaded when changed
-//            rulesValidator.reloadRules();
+            rulesValidator.updateCustomRules();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToCreateCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, customRuleType.getGuid(), null, customRule.getUpdatedBy());
@@ -249,13 +249,36 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             // TODO: Rewrite so rules are loaded when changed
-//            rulesValidator.reloadRules();
+            rulesValidator.updateCustomRules();
 
             CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid(), null, oldCustomRule.getUpdatedBy());
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid(), null, oldCustomRule.getUpdatedBy());
             return newCustomRule;
         } catch (RulesModelMapperException | MessageException | JMSException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param oldCustomRule
+     * @throws RulesServiceException
+     */
+    @Override
+    public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
+        LOG.info("Update custom rule invoked in service layer by timer");
+        try {
+            String request = RulesDataSourceRequestMapper.mapUpdateCustomRule(oldCustomRule);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+
+            CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, oldCustomRule.getGuid(), null, oldCustomRule.getUpdatedBy());
+            sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, newCustomRule.getGuid(), null, oldCustomRule.getUpdatedBy());
+            return newCustomRule;
+        } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -318,7 +341,7 @@ public class RulesServiceBean implements RulesService {
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
             // TODO: Rewrite so rules are loaded when changed
-//            rulesValidator.reloadRules();
+            rulesValidator.updateCustomRules();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, customRuleType.getGuid(), null, username);

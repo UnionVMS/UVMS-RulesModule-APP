@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
@@ -26,15 +27,16 @@ import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
-//@Startup
-//@Singleton
-@Stateless
+@Startup
+@Singleton
+//@Stateless
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
 //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
@@ -47,152 +49,95 @@ public class RulesValidator {
     @EJB
     ValidationService validationService;
 
-//    private KieBase kbase;
-//    private KieSessionConfiguration ksconf;
+    private KieServices kieServices;
 
-//    private KieServices kservices;
-//    private KieContainer kcontainer;
-//    private KieFileSystem kfs;
+    private KieFileSystem sanityKfs;
+    private KieContainer sanityKcontainer;
 
-//    @PostConstruct
-//    public void postConstruct() {
-//        init();
-//    }
+    private KieFileSystem customKfs;
+    private KieContainer customKcontainer;
 
-//    private void init() {
-//        LOG.info("Initializing Rules Validator");
+    @PostConstruct
+    public void init() {
+        initServices();
+        updateSanityRules();
+        updateCustomRules();
+    }
 
-//        kservices = KieServices.Factory.get();
-//
-//        kfs = kservices.newKieFileSystem();
-//        kfs.write(ResourceFactory.newClassPathResource(SANITY_RESOURCE_DRL_FILE));
-//        loadSanityRules();  // TODO: Move this so it always runs? In case it fails on bean startup.
+    private void initServices() {
+        kieServices = KieServices.Factory.get();
+    }
 
-//        loadRules();
-
-//        KieBuilder kbuilder = kservices.newKieBuilder(kfs);
-//        kbuilder.buildAll();
-
-        // Check for errors
-//        if (kbuilder.getResults().hasMessages(Level.ERROR)) {
-//            throw new IllegalArgumentException(kbuilder.getResults().toString());
-//        }
-
-        // Get the Release ID (mvn style: groupId, artifactId,version)
-//        ReleaseId releaseId = kbuilder.getKieModule().getReleaseId();
-//        LOG.debug("GroupId:{}, Artifact:{}, Version:{}", releaseId.getGroupId(), releaseId.getArtifactId(), releaseId.getVersion());
-
-        // Create the Container, wrapping the KieModule with the given ReleaseId
-//        kcontainer = kservices.newKieContainer(releaseId);
-
-        // Configure and create the KieBase
-//        KieBaseConfiguration kbconf = kservices.newKieBaseConfiguration();
-//        kbase = kcontainer.newKieBase(kbconf);
-
-        // Configure and create the StatelessKieSession
-//        ksconf = kservices.newKieSessionConfiguration();
-//    }
-
-//    private void loadSanityRules() {
-//        // Fetch sanity rules from DB
-//        List<SanityRuleType> sanityRules = new ArrayList<>();
-//        try {
-//            sanityRules = validationService.getSanityRules();
-//        } catch (RulesServiceException | RulesFaultException  e) {
-//            LOG.error("[ Error when getting sanity rules ]");
-//            // TODO: Throw exception???
-//        }
-//
-//        if (sanityRules != null && !sanityRules.isEmpty()) {
-//            // Add sanity rules
-//            String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
-//            kfs.write(SANITY_RULES_DRL_FILE, drl);
-//        }
-//    }
-
-    public void evaluate(RawMovementFact fact) {
-//        KieServices kservices;
-//        KieContainer kcontainer;
-//        KieFileSystem kfs;
-
-        LOG.info("Verifying sanity rules");
-
+    public void updateSanityRules() {
         // Fetch sanity rules from DB
         List<SanityRuleType> sanityRules = new ArrayList<>();
         try {
             sanityRules = validationService.getSanityRules();
+            if (sanityRules != null && !sanityRules.isEmpty()) {
+                // Add sanity rules
+                String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
+
+                sanityKfs = kieServices.newKieFileSystem();
+
+                sanityKfs.write(SANITY_RULES_DRL_FILE, drl);
+                kieServices.newKieBuilder(sanityKfs).buildAll();
+                sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting sanity rules ]");
             // TODO: Throw exception???
         }
-
-        if (sanityRules != null && !sanityRules.isEmpty()) {
-            // Add sanity rules
-            String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
-
-            KieServices kservices = KieServices.Factory.get();
-            KieFileSystem kfs = kservices.newKieFileSystem();
-
-            kfs.write(SANITY_RULES_DRL_FILE, drl);
-
-            // Create session
-            kservices.newKieBuilder(kfs).buildAll();
-            KieContainer kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
-            KieSession ksession = kcontainer.newKieSession();
-
-            // Inject beans
-            ksession.setGlobal("validationService", validationService);
-            ksession.setGlobal("logger", LOG);
-
-            ksession.insert(fact);
-            ksession.fireAllRules();
-
-            ksession.dispose();
-        }
     }
 
-    public void evaluate(MovementFact fact) {
-//        KieServices kservices;
-//        KieContainer kcontainer;
-//        KieFileSystem kfs;
-
-        LOG.info("Verify user defined rules");
-
+    public void updateCustomRules() {
         // Fetch custom rules from DB
         List<CustomRuleDto> rules = new ArrayList<>();
         List<CustomRuleType> customRules = new ArrayList<>();
         try {
             customRules = validationService.getRunnableCustomRules();
+            if (customRules != null && !customRules.isEmpty()) {
+                // Add custom rules
+                rules = CustomRuleParser.parseRules(customRules);
+                String drl = generateCustomRuleDrl(CUSTOM_RULE_TEMPLATE, rules);
+
+                customKfs = kieServices.newKieFileSystem();
+
+                customKfs.write(CUSTOM_RULE_DRL_FILE, drl);
+
+                // Create session
+                kieServices.newKieBuilder(customKfs).buildAll();
+                customKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting custom rules ]");
             // TODO: Throw exception???
         }
+    }
 
-        if (customRules != null && !customRules.isEmpty()) {
-            // Add custom rules
-            rules = CustomRuleParser.parseRules(customRules);
-            String drl = generateCustomRuleDrl(CUSTOM_RULE_TEMPLATE, rules);
+    public void evaluate(RawMovementFact fact) {
+        LOG.info("Verify sanity rules");
 
-            KieServices kservices = KieServices.Factory.get();
-            KieFileSystem kfs = kservices.newKieFileSystem();
+        KieSession ksession = sanityKcontainer.newKieSession();
 
-            kfs.write(CUSTOM_RULE_DRL_FILE, drl);
+        // Inject beans
+        ksession.setGlobal("validationService", validationService);
+        ksession.setGlobal("logger", LOG);
 
-            // Create session
-            kservices.newKieBuilder(kfs).buildAll();
-            KieContainer kcontainer = kservices.newKieContainer(kservices.getRepository().getDefaultReleaseId());
-            KieSession ksession = kcontainer.newKieSession();
+        ksession.insert(fact);
+        ksession.fireAllRules();
+    }
 
-            // Inject beans
-            ksession.setGlobal("validationService", validationService);
-            ksession.setGlobal("logger", LOG);
+    public void evaluate(MovementFact fact) {
+        LOG.info("Verify user defined rules");
 
-            ksession.insert(fact);
-            ksession.fireAllRules();
+        KieSession ksession = customKcontainer.newKieSession();
 
-            ksession.dispose();
-        }
+        // Inject beans
+        ksession.setGlobal("validationService", validationService);
+        ksession.setGlobal("logger", LOG);
 
+        ksession.insert(fact);
+        ksession.fireAllRules();
     }
 
     private String generateCustomRuleDrl(String template, List<CustomRuleDto> ruleDtos) {

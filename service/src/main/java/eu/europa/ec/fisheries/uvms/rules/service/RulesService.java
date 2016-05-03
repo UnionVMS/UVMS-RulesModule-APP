@@ -95,6 +95,14 @@ public interface RulesService {
     CustomRuleType updateCustomRule(CustomRuleType customRuleType, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException;
 
     /**
+     * Update an object
+     *
+     * @param customRuleType
+     * @throws RulesServiceException
+     */
+    CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException ;
+
+    /**
      * Creates an error report
      *
      * @param ruleName

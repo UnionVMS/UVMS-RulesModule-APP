@@ -11,7 +11,13 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleListCriteria;
+import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
+import eu.europa.ec.fisheries.uvms.exchange.model.util.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +35,12 @@ public class RulesTimerBean {
 
     @EJB
     RulesService rulesService;
+
+    @EJB
+    ValidationService validationService;
+
+    @EJB
+    RulesValidator rulesValidator;
 
     @PostConstruct
     public void postConstruct() {
@@ -67,6 +79,41 @@ public class RulesTimerBean {
             }
         } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when running checkCommunication timer ] {}", e.getMessage());
+        }
+    }
+
+    @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
+    public void clearOutdatedRules() {
+        LOG.debug("Clear outdated rules");
+        try {
+            List<CustomRuleType> customRules = validationService.getRunnableCustomRules();
+            boolean updateNeeded = false;
+            for (CustomRuleType rule : customRules) {
+                // If there are no time intervals, we do not need to check if the rule should be inactivated.
+                boolean inactivate = rule.getTimeIntervals().size() > 0;
+                for (CustomRuleIntervalType interval : rule.getTimeIntervals()) {
+                    if (interval.getEnd() != null) {
+                        Date end = DateUtils.parseToUTCDateTime(interval.getEnd());
+                        if (end.after(new Date())) {
+                            inactivate = false;
+                            break;
+                        }
+                    }
+                }
+                if (inactivate) {
+                    LOG.debug("Inactivating {}", rule.getName());
+                    rule.setActive(false);
+                    rule.setUpdatedBy("UVMS");
+                    rulesService.updateCustomRule(rule);
+                    updateNeeded = true;
+                }
+            }
+            if (updateNeeded) {
+                rulesValidator.updateCustomRules();
+            }
+        } catch (RulesServiceException | RulesFaultException  e) {
+            LOG.error("[ Error when getting sanity rules ]");
+            // TODO: Throw exception???
         }
     }
 

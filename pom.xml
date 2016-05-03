@@ -21,17 +21,17 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <dozer.version>5.5.1</dozer.version>
-        <uvms.config.version>2.0.2</uvms.config.version>
-        <uvms.common.version>2.0.0</uvms.common.version>
-        <movement.model.version>2.0.2</movement.model.version>
-        <exchange.model.version>2.0.1</exchange.model.version>
-        <asset.model.version>2.0.0</asset.model.version>
-        <mobileterminal.model.version>2.0.0</mobileterminal.model.version>
-        <user.model.version>1.2.0</user.model.version>
-        <usm4uvms.version>2.0.1</usm4uvms.version>
-        <audit.model.version>2.0.0</audit.model.version>
+        <uvms.config.version>2.0.3-SNAPSHOT</uvms.config.version>
+        <uvms.common.version>2.0.3-SNAPSHOT</uvms.common.version>
+        <movement.model.version>2.0.3-SNAPSHOT</movement.model.version>
+        <exchange.model.version>2.0.3-SNAPSHOT</exchange.model.version>
+        <asset.model.version>2.0.3-SNAPSHOT</asset.model.version>
+        <mobileterminal.model.version>2.0.3-SNAPSHOT</mobileterminal.model.version>
+        <user.model.version>1.3.0</user.model.version>
+        <usm4uvms.version>2.0.3-SNAPSHOT</usm4uvms.version>
+        <audit.model.version>2.0.3-SNAPSHOT</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>2.0.2</rules.model.version>
+        <rules.model.version>${project.version}</rules.model.version>
 
         
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
