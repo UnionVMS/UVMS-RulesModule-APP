@@ -83,8 +83,14 @@ public class RulesTimerBean {
     }
 
     @Schedule(second = "0", minute = "*/10", hour = "*", persistent = false)
-    public void clearOutdatedRules() {
-        LOG.debug("Clear outdated rules");
+    public void updateRules() {
+        clearCustomRules();
+        LOG.debug("Checking for changes in sanity rules");
+        rulesValidator.updateSanityRules();
+    }
+
+    private void clearCustomRules() {
+        LOG.debug("Looking outdated custom rules");
         try {
             List<CustomRuleType> customRules = validationService.getRunnableCustomRules();
             boolean updateNeeded = false;
@@ -109,9 +115,10 @@ public class RulesTimerBean {
                 }
             }
             if (updateNeeded) {
+                LOG.debug("Clear outdated custom rules");
                 rulesValidator.updateCustomRules();
             }
-        } catch (RulesServiceException | RulesFaultException  e) {
+        } catch (RulesServiceException | RulesFaultException e) {
             LOG.error("[ Error when getting sanity rules ]");
             // TODO: Throw exception???
         }

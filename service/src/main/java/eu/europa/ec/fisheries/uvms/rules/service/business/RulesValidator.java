@@ -53,6 +53,7 @@ public class RulesValidator {
 
     private KieFileSystem sanityKfs;
     private KieContainer sanityKcontainer;
+    private List<SanityRuleType> currentSanityRules;
 
     private KieFileSystem customKfs;
     private KieContainer customKcontainer;
@@ -74,14 +75,17 @@ public class RulesValidator {
         try {
             sanityRules = validationService.getSanityRules();
             if (sanityRules != null && !sanityRules.isEmpty()) {
-                // Add sanity rules
-                String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
+                if (checkForChanges(sanityRules)) {
+                    currentSanityRules = sanityRules;
+                    // Add sanity rules
+                    String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
 
-                sanityKfs = kieServices.newKieFileSystem();
+                    sanityKfs = kieServices.newKieFileSystem();
 
-                sanityKfs.write(SANITY_RULES_DRL_FILE, drl);
-                kieServices.newKieBuilder(sanityKfs).buildAll();
-                sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+                    sanityKfs.write(SANITY_RULES_DRL_FILE, drl);
+                    kieServices.newKieBuilder(sanityKfs).buildAll();
+                    sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+                }
             }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting sanity rules ]");
@@ -180,6 +184,49 @@ public class RulesValidator {
         LOG.debug("Sanity rule file:\n{}", drl);
 
         return drl;
+    }
+
+    private boolean checkForChanges(List<SanityRuleType> sanityRules) {
+        if (currentSanityRules == null || sanityRules.size() != currentSanityRules.size()) {
+            return true;
+        } else {
+            for (int i = 0; i < sanityRules.size(); i++) {
+                SanityRuleType a = sanityRules.get(i);
+                SanityRuleType b = currentSanityRules.get(i);
+
+                if (a.getDescription() != null && !a.getDescription().equalsIgnoreCase(b.getDescription())) {
+                    return true;
+                }
+                if (a.getDescription() == null && b.getDescription() != null) {
+                    return true;
+                }
+                if (a.getExpression() != null && !a.getExpression().equalsIgnoreCase(b.getExpression())) {
+                    return true;
+                }
+                if (a.getExpression() == null && b.getExpression() != null) {
+                    return true;
+                }
+                if (a.getName() != null && !a.getName().equalsIgnoreCase(b.getName())) {
+                    return true;
+                }
+                if (a.getName() == null && b.getName() != null) {
+                    return true;
+                }
+                if (a.getUpdated() != null && !a.getUpdated().equalsIgnoreCase(b.getUpdated())) {
+                    return true;
+                }
+                if (a.getUpdated() == null && b.getUpdated() != null) {
+                    return true;
+                }
+                if (a.getUpdatedBy() != null && !a.getUpdatedBy().equalsIgnoreCase(b.getUpdatedBy())) {
+                    return true;
+                }
+                if (a.getUpdatedBy() == null && b.getUpdatedBy() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
 }
