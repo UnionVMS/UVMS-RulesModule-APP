@@ -21,7 +21,6 @@ import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -61,7 +60,10 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Stateless
 public class ValidationServiceBean implements ValidationService {
@@ -241,21 +243,23 @@ public class ValidationServiceBean implements ValidationService {
         }
 
         List<SubscriptionType> subscriptions = customRuleType.getSubscriptions();
-        for (SubscriptionType subscription : subscriptions) {
-            if (SubscriptionTypeType.EMAIL.equals(subscription.getType())) {
-                try {
-                    // Find current email address
-                    String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(subscription.getOwner());
-                    String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
-                    TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
-                    GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
+        if (subscriptions != null) {
+            for (SubscriptionType subscription : subscriptions) {
+                if (SubscriptionTypeType.EMAIL.equals(subscription.getType())) {
+                    try {
+                        // Find current email address
+                        String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(subscription.getOwner());
+                        String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+                        TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+                        GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
 
-                    String emailAddress = userResponse.getContactDetails().getEMail();
+                        String emailAddress = userResponse.getContactDetails().getEMail();
 
-                    sendToEmail(emailAddress, ruleName, fact);
-                } catch (Exception e) {
-                    // If a mail attempt fails, proceed with the rest
-                    LOG.error("Could not send email to user '{}'", subscription.getOwner());
+                        sendToEmail(emailAddress, ruleName, fact);
+                    } catch (Exception e) {
+                        // If a mail attempt fails, proceed with the rest
+                        LOG.error("Could not send email to user '{}'", subscription.getOwner());
+                    }
                 }
             }
         }
@@ -355,7 +359,7 @@ public class ValidationServiceBean implements ValidationService {
                         LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
                         continue;
                     }
-                    String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(service.getName(), email, ruleName);
+                    String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(service.getServiceClassName(), email, ruleName);
                     producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
