@@ -1,38 +1,27 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
+import org.drools.template.parser.DefaultTemplateContainer;
+import org.drools.template.parser.TemplateContainer;
+import org.drools.template.parser.TemplateDataListener;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
-import org.drools.template.parser.DefaultTemplateContainer;
-import org.drools.template.parser.TemplateContainer;
-import org.drools.template.parser.TemplateDataListener;
-import org.kie.api.KieBase;
-import org.kie.api.KieBaseConfiguration;
-import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Message.Level;
-import org.kie.api.builder.ReleaseId;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.KieSessionConfiguration;
-import org.kie.api.runtime.rule.FactHandle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import java.io.InputStream;
+import java.util.List;
 
 @Startup
 @Singleton
@@ -70,10 +59,9 @@ public class RulesValidator {
     }
 
     public void updateSanityRules() {
-        // Fetch sanity rules from DB
-        List<SanityRuleType> sanityRules = new ArrayList<>();
         try {
-            sanityRules = validationService.getSanityRules();
+            // Fetch sanity rules from DB
+            List<SanityRuleType> sanityRules = validationService.getSanityRules();
             if (sanityRules != null && !sanityRules.isEmpty()) {
                 if (checkForChanges(sanityRules)) {
                     currentSanityRules = sanityRules;
@@ -94,14 +82,12 @@ public class RulesValidator {
     }
 
     public void updateCustomRules() {
-        // Fetch custom rules from DB
-        List<CustomRuleDto> rules = new ArrayList<>();
-        List<CustomRuleType> customRules = new ArrayList<>();
         try {
-            customRules = validationService.getRunnableCustomRules();
+            // Fetch custom rules from DB
+            List<CustomRuleType> customRules = validationService.getRunnableCustomRules();
             if (customRules != null && !customRules.isEmpty()) {
                 // Add custom rules
-                rules = CustomRuleParser.parseRules(customRules);
+                List<CustomRuleDto> rules = CustomRuleParser.parseRules(customRules);
                 String drl = generateCustomRuleDrl(CUSTOM_RULE_TEMPLATE, rules);
 
                 customKfs = kieServices.newKieFileSystem();
@@ -119,29 +105,33 @@ public class RulesValidator {
     }
 
     public void evaluate(RawMovementFact fact) {
-        LOG.info("Verify sanity rules");
+        if (sanityKcontainer != null) {
+            LOG.info("Verify sanity rules");
 
-        KieSession ksession = sanityKcontainer.newKieSession();
+            KieSession ksession = sanityKcontainer.newKieSession();
 
-        // Inject beans
-        ksession.setGlobal("validationService", validationService);
-        ksession.setGlobal("logger", LOG);
+            // Inject beans
+            ksession.setGlobal("validationService", validationService);
+            ksession.setGlobal("logger", LOG);
 
-        ksession.insert(fact);
-        ksession.fireAllRules();
+            ksession.insert(fact);
+            ksession.fireAllRules();
+        }
     }
 
     public void evaluate(MovementFact fact) {
-        LOG.info("Verify user defined rules");
+        if (customKcontainer != null) {
+            LOG.info("Verify user defined rules");
 
-        KieSession ksession = customKcontainer.newKieSession();
+            KieSession ksession = customKcontainer.newKieSession();
 
-        // Inject beans
-        ksession.setGlobal("validationService", validationService);
-        ksession.setGlobal("logger", LOG);
+            // Inject beans
+            ksession.setGlobal("validationService", validationService);
+            ksession.setGlobal("logger", LOG);
 
-        ksession.insert(fact);
-        ksession.fireAllRules();
+            ksession.insert(fact);
+            ksession.fireAllRules();
+        }
     }
 
     private String generateCustomRuleDrl(String template, List<CustomRuleDto> ruleDtos) {
