@@ -74,6 +74,9 @@ public class RulesValidator {
                     kieServices.newKieBuilder(sanityKfs).buildAll();
                     sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
                 }
+            } else {
+                sanityKfs = null;
+                sanityKcontainer = null;
             }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting sanity rules ]");
@@ -97,6 +100,9 @@ public class RulesValidator {
                 // Create session
                 kieServices.newKieBuilder(customKfs).buildAll();
                 customKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            } else {
+                customKfs = null;
+                customKcontainer = null;
             }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting custom rules ]");
