@@ -1,5 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalListRequest;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
@@ -739,6 +741,9 @@ public class RulesServiceBean implements RulesService {
                 }
             } else {
                 asset = getAssetByCfrIrcs(rawMovement.getAssetId());
+                if (PluginType.MANUAL.value().equals(rawMovement.getPluginType()) && asset != null)  {
+                    mobileTerminal = findMobileTerminalByAsset(asset.getAssetId().getGuid());
+                }
             }
             if (rawMovement.getAssetId() == null && asset != null) {
                 AssetId assetId = AssetAssetIdMapper.mapAssetToAssetId(asset);
@@ -1236,6 +1241,31 @@ public class RulesServiceBean implements RulesService {
         }
 
         return channelGuid;
+    }
+
+    private MobileTerminalType findMobileTerminalByAsset(String assetGuid) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
+        MobileTerminalListQuery query = new MobileTerminalListQuery();
+        eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
+        pagination.setListSize(2);
+        pagination.setPage(1);
+        MobileTerminalSearchCriteria criteria = new MobileTerminalSearchCriteria();
+        ListCriteria guidCriteria = new ListCriteria();
+        guidCriteria.setKey(SearchKey.CONNECT_ID);
+        guidCriteria.setValue(assetGuid);
+        criteria.getCriterias().add(guidCriteria);
+        query.setMobileTerminalSearchCriteria(criteria);
+        query.setPagination(pagination);
+
+        String request = MobileTerminalModuleRequestMapper.createMobileTerminalListRequest(query);
+        String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOBILE_TERMINAL);
+
+        TextMessage getMobileTerminalResponse = consumer.getMessage(messageId, TextMessage.class);
+
+        List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
+
+        MobileTerminalType mobileTerminal = resultList.size() != 1 ? null : resultList.get(0);
+
+        return mobileTerminal;
     }
 
     private Date auditLog(String msg, Date lastTimestamp) {
