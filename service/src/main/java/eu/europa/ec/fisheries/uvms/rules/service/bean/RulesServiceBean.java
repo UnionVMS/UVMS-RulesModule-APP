@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalListRequest;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
@@ -46,7 +45,6 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminal
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
@@ -250,7 +248,6 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            // TODO: Rewrite so rules are loaded when changed
             rulesValidator.updateCustomRules();
 
             CustomRuleType newCustomRule = RulesDataSourceResponseMapper.mapToUpdateCustomRuleFromResponse(response, messageId);
@@ -342,7 +339,6 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            // TODO: Rewrite so rules are loaded when changed
             rulesValidator.updateCustomRules();
 
             CustomRuleType customRuleType = RulesDataSourceResponseMapper.mapToDeleteCustomRuleFromResponse(response, messageId);
@@ -741,7 +737,7 @@ public class RulesServiceBean implements RulesService {
                 }
             } else {
                 asset = getAssetByCfrIrcs(rawMovement.getAssetId());
-                if (PluginType.MANUAL.value().equals(rawMovement.getPluginType()) && asset != null)  {
+                if (isPluginTypeWithoutMobileTerminal(rawMovement.getPluginType()) && asset != null) {
                     mobileTerminal = findMobileTerminalByAsset(asset.getAssetId().getGuid());
                 }
             }
@@ -773,6 +769,21 @@ public class RulesServiceBean implements RulesService {
             }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
             throw new RulesServiceException(e.getMessage());
+        }
+    }
+
+    private boolean isPluginTypeWithoutMobileTerminal(String pluginType) {
+        try {
+            PluginType type = PluginType.valueOf(pluginType);
+            switch (type) {
+                case MANUAL:
+                case NAF:
+                    return true;
+                default:
+                    return false;
+            }
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 
