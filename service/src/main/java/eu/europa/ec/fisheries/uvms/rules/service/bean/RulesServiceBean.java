@@ -981,24 +981,13 @@ public class RulesServiceBean implements RulesService {
 
         MovementType createdMovement = null;
         try {
-            long start = System.currentTimeMillis();
-            //MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
             movementBaseType.setConnectId(assetGuid);
-            LOG.debug("RULES Create MovementBaseType time: {}", (System.currentTimeMillis() - start));
-            start = System.currentTimeMillis();
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
-            LOG.debug("RULES Map to createMovementRequest time: {}", (System.currentTimeMillis() - start));
-            start = System.currentTimeMillis();
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-            LOG.debug("RULES Send message to movement time: {}", (System.currentTimeMillis() - start));
-            start = System.currentTimeMillis();
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
-            LOG.debug("RULES Movement response time: {}", (System.currentTimeMillis() - start));
-            start = System.currentTimeMillis();
 
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
-            LOG.debug("RULES Map created movement response time: {}", (System.currentTimeMillis() - start));
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
             LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
