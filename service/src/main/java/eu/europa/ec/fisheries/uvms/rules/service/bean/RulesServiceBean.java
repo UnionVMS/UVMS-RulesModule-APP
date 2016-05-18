@@ -993,8 +993,6 @@ public class RulesServiceBean implements RulesService {
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
             LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
-        } catch (MovementDuplicateException e) {
-            LOG.error("[ Error when getting movement from Movement, tried to create duplicate movement ]");
         }
 
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
