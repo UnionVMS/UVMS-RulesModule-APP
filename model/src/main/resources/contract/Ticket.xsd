@@ -20,6 +20,7 @@
             <xsd:element name="updated" type="xsd:string"/>
             <xsd:element name="updatedBy" type="xsd:string"/>
             <xsd:element name="ticketCount" type="xsd:long" nillable="true"/>
+            <xsd:element name="comment" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
     
