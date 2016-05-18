@@ -13,6 +13,7 @@ import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -739,6 +740,7 @@ public class RulesServiceBean implements RulesService {
                 asset = getAssetByCfrIrcs(rawMovement.getAssetId());
                 if (isPluginTypeWithoutMobileTerminal(rawMovement.getPluginType()) && asset != null) {
                     mobileTerminal = findMobileTerminalByAsset(asset.getAssetId().getGuid());
+                    rawMovement.setMobileTerminal(MobileTerminalMapper.mapMobileTerminal(mobileTerminal));
                 }
             }
             if (rawMovement.getAssetId() == null && asset != null) {
@@ -844,17 +846,22 @@ public class RulesServiceBean implements RulesService {
 //        String vicinityOf = "GO_GET_IT!!!";
 
         // Get data from parallel tasks
-        Date auditParallelTimestamp = new Date();
-        Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
-        List<AssetGroup> assetGroups = assetGroupTask.get();
-        numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
-        MovementType createdMovement = sendToMovementTask.get();
-        auditLog("Total time for parallel tasks:", auditParallelTimestamp);
+        try {
+            Date auditParallelTimestamp = new Date();
+            Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
+            List<AssetGroup> assetGroups = assetGroupTask.get();
+            numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
+            MovementType createdMovement = sendToMovementTask.get();
+            auditLog("Total time for parallel tasks:", auditParallelTimestamp);
 
-        MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
-        LOG.debug("movementFact:{}", movementFact);
+            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
+            LOG.debug("movementFact:{}", movementFact);
 
-        return movementFact;
+
+            return movementFact;
+        } catch (RulesServiceException | NullPointerException e) {
+            throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
+        }
     }
 
     private Long timeDiffAndPersistMovement(String assetGuid, XMLGregorianCalendar positionTime) {
@@ -974,16 +981,29 @@ public class RulesServiceBean implements RulesService {
 
         MovementType createdMovement = null;
         try {
-            MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
+            long start = System.currentTimeMillis();
+            //MovementBaseType movementBaseType = RulesDozerMapper.getInstance().getMapper().map(rawMovement, MovementBaseType.class);
+            MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
             movementBaseType.setConnectId(assetGuid);
+            LOG.debug("RULES Create MovementBaseType time: {}", (System.currentTimeMillis() - start));
+            start = System.currentTimeMillis();
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
+            LOG.debug("RULES Map to createMovementRequest time: {}", (System.currentTimeMillis() - start));
+            start = System.currentTimeMillis();
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
+            LOG.debug("RULES Send message to movement time: {}", (System.currentTimeMillis() - start));
+            start = System.currentTimeMillis();
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
+            LOG.debug("RULES Movement response time: {}", (System.currentTimeMillis() - start));
+            start = System.currentTimeMillis();
 
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
+            LOG.debug("RULES Map created movement response time: {}", (System.currentTimeMillis() - start));
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
             LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
+        } catch (MovementDuplicateException e) {
+            LOG.error("[ Error when getting movement from Movement, tried to create duplicate movement ]");
         }
 
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
