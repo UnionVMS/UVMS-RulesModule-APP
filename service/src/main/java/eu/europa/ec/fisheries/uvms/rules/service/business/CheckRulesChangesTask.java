@@ -48,9 +48,11 @@ public class CheckRulesChangesTask implements Runnable {
                 // If there are no time intervals, we do not need to check if the rule should be inactivated.
                 boolean inactivate = rule.getTimeIntervals().size() > 0;
                 for (CustomRuleIntervalType interval : rule.getTimeIntervals()) {
-                    if (interval.getEnd() != null) {
+                    if (interval.getEnd() != null && interval.getStart() != null) {
                         Date end = DateUtils.parseToUTCDateTime(interval.getEnd());
-                        if (end.after(new Date())) {
+                        Date start = DateUtils.parseToUTCDateTime(interval.getStart());
+                        Date now = new Date();
+                        if (start.before(now) && end.after(now)) {
                             inactivate = false;
                             break;
                         }
