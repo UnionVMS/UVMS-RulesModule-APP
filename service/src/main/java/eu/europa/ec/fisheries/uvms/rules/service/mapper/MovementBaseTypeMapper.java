@@ -48,6 +48,9 @@ public class MovementBaseTypeMapper {
     }
 
     private static MovementActivityTypeType mapMovementActivityTypeType(eu.europa.ec.fisheries.schema.rules.movement.v1.MovementActivityTypeType rawActivityTypeType) {
+        if (rawActivityTypeType == null) {
+            return null;
+        }
         try {
             return MovementActivityTypeType.valueOf(rawActivityTypeType.value());
         } catch (IllegalArgumentException e) {
@@ -77,6 +80,9 @@ public class MovementBaseTypeMapper {
     }
 
     private static MovementTypeType mapMovementTypeType(eu.europa.ec.fisheries.schema.rules.movement.v1.MovementTypeType rawMovementTypeType) {
+        if (rawMovementTypeType == null) {
+            return null;
+        }
         try {
             return MovementTypeType.valueOf(rawMovementTypeType.value());
         } catch (IllegalArgumentException e) {
@@ -97,6 +103,9 @@ public class MovementBaseTypeMapper {
     }
 
     private static MovementSourceType mapSourceType(eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType rawMovementSourceType) {
+        if (rawMovementSourceType == null) {
+            return null;
+        }
         try {
             return MovementSourceType.valueOf(rawMovementSourceType.value());
         } catch (IllegalArgumentException e) {

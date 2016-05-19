@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesDozerMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +72,7 @@ public class MovementFact {
     private Integer sumPositionReport;
 
     public MovementType getExchangeMovement() {
-        MovementType exchangeMovement = RulesDozerMapper.getInstance().getMapper().map(movementMovement, MovementType.class);
+        MovementType exchangeMovement = ExchangeMovementMapper.mapToExchangeMovementType(movementMovement);
         return exchangeMovement;
     }
 
