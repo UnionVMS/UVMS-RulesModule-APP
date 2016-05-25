@@ -64,7 +64,9 @@ public class MovementBaseTypeMapper {
         }
         AssetId assetId = new AssetId();
         try {
-            assetId.setAssetType(AssetType.valueOf(rawAssetId.getAssetType().value()));
+            if (rawAssetId.getAssetType() != null) {
+                assetId.setAssetType(AssetType.valueOf(rawAssetId.getAssetType().value()));
+            }
             for (AssetIdList assetIdList : rawAssetId.getAssetIdList()) {
                 assetId.setValue(assetIdList.getValue());
                 assetId.setIdType(AssetIdType.valueOf(assetIdList.getIdType().value()));

@@ -8,6 +8,9 @@ import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.MobileTerminalType;
  */
 public class MobileTerminalMapper {
     public static MobileTerminalType mapMobileTerminal(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType mobileTerminalType) {
+        if (mobileTerminalType == null) {
+            return null;
+        }
         MobileTerminalType rawMobileTerminalType = new MobileTerminalType();
         rawMobileTerminalType.setConnectId(mobileTerminalType.getConnectId());
         rawMobileTerminalType.setGuid(mobileTerminalType.getMobileTerminalId().getGuid());
