@@ -82,9 +82,17 @@ public class ExchangeMovementMapper {
             movement.setAssetId(assetId);
         }
 
+        setFlagState(rawMovement, movement);
         setReportMovementType.setMovement(movement);
 
         return setReportMovementType;
+    }
+
+    // Will be recipient in Exchange log
+    private static void setFlagState(RawMovementType rawMovement, MovementBaseType movement){
+        if (rawMovement.getPluginType()!=null && (rawMovement.getPluginType().equals(PluginType.FLUX.value())|| rawMovement.getPluginType().equals(PluginType.NAF.value()))) {
+            movement.setFlagState(rawMovement.getFlagState());
+        }
     }
 
     public static String mapToProcessedMovementResponse(SetReportMovementType orgRequest, MovementRefType movementRef, String username) throws ExchangeModelMapperException {
