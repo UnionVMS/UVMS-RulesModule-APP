@@ -17,14 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.*;
 import java.io.InputStream;
 import java.util.List;
 
 @Startup
 @Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 //@Stateless
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
@@ -58,6 +57,7 @@ public class RulesValidator {
         kieServices = KieServices.Factory.get();
     }
 
+    @Lock(LockType.WRITE)
     public void updateSanityRules() {
         try {
             // Fetch sanity rules from DB
@@ -84,6 +84,7 @@ public class RulesValidator {
         }
     }
 
+    @Lock(LockType.WRITE)
     public void updateCustomRules() {
         try {
             // Fetch custom rules from DB
@@ -110,6 +111,7 @@ public class RulesValidator {
         }
     }
 
+    @Lock(LockType.READ)
     public void evaluate(RawMovementFact fact) {
         if (sanityKcontainer != null) {
             LOG.info("Verify sanity rules");
@@ -125,6 +127,7 @@ public class RulesValidator {
         }
     }
 
+    @Lock(LockType.READ)
     public void evaluate(MovementFact fact) {
         if (customKcontainer != null) {
             LOG.info("Verify user defined rules");
