@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
+import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalGenericMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
@@ -777,6 +778,9 @@ public class RulesServiceBean implements RulesService {
     }
 
     private boolean isPluginTypeWithoutMobileTerminal(String pluginType) {
+        if (pluginType == null) {
+            return true;
+        }
         try {
             PluginType type = PluginType.valueOf(pluginType);
             switch (type) {
@@ -1101,10 +1105,16 @@ public class RulesServiceBean implements RulesService {
             }
 
             if (ircs != null && cfr != null) {
-                asset = getAsset(AssetIdType.CFR, cfr);
-                // If the asset matches on ircs as well we have a winner
-                if (asset != null && asset.getIrcs().equals(ircs)) {
-                    return asset;
+                try {
+                    asset = getAsset(AssetIdType.CFR, cfr);
+                    // If the asset matches on ircs as well we have a winner
+                    if (asset != null && asset.getIrcs().equals(ircs)) {
+                        return asset;
+                    } else if (asset == null) {
+                        return getAsset(AssetIdType.IRCS, ircs);
+                    }
+                } catch (AssetModelValidationException e) {
+                    return getAsset(AssetIdType.IRCS, ircs);
                 }
             } else if (cfr != null && ircs == null) {
                 return getAsset(AssetIdType.CFR, cfr);
