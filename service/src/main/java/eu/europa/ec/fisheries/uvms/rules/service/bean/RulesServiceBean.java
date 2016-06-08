@@ -787,6 +787,7 @@ public class RulesServiceBean implements RulesService {
             switch (type) {
                 case MANUAL:
                 case NAF:
+                case OTHER:
                     return true;
                 default:
                     return false;
