@@ -13,6 +13,8 @@ import eu.europa.ec.fisheries.schema.movement.search.v1.RangeCriteria;
 import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.*;
+import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalGenericMapper;
@@ -21,8 +23,6 @@ import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateExc
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
-import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
@@ -79,6 +79,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
@@ -1093,33 +1094,46 @@ public class RulesServiceBean implements RulesService {
 
             String cfr = null;
             String ircs = null;
+            String mmsi = null;
 
             // Get possible search parameters
             for (AssetIdList id : ids) {
-                if (id.getIdType().equals(eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.CFR)) {
+                if (eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.CFR.equals(id.getIdType())) {
                     cfr = id.getValue();
                 }
-                if (id.getIdType().equals(eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.IRCS)) {
+                if (eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.IRCS.equals(id.getIdType())) {
                     ircs = id.getValue();
                 }
+                if (eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdType.MMSI.equals(id.getIdType())) {
+                    mmsi = id.getValue();
+                }
+
             }
 
-            if (ircs != null && cfr != null) {
+            if (ircs != null && cfr != null && mmsi != null) {
                 try {
                     asset = getAsset(AssetIdType.CFR, cfr);
                     // If the asset matches on ircs as well we have a winner
                     if (asset != null && asset.getIrcs().equals(ircs)) {
                         return asset;
-                    } else if (asset == null) {
-                        return getAsset(AssetIdType.IRCS, ircs);
+                    }
+                    // If asset is null, try fetching by IRCS (cfr will fail for SE national db)
+                    if (asset == null) {
+                        asset = getAsset(AssetIdType.IRCS, ircs);
+                        // If asset is still null, try mmsi (this should be the case for movement coming from AIS)
+                        if (asset == null) {
+                            return getAsset(AssetIdType.MMSI, mmsi);
+                        }
                     }
                 } catch (AssetModelValidationException e) {
                     return getAsset(AssetIdType.IRCS, ircs);
                 }
-            } else if (cfr != null && ircs == null) {
+            } else if (cfr != null) {
                 return getAsset(AssetIdType.CFR, cfr);
-            } else if (cfr == null && ircs != null) {
+            } else if (ircs != null) {
                 return getAsset(AssetIdType.IRCS, ircs);
+            } else if (mmsi != null) {
+                return getAsset(AssetIdType.MMSI, mmsi);
             }
 
         } catch (Exception e) {
