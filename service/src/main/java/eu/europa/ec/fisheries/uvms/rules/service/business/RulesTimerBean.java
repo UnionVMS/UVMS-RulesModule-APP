@@ -6,15 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Startup
 @Singleton
+@DependsOn({"RulesValidator"})
 public class RulesTimerBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
@@ -31,14 +35,27 @@ public class RulesTimerBean {
     @Resource(lookup="java:/UvmsExecutorService")
     private ManagedScheduledExecutorService executorService;
 
+    ScheduledFuture comm;
+    ScheduledFuture changes;
+
     @PostConstruct
     public void postConstruct() {
         LOG.info("RulesTimerBean init");
         CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
-        executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
+        comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
 
         CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
-        executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
+        changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        if (comm != null) {
+            comm.cancel(true);
+        }
+        if (changes != null) {
+            changes.cancel(true);
+        }
     }
 
 }
