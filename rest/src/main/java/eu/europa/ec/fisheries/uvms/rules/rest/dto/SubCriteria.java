@@ -42,7 +42,7 @@ public enum SubCriteria {
     SEGMENT_TYPE(MainCriteria.POSITION),
     SOURCE(MainCriteria.POSITION),
     STATUS_CODE(MainCriteria.POSITION),
-//    VICINITY_OF(MainCriteria.POSITION), // NOT IMPLEMENTED YET
+    VICINITY_OF(MainCriteria.POSITION), // NOT IMPLEMENTED YET
     CLOSEST_COUNTRY_CODE(MainCriteria.POSITION),
     CLOSEST_PORT_CODE(MainCriteria.POSITION),
 

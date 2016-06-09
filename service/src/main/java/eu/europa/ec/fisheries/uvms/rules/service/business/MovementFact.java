@@ -63,7 +63,7 @@ public class MovementFact {
     private String segmentType;
     private String source;
     private String statusCode;
-    private String vicinityOf;
+    private List<String> vicinityOf;
     private String closestCountryCode;
     private String closestPortCode;
 
@@ -417,11 +417,11 @@ public class MovementFact {
         this.statusCode = statusCode;
     }
 
-    public String getVicinityOf() {
+    public List<String> getVicinityOf() {
         return vicinityOf;
     }
 
-    public void setVicinityOf(String vicinityOf) {
+    public void setVicinityOf(List<String> vicinityOf) {
         this.vicinityOf = vicinityOf;
     }
 

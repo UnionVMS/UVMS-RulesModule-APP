@@ -169,11 +169,11 @@ public class ConfigResource {
             case AREA_TYPE_ENT:
             case AREA_CODE_EXT:
             case AREA_TYPE_EXT:
+            case VICINITY_OF:
                 conditions.add(ConditionType.EQ.name());
                 conditions.add(ConditionType.NE.name());
                 break;
 
-//            case VICINITY_OF:
             case ASSET_CFR:
             case ASSET_IRCS:
             case MT_DNID:

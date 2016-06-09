@@ -106,9 +106,7 @@
             <xsd:enumeration value="TIME_DIFF_POSITION_REPORT"/>
             <xsd:enumeration value="SUM_POSITION_REPORT"/>
 
-            <!-- NOT IMPLEMENTED YET
             <xsd:enumeration value="VICINITY_OF"/>
-            -->
         </xsd:restriction>
     </xsd:simpleType>
 

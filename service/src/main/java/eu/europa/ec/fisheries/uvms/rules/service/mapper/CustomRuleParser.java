@@ -170,9 +170,13 @@ public class CustomRuleParser {
                         case STATUS_CODE:
                             sb.append("statusCode");
                             break;
-//                        case VICINITY_OF:
-//                            sb.append("vicinityOf");
-//                            break;
+                        case VICINITY_OF:
+                            // If list and NE
+                            if (segment.getCondition().equals(ConditionType.NE)) {
+                                sb.append("!");
+                            }
+                            sb.append("vicinityOf");
+                            break;
                         case CLOSEST_COUNTRY_CODE:
                             sb.append("closestCountryCode");
                             break;
@@ -238,7 +242,7 @@ public class CustomRuleParser {
                 }
 
                 // If list, end "contains" with parenthesis
-                if ((segment.getCriteria().equals(CriteriaType.AREA) || segment.getCriteria().equals(CriteriaType.ASSET_GROUP))
+                if ((segment.getCriteria().equals(CriteriaType.AREA) || segment.getCriteria().equals(CriteriaType.ASSET_GROUP) || segment.getSubCriteria().equals(SubCriteriaType.VICINITY_OF))
                         && (segment.getCondition().equals(ConditionType.EQ) || segment.getCondition().equals(ConditionType.NE))) {
                     sb.append(")");
                 }
@@ -312,7 +316,8 @@ public class CustomRuleParser {
                 SubCriteriaType.AREA_TYPE_ENT.equals(subcriteria) ||
                 SubCriteriaType.AREA_CODE_EXT.equals(subcriteria) ||
                 SubCriteriaType.AREA_TYPE_EXT.equals(subcriteria) ||
-                SubCriteriaType.ASSET_GROUP.equals(subcriteria);
+                SubCriteriaType.ASSET_GROUP.equals(subcriteria) ||
+                SubCriteriaType.VICINITY_OF.equals(subcriteria);
     }
 
     private static String createInterval(CustomRuleIntervalType interval) {

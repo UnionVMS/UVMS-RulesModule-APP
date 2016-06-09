@@ -1,23 +1,22 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
-import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
-import eu.europa.ec.fisheries.schema.movement.search.v1.MovementQuery;
-import eu.europa.ec.fisheries.schema.movement.search.v1.RangeCriteria;
-import eu.europa.ec.fisheries.schema.movement.search.v1.RangeKeyType;
+import eu.europa.ec.fisheries.schema.movement.search.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.*;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
+import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
-import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalGenericMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
@@ -31,7 +30,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovemen
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.*;
-import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
@@ -95,11 +93,9 @@ import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigInteger;
 import java.nio.file.AccessDeniedException;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Stateless
@@ -107,7 +103,7 @@ public class RulesServiceBean implements RulesService {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
 
-
+    static final double VICINITY_RADIUS = 0.05;
 
     @EJB
     ParameterService parameterService;
@@ -798,7 +794,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException, RulesServiceException {
-        int threadNum = 4;
+        int threadNum = 5;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
         final String assetGuid = asset.getAssetId().getGuid();
@@ -837,6 +833,14 @@ public class RulesServiceBean implements RulesService {
         });
         executor.execute(assetGroupTask);
 
+        FutureTask<List<String>> vicinityOfTask = new FutureTask<>(new Callable<List<String>>() {
+            @Override
+            public List<String> call() {
+                return getVicinityOf(rawMovement);
+            }
+        });
+        executor.execute(vicinityOfTask);
+
         // Get channel guid
         String channelGuid = "";
         if (mobileTerminal != null) {
@@ -849,10 +853,6 @@ public class RulesServiceBean implements RulesService {
             comChannelType = rawMovement.getComChannelType().name();
         }
 
-        // TODO: Get vicinityOf to validate on
-        // ??? Maybe Movement?
-//        String vicinityOf = "GO_GET_IT!!!";
-
         // Get data from parallel tasks
         try {
             Date auditParallelTimestamp = new Date();
@@ -860,9 +860,10 @@ public class RulesServiceBean implements RulesService {
             List<AssetGroup> assetGroups = assetGroupTask.get();
             numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
             MovementType createdMovement = sendToMovementTask.get();
+            List<String> vicinityOf = vicinityOfTask.get();
             auditLog("Total time for parallel tasks:", auditParallelTimestamp);
 
-            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid);
+            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid, vicinityOf);
             LOG.debug("movementFact:{}", movementFact);
 
 
@@ -1006,6 +1007,56 @@ public class RulesServiceBean implements RulesService {
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
 
         return createdMovement;
+    }
+
+    private List<String> getVicinityOf(RawMovementType rawMovement) {
+        long start = System.currentTimeMillis();
+        List<String> vicinityOf = new ArrayList<>();
+        try {
+            MovementQuery query = new MovementQuery();
+            query.setExcludeFirstAndLastSegment(true);
+
+            RangeCriteria time = new RangeCriteria();
+            GregorianCalendar from = rawMovement.getPositionTime().toGregorianCalendar();
+            from.add(Calendar.HOUR_OF_DAY, -1);
+
+            time.setKey(RangeKeyType.DATE);
+            time.setFrom(RulesUtil.gregorianToString(from));
+            time.setTo(RulesUtil.gregorianToString(rawMovement.getPositionTime().toGregorianCalendar()));
+            query.getMovementRangeSearchCriteria().add(time);
+
+            eu.europa.ec.fisheries.schema.movement.search.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.movement.search.v1.ListPagination();
+            pagination.setListSize(BigInteger.valueOf(1000L));
+            pagination.setPage(BigInteger.ONE);
+            query.setPagination(pagination);
+
+            String request = MovementModuleRequestMapper.mapToGetMovementListByQueryRequest(query);
+            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
+            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
+            List<MovementType> movements = MovementModuleResponseMapper.mapToMovementListResponse(movementResponse);
+            double centerX = rawMovement.getPosition().getLongitude();
+            double centerY = rawMovement.getPosition().getLatitude();
+            List<String> guidList = new ArrayList<>();
+            for (MovementType movement : movements) {
+                if (guidList.contains(movement.getConnectId())) {
+                    continue;
+                }
+                double x = movement.getPosition().getLongitude();
+                double y = movement.getPosition().getLatitude();
+                double distance = Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2);
+                if (distance < VICINITY_RADIUS) {
+                    guidList.add(movement.getConnectId());
+                    Asset asset = getAssetByConnectId(movement.getConnectId());
+                    vicinityOf.add(asset.getIrcs());
+                }
+                //(x - center_x)^2 + (y - center_y)^2 < radius^2
+            }
+        } catch (AssetModelMapperException | JMSException | MessageException | ModelMapperException | MovementFaultException | MovementDuplicateException e) {
+            LOG.warn("Could not fetch movements for vicinity of.");
+        }
+
+        LOG.debug("[ Get nearby vessels: {} ms ]", (System.currentTimeMillis() - start));
+        return vicinityOf;
     }
 
     private List<AssetGroup> getAssetGroup(String assetGuid) {
