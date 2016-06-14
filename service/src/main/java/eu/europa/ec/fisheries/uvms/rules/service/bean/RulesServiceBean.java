@@ -755,7 +755,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
-            if (rawMovementFact.isOk()) {
+            if (true) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
 
                 LOG.info("Validating movement from Movement Module");
@@ -866,9 +866,10 @@ public class RulesServiceBean implements RulesService {
             MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid, vicinityOf);
             LOG.debug("movementFact:{}", movementFact);
 
-
+            executor.shutdown();
             return movementFact;
         } catch (RulesServiceException | NullPointerException e) {
+            executor.shutdown();
             throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
         }
     }
