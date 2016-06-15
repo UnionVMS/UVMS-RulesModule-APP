@@ -755,7 +755,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.evaluate(rawMovementFact);
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
-            if (true) {
+            if (rawMovementFact.isOk()) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
 
                 LOG.info("Validating movement from Movement Module");
@@ -797,7 +797,13 @@ public class RulesServiceBean implements RulesService {
         int threadNum = 5;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
-        final String assetGuid = asset.getAssetId().getGuid();
+        final String assetGuid;
+        if (asset != null && asset.getAssetId() != null) {
+             assetGuid = asset.getAssetId().getGuid();
+            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
+        } else {
+            assetGuid = null;
+        }
 
         final XMLGregorianCalendar positionTime = rawMovement.getPositionTime();
 
