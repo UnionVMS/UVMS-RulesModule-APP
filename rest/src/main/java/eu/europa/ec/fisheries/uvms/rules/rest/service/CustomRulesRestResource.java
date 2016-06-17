@@ -1,9 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
+import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -64,6 +66,9 @@ public class CustomRulesRestResource {
     public ResponseDto createCustomRule(final CustomRuleType customRule) {
         LOG.info("Create invoked in rest layer");
         try {
+            if(!validate(customRule)){
+                return new ResponseDto<String>("Custom rule data is not correct", ResponseCode.INPUT_ERROR);
+            }
             return new ResponseDto(rulesService.createCustomRule(customRule, UnionVMSFeature.manageGlobalAlarmsRules.name(), getApplicationName(servletContext)), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException e) {
             LOG.error("[ Error when creating. ] {} ", e.getStackTrace());
@@ -224,6 +229,18 @@ public class CustomRulesRestResource {
         return cfgName;
     }
 
-
-
+    private boolean validate(CustomRuleType customRule){
+        boolean valid = true;
+        if(customRule.getName()==null || customRule.getName().isEmpty()){
+            valid = false;
+        }else if(customRule.getTimeIntervals()!=null && !customRule.getTimeIntervals().isEmpty()){
+            for (CustomRuleIntervalType intervalType : customRule.getTimeIntervals()){
+                if(DateUtil.parseToUTCDate(intervalType.getStart()).after(DateUtil.parseToUTCDate(intervalType.getEnd()))){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        return valid;
+    }
 }

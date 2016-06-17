@@ -18,6 +18,7 @@ public class MockData {
         CustomRuleType dto = new CustomRuleType();
         dto.setName("DummyRule" + id);
         dto.setAvailability(AvailabilityType.PUBLIC);
+        dto.setName("Test");
         return dto;
     }
 
