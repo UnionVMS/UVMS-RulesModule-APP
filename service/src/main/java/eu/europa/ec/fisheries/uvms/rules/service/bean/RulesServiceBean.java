@@ -1368,7 +1368,14 @@ public class RulesServiceBean implements RulesService {
 
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
 
-        MobileTerminalType mobileTerminal = resultList.size() != 1 ? null : resultList.get(0);
+        MobileTerminalType mobileTerminal = null;
+
+        for(MobileTerminalType mobileTerminalType : resultList){
+            if(mobileTerminalType.getConnectId()!=null){
+                mobileTerminal = mobileTerminalType;
+                break;
+            }
+        }
 
         return mobileTerminal;
     }
