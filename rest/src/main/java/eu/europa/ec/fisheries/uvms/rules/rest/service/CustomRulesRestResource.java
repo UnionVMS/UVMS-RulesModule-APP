@@ -1,9 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
@@ -233,13 +230,30 @@ public class CustomRulesRestResource {
         boolean valid = true;
         if(customRule.getName()==null || customRule.getName().isEmpty()){
             valid = false;
-        }else if(customRule.getTimeIntervals()!=null && !customRule.getTimeIntervals().isEmpty()){
+        } else if(customRule.getTimeIntervals()!=null && !customRule.getTimeIntervals().isEmpty()){
             for (CustomRuleIntervalType intervalType : customRule.getTimeIntervals()){
                 if(DateUtil.parseToUTCDate(intervalType.getStart()).after(DateUtil.parseToUTCDate(intervalType.getEnd()))){
                     valid = false;
                     break;
                 }
             }
+        }
+        int startOperators = 0;
+        int endOperators = 0;
+        for (int i = 0; i < customRule.getDefinitions().size(); i++) {
+            CustomRuleSegmentType segment = customRule.getDefinitions().get(i);
+            startOperators += segment.getStartOperator().length();
+            endOperators += segment.getEndOperator().length();
+            if (LogicOperatorType.NONE.equals(segment.getLogicBoolOperator()) && i < (customRule.getDefinitions().size() - 1)) {
+                valid = false;
+                break;
+            } else if (!LogicOperatorType.NONE.equals(segment.getLogicBoolOperator()) && i == (customRule.getDefinitions().size() - 1)) {
+                valid = false;
+                break;
+            }
+        }
+        if (startOperators != endOperators) {
+            valid = false;
         }
         return valid;
     }
