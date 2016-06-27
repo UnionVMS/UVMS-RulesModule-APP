@@ -29,14 +29,9 @@ public class CheckRulesChangesTask implements Runnable {
 
     @Override
     public void run() {
-        try {
-            clearCustomRules();
-            LOG.debug("Checking for changes in sanity rules");
-            rulesValidator.updateSanityRules();
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            //handle execption
-        }
+        clearCustomRules();
+        LOG.debug("Checking for changes in sanity rules");
+        rulesValidator.updateSanityRules();
     }
 
     private void clearCustomRules() {
