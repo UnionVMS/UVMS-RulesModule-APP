@@ -705,7 +705,7 @@ public class RulesServiceBean implements RulesService {
 
                 // TODO: Use better type (some variation of PluginType...)
                 String pluginType = alarm.getPluginType();
-                //NHI
+
                 setMovementReportReceived(rawMovementType, pluginType, username);
             }
 

@@ -46,18 +46,17 @@ public class MovementFactMapper {
             List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
             for (MovementMetaDataAreaType area : areas) {
                 if (MovementTypeType.POS.equals(area.getTransitionType()) || MovementTypeType.ENT.equals(area.getTransitionType())) {
-                    //fact.getAreaCodes().add(area.getCode()); //TODO: Bug from Spatial, they have switched name and code. Reported to them.
-                    fact.getAreaCodes().add(area.getName());
+                    fact.getAreaCodes().add(area.getCode());
                     fact.getAreaTypes().add(area.getAreaType());
                 }
                 if (MovementTypeType.ENT.equals(area.getTransitionType())) {
                     fact.getEntAreaCodes().add(area.getName());
-                    //fact.getAreaCodes().add(area.getCode()); //TODO: Bug from Spatial, they have switched name and code. Reported to them.
+                    fact.getAreaCodes().add(area.getCode());
                     fact.getEntAreaTypes().add(area.getAreaType());
                 }
                 if (MovementTypeType.EXI.equals(area.getTransitionType())) {
                     fact.getExtAreaCodes().add(area.getName());
-                    //fact.getAreaCodes().add(area.getCode()); //TODO: Bug from Spatial, they have switched name and code. Reported to them.
+                    fact.getAreaCodes().add(area.getCode());
                     fact.getExtAreaTypes().add(area.getAreaType());
                 }
             }
