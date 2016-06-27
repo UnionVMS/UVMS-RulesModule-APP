@@ -1,5 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.config.module.v1.ConfigModuleBaseRequest;
+import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
+import eu.europa.ec.fisheries.schema.config.source.v1.ConfigDataSourceMethod;
+import eu.europa.ec.fisheries.schema.config.source.v1.GetGlobalSettingsRequest;
+import eu.europa.ec.fisheries.schema.config.source.v1.ListSettingsRequest;
+import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
@@ -15,8 +21,13 @@ import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.*;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
+import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
+import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceRequestMapper;
+import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
@@ -798,11 +809,14 @@ public class RulesServiceBean implements RulesService {
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
         final String assetGuid;
+        final String assetFlagState;
         if (asset != null && asset.getAssetId() != null) {
-             assetGuid = asset.getAssetId().getGuid();
+            assetGuid = asset.getAssetId().getGuid();
+            assetFlagState = asset.getCountryCode();
             LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
         } else {
             assetGuid = null;
+            assetFlagState = null;
         }
 
         final XMLGregorianCalendar positionTime = rawMovement.getPositionTime();
@@ -810,7 +824,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
             @Override
             public Long call() {
-                return timeDiffAndPersistMovement(assetGuid, positionTime);
+                return timeDiffAndPersistMovement(rawMovement.getSource(), assetGuid, assetFlagState, positionTime);
             }
         });
         executor.execute(timeDiffAndPersistMovementTask);
@@ -880,7 +894,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private Long timeDiffAndPersistMovement(String assetGuid, XMLGregorianCalendar positionTime) {
+    private Long timeDiffAndPersistMovement(MovementSourceType movementSource, String assetGuid, String assetFlagState, XMLGregorianCalendar positionTime) {
         Date auditTimestamp = new Date();
 
         // This needs to be done before persisting last report
@@ -889,10 +903,34 @@ public class RulesServiceBean implements RulesService {
         timeDiffInSeconds = timeDiff != null ? timeDiff / 1000 : null;
         auditTimestamp = auditLog("Time to fetch time difference to previous report:", auditTimestamp);
 
-        persistLastCommunication(assetGuid, positionTime);
+        // We only persist our own last communications that were not from AIS.
+        if (isLocalFlagstate(assetFlagState) && !movementSource.equals(MovementSourceType.AIS)) {
+            persistLastCommunication(assetGuid, positionTime);
+        }
         auditLog("Time to persist the position time:", auditTimestamp);
 
         return timeDiffInSeconds;
+    }
+
+    private boolean isLocalFlagstate(String assetFlagState) {
+        if (assetFlagState == null) {
+            return false;
+        }
+        TextMessage response;
+        try {
+            String settingsRequest = ModuleRequestMapper.toListSettingsRequest("asset");
+            String messageId = producer.sendDataSourceMessage(settingsRequest, DataSourceQueue.CONFIG);
+            response = consumer.getMessage(messageId, TextMessage.class);
+            SettingsListResponse settings = eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller.unmarshallTextMessage(response, SettingsListResponse.class);
+            for (SettingType setting : settings.getSettings()) {
+                if (setting.getKey().equals("asset.default.flagstate")) {
+                    return assetFlagState.equalsIgnoreCase(setting.getValue());
+                }
+            }
+        } catch (eu.europa.ec.fisheries.uvms.config.model.exception.ModelMapperException | MessageException e) {
+            return false;
+        }
+        return false;
     }
 
     private Long timeDiffFromLastCommunication(String assetGuid, XMLGregorianCalendar thisTime) {
