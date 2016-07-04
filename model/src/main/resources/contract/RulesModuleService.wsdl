@@ -38,13 +38,25 @@
                     <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
                     <xsd:enumeration value="COUNT_TICKETS_BY_MOVEMENTS"/>
                     <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
-					
-					<xsd:enumeration value="SET_FLUX_FA_REPORT"/>
-
+					<xsd:enumeration value="SET_FLUX_FA_REPORT"/>					
+					<xsd:enumeration value="SET_FLUX_MDR_SYNC_REQUEST"/>
                 </xsd:restriction>
             </xsd:simpleType>
-			
+
 			<xsd:element name="SetFLUXFAReportMessageRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="SetFLUXMDRSyncMessageRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">

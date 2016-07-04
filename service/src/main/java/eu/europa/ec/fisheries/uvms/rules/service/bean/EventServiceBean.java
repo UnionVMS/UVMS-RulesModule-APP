@@ -2,11 +2,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
-import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -14,7 +11,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.*;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.JMSConnectorBean;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
@@ -23,7 +19,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
@@ -38,9 +33,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import java.util.List;
 
 @Stateless
@@ -205,7 +197,43 @@ public class EventServiceBean implements EventService {
         }
     }
 
-    private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void SetFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
+        try {
+            LOG.info("get SetFLUXFAReportMessageReceived inside rules");
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            LOG.info("marshall RulesBaseRequest successful");
+            SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
+            LOG.info("marshall SetFLUXFAReportMessageRequest successful");
+            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType().name(), request.getUsername());
+        } catch (RulesModelMarshallException e) {
+            LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
+        } catch (RulesServiceException e) {
+            LOG.error("[ Error when sending FLUXFAReportMessage to rules. ] {}", e);
+        }
+
+    }
+    
+    public void setFLUXMDRSyncMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message){
+    	 try {
+	    	 LOG.info("@SetFLUXMDRSyncMessageReceivedEvent recieved inside Rules Module.");
+	         RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+	         LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
+	         SetFLUXMDRSyncMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRequest.class);
+	         LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
+	         // Bypassing validation phase since it will probably be done in FLUX Module..
+	         rulesService.mapAndSendFLUXMdrRequestMessageToExchange(request.getRequest());
+    	 } catch (RulesModelMarshallException e) {
+             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
+         } catch (MessageException e) {
+        	 LOG.error("[ Error when un sending  SetFLUXMDRSyncMessageRequest to Exchange Module. ] {}", e);
+			e.printStackTrace();
+		}
+    }
+
+    @SuppressWarnings("unused")
+	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);

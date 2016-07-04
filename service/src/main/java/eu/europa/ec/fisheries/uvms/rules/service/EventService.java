@@ -1,12 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+
 import javax.ejb.Local;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
-
-import eu.europa.ec.fisheries.uvms.rules.message.event.*;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 
 @Local
 public interface EventService {
@@ -26,4 +26,8 @@ public interface EventService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     void getTicketsAndRulesByMovementsEvent(@Observes @GetTicketsAndRulesByMovementsEvent EventMessage message);
+
+    void SetFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message);
+
+	void setFLUXMDRSyncMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message);
 }
