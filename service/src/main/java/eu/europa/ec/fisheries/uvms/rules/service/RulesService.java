@@ -1,6 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
+import javax.ejb.Local;
+
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
@@ -14,16 +18,10 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsRes
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-
-import javax.ejb.Local;
-import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @Local
 public interface RulesService {
@@ -162,7 +160,6 @@ public interface RulesService {
 
     void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException;
 
-	void mapAndSendFLUXMdrRequestMessageToExchange(String request) throws MessageException;
-
+	void mapAndSendFLUXMdrRequestMessageToExchange(String request);
 
 }
