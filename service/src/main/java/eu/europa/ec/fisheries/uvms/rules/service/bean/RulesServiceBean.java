@@ -1112,6 +1112,7 @@ public class RulesServiceBean implements RulesService {
     private List<String> getVicinityOf(RawMovementType rawMovement) {
         long start = System.currentTimeMillis();
         List<String> vicinityOf = new ArrayList<>();
+        /*
         try {
             MovementQuery query = new MovementQuery();
             query.setExcludeFirstAndLastSegment(true);
@@ -1156,6 +1157,7 @@ public class RulesServiceBean implements RulesService {
         }
 
         LOG.debug("[ Get nearby vessels: {} ms ]", (System.currentTimeMillis() - start));
+        */
         return vicinityOf;
     }
 
