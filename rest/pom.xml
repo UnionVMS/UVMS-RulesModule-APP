@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>rules-rest</artifactId>
+    <name>${project.parent.artifactId}-rest</name>
+    <packaging>war</packaging>
+
+    <parent>
+        <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+        <artifactId>rules</artifactId>
+        <version>2.0.7-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <!-- EJB DEPENDENCS -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rules-service</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>usm4uvms</artifactId>
+            <version>${usm4uvms.version}</version>
+        </dependency>
+
+        <!-- TEST DEPENDENCIES -->
+        <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>${javax.json.version}</version>
+			<scope>test</scope>
+		</dependency> 
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- USE following command to run this profile: mvn clean install -P generate-rest-doc -Dhostname=127.0.0.1 -Dport=8080  -->
+    <profiles>
+        <profile>
+            <id>generate-rest-doc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>generate-service-docs</id>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <doclet>com.carma.swagger.doclet.ServiceDoclet</doclet>
+                                    <docletArtifact>
+                                        <groupId>com.carma</groupId>
+                                        <artifactId>swagger-doclet</artifactId>
+                                        <version>1.0.4.1</version>
+                                    </docletArtifact>
+                                    <reportOutputDirectory>src/main/webapp</reportOutputDirectory>
+                                    <useStandardDocletOptions>false</useStandardDocletOptions>
+                                    <additionalparam>
+                                        -apiVersion ${project.version}
+                                        -docBasePath http://${hostname}:${port}/${project.parent.artifactId}/apidocs
+                                        -apiBasePath http://${hostname}:${port}/${project.parent.artifactId}/rest</additionalparam>
+                                </configuration>
+                                <goals>
+                                    <goal>javadoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <file>${basedir}/src/main/webapp/apidocs/index.html</file>
+                            <replacements>
+                                <replacement>
+                                    <token>new ApiKeyAuthorization\("api_key", key, "query"\)</token>
+                                    <value>new ApiKeyAuthorization("Authorization", key, "header")</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

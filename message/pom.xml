@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>rules-message</artifactId>
+    <name>${project.parent.artifactId}-message</name>
+    <packaging>ejb</packaging>
+
+    <parent>
+        <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+        <artifactId>rules</artifactId>
+        <version>2.0.7-SNAPSHOT</version>
+    </parent>
+    
+    <dependencies>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-model</artifactId>
+            <version>${rules.model.version}</version>
+        </dependency>
+        <dependency>
+	        <groupId>eu.europa.ec.fisheries.uvms</groupId>
+	        <artifactId>uvms-config</artifactId>
+	        <version>${uvms.config.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

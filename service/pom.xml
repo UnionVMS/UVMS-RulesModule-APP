@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>rules-service</artifactId>
+    <name>${project.parent.artifactId}-service</name>
+    <packaging>ejb</packaging>
+
+    <parent>
+        <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+        <artifactId>rules</artifactId>
+        <version>2.0.7-SNAPSHOT</version>
+    </parent>
+    
+    <!-- PROPERTIES USED FOR LOGBACK -->
+    <properties>
+        <application.name>${project.parent.artifactId}</application.name> 
+        <application.version>${project.parent.version}</application.version>
+        <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
+        <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-bom</artifactId>
+                <type>pom</type>
+                <version>${drools.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+  
+    <dependencies>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-model</artifactId>
+            <version>${rules.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rules-message</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>${dozer.version}</version>
+        </dependency-->
+        
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
+            <artifactId>movement-model</artifactId>
+            <version>${movement.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+            <artifactId>asset-model</artifactId>
+            <version>${asset.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>
+            <artifactId>mobileterminal-model</artifactId>
+            <version>${mobileterminal.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
+            <artifactId>exchange-model</artifactId>
+            <version>${exchange.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.user</groupId>
+            <artifactId>user-model</artifactId>
+            <version>${user.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.audit</groupId>
+            <artifactId>audit-model</artifactId>
+            <version>${audit.model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+
+        <!-- drools dependencies -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-templates</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>uvms-commons</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+            <artifactId>activity-model</artifactId>
+            <version>${activity.model.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-maven-plugin</artifactId>
+                <version>6.2.0.Final</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${basedir}/src/main/resources/logging.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

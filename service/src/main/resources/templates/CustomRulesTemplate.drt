@@ -1,0 +1,22 @@
+template header
+rulename
+expression
+action
+ruleguid
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+global org.slf4j.Logger logger;
+global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
+
+template "CustomRulesTemplate"
+
+rule "@{rulename}"
+when
+   $fact : MovementFact(@{expression})
+then
+   logger.info("\t==> Executing RULE '@{rulename}' (rule guid:'@{ruleguid}') with action(s) '@{action}'");
+   validationService.customRuleTriggered("@{rulename}", "@{ruleguid}", $fact, "@{action}");
+end
+
+end template

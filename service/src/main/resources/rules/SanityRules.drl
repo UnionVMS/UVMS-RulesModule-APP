@@ -1,0 +1,250 @@
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import java.util.Date;
+
+global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
+global org.slf4j.Logger logger;
+
+
+rule "Sanity rule 1 - Time missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(positionTime == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 1 - Time missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Time missing", $fact);
+end
+
+rule "Sanity rule 2 - Lat missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(latitude == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 2 - Lat missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Lat missing", $fact);
+end
+
+rule "Sanity rule 3 - Long missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(longitude == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 3 - Long missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Long missing", $fact);
+end
+
+// A mobile terminal must be connected to a asset
+rule "Sanity rule 4 - Transponder not found"
+dialect "java"
+    when
+        $fact : RawMovementFact((mobileTerminalConnectId == null) && pluginType == "SATELLITE_RECEIVER")
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 4 - Transponder not found'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Transponder not found", $fact);
+end
+
+// An asset must exist
+rule "Sanity rule 5 - Asset not found"
+dialect "java"
+    when
+        $fact : RawMovementFact(assetGuid == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 5 - Asset not found'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Asset not found", $fact);
+end
+
+// If INMARSAT_C
+rule "Sanity rule 6 - Mem No. missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(mobileTerminalMemberNumber == null && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "INMARSAT_C")
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 6 - Mem No. missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Mem No. missing", $fact);
+end
+
+// If INMARSAT_C
+rule "Sanity rule 7 - DNID missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(mobileTerminalDnid == null && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "INMARSAT_C")
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 7 - DNID missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("DNID missing", $fact);
+end
+
+// If IRIDIUM
+rule "Sanity rule 8 - Serial No. missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(mobileTerminalSerialNumber == null && pluginType == "SATELLITE_RECEIVER" && mobileTerminalType == "IRIDIUM")
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 8 - Serial No. missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Serial No. missing", $fact);
+end
+
+rule "Sanity rule 9 - ComChannel Type missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(comChannelType == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 9 - ComChannel Type missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("ComChannel Type missing", $fact);
+end
+
+rule "Sanity rule 10 - CFR and IRCS missing"
+dialect "java"
+    when
+        $fact : RawMovementFact((cfr == null && ircs == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 10 - CFR and IRCS missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("CFR and IRCS missing", $fact);
+end
+
+rule "Sanity rule 11 - Plugin Type missing"
+dialect "java"
+    when
+        $fact : RawMovementFact(pluginType == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 11 - Plugin Type missing'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Plugin Type missing", $fact);
+end
+
+rule "Sanity rule 12 - Time in the future"
+dialect "java"
+    when
+        $fact : RawMovementFact(positionTime != null && positionTime.getTime() > new Date().getTime())
+    then
+        logger.info("\t==> Executing RULE 'Sanity rule 12 - Time in the future'" + "[" + $fact.getPositionTime() + " > " + new Date() + "]");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Time in future", $fact);
+end
+
+
+/*
+rule "Sanity check - statusCode must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(statusCode == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - statusCode must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - statusCode must exist", $fact);
+end
+
+rule "Sanity check - reportedSpeed must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(reportedSpeed == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - reportedSpeed must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - reportedSpeed must exist", $fact);
+end
+
+rule "Sanity check - reportedCourse must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(reportedCourse == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - reportedCourse must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - reportedCourse must exist", $fact);
+end
+*/
+
+
+/*
+rule "Sanity check - movementType must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(movementType == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - movementType must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - movementType must exist", $fact);
+end
+
+rule "Sanity check - source must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(source == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - source must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - source must exist", $fact);
+end
+
+rule "Sanity check - activityCallback must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(activityCallback == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - activityCallback must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - activityCallback must exist", $fact);
+end
+
+rule "Sanity check - activityMessageId must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(activityMessageId == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - activityMessageId must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - activityMessageId must exist", $fact);
+end
+
+rule "Sanity check - activityMessageType must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(activityMessageType == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - activityMessageType must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - activityMessageType must exist", $fact);
+end
+
+rule "Sanity check - assetType must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact((assetType == null) && (pluginType == "FLUX" || comChannelType == "MANUAL"))
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - assetType must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - assetType must exist", $fact);
+end
+
+rule "Sanity check - Altitude must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(altitude == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - altitude must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - altitude must exist", $fact);
+end
+
+rule "Sanity check - movementGuid must exist"
+dialect "java"
+    when
+        $fact : RawMovementFact(movementGuid == null)
+    then
+        logger.info("\t==> Executing RULE 'Sanity check - movementGuid must exist'");
+        $fact.setOk(false);
+        validationService.createAlarmReport("Sanity check - movementGuid must exist", $fact);
+end
+
+*/
+
