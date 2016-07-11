@@ -1,2 +1,3 @@
 target
 /rest/src/main/webapp
+*.iml
