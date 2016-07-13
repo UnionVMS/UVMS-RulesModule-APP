@@ -1,3 +1,4 @@
 target
 /rest/src/main/webapp
 *.iml
+/service/src/main/resources/logging.properties

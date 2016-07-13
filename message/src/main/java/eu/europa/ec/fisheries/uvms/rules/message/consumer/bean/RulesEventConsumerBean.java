@@ -11,7 +11,17 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import java.util.UUID;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -22,28 +32,7 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
-import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import java.util.UUID;
 
 @MessageDriven(mappedName = MessageConstants.RULES_MESSAGE_IN_QUEUE, activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -82,14 +71,6 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> pingReceivedEvent;
 
     @Inject
-    @SetFLUXFAReportMessageReceivedEvent
-    Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
-    
-    @Inject
-    @SetFLUXMDRSyncMessageReceivedEvent
-    Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
-
-    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -124,12 +105,6 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
                     getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_FA_REPORT:
-                    setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_MDR_SYNC_REQUEST:
-                	setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
