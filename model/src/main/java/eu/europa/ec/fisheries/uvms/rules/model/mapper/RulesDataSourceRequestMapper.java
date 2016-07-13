@@ -1,54 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CountTicketListByMovementsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.DeleteCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByAssetAndRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRulesByUserRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfAssetsNotSendingRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfOpenAlarmsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfOpenTicketsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportByAssetGuidRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetRunnableCustomRulesRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketsAndRulesByMovementsRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.ReprocessAlarmRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.RulesDataSourceMethod;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleLastTriggeredRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleSubscriptionRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateTicketCountRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateTicketStatusByQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpsertPreviousReportRequest;
+import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class RulesDataSourceRequestMapper {
 
