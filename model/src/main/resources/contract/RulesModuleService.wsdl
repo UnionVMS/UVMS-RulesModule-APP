@@ -56,7 +56,7 @@
                 </xsd:complexType>
             </xsd:element>
             
-            <xsd:element name="SetFLUXMDRSyncMessageRequest">
+            <xsd:element name="SetFLUXMDRSyncMessageRulesRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">

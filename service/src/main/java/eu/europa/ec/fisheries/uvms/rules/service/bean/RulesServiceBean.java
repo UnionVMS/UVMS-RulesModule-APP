@@ -1544,7 +1544,12 @@ public class RulesServiceBean implements RulesService {
 		String exchangerStrReq = null;
 		try {
 			exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-			producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
+            if(StringUtils.isNotEmpty(exchangerStrReq)){
+                producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
+            } else {
+                LOG.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
+            }
+
 		} catch (ExchangeModelMarshallException e) {
 			LOG.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestMessageToExchange(String) : "+e.getMessage());
 		} catch (MessageException e) {
