@@ -25,7 +25,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -64,9 +67,6 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
 
     @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
     private Queue auditQueue;
-
-    @Resource(mappedName = MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE)
-    private Queue activityQueue;
 
     @Inject
     JMSConnectorBean connector;
@@ -115,9 +115,6 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     break;
                 case AUDIT:
                     getProducer(session, auditQueue).send(message);
-                    break;
-                case ACTIVITY:
-                    getProducer(session, activityQueue).send(message);
                     break;
                 default:
                     break;
