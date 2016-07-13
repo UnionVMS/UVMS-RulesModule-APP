@@ -41,7 +41,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>${javaee.version}</version>
+            <version>${javaee.version}</version<name />
             <scope>provided</scope>
         </dependency>
 
@@ -94,6 +94,11 @@
             <id>focus-repo</id>
             <name>Focus nexus repository</name>
             <url>http://nexus.focus.fish/</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public//</url>
         </repository>
     </repositories>
 
