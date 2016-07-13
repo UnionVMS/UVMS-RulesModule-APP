@@ -115,12 +115,6 @@
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.kie</groupId>
-                <artifactId>kie-maven-plugin</artifactId>
-                <version>6.2.0.Final</version>
-                <extensions>true</extensions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
