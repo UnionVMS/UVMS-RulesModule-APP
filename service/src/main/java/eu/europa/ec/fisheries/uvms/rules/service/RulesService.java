@@ -169,8 +169,8 @@ public interface RulesService {
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
 
-    void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException;
+    //void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException;
 
-	void mapAndSendFLUXMdrRequestMessageToExchange(String request);
+	//void mapAndSendFLUXMdrRequestMessageToExchange(String request);
 
 }

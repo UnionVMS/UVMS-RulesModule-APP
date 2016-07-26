@@ -65,8 +65,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
     private Queue auditQueue;
 
-    @Resource(mappedName = MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE)
-    private Queue activityQueue;
+    /*@Resource(mappedName = MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE)
+    private Queue activityQueue;*/
 
     @Inject
     JMSConnectorBean connector;
@@ -116,9 +116,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 case AUDIT:
                     getProducer(session, auditQueue).send(message);
                     break;
-                case ACTIVITY:
+               /* case ACTIVITY:
                     getProducer(session, activityQueue).send(message);
-                    break;
+                    break;*/
                 default:
                     break;
             }
