@@ -11,19 +11,22 @@ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more d
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import eu.europa.ec.fisheries.schema.config.module.v1.ConfigModuleBaseRequest;
+//import eu.europa.ec.fisheries.schema.config.module.v1.ConfigModuleBaseRequest;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
-import eu.europa.ec.fisheries.schema.config.source.v1.ConfigDataSourceMethod;
-import eu.europa.ec.fisheries.schema.config.source.v1.GetGlobalSettingsRequest;
-import eu.europa.ec.fisheries.schema.config.source.v1.ListSettingsRequest;
+//import eu.europa.ec.fisheries.schema.config.source.v1.ConfigDataSourceMethod;
+//import eu.europa.ec.fisheries.schema.config.source.v1.GetGlobalSettingsRequest;
+//import eu.europa.ec.fisheries.schema.config.source.v1.ListSettingsRequest;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
+//import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.search.v1.*;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.movement.v1.MovementType;
@@ -33,9 +36,9 @@ import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.*;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
-import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
-import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceRequestMapper;
-import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceResponseMapper;
+//import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
+//import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceRequestMapper;
+//import eu.europa.ec.fisheries.uvms.config.model.mapper.ConfigDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
@@ -94,6 +97,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
@@ -110,6 +114,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import java.math.BigInteger;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.*;
