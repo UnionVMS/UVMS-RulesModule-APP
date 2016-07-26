@@ -1,4 +1,5 @@
-﻿/*
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
+/*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
 
@@ -9,8 +10,6 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
 
 import eu.europa.ec.fisheries.schema.config.module.v1.ConfigModuleBaseRequest;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
@@ -142,7 +141,7 @@ public class RulesServiceBean implements RulesService {
     @Inject
     @TicketUpdateEvent
     private Event<NotificationMessage> ticketUpdateEvent;
-    
+
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
@@ -1506,10 +1505,10 @@ public class RulesServiceBean implements RulesService {
     }
 
 
-	/* 
-	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest 
+	/*
+	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
 	 * to send a message to ExchangeModule
-	 * 
+	 *
 	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestMessageToExchange(java.lang.String)
 	 */
 	/*@Override
@@ -1523,7 +1522,7 @@ public class RulesServiceBean implements RulesService {
 		} catch (MessageException e) {
 			LOG.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
 		}
-		
+
 	}*/
 
 }

@@ -1,4 +1,5 @@
-﻿/*
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
+/*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
 
@@ -9,8 +10,6 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
@@ -49,12 +48,12 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-<<<<<<< HEAD
-=======
+
+
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
->>>>>>> ec909750e41331725bfed374c0e0a89bfbf432a4
+
 import java.util.List;
 
 @Stateless
@@ -219,7 +218,7 @@ public class EventServiceBean implements EventService {
         }
     }
 
-<<<<<<< HEAD
+
    /* @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void SetFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
@@ -250,14 +249,12 @@ public class EventServiceBean implements EventService {
 	         rulesService.mapAndSendFLUXMdrRequestMessageToExchange(request.getRequest());
     	 } catch (RulesModelMarshallException e) {
              LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
-         } 
+         }
     }*/
 
     @SuppressWarnings("unused")
-	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
-=======
+
     private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
->>>>>>> ec909750e41331725bfed374c0e0a89bfbf432a4
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
