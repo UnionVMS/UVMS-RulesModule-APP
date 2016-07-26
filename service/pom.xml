@@ -110,6 +110,7 @@
             <artifactId>uvms-commons</artifactId>
             <version>${uvms.common.version}</version>
         </dependency>
+
         <!--
 		<dependency>
             <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
@@ -117,17 +118,12 @@
             <version>${activity.model.version}</version>
         </dependency>
         -->
+
     </dependencies>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.kie</groupId>
-                <artifactId>kie-maven-plugin</artifactId>
-                <version>6.2.0.Final</version>
-                <extensions>true</extensions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

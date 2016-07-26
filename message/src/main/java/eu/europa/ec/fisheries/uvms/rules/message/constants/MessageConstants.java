@@ -1,4 +1,4 @@
-/*
+﻿/*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
 
@@ -27,6 +27,7 @@ public class MessageConstants {
     public static final String EXCHANGE_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSExchangeEvent";
     public static final String USER_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSUserEvent";
     public static final String AUDIT_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSAuditEvent";
+
     //public static final String ACTIVITY_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSActivityEvent";
 
     public static final String MDC_IDENTIFIER = "clientName";

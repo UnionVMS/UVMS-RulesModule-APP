@@ -1,3 +1,4 @@
 target
 .idea/
 *.iml
+/service/src/main/resources/logging.properties
