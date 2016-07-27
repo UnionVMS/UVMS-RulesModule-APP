@@ -34,8 +34,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsByMovementsReques
 import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
@@ -48,8 +46,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEven
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -227,38 +223,6 @@ public class EventServiceBean implements EventService {
             LOG.error("[ Error when fetching tickets and rules by movements ] {}", e.getMessage());
             errorEvent.fire(message);
         }
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void SetFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
-        try {
-            LOG.info("get SetFLUXFAReportMessageReceived inside rules");
-            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
-            LOG.info("marshall RulesBaseRequest successful");
-            SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            LOG.info("marshall SetFLUXFAReportMessageRequest successful");
-            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType().name(), request.getUsername());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
-        } catch (RulesServiceException e) {
-            LOG.error("[ Error when sending FLUXFAReportMessage to rules. ] {}", e);
-        }
-
-    }
-    
-    public void setFLUXMDRSyncMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message){
-    	 try {
-	    	 LOG.info("@SetFLUXMDRSyncMessageReceivedEvent recieved inside Rules Module.");
-	         RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
-	         LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
-	         SetFLUXMDRSyncMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRequest.class);
-	         LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
-	         // Bypassing validation phase since it will probably be done in FLUX Module..
-	         rulesService.mapAndSendFLUXMdrRequestMessageToExchange(request.getRequest());
-    	 } catch (RulesModelMarshallException e) {
-             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
-         } 
     }
 
     @SuppressWarnings("unused")

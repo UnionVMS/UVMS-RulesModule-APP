@@ -35,8 +35,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEven
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -82,14 +80,6 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> pingReceivedEvent;
 
     @Inject
-    @SetFLUXFAReportMessageReceivedEvent
-    Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
-    
-    @Inject
-    @SetFLUXMDRSyncMessageReceivedEvent
-    Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
-
-    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -124,12 +114,6 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
                     getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_FA_REPORT:
-                    setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_MDR_SYNC_REQUEST:
-                	setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
