@@ -70,7 +70,7 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/${release.branch.name}/Modules/Rules/APP/model</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Rules/APP/model</connection>
     </scm>
 
     <profiles>
