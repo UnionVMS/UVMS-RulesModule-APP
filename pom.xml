@@ -6,7 +6,10 @@
     <version>2.0.7-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
+
     <properties>
+        <maven.release.plugin.version>2.5.2</maven.release.plugin.version>
+        <maven.scm.provider.version>2.1.1</maven.scm.provider.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <release.branch.name>uvms-2.0.6-kili</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
@@ -146,6 +149,26 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+                        <artifactId>maven-scm-provider-svnjava</artifactId>
+                        <version>${maven.scm.provider.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <providerImplementations>
+                        <svn>javasvn</svn>
+                    </providerImplementations>
+                    <tagBase>https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/Exchange</tagBase>
+                    <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
