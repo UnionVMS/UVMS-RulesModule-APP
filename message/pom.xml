@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rules-message</artifactId>
+    <artifactId>rules-message_WebLogic-2.1.3_</artifactId>
     <name>${project.parent.artifactId}-message</name>
     <packaging>ejb</packaging>
 
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules</artifactId>
+        <artifactId>rules_WebLogic-2.1.3_</artifactId>
         <version>2.0.8-SNAPSHOT</version>
     </parent>
     
@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
 	        <groupId>eu.europa.ec.fisheries.uvms</groupId>
-	        <artifactId>uvms-config</artifactId>
+	        <artifactId>${uvms.config.artifactId}</artifactId>
 	        <version>${uvms.config.version}</version>
         </dependency>
     </dependencies>

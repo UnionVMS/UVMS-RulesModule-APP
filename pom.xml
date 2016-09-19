@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-    <artifactId>rules</artifactId>
+    <artifactId>rules_WebLogic-2.1.3_</artifactId>
     <version>2.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
@@ -20,23 +20,37 @@
         <logback.version>1.1.2</logback.version>
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
-        <uvms.config.version>2.0.8-SNAPSHOT</uvms.config.version>
+        <uvms.config.version>2.0.7</uvms.config.version>
         <uvms.common.version>2.0.12</uvms.common.version>
-        <movement.model.version>2.0.8-SNAPSHOT</movement.model.version>
-        <exchange.model.version>2.0.8-SNAPSHOT</exchange.model.version>
-        <asset.model.version>2.0.8-SNAPSHOT</asset.model.version>
-        <mobileterminal.model.version>2.0.8-SNAPSHOT</mobileterminal.model.version>
+        <movement.model.version>2.0.7</movement.model.version>
+        <exchange.model.version>2.0.7</exchange.model.version>
+        <asset.model.version>2.0.7</asset.model.version>
+        <mobileterminal.model.version>2.0.7</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
-        <usm4uvms.version>2.0.16-SNAPSHOT</usm4uvms.version>
-        <audit.model.version>2.0.8-SNAPSHOT</audit.model.version>
+        <usm4uvms.version>2.0.15</usm4uvms.version>
+        <audit.model.version>2.0.7</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <rules.model.version>2.0.8-SNAPSHOT</rules.model.version>
+        <rules.model.version>2.0.7</rules.model.version>
 
         
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
         <maven-release-plugin>2.5.3</maven-release-plugin>
-        <project.scm.id>github</project.scm.id>    </properties>
+        <project.scm.id>github</project.scm.id>
+        <uvms.config.version>2.0.7</uvms.config.version>
+        <uvms.config.artifactId>uvms-config</uvms.config.artifactId>
+
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>weblogic</id>
+            <properties>
+                <uvms.config.artifactId>uvms-config_WebLogic-2.1.3_</uvms.config.artifactId>
+                <uvms.config.version>2.0.9</uvms.config.version>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>

@@ -152,8 +152,11 @@ public class ValidationServiceBean implements ValidationService {
         LOG.info("Get all sanity rules invoked in service layer");
         try {
             String request = RulesDataSourceRequestMapper.mapGetSanityRules();
+            LOG.info("Got request: {}", request);
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
+            LOG.info("Sent request: {}", messageId);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            LOG.info("Got response: {}", response.getText());
             return RulesDataSourceResponseMapper.mapToGetSanityRulesFromResponse(response, messageId);
         } catch (RulesModelMapperException | MessageException | JMSException e) {
             throw new RulesServiceException(e.getMessage());

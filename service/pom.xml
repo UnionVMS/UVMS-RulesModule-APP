@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rules-service</artifactId>
+    <artifactId>rules-service_WebLogic-2.1.3_</artifactId>
     <name>${project.parent.artifactId}-service</name>
     <packaging>ejb</packaging>
 
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules</artifactId>
+        <artifactId>rules_WebLogic-2.1.3_</artifactId>
         <version>2.0.8-SNAPSHOT</version>
     </parent>
     
@@ -18,7 +18,26 @@
         <application.version>${project.parent.version}</application.version>
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <jta.data-source>java:jboss/datasources/uvms_asset</jta.data-source>
+        <jta.platform>org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform</jta.platform>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>oracle</id>
+            <properties>
+                <hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
+            </properties>
+        </profile>
+        <profile>
+            <id>weblogic</id>
+            <properties>
+                <jta.data-source>jdbc.uvms_movement</jta.data-source>
+                <jta.platform>org.hibernate.service.jta.platform.internal.WeblogicJtaPlatform</jta.platform>
+            </properties>
+        </profile>
+    </profiles>
     
     <dependencyManagement>
         <dependencies>
@@ -40,7 +59,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-message</artifactId>
+            <artifactId>rules-message_WebLogic-2.1.3_</artifactId>
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -155,8 +174,13 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>

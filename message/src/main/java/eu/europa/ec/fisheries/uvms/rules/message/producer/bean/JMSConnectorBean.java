@@ -24,7 +24,6 @@ import javax.jms.*;
 
 @Startup
 @Singleton
-@DependsOn("RulesMessageProducerBean")
 public class JMSConnectorBean {
     final static org.slf4j.Logger LOG = LoggerFactory.getLogger(JMSConnectorBean.class);
 
@@ -61,7 +60,7 @@ public class JMSConnectorBean {
         LOG.debug("Close connection to JMS broker");
         try {
             if (connection != null) {
-                connection.stop();
+                //connection.stop();
                 connection.close();
             }
         } catch (JMSException e) {

@@ -19,17 +19,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.*;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@Startup
-@Singleton
-@DependsOn({"RulesValidator"})
+@Stateless
 public class RulesTimerBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
@@ -43,30 +38,23 @@ public class RulesTimerBean {
     @EJB
     RulesValidator rulesValidator;
 
-    @Resource(lookup="java:/UvmsExecutorService")
-    private ManagedScheduledExecutorService executorService;
-
-    ScheduledFuture comm;
-    ScheduledFuture changes;
+    CheckCommunicationTask checkCommunicationTask;
+    CheckRulesChangesTask checkRulesChangesTask;
 
     @PostConstruct
     public void postConstruct() {
         LOG.info("RulesTimerBean init");
-        CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
-        comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
-
-        CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
-        changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
+        checkCommunicationTask = new CheckCommunicationTask(rulesService);
+        checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
     }
 
-    @PreDestroy
-    public void preDestroy() {
-        if (comm != null) {
-            comm.cancel(true);
+    @Schedule(minute = "0,10,20,30,40,50", hour = "*", persistent = false)
+    public void performTasks() {
+        if (checkCommunicationTask == null && checkRulesChangesTask == null) {
+            postConstruct();
         }
-        if (changes != null) {
-            changes.cancel(true);
-        }
+        checkCommunicationTask.run();
+        checkRulesChangesTask.run();
     }
 
 }

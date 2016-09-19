@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence">
-    <persistence-unit name="modulePU" transaction-type="JTA">
+    <persistence-unit name="rulesInternalPU" transaction-type="JTA">
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:jboss/datasources/uvms_rules</jta-data-source>
-        <class>eu.europa.ec.fisheries.uvms.config.service.entity.Parameter</class>
+        <jta-data-source>${jta.data-source}</jta-data-source>
         <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <!--property name="hibernate.dialect" value="org.hibernate.dialect.Oracle8iDialect"/-->
-            <!-- <property name="hibernate.hbm2ddl.auto" value="validate"/> -->
-            <!-- <property name="hibernate.show_sql" value="true"/> -->
-            <!-- <property name="hibernate.format_sql" value="true"/> -->
+            <property name="hibernate.dialect" value="${hibernate.dialect}"/>
+            <property name="hibernate.transaction.jta.platform" value="${jta.platform}" />
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="org.hibernate.cacheable" value="false"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

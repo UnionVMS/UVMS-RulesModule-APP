@@ -28,10 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.*;
@@ -68,7 +65,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
     private Queue auditQueue;
 
-    @Inject
+    @EJB
     JMSConnectorBean connector;
 
     private static final int CONFIG_TTL = 30000;
@@ -83,7 +80,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
-        LOG.debug("Sending message to {}", queue.name());
+        LOG.info("Sending message to {}", queue.name());
 
         try {
             Session session = connector.getNewSession();
