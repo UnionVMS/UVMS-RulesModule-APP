@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rules-rest_WebLogic-2.1.3_</artifactId>
+    <artifactId>rules-rest</artifactId>
     <name>${project.parent.artifactId}-rest</name>
     <packaging>war</packaging>
 
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules_WebLogic-2.1.3_</artifactId>
+        <artifactId>rules</artifactId>
         <version>2.0.8-SNAPSHOT</version>
     </parent>
 
@@ -16,8 +16,9 @@
         <!-- EJB DEPENDENCS -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-service_WebLogic-2.1.3_</artifactId>
+            <artifactId>rules-service</artifactId>
             <version>${project.parent.version}</version>
+            <classifier>${envClassifier}</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -59,6 +60,7 @@
                 <version>2.4</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <classifier>${envClassifier}</classifier>
                 </configuration>
             </plugin>
         </plugins>

@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>rules-module_WebLogic-2.1.3_</artifactId>
+    <artifactId>rules-module</artifactId>
     <name>${project.parent.artifactId}-module</name>
     <packaging>ear</packaging>
 
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules_WebLogic-2.1.3_</artifactId>
+        <artifactId>rules</artifactId>
         <version>2.0.8-SNAPSHOT</version>
     </parent>
 
@@ -41,6 +41,7 @@
                         </webModule>
                     </modules>
                     <skinnyWars>true</skinnyWars>
+                    <classifier>${envClassifier}</classifier>
                     <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
                 </configuration>
             </plugin>
@@ -50,13 +51,13 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-message_WebLogic-2.1.3_</artifactId>
+            <artifactId>rules-message</artifactId>
             <version>${project.parent.version}</version>
             <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-service_WebLogic-2.1.3_</artifactId>
+            <artifactId>rules-service</artifactId>
             <version>${project.parent.version}</version>
             <type>ejb</type>
         </dependency>
@@ -68,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-rest_WebLogic-2.1.3_</artifactId>
+            <artifactId>rules-rest</artifactId>
             <version>${project.parent.version}</version>
             <type>war</type>
         </dependency>
@@ -104,7 +105,7 @@
                         <artifactId>wildfly-maven-plugin</artifactId>
                         <version>1.0.2.Final</version>
                         <configuration>
-                            <filename>${project.build.finalName}.${project.packaging}</filename>
+                            <filename>${project.build.finalName}-${envClassifier}.${project.packaging}</filename>
                             <targetDir>${project.build.directory}</targetDir>
                             <hostname>${hostname}</hostname>
                             <port>${port}</port>
@@ -138,6 +139,7 @@
                                             <groupId>${project.groupId}</groupId>
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
+                                            <classifier>${envClassifier}</classifier>
                                             <type>${project.packaging}</type>
                                         </artifactItem>
                                     </artifactItems>

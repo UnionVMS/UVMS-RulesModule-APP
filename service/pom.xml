@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rules-service_WebLogic-2.1.3_</artifactId>
+    <artifactId>rules-service</artifactId>
     <name>${project.parent.artifactId}-service</name>
     <packaging>ejb</packaging>
 
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-        <artifactId>rules_WebLogic-2.1.3_</artifactId>
+        <artifactId>rules</artifactId>
         <version>2.0.8-SNAPSHOT</version>
     </parent>
     
@@ -19,8 +19,6 @@
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
-        <jta.data-source>java:jboss/datasources/uvms_asset</jta.data-source>
-        <jta.platform>org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform</jta.platform>
     </properties>
 
     <profiles>
@@ -59,8 +57,9 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>rules-message_WebLogic-2.1.3_</artifactId>
+            <artifactId>rules-message</artifactId>
             <version>${project.parent.version}</version>
+            <classifier>${envClassifier}</classifier>
             <scope>provided</scope>
         </dependency>
         <!--dependency>
@@ -156,6 +155,7 @@
                 <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
+                    <classifier>${envClassifier}</classifier>
                 </configuration>
             </plugin>
             <plugin>
