@@ -24,11 +24,13 @@
                     <modules>
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>rules-message_WebLogic-2.1.3_</artifactId>
+                            <artifactId>rules-message</artifactId>
+                            <classifier>${envClassifier}</classifier>
                         </ejbModule>
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>rules-service_WebLogic-2.1.3_</artifactId>
+                            <artifactId>rules-service</artifactId>
+                            <classifier>${envClassifier}</classifier>
                         </ejbModule>
                         <jarModule>
                             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
@@ -37,7 +39,8 @@
                         <webModule>
                             <groupId>${project.groupId}</groupId>
                             <context-root>${project.parent.artifactId}</context-root>
-                            <artifactId>rules-rest_WebLogic-2.1.3_</artifactId>
+                            <artifactId>rules-rest</artifactId>
+                            <classifier>${envClassifier}</classifier>
                         </webModule>
                     </modules>
                     <skinnyWars>true</skinnyWars>
@@ -53,12 +56,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-message</artifactId>
             <version>${project.parent.version}</version>
+            <classifier>${envClassifier}</classifier>
             <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-service</artifactId>
             <version>${project.parent.version}</version>
+            <classifier>${envClassifier}</classifier>
             <type>ejb</type>
         </dependency>
         <dependency>
@@ -71,6 +76,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-rest</artifactId>
             <version>${project.parent.version}</version>
+            <classifier>${envClassifier}</classifier>
             <type>war</type>
         </dependency>
         <dependency>
