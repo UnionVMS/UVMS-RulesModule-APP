@@ -31,7 +31,7 @@
         <profile>
             <id>weblogic</id>
             <properties>
-                <jta.data-source>jdbc.uvms_movement</jta.data-source>
+                <jta.data-source>jdbc.uvms_rules</jta.data-source>
                 <jta.platform>org.hibernate.service.jta.platform.internal.WeblogicJtaPlatform</jta.platform>
             </properties>
         </profile>
