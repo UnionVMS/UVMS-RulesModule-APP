@@ -9,7 +9,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.branch.name>uvms-2.0.6-kili</release.branch.name>
+        <release.branch.name>uvms-2.1.0-jessamine-boffin</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
@@ -22,22 +22,22 @@
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
 
-        <usm4uvms.version>2.1.0-SNAPSHOT</usm4uvms.version>
-        <uvms.config.version>2.1.0-SNAPSHOT</uvms.config.version>
+        <usm4uvms.version>2.1.0</usm4uvms.version>
+        <uvms.config.version>2.1.0</uvms.config.version>
         <uvms.common.version>2.0.12</uvms.common.version>
-        <movement.model.version>2.1.0-SNAPSHOT</movement.model.version>
-        <exchange.model.version>2.1.0-SNAPSHOT</exchange.model.version>
-        <mobileterminal.model.version>2.1.0-SNAPSHOT</mobileterminal.model.version>
+        <movement.model.version>2.1.0</movement.model.version>
+        <exchange.model.version>2.1.0</exchange.model.version>
+        <mobileterminal.model.version>2.1.0</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
-        <asset.model.version>2.1.0-SNAPSHOT</asset.model.version>
-        <audit.model.version>2.1.0-SNAPSHOT</audit.model.version>
-        <rules.model.version>2.1.0-SNAPSHOT</rules.model.version>
+        <asset.model.version>2.1.0</asset.model.version>
+        <audit.model.version>2.1.0</audit.model.version>
+        <rules.model.version>2.1.0</rules.model.version>
 
         
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
 
-		<!--activity.model.version>0.5.1-SNAPSHOT</activity.model.version-->
+		
 
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
