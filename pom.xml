@@ -29,7 +29,7 @@
         <asset.model.version>2.0.5</asset.model.version>
         <mobileterminal.model.version>2.0.5</mobileterminal.model.version>
         <user.model.version>1.3.0</user.model.version>
-        <usm4uvms.version>2.0.11</usm4uvms.version>
+        <usm4uvms.version>2.0.16-SNAPSHOT</usm4uvms.version>
         <audit.model.version>2.0.5</audit.model.version>
         <maven.plugins.version>3.4</maven.plugins.version>
         <rules.model.version>2.0.7</rules.model.version>
