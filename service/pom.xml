@@ -86,6 +86,13 @@
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
         </dependency>
+		
+		  <dependency>
+                <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+                <artifactId>activity-model-fa</artifactId>
+                <version>${activity.model.fa}</version>
+            </dependency>
+
 
         <!-- drools dependencies -->
         <dependency>
