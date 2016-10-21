@@ -13,6 +13,7 @@
             <xsd:enumeration value="FLUX"/>
             <xsd:enumeration value="OTHER"/>
             <xsd:enumeration value="NAF"/>
+            <xsd:enumeration value="MANUAL"/>
         </xsd:restriction>
     </xsd:simpleType>
     

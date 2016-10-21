@@ -207,7 +207,7 @@ public class EventServiceBean implements EventService {
             LOG.info("marshall RulesBaseRequest successful");
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
             LOG.info("marshall SetFLUXFAReportMessageRequest successful");
-            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType().name(), request.getUsername());
+            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType(), request.getUsername());
         } catch (RulesModelMarshallException e) {
             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
         } catch (RulesServiceException e) {

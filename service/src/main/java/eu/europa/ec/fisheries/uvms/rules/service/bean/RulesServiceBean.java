@@ -158,16 +158,16 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException, RulesModelMarshallException {
+    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException {
         LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
         try {
-            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username);
+            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
             LOG.info("Sending back FluxFAResponse to exchange");
             FLUXResponseMessage fluxResponseMessageType= new FLUXResponseMessage();
             String fluxFAResponse=JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
             String fluxFAReponseText=ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
-             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             LOG.info("Flux Response message sent successfully to exchange");
         } catch (eu.europa.ec.fisheries.uvms.activity.model.exception.ModelMarshallException e) {
             throw new RulesServiceException(e.getMessage());
