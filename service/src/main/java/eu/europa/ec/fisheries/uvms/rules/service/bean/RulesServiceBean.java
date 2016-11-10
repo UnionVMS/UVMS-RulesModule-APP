@@ -956,13 +956,14 @@ public class RulesServiceBean implements RulesService {
     private List<String> getVicinityOf(RawMovementType rawMovement) {
         long start = System.currentTimeMillis();
         List<String> vicinityOf = new ArrayList<>();
+        /*
         try {
             MovementQuery query = new MovementQuery();
             query.setExcludeFirstAndLastSegment(true);
 
             RangeCriteria time = new RangeCriteria();
-            /*GregorianCalendar from = rawMovement.getPositionTime().toGregorianCalendar();
-            from.add(Calendar.HOUR_OF_DAY, -1);*/
+            //GregorianCalendar from = rawMovement.getPositionTime().toGregorianCalendar();
+            //from.add(Calendar.HOUR_OF_DAY, -1);
             Date fromDate = new Date(rawMovement.getPositionTime().getTime() - TWENTYFOUR_HOURS_IN_MILLISEC);
             time.setKey(RangeKeyType.DATE);
             time.setFrom(fromDate.toString());
@@ -1000,6 +1001,7 @@ public class RulesServiceBean implements RulesService {
         }
 
         LOG.debug("[ Get nearby vessels: {} ms ]", (System.currentTimeMillis() - start));
+        */
         return vicinityOf;
     }
 
