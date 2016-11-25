@@ -1199,18 +1199,9 @@ public class RulesServiceBean implements RulesService {
 
         // If we know the transponder type from the source, use it in the search criteria
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria transponderTypeCrit = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria();
-        switch(rawMovement.getSource()) {
-            case INMARSAT_C:
-                transponderTypeCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
-                transponderTypeCrit.setValue("INMARSAT_C");
-                criteria.getCriterias().add(transponderTypeCrit);
-                break;
-            case IRIDIUM:
-                transponderTypeCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
-                transponderTypeCrit.setValue("IRIDIUM");
-                criteria.getCriterias().add(transponderTypeCrit);
-                break;
-        }
+        transponderTypeCrit.setKey(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey.TRANSPONDER_TYPE);
+        transponderTypeCrit.setValue(rawMovement.getSource().name());
+        criteria.getCriterias().add(transponderTypeCrit);
 
         query.setMobileTerminalSearchCriteria(criteria);
         eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination pagination = new eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination();
