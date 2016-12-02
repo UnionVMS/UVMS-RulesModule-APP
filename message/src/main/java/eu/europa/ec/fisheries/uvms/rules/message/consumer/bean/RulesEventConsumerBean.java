@@ -83,6 +83,14 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> pingReceivedEvent;
 
     @Inject
+    @SetFLUXFAReportMessageReceivedEvent
+    Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
+    
+    @Inject
+    @SetFLUXMDRSyncMessageReceivedEvent
+    Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
+
+    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 

@@ -37,7 +37,7 @@ public class RawMovementFactMapper {
             fact.setMovementType(rawMovement.getMovementType().name());
         }
         if (rawMovement.getPositionTime() != null) {
-            fact.setPositionTime(rawMovement.getPositionTime().toGregorianCalendar().getTime());
+            fact.setPositionTime(rawMovement.getPositionTime());
         }
         fact.setReportedCourse(rawMovement.getReportedCourse());
         fact.setReportedSpeed(rawMovement.getReportedSpeed());

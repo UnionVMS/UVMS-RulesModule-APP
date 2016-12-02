@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
@@ -25,10 +26,14 @@ import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,6 +49,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.jms.TextMessage;
 
 import java.util.ArrayList;
@@ -73,9 +79,14 @@ public class RulesServiceBeanTest {
     Event<NotificationMessage> ticketCountEvent;
     @Mock
     ValidationServiceBean mockValidationServiceBean;
+    @Mock
+    Event<NotificationMessage> alarmReportCountEvent;
 
     @InjectMocks
     RulesServiceBean rulesServiceBean;
+
+    @Mock
+    private RulesDomainModel rulesDomainModel;
 
     @Before
     public void initMocks() {
@@ -137,17 +148,10 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.getCustomRuleResponse(response, messageId)).thenReturn(result);
 
         // Act
+        CustomRuleType mockCustomRule = mock(CustomRuleType.class);
+        when(rulesDomainModel.getByGuid(guid)).thenReturn(mockCustomRule);
         rulesServiceBean.getCustomRuleByGuid(guid);
 
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapGetCustomRule(guid);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.getCustomRuleResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
     @Ignore
@@ -202,50 +206,11 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId)).thenReturn(result);
 
         // Act
+        AlarmListResponseDto responseDto = mock(AlarmListResponseDto.class);
+        when(rulesDomainModel.getAlarmListByQuery(query)).thenReturn(responseDto);
         rulesServiceBean.getAlarmList(query);
-
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapAlarmList(query);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
-    @Test (expected = RulesServiceException.class)
-    public void testGetAlarmListThrowsExceptionWhenResponseIsNull() throws Exception {
-        // Setup
-        mockStatic(RulesDataSourceRequestMapper.class);
-        AlarmQuery query = new AlarmQuery();
-        String request = "request";
-        when(RulesDataSourceRequestMapper.mapAlarmList(query)).thenReturn(request);
-
-        String messageId = "messageId";
-        when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
-
-        TextMessage response = null;
-        when(mockConsumer.getMessage(messageId, TextMessage.class)).thenReturn(response);
-
-        mockStatic(RulesDataSourceResponseMapper.class);
-        GetAlarmListByQueryResponse result = new GetAlarmListByQueryResponse();
-        when(RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId)).thenReturn(result);
-
-        // Act
-        rulesServiceBean.getAlarmList(query);
-
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapAlarmList(query);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
-    }
 
     @Test
     public void testGetTicketList() throws Exception {
@@ -267,51 +232,14 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId)).thenReturn(result);
 
         // Act
+        TicketListResponseDto responseDto = mock(TicketListResponseDto.class);
+        when(rulesDomainModel.getTicketListByQuery(loggedInUser, query)).thenReturn(responseDto);
         rulesServiceBean.getTicketList(loggedInUser, query);
 
-        // Verify
         verifyStatic();
-        RulesDataSourceRequestMapper.mapTicketList(loggedInUser, query);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
-    @Test (expected = RulesServiceException.class)
-    public void testGetTicketListThrowsExceptionWhenResponseIsNull() throws Exception {
-        // Setup
-        mockStatic(RulesDataSourceRequestMapper.class);
-        TicketQuery query = new TicketQuery();
-        String loggedInUser = "loggedInUser";
-        String request = "request";
-        when(RulesDataSourceRequestMapper.mapTicketList(loggedInUser, query)).thenReturn(request);
 
-        String messageId = "messageId";
-        when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
-
-        TextMessage response = null;
-        when(mockConsumer.getMessage(messageId, TextMessage.class)).thenReturn(response);
-
-        mockStatic(RulesDataSourceResponseMapper.class);
-        GetTicketListByQueryResponse result = new GetTicketListByQueryResponse();
-        when(RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId)).thenReturn(result);
-
-        // Act
-        rulesServiceBean.getTicketList(loggedInUser, query);
-
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapTicketList(loggedInUser, query);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToTicketListFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
-    }
 
     @Ignore // Mocking events not working
     @Test
@@ -403,17 +331,9 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToGetPreviousReportsResponse(response, messageId)).thenReturn(result);
 
         // Act
+        List<PreviousReportType> previousReportTypes = new ArrayList<>();
+        when(rulesDomainModel.getPreviousReports()).thenReturn(previousReportTypes);
         rulesServiceBean.getPreviousMovementReports();
-
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapGetPreviousReports();
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetPreviousReportsResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
     @Test
@@ -440,17 +360,10 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapToUpdateTicketCountFromResponse(response, messageId)).thenReturn(new TicketType());
 
         // Act
+        TicketType mock = mock(TicketType.class);
+        when(rulesDomainModel.getTicketByAssetGuid(fact.getAssetGuid(), ruleName)).thenReturn(mock);
+        when(rulesDomainModel.updateTicketCount(mock)).thenReturn(mock);
         rulesServiceBean.timerRuleTriggered(ruleName, fact);
-
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapGetTicketByAssetAndRule(fact.getAssetGuid(), ruleName);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapToGetTicketByAssetGuidFromResponse(response, messageId);
-
-        verify(mockProducer, times(2)).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer, times(2)).getMessage(messageId, TextMessage.class);
     }
 
 //    @Test
@@ -562,17 +475,10 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(response, messageId)).thenReturn(result);
 
         // Act
+        AlarmReportType mock = mock(AlarmReportType.class);
+        when(rulesDomainModel.getAlarmReportByGuid(guid)).thenReturn(mock);
         rulesServiceBean.getAlarmReportByGuid(guid);
 
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapGetAlarmByGuid(guid);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapSingleAlarmFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
     @Test
@@ -594,17 +500,10 @@ public class RulesServiceBeanTest {
         when(RulesDataSourceResponseMapper.mapSingleTicketFromResponse(response, messageId)).thenReturn(result);
 
         // Act
+        TicketType mock = mock(TicketType.class);
+        when(rulesDomainModel.getTicketByGuid(guid)).thenReturn(mock);
         rulesServiceBean.getTicketByGuid(guid);
 
-        // Verify
-        verifyStatic();
-        RulesDataSourceRequestMapper.mapGetTicketByGuid(guid);
-
-        verifyStatic();
-        RulesDataSourceResponseMapper.mapSingleTicketFromResponse(response, messageId);
-
-        verify(mockProducer).sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL));
-        verify(mockConsumer).getMessage(messageId, TextMessage.class);
     }
 
     public void testReprocessAlarm() throws Exception {

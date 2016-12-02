@@ -28,7 +28,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.*;
@@ -80,7 +83,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
-        LOG.info("Sending message to {}", queue.name());
+        LOG.debug("Sending message to {}", queue.name());
 
         try {
             Session session = connector.getNewSession();
