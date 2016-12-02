@@ -21,13 +21,13 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.jms.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
-@Startup
 @Singleton
 public class JMSConnectorBean {
     final static org.slf4j.Logger LOG = LoggerFactory.getLogger(JMSConnectorBean.class);
 
-    @Resource(lookup = MessageConstants.CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
     private Connection connection;
@@ -35,6 +35,27 @@ public class JMSConnectorBean {
     @PostConstruct
     private void connectToQueue() {
         LOG.debug("Open connection to JMS broker");
+        InitialContext ctx;
+        try {
+            ctx = new InitialContext();
+        } catch (Exception e) {
+            LOG.error("Failed to get InitialContext",e);
+            throw new RuntimeException(e);
+        }
+        try {
+            connectionFactory = (QueueConnectionFactory) ctx.lookup(MessageConstants.CONNECTION_FACTORY);
+        } catch (NamingException ne) {
+            //if we did not find the connection factory we might need to add java:/ at the start
+            LOG.debug("Connection Factory lookup failed for " + MessageConstants.CONNECTION_FACTORY);
+            String wfName = "java:/" + MessageConstants.CONNECTION_FACTORY;
+            try {
+                LOG.debug("trying " + wfName);
+                connectionFactory = (QueueConnectionFactory) ctx.lookup(wfName);
+            } catch (Exception e) {
+                LOG.error("Connection Factory lookup failed for both " + MessageConstants.CONNECTION_FACTORY  + " and " + wfName);
+                throw new RuntimeException(e);
+            }
+        }
         try {
             connection = connectionFactory.createConnection();
             connection.start();

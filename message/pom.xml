@@ -21,8 +21,13 @@
         </dependency>
         <dependency>
 	        <groupId>eu.europa.ec.fisheries.uvms</groupId>
-	        <artifactId>${uvms.config.artifactId}</artifactId>
+	        <artifactId>uvms-config</artifactId>
 	        <version>${uvms.config.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>uvms-commons</artifactId>
+            <version>${uvms.common.version}</version>
         </dependency>
     </dependencies>
 
@@ -44,7 +49,6 @@
                 <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
-                    <classifier>${envClassifier}</classifier>
                 </configuration>
             </plugin>
         </plugins>

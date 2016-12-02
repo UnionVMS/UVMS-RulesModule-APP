@@ -18,25 +18,8 @@
         <application.version>${project.parent.version}</application.version>
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
-        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>oracle</id>
-            <properties>
-                <hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
-            </properties>
-        </profile>
-        <profile>
-            <id>weblogic</id>
-            <properties>
-                <jta.data-source>jdbc.uvms_rules</jta.data-source>
-                <jta.platform>org.hibernate.service.jta.platform.internal.WeblogicJtaPlatform</jta.platform>
-            </properties>
-        </profile>
-    </profiles>
-    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -60,7 +43,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-message</artifactId>
             <version>${project.parent.version}</version>
-            <classifier>${envClassifier}</classifier>
             <scope>provided</scope>
         </dependency>
         
@@ -148,7 +130,6 @@
                 <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
-                    <classifier>${envClassifier}</classifier>
                 </configuration>
             </plugin>
             <plugin>
@@ -168,12 +149,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
 </project>
