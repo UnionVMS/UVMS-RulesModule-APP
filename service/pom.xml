@@ -19,7 +19,7 @@
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
     </properties>
-    
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -148,7 +148,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

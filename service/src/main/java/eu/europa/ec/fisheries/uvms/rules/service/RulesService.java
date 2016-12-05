@@ -1,4 +1,3 @@
-package eu.europa.ec.fisheries.uvms.rules.service;
 /*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
@@ -10,8 +9,13 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
+import javax.ejb.Local;
+
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
@@ -31,10 +35,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-
-import javax.ejb.Local;
-import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @Local
 public interface RulesService {
@@ -170,11 +170,6 @@ public interface RulesService {
     long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException;
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
-
-
-    //void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException;
-
-    //void mapAndSendFLUXMdrRequestMessageToExchange(String request);
 
 
 }

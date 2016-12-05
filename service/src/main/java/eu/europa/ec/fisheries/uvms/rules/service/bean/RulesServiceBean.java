@@ -1,4 +1,3 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
 /*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
@@ -10,6 +9,7 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
@@ -120,9 +120,6 @@ public class RulesServiceBean implements RulesService {
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
 
     @EJB
-    ParameterService parameterService;
-
-    @EJB
     RulesResponseConsumer consumer;
 
     @EJB
@@ -139,7 +136,7 @@ public class RulesServiceBean implements RulesService {
     @Inject
     @TicketUpdateEvent
     private Event<NotificationMessage> ticketUpdateEvent;
-
+    
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
@@ -170,29 +167,6 @@ public class RulesServiceBean implements RulesService {
             return null;
         }
     }
-
-   /* @Override
-    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException {
-        LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
-        try {
-            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username);
-            producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
-            LOG.info("Sending back FluxFAResponse to exchange");
-            FLUXResponseMessageType fluxResponseMessageType= new FLUXResponseMessageType();
-            String fluxFAReponseText=ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponseMessageType,username);
-             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
-            LOG.info("Flux Response message sent successfully to exchange");
-        } catch (eu.europa.ec.fisheries.uvms.activity.model.exception.ModelMarshallException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (ExchangeModelMarshallException e){
-            throw new RulesServiceException(e.getMessage());
-        } catch(MessageException e) {
-            throw new RulesServiceException(e.getMessage());
-        }
-
-    }
-    */
-
 
     /**
      * {@inheritDoc}
@@ -1367,26 +1341,4 @@ public class RulesServiceBean implements RulesService {
         }
         return false;
     }
-
-
-	/*
-	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
-	 * to send a message to ExchangeModule
-	 *
-	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestMessageToExchange(java.lang.String)
-	 */
-	/*@Override
-	public void mapAndSendFLUXMdrRequestMessageToExchange(String request) {
-		String exchangerStrReq = null;
-		try {
-			exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-			producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
-		} catch (ExchangeModelMarshallException e) {
-			LOG.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestMessageToExchange(String) : "+e.getMessage());
-		} catch (MessageException e) {
-			LOG.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
-		}
-
-	}*/
-
 }

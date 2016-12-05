@@ -1,4 +1,3 @@
-package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 /*
 ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
 © European Union, 2015-2016.
@@ -10,10 +9,12 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
+import eu.europa.ec.fisheries.uvms.message.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
@@ -35,48 +36,43 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.*;
+import javax.naming.InitialContext;
 
 @Stateless
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
-    @Resource(mappedName = MessageConstants.QUEUE_DATASOURCE_INTERNAL)
-    private Queue localDbQueue;
-
-    @Resource(mappedName = MessageConstants.RULES_RESPONSE_QUEUE)
     private Queue responseQueue;
-
-    @Resource(mappedName = MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE)
     private Queue movementQueue;
-
-    @Resource(mappedName = ConfigConstants.CONFIG_MESSAGE_IN_QUEUE)
     private Queue configQueue;
-
-    @Resource(mappedName = MessageConstants.ASSET_MESSAGE_IN_QUEUE)
     private Queue assetQueue;
-
-    @Resource(mappedName = MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE)
     private Queue mobileTerminalQueue;
-
-    @Resource(mappedName = MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE)
     private Queue exchangeQueue;
-
-    @Resource(mappedName = MessageConstants.USER_MESSAGE_IN_QUEUE)
     private Queue userQueue;
-
-    @Resource(mappedName = MessageConstants.AUDIT_MESSAGE_IN_QUEUE)
     private Queue auditQueue;
 
-
-    /*@Resource(mappedName = MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE)
-    private Queue activityQueue;*/
-
-
-    @Inject
+    @EJB
     JMSConnectorBean connector;
 
-    private static final int CONFIG_TTL = 30000;
+    @PostConstruct
+    public void init() {
+        InitialContext ctx;
+        try {
+            ctx = new InitialContext();
+        } catch (Exception e) {
+            LOG.error("Failed to get InitialContext",e);
+            throw new RuntimeException(e);
+        }
+        responseQueue = JMSUtils.lookupQueue(ctx, MessageConstants.RULES_RESPONSE_QUEUE);
+        movementQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
+        configQueue = JMSUtils.lookupQueue(ctx, ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
+        assetQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ASSET_MESSAGE_IN_QUEUE);
+        mobileTerminalQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE);
+        exchangeQueue = JMSUtils.lookupQueue(ctx, MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
+        userQueue = JMSUtils.lookupQueue(ctx, MessageConstants.USER_MESSAGE_IN_QUEUE);
+        auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
+    }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {
         MessageProducer producer = session.createProducer(destination);
@@ -97,9 +93,6 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             message.setText(text);
 
             switch (queue) {
-                case INTERNAL:
-                    getProducer(session, localDbQueue).send(message);
-                    break;
                 case MOVEMENT:
                     getProducer(session, movementQueue).send(message);
                     break;
@@ -121,11 +114,6 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 case AUDIT:
                     getProducer(session, auditQueue).send(message);
                     break;
-
-               /* case ACTIVITY:
-                    getProducer(session, activityQueue).send(message);
-                    break;*/
-
                 default:
                     break;
             }

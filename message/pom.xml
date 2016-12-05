@@ -24,6 +24,11 @@
 	        <artifactId>uvms-config</artifactId>
 	        <version>${uvms.config.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>uvms-commons</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

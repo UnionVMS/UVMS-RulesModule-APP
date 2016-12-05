@@ -24,6 +24,8 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -43,15 +45,13 @@ public class RulesTimerBean {
     @EJB
     RulesValidator rulesValidator;
 
-    @Resource(lookup="java:/UvmsExecutorService")
-    private ManagedScheduledExecutorService executorService;
-
     ScheduledFuture comm;
     ScheduledFuture changes;
 
     @PostConstruct
     public void postConstruct() {
         LOG.info("RulesTimerBean init");
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
         CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
         comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
 
