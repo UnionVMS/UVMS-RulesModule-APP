@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
@@ -39,7 +40,9 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
@@ -49,6 +52,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
@@ -103,6 +107,9 @@ public class ValidationServiceBean implements ValidationService {
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
 
+    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    private RulesDomainModel rulesDomainModel;
+
     /**
      * {@inheritDoc}
      *
@@ -113,11 +120,9 @@ public class ValidationServiceBean implements ValidationService {
     public List<CustomRuleType> getCustomRulesByUser(String userName) throws RulesServiceException, RulesFaultException {
         LOG.info("Get all custom rules invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapGetCustomRulesByUser(userName);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToGetCustomRulesFromResponse(response, messageId);
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            List<CustomRuleType> customRulesByUser = rulesDomainModel.getCustomRulesByUser(userName);
+            return customRulesByUser;
+        } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -132,11 +137,9 @@ public class ValidationServiceBean implements ValidationService {
     public List<CustomRuleType> getRunnableCustomRules() throws RulesServiceException, RulesFaultException {
         LOG.info("Get all valid custom rules invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapGetRunnableCustomRules();
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            return RulesDataSourceResponseMapper.mapToGetRunnableCustomRulesFromResponse(response, messageId);
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            List<CustomRuleType> runnableCustomRuleList = rulesDomainModel.getRunnableCustomRuleList();
+            return runnableCustomRuleList;
+        } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -151,14 +154,9 @@ public class ValidationServiceBean implements ValidationService {
     public List<SanityRuleType> getSanityRules() throws RulesServiceException, RulesFaultException {
         LOG.info("Get all sanity rules invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapGetSanityRules();
-            LOG.info("Got request: {}", request);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            LOG.info("Sent request: {}", messageId);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-            LOG.info("Got response: {}", response.getText());
-            return RulesDataSourceResponseMapper.mapToGetSanityRulesFromResponse(response, messageId);
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            List<SanityRuleType> sanityRuleList = rulesDomainModel.getSanityRuleList();
+            return sanityRuleList;
+        } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -167,12 +165,13 @@ public class ValidationServiceBean implements ValidationService {
     public GetCustomRuleListByQueryResponse getCustomRulesByQuery(CustomRuleQuery query) throws RulesServiceException, RulesFaultException {
         LOG.info("Get custom rules by query invoked in service layer");
         try {
-            String request = RulesDataSourceRequestMapper.mapCustomRuleListByQuery(query);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            return RulesDataSourceResponseMapper.mapToCustomRuleListByQueryFromResponse(response, messageId);
-        } catch (RulesModelMapperException | MessageException | JMSException e) {
+            CustomRuleListResponseDto customRuleListByQuery = rulesDomainModel.getCustomRuleListByQuery(query);
+            GetCustomRuleListByQueryResponse response = new GetCustomRuleListByQueryResponse();
+            response.setTotalNumberOfPages(customRuleListByQuery.getTotalNumberOfPages());
+            response.setCurrentPage(customRuleListByQuery.getCurrentPage());
+            response.getCustomRules().addAll(customRuleListByQuery.getCustomRuleList());
+            return response;
+        } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -248,11 +247,8 @@ public class ValidationServiceBean implements ValidationService {
         CustomRuleType customRuleType = null;
         try {
             // Get email subscribers
-            String customRuleRequest = RulesDataSourceRequestMapper.mapGetCustomRule(ruleGuid);
-            String customRuleMessageId = producer.sendDataSourceMessage(customRuleRequest, DataSourceQueue.INTERNAL);
-            TextMessage customRuleMessage = consumer.getMessage(customRuleMessageId, TextMessage.class);
-            customRuleType = RulesDataSourceResponseMapper.getCustomRuleResponse(customRuleMessage, customRuleMessageId);
-        } catch (RulesModelMapperException | RulesFaultException | MessageException | JMSException e) {
+            customRuleType = rulesDomainModel.getByGuid(ruleGuid);
+        } catch (RulesModelException e) {
             LOG.error("[ Failed to fetch rule when sending email to subscribers! ] {}", e.getMessage());
         }
 
@@ -266,9 +262,7 @@ public class ValidationServiceBean implements ValidationService {
                         String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
                         TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
                         GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
-
                         String emailAddress = userResponse.getContactDetails().getEMail();
-
                         sendToEmail(emailAddress, ruleName, fact);
                     } catch (Exception e) {
                         // If a mail attempt fails, proceed with the rest
@@ -281,10 +275,8 @@ public class ValidationServiceBean implements ValidationService {
 
     private void updateLastTriggered(String ruleGuid) {
         try {
-            String request = RulesDataSourceRequestMapper.mapUpdateCustomRuleLastTriggered(ruleGuid);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-        } catch (RulesModelMapperException | MessageException e) {
+            rulesDomainModel.updateLastTriggeredCustomRule(ruleGuid);
+        } catch (RulesModelException e) {
             LOG.warn("[ Failed to update last triggered date for rule {} ]", ruleGuid);
         }
     }
@@ -295,7 +287,7 @@ public class ValidationServiceBean implements ValidationService {
         try {
             MovementType exchangeMovement = fact.getExchangeMovement();
 
-            XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
+            //XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
 
             String userRequest = UserModuleRequestMapper.mapToFindOrganisationsRequest(endpoint);
             String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
@@ -322,7 +314,7 @@ public class ValidationServiceBean implements ValidationService {
                         LOG.info("Service {} was Stopped, trying the next one, if possible.", service.getName());
                         continue;
                     }
-                    String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, date, ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
+                    String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, new Date(), ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
                     String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
                     TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
@@ -333,7 +325,7 @@ public class ValidationServiceBean implements ValidationService {
             }
 
             LOG.info("[ No plugin of the correct type found. Nothing was sent ]");
-        } catch (ExchangeModelMapperException | MessageException | DatatypeConfigurationException | ModelMarshallException | RulesModelMarshallException e) {
+        } catch (ExchangeModelMapperException | MessageException | ModelMarshallException | RulesModelMarshallException e) {
             LOG.error("[ Failed to send to endpoint! ] {}", e.getMessage());
         }
         
@@ -507,19 +499,16 @@ public class ValidationServiceBean implements ValidationService {
                 }
             }
 
+            TicketType createdTicket = rulesDomainModel.createTicket(ticket);
             String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
 
-            // Notify long-polling clients of the new ticket
-            CreateTicketResponse createTicketResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateTicketResponse.class);
-            ticketEvent.fire(new NotificationMessage("guid", createTicketResponse.getTicket().getGuid()));
+            ticketEvent.fire(new NotificationMessage("guid", createdTicket.getGuid()));
 
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createTicketResponse.getTicket().getGuid(), null, ticket.getUpdatedBy());
-        } catch (RulesModelMapperException | MessageException e) {
+            sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.CREATE, createdTicket.getGuid(), null, ticket.getUpdatedBy());
+        } catch (RulesModelMapperException | RulesModelException e) {
             LOG.error("[ Failed to create ticket! ] {}", e.getMessage());
         }
     }
@@ -554,19 +543,17 @@ public class ValidationServiceBean implements ValidationService {
             alarmItems.add(alarmItem);
             alarmReport.getAlarmItem().addAll(alarmItems);
 
-            String request = RulesDataSourceRequestMapper.mapCreateAlarmReport(alarmReport);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            AlarmReportType createdAlarmReport = rulesDomainModel.createAlarmReport(alarmReport);
+
 
             // Notify long-polling clients of the new alarm report
-            CreateAlarmReportResponse createAlarmResponse = JAXBMarshaller.unmarshallTextMessage(response, CreateAlarmReportResponse.class);
-            alarmReportEvent.fire(new NotificationMessage("guid", createAlarmResponse.getAlarm().getGuid()));
+            alarmReportEvent.fire(new NotificationMessage("guid", createdAlarmReport.getGuid()));
 
             // Notify long-polling clients of the change (no vlaue since FE will need to fetch it)
             alarmReportCountEvent.fire(new NotificationMessage("alarmCount", null));
 
-            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createAlarmResponse.getAlarm().getGuid(), null, alarmReport.getUpdatedBy());
-        } catch (RulesModelMapperException | MessageException e) {
+            sendAuditMessage(AuditObjectTypeEnum.ALARM, AuditOperationEnum.CREATE, createdAlarmReport.getGuid(), null, alarmReport.getUpdatedBy());
+        } catch (RulesModelException e) {
             LOG.error("[ Failed to create alarm! ] {}", e.getMessage());
         }
     }
@@ -574,12 +561,9 @@ public class ValidationServiceBean implements ValidationService {
     @Override
     public long getNumberOfOpenAlarmReports() throws RulesServiceException, RulesFaultException {
         try {
-            String request = RulesDataSourceRequestMapper.getNumberOfOpenAlarmReports();
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            return RulesDataSourceResponseMapper.mapGetNumberOfOpenAlarmReportsFromResponse(response, messageId);
-        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            long numberOfOpenAlarms = rulesDomainModel.getNumberOfOpenAlarms();
+            return numberOfOpenAlarms;
+        } catch (RulesModelException e) {
             LOG.error("[ Error when getting number of open alarms ] {}", e.getMessage());
             throw new RulesServiceException("[ Error when getting number of open alarms. ]");
         }
@@ -588,12 +572,9 @@ public class ValidationServiceBean implements ValidationService {
     @Override
     public long getNumberOfOpenTickets(String userName) throws RulesServiceException, RulesFaultException {
         try {
-            String request = RulesDataSourceRequestMapper.getNumberOfOpenTickets(userName);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.INTERNAL);
-            TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
-            return RulesDataSourceResponseMapper.mapGetNumberOfOpenTicketsFromResponse(response, messageId);
-        } catch (MessageException | JMSException | RulesModelMapperException e) {
+            long numberOfOpenTickets = rulesDomainModel.getNumberOfOpenTickets(userName);
+            return numberOfOpenTickets;
+        } catch (RulesModelException e) {
             LOG.error("[ Error when getting number of open tickets ] {}", e.getMessage());
             throw new RulesServiceException("[ Error when getting number of open alarms. ]");
         }

@@ -37,6 +37,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/customrules")
 @Stateless

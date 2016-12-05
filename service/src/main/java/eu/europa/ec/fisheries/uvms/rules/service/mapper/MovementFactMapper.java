@@ -124,7 +124,7 @@ public class MovementFactMapper {
             fact.setMovementType(movement.getMovementType().name());
         }
         if (movement.getPositionTime() != null) {
-            fact.setPositionTime(movement.getPositionTime().toGregorianCalendar().getTime());
+            fact.setPositionTime(movement.getPositionTime());
         }
         fact.setReportedCourse(movement.getReportedCourse());
         fact.setReportedSpeed(movement.getReportedSpeed());

@@ -21,11 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class CheckCommunicationTask implements Runnable {
-    private static final int THRESHOLD = 2;
+    private static final long TWO_HOURS_IN_MILLISECONDS = 7200000;
 
     private final static Logger LOG = LoggerFactory.getLogger(CheckCommunicationTask.class);
 
@@ -52,9 +51,10 @@ public class CheckCommunicationTask implements Runnable {
                 fact.setMovementGuid(previousReport.getMovementGuid());
                 fact.setAssetGuid(previousReport.getAssetGuid());
 
-                GregorianCalendar gregCal = previousReport.getPositionTime().toGregorianCalendar();
-                gregCal.add(GregorianCalendar.HOUR, THRESHOLD);
-                fact.setDeadline(gregCal.getTime());
+                Date positionTime = previousReport.getPositionTime();
+                long time = positionTime.getTime() + TWO_HOURS_IN_MILLISECONDS;
+                Date threshold = new Date(time+ TWO_HOURS_IN_MILLISECONDS);
+                fact.setDeadline(threshold);
 
                 if (fact.getDeadline().getTime() <= new Date().getTime()) {
                     LOG.info("\t==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getAssetGuid());

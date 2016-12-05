@@ -31,6 +31,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Startup
 @Singleton
@@ -57,13 +59,19 @@ public class RulesValidator {
     private KieFileSystem customKfs;
     private KieContainer customKcontainer;
 
+    @PostConstruct
     public void init() {
-        initServices();
-        updateSanityRules();
-        updateCustomRules();
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                initServices();
+                updateSanityRules();
+                updateCustomRules();
+            }
+        });
     }
 
-    @PostConstruct
     private void initServices() {
         kieServices = KieServices.Factory.get();
     }
@@ -73,11 +81,8 @@ public class RulesValidator {
         try {
             // Fetch sanity rules from DB
             List<SanityRuleType> sanityRules = validationService.getSanityRules();
-            LOG.info("Got all sanity rules invoked in service layer");
             if (sanityRules != null && !sanityRules.isEmpty()) {
-                LOG.info("Sanity rules ok");
                 if (checkForChanges(sanityRules)) {
-                    LOG.info("Build rules");
                     currentSanityRules = sanityRules;
                     // Add sanity rules
                     String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
@@ -96,7 +101,6 @@ public class RulesValidator {
             LOG.error("[ Error when getting sanity rules ]");
             // TODO: Throw exception???
         }
-        LOG.info("Update sanity rules done");
     }
 
     @Lock(LockType.WRITE)
@@ -202,7 +206,6 @@ public class RulesValidator {
 
     private boolean checkForChanges(List<SanityRuleType> sanityRules) {
         if (currentSanityRules == null || sanityRules.size() != currentSanityRules.size()) {
-            LOG.info("First fetch");
             return true;
         } else {
             for (int i = 0; i < sanityRules.size(); i++) {
