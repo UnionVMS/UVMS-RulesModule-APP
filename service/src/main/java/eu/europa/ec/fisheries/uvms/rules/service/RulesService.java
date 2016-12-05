@@ -29,8 +29,10 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsRes
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
@@ -169,8 +171,5 @@ public interface RulesService {
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
 
-    void setFLUXFAReportMessageReceived(String fluxFAReportMessage, String pluginType, String username) throws RulesServiceException;
-
-	void mapAndSendFLUXMdrRequestMessageToExchange(String request);
 
 }

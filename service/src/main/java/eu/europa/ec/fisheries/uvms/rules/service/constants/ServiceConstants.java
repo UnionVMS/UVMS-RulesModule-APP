@@ -16,4 +16,6 @@ public class ServiceConstants {
     // Rule GUID for Asset not sending rule
     public static final String ASSET_NOT_SENDING_RULE = "Asset not sending";
 
+    public static final String DB_ACCESS_RULES_DOMAIN_MODEL = "java:global/rules-dbaccess-module/rules-dbaccess-domain/RulesDomainModelBean!eu.europa.ec.fisheries.remote.RulesDomainModel";
+
 }

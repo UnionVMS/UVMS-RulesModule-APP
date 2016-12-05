@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.longpolling.service;
 
 import java.io.IOException;
 
+import javax.ejb.EJB;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.Json;
@@ -40,7 +41,7 @@ public class LongPollingHttpServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    @Inject
+    @EJB
     LongPollingContextHelper asyncContexts;
 
     @Override
