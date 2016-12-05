@@ -31,6 +31,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Startup
 @Singleton
@@ -59,9 +61,15 @@ public class RulesValidator {
 
     @PostConstruct
     public void init() {
-        initServices();
-        updateSanityRules();
-        updateCustomRules();
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                initServices();
+                updateSanityRules();
+                updateCustomRules();
+            }
+        });
     }
 
     private void initServices() {
