@@ -162,6 +162,7 @@ public interface RulesService {
 
     void setFLUXFAReportMessageReceived(String fluxFAReportMessage, PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException;
 
-	void mapAndSendFLUXMdrRequestMessageToExchange(String request);
+	void mapAndSendFLUXMdrRequestToExchange(String request);
 
+    void mapAndSendFLUXMdrResponseToMdrModule(String request);
 }
