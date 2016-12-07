@@ -23,7 +23,7 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <uvms.config.version>2.0.8</uvms.config.version>
-        <uvms.common.version>2.0.7</uvms.common.version>
+        <uvms.common.version>2.0.13-SNAPSHOT</uvms.common.version>
         <movement.model.version>2.0.5</movement.model.version>
         <exchange.model.version>2.0.8</exchange.model.version>
         <asset.model.version>2.0.5</asset.model.version>
