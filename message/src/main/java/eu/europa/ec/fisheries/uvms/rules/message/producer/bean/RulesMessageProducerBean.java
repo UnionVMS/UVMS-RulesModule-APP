@@ -57,6 +57,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Resource(mappedName = MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE)
     private Queue activityQueue;
 
+    @Resource(mappedName = MessageConstants.MDR_EVENT)
+    private Queue mdrEventQueue;
+
     @Inject
     JMSConnectorBean connector;
 
@@ -108,12 +111,15 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 case ACTIVITY:
                     getProducer(session, activityQueue).send(message);
                     break;
+                case MDR_EVENT:
+                    getProducer(session, mdrEventQueue).send(message);
+                    break;
                 default:
                     break;
             }
             return message.getJMSMessageID();
         } catch (Exception e) {
-            LOG.error("[ Error when sending message. ] {}", e.getMessage());
+            LOG.error("[ Error when sending message. ] {}", e);
             throw new MessageException("[ Error when sending message. ]", e);
         }
     }

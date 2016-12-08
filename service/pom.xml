@@ -87,11 +87,17 @@
             <version>${joda-time.version}</version>
         </dependency>
 		
-		  <dependency>
-                <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
-                <artifactId>activity-model-fa</artifactId>
-                <version>${activity.model.fa}</version>
-            </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+            <artifactId>activity-model-fa</artifactId>
+            <version>${activity.model.fa}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
+            <artifactId>mdr-model</artifactId>
+            <version>${mdr.model.version}</version>
+        </dependency>
 
 
         <!-- drools dependencies -->

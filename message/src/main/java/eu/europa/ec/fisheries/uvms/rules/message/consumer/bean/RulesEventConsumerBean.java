@@ -68,6 +68,10 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
 
     @Inject
+    @GetFLUXMDRSyncMessageResponseEvent
+    Event<EventMessage> getFluxMdrSynchMessageResponse;
+
+    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -77,37 +81,39 @@ public class RulesEventConsumerBean implements MessageListener {
         String id = UUID.randomUUID().toString();
         MDC.put(MessageConstants.MDC_IDENTIFIER, id);
 
-        LOG.info("Message received in rules");
-
+        LOG.info("Message received in rules..");
         TextMessage textMessage = (TextMessage) message;
         try {
 
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
 
             switch (request.getMethod()) {
-                case SET_MOVEMENT_REPORT:
+                case SET_MOVEMENT_REPORT :
                     setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
                     break;
                 case PING:
                     pingReceivedEvent.fire(new EventMessage(textMessage));
                     break;
-                case GET_CUSTOM_RULE:
+                case GET_CUSTOM_RULE :
                     getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
                     break;
-                case GET_TICKETS_BY_MOVEMENTS:
+                case GET_TICKETS_BY_MOVEMENTS :
                     getTicketsByMovementsEvent.fire(new EventMessage(textMessage));
                     break;
-                case COUNT_TICKETS_BY_MOVEMENTS:
+                case COUNT_TICKETS_BY_MOVEMENTS :
                     countTicketByMovementsEvent.fire(new EventMessage(textMessage));
                     break;
-                case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
+                case GET_TICKETS_AND_RULES_BY_MOVEMENTS :
                     getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
                     break;
-                case SET_FLUX_FA_REPORT:
+                case SET_FLUX_FA_REPORT :
                     setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
                     break;
-                case SET_FLUX_MDR_SYNC_REQUEST:
+                case SET_FLUX_MDR_SYNC_REQUEST :
                 	setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case GET_FLUX_MDR_SYNC_RESPONSE :
+                    getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());

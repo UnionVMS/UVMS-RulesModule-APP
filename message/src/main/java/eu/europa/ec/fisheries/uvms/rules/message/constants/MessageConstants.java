@@ -23,4 +23,6 @@ public class MessageConstants {
     public static final String MDC_IDENTIFIER = "clientName";
 
     public static final String MODULE_NAME = "rules";
+
+    public static final String  MDR_EVENT = "java:/jms/queue/UVMSMdrEvent";;
 }
