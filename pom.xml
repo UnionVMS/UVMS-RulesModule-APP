@@ -22,7 +22,7 @@
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
 
-        <usm4uvms.version>2.1.0</usm4uvms.version>
+        <usm4uvms.version>2.1.4-SNAPSHOT</usm4uvms.version>
         <uvms.config.version>2.1.2</uvms.config.version>
         <uvms.common.version>2.0.13</uvms.common.version>
         <movement.model.version>2.1.1</movement.model.version>
