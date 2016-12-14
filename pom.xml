@@ -3,7 +3,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>2.1.4-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -22,16 +22,16 @@
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
 
-        <usm4uvms.version>2.1.4-SNAPSHOT</usm4uvms.version>
-        <uvms.config.version>2.1.2</uvms.config.version>
-        <uvms.common.version>2.0.13</uvms.common.version>
-        <movement.model.version>2.1.1</movement.model.version>
-        <exchange.model.version>2.1.1</exchange.model.version>
-        <mobileterminal.model.version>2.1.1</mobileterminal.model.version>
+        <usm4uvms.version>3.0.0-SNAPSHOT</usm4uvms.version>
+        <uvms.config.version>3.0.0-SNAPSHOT</uvms.config.version>
+        <uvms.common.version>2.0.14-SNAPSHOT</uvms.common.version>
+        <movement.model.version>3.0.0-SNAPSHOT</movement.model.version>
+        <exchange.model.version>3.0.0-SNAPSHOT</exchange.model.version>
+        <mobileterminal.model.version>3.0.0-SNAPSHOT</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
-        <asset.model.version>2.1.1</asset.model.version>
-        <audit.model.version>2.1.1</audit.model.version>
-        <rules.model.version>2.1.1</rules.model.version>
+        <asset.model.version>3.0.0-SNAPSHOT</asset.model.version>
+        <audit.model.version>3.0.0-SNAPSHOT</audit.model.version>
+        <rules.model.version>3.0.0-SNAPSHOT</rules.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
