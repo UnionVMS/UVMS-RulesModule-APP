@@ -32,12 +32,17 @@
         <asset.model.version>2.1.1</asset.model.version>
         <audit.model.version>2.1.1</audit.model.version>
         <rules.model.version>2.1.1</rules.model.version>
+        <activity.model.version>0.5.6</activity.model.version>
+        <activity.model.fa>0.5.5</activity.model.fa>
+        <mdr.model.version>0.5.0-SNAPSHOT</mdr.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
 		<activity.model.version>0.5.1</activity.model.version>
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
+
+        <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
     </properties>
 
     <dependencies>
@@ -119,9 +124,31 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</connection>
+        <connection>${scm.connection}</connection>
       <tag>HEAD</tag>
   </scm>
+
+    <profiles>
+        <profile>
+			<id>dg-mare</id>
+            <distributionManagement>
+                <repository>
+                    <id>digit-releases</id>
+                    <name>DG DIGIT Repository</name>
+                    <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>digit-snapshots</id>
+                    <name>DG DIGIT Snapshot Repository</name>
+                    <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+			<properties>
+				<scm.connection>scm:git:https://emserveje@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-RulesModule-APP.git</scm.connection>
+			</properties>
+		</profile>
+    </profiles>
 
     <build>
         <plugins>

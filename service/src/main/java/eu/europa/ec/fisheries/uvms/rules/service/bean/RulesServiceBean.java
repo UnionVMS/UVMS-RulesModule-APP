@@ -1341,4 +1341,68 @@ public class RulesServiceBean implements RulesService {
         }
         return false;
     }
+
+    @Override
+    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException {
+        LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
+        try {
+            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username, pluginType.toString());
+            producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
+            LOG.info("Sending back FluxFAResponse to exchange");
+            FLUXResponseMessage fluxResponseMessageType= new FLUXResponseMessage();
+            String fluxFAResponse=JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
+            String fluxFAReponseText=ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
+            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+            LOG.info("Flux Response message sent successfully to exchange");
+        } catch (eu.europa.ec.fisheries.uvms.activity.model.exception.ModelMarshallException e) {
+            throw new RulesServiceException(e.getMessage());
+        } catch (ExchangeModelMarshallException e){
+            throw new RulesServiceException(e.getMessage());
+        } catch(MessageException e) {
+            throw new RulesServiceException(e.getMessage());
+        }
+
+    }
+
+    /*
+	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
+	 * to send a message to ExchangeModule
+	 *
+	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestToExchange(java.lang.String)
+	 */
+    @Override
+    public void mapAndSendFLUXMdrRequestToExchange(String request) {
+        String exchangerStrReq;
+        try {
+            exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
+            if(StringUtils.isNotEmpty(exchangerStrReq)){
+                producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
+            } else {
+                LOG.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
+            }
+
+        } catch (ExchangeModelMarshallException e) {
+            LOG.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : "+e.getMessage());
+        } catch (MessageException e) {
+            LOG.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void mapAndSendFLUXMdrResponseToMdrModule(String request) {
+        String mdrSyncResponseReq;
+        try {
+            mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
+            if(StringUtils.isNotEmpty(mdrSyncResponseReq)){
+                producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
+            } else {
+                LOG.error("ERROR : REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
+            }
+        } catch (MdrModelMarshallException e) {
+            LOG.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : "+e.getMessage());
+        } catch (MessageException e) {
+            LOG.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
+        }
+
+    }
 }
