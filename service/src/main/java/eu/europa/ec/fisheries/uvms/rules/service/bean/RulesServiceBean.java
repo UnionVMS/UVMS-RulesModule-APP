@@ -47,6 +47,7 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRespons
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
@@ -56,6 +57,10 @@ import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -95,8 +100,10 @@ import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContext;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -1351,7 +1358,7 @@ public class RulesServiceBean implements RulesService {
             LOG.info("Sending back FluxFAResponse to exchange");
             FLUXResponseMessage fluxResponseMessageType= new FLUXResponseMessage();
             String fluxFAResponse=JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
-            String fluxFAReponseText=ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
+            String fluxFAReponseText= ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             LOG.info("Flux Response message sent successfully to exchange");
         } catch (eu.europa.ec.fisheries.uvms.activity.model.exception.ModelMarshallException e) {
