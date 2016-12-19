@@ -87,7 +87,15 @@
             <version>${joda-time.version}</version>
         </dependency>
 
-        <!-- drools dependencies -->
+
+		<dependency>
+			<groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
+			<artifactId>mdr-model</artifactId>
+			<version>${mdr.model.version}</version>
+		</dependency>
+
+
+		<!-- drools dependencies -->
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
@@ -115,6 +123,11 @@
                     <artifactId>gt-geojson</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+            <artifactId>activity-model</artifactId>
+            <version>${activity.model.version}</version>
         </dependency>
     </dependencies>
 

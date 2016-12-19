@@ -51,6 +51,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Queue exchangeQueue;
     private Queue userQueue;
     private Queue auditQueue;
+    private Queue activityQueue;
+    private Queue mdrEventQueue;
 
     @EJB
     JMSConnectorBean connector;
@@ -72,6 +74,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         exchangeQueue = JMSUtils.lookupQueue(ctx, MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
         userQueue = JMSUtils.lookupQueue(ctx, MessageConstants.USER_MESSAGE_IN_QUEUE);
         auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
+        activityQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
+        mdrEventQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MDR_EVENT);
     }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {
@@ -113,6 +117,12 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     break;
                 case AUDIT:
                     getProducer(session, auditQueue).send(message);
+                    break;
+                case ACTIVITY:
+                    getProducer(session, activityQueue).send(message);
+                    break;
+                case MDR_EVENT:
+                    getProducer(session, mdrEventQueue).send(message);
                     break;
                 default:
                     break;
@@ -168,3 +178,4 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     }
 
 }
+

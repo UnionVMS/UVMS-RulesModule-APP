@@ -49,9 +49,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import java.util.List;
 
@@ -214,6 +211,51 @@ public class EventServiceBean implements EventService {
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
             LOG.error("[ Error when fetching tickets and rules by movements ] {}", e.getMessage());
             errorEvent.fire(message);
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void setFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
+        try {
+            LOG.info("get SetFLUXFAReportMessageReceived inside rules");
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            LOG.info("marshall RulesBaseRequest successful");
+            SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
+            LOG.info("marshall SetFLUXFAReportMessageRequest successful");
+            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType(), request.getUsername());
+        } catch (RulesModelMarshallException e) {
+            LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
+        } catch (RulesServiceException e) {
+            LOG.error("[ Error when sending FLUXFAReportMessage to rules. ] {}", e);
+        }
+
+    }
+
+    public void setFLUXMDRSyncRequestMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message){
+    	 try {
+	    	 LOG.info("@SetFLUXMDRSyncMessageReceivedEvent recieved inside Rules Module.");
+	         RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+	         LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
+	         SetFLUXMDRSyncMessageRulesRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesRequest.class);
+	         LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
+	         rulesService.mapAndSendFLUXMdrRequestToExchange(request.getRequest());
+    	 } catch (RulesModelMarshallException e) {
+             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
+         }
+    }
+
+
+    public void getFLUXMDRSyncResponseMessageReceivedEvent(@Observes @GetFLUXMDRSyncMessageResponseEvent EventMessage message){
+        try {
+            LOG.info("@SetFLUXMDRSyncMessageReceivedEvent recieved inside Rules Module.");
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
+            SetFLUXMDRSyncMessageRulesResponse request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesResponse.class);
+            LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
+            rulesService.mapAndSendFLUXMdrResponseToMdrModule(request.getRequest());
+        } catch (RulesModelMarshallException e) {
+            LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
         }
     }
 

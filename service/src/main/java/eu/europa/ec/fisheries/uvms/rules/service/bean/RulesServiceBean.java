@@ -47,6 +47,8 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRespons
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
@@ -56,6 +58,10 @@ import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -95,8 +101,10 @@ import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContext;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -1340,5 +1348,65 @@ public class RulesServiceBean implements RulesService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException {
+        LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
+        try {
+            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username, pluginType.toString());
+            producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
+            LOG.info("Sending back FluxFAResponse to exchange");
+            FLUXResponseMessage fluxResponseMessageType= new FLUXResponseMessage();
+            String fluxFAResponse=JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
+            String fluxFAReponseText= ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
+            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+            LOG.info("Flux Response message sent successfully to exchange");
+        } catch (ActivityModelMarshallException | ExchangeModelMarshallException | MessageException e) {
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+
+    }
+
+    /*
+	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
+	 * to send a message to ExchangeModule
+	 *
+	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestToExchange(java.lang.String)
+	 */
+    @Override
+    public void mapAndSendFLUXMdrRequestToExchange(String request) {
+        String exchangerStrReq;
+        try {
+            exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
+            if(StringUtils.isNotEmpty(exchangerStrReq)){
+                producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
+            } else {
+                LOG.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
+            }
+
+        } catch (ExchangeModelMarshallException e) {
+            LOG.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : "+e.getMessage());
+        } catch (MessageException e) {
+            LOG.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void mapAndSendFLUXMdrResponseToMdrModule(String request) {
+        String mdrSyncResponseReq;
+        try {
+            mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
+            if(StringUtils.isNotEmpty(mdrSyncResponseReq)){
+                producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
+            } else {
+                LOG.error("ERROR : REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
+            }
+        } catch (MdrModelMarshallException e) {
+            LOG.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : "+e.getMessage());
+        } catch (MessageException e) {
+            LOG.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
+        }
+
     }
 }
