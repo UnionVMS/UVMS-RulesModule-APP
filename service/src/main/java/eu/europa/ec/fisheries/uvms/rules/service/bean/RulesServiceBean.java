@@ -47,6 +47,7 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryRespons
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
@@ -1361,12 +1362,8 @@ public class RulesServiceBean implements RulesService {
             String fluxFAReponseText= ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             LOG.info("Flux Response message sent successfully to exchange");
-        } catch (eu.europa.ec.fisheries.uvms.activity.model.exception.ModelMarshallException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (ExchangeModelMarshallException e){
-            throw new RulesServiceException(e.getMessage());
-        } catch(MessageException e) {
-            throw new RulesServiceException(e.getMessage());
+        } catch (ActivityModelMarshallException | ExchangeModelMarshallException | MessageException e) {
+            throw new RulesServiceException(e.getMessage(), e);
         }
 
     }

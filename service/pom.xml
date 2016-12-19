@@ -89,12 +89,6 @@
 
 
 		<dependency>
-			<groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
-			<artifactId>activity-model-fa</artifactId>
-			<version>${activity.model.fa}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
 			<artifactId>mdr-model</artifactId>
 			<version>${mdr.model.version}</version>
@@ -138,7 +132,7 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
             <artifactId>activity-model</artifactId>
-            <version>0.5.7-SNAPSHOT</version>
+            <version>${activity.model.version}</version>
         </dependency>
     </dependencies>
 
