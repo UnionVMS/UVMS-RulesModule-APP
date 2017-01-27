@@ -9,7 +9,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.branch.name>uvms-3.0.0-boba-fett</release.branch.name>
+        <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
@@ -146,7 +146,7 @@
 
 			<properties>
 				<scm.connection>scm:git:https://emserveje@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-RulesModule-APP.git</scm.connection>
-			<release.branch.name>uvms-3.0.0-boba-fett</release.branch.name></properties>
+			<release.branch.name>uvms-3.0.5-C3PO</release.branch.name></properties>
 		</profile>
     </profiles>
 
