@@ -128,6 +128,9 @@ public class RulesServiceBean implements RulesService {
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
 
     @EJB
+    RulesEngine rulesEngine;
+
+    @EJB
     RulesResponseConsumer consumer;
 
     @EJB

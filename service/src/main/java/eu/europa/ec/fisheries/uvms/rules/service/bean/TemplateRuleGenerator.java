@@ -19,17 +19,12 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.Rule;
 import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
 
-public abstract class TemplateDatasource {
-	public abstract List<String> computeRules(Template template);
+public abstract class TemplateRuleGenerator {
+	public abstract List<String> computeRules(Template template, List<Rule> rules);
 	public abstract TemplateType getTemplateType();
-	//public abstract List<String> getAttributes();
-
-/*	@PostConstruct
-	public void registerTemplateDatasource() {
-		RuleLifecycleContainer.registerTemplateDatasource(this, getTemplateType());
-	}*/
 }

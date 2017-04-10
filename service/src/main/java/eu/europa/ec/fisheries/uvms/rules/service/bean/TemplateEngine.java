@@ -17,41 +17,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.Rule;
 import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
 
-@Singleton
+@Stateless
 public class TemplateEngine {
 
     @Inject
-    RulesDomainModel rulesDb;
+    private RulesDomainModel rulesDb;
 
-	RuleLifecycleContainer ruleLifecycleContainer;
-
-    @PostConstruct
-    public void initialize() {
-        ruleLifecycleContainer = new RuleLifecycleContainer();
-    }
+    @Inject
+	private RuleLifecycleContainer ruleLifecycleContainer;
     
     public void evaluate(AbstractFact fact) throws RulesModelException {
     	List<String> rules = generateAllRules();
-    	ruleLifecycleContainer.triggerEvaluation(rules, fact);    	                
+    	ruleLifecycleContainer.triggerEvaluation(rules, fact);
     }
     
     private List<String> generateAllRules() throws RulesModelException {
-        List<Template> templates = rulesDb.getTemplates();
-        List<String> allRules = new ArrayList<String>();
+        List<Template> templates = rulesDb.getAllTemplates();
+        List<String> allRules = new ArrayList<>();
         for (Template template : templates) {
-        	TemplateDatasource datasource = RuleLifecycleContainer.findDataSource(template);
-        	List<String> rules  = datasource.computeRules(template);
-        	allRules.addAll(rules);
+        	TemplateRuleGenerator datasource = ruleLifecycleContainer.getRuleGenerator(template);
+            List<Rule> rules = rulesDb.getRuleByType(template.getRuleType());
+        	List<String> ruleDefinition  = datasource.computeRules(template, rules);
+        	allRules.addAll(ruleDefinition);
         }
     	return allRules;
     }

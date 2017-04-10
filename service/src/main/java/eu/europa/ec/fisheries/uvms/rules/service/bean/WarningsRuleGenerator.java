@@ -13,35 +13,27 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.Rule;
 import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import java.util.ArrayList;
 import java.util.List;
 
-@Singleton
-@Startup
-public class WarningsDatasource extends TemplateDatasource {
+public class WarningsRuleGenerator extends TemplateRuleGenerator {
 
 	@Override
-	public List<String> computeRules(Template template){
-		List<String> rules = new ArrayList<String>();
+	public List<String> computeRules(Template template, List<Rule> rules) {
+		List<String> ruleDefinitions = new ArrayList<>();
 		String rule = "some rule";
 		rule  = injectWarningMetadata(rule);
-		rules.add(rule);
-		return rules;
+		ruleDefinitions.add(rule);
+		return ruleDefinitions;
 	}
 
 	@Override
 	public TemplateType getTemplateType(){
 		return TemplateType.WARNING;
-	}
-
-	@Override
-	public List<String> getAttributes() {
-		return null;
 	}
 
 	private String injectWarningMetadata(String rule) {

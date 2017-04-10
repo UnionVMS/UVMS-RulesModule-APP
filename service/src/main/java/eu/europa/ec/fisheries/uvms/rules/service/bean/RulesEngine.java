@@ -15,15 +15,30 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class RulesEngine {
  
 	@Inject
 	private TemplateEngine templateEngine;
+
+	@Inject
+	private RuleLifecycleContainer ruleLifecycleContainer;
+
+	@PostConstruct
+	public void initialize() {
+		List<TemplateRuleGenerator> templateRuleGenerator = new ArrayList<>();
+		templateRuleGenerator.add(new CheckNullRuleGenerator());
+		templateRuleGenerator.add(new WarningsRuleGenerator());
+		ruleLifecycleContainer.registerTemplateDatasource(templateRuleGenerator);
+	}
 	
     public void evaluate(AbstractFact fact) throws RulesModelException {
     	templateEngine.evaluate(fact);

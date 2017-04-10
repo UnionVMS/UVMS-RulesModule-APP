@@ -18,7 +18,7 @@ import java.util.*;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateDatasource;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateRuleGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.extern.slf4j.Slf4j;
 import org.kie.api.KieServices;
@@ -32,20 +32,20 @@ import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
+import javax.ejb.Stateless;
+
 @Slf4j
+@Stateless
 public class RuleLifecycleContainer {
 
-    private static Map<TemplateType, TemplateDatasource> datasourceRegister;
+    private Map<TemplateType, TemplateRuleGenerator> datasourceRegister = new EnumMap<>(TemplateType.class);
 
-    static {
-        datasourceRegister = new EnumMap<>(TemplateType.class);
+    public void registerTemplateDatasource(List<TemplateRuleGenerator> templateRuleGenerators) {
+        for (TemplateRuleGenerator templateDatasource : templateRuleGenerators)
+        datasourceRegister.put(templateDatasource.getTemplateType(), templateDatasource);
     }
 
-    public static void registerTemplateDatasource(TemplateDatasource templateDatasource, TemplateType type) {
-        datasourceRegister.put(type, templateDatasource);
-    }
-
-    public static TemplateDatasource findDataSource(Template template) {
+    public TemplateRuleGenerator getRuleGenerator(Template template) {
         return datasourceRegister.get(template.getType());
     }
 

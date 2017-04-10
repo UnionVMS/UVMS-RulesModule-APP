@@ -19,46 +19,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.NotNullRule;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.Rule;
 import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
-import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
+import lombok.SneakyThrows;
 import org.drools.template.ObjectDataCompiler;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+public class CheckNullRuleGenerator extends TemplateRuleGenerator {
 
-@Stateless
-public class CheckNullDatasource extends TemplateDatasource {
+    public List<String> computeRules(Template template, List<Rule> rules) {
 
-    public List<String> rulesDef = new ArrayList<>();
-
-
-    public List<String> computeRules(Template template) {
         ObjectDataCompiler objectDataCompiler = new ObjectDataCompiler();
-        List<String> rules = new ArrayList<>();
-        // retrieve here all your data
-        for (String attribute : rulesDef) {
-            Map<String, Object> data = new HashMap<String, Object>();
-            data.put("checkNullAttribute", attribute);
-            String rule = objectDataCompiler.compile(Arrays.asList(data), template.getLhs());
-            rules.add(rule);
+        List<String> ruleDefinitions = new ArrayList<>();
+
+        for (Rule rule : rules) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("checkNullAttribute", ((NotNullRule)rule).getAttribute());
+            String ruleDefinition = objectDataCompiler.compile(Arrays.asList(data), template.getLhs());
+            ruleDefinitions.add(ruleDefinition);
         }
-        return rules;
-    }
-
-    @PostConstruct
-    // mock list, should be fetched from the database
-    public void getAttributes() {
-        // Make DB call
-        rulesDef.add("person.name");
-        rulesDef.add("person.firstName");
-        rulesDef.add("person.lastName");
-
-        RuleLifecycleContainer.registerTemplateDatasource(this, getTemplateType());
+        return ruleDefinitions;
     }
 
     public TemplateType getTemplateType() {
         return TemplateType.CHECKNULL;
     }
-
 }
