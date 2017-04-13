@@ -1,6 +1,6 @@
 /*
  *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
  *
  * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
@@ -11,32 +11,13 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business;
+package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-public class RuleError {
+import org.mapstruct.Mapper;
 
-    private String ruleName;
-
-    private String message;
-
-    public RuleError(String ruleName, String message) {
-        this.ruleName = ruleName;
-        this.message = message;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+/**
+ * Created by padhyad on 4/13/2017.
+ */
+@Mapper
+public class FaReportDocumentMapper {
 }

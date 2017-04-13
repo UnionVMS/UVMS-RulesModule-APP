@@ -1,6 +1,6 @@
 /*
  *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
  *
  * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
@@ -13,10 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractFact {
+
+    protected FactType factType;
 
     protected List<RuleWarning> warnings;
 
@@ -45,5 +49,17 @@ public abstract class AbstractFact {
         this.ok = ok;
     }
 
+    public FactType getFactType() {
+        return factType;
+    }
 
+    public abstract void setFactType();
+
+    public void addWarningOrError(String type, String msg) {
+        if (type.equalsIgnoreCase("error")) {
+            getErrors().add(new RuleError("blabla", msg));
+        } else {
+            getWarnings().add(new RuleWarning("blabla", msg));
+        }
+    }
 }

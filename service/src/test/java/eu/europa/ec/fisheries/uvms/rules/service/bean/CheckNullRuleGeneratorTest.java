@@ -1,6 +1,6 @@
 /*
  *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
  *
  * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
@@ -13,10 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.Rule;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.WarningRule;
-import eu.europa.ec.fisheries.schema.rules.template.v1.Template;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.FactRuleType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/10/2017.
@@ -25,28 +28,23 @@ public class CheckNullRuleGeneratorTest {
 
     @Test
     public void testComputeRule() {
-        CheckNullRuleGenerator nullRuleGenerator = new CheckNullRuleGenerator();
-        Template template = new Template();
-    }
+        RuleType rule = new FactRuleType();
+        //rule.setAttribute("value : StringWrapper");
+        rule.setBrId("1");
+        rule.setNote("Test Notes");
+        //rule.setRuleDef("Defination");
+        //rule.setMessageType(MessageType.ERROR);
 
-    private String getRuleTemplate(Template template, Rule rule) {
 
-        String ruleStr = "template header" + "\n\n" +
-                "rule" + "\n\n" +
-                // Add input
-                "package eu.europa.ec.fisheries.uvms.rules.service.business." + template.getTemplateName() + "\n\n" +
-                "import eu.europa.ec.fisheries.uvms.rules.service.business.FaReportDocumentFact" + "\n\n\n" +
-                "template " + template.getTemplateName() + "\n\n" +
-                "rule " + template.getTemplateName() + " : @{row.rowNumber} @{rule.id}" + "\n\n" +
-                "when" + "\n\n" +
-                "$fact : FaReportDocumentFact(" + template.getLhs() + ")" + "\n\n" +
-                "then" + "\n\n" +
-                "$fact.setOk(false)" + "\n\n" +
-                template.getThenStatement() + "\n\n" +
-                "end" + "\n\n" +
-                "end template" + "\n\n";
+        FactRuleGenerator generator = new FactRuleGenerator();
+        List<String> rules = generator.computeRules("/templates/FaReportDocument.drt", Arrays.asList(rule));
+        System.out.print(rules);
 
-        return ruleStr;
+        String str = rules.get(0);
 
+        FaReportDocumentFact fact = new FaReportDocumentFact();
+
+
+        generator.validateRule(str, fact);
     }
 }

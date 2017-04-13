@@ -1,0 +1,26 @@
+template header
+
+attribute
+brId
+note
+ruleDef
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.nullcheck;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+
+template "null check template"
+
+rule "null check template @{row.rowNumber} @{brId}"
+
+when
+
+    $fact : FaReportDocumentFact(@{attribute})
+
+then
+
+    $fact.setOk(false);
+
+end
+
+end template

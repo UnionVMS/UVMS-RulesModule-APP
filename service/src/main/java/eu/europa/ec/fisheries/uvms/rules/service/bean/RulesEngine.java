@@ -1,6 +1,6 @@
 /*
  *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
  *
  * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
@@ -29,18 +29,13 @@ public class RulesEngine {
 	@Inject
 	private TemplateEngine templateEngine;
 
-	@Inject
-	private RuleLifecycleContainer ruleLifecycleContainer;
-
 	@PostConstruct
 	public void initialize() {
-		List<TemplateRuleGenerator> templateRuleGenerator = new ArrayList<>();
-		templateRuleGenerator.add(new CheckNullRuleGenerator());
-		templateRuleGenerator.add(new WarningsRuleGenerator());
-		ruleLifecycleContainer.registerTemplateDatasource(templateRuleGenerator);
+		List<RuleGenerator> templateRuleGenerator = new ArrayList<>();
+		templateRuleGenerator.add(new FactRuleGenerator());
 	}
 	
-    public void evaluate(AbstractFact fact) throws RulesModelException {
+    public void evaluate(List<AbstractFact> fact) throws RulesModelException {
     	templateEngine.evaluate(fact);
     }
 }

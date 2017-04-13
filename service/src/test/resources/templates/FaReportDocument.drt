@@ -1,0 +1,29 @@
+template header
+
+templateName
+expression
+brId
+note
+ruleDef
+type
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.nullcheck;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.StringWrapper;
+
+template "@{templateName}"
+
+rule "null check template @{row.rowNumber} @{brId}"
+
+when
+
+    $fact : FaReportDocumentFact(@{expression})
+
+then
+        $fact.setOk(false);
+        $fact.addWarningOrError("@{type}", "msg");
+
+end
+
+end template

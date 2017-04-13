@@ -11,22 +11,41 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business;
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
  * Created by padhyad on 4/7/2017.
  */
 public class FaReportDocumentFact extends AbstractFact {
 
-    FAReportDocument faReportDocument;
+    private String typeCode;
 
-    public FAReportDocument getFaReportDocument() {
-        return faReportDocument;
+    private String listId;
+
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setFaReportDocument(FAReportDocument faReportDocument) {
-        this.faReportDocument = faReportDocument;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getListId() {
+        return listId;
+    }
+
+    public void setListId(String listId) {
+        this.listId = listId;
+    }
+
+    @Override
+    public void setFactType() {
+        this.factType = FactType.FA_REPORT_DOCUMENT;
     }
 }
+
+
