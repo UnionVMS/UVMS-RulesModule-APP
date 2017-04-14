@@ -13,16 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.additionalfact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.AdditionalFactType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
  * Created by padhyad on 4/13/2017.
  */
-public class FaDepartureFact extends AbstractAddlFact {
+public class FaDepartureFact extends AbstractFact {
 
     @Override
-    protected void setAdditionalFactType() {
-        this.additionalFactType = AdditionalFactType.FA_DEPARTURE;
+    public void setFactType() {
+        this.factType = FactType.FA_DEPARTURE;
     }
 }

@@ -11,27 +11,28 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business.additionalfact;
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.AdditionalFactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
- * Created by padhyad on 4/13/2017.
+ * Created by padhyad on 4/14/2017.
  */
-public abstract class AbstractAddlFact extends AbstractFact {
+public class VesselTransportMeansFact extends AbstractFact {
 
-    protected AdditionalFactType additionalFactType;
+    private String typeCode;
 
-    public AdditionalFactType getAdditionalFactType() {
-        return additionalFactType;
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override
     public void setFactType() {
-        this.factType = FactType.FISHING_ACTIVITY;
+        this.factType = FactType.VESSEL_TRANSPORT_MEANS;
     }
-
-    protected abstract void setAdditionalFactType();
 }

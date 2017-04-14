@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,36 +25,35 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateNameFactory;
-import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
 
 @Stateless
 public class TemplateEngine {
 
     @Inject
     private RulesDomainModel rulesDb;
-
-    @Inject
-	private RuleLifecycleContainer ruleLifecycleContainer;
     
-    public void evaluate(List<AbstractFact> fact) throws RulesModelException {
-    	List<String> rules = generateAllRules(fact);
-        // TODO do execution of rule
-    	//ruleLifecycleContainer.triggerEvaluation(rules, fact);
-    }
-    
-    private List<String> generateAllRules(List<AbstractFact> Type) throws RulesModelException {
+    public void evaluateFacts(List<AbstractFact> facts) throws RulesModelException {
         List<TemplateRuleMapDto> templates = rulesDb.getAllFactTemplatesAndRules();
-        //Map<AdditionalTemplate, List<Rule>> additionalTemp = rulesDb.getAdditionalTemplates(type);
-        //templates.addAll(additionalTemp);
-        List<String> allRules = new ArrayList<>();
-        for (TemplateRuleMapDto template : templates) {
-        	//RuleGenerator datasource = ruleLifecycleContainer.getRuleGenerator(template);
-            List<RuleType> rules = template.getRules();
-            FactRuleGenerator factRuleGenerator = new FactRuleGenerator();
-        	List<String> ruleDefinition  = factRuleGenerator.computeRules(template, rules);
-        	allRules.addAll(ruleDefinition);
+        if (!templates.isEmpty()) {
+            FactRuleEvaluator ruleEvaluator = new FactRuleEvaluator();
+            ruleEvaluator.computeRules(templates, facts);
         }
-    	return allRules;
+        /*for (TemplateRuleMapDto template : templates) {
+            AbstractFact factToEvaluate = getFactToEvaluate(template, facts);
+            templatesWithFacts.put(template, factToEvaluate);
+        }
+        if (!templatesWithFacts.isEmpty()) {
+
+            ruleEvaluator.computeRules(templatesWithFacts);
+        }*/
     }
+
+/*    private AbstractFact getFactToEvaluate(TemplateRuleMapDto template, List<AbstractFact> facts) {
+        for (AbstractFact fact : facts) {
+            if (fact.getFactType().equals(template.getTemplateType().getType())) {
+                return fact;
+            }
+        }
+        return null;
+    }*/
 }

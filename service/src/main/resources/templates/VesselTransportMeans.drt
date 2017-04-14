@@ -8,7 +8,7 @@ type
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 
 template "@{templateName}"
 
@@ -16,7 +16,7 @@ rule "null check template @{tname} - @{brid}"
 
 when
 
-    $fact : FaReportDocumentFact(@{expression})
+    $fact : VesselTransportMeansFact(@{expression})
 
 then
     $fact.setOk(false);

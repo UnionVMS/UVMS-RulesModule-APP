@@ -18,12 +18,14 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 /**
  * Created by padhyad on 4/13/2017.
  */
-public class TemplateNameFactory {
+public class TemplateFactory {
 
     public static final String getTemplateFileName(FactType factType) {
         switch (factType) {
             case FA_REPORT_DOCUMENT:
-                return "faReportTemplateFact.drt";
+                return "/templates/FaReportDocument.drt";
+            case VESSEL_TRANSPORT_MEANS:
+                return "/templates/VesselTransportMeans.drt";
             default:
                 break;
         }

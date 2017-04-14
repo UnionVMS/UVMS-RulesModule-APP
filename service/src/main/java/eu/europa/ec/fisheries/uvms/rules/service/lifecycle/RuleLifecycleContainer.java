@@ -16,8 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.lifecycle;
 import java.io.StringReader;
 import java.util.*;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.extern.slf4j.Slf4j;
 import org.kie.api.KieServices;
@@ -25,6 +23,7 @@ import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
+import org.kie.api.definition.KiePackage;
 import org.kie.api.event.process.ProcessEventListener;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.RuleRuntimeEventListener;
@@ -37,18 +36,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class RuleLifecycleContainer {
 
-    private Map<TemplateType, RuleGenerator> datasourceRegister = new HashMap<>();
-
-    public void registerTemplateDatasource(List<RuleGenerator> templateRuleGenerators) {
-        for (RuleGenerator templateDatasource : templateRuleGenerators) {}
-        //datasourceRegister.put(templateDatasource.getTemplateType(), templateDatasource);
-    }
-
-    public RuleGenerator getRuleGenerator(TemplateType template) {
-        //return datasourceRegister.get(template.getType());
-        return null;
-    }
-
     public void triggerEvaluation(List<String> rules, AbstractFact fact) {
         KieServices kieServices = KieServices.Factory.get();
         KieFileSystem kfs = kieServices.newKieFileSystem();
@@ -59,7 +46,6 @@ public class RuleLifecycleContainer {
             kfs.write(ruleName.toString(), kieServices.getResources().newReaderResource(new StringReader(rule)));
         }
         KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
-
 
         // check there have been no errors for rule setup
         Results results = kieBuilder.getResults();

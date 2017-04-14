@@ -15,12 +15,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.RuleLifecycleContainer;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -29,13 +27,14 @@ public class RulesEngine {
 	@Inject
 	private TemplateEngine templateEngine;
 
-	@PostConstruct
-	public void initialize() {
-		List<RuleGenerator> templateRuleGenerator = new ArrayList<>();
-		templateRuleGenerator.add(new FactRuleGenerator());
+
+	public List<AbstractFact> generateFacts(FAReportDocument faReportDocument) throws RulesModelException {
+		//TODO create all mandatory facts
+		return null;
 	}
 	
-    public void evaluate(List<AbstractFact> fact) throws RulesModelException {
-    	templateEngine.evaluate(fact);
+    public void evaluate(FAReportDocument faReportDocument) throws RulesModelException {
+		List<AbstractFact> facts = generateFacts(faReportDocument);
+    	templateEngine.evaluateFacts(facts);
     }
 }

@@ -1,28 +1,26 @@
 template header
 
-templateName
+tname
 expression
-brId
-note
-ruleDef
+brid
+rulemsg
 type
 
-package eu.europa.ec.fisheries.uvms.rules.service.business.nullcheck;
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.StringWrapper;
 
 template "@{templateName}"
 
-rule "null check template @{row.rowNumber} @{brId}"
+rule "FA Report Document @{tname} - @{brid}"
 
 when
 
     $fact : FaReportDocumentFact(@{expression})
 
 then
-        $fact.setOk(false);
-        $fact.addWarningOrError("@{type}", "msg");
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}");
 
 end
 

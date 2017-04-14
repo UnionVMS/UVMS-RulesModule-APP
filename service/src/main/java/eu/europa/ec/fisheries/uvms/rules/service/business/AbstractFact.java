@@ -55,7 +55,7 @@ public abstract class AbstractFact {
 
     public abstract void setFactType();
 
-    public void addWarningOrError(String type, String msg) {
+    public void addWarningOrError(String type, String msg, String brId) {
         if (type.equalsIgnoreCase("error")) {
             getErrors().add(new RuleError("blabla", msg));
         } else {
