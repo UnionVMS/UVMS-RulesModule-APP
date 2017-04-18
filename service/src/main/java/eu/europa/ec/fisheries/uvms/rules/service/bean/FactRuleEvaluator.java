@@ -13,54 +13,84 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
-import org.drools.core.marshalling.impl.ProtobufMessages;
+import lombok.extern.slf4j.Slf4j;
+import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
+import org.kie.api.KieBase;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
-import org.kie.api.builder.Results;
-import org.kie.api.io.ResourceType;
+import org.kie.api.builder.model.KieModuleModel;
+import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.internal.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilderError;
-import org.kie.internal.builder.KnowledgeBuilderFactory;
-import org.kie.internal.io.ResourceFactory;
+import org.kie.internal.definition.KnowledgePackage;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
+@Slf4j
 public class FactRuleEvaluator {
 
-    public void computeRules(Collection<TemplateRuleMapDto> templates, Collection<AbstractFact> facts) {
+    private KieServices kieServices = KieServices.Factory.get();
+    private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
+    private List<String> failedRules = new ArrayList<>();
 
-        List<String> rules = new ArrayList<>();
+    private static FactRuleEvaluator factRuleEvaluator;
 
+    private FactRuleEvaluator() {
+    }
+
+    public static FactRuleEvaluator getInstance() {
+        if (factRuleEvaluator == null) {
+            factRuleEvaluator = new FactRuleEvaluator();
+        }
+        return factRuleEvaluator;
+    }
+
+    public void initializeRules(Collection<TemplateRuleMapDto> templates) {
+        Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
-            rules.addAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
+            drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
         }
-        validateRule(rules, facts);
+        Collection<KiePackage> packages = createAllPackages(drlsAndRules);
+        buildAllPackages(packages);
     }
 
-    private List<String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
+    public void validateFact(Collection<AbstractFact> facts) {
+        KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+
+        KieSession ksession = container.newKieSession();
+        for (AbstractFact fact : facts) { // Insert All the facts
+            ksession.insert(fact);
+        }
+        ksession.fireAllRules();
+        ksession.dispose();
+    }
+
+    public List<String> getFailedRules() {
+        return failedRules;
+    }
+
+    private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
-        TemplateDataListener listener = new TemplateDataListener(tc);
-        List<String> rulesDefinitions = new ArrayList<>();
+        Map<String, String> drlsAndBrId = new HashMap<>();
 
         int rowNum = 0;
         for (RuleType ruleDto : rules) {
+            TemplateDataListener listener = new TemplateDataListener(tc);
             listener.newRow(rowNum, 0);
             listener.newCell(rowNum, 0, templateName, 0);
             listener.newCell(rowNum, 1, ruleDto.getExpression(), 0);
@@ -69,40 +99,52 @@ public class FactRuleEvaluator {
             listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
             listener.finishSheet();
             String drl = listener.renderDRL();
-            rulesDefinitions.add(drl);
+            log.debug("DRL for BR Id {} : {} ", ruleDto.getBrId(), drl);
+            drlsAndBrId.put(drl, ruleDto.getBrId());
             rowNum++;
         }
-        return rulesDefinitions;
+        return drlsAndBrId;
     }
 
-    public void validateRule(List<String> rules, Collection<AbstractFact> facts) {
-        KieServices kieServices = KieServices.Factory.get();
-        KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
-
-        int ruleIndex = 0;
-        for (String rule : rules) {
-            StringBuilder ruleName = new StringBuilder("src/main/resources/rule");
-            ruleName.append(ruleIndex).append(".drl");
+    private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
+        Collection<KiePackage> compiledPackages = new ArrayList<>();
+        for (String rule : drlsAndRules.keySet()) {
+            String brId = drlsAndRules.get(rule);
+            StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
+            ruleName.append(brId).append(".drl");
             kieFileSystem.write(ruleName.toString(), rule);
-            ruleIndex ++;
-        }
-        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
+            KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
 
-        List<String> failedRules = new ArrayList<>();
-        if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
-            List<Message> messages = kieBuilder.getResults().getMessages(Message.Level.ERROR);
-            for (Message message : messages) {
-                failedRules.add(message.getPath());
+            if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
+                log.error("Rule failed to build {} ", brId);
+                failedRules.add(brId);
+                continue;
             }
-            //TODO check for rules with errors
-            throw new RuntimeException();
-        }
+            kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
+            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
 
-        KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-        KieSession ksession = container.newKieSession();
-        for (AbstractFact fact : facts) { // Insert All the facts
-            ksession.insert(fact);
+            KieBase kBase = container.getKieBase();
+            compiledPackages = kBase.getKiePackages();
         }
-        ksession.fireAllRules();
+        return compiledPackages;
+    }
+
+    private void buildAllPackages(Collection<KiePackage> packages) {
+        KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
+        kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
+        kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
+
+        kieServices.newKieBuilder(kieFileSystem).buildAll();
+        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl)kContainer.getKieBase();
+
+        Collection<KnowledgePackage> allPackages = Collections2.transform(packages, new Function<KiePackage, KnowledgePackage>() {
+            @Override
+            public KnowledgePackage apply(KiePackage kiePackage) {
+                return (KnowledgePackage) kiePackage;
+            }
+        });
+
+        kBase.addKnowledgePackages(allPackages);
     }
 }

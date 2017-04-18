@@ -13,47 +13,56 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 
-@Stateless
+@Singleton
 public class TemplateEngine {
 
     @Inject
     private RulesDomainModel rulesDb;
-    
-    public void evaluateFacts(List<AbstractFact> facts) throws RulesModelException {
-        List<TemplateRuleMapDto> templates = rulesDb.getAllFactTemplatesAndRules();
-        if (!templates.isEmpty()) {
-            FactRuleEvaluator ruleEvaluator = new FactRuleEvaluator();
-            ruleEvaluator.computeRules(templates, facts);
-        }
-        /*for (TemplateRuleMapDto template : templates) {
-            AbstractFact factToEvaluate = getFactToEvaluate(template, facts);
-            templatesWithFacts.put(template, factToEvaluate);
-        }
-        if (!templatesWithFacts.isEmpty()) {
 
-            ruleEvaluator.computeRules(templatesWithFacts);
-        }*/
+    private FactRuleEvaluator ruleEvaluator = FactRuleEvaluator.getInstance();
+
+    @PostConstruct
+    public void initialize() {
+        ruleEvaluator.initializeRules(getAllTemplates());
+        updateFailedRules(ruleEvaluator.getFailedRules());
     }
 
-/*    private AbstractFact getFactToEvaluate(TemplateRuleMapDto template, List<AbstractFact> facts) {
-        for (AbstractFact fact : facts) {
-            if (fact.getFactType().equals(template.getTemplateType().getType())) {
-                return fact;
-            }
+    public void evaluateFacts(List<AbstractFact> facts) throws RulesModelException {
+        if (!CollectionUtils.isEmpty(facts)) {
+            ruleEvaluator.validateFact(facts);
         }
-        return null;
-    }*/
+    }
+
+    private List<TemplateRuleMapDto> getAllTemplates() {
+        try {
+            List<TemplateRuleMapDto> templates = new ArrayList<>();
+            templates.addAll(rulesDb.getAllFactTemplatesAndRules());
+            templates.addAll(rulesDb.getAllAdditionalTemplatesAndRules());
+            return templates;
+        } catch (RulesModelException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void updateFailedRules(List<String> failedBrIds) {
+        try {
+            rulesDb.updateFailedRules(failedBrIds);
+        } catch (RulesModelException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

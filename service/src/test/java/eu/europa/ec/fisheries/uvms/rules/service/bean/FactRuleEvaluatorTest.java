@@ -37,12 +37,25 @@ public class FactRuleEvaluatorTest {
 
     @Test
     public void testComputeRule() {
+        List<RuleType> rules = new ArrayList<>();
+        for (int i = 0; i < 100 ; i ++) {
+            RuleType rule = new FactRuleType();
+            rule.setExpression("typeCode != ");
+            rule.setBrId("1" + i);
+            rule.setNote("Test Notes");
+            rule.setErrorType(ErrorType.ERROR);
+            rule.setMessage("This is test message");
+            rules.add(rule);
+        }
+
         RuleType rule = new FactRuleType();
-        rule.setExpression("typeCode != null ");
+        rule.setExpression("typeCode != null");
         rule.setBrId("1");
         rule.setNote("Test Notes");
         rule.setErrorType(ErrorType.ERROR);
         rule.setMessage("This is test message");
+        rules.add(rule);
+
 
         TemplateType template = new TemplateType();
         template.setInOutType(InOutType.IN);
@@ -51,7 +64,7 @@ public class FactRuleEvaluatorTest {
 
         List<TemplateRuleMapDto> templates = new ArrayList<>();
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
-        templateRuleMapDto.setRules(Arrays.asList(rule));
+        templateRuleMapDto.setRules(rules);
         templateRuleMapDto.setTemplateType(template);
         templates.add(templateRuleMapDto);
 
@@ -82,8 +95,17 @@ public class FactRuleEvaluatorTest {
         //vesselTransportMeansFact.setTypeCode("ABC");
         facts.add(vesselTransportMeansFact);
 
-        FactRuleEvaluator generator = new FactRuleEvaluator();
-        generator.computeRules(templates, facts);
+        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+        generator.initializeRules(templates);
+        generator.validateFact(facts);
+
+        // Second validation
+        Collection<AbstractFact> factnews = new ArrayList<>();
+        FaReportDocumentFact factnew = new FaReportDocumentFact();
+        factnew.setTypeCode("CODE");
+        factnews.add(factnew);
+
+        generator.validateFact(factnews);
         System.out.print("");
     }
 }
