@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.FactRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
@@ -30,6 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by padhyad on 4/10/2017.
  */
@@ -37,10 +38,43 @@ public class FactRuleEvaluatorTest {
 
     @Test
     public void testComputeRule() {
+        List<TemplateRuleMapDto> templates = new ArrayList<>();
+        templates.add(getTemplateRuleMapForFaReport());
+        templates.add(getTemplateRuleMapForVesselTM());
+
+        Collection<AbstractFact> facts = new ArrayList<>();
+        FaReportDocumentFact fact = new FaReportDocumentFact();
+        fact.setTypeCode("typecode");
+        facts.add(fact);
+
+        VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
+        vesselTransportMeansFact.setTypeCode("ABC");
+        facts.add(vesselTransportMeansFact);
+
+        // First Validation
+        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+        generator.initializeRules(templates);
+        generator.validateFact(facts);
+
+        assertNotNull(fact.getErrors());
+        assertNotNull(fact.getErrors().iterator().next().getRuleName());
+
+        assertNotNull(vesselTransportMeansFact.getWarnings());
+        assertNotNull(vesselTransportMeansFact.getWarnings().iterator().next().getRuleName());
+
+        // Second Validation
+        facts.clear();
+        FaReportDocumentFact newFaReport = new FaReportDocumentFact();
+        newFaReport.setTypeCode("CODE");
+        facts.add(newFaReport);
+        generator.validateFact(facts);
+    }
+
+    private TemplateRuleMapDto getTemplateRuleMapForFaReport() {
         List<RuleType> rules = new ArrayList<>();
-        for (int i = 0; i < 100 ; i ++) {
-            RuleType rule = new FactRuleType();
-            rule.setExpression("typeCode != ");
+        for (int i = 0; i < 10 ; i ++) {
+            RuleType rule = new RuleType();
+            rule.setExpression("typeCode != null");
             rule.setBrId("1" + i);
             rule.setNote("Test Notes");
             rule.setErrorType(ErrorType.ERROR);
@@ -48,34 +82,26 @@ public class FactRuleEvaluatorTest {
             rules.add(rule);
         }
 
-        RuleType rule = new FactRuleType();
-        rule.setExpression("typeCode != null");
-        rule.setBrId("1");
-        rule.setNote("Test Notes");
-        rule.setErrorType(ErrorType.ERROR);
-        rule.setMessage("This is test message");
-        rules.add(rule);
-
-
         TemplateType template = new TemplateType();
         template.setInOutType(InOutType.IN);
         template.setTemplateName("Test Template");
         template.setType(FactType.FA_REPORT_DOCUMENT);
 
-        List<TemplateRuleMapDto> templates = new ArrayList<>();
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(rules);
         templateRuleMapDto.setTemplateType(template);
-        templates.add(templateRuleMapDto);
 
+        return templateRuleMapDto;
+    }
 
+    private TemplateRuleMapDto getTemplateRuleMapForVesselTM() {
         TemplateType vsl = new TemplateType();
         vsl.setInOutType(InOutType.IN);
         vsl.setTemplateName("Vessel Template");
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
-        RuleType vrule = new FactRuleType();
-        vrule.setExpression("typeCode == null");
+        RuleType vrule = new RuleType();
+        vrule.setExpression("typeCode != null");
         vrule.setBrId("1");
         vrule.setNote("Test Notes");
         vrule.setErrorType(ErrorType.WARNING);
@@ -84,28 +110,7 @@ public class FactRuleEvaluatorTest {
         TemplateRuleMapDto vesselTmp = new TemplateRuleMapDto();
         vesselTmp.setRules(Arrays.asList(vrule));
         vesselTmp.setTemplateType(vsl);
-        templates.add(vesselTmp);
-
-        Collection<AbstractFact > facts = new ArrayList<>();
-        FaReportDocumentFact fact = new FaReportDocumentFact();
-        fact.setTypeCode("CODE");
-        facts.add(fact);
-
-        VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
-        //vesselTransportMeansFact.setTypeCode("ABC");
-        facts.add(vesselTransportMeansFact);
-
-        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
-        generator.initializeRules(templates);
-        generator.validateFact(facts);
-
-        // Second validation
-        Collection<AbstractFact> factnews = new ArrayList<>();
-        FaReportDocumentFact factnew = new FaReportDocumentFact();
-        factnew.setTypeCode("CODE");
-        factnews.add(factnew);
-
-        generator.validateFact(factnews);
-        System.out.print("");
+        return vesselTmp;
     }
+
 }

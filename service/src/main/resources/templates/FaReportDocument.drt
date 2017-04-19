@@ -12,7 +12,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentF
 
 template "@{templateName}"
 
-rule "null check template @{tname} - @{brid}"
+rule "FA Report Document @{tname} - @{brid}"
 
 when
 

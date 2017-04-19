@@ -13,44 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
 /**
- * Created by padhyad on 4/7/2017.
+ * Created by padhyad on 4/19/2017.
  */
-public class FaReportDocumentFact extends AbstractFact {
+public class FishingGearFact extends AbstractFact {
 
-    private String typeCode;
-
-    private String listId;
-
-    public FaReportDocumentFact() {
+    public FishingGearFact() {
         setFactType();
     }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public String getListId() {
-        return listId;
-    }
-
-    public void setListId(String listId) {
-        this.listId = listId;
-    }
-
     @Override
     public void setFactType() {
-        this.factType = FactType.FA_REPORT_DOCUMENT;
+        this.factType = FactType.FISHING_GEAR;
     }
 }
-
-

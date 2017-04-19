@@ -23,6 +23,10 @@ public class VesselTransportMeansFact extends AbstractFact {
 
     private String typeCode;
 
+    public VesselTransportMeansFact() {
+        setFactType();
+    }
+
     public String getTypeCode() {
         return typeCode;
     }

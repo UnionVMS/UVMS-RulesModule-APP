@@ -13,12 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
@@ -49,10 +47,7 @@ public class TemplateEngine {
 
     private List<TemplateRuleMapDto> getAllTemplates() {
         try {
-            List<TemplateRuleMapDto> templates = new ArrayList<>();
-            templates.addAll(rulesDb.getAllFactTemplatesAndRules());
-            templates.addAll(rulesDb.getAllAdditionalTemplatesAndRules());
-            return templates;
+            return rulesDb.getAllFactTemplatesAndRules();
         } catch (RulesModelException e) {
             throw new IllegalStateException(e);
         }

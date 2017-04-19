@@ -26,6 +26,10 @@ public class TemplateFactory {
                 return "/templates/FaReportDocument.drt";
             case VESSEL_TRANSPORT_MEANS:
                 return "/templates/VesselTransportMeans.drt";
+            case FISHING_ACTIVITY:
+                return "/templates/FishingActivity.drt";
+            case FA_DEPARTURE:
+                return "/templates/FaDeparture.drt";
             default:
                 break;
         }

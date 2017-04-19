@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
 import javax.ejb.Stateless;
@@ -26,15 +27,14 @@ public class RulesEngine {
  
 	@Inject
 	private TemplateEngine templateEngine;
+	
+    public void evaluate(FLUXFAReportMessage fluxfaReportMessage) throws RulesModelException {
+		List<AbstractFact> facts = generateFacts(fluxfaReportMessage);
+    	templateEngine.evaluateFacts(facts);
+    }
 
-
-	public List<AbstractFact> generateFacts(FAReportDocument faReportDocument) throws RulesModelException {
+	public List<AbstractFact> generateFacts(FLUXFAReportMessage fluxfaReportMessage) throws RulesModelException {
 		//TODO create all mandatory facts
 		return null;
 	}
-	
-    public void evaluate(FAReportDocument faReportDocument) throws RulesModelException {
-		List<AbstractFact> facts = generateFacts(faReportDocument);
-    	templateEngine.evaluateFacts(facts);
-    }
 }

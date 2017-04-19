@@ -11,18 +11,22 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business.additionalfact;
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
- * Created by padhyad on 4/13/2017.
+ * Created by padhyad on 4/19/2017.
  */
-public class FaDepartureFact extends AbstractFact {
+public class FishingActivityFact extends AbstractFact {
+
+    public FishingActivityFact() {
+        setFactType();
+    }
 
     @Override
     public void setFactType() {
-        this.factType = FactType.FA_DEPARTURE;
+        this.factType = FactType.FISHING_ACTIVITY;
     }
 }
