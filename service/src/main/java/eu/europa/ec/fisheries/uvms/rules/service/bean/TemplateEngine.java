@@ -16,6 +16,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
@@ -26,9 +28,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
 
 @Singleton
+@LocalBean
 public class TemplateEngine {
 
-    @Inject
+    @EJB
     private RulesDomainModel rulesDb;
 
     private FactRuleEvaluator ruleEvaluator = FactRuleEvaluator.getInstance();
