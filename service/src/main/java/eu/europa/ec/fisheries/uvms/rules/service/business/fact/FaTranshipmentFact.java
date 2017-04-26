@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FaTranshipmentFact extends AbstractFact {
 
+    private String typeCode;
+
     public FaTranshipmentFact() {
         setFactType();
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override

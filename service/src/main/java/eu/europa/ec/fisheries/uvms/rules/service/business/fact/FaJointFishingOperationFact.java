@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FaJointFishingOperationFact extends AbstractFact {
 
+    private String typeCode;
+
     public FaJointFishingOperationFact() {
         setFactType();
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override

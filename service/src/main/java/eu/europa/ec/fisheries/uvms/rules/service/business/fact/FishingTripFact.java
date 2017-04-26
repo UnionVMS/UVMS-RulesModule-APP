@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FishingTripFact extends AbstractFact {
 
+    private String typeCode;
+
     public FishingTripFact() {
         setFactType();
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override

@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -21,8 +23,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class VesselStorageCharacteristicsFact extends AbstractFact {
 
+    private List<CodeType> typeCodes;
+
     public VesselStorageCharacteristicsFact() {
         setFactType();
+    }
+
+    public List<CodeType> getTypeCodes() {
+        return typeCodes;
+    }
+
+    public void setTypeCodes(List<CodeType> typeCodes) {
+        this.typeCodes = typeCodes;
     }
 
     @Override

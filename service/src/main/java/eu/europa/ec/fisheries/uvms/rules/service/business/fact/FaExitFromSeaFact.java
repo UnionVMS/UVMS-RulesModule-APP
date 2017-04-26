@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FaExitFromSeaFact extends AbstractFact {
 
+    private String typeCode;
+
     public FaExitFromSeaFact() {
         setFactType();
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override

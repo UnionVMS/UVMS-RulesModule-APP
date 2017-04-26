@@ -13,10 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 
 public abstract class AbstractFact {
 

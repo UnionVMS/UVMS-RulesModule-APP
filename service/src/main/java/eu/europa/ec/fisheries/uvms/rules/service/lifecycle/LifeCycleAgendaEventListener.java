@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.lifecycle;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

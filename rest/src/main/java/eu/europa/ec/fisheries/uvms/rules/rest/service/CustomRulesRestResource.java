@@ -11,14 +11,33 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.nio.file.AccessDeniedException;
+
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
@@ -28,18 +47,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.nio.file.AccessDeniedException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-
 @Path("/customrules")
 @Stateless
 public class CustomRulesRestResource {
@@ -47,18 +54,12 @@ public class CustomRulesRestResource {
     private final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
 
     private static String UNION_VMS_APPLICATION = "Union-VMS";
-
-    @Context
-    private ServletContext servletContext;
-
     @EJB
     RulesService rulesService;
-
     @EJB
     ValidationService validationService;
-
-
-
+    @Context
+    private ServletContext servletContext;
     @Context
     private HttpServletRequest request;
     /**

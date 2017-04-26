@@ -13,25 +13,24 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
+import java.util.List;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.apache.commons.collections.CollectionUtils;
 
 @Singleton
 @LocalBean
 public class TemplateEngine {
 
-    @EJB
+    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDb;
 
     private FactRuleEvaluator ruleEvaluator = FactRuleEvaluator.getInstance();

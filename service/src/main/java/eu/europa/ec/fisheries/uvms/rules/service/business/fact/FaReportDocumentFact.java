@@ -16,7 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
 /**
  * Created by padhyad on 4/7/2017.
@@ -24,8 +23,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 public class FaReportDocumentFact extends AbstractFact {
 
     private String typeCode;
-
-    private String listId;
 
     public FaReportDocumentFact() {
         setFactType();
@@ -37,14 +34,6 @@ public class FaReportDocumentFact extends AbstractFact {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
-    }
-
-    public String getListId() {
-        return listId;
-    }
-
-    public void setListId(String listId) {
-        this.listId = listId;
     }
 
     @Override

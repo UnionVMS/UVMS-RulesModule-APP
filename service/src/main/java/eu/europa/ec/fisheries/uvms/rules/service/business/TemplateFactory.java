@@ -25,59 +25,59 @@ public class TemplateFactory {
             case FA_DEPARTURE:
                 return "/templates/FaDeparture.drt";
             case FA_ARRIVAL:
-                return "/template/FaArrival.drt";
+                return "/templates/FaArrival.drt";
             case FA_CATCH:
-                return "/template/FaCatch.drt";
+                return "/templates/FaCatch.drt";
             case FA_DISCARD:
-                return "/template/FaDiscard.drt";
+                return "/templates/FaDiscard.drt";
             case FA_ENTRY_TO_SEA:
-                return "/template/FaEntryToSea.drt";
+                return "/templates/FaEntryToSea.drt";
             case FA_EXIT_FROM_SEA:
-                return "/template/FaExitFromSea.drt";
+                return "/templates/FaExitFromSea.drt";
             case FA_FISHING_OPERATION:
-                return "/template/FaFishingOperation.drt";
+                return "/templates/FaFishingOperation.drt";
             case FA_JOINT_FISHING_OPERATION:
-                return "/template/FaJointFishingOperation.drt";
+                return "/templates/FaJointFishingOperation.drt";
             case FA_LANDING:
-                return "/template/FaLanding.drt";
+                return "/templates/FaLanding.drt";
             case FA_NOTIFICATION_OF_ARRIVAL:
-                return "/template/FaNotificationOfArrival.drt";
+                return "/templates/FaNotificationOfArrival.drt";
             case FA_NOTIFICATION_OF_TRANSHIPMENT:
-                return "/template/FaNotificationOfTranshipment.drt";
+                return "/templates/FaNotificationOfTranshipment.drt";
             case FA_REPORT_DOCUMENT:
                 return "/templates/FaReportDocument.drt";
             case FISHING_ACTIVITY:
                 return "/templates/FishingActivity.drt";
             case FA_QUERY:
-                return "/template/FaQuery.drt";
+                return "/templates/FaQuery.drt";
             case FA_QUERY_PARAMETER:
-                return "/template/FaQueryParameter.drt";
+                return "/templates/FaQueryParameter.drt";
             case FA_RELOCATION:
                 return "/template/FaRelocation.drt";
             case FA_RESPONSE:
-                return "/template/FaResponse.drt";
+                return "/templates/FaResponse.drt";
             case FA_TRANSHIPMENT:
-                return "/template/FaTranshipment.drt";
+                return "/templates/FaTranshipment.drt";
             case FISHING_GEAR:
-                return "/template/FishingGear.drt";
+                return "/templates/FishingGear.drt";
             case FISHING_TRIP:
-                return "/template/FishingTrip.drt";
+                return "/templates/FishingTrip.drt";
             case FLUX_CHARACTERISTIC:
-                return "/template/FluxCharacteristics.drt";
+                return "/templates/FluxCharacteristics.drt";
             case FLUX_FA_REPORT_MESSAGE:
-                return "/template/FluxFaReportMessage.drt";
+                return "/templates/FluxFaReportMessage.drt";
             case FLUX_LOCATION:
                 return "/template/FluxLocation.drt";
             case GEAR_CHARACTERISTIC:
-                return "/template/GearCharacteristics.drt";
+                return "/templates/GearCharacteristics.drt";
             case GEAR_PROBLEM:
-                return "/template/GearProblem.drt";
+                return "/templates/GearProblem.drt";
             case STRUCTURED_ADDRESS:
-                return "/template/StructuredAddress.drt";
+                return "/templates/StructuredAddress.drt";
             case VESSEL_STORAGE_CHARACTERISTIC:
-                return "/template/VesselStorageCharacteristics.drt";
+                return "/templates/VesselStorageCharacteristics.drt";
             case VESSEL_TRANSPORT_MEANS:
-                return "/template/VesselTransportMeans.drt";
+                return "/templates/VesselTransportMeans.drt";
         }
         return null;
     }

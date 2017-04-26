@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FaResponseFact extends AbstractFact {
 
+    private String referencedID;
+
     public FaResponseFact() {
         setFactType();
+    }
+
+    public String getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(String referencedID) {
+        this.referencedID = referencedID;
     }
 
     @Override

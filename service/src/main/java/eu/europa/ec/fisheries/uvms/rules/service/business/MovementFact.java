@@ -11,36 +11,31 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
+
 public class MovementFact {
-    private eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement;
-    private String movementGuid;
-    private String channelGuid;
-
-    // ROOT
-    private List<String> assetGroups;
-
-    // ACTIVITY
-    private String activityCallback;
-    private String activityMessageId;
-    private String activityMessageType;
-
     // AREA
     List<String> areaCodes;
     List<String> areaTypes;
-
     List<String> entAreaCodes;
     List<String> entAreaTypes;
     List<String> extAreaCodes;
     List<String> extAreaTypes;
-
+    private eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement;
+    private String movementGuid;
+    private String channelGuid;
+    // ROOT
+    private List<String> assetGroups;
+    // ACTIVITY
+    private String activityCallback;
+    private String activityMessageId;
+    private String activityMessageType;
     // ASSET
     private String assetGuid;
     private String assetIdGearType;

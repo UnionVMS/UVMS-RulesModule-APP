@@ -13,6 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -23,13 +30,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by padhyad on 4/10/2017.
@@ -48,7 +48,7 @@ public class FactRuleEvaluatorTest {
         facts.add(fact);
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
-        vesselTransportMeansFact.setTypeCode("ABC");
+        vesselTransportMeansFact.setRoleCode("ABC");
         facts.add(vesselTransportMeansFact);
 
         // First Validation
@@ -101,7 +101,7 @@ public class FactRuleEvaluatorTest {
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
         RuleType vrule = new RuleType();
-        vrule.setExpression("typeCode != null");
+        vrule.setExpression("roleCode != null");
         vrule.setBrId("1");
         vrule.setNote("Test Notes");
         vrule.setErrorType(ErrorType.WARNING);

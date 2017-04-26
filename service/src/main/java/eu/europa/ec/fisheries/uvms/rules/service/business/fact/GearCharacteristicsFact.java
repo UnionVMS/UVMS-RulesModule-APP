@@ -21,8 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class GearCharacteristicsFact extends AbstractFact {
 
-    private GearCharacteristicsFact() {
+    private String typeCode;
+
+    public GearCharacteristicsFact() {
         setFactType();
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     @Override
