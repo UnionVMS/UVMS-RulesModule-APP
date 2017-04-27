@@ -32,7 +32,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMe
 import org.junit.Test;
 
 /**
- * Created by padhyad on 4/10/2017.
+ * @autor padhyad
+ * @author Gregory Rinaldi
  */
 public class FactRuleEvaluatorTest {
 

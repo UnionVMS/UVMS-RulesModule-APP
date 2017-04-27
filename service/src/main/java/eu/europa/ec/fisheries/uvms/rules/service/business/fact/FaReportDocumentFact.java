@@ -14,15 +14,21 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
- * Created by padhyad on 4/7/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class FaReportDocumentFact extends AbstractFact {
 
     private String typeCode;
+
+    private List<IDType> ids;
 
     public FaReportDocumentFact() {
         setFactType();
@@ -40,6 +46,17 @@ public class FaReportDocumentFact extends AbstractFact {
     public void setFactType() {
         this.factType = FactType.FA_REPORT_DOCUMENT;
     }
+
+    public List<IDType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IDType> ids) {
+        this.ids = ids;
+    }
+
+
+
 }
 
 
