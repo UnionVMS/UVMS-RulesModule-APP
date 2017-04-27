@@ -111,7 +111,6 @@ public class FLUX_ReportDocumentRuleTest {
         idTypes.add(new IDType());
         ((FaReportDocumentFact) fact).setIds(idTypes);
 
-
         generator.validateFact(Collections.singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
