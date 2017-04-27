@@ -18,17 +18,26 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@AllArgsConstructor
+@Builder
 public class FaReportDocumentFact extends AbstractFact {
 
     private String typeCode;
 
     private List<IDType> ids;
+
+    private DateTimeType creationDateTime;
+
+    private IDType referencedID;
 
     public FaReportDocumentFact() {
         setFactType();
@@ -55,8 +64,21 @@ public class FaReportDocumentFact extends AbstractFact {
         this.ids = ids;
     }
 
+    public DateTimeType getCreationDateTime() {
+        return creationDateTime;
+    }
 
+    public void setCreationDateTime(DateTimeType creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
 
+    public IDType getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(IDType referencedID) {
+        this.referencedID = referencedID;
+    }
 }
 
 

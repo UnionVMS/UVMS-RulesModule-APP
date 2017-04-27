@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 
@@ -61,5 +62,14 @@ public abstract class AbstractFact {
         } else {
             getWarnings().add(new RuleWarning("blabla", msg));
         }
+    }
+
+    public boolean isUUID(String name) {
+        try {
+            UUID.fromString(name);
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
+        return false;
     }
 }
