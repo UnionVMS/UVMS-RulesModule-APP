@@ -15,21 +15,21 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 public class RuleError {
 
-    private String ruleName;
+    private String ruleId;
 
     private String message;
 
-    public RuleError(String ruleName, String message) {
-        this.ruleName = ruleName;
+    public RuleError(String ruleId, String message) {
+        this.ruleId = ruleId;
         this.message = message;
     }
 
-    public String getRuleName() {
-        return ruleName;
+    public String getRuleId() {
+        return ruleId;
     }
 
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
+    public void setRuleId(String ruleId) {
+        this.ruleId = ruleId;
     }
 
     public String getMessage() {

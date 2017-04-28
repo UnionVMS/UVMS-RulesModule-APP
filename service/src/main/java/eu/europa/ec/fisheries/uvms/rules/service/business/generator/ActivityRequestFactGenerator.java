@@ -30,7 +30,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private FLUXFAReportMessage fluxfaReportMessage;
 
-    public void setFluxfaReportMessage(Object businessObject) throws RulesServiceException {
+    @Override
+    public void setBusinessObjectMessage(Object businessObject) throws RulesServiceException {
         if (!(businessObject instanceof FLUXFAReportMessage)) {
             throw new RulesServiceException("Business object does not match required type");
         }
@@ -41,6 +42,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     public List<AbstractFact> getAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
         facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
+        //TODO
         return facts;
     }
 }

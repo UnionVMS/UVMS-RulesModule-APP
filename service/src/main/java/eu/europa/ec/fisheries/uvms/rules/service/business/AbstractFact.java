@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 
 import java.util.ArrayList;
@@ -56,10 +57,10 @@ public abstract class AbstractFact {
     public abstract void setFactType();
 
     public void addWarningOrError(String type, String msg, String brId) {
-        if (type.equalsIgnoreCase("error")) {
-            getErrors().add(new RuleError("blabla", msg));
+        if (type.equals(ErrorType.ERROR)) {
+            getErrors().add(new RuleError(brId, msg));
         } else {
-            getWarnings().add(new RuleWarning("blabla", msg));
+            getWarnings().add(new RuleWarning(brId, msg));
         }
     }
 }

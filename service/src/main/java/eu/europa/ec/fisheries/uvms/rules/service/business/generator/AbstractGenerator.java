@@ -25,5 +25,5 @@ public abstract class AbstractGenerator {
 
     public abstract List<AbstractFact> getAllFacts();
 
-    public abstract void setFluxfaReportMessage(Object businessObject) throws RulesServiceException;
+    public abstract void setBusinessObjectMessage(Object businessObject) throws RulesServiceException;
 }

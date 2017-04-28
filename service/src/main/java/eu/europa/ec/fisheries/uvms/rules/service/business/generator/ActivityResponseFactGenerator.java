@@ -33,7 +33,7 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
     }
 
     @Override
-    public void setFluxfaReportMessage(Object businessObject) throws RulesServiceException {
+    public void setBusinessObjectMessage(Object businessObject) throws RulesServiceException {
         if (!(businessObject instanceof FLUXResponseDocument)) {
             throw new RulesServiceException("Business object does not match required type");
         }
