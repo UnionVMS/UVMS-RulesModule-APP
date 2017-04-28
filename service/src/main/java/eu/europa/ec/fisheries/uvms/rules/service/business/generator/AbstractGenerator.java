@@ -13,10 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-
-import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.

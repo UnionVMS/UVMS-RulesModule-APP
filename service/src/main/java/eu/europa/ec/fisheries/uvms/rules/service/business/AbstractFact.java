@@ -18,6 +18,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractFact {
 
@@ -62,5 +63,14 @@ public abstract class AbstractFact {
         } else {
             getWarnings().add(new RuleWarning(brId, msg));
         }
+    }
+
+    public boolean isUUID(String name) {
+        try {
+            UUID.fromString(name);
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
+        return false;
     }
 }

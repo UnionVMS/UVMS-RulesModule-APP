@@ -13,6 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -35,17 +42,13 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
-import java.io.InputStream;
-import java.util.*;
-
 @Slf4j
 public class FactRuleEvaluator {
 
+    private static FactRuleEvaluator factRuleEvaluator;
     private KieServices kieServices = KieServices.Factory.get();
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
-
-    private static FactRuleEvaluator factRuleEvaluator;
 
     private FactRuleEvaluator() {
     }

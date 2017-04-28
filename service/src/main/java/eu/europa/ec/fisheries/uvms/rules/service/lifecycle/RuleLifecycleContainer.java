@@ -13,8 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.lifecycle;
 
+import javax.ejb.Stateless;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +25,11 @@ import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
-import org.kie.api.definition.KiePackage;
 import org.kie.api.event.process.ProcessEventListener;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-
-import javax.ejb.Stateless;
 
 @Slf4j
 @Stateless

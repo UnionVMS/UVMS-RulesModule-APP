@@ -11,18 +11,20 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
-import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class JMSConnectorBean {

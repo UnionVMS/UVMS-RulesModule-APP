@@ -17,6 +17,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/7/2017.
@@ -24,6 +28,12 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 public class FaReportDocumentFact extends AbstractFact {
 
     private String typeCode;
+
+    private List<IDType> ids;
+
+    private DateTimeType creationDateTime;
+
+    private IDType referencedID;
 
     public FaReportDocumentFact() {
         setFactType();
@@ -35,6 +45,30 @@ public class FaReportDocumentFact extends AbstractFact {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public List<IDType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IDType> ids) {
+        this.ids = ids;
+    }
+
+    public DateTimeType getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(DateTimeType creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public IDType getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(IDType referencedID) {
+        this.referencedID = referencedID;
     }
 
     @Override
