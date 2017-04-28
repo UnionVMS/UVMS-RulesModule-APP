@@ -13,10 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import org.mapstruct.BeanMapping;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -27,193 +28,202 @@ import java.util.List;
 /**
  * Created by padhyad on 4/21/2017.
  */
-@Mapper(imports = {
-        FaReportDocumentFact.class,
-        FishingActivityFact.class,
-        FluxFaReportMessageFact.class,
-        VesselTransportMeansFact.class,
-        StructuredAddressFact.class,
-        FishingGearFact.class,
-        GearCharacteristicsFact.class,
-        GearProblemFact.class,
-        FaCatchFact.class,
-        VesselStorageCharacteristicsFact.class,
-        FaDepartureFact.class,
-        FaEntryToSeaFact.class,
-        FaFishingOperationFact.class,
-        FaJointFishingOperationFact.class,
-        FaRelocationFact.class,
-        FaDiscardFact.class,
-        FaExitFromSeaFact.class,
-        FaNotificationOfArrivalFact.class,
-        FaArrivalFact.class,
-        FaLandingFact.class,
-        FaTranshipmentFact.class,
-        FaNotificationOfTranshipmentFact.class,
-        FaQueryFact.class,
-        FaQueryParameterFact.class,
-        FaResponseFact.class,
-        FishingTripFact.class,
-        FluxLocationFact.class,
-        FluxCharacteristicsFact.class
-})
+@Mapper
 public interface ActivityFactMapper {
 
     ActivityFactMapper INSTANCE = Mappers.getMapper(ActivityFactMapper.class);
 
-    @BeanMapping(resultType = FaReportDocumentFact.class)
-    AbstractFact generateFactForFaReportDocument(FAReportDocument faReportDocuments);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaReportDocumentFact generateFactForFaReportDocument(FAReportDocument faReportDocuments);
 
-    @BeanMapping(resultType = FaReportDocumentFact.class)
-    List<AbstractFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments);
+    List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments);
 
-    @BeanMapping(resultType = FishingActivityFact.class)
-    AbstractFact generateFactForFishingActivity(FishingActivity fishingActivity);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FishingActivityFact.class)
-    List<AbstractFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
+    List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FluxFaReportMessageFact.class)
-    AbstractFact generateFactForFluxReportMessage(FLUXFAReportMessage fluxfaReportMessage);
+    @Mappings({
+            @Mapping(target = "referencedID", source = "FLUXReportDocument.referencedID.value")
+    })
+    FluxFaReportMessageFact generateFactForFluxReportMessage(FLUXFAReportMessage fluxfaReportMessage);
 
-    @BeanMapping(resultType = VesselTransportMeansFact.class)
-    AbstractFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
+    @Mappings({
+            @Mapping(target = "roleCode", source = "roleCode.value")
+    })
+    VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
 
-    @BeanMapping(resultType = VesselTransportMeansFact.class)
-    List<AbstractFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans);
+    List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans);
 
-    @BeanMapping(resultType = StructuredAddressFact.class)
-    AbstractFact generateFactsForStructureAddress(StructuredAddress structuredAddress);
 
-    @BeanMapping(resultType = StructuredAddressFact.class)
-    List<AbstractFact> generateFactsForStructureAddresses(List<StructuredAddress> structuredAddresses);
+    @Mappings({
+            @Mapping(target = "postcodeCode", source = "postcodeCode.value")
+    })
+    StructuredAddressFact generateFactsForStructureAddress(StructuredAddress structuredAddress);
 
-    @BeanMapping(resultType = FishingGearFact.class)
-    AbstractFact generateFactsForFishingGear(FishingGear fishinggear);
+    List<StructuredAddressFact> generateFactsForStructureAddresses(List<StructuredAddress> structuredAddresses);
 
-    @BeanMapping(resultType = FishingGearFact.class)
-    List<AbstractFact> generateFactsForFishingGears(List<FishingGear> fishinggears);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FishingGearFact generateFactsForFishingGear(FishingGear fishingGear);
 
-    @BeanMapping(resultType = GearCharacteristicsFact.class)
-    AbstractFact generateFactsForGearCharacteristic(GearCharacteristic gearCharacteristic);
+    List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears);
 
-    @BeanMapping(resultType = GearCharacteristicsFact.class)
-    List<AbstractFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    GearCharacteristicsFact generateFactsForGearCharacteristic(GearCharacteristic gearCharacteristic);
 
-    @BeanMapping(resultType = GearProblemFact.class)
-    AbstractFact generateFactsForGearProblem(GearProblem gearProblem);
+    List<GearCharacteristicsFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics);
 
-    @BeanMapping(resultType = GearProblemFact.class)
-    List<AbstractFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    GearProblemFact generateFactsForGearProblem(GearProblem gearProblem);
 
-    @BeanMapping(resultType = FaCatchFact.class)
-    AbstractFact generateFactsForFaCatchs(FACatch faCatches);
+    List<GearProblemFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
 
-    @BeanMapping(resultType = FaCatchFact.class)
-    List<AbstractFact> generateFactsForFaCatchs(List<FACatch> faCatches);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaCatchFact generateFactsForFaCatchs(FACatch faCatches);
 
-    @BeanMapping(resultType = VesselStorageCharacteristicsFact.class)
-    AbstractFact generateFactsForVesselStorageCharacteristic(VesselStorageCharacteristic vesselStorageCharacteristic);
+    List<FaCatchFact> generateFactsForFaCatchs(List<FACatch> faCatches);
 
-    @BeanMapping(resultType = VesselStorageCharacteristicsFact.class)
-    List<AbstractFact> generateFactsForVesselStorageCharacteristics(List<VesselStorageCharacteristic> vesselStorageCharacteristics);
+    VesselStorageCharacteristicsFact generateFactsForVesselStorageCharacteristic(VesselStorageCharacteristic vesselStorageCharacteristic);
 
-    @BeanMapping(resultType = FishingTripFact.class)
-    AbstractFact generateFactForFishingTrip(FishingTrip fishingTrip);
+    List<VesselStorageCharacteristicsFact> generateFactsForVesselStorageCharacteristics(List<VesselStorageCharacteristic> vesselStorageCharacteristics);
 
-    @BeanMapping(resultType = FishingTripFact.class)
-    List<AbstractFact> generateFactForFishingTrips(List<FishingTrip> fishingTrip);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FishingTripFact generateFactForFishingTrip(FishingTrip fishingTrip);
 
-    @BeanMapping(resultType = FluxLocationFact.class)
-    AbstractFact generateFactForFluxLocation(FLUXLocation fluxLocation);
+    List<FishingTripFact> generateFactForFishingTrips(List<FishingTrip> fishingTrip);
 
-    @BeanMapping(resultType = FluxLocationFact.class)
-    List<AbstractFact> generateFactsForFluxLocations(List<FLUXLocation> fluxLocation);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FluxLocationFact generateFactForFluxLocation(FLUXLocation fluxLocation);
 
-    @BeanMapping(resultType = FluxCharacteristicsFact.class)
-    AbstractFact generateFactForFluxCharacteristics(FLUXCharacteristic fluxCharacteristic);
+    List<FluxLocationFact> generateFactsForFluxLocations(List<FLUXLocation> fluxLocation);
 
-    @BeanMapping(resultType = FluxCharacteristicsFact.class)
-    List<AbstractFact> generateFactsForFluxCharacteristics(List<FLUXCharacteristic> fluxCharacteristic);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FluxCharacteristicsFact generateFactForFluxCharacteristics(FLUXCharacteristic fluxCharacteristic);
 
-    @BeanMapping(resultType = FaDepartureFact.class)
-    AbstractFact generateFactsForFaDeparture(FishingActivity fishingActivity);
+    List<FluxCharacteristicsFact> generateFactsForFluxCharacteristics(List<FLUXCharacteristic> fluxCharacteristic);
 
-    @BeanMapping(resultType = FaDepartureFact.class)
-    List<AbstractFact> generateFactsForFaDepartures(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaDepartureFact generateFactsForFaDeparture(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaEntryToSeaFact.class)
-    AbstractFact generateFactsForEntryIntoSea(FishingActivity fishingActivity);
+    List<FaDepartureFact> generateFactsForFaDepartures(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaEntryToSeaFact.class)
-    List<AbstractFact> generateFactsForEntryIntoSeas(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaEntryToSeaFact generateFactsForEntryIntoSea(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaFishingOperationFact.class)
-    AbstractFact generateFactsForFishingOperation(FishingActivity fishingActivity);
+    List<FaEntryToSeaFact> generateFactsForEntryIntoSeas(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaFishingOperationFact.class)
-    List<AbstractFact> generateFactsForFishingOperations(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaFishingOperationFact generateFactsForFishingOperation(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaJointFishingOperationFact.class)
-    AbstractFact generateFactsForJointFishingOperation(FishingActivity fishingActivity);
+    List<FaFishingOperationFact> generateFactsForFishingOperations(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaJointFishingOperationFact.class)
-    List<AbstractFact> generateFactsForJointFishingOperations(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaJointFishingOperationFact generateFactsForJointFishingOperation(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaRelocationFact.class)
-    AbstractFact generateFactsForRelocation(FishingActivity fishingActivity);
+    List<FaJointFishingOperationFact> generateFactsForJointFishingOperations(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaRelocationFact.class)
-    List<AbstractFact> generateFactsForRelocations(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaDiscardFact.class)
-    AbstractFact generateFactsForDiscard(FishingActivity fishingActivity);
+    List<FaRelocationFact> generateFactsForRelocations(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaDiscardFact.class)
-    List<AbstractFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaDiscardFact generateFactsForDiscard(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaExitFromSeaFact.class)
-    AbstractFact generateFactsForExitArea(FishingActivity fishingActivity);
+    List<FaDiscardFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaExitFromSeaFact.class)
-    List<AbstractFact> generateFactsForExitAreas(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaNotificationOfArrivalFact.class)
-    AbstractFact generateFactsForPriorNotificationOfArrival(FishingActivity fishingActivity);
+    List<FaExitFromSeaFact> generateFactsForExitAreas(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaNotificationOfArrivalFact.class)
-    List<AbstractFact> generateFactsForPriorNotificationOfArrivals(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaNotificationOfArrivalFact generateFactsForPriorNotificationOfArrival(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaArrivalFact.class)
-    AbstractFact generateFactsForArrival(FishingActivity fishingActivity);
+    List<FaNotificationOfArrivalFact> generateFactsForPriorNotificationOfArrivals(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaArrivalFact.class)
-    List<AbstractFact> generateFactsForArrivals(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaArrivalFact generateFactsForArrival(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaLandingFact.class)
-    AbstractFact generateFactsForLanding(FishingActivity fishingActivity);
+    List<FaArrivalFact> generateFactsForArrivals(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaLandingFact.class)
-    List<AbstractFact> generateFactsForLandings(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaLandingFact generateFactsForLanding(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaTranshipmentFact.class)
-    AbstractFact generateFactsForTranshipment(FishingActivity fishingActivity);
+    List<FaLandingFact> generateFactsForLandings(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaTranshipmentFact.class)
-    List<AbstractFact> generateFactsForTranshipments(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaTranshipmentFact generateFactsForTranshipment(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaNotificationOfTranshipmentFact.class)
-    AbstractFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity);
+    List<FaTranshipmentFact> generateFactsForTranshipments(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaNotificationOfTranshipmentFact.class)
-    List<AbstractFact> generateFactsForNotificationOfTranshipments(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaNotificationOfTranshipmentFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity);
 
-    @BeanMapping(resultType = FaQueryFact.class)
-    AbstractFact generateFactsForFaQuery(FAQuery faQuery);
+    List<FaNotificationOfTranshipmentFact> generateFactsForNotificationOfTranshipments(List<FishingActivity> fishingActivities);
 
-    @BeanMapping(resultType = FaQueryParameterFact.class)
-    AbstractFact generateFactsForFaQueryParameter(FAQueryParameter faQueryParameter);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaQueryFact generateFactsForFaQuery(FAQuery faQuery);
 
-    @BeanMapping(resultType = FaResponseFact.class)
-    AbstractFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage);
+    @Mappings({
+            @Mapping(target = "typeCode", source = "typeCode.value")
+    })
+    FaQueryParameterFact generateFactsForFaQueryParameter(FAQueryParameter faQueryParameter);
+
+    @Mappings({
+            @Mapping(target = "referencedID", source = "FLUXResponseDocument.referencedID.value")
+    })
+    FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage);
+
+    @Mappings({
+            @Mapping(target = "typeCode", source = "value"),
+            @Mapping(target = "listId", source = "listID")
+    })
+    CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType);
+
+    List<CodeType> mapToCodeType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeType);
 }

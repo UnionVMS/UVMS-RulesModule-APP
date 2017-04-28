@@ -65,6 +65,7 @@ public class FactRuleEvaluator {
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
+
         buildAllPackages(packages);
     }
 
@@ -117,6 +118,7 @@ public class FactRuleEvaluator {
 
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
                 log.error("Rule failed to build {} ", brId);
+                kieFileSystem.delete(ruleName.toString(), rule);
                 failedRules.add(brId);
                 continue;
             }
@@ -130,6 +132,9 @@ public class FactRuleEvaluator {
     }
 
     private void buildAllPackages(Collection<KiePackage> packages) {
+        if (packages == null) {
+            return;
+        }
         KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
         kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
         kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());

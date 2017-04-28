@@ -25,8 +25,6 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private String typeCode;
 
-    private String listId;
-
     public FaReportDocumentFact() {
         setFactType();
     }
@@ -37,14 +35,6 @@ public class FaReportDocumentFact extends AbstractFact {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
-    }
-
-    public String getListId() {
-        return listId;
-    }
-
-    public void setListId(String listId) {
-        this.listId = listId;
     }
 
     @Override

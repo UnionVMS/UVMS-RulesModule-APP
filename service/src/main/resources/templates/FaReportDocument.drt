@@ -19,9 +19,12 @@ when
     $fact : FaReportDocumentFact(@{expression})
 
 then
-    $fact.setOk(false);
-    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}");
+    try {
+       $fact.setOk(false);
+       $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}");
+    catch (Exception e) {
 
+    }
 end
 
 end template

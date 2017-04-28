@@ -48,7 +48,7 @@ public class FactRuleEvaluatorTest {
         facts.add(fact);
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
-        vesselTransportMeansFact.setTypeCode("ABC");
+        vesselTransportMeansFact.setRoleCode("ABC");
         facts.add(vesselTransportMeansFact);
 
         // First Validation
@@ -101,7 +101,7 @@ public class FactRuleEvaluatorTest {
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
         RuleType vrule = new RuleType();
-        vrule.setExpression("typeCode != null");
+        vrule.setExpression("roleCode != null");
         vrule.setBrId("1");
         vrule.setNote("Test Notes");
         vrule.setErrorType(ErrorType.WARNING);

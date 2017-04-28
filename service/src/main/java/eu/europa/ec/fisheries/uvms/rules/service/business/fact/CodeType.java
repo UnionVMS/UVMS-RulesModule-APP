@@ -13,15 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 /**
- * Created by padhyad on 4/21/2017.
+ * Created by padhyad on 4/25/2017.
  */
-public class GearProblemFact extends AbstractFact {
+public class CodeType {
 
     private String typeCode;
+    private String listId;
 
     public String getTypeCode() {
         return typeCode;
@@ -31,12 +29,11 @@ public class GearProblemFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public GearProblemFact() {
-        setFactType();
+    public String getListId() {
+        return listId;
     }
 
-    @Override
-    public void setFactType() {
-        this.factType = FactType.GEAR_PROBLEM;
+    public void setListId(String listId) {
+        this.listId = listId;
     }
 }

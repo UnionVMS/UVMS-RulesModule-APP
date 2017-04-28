@@ -21,6 +21,17 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FluxCharacteristicsFact extends AbstractFact {
 
+    private String typeCode;
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+
     public FluxCharacteristicsFact() {
         setFactType();
     }

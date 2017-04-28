@@ -21,6 +21,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class StructuredAddressFact extends AbstractFact {
 
+    private String postcodeCode;
+
+    public String getPostcodeCode() {
+        return postcodeCode;
+    }
+
+    public void setPostcodeCode(String postcodeCode) {
+        this.postcodeCode = postcodeCode;
+    }
+
     public StructuredAddressFact() {
         setFactType();
     }

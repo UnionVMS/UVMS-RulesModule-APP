@@ -21,18 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class VesselTransportMeansFact extends AbstractFact {
 
-    private String typeCode;
+    private String roleCode;
 
     public VesselTransportMeansFact() {
         setFactType();
     }
 
-    public String getTypeCode() {
-        return typeCode;
+    public String getRoleCode() {
+        return roleCode;
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
     }
 
     @Override

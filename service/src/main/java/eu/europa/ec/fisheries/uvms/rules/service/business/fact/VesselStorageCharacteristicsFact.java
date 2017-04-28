@@ -16,10 +16,22 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
+import java.util.List;
+
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class VesselStorageCharacteristicsFact extends AbstractFact {
+
+    private List<CodeType> typeCodes;
+
+    public List<CodeType> getTypeCodes() {
+        return typeCodes;
+    }
+
+    public void setTypeCodes(List<CodeType> typeCodes) {
+        this.typeCodes = typeCodes;
+    }
 
     public VesselStorageCharacteristicsFact() {
         setFactType();
