@@ -44,7 +44,9 @@ public class FactRuleEvaluatorTest {
 
         Collection<AbstractFact> facts = new ArrayList<>();
         FaReportDocumentFact fact = new FaReportDocumentFact();
-        fact.setTypeCode("typecode");
+        CodeType codeType = new CodeType();
+        codeType.setValue("typecode");
+        fact.setTypeCode(codeType);
         facts.add(fact);
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
@@ -65,7 +67,9 @@ public class FactRuleEvaluatorTest {
         // Second Validation
         facts.clear();
         FaReportDocumentFact newFaReport = new FaReportDocumentFact();
-        newFaReport.setTypeCode("CODE");
+        CodeType codeType1 = new CodeType();
+        codeType1.setValue("CODE");
+        newFaReport.setTypeCode(codeType1);
         facts.add(newFaReport);
         generator.validateFact(facts);
     }
@@ -74,7 +78,7 @@ public class FactRuleEvaluatorTest {
         List<RuleType> rules = new ArrayList<>();
         for (int i = 0; i < 10 ; i ++) {
             RuleType rule = new RuleType();
-            rule.setExpression("typeCode != null");
+            rule.setExpression("typeCode.value != null");
             rule.setBrId("1" + i);
             rule.setNote("Test Notes");
             rule.setErrorType(ErrorType.ERROR);

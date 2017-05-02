@@ -12,61 +12,62 @@ public class LifecycleProcessEventListener implements ProcessEventListener {
 	@Override
 	public void afterNodeLeft(ProcessNodeLeftEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void afterNodeTriggered(ProcessNodeTriggeredEvent arg0) {
 		// TODO Auto-generated method stub
+		System.out.print("abc");
 
 	}
 
 	@Override
 	public void afterProcessCompleted(ProcessCompletedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void afterProcessStarted(ProcessStartedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void afterVariableChanged(ProcessVariableChangedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void beforeNodeLeft(ProcessNodeLeftEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void beforeNodeTriggered(ProcessNodeTriggeredEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void beforeProcessCompleted(ProcessCompletedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void beforeProcessStarted(ProcessStartedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 	@Override
 	public void beforeVariableChanged(ProcessVariableChangedEvent arg0) {
 		// TODO Auto-generated method stub
-
+		System.out.print("abc");
 	}
 
 }

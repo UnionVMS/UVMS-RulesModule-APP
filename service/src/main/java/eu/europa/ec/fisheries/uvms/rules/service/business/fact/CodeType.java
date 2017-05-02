@@ -22,19 +22,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CodeType {
 
-    private String typeCode;
+    private String value;
     private String listId;
 
-    public CodeType(String typeCode) {
-        this.typeCode = typeCode;
+    public String getValue() {
+        return value;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setValue(String typeCode) {
+        this.value = typeCode;
     }
 
     public String getListId() {

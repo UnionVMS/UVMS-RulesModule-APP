@@ -17,9 +17,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,48 +31,118 @@ import java.util.List;
  */
 public class FaReportDocumentFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    private List<IDType> ids;
+    private List<IdType> relatedReportIDs;
 
-    private DateTimeType creationDateTime;
+    private Date acceptanceDateTime;
 
-    private IDType referencedID;
+    private List<IdType> ids;
+
+    private FLUXReportDocument relatedFLUXReportDocument;
+
+    private CodeType purposeCode;
+
+    private IdType referencedID;
+
+    private Date creationDateTime;
+
+    private List<IdType> ownerFluxPartyIds;
+
+    private VesselTransportMeans specifiedVesselTransportMeans;
+
+    private List<FishingActivity> specifiedFishingActivities;
 
     public FaReportDocumentFact() {
         setFactType();
     }
 
-    public String getTypeCode() {
+    public CodeType getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
     }
 
-    public List<IDType> getIds() {
+    public List<IdType> getRelatedReportIDs() {
+        return relatedReportIDs;
+    }
+
+    public void setRelatedReportIDs(List<IdType> relatedReportIDs) {
+        this.relatedReportIDs = relatedReportIDs;
+    }
+
+    public Date getAcceptanceDateTime() {
+        return acceptanceDateTime;
+    }
+
+    public void setAcceptanceDateTime(Date acceptanceDateTime) {
+        this.acceptanceDateTime = acceptanceDateTime;
+    }
+
+    public List<IdType> getIds() {
         return ids;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIds(List<IdType> ids) {
         this.ids = ids;
     }
 
-    public DateTimeType getCreationDateTime() {
-        return creationDateTime;
+    public FLUXReportDocument getRelatedFLUXReportDocument() {
+        return relatedFLUXReportDocument;
     }
 
-    public void setCreationDateTime(DateTimeType creationDateTime) {
-        this.creationDateTime = creationDateTime;
+    public void setRelatedFLUXReportDocument(FLUXReportDocument relatedFLUXReportDocument) {
+        this.relatedFLUXReportDocument = relatedFLUXReportDocument;
     }
 
-    public IDType getReferencedID() {
+    public CodeType getPurposeCode() {
+        return purposeCode;
+    }
+
+    public void setPurposeCode(CodeType purposeCode) {
+        this.purposeCode = purposeCode;
+    }
+
+    public IdType getReferencedID() {
         return referencedID;
     }
 
-    public void setReferencedID(IDType referencedID) {
+    public void setReferencedID(IdType referencedID) {
         this.referencedID = referencedID;
+    }
+
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public List<IdType> getOwnerFluxPartyIds() {
+        return ownerFluxPartyIds;
+    }
+
+    public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
+        this.ownerFluxPartyIds = ownerFluxPartyIds;
+    }
+
+    public VesselTransportMeans getSpecifiedVesselTransportMeans() {
+        return specifiedVesselTransportMeans;
+    }
+
+    public void setSpecifiedVesselTransportMeans(VesselTransportMeans specifiedVesselTransportMeans) {
+        this.specifiedVesselTransportMeans = specifiedVesselTransportMeans;
+    }
+
+    public List<FishingActivity> getSpecifiedFishingActivities() {
+        return specifiedFishingActivities;
+    }
+
+    public void setSpecifiedFishingActivities(List<FishingActivity> specifiedFishingActivities) {
+        this.specifiedFishingActivities = specifiedFishingActivities;
     }
 
     @Override

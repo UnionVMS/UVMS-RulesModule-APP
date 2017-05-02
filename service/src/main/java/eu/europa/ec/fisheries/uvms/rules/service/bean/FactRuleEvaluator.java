@@ -26,6 +26,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.LifecycleProcessEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
@@ -40,6 +41,7 @@ import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.ConsequenceException;
 import org.kie.internal.definition.KnowledgePackage;
 
 @Slf4j
@@ -73,14 +75,18 @@ public class FactRuleEvaluator {
     }
 
     public void validateFact(Collection<AbstractFact> facts) {
-        KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-
-        KieSession ksession = container.newKieSession();
-        for (AbstractFact fact : facts) { // Insert All the facts
-            ksession.insert(fact);
+        try {
+            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            KieSession ksession = container.newKieSession();
+            for (AbstractFact fact : facts) { // Insert All the facts
+                ksession.insert(fact);
+            }
+            ksession.fireAllRules();
+            ksession.dispose();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        ksession.fireAllRules();
-        ksession.dispose();
+
     }
 
     public List<String> getFailedRules() {

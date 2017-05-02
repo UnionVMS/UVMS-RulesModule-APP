@@ -42,7 +42,7 @@ public class FLUX_ReportDocumentRuleTest {
     @Before
     public void beforeClass() {
 
-        ruleID.setExpression("ids == null || ids.empty == true");
+        ruleID.setExpression("ids == null || ids.empty == true || ids.get(0).value = \"abc\"");
         ruleID.setBrId("FA-L00-00-0001");
         ruleID.setErrorType(ERROR);
         ruleID.setMessage("ID Must be present.");
@@ -74,7 +74,7 @@ public class FLUX_ReportDocumentRuleTest {
         AbstractFact fact = new FaReportDocumentFact();
         IDType idType = new IDType();
         idType.setSchemeID("1cc5c060-2b84-11e7-93ae-92361f002671");
-        ((FaReportDocumentFact) fact).setReferencedID(idType);
+        //((FaReportDocumentFact) fact).setReferencedID(idType);
 
         generator.validateFact(Collections.singletonList(fact));
 
@@ -91,7 +91,7 @@ public class FLUX_ReportDocumentRuleTest {
 
         AbstractFact fact = new FaReportDocumentFact();
         DateTimeType dateTimeType = new DateTimeType();
-        ((FaReportDocumentFact) fact).setCreationDateTime(dateTimeType);
+        //((FaReportDocumentFact) fact).setCreationDateTime(dateTimeType);
 
         generator.validateFact(Collections.singletonList(fact));
 
@@ -109,7 +109,7 @@ public class FLUX_ReportDocumentRuleTest {
         AbstractFact fact = new FaReportDocumentFact();
         ArrayList<IDType> idTypes = new ArrayList<>();
         idTypes.add(new IDType());
-        ((FaReportDocumentFact) fact).setIds(idTypes);
+        //((FaReportDocumentFact) fact).setIds(idTypes);
 
         generator.validateFact(Collections.singletonList(fact));
 
