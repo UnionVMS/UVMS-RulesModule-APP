@@ -58,7 +58,7 @@ public abstract class AbstractFact {
     public abstract void setFactType();
 
     public void addWarningOrError(String type, String msg, String brId) {
-        if (type.equals(ErrorType.ERROR)) {
+        if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
             getErrors().add(new RuleError(brId, msg));
         } else {
             getWarnings().add(new RuleWarning(brId, msg));
@@ -68,7 +68,7 @@ public abstract class AbstractFact {
     public boolean isUUID(String name) {
         try {
             UUID.fromString(name);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return true;
         }
         return false;

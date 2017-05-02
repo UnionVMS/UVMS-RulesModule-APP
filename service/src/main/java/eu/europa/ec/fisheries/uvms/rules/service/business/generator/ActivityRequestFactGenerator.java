@@ -39,7 +39,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     @Override
     public List<AbstractFact> getAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
-        facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
+        //facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
         //TODO
         return facts;
     }
