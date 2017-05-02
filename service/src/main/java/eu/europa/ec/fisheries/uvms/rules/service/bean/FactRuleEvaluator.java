@@ -26,7 +26,6 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
-import eu.europa.ec.fisheries.uvms.rules.service.lifecycle.LifecycleProcessEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
@@ -41,7 +40,6 @@ import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.rule.ConsequenceException;
 import org.kie.internal.definition.KnowledgePackage;
 
 @Slf4j

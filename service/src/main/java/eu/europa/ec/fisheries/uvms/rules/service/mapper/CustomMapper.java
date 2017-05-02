@@ -10,31 +10,57 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
+/**
+ * @author padhyad
+ * @author Gregory Rinaldi
+ */
 public class CustomMapper {
 
     private CustomMapper(){
 
     }
-    public static List<IdType> mapToIdTypeList(List<ContactParty> contactPartyList){
-        List<IdType> idTypeList = null;
 
-        if((CollectionUtils.isEmpty(contactPartyList))){
+    public static List<CodeType> mapToIdTypeList(List<ContactParty> contactPartyList) {
+        List<CodeType> codeTypes = null;
 
-            idTypeList = Collections.newArrayList();
+        if (CollectionUtils.isEmpty(contactPartyList)) {
+
+            codeTypes = Collections.newArrayList();
 
             for(ContactParty contactParty: contactPartyList){
-                idTypeList.addAll(ActivityFactMapper.INSTANCE.mapToIdType(contactParty.getIDS()));
+                codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(contactParty.getRoleCodes()));
             }
         }
 
-        return idTypeList;
+        return codeTypes;
     }
+
+    public static Date getDate(DateTimeType dateTimeType) {
+        Date date;
+        try {
+            if (dateTimeType.getDateTime() != null) {
+                date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
+            } else {
+                String format = dateTimeType.getDateTimeString().getFormat();
+                String value = dateTimeType.getDateTimeString().getValue();
+                date = new SimpleDateFormat(format).parse(value);
+            }
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
+    }
+
 }

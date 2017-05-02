@@ -43,7 +43,7 @@ public class ActivityFactMapperTest {
         List<VesselTransportMeansFact> vesselTransportMeansFacts = ActivityFactMapper.INSTANCE.generateFactForVesselTransportMeans(Collections.singletonList(vesselTransportMeans));
         VesselTransportMeansFact mappedFact = vesselTransportMeansFacts.get(0);
 
-        assertEquals(codeType.getValue(), mappedFact.getRoleCode().getTypeCode());
+        assertEquals(codeType.getValue(), mappedFact.getRoleCode().getValue());
         assertEquals(idType.getValue(), mappedFact.getIds().get(0).getValue());
 
     }

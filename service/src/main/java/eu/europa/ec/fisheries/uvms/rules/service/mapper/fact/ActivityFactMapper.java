@@ -13,7 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -51,14 +52,20 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 /**
  * @author padhyad
@@ -95,8 +102,7 @@ public interface ActivityFactMapper {
     @Mappings({
             @Mapping(target = "ids", source = "IDS"),
             @Mapping(target = "registrationVesselCountryId", source = "registrationVesselCountry.ID"),
-            @Mapping(target = "registrationVesselCountryId", source = "registrationVesselCountry.ID"),
-
+            @Mapping(target = "specifiedContactPartyRoleCodes", source = "specifiedContactParties"),
     })
     VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
 
@@ -263,33 +269,17 @@ public interface ActivityFactMapper {
     FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "value"),
             @Mapping(target = "listId", source = "listID")
     })
     CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType);
 
     @Mappings({
-            @Mapping(target = "value", source = "value"),
             @Mapping(target = "schemeId", source = "schemeID")
     })
     IdType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType idType);
 
-    List<CodeType> mapToCodeType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeType);
+    List<IdType> mapToIdType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType> idTypes);
 
-    protected Date getDate(DateTimeType dateTimeType) {
-        Date date;
-        try {
-            if (dateTimeType.getDateTime() != null) {
-                date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-            } else {
-                String format = dateTimeType.getDateTimeString().getFormat();
-                String value = dateTimeType.getDateTimeString().getValue();
-                date = new SimpleDateFormat(format).parse(value);
-            }
-        } catch (ParseException e) {
-            date = null;
-        }
-        return date;
-    }
+    List<CodeType> mapToCodeType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes);
 
 }

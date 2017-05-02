@@ -29,7 +29,7 @@ public class VesselTransportMeansFact extends AbstractFact {
 
     private List<ContactParty> specifiedContactParties;
 
-    private List<CodeType> specifiedContactPartiesRoleCodes;
+    private List<CodeType> specifiedContactPartyRoleCodes;
 
     public VesselTransportMeansFact() {
         setFactType();
@@ -72,11 +72,11 @@ public class VesselTransportMeansFact extends AbstractFact {
         this.specifiedContactParties = specifiedContactParties;
     }
 
-    public List<CodeType> getSpecifiedContactPartiesRoleCodes() {
-        return specifiedContactPartiesRoleCodes;
+    public List<CodeType> getSpecifiedContactPartyRoleCodes() {
+        return specifiedContactPartyRoleCodes;
     }
 
-    public void setSpecifiedContactPartiesRoleCodes(List<CodeType> specifiedContactPartiesRoleCodes) {
-        this.specifiedContactPartiesRoleCodes = specifiedContactPartiesRoleCodes;
+    public void setSpecifiedContactPartyRoleCodes(List<CodeType> specifiedContactPartyRoleCodes) {
+        this.specifiedContactPartyRoleCodes = specifiedContactPartyRoleCodes;
     }
 }

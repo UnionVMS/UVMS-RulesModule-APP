@@ -14,7 +14,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 /**
- * Created by padhyad on 5/2/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class IdType {
 

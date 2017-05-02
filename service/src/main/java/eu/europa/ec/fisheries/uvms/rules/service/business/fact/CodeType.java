@@ -25,6 +25,10 @@ public class CodeType {
     private String value;
     private String listId;
 
+    public CodeType(String value) {
+        this.value = value;
+    }
+
     public String getValue() {
         return value;
     }

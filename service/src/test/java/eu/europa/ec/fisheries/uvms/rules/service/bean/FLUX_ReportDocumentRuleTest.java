@@ -12,7 +12,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
 import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
