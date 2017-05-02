@@ -15,6 +15,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -23,12 +27,62 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private String referencedID;
 
+    private List<IdType> ids;
+
+    private Date creationDateTime;
+
+    private CodeType purposeCode;
+
+    private List<IdType> ownerFluxPartyIds;
+
+    private List<FAReportDocument> faReportDocuments;
+
     public String getReferencedID() {
         return referencedID;
     }
 
     public void setReferencedID(String referencedID) {
         this.referencedID = referencedID;
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public CodeType getPurposeCode() {
+        return purposeCode;
+    }
+
+    public void setPurposeCode(CodeType purposeCode) {
+        this.purposeCode = purposeCode;
+    }
+
+    public List<IdType> getOwnerFluxPartyIds() {
+        return ownerFluxPartyIds;
+    }
+
+    public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
+        this.ownerFluxPartyIds = ownerFluxPartyIds;
+    }
+
+    public List<FAReportDocument> getFaReportDocuments() {
+        return faReportDocuments;
+    }
+
+    public void setFaReportDocuments(List<FAReportDocument> faReportDocuments) {
+        this.faReportDocuments = faReportDocuments;
     }
 
     public FluxFaReportMessageFact() {

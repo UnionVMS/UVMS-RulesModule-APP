@@ -23,6 +23,8 @@ public class FishingActivityFact extends AbstractFact {
 
     private String typeCode;
 
+    private boolean isSubActivity;
+
     public String getTypeCode() {
         return typeCode;
     }
@@ -38,5 +40,13 @@ public class FishingActivityFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FISHING_ACTIVITY;
+    }
+
+    public void setIsSubActivity(boolean isSubActivity) {
+        this.isSubActivity = isSubActivity;
+    }
+
+    public boolean isSubActivity() {
+        return isSubActivity;
     }
 }
