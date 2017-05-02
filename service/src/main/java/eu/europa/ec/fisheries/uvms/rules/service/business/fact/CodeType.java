@@ -13,13 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import lombok.NoArgsConstructor;
+
 /**
- * Created by padhyad on 4/25/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
+@NoArgsConstructor
 public class CodeType {
 
     private String typeCode;
     private String listId;
+
+    public CodeType(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
     public String getTypeCode() {
         return typeCode;

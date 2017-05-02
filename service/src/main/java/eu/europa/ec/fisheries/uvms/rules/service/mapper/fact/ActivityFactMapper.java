@@ -45,6 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -67,9 +68,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
-@Mapper
+@Mapper(uses = CustomMapper.class)
 public interface ActivityFactMapper {
 
     ActivityFactMapper INSTANCE = Mappers.getMapper(ActivityFactMapper.class);
@@ -94,7 +96,10 @@ public interface ActivityFactMapper {
     FluxFaReportMessageFact generateFactForFluxReportMessage(FLUXFAReportMessage fluxfaReportMessage);
 
     @Mappings({
-            @Mapping(target = "ids", source = "IDS")
+            @Mapping(target = "ids", source = "IDS"),
+            @Mapping(target = "registrationVesselCountryId", source = "registrationVesselCountry.ID"),
+            @Mapping(target = "registrationVesselCountryId", source = "registrationVesselCountry.ID"),
+
     })
     VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
 
@@ -267,7 +272,6 @@ public interface ActivityFactMapper {
     CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType);
 
     @Mappings({
-            @Mapping(target = "value", source = "value"),
             @Mapping(target = "schemeId", source = "schemeID")
     })
     IdType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType idType);

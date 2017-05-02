@@ -13,30 +13,70 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 
-/**
- * Created by padhyad on 4/14/2017.
- */
 public class VesselTransportMeansFact extends AbstractFact {
 
-    private String roleCode;
+    private List<IdType> ids;
+
+    private IdType registrationVesselCountryId;
+
+    private CodeType roleCode;
+
+    private List<ContactParty> specifiedContactParties;
+
+    private List<CodeType> specifiedContactPartiesRoleCodes;
 
     public VesselTransportMeansFact() {
         setFactType();
     }
 
-    public String getRoleCode() {
-        return roleCode;
-    }
-
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
-    }
-
     @Override
     public void setFactType() {
         this.factType = FactType.VESSEL_TRANSPORT_MEANS;
+    }
+
+    public CodeType getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(CodeType roleCode) {
+        this.roleCode = roleCode;
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public IdType getRegistrationVesselCountryId() {
+        return registrationVesselCountryId;
+    }
+
+    public void setRegistrationVesselCountryId(IdType registrationVesselCountryId) {
+        this.registrationVesselCountryId = registrationVesselCountryId;
+    }
+
+    public List<ContactParty> getSpecifiedContactParties() {
+        return specifiedContactParties;
+    }
+
+    public void setSpecifiedContactParties(List<ContactParty> specifiedContactParties) {
+        this.specifiedContactParties = specifiedContactParties;
+    }
+
+    public List<CodeType> getSpecifiedContactPartiesRoleCodes() {
+        return specifiedContactPartiesRoleCodes;
+    }
+
+    public void setSpecifiedContactPartiesRoleCodes(List<CodeType> specifiedContactPartiesRoleCodes) {
+        this.specifiedContactPartiesRoleCodes = specifiedContactPartiesRoleCodes;
     }
 }
