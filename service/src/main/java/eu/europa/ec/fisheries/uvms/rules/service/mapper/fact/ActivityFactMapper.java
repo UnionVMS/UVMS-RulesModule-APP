@@ -176,11 +176,16 @@ public interface ActivityFactMapper {
     List<FluxCharacteristicsFact> generateFactsForFluxCharacteristics(List<FLUXCharacteristic> fluxCharacteristic);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "occurrenceDateTime", source = "fishingActivity.occurrenceDateTime"),
+            @Mapping(target = "reasonCode", source = "fishingActivity.reasonCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "specifiedFishingGears", source = "fishingActivity.specifiedFishingGears"),
+            @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches"),
+            @Mapping(target = "specifiedFishingTrip", source = "fishingActivity.specifiedFishingTrip"),
     })
-    FaDepartureFact generateFactsForFaDeparture(FishingActivity fishingActivity);
-
-    List<FaDepartureFact> generateFactsForFaDepartures(List<FishingActivity> fishingActivities);
+    FaDepartureFact generateFactsForFaDeparture(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
