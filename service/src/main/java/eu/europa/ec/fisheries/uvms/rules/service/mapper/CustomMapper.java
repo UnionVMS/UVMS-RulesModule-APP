@@ -17,6 +17,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
@@ -27,6 +28,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@Slf4j
 public class CustomMapper {
 
     private CustomMapper(){
@@ -64,18 +66,22 @@ public class CustomMapper {
     }
 
     public static Date getDate(DateTimeType dateTimeType) {
-        Date date;
-        try {
-            if (dateTimeType.getDateTime() != null) {
-                date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-            } else {
-                String format = dateTimeType.getDateTimeString().getFormat();
-                String value = dateTimeType.getDateTimeString().getValue();
-                date = new SimpleDateFormat(format).parse(value);
+        Date date = null;
+
+        if (dateTimeType != null) {
+            try {
+                if (dateTimeType.getDateTime() != null) {
+                    date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
+                } else {
+                    String format = dateTimeType.getDateTimeString().getFormat();
+                    String value = dateTimeType.getDateTimeString().getValue();
+                    date = new SimpleDateFormat(format).parse(value);
+                }
+            } catch (ParseException e) {
+                log.debug("Error while trying to parse dateTimeType", e);
             }
-        } catch (ParseException e) {
-            date = null;
         }
+
         return date;
     }
 

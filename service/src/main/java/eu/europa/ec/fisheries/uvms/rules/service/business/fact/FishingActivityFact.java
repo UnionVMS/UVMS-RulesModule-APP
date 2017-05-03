@@ -13,25 +13,46 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class FishingActivityFact extends AbstractFact {
 
-    private String typeCode;
+    private List<IdType> ids;
+
+    private Date occurrenceDateTime;
+
+    private FishingTrip specifiedFishingTrip;
+
+    private List<FishingActivity> relatedFishingActivities;
+
+    private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
+
+    private CodeType reasonCode;
+
+    private CodeType fisheryTypeCode;
+
+    private CodeType speciesTargetCode;
+
+    private String operationQuantity;
 
     private boolean isSubActivity;
 
-    public String getTypeCode() {
-        return typeCode;
-    }
+    private List<DelimitedPeriod> delimitedPeriods;
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private List<FLUXLocation> relatedFLUXLocations;
 
     public FishingActivityFact() {
         setFactType();
@@ -48,5 +69,98 @@ public class FishingActivityFact extends AbstractFact {
 
     public boolean isSubActivity() {
         return isSubActivity;
+    }
+
+    public void setSubActivity(boolean subActivity) {
+
+        isSubActivity = subActivity;
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public Date getOccurrenceDateTime() {
+        return occurrenceDateTime;
+    }
+
+    public void setOccurrenceDateTime(Date occurrenceDateTime) {
+        this.occurrenceDateTime = occurrenceDateTime;
+    }
+
+    public List<FishingActivity> getRelatedFishingActivities() {
+        return relatedFishingActivities;
+    }
+
+    public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
+        this.relatedFishingActivities = relatedFishingActivities;
+    }
+
+    public List<DelimitedPeriod> getDelimitedPeriods() {
+        return delimitedPeriods;
+    }
+
+    public void setDelimitedPeriods(List<DelimitedPeriod> delimitedPeriods) {
+        this.delimitedPeriods = delimitedPeriods;
+    }
+
+    public List<FLUXLocation> getRelatedFLUXLocations() {
+        return relatedFLUXLocations;
+    }
+
+    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
+        this.relatedFLUXLocations = relatedFLUXLocations;
+    }
+
+    public CodeType getReasonCode() {
+        return reasonCode;
+    }
+
+    public void setReasonCode(CodeType reasonCode) {
+        this.reasonCode = reasonCode;
+    }
+
+    public CodeType getFisheryTypeCode() {
+        return fisheryTypeCode;
+    }
+
+    public void setFisheryTypeCode(CodeType fisheryTypeCode) {
+        this.fisheryTypeCode = fisheryTypeCode;
+    }
+
+    public CodeType getSpeciesTargetCode() {
+        return speciesTargetCode;
+    }
+
+    public void setSpeciesTargetCode(CodeType speciesTargetCode) {
+        this.speciesTargetCode = speciesTargetCode;
+    }
+
+    public String getOperationQuantity() {
+        return operationQuantity;
+    }
+
+    public void setOperationQuantity(String operationQuantity) {
+        this.operationQuantity = operationQuantity;
+    }
+
+    public FishingTrip getSpecifiedFishingTrip() {
+        return specifiedFishingTrip;
+    }
+
+    public void setSpecifiedFishingTrip(FishingTrip specifiedFishingTrip) {
+        this.specifiedFishingTrip = specifiedFishingTrip;
+    }
+
+    public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
+        return specifiedFLUXCharacteristics;
+    }
+
+    public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
+        this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
     }
 }

@@ -88,7 +88,9 @@ public interface ActivityFactMapper {
     List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "ids", source = "IDS"),
+            @Mapping(target = "delimitedPeriods", source = "specifiedDelimitedPeriods"),
+            @Mapping(target = "operationQuantity", source = "operationsQuantity.value")
     })
     FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity);
 
