@@ -131,7 +131,6 @@ public interface ActivityFactMapper {
     List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
     })
     GearCharacteristicsFact generateFactsForGearCharacteristic(GearCharacteristic gearCharacteristic);
 

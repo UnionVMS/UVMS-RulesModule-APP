@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.SneakyThrows;
@@ -31,6 +32,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
@@ -160,6 +162,18 @@ public class ActivityFactMapperTest {
         assertEquals(fishingActivity, fishingActivityFacts.get(0).getRelatedFishingActivities().get(0));
         assertEquals(fluxLocation, fishingActivityFacts.get(0).getRelatedFLUXLocations().get(0));
         assertEquals(fishingTrip, fishingActivityFacts.get(0).getSpecifiedFishingTrip());
+
+    }
+
+    @Test
+    public void testGenerateFactForGearCharacteristics() {
+
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        gearCharacteristic.setTypeCode(codeType);
+
+        List<GearCharacteristicsFact> gearCharacteristicsFacts = ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(Collections.singletonList(gearCharacteristic));
+
+        assertEquals(codeType.getValue(), gearCharacteristicsFacts.get(0).getTypeCode().getValue());
 
     }
 

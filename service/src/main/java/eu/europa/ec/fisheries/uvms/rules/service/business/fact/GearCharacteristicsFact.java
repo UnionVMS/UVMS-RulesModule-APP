@@ -17,19 +17,12 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @autor padhyad
+ * @autor Gregory Rinaldi
  */
 public class GearCharacteristicsFact extends AbstractFact {
 
-    private String typeCode;
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private CodeType typeCode;
 
     public GearCharacteristicsFact() {
         setFactType();
@@ -38,5 +31,13 @@ public class GearCharacteristicsFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.GEAR_CHARACTERISTIC;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
     }
 }
