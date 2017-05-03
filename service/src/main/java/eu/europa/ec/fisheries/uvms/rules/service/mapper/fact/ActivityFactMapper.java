@@ -103,11 +103,11 @@ public interface ActivityFactMapper {
             @Mapping(target = "ids", source = "IDS"),
             @Mapping(target = "registrationVesselCountryId", source = "registrationVesselCountry.ID"),
             @Mapping(target = "specifiedContactPartyRoleCodes", source = "specifiedContactParties"),
+            @Mapping(target = "specifiedContactPersons", source = "specifiedContactParties")
     })
     VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
 
     List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans);
-
 
     @Mappings({
             @Mapping(target = "postcodeCode", source = "postcodeCode.value")

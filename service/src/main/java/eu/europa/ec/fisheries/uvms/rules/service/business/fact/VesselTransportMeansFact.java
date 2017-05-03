@@ -18,6 +18,7 @@ import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 
 public class VesselTransportMeansFact extends AbstractFact {
 
@@ -30,6 +31,8 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<ContactParty> specifiedContactParties;
 
     private List<CodeType> specifiedContactPartyRoleCodes;
+
+    private List<ContactPerson> specifiedContactPersons;
 
     public VesselTransportMeansFact() {
         setFactType();
@@ -78,5 +81,13 @@ public class VesselTransportMeansFact extends AbstractFact {
 
     public void setSpecifiedContactPartyRoleCodes(List<CodeType> specifiedContactPartyRoleCodes) {
         this.specifiedContactPartyRoleCodes = specifiedContactPartyRoleCodes;
+    }
+
+    public List<ContactPerson> getSpecifiedContactPersons() {
+        return specifiedContactPersons;
+    }
+
+    public void setSpecifiedContactPersons(List<ContactPerson> specifiedContactPersons) {
+        this.specifiedContactPersons = specifiedContactPersons;
     }
 }

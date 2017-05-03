@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 /**
@@ -35,7 +36,7 @@ public class CustomMapper {
     public static List<CodeType> mapToIdTypeList(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
 
-        if (CollectionUtils.isEmpty(contactPartyList)) {
+        if (!CollectionUtils.isEmpty(contactPartyList)) {
 
             codeTypes = Collections.newArrayList();
 
@@ -45,6 +46,21 @@ public class CustomMapper {
         }
 
         return codeTypes;
+    }
+
+    public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
+        List<ContactPerson> contactPersonList = null;
+
+        if (CollectionUtils.isEmpty(contactPartyList)) {
+
+            contactPersonList = Collections.newArrayList();
+
+            for (ContactParty contactParty : contactPartyList) {
+                contactPersonList.addAll(contactParty.getSpecifiedContactPersons());
+            }
+        }
+
+        return contactPersonList;
     }
 
     public static Date getDate(DateTimeType dateTimeType) {

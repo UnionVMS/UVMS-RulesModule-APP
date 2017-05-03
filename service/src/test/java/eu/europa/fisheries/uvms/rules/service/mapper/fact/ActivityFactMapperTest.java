@@ -17,7 +17,10 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
@@ -27,24 +30,52 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
  */
 public class ActivityFactMapperTest {
 
+    IDType idType;
+    CodeType codeType;
+
+    @Before
+    public void before() {
+        idType = new IDType();
+        idType.setValue("value");
+        idType.setSchemeID("schemeId");
+
+        codeType = new CodeType();
+        codeType.setValue("value");
+    }
+
     @Test
     public void testGenerateFactForVesselTransportMean(){
 
         VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
-        CodeType codeType = new CodeType();
-        codeType.setValue("codeTypeValue");
         vesselTransportMeans.setRoleCode(codeType);
 
-        IDType idType = new IDType();
-        idType.setValue("idTypeValue");
-        idType.setSchemeID("isSchemeId");
         vesselTransportMeans.setIDS(Collections.singletonList(idType));
+
+        VesselCountry vesselCountry = new VesselCountry();
+        vesselCountry.setID(idType);
+        vesselTransportMeans.setRegistrationVesselCountry(vesselCountry);
+
+        ContactParty contactParty = new ContactParty();
+        contactParty.setRoleCodes(Collections.singletonList(codeType));
+        contactParty.setIDS(Collections.singletonList(idType));
+        vesselTransportMeans.setSpecifiedContactParties(Collections.singletonList(contactParty));
 
         List<VesselTransportMeansFact> vesselTransportMeansFacts = ActivityFactMapper.INSTANCE.generateFactForVesselTransportMeans(Collections.singletonList(vesselTransportMeans));
         VesselTransportMeansFact mappedFact = vesselTransportMeansFacts.get(0);
 
         assertEquals(codeType.getValue(), mappedFact.getRoleCode().getValue());
+
+        assertEquals(idType.getValue(), mappedFact.getRegistrationVesselCountryId().getValue());
+        assertEquals(idType.getSchemeID(), mappedFact.getRegistrationVesselCountryId().getSchemeId());
+
+        assertEquals(idType.getValue(), mappedFact.getSpecifiedContactParties().get(0).getIDS().get(0).getValue());
+        assertEquals(idType.getSchemeID(), mappedFact.getSpecifiedContactParties().get(0).getIDS().get(0).getSchemeID());
+
         assertEquals(idType.getValue(), mappedFact.getIds().get(0).getValue());
+        assertEquals(idType.getSchemeID(), mappedFact.getIds().get(0).getSchemeId());
+
+        assertEquals(codeType.getValue(), mappedFact.getSpecifiedContactPartyRoleCodes().get(0).getValue());
 
     }
+
 }
