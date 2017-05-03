@@ -155,7 +155,7 @@ public interface ActivityFactMapper {
     List<VesselStorageCharacteristicsFact> generateFactsForVesselStorageCharacteristics(List<VesselStorageCharacteristic> vesselStorageCharacteristics);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "ids", source = "IDS")
     })
     FishingTripFact generateFactForFishingTrip(FishingTrip fishingTrip);
 

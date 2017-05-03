@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
@@ -174,6 +175,21 @@ public class ActivityFactMapperTest {
         List<GearCharacteristicsFact> gearCharacteristicsFacts = ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(Collections.singletonList(gearCharacteristic));
 
         assertEquals(codeType.getValue(), gearCharacteristicsFacts.get(0).getTypeCode().getValue());
+
+    }
+
+    @Test
+    public void testGenerateFactForFishingTrip() {
+
+        FishingTrip fishingTrip = new FishingTrip();
+        fishingTrip.setIDS(Collections.singletonList(idType));
+        fishingTrip.setTypeCode(codeType);
+
+        List<FishingTripFact> fishingTripFacts = ActivityFactMapper.INSTANCE.generateFactForFishingTrips(Collections.singletonList(fishingTrip));
+
+        assertEquals(idType.getValue(), fishingTripFacts.get(0).getIds().get(0).getValue());
+        assertEquals(idType.getSchemeID(), fishingTripFacts.get(0).getIds().get(0).getSchemeId());
+        assertEquals(codeType.getValue(), fishingTripFacts.get(0).getTypeCode().getValue());
 
     }
 

@@ -13,23 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class FishingTripFact extends AbstractFact {
 
-    private String typeCode;
+    private List<IdType> ids;
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private CodeType typeCode;
 
     public FishingTripFact() {
         setFactType();
@@ -38,5 +35,21 @@ public class FishingTripFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FISHING_TRIP;
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
     }
 }
