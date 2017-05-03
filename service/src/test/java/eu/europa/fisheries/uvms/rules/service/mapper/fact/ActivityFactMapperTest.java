@@ -47,20 +47,20 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 
 /**
- * TODO create test
+ * @author Gregory Rinaldi
  */
 public class ActivityFactMapperTest {
 
-    IDType idType;
-    CodeType codeType;
-    DelimitedPeriod delimitedPeriod;
-    QuantityType quantityType;
-    DateTimeType dateTimeType;
-    Date date;
-    FLUXLocation fluxLocation;
-    FACatch faCatch;
-    FishingTrip fishingTrip;
-    FishingGear fishingGear;
+    private IDType idType;
+    private CodeType codeType;
+    private DelimitedPeriod delimitedPeriod;
+    private QuantityType quantityType;
+    private DateTimeType dateTimeType;
+    private Date date;
+    private FLUXLocation fluxLocation;
+    private FACatch faCatch;
+    private FishingTrip fishingTrip;
+    private FishingGear fishingGear;
 
     @Before
     @SneakyThrows
