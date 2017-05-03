@@ -95,7 +95,12 @@ public interface ActivityFactMapper {
     List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
 
     @Mappings({
-            @Mapping(target = "referencedID", source = "FLUXReportDocument.referencedID.value")
+            @Mapping(target = "referencedID", source = "FLUXReportDocument.referencedID.value"),
+            @Mapping(target = "creationDateTime", source = "FLUXReportDocument.creationDateTime"),
+            @Mapping(target = "purposeCode", source = "FLUXReportDocument.purposeCode"),
+            @Mapping(target = "ids", source = "FLUXReportDocument.IDS"),
+            @Mapping(target = "ownerFluxPartyIds", source = "FLUXReportDocument.ownerFLUXParty.IDS"),
+            @Mapping(target = "faReportDocuments", source = "FAReportDocuments")
     })
     FluxFaReportMessageFact generateFactForFluxReportMessage(FLUXFAReportMessage fluxfaReportMessage);
 

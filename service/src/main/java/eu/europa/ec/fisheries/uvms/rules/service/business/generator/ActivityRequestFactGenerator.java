@@ -14,11 +14,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -38,8 +43,53 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     @Override
     public List<AbstractFact> getAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
-        //facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
-        //TODO
+        facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
+        if (fluxfaReportMessage.getFAReportDocuments() != null) {
+            facts.addAll(ActivityFactMapper.INSTANCE.generateFactForFaReportDocuments(fluxfaReportMessage.getFAReportDocuments()));
+            for (FAReportDocument faReportDocument : fluxfaReportMessage.getFAReportDocuments()) {
+                facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities()));
+            }
+        }
+        return facts;
+    }
+
+    private Collection<AbstractFact> addFacts(List<FishingActivity> specifiedFishingActivities) {
+        List<AbstractFact> facts = new ArrayList<>();
+        if (specifiedFishingActivities != null) {
+            for (FishingActivity activity : specifiedFishingActivities) {
+                facts.add(ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity));
+                facts.add(addAdditionalValidationFact(activity));
+                facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
+                //TODO create other facts
+            }
+        }
+        return facts;
+    }
+
+    private AbstractFact addAdditionalValidationFact(FishingActivity activity) {
+        AbstractFact abstractFact = null;
+        if(activity != null) {
+            String activityType = activity.getTypeCode().getValue();
+            switch (activityType) {
+                case "departure" :
+                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity);
+                    break;
+                default:
+                    abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
+            }
+        }
+        return abstractFact;
+    }
+
+    private Collection<AbstractFact> addAdditionalValidationfactForSubActivities(List<FishingActivity> fishingActivities) {
+        List<AbstractFact> facts = new ArrayList<>();
+        if (fishingActivities != null) {
+            for (FishingActivity activity : fishingActivities) {
+                FishingActivityFact fishingActivityFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
+                fishingActivityFact.setIsSubActivity(true);
+                facts.add(fishingActivityFact);
+            }
+        }
         return facts;
     }
 }
