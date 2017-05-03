@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
@@ -30,8 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
@@ -43,19 +47,20 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 
 /**
- * TODO create test
+ * @author Gregory Rinaldi
  */
 public class ActivityFactMapperTest {
 
-    IDType idType;
-    CodeType codeType;
-    DelimitedPeriod delimitedPeriod;
-    QuantityType quantityType;
-    DateTimeType dateTimeType;
-    Date date;
-    FLUXLocation fluxLocation;
-
-    FishingTrip fishingTrip;
+    private IDType idType;
+    private CodeType codeType;
+    private DelimitedPeriod delimitedPeriod;
+    private QuantityType quantityType;
+    private DateTimeType dateTimeType;
+    private Date date;
+    private FLUXLocation fluxLocation;
+    private FACatch faCatch;
+    private FishingTrip fishingTrip;
+    private FishingGear fishingGear;
 
     @Before
     @SneakyThrows
@@ -95,6 +100,12 @@ public class ActivityFactMapperTest {
         fishingTrip = new FishingTrip();
         fishingTrip.setIDS(Collections.singletonList(idType));
 
+        faCatch = new FACatch();
+        faCatch.setTypeCode(codeType);
+
+        fishingGear = new FishingGear();
+        fishingGear.setTypeCode(codeType);
+        fishingGear.setRoleCodes(Collections.singletonList(codeType));
     }
 
     @Test
@@ -193,4 +204,33 @@ public class ActivityFactMapperTest {
 
     }
 
+    @Test
+    public void testGenerateFactsForFaDeparture() {
+
+        FishingActivity fishingActivity = new FishingActivity();
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setOccurrenceDateTime(dateTimeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setSpecifiedFishingTrip(fishingTrip);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+        fishingActivity.setSpecifiedFishingGears(Collections.singletonList(fishingGear));
+        fishingActivity.setTypeCode(codeType);
+
+        FaDepartureFact faDepartureFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faDepartureFact.getFishingActivityTypeCode().getValue());
+
+        assertEquals(codeType.getValue(), faDepartureFact.getReasonCode().getValue());
+        assertEquals(date, faDepartureFact.getOccurrenceDateTime());
+        assertEquals(fluxLocation, faDepartureFact.getRelatedFLUXLocations().get(0));
+        assertEquals(fishingTrip, faDepartureFact.getSpecifiedFishingTrip());
+        assertEquals(faCatch, faDepartureFact.getSpecifiedFACatches().get(0));
+        assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFishingGears().get(0).getRoleCodes().get(0).getValue());
+        assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFishingGears().get(0).getTypeCode().getValue());
+        assertEquals(codeType.getValue(), faDepartureFact.getFaReportDocumentTypeCode().getValue());
+
+    }
 }

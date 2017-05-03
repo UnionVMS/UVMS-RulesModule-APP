@@ -47,18 +47,18 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         if (fluxfaReportMessage.getFAReportDocuments() != null) {
             facts.addAll(ActivityFactMapper.INSTANCE.generateFactForFaReportDocuments(fluxfaReportMessage.getFAReportDocuments()));
             for (FAReportDocument faReportDocument : fluxfaReportMessage.getFAReportDocuments()) {
-                facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities()));
+                facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument));
             }
         }
         return facts;
     }
 
-    private Collection<AbstractFact> addFacts(List<FishingActivity> specifiedFishingActivities) {
+    private Collection<AbstractFact> addFacts(List<FishingActivity> specifiedFishingActivities, FAReportDocument faReportDocument) {
         List<AbstractFact> facts = new ArrayList<>();
         if (specifiedFishingActivities != null) {
             for (FishingActivity activity : specifiedFishingActivities) {
                 facts.add(ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity));
-                facts.add(addAdditionalValidationFact(activity));
+                facts.add(addAdditionalValidationFact(activity, faReportDocument));
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
                 //TODO create other facts
             }
@@ -66,13 +66,13 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         return facts;
     }
 
-    private AbstractFact addAdditionalValidationFact(FishingActivity activity) {
+    private AbstractFact addAdditionalValidationFact(FishingActivity activity, FAReportDocument faReportDocument) {
         AbstractFact abstractFact = null;
         if(activity != null) {
             String activityType = activity.getTypeCode().getValue();
             switch (activityType) {
                 case "departure" :
-                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity);
+                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity, faReportDocument);
                     break;
                 default:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
