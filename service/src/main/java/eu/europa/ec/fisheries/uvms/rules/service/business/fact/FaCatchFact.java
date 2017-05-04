@@ -35,7 +35,7 @@ public class FaCatchFact extends AbstractFact {
     private List<MeasureType> resultAAPProductWeightMeasure;
     private List<CodeType> resultAAPProductPackagingTypeCode;
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
-    private MeasureType resultAAPProductPackagingUnitQuantity;
+    private List<MeasureType> resultAAPProductPackagingUnitQuantity;
 
 
     public CodeType getTypeCode() {
@@ -93,8 +93,17 @@ public class FaCatchFact extends AbstractFact {
         return appliedAAPProcessTypeCodes;
     }
 
+    public List<MeasureType> getResultAAPProductPackagingUnitQuantity() {
+        return resultAAPProductPackagingUnitQuantity;
+    }
+
+    public void setResultAAPProductPackagingUnitQuantity(List<MeasureType> resultAAPProductPackagingUnitQuantity) {
+        this.resultAAPProductPackagingUnitQuantity = resultAAPProductPackagingUnitQuantity;
+    }
+
     public void setAppliedAAPProcessTypeCodes(List<CodeType> appliedAAPProcessTypeCodes) {
         this.appliedAAPProcessTypeCodes = appliedAAPProcessTypeCodes;
+
     }
 
 
@@ -134,13 +143,7 @@ public class FaCatchFact extends AbstractFact {
         this.resultAAPProductWeightMeasure = resultAAPProductWeightMeasure;
     }
 
-    public MeasureType getResultAAPProductPackagingUnitQuantity() {
-        return resultAAPProductPackagingUnitQuantity;
-    }
 
-    public void setResultAAPProductPackagingUnitQuantity(MeasureType resultAAPProductPackagingUnitQuantity) {
-        this.resultAAPProductPackagingUnitQuantity = resultAAPProductPackagingUnitQuantity;
-    }
 
     @Override
     public void setFactType() {

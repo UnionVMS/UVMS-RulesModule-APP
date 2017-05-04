@@ -77,6 +77,7 @@ public interface ActivityFactMapper {
 
     ActivityFactMapper INSTANCE = Mappers.getMapper(ActivityFactMapper.class);
 
+
     @Mappings({
             @Mapping(target = "acceptanceDateTime", source = "acceptanceDateTime"),
             @Mapping(target = "creationDateTime", source = "relatedFLUXReportDocument.creationDateTime"),
@@ -142,15 +143,22 @@ public interface ActivityFactMapper {
     GearProblemFact generateFactsForGearProblem(GearProblem gearProblem);
 
     List<GearProblemFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
+    String AAP_PRODUCT_PACKAGING_UNIT_QUANTITY = "PackagingUnitQuantity";
+    String AAP_PRODUCT_WEIGHT_MEASURE = "WeightMeasure";
+    String AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
+    String AAP_PRODUCT_UNIT_QUANTITY = "UnitQuantity";
 
     @Mappings({
             @Mapping(target = "typeCode", source = "faCatches.typeCode"),
             @Mapping(target = "speciesCode", source = "faCatches.speciesCode"),
             @Mapping(target = "sizeDistributionClassCode", source = "faCatches.specifiedSizeDistribution.classCodes"),
-            @Mapping(target = "appliedAAPProcessTypeCodes", source = "faCatches.appliedAAPProcesses"),
             @Mapping(target = "resultAAPProduct", source = "faCatches.appliedAAPProcesses"),
-            @Mapping(target = "resultAAPProductUnitQuantity", expression = "java(CustomMapper.getAAPProductUnitQuantity(faCatches.getAppliedAAPProcesses()))"),
-            @Mapping(target = "resultAAPProductWeightMeasure", expression = "java(CustomMapper.getAAPProductWeightMeasure(faCatches.getAppliedAAPProcesses()))")
+            @Mapping(target = "appliedAAPProcessTypeCodes", expression = "java(CustomMapper.getAppliedProcessTypeCodes(faCatches.getAppliedAAPProcesses()))"),
+            @Mapping(target = "resultAAPProductPackagingTypeCode", expression = "java(CustomMapper.getAAPProductPackagingTypeCode(faCatches.getAppliedAAPProcesses()))"),
+            @Mapping(target = "resultAAPProductPackagingUnitQuantity", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_PACKAGING_UNIT_QUANTITY))"),
+            @Mapping(target = "resultAAPProductWeightMeasure", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_WEIGHT_MEASURE))"),
+            @Mapping(target = "resultAAPProductPackagingUnitAverageWeightMeasure", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE))"),
+            @Mapping(target = "resultAAPProductUnitQuantity", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_UNIT_QUANTITY))")
     })
     FaCatchFact generateFactsForFaCatchs(FACatch faCatches);
 
