@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
@@ -149,7 +150,7 @@ public class ActivityFactMapperTest {
         FishingActivity fishingActivity = new FishingActivity();
 
         fishingActivity.setReasonCode(codeType);
-        fishingActivity.setIDS(Collections.singletonList(idType));
+        fishingActivity.setTypeCode(codeType);
         fishingActivity.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setFisheryTypeCode(codeType);
         fishingActivity.setOperationsQuantity(quantityType);
@@ -162,8 +163,7 @@ public class ActivityFactMapperTest {
         List<FishingActivityFact> fishingActivityFacts = ActivityFactMapper.INSTANCE.generateFactForFishingActivities(Collections.singletonList(fishingActivity));
 
         assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getReasonCode().getValue());
-        assertEquals(idType.getValue(), fishingActivityFacts.get(0).getIds().get(0).getValue());
-        assertEquals(idType.getSchemeID(), fishingActivityFacts.get(0).getIds().get(0).getSchemeId());
+        assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getTypeCode().getValue());
         assertEquals(delimitedPeriod.getDurationMeasure(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getDurationMeasure());
         assertEquals(delimitedPeriod.getEndDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getEndDateTime());
         assertEquals(delimitedPeriod.getStartDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getStartDateTime());
@@ -233,4 +233,29 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faDepartureFact.getFaReportDocumentTypeCode().getValue());
 
     }
+
+    @Test
+    public void testGenerateFactsForFaEntryToSeaFact() {
+
+        FishingActivity fishingActivity = new FishingActivity();
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setSpeciesTargetCode(codeType);
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+
+        FaEntryToSeaFact faEntryToSeaFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getReasonCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getSpeciesTargetCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getFishingActivityTypeCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getSpeciesTargetCode().getValue());
+        assertEquals(fluxLocation, faEntryToSeaFact.getRelatedFLUXLocations().get(0));
+
+    }
+
 }

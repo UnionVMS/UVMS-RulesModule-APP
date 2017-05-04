@@ -30,7 +30,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
  */
 public class FishingActivityFact extends AbstractFact {
 
-    private List<IdType> ids;
+    private CodeType typeCode;
 
     private Date occurrenceDateTime;
 
@@ -74,14 +74,6 @@ public class FishingActivityFact extends AbstractFact {
     public void setSubActivity(boolean subActivity) {
 
         isSubActivity = subActivity;
-    }
-
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
     }
 
     public Date getOccurrenceDateTime() {
@@ -162,5 +154,13 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
         this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
     }
 }

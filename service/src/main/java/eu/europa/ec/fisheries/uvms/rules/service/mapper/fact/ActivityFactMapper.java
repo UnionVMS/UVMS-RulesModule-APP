@@ -88,7 +88,6 @@ public interface ActivityFactMapper {
     List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments);
 
     @Mappings({
-            @Mapping(target = "ids", source = "IDS"),
             @Mapping(target = "delimitedPeriods", source = "specifiedDelimitedPeriods"),
             @Mapping(target = "operationQuantity", source = "operationsQuantity.value")
     })
@@ -183,16 +182,18 @@ public interface ActivityFactMapper {
             @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
             @Mapping(target = "specifiedFishingGears", source = "fishingActivity.specifiedFishingGears"),
             @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches"),
-            @Mapping(target = "specifiedFishingTrip", source = "fishingActivity.specifiedFishingTrip"),
+            @Mapping(target = "specifiedFishingTrip", source = "fishingActivity.specifiedFishingTrip")
     })
     FaDepartureFact generateFactsForFaDeparture(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "reasonCode", source = "fishingActivity.reasonCode"),
+            @Mapping(target = "speciesTargetCode", source = "fishingActivity.speciesTargetCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations")
     })
-    FaEntryToSeaFact generateFactsForEntryIntoSea(FishingActivity fishingActivity);
-
-    List<FaEntryToSeaFact> generateFactsForEntryIntoSeas(List<FishingActivity> fishingActivities);
+    FaEntryToSeaFact generateFactsForEntryIntoSea(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
