@@ -225,11 +225,11 @@ public interface ActivityFactMapper {
     List<FaDiscardFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations")
     })
-    FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity);
-
-    List<FaExitFromSeaFact> generateFactsForExitAreas(List<FishingActivity> fishingActivities);
+    FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")

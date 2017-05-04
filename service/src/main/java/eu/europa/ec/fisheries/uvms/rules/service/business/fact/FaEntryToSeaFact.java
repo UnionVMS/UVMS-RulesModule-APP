@@ -29,11 +29,11 @@ public class FaEntryToSeaFact extends AbstractFact {
 
     private CodeType faReportDocumentTypeCode;
 
+    private List<FLUXLocation> relatedFLUXLocations;
+
     private CodeType reasonCode;
 
     private CodeType speciesTargetCode;
-
-    private List<FLUXLocation> relatedFLUXLocations;
 
     public FaEntryToSeaFact() {
         setFactType();

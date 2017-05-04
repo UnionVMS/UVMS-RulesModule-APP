@@ -22,6 +22,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
@@ -297,6 +298,24 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFaReportDocumentTypeCode().getValue());
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFishingActivityTypeCode().getValue());
         assertEquals(fluxLocation, faJointFishingOperationFact.getRelatedFLUXLocations().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForExitAreaFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+
+        FaExitFromSeaFact faExitFromSeaFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faExitFromSeaFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faExitFromSeaFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faExitFromSeaFact.getRelatedFLUXLocations().get(0));
 
     }
 
