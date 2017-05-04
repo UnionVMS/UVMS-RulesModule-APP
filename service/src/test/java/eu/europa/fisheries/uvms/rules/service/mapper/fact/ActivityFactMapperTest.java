@@ -21,6 +21,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
@@ -32,6 +38,7 @@ import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
@@ -149,7 +156,7 @@ public class ActivityFactMapperTest {
         FishingActivity fishingActivity = new FishingActivity();
 
         fishingActivity.setReasonCode(codeType);
-        fishingActivity.setIDS(Collections.singletonList(idType));
+        fishingActivity.setTypeCode(codeType);
         fishingActivity.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setFisheryTypeCode(codeType);
         fishingActivity.setOperationsQuantity(quantityType);
@@ -162,8 +169,7 @@ public class ActivityFactMapperTest {
         List<FishingActivityFact> fishingActivityFacts = ActivityFactMapper.INSTANCE.generateFactForFishingActivities(Collections.singletonList(fishingActivity));
 
         assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getReasonCode().getValue());
-        assertEquals(idType.getValue(), fishingActivityFacts.get(0).getIds().get(0).getValue());
-        assertEquals(idType.getSchemeID(), fishingActivityFacts.get(0).getIds().get(0).getSchemeId());
+        assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getTypeCode().getValue());
         assertEquals(delimitedPeriod.getDurationMeasure(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getDurationMeasure());
         assertEquals(delimitedPeriod.getEndDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getEndDateTime());
         assertEquals(delimitedPeriod.getStartDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getStartDateTime());
@@ -213,9 +219,9 @@ public class ActivityFactMapperTest {
 
         fishingActivity.setReasonCode(codeType);
         fishingActivity.setOccurrenceDateTime(dateTimeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
         fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
         fishingActivity.setSpecifiedFishingTrip(fishingTrip);
-        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
         fishingActivity.setSpecifiedFishingGears(Collections.singletonList(fishingGear));
         fishingActivity.setTypeCode(codeType);
 
@@ -233,4 +239,128 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faDepartureFact.getFaReportDocumentTypeCode().getValue());
 
     }
+
+    @Test
+    public void testGenerateFactsForFaEntryToSeaFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setSpeciesTargetCode(codeType);
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+
+        FaEntryToSeaFact faEntryToSeaFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getReasonCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getSpeciesTargetCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getFishingActivityTypeCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faEntryToSeaFact.getSpeciesTargetCode().getValue());
+        assertEquals(fluxLocation, faEntryToSeaFact.getRelatedFLUXLocations().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaFishingOperationFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setVesselRelatedActivityCode(codeType);
+        fishingActivity.setOperationsQuantity(quantityType);
+
+        FaFishingOperationFact faFishingOperationFact = ActivityFactMapper.INSTANCE.generateFactsForFishingOperation(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faFishingOperationFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faFishingOperationFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faFishingOperationFact.getRelatedFLUXLocations().get(0));
+        assertEquals(quantityType.getValue().toString(), faFishingOperationFact.getOperationsQuantity());
+        assertEquals(codeType.getValue(), faFishingOperationFact.getVesselRelatedActivityCode().getValue());
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaJointFishingOperationFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+
+        FaJointFishingOperationFact faJointFishingOperationFact = ActivityFactMapper.INSTANCE.generateFactsForJointFishingOperation(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faJointFishingOperationFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faJointFishingOperationFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faJointFishingOperationFact.getRelatedFLUXLocations().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForExitAreaFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+
+        FaExitFromSeaFact faExitFromSeaFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faExitFromSeaFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faExitFromSeaFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faExitFromSeaFact.getRelatedFLUXLocations().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaNotificationOfArrivalFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setOccurrenceDateTime(dateTimeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+
+        FaNotificationOfArrivalFact faNotificationOfArrivalFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faNotificationOfArrivalFact.getRelatedFLUXLocations().get(0));
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getReasonCode().getValue());
+        assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime());
+        assertEquals(faCatch, faNotificationOfArrivalFact.getSpecifiedFACatches().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaQuery() {
+
+        FAQuery faQuery = new FAQuery();
+        faQuery.setTypeCode(codeType);
+        faQuery.setID(idType);
+        faQuery.setSubmittedDateTime(dateTimeType);
+
+        FaQueryFact faQueryFact = ActivityFactMapper.INSTANCE.generateFactsForFaQuery(faQuery);
+
+        assertEquals(codeType.getValue(), faQueryFact.getTypeCode().getValue());
+        assertEquals(idType.getValue(), faQueryFact.getId().getValue());
+        assertEquals(date, faQueryFact.getSubmittedDateTime());
+
+    }
+
+
 }

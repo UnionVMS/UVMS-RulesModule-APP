@@ -89,7 +89,6 @@ public interface ActivityFactMapper {
     List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments);
 
     @Mappings({
-            @Mapping(target = "ids", source = "IDS"),
             @Mapping(target = "delimitedPeriods", source = "specifiedDelimitedPeriods"),
             @Mapping(target = "operationQuantity", source = "operationsQuantity.value")
     })
@@ -190,30 +189,33 @@ public interface ActivityFactMapper {
             @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
             @Mapping(target = "specifiedFishingGears", source = "fishingActivity.specifiedFishingGears"),
             @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches"),
-            @Mapping(target = "specifiedFishingTrip", source = "fishingActivity.specifiedFishingTrip"),
+            @Mapping(target = "specifiedFishingTrip", source = "fishingActivity.specifiedFishingTrip")
     })
     FaDepartureFact generateFactsForFaDeparture(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "reasonCode", source = "fishingActivity.reasonCode"),
+            @Mapping(target = "speciesTargetCode", source = "fishingActivity.speciesTargetCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations")
     })
-    FaEntryToSeaFact generateFactsForEntryIntoSea(FishingActivity fishingActivity);
-
-    List<FaEntryToSeaFact> generateFactsForEntryIntoSeas(List<FishingActivity> fishingActivities);
+    FaEntryToSeaFact generateFactsForEntryIntoSea(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "operationsQuantity", source = "fishingActivity.operationsQuantity.value"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations")
     })
-    FaFishingOperationFact generateFactsForFishingOperation(FishingActivity fishingActivity);
-
-    List<FaFishingOperationFact> generateFactsForFishingOperations(List<FishingActivity> fishingActivities);
+    FaFishingOperationFact generateFactsForFishingOperation(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
     })
-    FaJointFishingOperationFact generateFactsForJointFishingOperation(FishingActivity fishingActivity);
-
-    List<FaJointFishingOperationFact> generateFactsForJointFishingOperations(List<FishingActivity> fishingActivities);
+    FaJointFishingOperationFact generateFactsForJointFishingOperation(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
@@ -230,18 +232,35 @@ public interface ActivityFactMapper {
     List<FaDiscardFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations")
     })
-    FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity);
-
-    List<FaExitFromSeaFact> generateFactsForExitAreas(List<FishingActivity> fishingActivities);
+    FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "occurrenceDateTime", source = "fishingActivity.occurrenceDateTime"),
+            @Mapping(target = "reasonCode", source = "fishingActivity.reasonCode"),
+            @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches")
     })
-    FaNotificationOfArrivalFact generateFactsForPriorNotificationOfArrival(FishingActivity fishingActivity);
+    FaNotificationOfArrivalFact generateFactsForPriorNotificationOfArrival(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
-    List<FaNotificationOfArrivalFact> generateFactsForPriorNotificationOfArrivals(List<FishingActivity> fishingActivities);
+    @Mappings({
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "relatedVesselTransportMeans", source = "fishingActivity.relatedVesselTransportMeans"),
+            @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches"),
+    })
+    FaTranshipmentFact generateFactsForTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument);
+
+    @Mappings({
+            @Mapping(target = "id", source = "ID")
+    })
+    FaQueryFact generateFactsForFaQuery(FAQuery faQuery);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
@@ -260,21 +279,9 @@ public interface ActivityFactMapper {
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
     })
-    FaTranshipmentFact generateFactsForTranshipment(FishingActivity fishingActivity);
-
-    List<FaTranshipmentFact> generateFactsForTranshipments(List<FishingActivity> fishingActivities);
-
-    @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
-    })
     FaNotificationOfTranshipmentFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity);
 
     List<FaNotificationOfTranshipmentFact> generateFactsForNotificationOfTranshipments(List<FishingActivity> fishingActivities);
-
-    @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
-    })
-    FaQueryFact generateFactsForFaQuery(FAQuery faQuery);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")

@@ -13,23 +13,22 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class FaQueryFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    public String getTypeCode() {
-        return typeCode;
-    }
+    private IdType id;
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private Date submittedDateTime;
 
     public FaQueryFact() {
         setFactType();
@@ -38,5 +37,29 @@ public class FaQueryFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_QUERY;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public IdType getId() {
+        return id;
+    }
+
+    public void setId(IdType id) {
+        this.id = id;
+    }
+
+    public Date getSubmittedDateTime() {
+        return submittedDateTime;
+    }
+
+    public void setSubmittedDateTime(Date submittedDateTime) {
+        this.submittedDateTime = submittedDateTime;
     }
 }

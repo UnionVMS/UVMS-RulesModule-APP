@@ -17,6 +17,11 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +67,8 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovemen
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessage;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
@@ -112,11 +119,15 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
@@ -148,6 +159,7 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 @Stateless
@@ -1378,18 +1390,56 @@ public class RulesServiceBean implements RulesService {
     public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException {
         LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
         try {
-            String setFLUXFAReportMessageRequest= ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username, pluginType.toString());
-            producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
-            LOG.info("Sending back FluxFAResponse to exchange");
-            FLUXResponseMessage fluxResponseMessageType= new FLUXResponseMessage();
-            String fluxFAResponse=JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
-            String fluxFAReponseText= ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
-            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
-            LOG.info("Flux Response message sent successfully to exchange");
+            FLUXFAReportMessage fluxfaReportMessage = unMarshallMessage(fluxFAReportMessage, FLUXFAReportMessage.class);
+            if (fluxfaReportMessage != null) {
+                List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
+                fluxfaReportMessage.getFLUXReportDocument().getIDS();
+                if (checkAndUpdateValidationResult(facts, fluxFAReportMessage)) {
+
+                }
+                String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage,username, pluginType.toString());
+                producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
+                LOG.info("Sending back FluxFAResponse to exchange");
+                FLUXResponseMessage fluxResponseMessageType = new FLUXResponseMessage();
+                String fluxFAResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
+                String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxFAResponse,username);
+                producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+                LOG.info("Flux Response message sent successfully to exchange");
+            }
+
         } catch (ActivityModelMarshallException | ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
+    }
 
+    private boolean checkAndUpdateValidationResult(List<AbstractFact> facts, String messageId) {
+        boolean isWarning = false;
+        boolean isError = false;
+        List<ValidationMessage> validationMessages = new ArrayList<>();
+        for (AbstractFact fact : facts) {
+            if (!fact.isOk()) {
+                for (RuleError error : fact.getErrors()) {
+                    isError = true;
+                    ValidationMessage validationMessage = new ValidationMessage();
+                    validationMessage.setBrId(error.getRuleId());
+                    validationMessage.setErrorType(ErrorType.ERROR);
+                    validationMessage.setMessage(error.getMessage());
+                    //validationMessage.setMessageId(messageId);
+                    validationMessages.add(validationMessage);
+                }
+                for (RuleWarning warning : fact.getWarnings()) {
+                    isWarning = true;
+                    ValidationMessage validationMessage = new ValidationMessage();
+                    validationMessage.setBrId(warning.getRuleId());
+                    validationMessage.setErrorType(ErrorType.WARNING);
+                    validationMessage.setMessage(warning.getMessage());
+                    //validationMessage.setMessageId(messageId);
+                    validationMessages.add(validationMessage);
+                }
+            }
+        }
+
+        return isError;
     }
 
     /*
@@ -1432,5 +1482,20 @@ public class RulesServiceBean implements RulesService {
             LOG.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
         }
 
+    }
+
+    private <R> R unMarshallMessage(String textMessage, Class clazz) throws RulesModelMarshallException {
+        try {
+            JAXBContext jc = JAXBContext.newInstance(clazz);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            StringReader sr = new StringReader(textMessage);
+            StreamSource source = new StreamSource(sr);
+            long before = System.currentTimeMillis();
+            R object = (R) unmarshaller.unmarshal(source);
+            LOG.debug("Unmarshalling time: {}", (System.currentTimeMillis() - before));
+            return object;
+        } catch (JAXBException ex) {
+            throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper. Expected class was " + clazz.getName() + " ]", ex);
+        }
     }
 }
