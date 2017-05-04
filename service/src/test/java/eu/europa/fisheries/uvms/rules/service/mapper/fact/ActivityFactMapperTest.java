@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
@@ -216,9 +217,9 @@ public class ActivityFactMapperTest {
 
         fishingActivity.setReasonCode(codeType);
         fishingActivity.setOccurrenceDateTime(dateTimeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
         fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
         fishingActivity.setSpecifiedFishingTrip(fishingTrip);
-        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
         fishingActivity.setSpecifiedFishingGears(Collections.singletonList(fishingGear));
         fishingActivity.setTypeCode(codeType);
 
@@ -319,5 +320,28 @@ public class ActivityFactMapperTest {
 
     }
 
+    @Test
+    public void testGenerateFactsForFaNotificationOfArrivalFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setOccurrenceDateTime(dateTimeType);
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+
+        FaNotificationOfArrivalFact faNotificationOfArrivalFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faNotificationOfArrivalFact.getRelatedFLUXLocations().get(0));
+        assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getReasonCode().getValue());
+        assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime());
+        assertEquals(faCatch, faNotificationOfArrivalFact.getSpecifiedFACatches().get(0));
+
+    }
 
 }
