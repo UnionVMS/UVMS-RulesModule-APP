@@ -10,19 +10,23 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -84,5 +88,68 @@ public class CustomMapper {
 
         return date;
     }
+
+   public static List<CodeType> getAppliedProcessTypeCodes(List<AAPProcess> appliedAAPProcesses) {
+       if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+           return java.util.Collections.emptyList();
+       }
+       List<CodeType> codeTypes = new ArrayList<>();
+
+       for (AAPProcess aapProcess : appliedAAPProcesses) {
+           if (CollectionUtils.isNotEmpty(aapProcess.getTypeCodes())) {
+               codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(aapProcess.getTypeCodes()));
+           }
+       }
+       return codeTypes;
+   }
+
+    public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<AAPProduct> aapProducts = new ArrayList<>();
+
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                aapProducts.addAll(aapProcess.getResultAAPProducts());
+            }
+        }
+        return aapProducts;
+    }
+
+    public static List<MeasureType> getAAPProductUnitQuantity(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
+                    if (aapProduct.getUnitQuantity() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
+                    }
+                }
+            }
+        }
+        return measureTypes;
+    }
+
+    public static List<MeasureType> getAAPProductWeightMeasure(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
+                    if (aapProduct.getWeightMeasure() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
+                    }
+                }
+            }
+        }
+        return measureTypes;
+    }
+
 
 }

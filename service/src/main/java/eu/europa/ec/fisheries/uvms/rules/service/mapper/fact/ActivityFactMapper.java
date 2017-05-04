@@ -13,8 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -42,6 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
@@ -66,6 +65,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+
+import java.util.List;
 
 /**
  * @author padhyad
@@ -144,7 +145,13 @@ public interface ActivityFactMapper {
     List<GearProblemFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "typeCode", source = "faCatches.typeCode"),
+            @Mapping(target = "speciesCode", source = "faCatches.speciesCode"),
+            @Mapping(target = "sizeDistributionClassCode", source = "faCatches.specifiedSizeDistribution.classCodes"),
+            @Mapping(target = "appliedAAPProcessTypeCodes", source = "faCatches.appliedAAPProcesses"),
+            @Mapping(target = "resultAAPProduct", source = "faCatches.appliedAAPProcesses"),
+            @Mapping(target = "resultAAPProductUnitQuantity", expression = "java(CustomMapper.getAAPProductUnitQuantity(faCatches.getAppliedAAPProcesses()))"),
+            @Mapping(target = "resultAAPProductWeightMeasure", expression = "java(CustomMapper.getAAPProductWeightMeasure(faCatches.getAppliedAAPProcesses()))")
     })
     FaCatchFact generateFactsForFaCatchs(FACatch faCatches);
 
@@ -292,5 +299,13 @@ public interface ActivityFactMapper {
     List<IdType> mapToIdType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType> idTypes);
 
     List<CodeType> mapToCodeType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes);
+
+    MeasureType mapToMeasureType(un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType measureType);
+
+    List<MeasureType> mapToMeasureType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType> measureTypes);
+
+    MeasureType mapQuantityTypeToMeasureType(un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType quantityType);
+
+    List<MeasureType> mapToQuantityTypeToMeasureType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType> quantityTypes);
 
 }

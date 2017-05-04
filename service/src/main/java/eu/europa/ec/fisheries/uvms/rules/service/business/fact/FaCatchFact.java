@@ -26,20 +26,16 @@ public class FaCatchFact extends AbstractFact {
 
     private CodeType typeCode;
     private CodeType speciesCode;
-    private List<AAPProduct> resultAAPProduct;
     private MeasureType unitQuantity;
-    private String fishingActivityTypeCode;
-    private CodeType activityRelatedFLUXLocationId;
     private MeasureType weightMeasure;
-    private CodeType weighingMeansCode;
     private List<CodeType> sizeDistributionClassCode;
-    private CodeType sizeDistributionCategoryCode;
     private List<CodeType> appliedAAPProcessTypeCodes;
-    private List<NumericType> appliedAAPProcessConversionFactor;
-    private List<CodeType> specifiedFLUXLocationId;
+    private List<AAPProduct> resultAAPProduct;
+    private List<MeasureType> resultAAPProductUnitQuantity;
+    private List<MeasureType> resultAAPProductWeightMeasure;
     private List<CodeType> resultAAPProductPackagingTypeCode;
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
-    private List<MeasureType> resultAAPProductUnitQuantity;
+    private MeasureType resultAAPProductPackagingUnitQuantity;
 
 
     public CodeType getTypeCode() {
@@ -74,22 +70,6 @@ public class FaCatchFact extends AbstractFact {
         this.unitQuantity = unitQuantity;
     }
 
-    public String getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(String fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getActivityRelatedFLUXLocationId() {
-        return activityRelatedFLUXLocationId;
-    }
-
-    public void setActivityRelatedFLUXLocationId(CodeType activityRelatedFLUXLocationId) {
-        this.activityRelatedFLUXLocationId = activityRelatedFLUXLocationId;
-    }
-
     public MeasureType getWeightMeasure() {
         return weightMeasure;
     }
@@ -98,13 +78,7 @@ public class FaCatchFact extends AbstractFact {
         this.weightMeasure = weightMeasure;
     }
 
-    public CodeType getWeighingMeansCode() {
-        return weighingMeansCode;
-    }
 
-    public void setWeighingMeansCode(CodeType weighingMeansCode) {
-        this.weighingMeansCode = weighingMeansCode;
-    }
 
     public List<CodeType> getSizeDistributionClassCode() {
         return sizeDistributionClassCode;
@@ -114,13 +88,6 @@ public class FaCatchFact extends AbstractFact {
         this.sizeDistributionClassCode = sizeDistributionClassCode;
     }
 
-    public CodeType getSizeDistributionCategoryCode() {
-        return sizeDistributionCategoryCode;
-    }
-
-    public void setSizeDistributionCategoryCode(CodeType sizeDistributionCategoryCode) {
-        this.sizeDistributionCategoryCode = sizeDistributionCategoryCode;
-    }
 
     public List<CodeType> getAppliedAAPProcessTypeCodes() {
         return appliedAAPProcessTypeCodes;
@@ -130,21 +97,6 @@ public class FaCatchFact extends AbstractFact {
         this.appliedAAPProcessTypeCodes = appliedAAPProcessTypeCodes;
     }
 
-    public List<NumericType> getAppliedAAPProcessConversionFactor() {
-        return appliedAAPProcessConversionFactor;
-    }
-
-    public void setAppliedAAPProcessConversionFactor(List<NumericType> appliedAAPProcessConversionFactor) {
-        this.appliedAAPProcessConversionFactor = appliedAAPProcessConversionFactor;
-    }
-
-    public List<CodeType> getSpecifiedFLUXLocationId() {
-        return specifiedFLUXLocationId;
-    }
-
-    public void setSpecifiedFLUXLocationId(List<CodeType> specifiedFLUXLocationId) {
-        this.specifiedFLUXLocationId = specifiedFLUXLocationId;
-    }
 
     public List<CodeType> getResultAAPProductPackagingTypeCode() {
         return resultAAPProductPackagingTypeCode;
@@ -172,6 +124,22 @@ public class FaCatchFact extends AbstractFact {
 
     public FaCatchFact() {
         setFactType();
+    }
+
+    public List<MeasureType> getResultAAPProductWeightMeasure() {
+        return resultAAPProductWeightMeasure;
+    }
+
+    public void setResultAAPProductWeightMeasure(List<MeasureType> resultAAPProductWeightMeasure) {
+        this.resultAAPProductWeightMeasure = resultAAPProductWeightMeasure;
+    }
+
+    public MeasureType getResultAAPProductPackagingUnitQuantity() {
+        return resultAAPProductPackagingUnitQuantity;
+    }
+
+    public void setResultAAPProductPackagingUnitQuantity(MeasureType resultAAPProductPackagingUnitQuantity) {
+        this.resultAAPProductPackagingUnitQuantity = resultAAPProductPackagingUnitQuantity;
     }
 
     @Override
