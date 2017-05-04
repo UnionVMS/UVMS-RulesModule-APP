@@ -45,10 +45,6 @@ public class FLUX_ReportDocumentRuleTest {
     @Before
     public void beforeClass() {
 
-        ruleID.setExpression("ids == null || ids.empty == true || ids.get(0).value = \"abc\"");
-        ruleID.setBrId("FA-L00-00-0001");
-        ruleID.setErrorType(ERROR);
-        ruleID.setMessage("ID Must be present.");
 
         ruleCreationDateTime.setExpression("creationDateTime == null");
         ruleCreationDateTime.setBrId("FA-L00-00-0005");
@@ -104,6 +100,12 @@ public class FLUX_ReportDocumentRuleTest {
 
     @Test
     public void testRuleID() {
+
+        ruleID = new RuleType();
+        ruleID.setExpression("ids == null || ids.empty == true || ids.get(1).value == \"abc\"");
+        ruleID.setBrId("FA-L00-00-0001");
+        ruleID.setErrorType(ERROR);
+        ruleID.setMessage("ID Must be present.");
 
         templateRuleMapDto.setRules(Collections.singletonList(ruleID));
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));

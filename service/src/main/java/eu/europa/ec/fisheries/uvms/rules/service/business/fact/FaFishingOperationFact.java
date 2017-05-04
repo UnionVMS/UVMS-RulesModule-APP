@@ -13,23 +13,27 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class FaFishingOperationFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType fishingActivityTypeCode;
 
-    public String getTypeCode() {
-        return typeCode;
-    }
+    private CodeType faReportDocumentTypeCode;
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private CodeType vesselRelatedActivityCode;
+
+    private String operationsQuantity;
+
+    private List<FLUXLocation> relatedFLUXLocations;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -38,5 +42,45 @@ public class FaFishingOperationFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_FISHING_OPERATION;
+    }
+
+    public CodeType getFishingActivityTypeCode() {
+        return fishingActivityTypeCode;
+    }
+
+    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
+        this.fishingActivityTypeCode = fishingActivityTypeCode;
+    }
+
+    public CodeType getFaReportDocumentTypeCode() {
+        return faReportDocumentTypeCode;
+    }
+
+    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
+        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
+    }
+
+    public CodeType getVesselRelatedActivityCode() {
+        return vesselRelatedActivityCode;
+    }
+
+    public void setVesselRelatedActivityCode(CodeType vesselRelatedActivityCode) {
+        this.vesselRelatedActivityCode = vesselRelatedActivityCode;
+    }
+
+    public String getOperationsQuantity() {
+        return operationsQuantity;
+    }
+
+    public void setOperationsQuantity(String operationsQuantity) {
+        this.operationsQuantity = operationsQuantity;
+    }
+
+    public List<FLUXLocation> getRelatedFLUXLocations() {
+        return relatedFLUXLocations;
+    }
+
+    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
+        this.relatedFLUXLocations = relatedFLUXLocations;
     }
 }

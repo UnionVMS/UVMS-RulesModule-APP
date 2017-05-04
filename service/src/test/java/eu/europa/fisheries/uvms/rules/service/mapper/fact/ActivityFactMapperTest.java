@@ -22,6 +22,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
@@ -237,10 +238,10 @@ public class ActivityFactMapperTest {
     @Test
     public void testGenerateFactsForFaEntryToSeaFact() {
 
-        FishingActivity fishingActivity = new FishingActivity();
         FAReportDocument faReportDocument = new FAReportDocument();
         faReportDocument.setTypeCode(codeType);
 
+        FishingActivity fishingActivity = new FishingActivity();
         fishingActivity.setReasonCode(codeType);
         fishingActivity.setSpeciesTargetCode(codeType);
         fishingActivity.setTypeCode(codeType);
@@ -255,6 +256,28 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faEntryToSeaFact.getFaReportDocumentTypeCode().getValue());
         assertEquals(codeType.getValue(), faEntryToSeaFact.getSpeciesTargetCode().getValue());
         assertEquals(fluxLocation, faEntryToSeaFact.getRelatedFLUXLocations().get(0));
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaFishingOperationFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setVesselRelatedActivityCode(codeType);
+        fishingActivity.setOperationsQuantity(quantityType);
+
+        FaFishingOperationFact faFishingOperationFact = ActivityFactMapper.INSTANCE.generateFactsForFishingOperation(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faFishingOperationFact.getFaReportDocumentTypeCode().getValue());
+        assertEquals(codeType.getValue(), faFishingOperationFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faFishingOperationFact.getRelatedFLUXLocations().get(0));
+        assertEquals(quantityType.getValue().toString(), faFishingOperationFact.getOperationsQuantity());
+        assertEquals(codeType.getValue(), faFishingOperationFact.getVesselRelatedActivityCode().getValue());
 
     }
 
