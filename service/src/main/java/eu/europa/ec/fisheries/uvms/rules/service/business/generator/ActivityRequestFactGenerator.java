@@ -59,6 +59,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             for (FishingActivity activity : specifiedFishingActivities) {
                 facts.add(ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity));
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(activity.getSpecifiedFACatches()));
+                facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(activity.getSpecifiedFishingGears()));
                 facts.add(addAdditionalValidationFact(activity, faReportDocument));
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
                 //TODO create other facts

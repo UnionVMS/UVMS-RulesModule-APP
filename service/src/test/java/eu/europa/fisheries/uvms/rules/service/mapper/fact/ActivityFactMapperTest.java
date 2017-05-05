@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOpe
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
@@ -46,6 +47,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import javax.xml.datatype.DatatypeFactory;
 import java.math.BigDecimal;
@@ -57,6 +59,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Gregory Rinaldi
@@ -77,6 +80,7 @@ public class ActivityFactMapperTest {
     private MeasureType measureType;
     private  List<AAPProcess> appliedAAPProcesses;
     private AAPProduct  aapProduct;
+    private List<GearCharacteristic> applicableGearCharacteristics;
 
     @Before
     @SneakyThrows
@@ -144,6 +148,12 @@ public class ActivityFactMapperTest {
         aapProcess.setResultAAPProducts(Collections.singletonList(aapProduct));
         appliedAAPProcesses.add(aapProcess);
 
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristic.setValue(new TextType("testValue",null,null));
+
+        applicableGearCharacteristics = new ArrayList<>();
+        applicableGearCharacteristics.add(gearCharacteristic);
 
     }
 
@@ -263,6 +273,21 @@ public class ActivityFactMapperTest {
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());
         assertEquals(measureType.getValue(), faCatchFact.getWeightMeasure().getValue());
+
+    }
+
+    @Test
+    public void testGenerateFactForFishingGear() {
+
+        FishingGear fishingGear = new FishingGear();
+        fishingGear.setTypeCode(codeType);
+        fishingGear.setApplicableGearCharacteristics(applicableGearCharacteristics);
+
+        FishingGearFact fishingGearFact = ActivityFactMapper.INSTANCE.generateFactsForFishingGear(fishingGear);
+
+
+        assertEquals(codeType.getValue(), fishingGearFact.getTypeCode().getValue());
+        assertNotNull(fishingGearFact.getApplicableGearCharacteristics());
 
     }
 

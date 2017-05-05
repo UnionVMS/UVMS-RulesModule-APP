@@ -128,7 +128,7 @@ public interface ActivityFactMapper {
     List<StructuredAddressFact> generateFactsForStructureAddresses(List<StructuredAddress> structuredAddresses);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "typeCode", source = "typeCode")
     })
     FishingGearFact generateFactsForFishingGear(FishingGear fishingGear);
 
