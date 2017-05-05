@@ -35,7 +35,7 @@ import java.util.List;
 @Slf4j
 public class CustomMapper {
 
-    private CustomMapper(){
+    private CustomMapper() {
 
     }
 
@@ -46,7 +46,7 @@ public class CustomMapper {
 
             codeTypes = Collections.newArrayList();
 
-            for(ContactParty contactParty: contactPartyList){
+            for (ContactParty contactParty : contactPartyList) {
                 codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(contactParty.getRoleCodes()));
             }
         }
@@ -90,7 +90,6 @@ public class CustomMapper {
     }
 
 
-
     public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
         if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
             return java.util.Collections.emptyList();
@@ -105,102 +104,42 @@ public class CustomMapper {
         return aapProducts;
     }
 
-    public static List<MeasureType> getAAPProductUnitQuantity(List<AAPProcess> appliedAAPProcesses) {
+    /**
+     * Extract List<MeasureType> from AAPProduct. List will be created from different attributes of AAPProduct based on parameter methodToChoose.
+     *
+     * @param appliedAAPProcesses
+     * @param methodToChoose
+     * @return
+     */
+    public static List<MeasureType> getMeasureTypeFromAAPProcess(List<AAPProcess> appliedAAPProcesses, String methodToChoose) {
         if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
             return java.util.Collections.emptyList();
         }
         List<MeasureType> measureTypes = new ArrayList<>();
         for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
                 for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    if (aapProduct.getUnitQuantity() != null) {
-                        measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
-                    }
-                }
-            }
-        }
-        return measureTypes;
-    }
-
-    public static List<MeasureType> getAAPProductWeightMeasure(List<AAPProcess> appliedAAPProcesses) {
-        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
-            return java.util.Collections.emptyList();
-        }
-        List<MeasureType> measureTypes = new ArrayList<>();
-        for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
-                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    if (aapProduct.getWeightMeasure() != null) {
-                        measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
-                    }
-                }
-            }
-        }
-        return measureTypes;
-    }
-
-
-
-
-    public static List<MeasureType> getAAPProductPackagingUnitAverageWeightMeasure(List<AAPProcess> appliedAAPProcesses) {
-        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
-            return java.util.Collections.emptyList();
-        }
-        List<MeasureType> measureTypes = new ArrayList<>();
-        for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
-                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
-                        measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
-                    }
-                }
-            }
-        }
-        return measureTypes;
-    }
-
-    public static List<MeasureType> getAAPProductPackagingUnitQuantity(List<AAPProcess> appliedAAPProcesses) {
-        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
-            return java.util.Collections.emptyList();
-        }
-        List<MeasureType> measureTypes = new ArrayList<>();
-        for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
-                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    if (aapProduct.getPackagingUnitQuantity() != null) {
-                        measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
-                    }
-                }
-            }
-        }
-        return measureTypes;
-    }
-
-    public static List<MeasureType> getMeasureTypeFromAAPProcess(List<AAPProcess> appliedAAPProcesses,String methodToChoose) {
-        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
-            return java.util.Collections.emptyList();
-        }
-        List<MeasureType> measureTypes = new ArrayList<>();
-        for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
-                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    switch(methodToChoose){
-                        case ActivityFactMapper.AAP_PRODUCT_PACKAGING_UNIT_QUANTITY: if (aapProduct.getPackagingUnitQuantity() != null) {
-                                                       measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
-                                                        }
-                                                        break;
-                        case ActivityFactMapper.AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE :   if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
-                                                            measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
-                                                        }
-                                                         break;
-                        case ActivityFactMapper.AAP_PRODUCT_WEIGHT_MEASURE :  if (aapProduct.getWeightMeasure() != null) {
-                                                    measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
-                                                }
-                                                break;
-                        case ActivityFactMapper.AAP_PRODUCT_UNIT_QUANTITY :   if (aapProduct.getUnitQuantity() != null) {
-                                                    measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
-                                                }
-                                                break;
+                    switch (methodToChoose) {
+                        case ActivityFactMapper.AAP_PRODUCT_PACKAGING_UNIT_QUANTITY:
+                            if (aapProduct.getPackagingUnitQuantity() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE:
+                            if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_WEIGHT_MEASURE:
+                            if (aapProduct.getWeightMeasure() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_UNIT_QUANTITY:
+                            if (aapProduct.getUnitQuantity() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
+                            }
+                            break;
                     }
 
                 }
@@ -215,7 +154,7 @@ public class CustomMapper {
         }
         List<CodeType> codeTypes = new ArrayList<>();
         for (AAPProcess aapProcess : appliedAAPProcesses) {
-            if(CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
                 for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
                     if (aapProduct.getPackagingTypeCode() != null) {
                         codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(aapProduct.getPackagingTypeCode()));

@@ -10,16 +10,7 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
@@ -35,6 +26,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -45,6 +38,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
@@ -52,6 +46,17 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Gregory Rinaldi
@@ -68,6 +73,10 @@ public class ActivityFactMapperTest {
     private FACatch faCatch;
     private FishingTrip fishingTrip;
     private FishingGear fishingGear;
+    private List<CodeType> codeTypeList;
+    private MeasureType measureType;
+    private  List<AAPProcess> appliedAAPProcesses;
+    private AAPProduct  aapProduct;
 
     @Before
     @SneakyThrows
@@ -86,6 +95,10 @@ public class ActivityFactMapperTest {
         quantityType = new QuantityType();
         quantityType.setUnitCode("unitCode");
         quantityType.setValue(new BigDecimal(10));
+
+        measureType = new MeasureType();
+        measureType.setUnitCode("unitCode");
+        measureType.setValue(new BigDecimal(10));
 
         delimitedPeriod = new DelimitedPeriod();
         MeasureType durationMeasure = new MeasureType();
@@ -113,6 +126,25 @@ public class ActivityFactMapperTest {
         fishingGear = new FishingGear();
         fishingGear.setTypeCode(codeType);
         fishingGear.setRoleCodes(Collections.singletonList(codeType));
+
+        codeTypeList = Collections.singletonList(codeType);
+
+        appliedAAPProcesses = new ArrayList<>();
+        AAPProcess aapProcess = new AAPProcess();
+        aapProcess.setTypeCodes(Collections.singletonList(codeType));
+
+        measureType = new MeasureType();
+        measureType.setUnitCode("unitCode");
+        measureType.setValue(new BigDecimal(10));
+
+        aapProduct = new AAPProduct();
+        aapProduct.setWeightMeasure(measureType);
+        aapProduct.setPackagingUnitQuantity(quantityType);
+
+        aapProcess.setResultAAPProducts(Collections.singletonList(aapProduct));
+        appliedAAPProcesses.add(aapProcess);
+
+
     }
 
     @Test
@@ -207,6 +239,30 @@ public class ActivityFactMapperTest {
         assertEquals(idType.getValue(), fishingTripFacts.get(0).getIds().get(0).getValue());
         assertEquals(idType.getSchemeID(), fishingTripFacts.get(0).getIds().get(0).getSchemeId());
         assertEquals(codeType.getValue(), fishingTripFacts.get(0).getTypeCode().getValue());
+
+    }
+
+    @Test
+    public void testGenerateFactForFaCatch() {
+
+        FACatch faCatch = new FACatch();
+        faCatch.setTypeCode(codeType);
+        faCatch.setSpeciesCode(codeType);
+        faCatch.setUnitQuantity(quantityType);
+        faCatch.setWeightMeasure(measureType);
+
+        SizeDistribution sizeDistribution = new SizeDistribution();
+        sizeDistribution.setClassCodes(codeTypeList);
+        faCatch.setSpecifiedSizeDistribution(sizeDistribution);
+
+        faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
+
+
+        FaCatchFact faCatchFact = ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(faCatch);
+
+
+        assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());
+        assertEquals(measureType.getValue(), faCatchFact.getWeightMeasure().getValue());
 
     }
 

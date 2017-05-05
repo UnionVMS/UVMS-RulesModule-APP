@@ -76,7 +76,10 @@ import java.util.List;
 public interface ActivityFactMapper {
 
     ActivityFactMapper INSTANCE = Mappers.getMapper(ActivityFactMapper.class);
-
+    String AAP_PRODUCT_PACKAGING_UNIT_QUANTITY = "PackagingUnitQuantity";
+    String AAP_PRODUCT_WEIGHT_MEASURE = "WeightMeasure";
+    String AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
+    String AAP_PRODUCT_UNIT_QUANTITY = "UnitQuantity";
 
     @Mappings({
             @Mapping(target = "acceptanceDateTime", source = "acceptanceDateTime"),
@@ -143,10 +146,7 @@ public interface ActivityFactMapper {
     GearProblemFact generateFactsForGearProblem(GearProblem gearProblem);
 
     List<GearProblemFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
-    String AAP_PRODUCT_PACKAGING_UNIT_QUANTITY = "PackagingUnitQuantity";
-    String AAP_PRODUCT_WEIGHT_MEASURE = "WeightMeasure";
-    String AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
-    String AAP_PRODUCT_UNIT_QUANTITY = "UnitQuantity";
+
 
     @Mappings({
             @Mapping(target = "typeCode", source = "faCatches.typeCode"),

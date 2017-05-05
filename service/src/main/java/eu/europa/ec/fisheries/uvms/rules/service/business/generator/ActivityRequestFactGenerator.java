@@ -13,10 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -24,6 +20,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -58,6 +58,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         if (specifiedFishingActivities != null) {
             for (FishingActivity activity : specifiedFishingActivities) {
                 facts.add(ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity));
+                facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(activity.getSpecifiedFACatches()));
                 facts.add(addAdditionalValidationFact(activity, faReportDocument));
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
                 //TODO create other facts
