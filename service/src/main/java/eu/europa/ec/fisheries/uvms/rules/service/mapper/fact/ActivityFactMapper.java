@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDeclarationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
@@ -268,6 +269,19 @@ public interface ActivityFactMapper {
             @Mapping(target = "specifiedFACatches", source = "fishingActivity.specifiedFACatches"),
     })
     FaTranshipmentFact generateFactsForTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument);
+
+
+    @Mappings({
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "occurrenceDateTime", source = "fishingActivity.occurrenceDateTime"),
+            @Mapping(target = "reasonCode", source = "fishingActivity.reasonCode"),
+            @Mapping(target = "relatedFLUXLocations", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "fluxLocationTypeCodes", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "fishingGearRoleCodes", source = "fishingActivity.specifiedFishingGears"),
+            @Mapping(target = "fishingTripIds", source = "fishingActivity.specifiedFishingTrip.IDS")
+    })
+    FaDeclarationOfArrivalFact generateFactsForDeclarationOfArrival(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "id", source = "ID")

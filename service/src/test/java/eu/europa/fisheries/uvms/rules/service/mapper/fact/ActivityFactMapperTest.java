@@ -11,6 +11,7 @@
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDeclarationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
@@ -62,6 +63,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 /**
  * @author Gregory Rinaldi
@@ -462,6 +464,33 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faQueryFact.getTypeCode().getValue());
         assertEquals(idType.getValue(), faQueryFact.getId().getValue());
         assertEquals(date, faQueryFact.getSubmittedDateTime());
+
+    }
+
+    @Test
+    public void testGenerateFactsForFaDeclarationOfArrivalFact() {
+
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
+
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
+        fishingActivity.setReasonCode(codeType);
+        fishingActivity.setOccurrenceDateTime(dateTimeType);
+        List<FishingGear> gears = new ArrayList<>();
+        gears.add(fishingGear);
+        fishingActivity.setSpecifiedFishingGears(gears);
+
+        FaDeclarationOfArrivalFact faDeclarationOfArrivalFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(fishingActivity, faReportDocument);
+
+        assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getFaReportTypeCode().getValue());
+        assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getFishingActivityTypeCode().getValue());
+        assertEquals(fluxLocation, faDeclarationOfArrivalFact.getRelatedFLUXLocations().get(0));
+        assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getReasonCode().getValue());
+        assertEquals(dateTimeType, faDeclarationOfArrivalFact.getOccurrenceDateTime());
+        assertNotSame(0,faDeclarationOfArrivalFact.getFishingGearRoleCodes().size());
+
 
     }
 

@@ -15,6 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
@@ -37,7 +39,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         if (!(businessObject instanceof FLUXFAReportMessage)) {
             throw new RulesServiceException("Business object does not match required type");
         }
-        this.fluxfaReportMessage = (FLUXFAReportMessage)businessObject;
+        this.fluxfaReportMessage = (FLUXFAReportMessage) businessObject;
     }
 
     @Override
@@ -71,11 +73,18 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private AbstractFact addAdditionalValidationFact(FishingActivity activity, FAReportDocument faReportDocument) {
         AbstractFact abstractFact = null;
-        if(activity != null) {
-            String activityType = activity.getTypeCode().getValue();
-            switch (activityType) {
-                case "departure" :
+        if (activity != null) {
+            FishingActivityType fishingActivityType = FishingActivityType.valueOf(activity.getTypeCode().getValue());
+            switch (fishingActivityType) {
+                case DEPARTURE:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity, faReportDocument);
+                    break;
+                case ARRIVAL:
+                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(activity, faReportDocument);
+                    }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
+                    }
                     break;
                 default:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);

@@ -21,6 +21,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.text.ParseException;
@@ -189,6 +191,34 @@ public class CustomMapper {
            if (fluxCharacteristic.getTypeCode() != null) {
                 codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxCharacteristic.getTypeCode()));
            }
+        }
+        return codeTypes;
+    }
+
+
+    public static List<CodeType> getFLUXLocationTypeCodes(List<FLUXLocation> fluxLocations) {
+        if (CollectionUtils.isEmpty(fluxLocations)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            if (fluxLocation.getTypeCode() != null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxLocation.getTypeCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getFishingGearRoleCodes(List<FishingGear> fishingGears) {
+        if (CollectionUtils.isEmpty(fishingGears)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FishingGear fishingGear : fishingGears) {
+
+            if (CollectionUtils.isNotEmpty(fishingGear.getRoleCodes())) {
+                codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(fishingGear.getRoleCodes()));
+            }
         }
         return codeTypes;
     }
