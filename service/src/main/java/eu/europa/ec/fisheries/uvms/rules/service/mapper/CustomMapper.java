@@ -20,6 +20,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.text.ParseException;
@@ -175,6 +176,19 @@ public class CustomMapper {
             if (CollectionUtils.isNotEmpty(aapProcess.getTypeCodes())) {
                 codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(aapProcess.getTypeCodes()));
             }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getApplicableFLUXCharacteristicsTypeCode(List<FLUXCharacteristic> fluxCharacteristics) {
+        if (CollectionUtils.isEmpty(fluxCharacteristics)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
+           if (fluxCharacteristic.getTypeCode() != null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxCharacteristic.getTypeCode()));
+           }
         }
         return codeTypes;
     }

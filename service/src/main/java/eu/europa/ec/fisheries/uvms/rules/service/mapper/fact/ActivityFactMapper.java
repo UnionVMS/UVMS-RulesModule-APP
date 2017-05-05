@@ -176,7 +176,11 @@ public interface ActivityFactMapper {
     List<FishingTripFact> generateFactForFishingTrips(List<FishingTrip> fishingTrip);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "id", source = "ID"),
+            @Mapping(target = "typeCode", source = "typeCode"),
+            @Mapping(target = "countryID", source = "countryID"),
+            @Mapping(target = "applicableFLUXCharacteristicTypeCode", source = "fluxLocation.applicableFLUXCharacteristics")
+
     })
     FluxLocationFact generateFactForFluxLocation(FLUXLocation fluxLocation);
 

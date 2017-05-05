@@ -15,20 +15,70 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class FluxLocationFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
+    private IdType countryID;
+    private IdType id;
+    private FLUXGeographicalCoordinate specifiedPhysicalFLUXGeographicalCoordinate;
+    private StructuredAddress physicalStructuredAddress;
+    private List<CodeType> applicableFLUXCharacteristicTypeCode;
 
-    public String getTypeCode() {
+
+    public CodeType getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public IdType getCountryID() {
+        return countryID;
+    }
+
+    public void setCountryID(IdType countryID) {
+        this.countryID = countryID;
+    }
+
+    public IdType getId() {
+        return id;
+    }
+
+    public void setId(IdType id) {
+        this.id = id;
+    }
+
+    public FLUXGeographicalCoordinate getSpecifiedPhysicalFLUXGeographicalCoordinate() {
+        return specifiedPhysicalFLUXGeographicalCoordinate;
+    }
+
+    public void setSpecifiedPhysicalFLUXGeographicalCoordinate(FLUXGeographicalCoordinate specifiedPhysicalFLUXGeographicalCoordinate) {
+        this.specifiedPhysicalFLUXGeographicalCoordinate = specifiedPhysicalFLUXGeographicalCoordinate;
+    }
+
+    public StructuredAddress getPhysicalStructuredAddress() {
+        return physicalStructuredAddress;
+    }
+
+    public void setPhysicalStructuredAddress(StructuredAddress physicalStructuredAddress) {
+        this.physicalStructuredAddress = physicalStructuredAddress;
+    }
+
+    public List<CodeType> getApplicableFLUXCharacteristicTypeCode() {
+        return applicableFLUXCharacteristicTypeCode;
+    }
+
+    public void setApplicableFLUXCharacteristicTypeCode(List<CodeType> applicableFLUXCharacteristicTypeCode) {
+        this.applicableFLUXCharacteristicTypeCode = applicableFLUXCharacteristicTypeCode;
     }
 
     public FluxLocationFact() {

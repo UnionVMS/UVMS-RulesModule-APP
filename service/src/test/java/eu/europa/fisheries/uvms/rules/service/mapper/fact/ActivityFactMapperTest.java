@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
@@ -34,6 +35,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
@@ -81,6 +83,7 @@ public class ActivityFactMapperTest {
     private  List<AAPProcess> appliedAAPProcesses;
     private AAPProduct  aapProduct;
     private List<GearCharacteristic> applicableGearCharacteristics;
+    private FLUXGeographicalCoordinate fluxGeographicalCoordinate;
 
     @Before
     @SneakyThrows
@@ -154,6 +157,10 @@ public class ActivityFactMapperTest {
 
         applicableGearCharacteristics = new ArrayList<>();
         applicableGearCharacteristics.add(gearCharacteristic);
+
+        fluxGeographicalCoordinate = new FLUXGeographicalCoordinate();
+        fluxGeographicalCoordinate.setAltitudeMeasure(measureType);
+        fluxGeographicalCoordinate.setLatitudeMeasure(measureType);
 
     }
 
@@ -285,9 +292,24 @@ public class ActivityFactMapperTest {
 
         FishingGearFact fishingGearFact = ActivityFactMapper.INSTANCE.generateFactsForFishingGear(fishingGear);
 
-
         assertEquals(codeType.getValue(), fishingGearFact.getTypeCode().getValue());
         assertNotNull(fishingGearFact.getApplicableGearCharacteristics());
+
+    }
+
+    @Test
+    public void testGenerateFactForFLUXLocation() {
+
+        FLUXLocation fluxLocation = new FLUXLocation();
+        fluxLocation.setTypeCode(codeType);
+        fluxLocation.setCountryID(idType);
+        fluxLocation.setID(idType);
+        fluxLocation.setSpecifiedPhysicalFLUXGeographicalCoordinate(fluxGeographicalCoordinate);
+
+        FluxLocationFact fluxLocationFact = ActivityFactMapper.INSTANCE.generateFactForFluxLocation(fluxLocation);
+
+        assertEquals(codeType.getValue(), fluxLocationFact.getTypeCode().getValue());
+        assertNotNull(fluxLocationFact.getSpecifiedPhysicalFLUXGeographicalCoordinate());
 
     }
 
