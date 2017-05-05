@@ -44,9 +44,9 @@ public class FactRuleEvaluatorTest {
 
         Collection<AbstractFact> facts = new ArrayList<>();
         FaReportDocumentFact fact = new FaReportDocumentFact();
-        CodeType codeType = new CodeType();
-        codeType.setValue("typecode");
-        fact.setTypeCode(codeType);
+        //CodeType codeType = new CodeType();
+        //codeType.setValue("typecode");
+        //fact.setTypeCode(codeType);
         facts.add(fact);
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();

@@ -15,13 +15,11 @@ template "@{templateName}"
 rule "FA Report Document @{tname} - @{brid}"
 
 when
-    $fact : FaReportDocumentFact(
-        try {
-            @{expression}
-        } catch (Exception e) {
 
-        }
+    $fact : FaReportDocumentFact(
+            @{expression}
     )
+
 
 then
 try {
