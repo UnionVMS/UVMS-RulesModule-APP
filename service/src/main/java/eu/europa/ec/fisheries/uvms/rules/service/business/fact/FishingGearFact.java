@@ -15,20 +15,33 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
  */
 public class FishingGearFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    public String getTypeCode() {
+    private List<GearCharacteristic> applicableGearCharacteristics;
+
+    public CodeType getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public List<GearCharacteristic> getApplicableGearCharacteristics() {
+        return applicableGearCharacteristics;
+    }
+
+    public void setApplicableGearCharacteristics(List<GearCharacteristic> applicableGearCharacteristics) {
+        this.applicableGearCharacteristics = applicableGearCharacteristics;
     }
 
     public FishingGearFact() {
