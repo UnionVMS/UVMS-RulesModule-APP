@@ -11,12 +11,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -63,11 +62,10 @@ public class MDRService {
                             }
                     );
         }
-
     }
 
     private List<String> getEntry(MDRAcronymType acronymType) {
-        List<String> result = Collections.emptyList();
+        List<String> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
@@ -86,20 +84,22 @@ public class MDRService {
         String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(s, TextMessage.class);
 
-        List<String> stringList = new ArrayList<>();
+        List<String> stringList = emptyList();
 
-        if (null != message) {
-            String messageStr = message.getText();
-            MdrGetCodeListResponse response = unmarshallTextMessage(messageStr, MdrGetCodeListResponse.class);
+        if (message != null) {
+            MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             for (ObjectRepresentation objectRep : response.getDataSets()) {
-                for (ColumnDataType nameVal : objectRep.getFields()) {
-                    if ("code".equals(nameVal.getColumnName())) {
-                        stringList.add(nameVal.getColumnValue());
-                    }
-                }
+                extractCodes(stringList, objectRep);
             }
         }
-
         return stringList;
+    }
+
+    private void extractCodes(List<String> stringList, ObjectRepresentation objectRep) {
+        for (ColumnDataType nameVal : objectRep.getFields()) {
+            if ("code".equals(nameVal.getColumnName())) {
+                stringList.add(nameVal.getColumnValue());
+            }
+        }
     }
 }
