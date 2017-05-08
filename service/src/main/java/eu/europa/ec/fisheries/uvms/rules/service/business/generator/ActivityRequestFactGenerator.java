@@ -170,6 +170,11 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
                     }
                     break;
+                case LANDING:
+
+                      abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
+
+                    break;
                 default:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
             }

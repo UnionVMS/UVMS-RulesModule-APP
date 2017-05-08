@@ -16,13 +16,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.text.ParseException;
@@ -188,9 +182,9 @@ public class CustomMapper {
         }
         List<CodeType> codeTypes = new ArrayList<>();
         for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
-           if (fluxCharacteristic.getTypeCode() != null) {
+            if (fluxCharacteristic.getTypeCode() != null) {
                 codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxCharacteristic.getTypeCode()));
-           }
+            }
         }
         return codeTypes;
     }
@@ -222,5 +216,85 @@ public class CustomMapper {
         }
         return codeTypes;
     }
+
+    /**
+     * Fetch List<CodeType> from FACatch. CodeType List will be created from FACatch based on parameter methodToChoose
+     * i.e code type for FACatch or code type for specified fluxlocation
+     *
+     * @param faCatch
+     * @param methodToChoose
+     * @return
+     */
+    public static List<CodeType> getCodeTypesFromFaCatch(List<FACatch> faCatch, String methodToChoose) {
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FACatch faCatches : faCatch) {
+
+
+            switch (methodToChoose) {
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH:
+                    if (faCatches.getTypeCode() != null) {
+                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+                    }
+                    break;
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH_FLUXLOCATION:
+
+                    if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
+                        for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations()) {
+                            if (specifiedFluxLocation.getTypeCode() != null) {
+                                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
+                            }
+                            break;
+
+
+                        }
+
+                    }
+
+            }
+        }
+        return codeTypes;
+    }
+
+
+    public static List<CodeType> getSpecifiedFaCatchFluxLocationTypeCodes(List<FACatch> faCatch) {
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+
+        for (FACatch faCatches : faCatch) {
+            if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
+                for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations())
+                    if (specifiedFluxLocation.getTypeCode() != null) {
+                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
+
+                    }
+
+            }
+
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getSpecifiedFaCatchTypeCodes(List<FACatch> faCatch) {
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FACatch faCatches : faCatch) {
+            if (faCatches.getTypeCode() != null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+
+            }
+        }
+
+        return codeTypes;
+    }
+
 
 }
