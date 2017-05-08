@@ -168,8 +168,9 @@ public class RulesServiceBean implements RulesService {
     static final double VICINITY_RADIUS = 0.05;
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
     private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
+
     @EJB
-    RulesEngine rulesEngine;
+    RulesEngineBean rulesEngine;
 
     @EJB
     RulesResponseConsumer consumer;
@@ -197,7 +198,6 @@ public class RulesServiceBean implements RulesService {
     private Event<NotificationMessage> ticketCountEvent;
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
-
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);

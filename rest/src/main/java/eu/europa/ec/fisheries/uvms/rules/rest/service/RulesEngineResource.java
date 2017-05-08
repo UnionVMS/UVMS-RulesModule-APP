@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngine;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -31,16 +31,16 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 /**
  * @author Gregory Rinaldi
  */
-@Path("/xml")
+@Path("/rulesengine")
 @Slf4j
-public class RulesEngineresource {
+public class RulesEngineResource {
 
     @EJB
-    private RulesEngine rulesEngine;
+    private RulesEngineBean rulesEngine;
 
     @POST
-    @Produces(value = {MediaType.APPLICATION_XML})
     @Consumes(value = {MediaType.APPLICATION_XML})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/evaluate")
     public List<AbstractFact> evaluate(FLUXFAReportMessage request, @PathParam("objectType") BusinessObjectType objectType) throws ServiceException {
 

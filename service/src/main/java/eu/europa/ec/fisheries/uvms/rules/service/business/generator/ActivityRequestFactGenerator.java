@@ -26,7 +26,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class ActivityRequestFactGenerator extends AbstractGenerator {
 

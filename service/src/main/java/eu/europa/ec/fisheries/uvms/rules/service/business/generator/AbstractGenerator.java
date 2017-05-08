@@ -19,7 +19,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public abstract class AbstractGenerator {
 

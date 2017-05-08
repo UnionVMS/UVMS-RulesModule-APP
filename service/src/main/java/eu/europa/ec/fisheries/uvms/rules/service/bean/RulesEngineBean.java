@@ -13,23 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType.FLUX_UNIT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType.FLUX_VESSEL_ID_TYPE;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,15 +32,12 @@ import lombok.extern.slf4j.Slf4j;
  * @author Gregory Rinaldi
  */
 @Stateless
-@LocalBean
 @Slf4j
-public class RulesEngine implements IRulesEngine {
+@LocalBean
+public class RulesEngineBean {
 
     @EJB
 	private TemplateEngine templateEngine;
-
-    @EJB
-    private MDRCache mdrCache;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesServiceException {
 		try {
@@ -54,23 +45,12 @@ public class RulesEngine implements IRulesEngine {
 			AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 			generator.setBusinessObjectMessage(businessObject);
 
-            Map<MDRAcronymType, List<String>> stringListMap = fetchMdrCodeLists();
-
-            facts.addAll(generator.getAllFacts(stringListMap));
+            facts.addAll(generator.getAllFacts());
 			templateEngine.evaluateFacts(facts);
 			return facts;
 		} catch (RulesModelException e) {
 			throw new RulesServiceException(e.getMessage(), e);
 		}
-    }
-
-    private Map<MDRAcronymType, List<String>> fetchMdrCodeLists() {
-        Map<MDRAcronymType, List<String>> stringListMap = Collections.emptyMap();
-        List<String> fluxVesselIdType = mdrCache.getEntry(FLUX_VESSEL_ID_TYPE);
-        List<String> fluxUnit = mdrCache.getEntry(FLUX_UNIT);
-        stringListMap.put(FLUX_VESSEL_ID_TYPE, fluxVesselIdType);
-        stringListMap.put(FLUX_UNIT, fluxUnit);
-        return stringListMap;
     }
 
 }

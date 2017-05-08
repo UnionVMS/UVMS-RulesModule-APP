@@ -11,7 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
 
-public enum MDRAcronumType {
+public enum MDRAcronymType {
 
-    FLUX_VESSEL_ID_TYPE, FLUX_UNIT;
+    FLUX_VESSEL_ID_TYPE, FLUX_UNIT
 }

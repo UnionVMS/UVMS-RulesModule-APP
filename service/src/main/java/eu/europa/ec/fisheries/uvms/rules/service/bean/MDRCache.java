@@ -10,8 +10,93 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.EnumUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
 /**
- * TODO create test
+ * @author Gregory Rinaldi
  */
+@Singleton
 public class MDRCache {
+
+    private final LoadingCache<MDRAcronymType , List<String>> cache;
+
+    @EJB
+    private RulesResponseConsumer consumer;
+
+    @EJB
+    private RulesMessageProducer producer;
+
+    public MDRCache() {
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                //.refreshAfterWrite(1, TimeUnit.HOURS)
+                .build(
+                        new CacheLoader<MDRAcronymType, List<String>>() {
+                            @Override
+                            public List<String> load(MDRAcronymType acronymType) throws Exception {
+                                return mdrCodeListByAcronymType(acronymType);
+                            }
+                        }
+                );
+    }
+
+    private List<String> getEntry(MDRAcronymType acronymType) {
+        List<String> result = Collections.emptyList();
+        if(acronymType!= null){
+            result = cache.getUnchecked(acronymType);
+        }
+        return result;
+    }
+
+    public boolean isPresentInList(String listName, String codeValue){
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        return getEntry(anEnum).contains(codeValue);
+    }
+
+    @SneakyThrows
+    private List<String> mdrCodeListByAcronymType(MDRAcronymType acronym) {
+
+        String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
+        String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
+        TextMessage message = consumer.getMessage(s, TextMessage.class);
+
+        List<String> stringList = new ArrayList<>();
+
+        if (null != message) {
+            String messageStr = message.getText();
+            MdrGetCodeListResponse response = unmarshallTextMessage(messageStr, MdrGetCodeListResponse.class);
+            for (ObjectRepresentation objectRep : response.getDataSets()) {
+                for (ColumnDataType nameVal : objectRep.getFields()) {
+                    if ("code".equals(nameVal.getColumnName())) {
+                        stringList.add(nameVal.getColumnValue());
+                    }
+                }
+            }
+        }
+
+        return stringList;
+    }
 }

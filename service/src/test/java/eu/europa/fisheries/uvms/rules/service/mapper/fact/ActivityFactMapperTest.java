@@ -132,8 +132,7 @@ public class ActivityFactMapperTest {
         contactParty.setIDS(Collections.singletonList(idType));
         vesselTransportMeans.setSpecifiedContactParties(Collections.singletonList(contactParty));
 
-        List<VesselTransportMeansFact> vesselTransportMeansFacts = ActivityFactMapper.INSTANCE.generateFactForVesselTransportMeans(Collections.singletonList(vesselTransportMeans));
-        VesselTransportMeansFact mappedFact = vesselTransportMeansFacts.get(0);
+        VesselTransportMeansFact mappedFact = ActivityFactMapper.INSTANCE.generateFactForVesselTransportMean(vesselTransportMeans);
 
         assertEquals(codeType.getValue(), mappedFact.getRoleCode().getValue());
 
