@@ -122,7 +122,11 @@ public interface ActivityFactMapper {
     List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans);
 
     @Mappings({
-            @Mapping(target = "postcodeCode", source = "postcodeCode.value")
+            @Mapping(target = "postcodeCode", source = "postcodeCode.value"),
+            @Mapping(target = "streetName", source = "streetName.value"),
+            @Mapping(target = "cityName", source = "cityName.value"),
+            @Mapping(target = "countryID", source = "countryID.value"),
+            @Mapping(target = "plotIdentification", source = "plotIdentification.value")
     })
     StructuredAddressFact generateFactsForStructureAddress(StructuredAddress structuredAddress);
 

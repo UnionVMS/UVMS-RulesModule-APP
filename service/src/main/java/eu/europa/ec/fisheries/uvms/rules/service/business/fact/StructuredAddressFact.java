@@ -23,13 +23,13 @@ public class StructuredAddressFact extends AbstractFact {
 
     private String postcodeCode;
 
-    public String getPostcodeCode() {
-        return postcodeCode;
-    }
+    private String streetName;
 
-    public void setPostcodeCode(String postcodeCode) {
-        this.postcodeCode = postcodeCode;
-    }
+    private String cityName;
+
+    private String countryID;
+
+    private String plotIdentification;
 
     public StructuredAddressFact() {
         setFactType();
@@ -39,4 +39,45 @@ public class StructuredAddressFact extends AbstractFact {
     public void setFactType() {
         this.factType = FactType.STRUCTURED_ADDRESS;
     }
+
+    public String getPostcodeCode() {
+        return postcodeCode;
+    }
+
+    public void setPostcodeCode(String postcodeCode) {
+        this.postcodeCode = postcodeCode;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCountryID() {
+        return countryID;
+    }
+
+    public void setCountryID(String countryID) {
+        this.countryID = countryID;
+    }
+
+    public String getPlotIdentification() {
+        return plotIdentification;
+    }
+
+    public void setPlotIdentification(String plotIdentification) {
+        this.plotIdentification = plotIdentification;
+    }
+
 }
