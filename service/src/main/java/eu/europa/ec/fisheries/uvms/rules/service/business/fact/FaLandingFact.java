@@ -15,20 +15,76 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
+ *
+ * @author patilva
  */
 public class FaLandingFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType fishingActivityCodeType;
 
-    public String getTypeCode() {
-        return typeCode;
+    private CodeType faReportDocumentTypeCode;
+
+    private List<FLUXLocation> relatedFluxLocations;
+
+    private List<CodeType> specifiedFaCatchFluxLocationTypeCode;
+
+    private List<FACatch> specifiedFaCatches;
+
+    private List<CodeType> specifiedFaCatchTypeCode;
+
+    public List<CodeType> getSpecifiedFaCatchFluxLocationTypeCode() {
+        return specifiedFaCatchFluxLocationTypeCode;
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setSpecifiedFaCatchFluxLocationTypeCode(List<CodeType> specifiedFaCatchFluxLocationTypeCode) {
+        this.specifiedFaCatchFluxLocationTypeCode = specifiedFaCatchFluxLocationTypeCode;
+    }
+
+    public CodeType getFishingActivityCodeType() {
+        return fishingActivityCodeType;
+    }
+
+    public void setFishingActivityCodeType(CodeType fishingActivityCodeType) {
+        this.fishingActivityCodeType = fishingActivityCodeType;
+    }
+
+    public CodeType getFaReportDocumentTypeCode() {
+        return faReportDocumentTypeCode;
+    }
+
+    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
+        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
+    }
+
+    public List<FLUXLocation> getRelatedFluxLocations() {
+        return relatedFluxLocations;
+    }
+
+    public void setRelatedFluxLocations(List<FLUXLocation> relatedFluxLocations) {
+        this.relatedFluxLocations = relatedFluxLocations;
+    }
+
+    public List<FACatch> getSpecifiedFaCatches() {
+        return specifiedFaCatches;
+    }
+
+    public void setSpecifiedFaCatches(List<FACatch> specifiedFaCatches) {
+        this.specifiedFaCatches = specifiedFaCatches;
+    }
+
+    public List<CodeType> getSpecifiedFaCatchTypeCode() {
+        return specifiedFaCatchTypeCode;
+    }
+
+    public void setSpecifiedFaCatchTypeCode(List<CodeType> specifiedFaCatchTypeCode) {
+        this.specifiedFaCatchTypeCode = specifiedFaCatchTypeCode;
     }
 
     public FaLandingFact() {
