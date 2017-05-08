@@ -64,6 +64,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(activity.getSpecifiedFACatches()));
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(activity.getSpecifiedFishingGears()));
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFluxLocations(activity.getRelatedFLUXLocations()));
+                //TODO : need to confirm getsource or destination
+                //facts.add(ActivityFactMapper.INSTANCE.generateFactsForVesselStorageCharacteristic(activity.getSourceVesselStorageCharacteristic()));
                 facts.add(addAdditionalValidationFact(activity, faReportDocument));
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
                 //TODO create other facts
@@ -86,6 +88,11 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
                     }
+                    break;
+                case LANDING:
+
+                      abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
+
                     break;
                 default:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
