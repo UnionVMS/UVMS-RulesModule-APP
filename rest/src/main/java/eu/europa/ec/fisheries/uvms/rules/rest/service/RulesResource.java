@@ -12,15 +12,17 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -31,31 +33,41 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 /**
  * @author Gregory Rinaldi
  */
-@Path("/rulesengine")
+@Path("/rules")
 @Slf4j
-public class RulesEngineResource {
+public class RulesResource {
 
     @EJB
     private RulesEngineBean rulesEngine;
 
+    @EJB
+    private MDRService mdrCache;
+
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/evaluate")
-    public List<AbstractFact> evaluate(FLUXFAReportMessage request, @PathParam("objectType") BusinessObjectType objectType) throws ServiceException {
+    @Path("/evaluate/{objectType}")
+    public Response evaluate(FLUXFAReportMessage request, @PathParam("objectType") BusinessObjectType objectType) throws ServiceException {
 
-        List<AbstractFact> abstractFacts = new ArrayList<>();
+        List<AbstractFact> abstractFacts;
 
         try {
 
             abstractFacts = rulesEngine.evaluate(objectType, request);
 
         } catch (RulesServiceException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            return Response.ok(e.getMessage()).build();
         }
+        return Response.ok(abstractFacts).build();
 
-        return abstractFacts;
+    }
 
+    @GET
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Path("/ispresentlist/{listname}/{codevalue}")
+    public Response test(@PathParam("listname") String listName, @PathParam("codevalue") String codeValue) {
+        return Response.ok(mdrCache.isPresentInList(listName, codeValue)).build();
     }
 
 }

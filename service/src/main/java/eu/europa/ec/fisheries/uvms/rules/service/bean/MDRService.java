@@ -38,9 +38,9 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
  * @author Gregory Rinaldi
  */
 @Singleton
-public class MDRCache {
+public class MDRService {
 
-    private final LoadingCache<MDRAcronymType , List<String>> cache;
+    private LoadingCache<MDRAcronymType, List<String>> cache;
 
     @EJB
     private RulesResponseConsumer consumer;
@@ -48,24 +48,27 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-    public MDRCache() {
-        cache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                //.refreshAfterWrite(1, TimeUnit.HOURS)
-                .build(
-                        new CacheLoader<MDRAcronymType, List<String>>() {
-                            @Override
-                            public List<String> load(MDRAcronymType acronymType) throws Exception {
-                                return mdrCodeListByAcronymType(acronymType);
+    public MDRService() {
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder()
+                    .maximumSize(1000)
+                    .expireAfterWrite(1, TimeUnit.HOURS)
+                    //.refreshAfterWrite(1, TimeUnit.HOURS)
+                    .build(
+                            new CacheLoader<MDRAcronymType, List<String>>() {
+                                @Override
+                                public List<String> load(MDRAcronymType acronymType) throws Exception {
+                                    return mdrCodeListByAcronymType(acronymType);
+                                }
                             }
-                        }
-                );
+                    );
+        }
+
     }
 
     private List<String> getEntry(MDRAcronymType acronymType) {
         List<String> result = Collections.emptyList();
-        if(acronymType!= null){
+        if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
         return result;
