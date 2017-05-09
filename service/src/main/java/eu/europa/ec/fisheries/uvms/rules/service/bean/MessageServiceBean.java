@@ -31,6 +31,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -81,7 +82,7 @@ public class MessageServiceBean implements MessageService {
             FLUXFAReportMessage fluxfaReportMessage = JAXBMarshaller.unMarshallMessage(fluxFAReportMessage, FLUXFAReportMessage.class);
             if (fluxfaReportMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
-                List<String> faReportMessageId = getIds(fluxfaReportMessage.getFLUXReportDocument());
+                List<String> faReportMessageId = CustomMapper.getIds(fluxfaReportMessage.getFLUXReportDocument());
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
                 boolean isContinueValidation = validationMap.entrySet().iterator().next().getKey();
                 log.info("Validation continue : {}", isContinueValidation);
@@ -218,7 +219,7 @@ public class MessageServiceBean implements MessageService {
             //Validate response message
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
             List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxfaReportMessage);
-            List<String> fluxResponseMessageId = getIds(fluxResponseMessageType.getFLUXResponseDocument());
+            List<String> fluxResponseMessageId = CustomMapper.getIds(fluxResponseMessageType.getFLUXResponseDocument());
             ValidationResultDto fluxResponseValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponseMessageId, fluxResponse);
 
             // TODO create final response based on exchange contract
@@ -230,29 +231,6 @@ public class MessageServiceBean implements MessageService {
         }
     }
 
-    private List<String> getIds(FLUXResponseDocument fluxResponseDocument) {
-        if (fluxResponseDocument == null) {
-            return Collections.emptyList();
-        }
-        List<IDType> idTypes = fluxResponseDocument.getIDS();
-        List<String> ids = new ArrayList<>();
-        for (IDType idType : idTypes) {
-            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
-        }
-        return ids;
-    }
-
-    private List<String> getIds(FLUXReportDocument fluxReportDocument) {
-        if (fluxReportDocument == null) {
-            return Collections.emptyList();
-        }
-        List<IDType> idTypes = fluxReportDocument.getIDS();
-        List<String> ids = new ArrayList<>();
-        for (IDType idType : idTypes) {
-            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
-        }
-        return ids;
-    }
 
     /*
 	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
