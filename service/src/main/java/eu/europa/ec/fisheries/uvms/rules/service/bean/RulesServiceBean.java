@@ -11,23 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.nio.file.AccessDeniedException;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -35,13 +18,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementMapResponseType;
 import eu.europa.ec.fisheries.schema.movement.search.v1.MovementQuery;
@@ -62,20 +39,14 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovemen
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
-import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
-import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
+import eu.europa.ec.fisheries.schema.rules.search.v1.*;
 import eu.europa.ec.fisheries.schema.rules.search.v1.ListPagination;
-import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
-import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
@@ -84,10 +55,6 @@ import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
-import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
@@ -106,7 +73,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -115,47 +81,34 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.event.TicketEvent;
-import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.event.*;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.AssetAssetIdMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MobileTerminalMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementBaseTypeMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteriaPair;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListPagination;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
-import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
+import eu.europa.ec.fisheries.wsdl.asset.types.*;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContext;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.*;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
@@ -163,15 +116,6 @@ public class RulesServiceBean implements RulesService {
     static final double VICINITY_RADIUS = 0.05;
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
     private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
-
-    @EJB
-    RulesEngine rulesEngine;
-
-    @EJB
-    RulePostProcessBean rulePostprocessBean;
-
-    @EJB
-    RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
     RulesResponseConsumer consumer;
@@ -199,7 +143,6 @@ public class RulesServiceBean implements RulesService {
     private Event<NotificationMessage> ticketCountEvent;
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
-
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
@@ -1387,227 +1330,5 @@ public class RulesServiceBean implements RulesService {
             }
         }
         return false;
-    }
-
-    @Override
-    public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException {
-        LOG.debug("inside setFLUXFAReportMessageReceived", fluxFAReportMessage);
-        try {
-            FLUXFAReportMessage fluxfaReportMessage = JAXBMarshaller.unMarshallMessage(fluxFAReportMessage, FLUXFAReportMessage.class);
-            if (fluxfaReportMessage != null) {
-                FLUXResponseMessage fluxResponseMessageType;
-                List<String> faReportMessageId = getIds(fluxfaReportMessage.getFLUXReportDocument());
-                Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
-                boolean isContinueValidation = validationMap.entrySet().iterator().next().getKey();
-                LOG.info("Validation continue : {}", isContinueValidation);
-
-                // TODO send exchange ack
-
-                if (isContinueValidation) {
-                    LOG.info("Trigger rule engine to do validation of incoming message");
-                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
-                    ValidationResultDto faReportValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(faReportFacts, faReportMessageId, fluxFAReportMessage);
-                    updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isContinueValidation));
-
-                    if (!faReportValidationResult.isError()) {
-                        LOG.info("Validation of Report is successful, forwarding message to Activity");
-                        String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
-                        producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
-                    }
-                    fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
-                } else {
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
-                }
-                sendResponseToExchange(fluxResponseMessageType, username, fluxfaReportMessage);
-            }
-        } catch (ActivityModelMarshallException | RulesModelMarshallException | MessageException e) {
-            throw new RulesServiceException(e.getMessage(), e);
-        }
-    }
-
-    private void updateValidationResultWithExisting(ValidationResultDto faReportValidationResult, ValidationResultDto previousValidationResultDto) {
-        if (previousValidationResultDto != null) {
-            faReportValidationResult.setIsError(faReportValidationResult.isError() || previousValidationResultDto.isError());
-            faReportValidationResult.setIsWarning(faReportValidationResult.isWarning() || previousValidationResultDto.isWarning());
-            faReportValidationResult.setIsOk(faReportValidationResult.isOk() || previousValidationResultDto.isOk());
-            faReportValidationResult.getValidationMessages().addAll(previousValidationResultDto.getValidationMessages());
-        }
-    }
-
-    private FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
-        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
-        try {
-            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-
-            IDType responseId = new IDType();
-            responseId.setValue(String.valueOf(new Random().nextInt()));
-            responseId.setSchemeID(UUID.randomUUID().toString());
-            fluxResponseDocument.setIDS(Arrays.asList(responseId)); // Set random ID
-            if (fluxfaReportMessage.getFLUXReportDocument() != null) {
-                List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
-                fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
-            }
-            GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
-            XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
-            DateTimeType dateTime = new DateTimeType();
-            dateTime.setDateTime(calender);
-            fluxResponseDocument.setCreationDateTime(dateTime); // Set creation date time
-
-            CodeType responseCode = new CodeType();
-            if (faReportValidationResult.isError()) {
-                responseCode.setValue("NOK");
-            } else if (faReportValidationResult.isWarning()) {
-                responseCode.setValue("WOK");
-            } else {
-                responseCode.setValue("OK");
-            }
-            responseCode.setListID("FLUX_GP_RESPONSE");
-            fluxResponseDocument.setResponseCode(responseCode); // Set response Code
-
-            if (faReportValidationResult.isError() || faReportValidationResult.isWarning()) {
-                TextType rejectionReason = new TextType();
-                rejectionReason.setValue("VALIDATION");
-                fluxResponseDocument.setRejectionReason(rejectionReason); // Set rejection reason
-            }
-
-            fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
-            fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
-
-            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
-        } catch (DatatypeConfigurationException e) {
-         LOG.error(e.getMessage(), e);
-        }
-        return responseMessage;
-    }
-
-    private List<ValidationResultDocument> getValidationResultDocument(ValidationResultDto faReportValidationResult) throws DatatypeConfigurationException {
-        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
-
-        GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
-        XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
-        DateTimeType dateTime = new DateTimeType();
-        dateTime.setDateTime(calender);
-        validationResultDocument.setCreationDateTime(dateTime);
-
-        IDType idType = new IDType();
-        // TODO set FLUX_GP_PARTY
-        validationResultDocument.setValidatorID(idType);
-
-        List<ValidationQualityAnalysis> validationQuality = new ArrayList<>();
-        for (ValidationMessageType validationMessage : faReportValidationResult.getValidationMessages()) {
-            ValidationQualityAnalysis analysis = new ValidationQualityAnalysis();
-
-            IDType identification = new IDType();
-            identification.setValue(validationMessage.getBrId());
-            analysis.setID(identification);
-
-            CodeType level = new CodeType();
-            level.setValue(validationMessage.getLevel());
-            analysis.setLevelCode(level);
-
-            CodeType type = new CodeType();
-            type.setValue(validationMessage.getErrorType().value());
-            analysis.setTypeCode(type);
-
-            TextType text = new TextType();
-            text.setValue(validationMessage.getMessage());
-            analysis.getResults().add(text);
-
-            TextType referenceItem = new TextType();
-            text.setValue("X-path"); // SET Xpath
-            analysis.getReferencedItems().add(referenceItem);
-
-            validationQuality.add(analysis);
-        }
-        validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
-        return Arrays.asList(validationResultDocument);
-    }
-
-    private FLUXParty getRespondedFluxParty() {
-        //TODO FLUX_GP_PARTY
-        return null;
-    }
-
-    private void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, String username, FLUXFAReportMessage fluxfaReportMessage) throws RulesServiceException {
-        try {
-            //Validate response message
-            String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
-            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxfaReportMessage);
-            List<String> fluxResponseMessageId = getIds(fluxResponseMessageType.getFLUXResponseDocument());
-            ValidationResultDto fluxResponseValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponseMessageId, fluxResponse);
-
-            // TODO create final response based on exchange contract
-            //Create Response
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username);
-            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
-        } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException e) {
-            throw new RulesServiceException(e.getMessage(), e);
-        }
-    }
-
-    private List<String> getIds(FLUXResponseDocument fluxResponseDocument) {
-        if (fluxResponseDocument == null) {
-            return Collections.emptyList();
-        }
-        List<IDType> idTypes = fluxResponseDocument.getIDS();
-        List<String> ids = new ArrayList<>();
-        for (IDType idType : idTypes) {
-            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
-        }
-        return ids;
-    }
-
-    private List<String> getIds(FLUXReportDocument fluxReportDocument) {
-        if (fluxReportDocument == null) {
-            return Collections.emptyList();
-        }
-        List<IDType> idTypes = fluxReportDocument.getIDS();
-        List<String> ids = new ArrayList<>();
-        for (IDType idType : idTypes) {
-            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
-        }
-        return ids;
-    }
-
-    /*
-	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
-	 * to send a message to ExchangeModule
-	 *
-	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestToExchange(java.lang.String)
-	 */
-    @Override
-    public void mapAndSendFLUXMdrRequestToExchange(String request) {
-        String exchangerStrReq;
-        try {
-            exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-            if(StringUtils.isNotEmpty(exchangerStrReq)){
-                producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
-            } else {
-                LOG.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
-            }
-
-        } catch (ExchangeModelMarshallException e) {
-            LOG.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : "+e.getMessage());
-        } catch (MessageException e) {
-            LOG.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
-        }
-    }
-
-    @Override
-    public void mapAndSendFLUXMdrResponseToMdrModule(String request) {
-        String mdrSyncResponseReq;
-        try {
-            mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-            if(StringUtils.isNotEmpty(mdrSyncResponseReq)){
-                producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
-            } else {
-                LOG.error("ERROR : REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
-            }
-        } catch (MdrModelMarshallException e) {
-            LOG.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : "+e.getMessage());
-        } catch (MessageException e) {
-            LOG.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
-        }
-
     }
 }

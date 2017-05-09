@@ -10,23 +10,27 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
-import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
+import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * @author Gregory Rinaldi
+ */
 public class FLUX_ReportDocumentRuleTest {
 
     private FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
@@ -41,17 +45,13 @@ public class FLUX_ReportDocumentRuleTest {
     @Before
     public void beforeClass() {
 
-        ruleID.setExpression("ids == null || ids.empty == true || ids.get(0).value = \"abc\"");
-        ruleID.setBrId("FA-L00-00-0001");
-        ruleID.setErrorType(ERROR);
-        ruleID.setMessage("ID Must be present.");
 
         ruleCreationDateTime.setExpression("creationDateTime == null");
         ruleCreationDateTime.setBrId("FA-L00-00-0005");
         ruleCreationDateTime.setErrorType(ERROR);
         ruleCreationDateTime.setMessage("CreationDateTime Must be present.");
 
-        ruleReferencedID.setExpression("referencedID == null || referencedID.schemeID == null || isUUID(referencedID.schemeID)");
+        ruleReferencedID.setExpression("referencedID == null || referencedID.schemeId == null || isUUID(referencedID.schemeId)");
         ruleReferencedID.setBrId("FA-L00-00-0011");
         ruleReferencedID.setErrorType(ERROR);
         ruleReferencedID.setMessage("SchemeID Must be UUID.");
@@ -71,14 +71,15 @@ public class FLUX_ReportDocumentRuleTest {
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         AbstractFact fact = new FaReportDocumentFact();
-        IDType idType = new IDType();
-        idType.setSchemeID("1cc5c060-2b84-11e7-93ae-92361f002671");
-        //((FaReportDocumentFact) fact).setReferencedID(idType);
+        IdType idType = new IdType();
+        idType.setValue("id1");
+        idType.setSchemeId("1cc5c060-2b84-11e7-93ae-92361f002671");
+        ((FaReportDocumentFact) fact).setReferencedID(idType);
 
         generator.validateFact(Collections.singletonList(fact));
 
-        //assertTrue(fact.getErrors().isEmpty());
-       // assertTrue(fact.getWarnings().isEmpty());
+        assertTrue(fact.getErrors().isEmpty());
+        assertTrue(fact.getWarnings().isEmpty());
 
     }
 
@@ -89,31 +90,39 @@ public class FLUX_ReportDocumentRuleTest {
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         AbstractFact fact = new FaReportDocumentFact();
-        DateTimeType dateTimeType = new DateTimeType();
-        //((FaReportDocumentFact) fact).setCreationDateTime(dateTimeType);
+        ((FaReportDocumentFact) fact).setCreationDateTime(new Date());
 
         generator.validateFact(Collections.singletonList(fact));
 
-        //assertTrue(fact.getErrors().isEmpty());
-        //assertTrue(fact.getWarnings().isEmpty());
+        assertTrue(fact.getErrors().isEmpty());
+        assertTrue(fact.getWarnings().isEmpty());
 
     }
 
     @Test
     public void testRuleID() {
 
+        ruleID = new RuleType();
+        ruleID.setExpression("ids == null || ids.empty == true || ids.get(1).value != 'abc'");
+        ruleID.setBrId("FA-L00-00-0001");
+        ruleID.setErrorType(ERROR);
+        ruleID.setMessage("ID Must be present.");
+
         templateRuleMapDto.setRules(Collections.singletonList(ruleID));
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         AbstractFact fact = new FaReportDocumentFact();
-        ArrayList<IDType> idTypes = new ArrayList<>();
-        idTypes.add(new IDType());
-        //((FaReportDocumentFact) fact).setIds(idTypes);
+        ArrayList<IdType> idTypes = new ArrayList<>();
+        idTypes.add(new IdType());
+        IdType idType = new IdType();
+        idType.setValue("abc");
+        idTypes.add(idType);
+        ((FaReportDocumentFact) fact).setIds(idTypes);
 
         generator.validateFact(Collections.singletonList(fact));
 
-        //assertTrue(fact.getErrors().isEmpty());
-        //assertTrue(fact.getWarnings().isEmpty());
+        assertTrue(fact.getErrors().isEmpty());
+        assertTrue(fact.getWarnings().isEmpty());
 
     }
 }

@@ -10,19 +10,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -31,7 +32,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 @Slf4j
 public class CustomMapper {
 
-    private CustomMapper(){
+    private CustomMapper() {
 
     }
 
@@ -42,7 +43,7 @@ public class CustomMapper {
 
             codeTypes = Collections.newArrayList();
 
-            for(ContactParty contactParty: contactPartyList){
+            for (ContactParty contactParty : contactPartyList) {
                 codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(contactParty.getRoleCodes()));
             }
         }
@@ -84,5 +85,203 @@ public class CustomMapper {
 
         return date;
     }
+
+
+    public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<AAPProduct> aapProducts = new ArrayList<>();
+
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                aapProducts.addAll(aapProcess.getResultAAPProducts());
+            }
+        }
+        return aapProducts;
+    }
+
+    /**
+     * Extract List<MeasureType> from AAPProduct. List will be created from different attributes of AAPProduct based on parameter methodToChoose.
+     *
+     * @param appliedAAPProcesses
+     * @param methodToChoose
+     * @return
+     */
+    public static List<MeasureType> getMeasureTypeFromAAPProcess(List<AAPProcess> appliedAAPProcesses, String methodToChoose) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
+                    switch (methodToChoose) {
+                        case ActivityFactMapper.AAP_PRODUCT_PACKAGING_UNIT_QUANTITY:
+                            if (aapProduct.getPackagingUnitQuantity() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE:
+                            if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_WEIGHT_MEASURE:
+                            if (aapProduct.getWeightMeasure() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
+                            }
+                            break;
+                        case ActivityFactMapper.AAP_PRODUCT_UNIT_QUANTITY:
+                            if (aapProduct.getUnitQuantity() != null) {
+                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
+                            }
+                            break;
+                    }
+
+                }
+            }
+        }
+        return measureTypes;
+    }
+
+    public static List<CodeType> getAAPProductPackagingTypeCode(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
+                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
+                    if (aapProduct.getPackagingTypeCode() != null) {
+                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(aapProduct.getPackagingTypeCode()));
+                    }
+                }
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getAppliedProcessTypeCodes(List<AAPProcess> appliedAAPProcesses) {
+        if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+
+        for (AAPProcess aapProcess : appliedAAPProcesses) {
+            if (CollectionUtils.isNotEmpty(aapProcess.getTypeCodes())) {
+                codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(aapProcess.getTypeCodes()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getApplicableFLUXCharacteristicsTypeCode(List<FLUXCharacteristic> fluxCharacteristics) {
+        if (CollectionUtils.isEmpty(fluxCharacteristics)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
+            if (fluxCharacteristic.getTypeCode() != null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxCharacteristic.getTypeCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<MeasureType> getApplicableFLUXCharacteristicsValueQuantity(List<FLUXCharacteristic> fluxCharacteristics) {
+        if (CollectionUtils.isEmpty(fluxCharacteristics)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
+            if (fluxCharacteristic.getValueQuantity() != null) {
+                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(fluxCharacteristic.getValueQuantity()));
+            }
+        }
+        return measureTypes;
+    }
+
+    public static List<CodeType> getFLUXLocationTypeCodes(List<FLUXLocation> fluxLocations) {
+        if (CollectionUtils.isEmpty(fluxLocations)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            if (fluxLocation.getTypeCode() != null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxLocation.getTypeCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getFishingGearRoleCodes(List<FishingGear> fishingGears) {
+        if (CollectionUtils.isEmpty(fishingGears)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FishingGear fishingGear : fishingGears) {
+
+            if (CollectionUtils.isNotEmpty(fishingGear.getRoleCodes())) {
+                codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(fishingGear.getRoleCodes()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getVesselTransportMeansRoleCodes(List<VesselTransportMeans> vesselTransportMeanses) {
+        if (CollectionUtils.isEmpty(vesselTransportMeanses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
+
+            if (vesselTransportMeans.getRoleCode()!=null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(vesselTransportMeans.getRoleCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+  /**
+     * Fetch List<CodeType> from FACatch. CodeType List will be created from FACatch based on parameter methodToChoose
+     * i.e code type for FACatch or code type for specified fluxlocation
+     *
+     * @param faCatch
+    // * @param methodToChoose
+     * @return
+     */
+    public static List<CodeType> getCodeTypesFromFaCatch(List<FACatch> faCatch, String methodToChoose) {
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FACatch faCatches : faCatch) {
+
+
+            switch (methodToChoose) {
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH:
+                    if (faCatches.getTypeCode() != null) {
+                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+                    }
+                    break;
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH_FLUXLOCATION:
+
+                    if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
+                        for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations()) {
+                            if (specifiedFluxLocation.getTypeCode() != null) {
+                                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
+                            }
+                        }
+                    }
+                    break;
+
+            }
+        }
+        return codeTypes;
+    }
+
 
 }

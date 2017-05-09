@@ -10,15 +10,31 @@
  *
  *
  */
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-package eu.europa.ec.fisheries.uvms.rules.service.config;
+import java.math.BigDecimal;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * Created by sanera on 03/05/2017.
  */
-public enum BusinessObjectType {
 
-    FLUX_ACTIVITY_REQUEST_MSG,
-    FLUX_ACTIVITY_RESPONSE_MSG,
-    FLUX_ACTIVITY_QUERY_MSG
+public class MeasureType {
+    private BigDecimal value;
+    private String unitCode;
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
+    }
 }

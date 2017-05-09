@@ -11,14 +11,23 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.config;
+package eu.europa.ec.fisheries.uvms.rules.service;
+
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+
+import javax.ejb.Local;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * Created by padhyad on 5/9/2017.
  */
-public enum BusinessObjectType {
+@Local
+public interface MessageService {
 
-    FLUX_ACTIVITY_REQUEST_MSG,
-    FLUX_ACTIVITY_RESPONSE_MSG,
-    FLUX_ACTIVITY_QUERY_MSG
+    void setFLUXFAReportMessageReceived(String fluxFAReportMessage, PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException;
+
+    void mapAndSendFLUXMdrRequestToExchange(String request);
+
+    void mapAndSendFLUXMdrResponseToMdrModule(String request);
 }
