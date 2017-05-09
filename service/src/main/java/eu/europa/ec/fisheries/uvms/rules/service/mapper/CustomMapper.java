@@ -189,6 +189,18 @@ public class CustomMapper {
         return codeTypes;
     }
 
+    public static List<MeasureType> getApplicableFLUXCharacteristicsValueQuantity(List<FLUXCharacteristic> fluxCharacteristics) {
+        if (CollectionUtils.isEmpty(fluxCharacteristics)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
+            if (fluxCharacteristic.getValueQuantity() != null) {
+                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(fluxCharacteristic.getValueQuantity()));
+            }
+        }
+        return measureTypes;
+    }
 
     public static List<CodeType> getFLUXLocationTypeCodes(List<FLUXLocation> fluxLocations) {
         if (CollectionUtils.isEmpty(fluxLocations)) {
@@ -212,6 +224,20 @@ public class CustomMapper {
 
             if (CollectionUtils.isNotEmpty(fishingGear.getRoleCodes())) {
                 codeTypes.addAll(ActivityFactMapper.INSTANCE.mapToCodeType(fishingGear.getRoleCodes()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<CodeType> getVesselTransportMeansRoleCodes(List<VesselTransportMeans> vesselTransportMeanses) {
+        if (CollectionUtils.isEmpty(vesselTransportMeanses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
+
+            if (vesselTransportMeans.getRoleCode()!=null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(vesselTransportMeans.getRoleCode()));
             }
         }
         return codeTypes;

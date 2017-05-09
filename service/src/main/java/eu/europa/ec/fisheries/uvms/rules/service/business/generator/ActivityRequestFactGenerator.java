@@ -170,10 +170,28 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
                     }
                     break;
+                case AREA_ENTRY:
+                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(activity, faReportDocument);
+                    }
+                    break;
+                case AREA_EXIT:
+                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(activity, faReportDocument);
+                    }
+                    break;
+                case FISHING_OPERATION:
+                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFishingOperation(activity, faReportDocument);
+                    break;
                 case LANDING:
-
                       abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
-
+                    break;
+                case TRANSHIPMENT:
+                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForTranshipment(activity, faReportDocument);
+                    }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
+                    }
                     break;
                 default:
                     abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);

@@ -14,11 +14,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDeclarationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
@@ -28,7 +26,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfA
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
@@ -235,19 +232,19 @@ public interface ActivityFactMapper {
     })
     FaJointFishingOperationFact generateFactsForJointFishingOperation(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
-    @Mappings({
+   /* @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
     })
     FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity);
 
-    List<FaRelocationFact> generateFactsForRelocations(List<FishingActivity> fishingActivities);
+    List<FaRelocationFact> generateFactsForRelocations(List<FishingActivity> fishingActivities);*/
 
-    @Mappings({
+  /*  @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
     })
     FaDiscardFact generateFactsForDiscard(FishingActivity fishingActivity);
 
-    List<FaDiscardFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);
+    List<FaDiscardFact> generateFactsForDiscards(List<FishingActivity> fishingActivities);*/
 
     @Mappings({
             @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
@@ -293,12 +290,12 @@ public interface ActivityFactMapper {
     })
     FaQueryFact generateFactsForFaQuery(FAQuery faQuery);
 
-    @Mappings({
+  /*  @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")
     })
     FaArrivalFact generateFactsForArrival(FishingActivity fishingActivity);
 
-    List<FaArrivalFact> generateFactsForArrivals(List<FishingActivity> fishingActivities);
+    List<FaArrivalFact> generateFactsForArrivals(List<FishingActivity> fishingActivities);*/
 
     @Mappings({
             @Mapping(target = "fishingActivityCodeType", source = "fishingActivity.typeCode"),
@@ -306,18 +303,22 @@ public interface ActivityFactMapper {
             @Mapping(target = "relatedFluxLocations", source = "fishingActivity.relatedFLUXLocations"),
             @Mapping(target = "specifiedFaCatchTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH))"),
             @Mapping(target = "specifiedFaCatchFluxLocationTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH_FLUXLOCATION))")
-
+          //  @Mapping(target = "specifiedFaCatchTypeCode", source = "fishingActivity.specifiedFACatches"),
+            //@Mapping(target = "specifiedFaCatchFluxLocationTypeCode", source = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH_FLUXLOCATION))")
     })
     FaLandingFact generateFactsForLanding(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
-    //List<FaLandingFact> generateFactsForLandings(List<FishingActivity> fishingActivities,FAReportDocument faReportDocument);
 
     @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
+            @Mapping(target = "fishingActivityTypeCode", source = "fishingActivity.typeCode"),
+            @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
+            @Mapping(target = "faCatchTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH))"),
+            @Mapping(target = "fluxLocationTypeCode", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "vesselTransportMeansRoleCode", source = "fishingActivity.relatedVesselTransportMeans"),
+            @Mapping(target = "fluxCharacteristicValueQuantity", source = "fishingActivity.specifiedFLUXCharacteristics")
     })
-    FaNotificationOfTranshipmentFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity);
+    FaNotificationOfTranshipmentFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
-    List<FaNotificationOfTranshipmentFact> generateFactsForNotificationOfTranshipments(List<FishingActivity> fishingActivities);
 
     @Mappings({
             @Mapping(target = "typeCode", source = "typeCode.value")

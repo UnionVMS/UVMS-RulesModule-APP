@@ -15,20 +15,84 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
-    private String typeCode;
 
-    public String getTypeCode() {
-        return typeCode;
+    private CodeType fishingActivityTypeCode;
+
+    private CodeType faReportDocumentTypeCode;
+
+    private List<CodeType> faCatchTypeCode;
+
+    private List<CodeType> fluxLocationTypeCode;
+
+    private List<VesselTransportMeans> relatedVesselTransportMeans;
+
+    private List<CodeType> vesselTransportMeansRoleCode;
+
+    private List<MeasureType> fluxCharacteristicValueQuantity;
+
+    public CodeType getFishingActivityTypeCode() {
+        return fishingActivityTypeCode;
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
+        this.fishingActivityTypeCode = fishingActivityTypeCode;
+    }
+
+    public CodeType getFaReportDocumentTypeCode() {
+        return faReportDocumentTypeCode;
+    }
+
+    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
+        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
+    }
+
+    public List<CodeType> getFaCatchTypeCode() {
+        return faCatchTypeCode;
+    }
+
+    public void setFaCatchTypeCode(List<CodeType> faCatchTypeCode) {
+        this.faCatchTypeCode = faCatchTypeCode;
+    }
+
+    public List<CodeType> getFluxLocationTypeCode() {
+        return fluxLocationTypeCode;
+    }
+
+    public void setFluxLocationTypeCode(List<CodeType> fluxLocationTypeCode) {
+        this.fluxLocationTypeCode = fluxLocationTypeCode;
+    }
+
+    public List<VesselTransportMeans> getRelatedVesselTransportMeans() {
+        return relatedVesselTransportMeans;
+    }
+
+    public void setRelatedVesselTransportMeans(List<VesselTransportMeans> relatedVesselTransportMeans) {
+        this.relatedVesselTransportMeans = relatedVesselTransportMeans;
+    }
+
+    public List<CodeType> getVesselTransportMeansRoleCode() {
+        return vesselTransportMeansRoleCode;
+    }
+
+    public void setVesselTransportMeansRoleCode(List<CodeType> vesselTransportMeansRoleCode) {
+        this.vesselTransportMeansRoleCode = vesselTransportMeansRoleCode;
+    }
+
+    public List<MeasureType> getFluxCharacteristicValueQuantity() {
+        return fluxCharacteristicValueQuantity;
+    }
+
+    public void setFluxCharacteristicValueQuantity(List<MeasureType> fluxCharacteristicValueQuantity) {
+        this.fluxCharacteristicValueQuantity = fluxCharacteristicValueQuantity;
     }
 
     public FaNotificationOfTranshipmentFact() {
