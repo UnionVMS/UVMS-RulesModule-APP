@@ -118,6 +118,8 @@ public interface ActivityFactMapper {
     })
     VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean);
 
+    List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMean);
+
     @Mappings({
             @Mapping(target = "postcodeCode", source = "postcodeCode.value")
     })
