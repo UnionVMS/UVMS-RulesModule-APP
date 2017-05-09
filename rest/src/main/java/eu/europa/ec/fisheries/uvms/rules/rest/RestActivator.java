@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.constants.RestConstants;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.AlarmRestResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.ConfigResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.CustomRulesRestResource;
+import eu.europa.ec.fisheries.uvms.rules.rest.service.RulesResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.SanityRulesRestResource;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.TicketRestResource;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class RestActivator extends Application {
         set.add(ConfigResource.class);
         set.add(UnionVMSFeatureFilter.class);
         set.add(SanityRulesRestResource.class);
+        set.add(RulesResource.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 

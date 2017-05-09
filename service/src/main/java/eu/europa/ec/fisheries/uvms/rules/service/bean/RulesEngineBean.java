@@ -13,38 +13,44 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+/**
+ * @author padhyad
+ * @author Gregory Rinaldi
+ */
 @Stateless
+@Slf4j
 @LocalBean
-public class RulesEngine {
- 
-	@EJB
+public class RulesEngineBean {
+
+    @EJB
 	private TemplateEngine templateEngine;
-	
+
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesServiceException {
 		try {
 			List<AbstractFact> facts = new ArrayList<>();
 			AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 			generator.setBusinessObjectMessage(businessObject);
-			facts.addAll(generator.getAllFacts());
+
+            facts.addAll(generator.getAllFacts());
 			templateEngine.evaluateFacts(facts);
 			return facts;
 		} catch (RulesModelException e) {
 			throw new RulesServiceException(e.getMessage(), e);
 		}
     }
+
 }

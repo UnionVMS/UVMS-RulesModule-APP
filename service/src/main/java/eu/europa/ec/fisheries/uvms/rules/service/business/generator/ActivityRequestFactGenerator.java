@@ -37,7 +37,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by padhyad on 4/19/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class ActivityRequestFactGenerator extends AbstractGenerator {
 
