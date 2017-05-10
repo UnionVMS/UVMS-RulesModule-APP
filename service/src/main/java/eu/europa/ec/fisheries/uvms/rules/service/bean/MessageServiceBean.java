@@ -44,6 +44,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -177,7 +178,7 @@ public class MessageServiceBean implements MessageService {
         validationResultDocument.setCreationDateTime(dateTime);
 
         IDType idType = new IDType();
-        idType.setValue("LUX"); // TODO to be received from Global config
+        idType.setValue("XEU"); // TODO to be received from Global config
         idType.setSchemeID("FLUX_GP_PARTY");
         validationResultDocument.setValidatorID(idType);
 
@@ -213,7 +214,7 @@ public class MessageServiceBean implements MessageService {
 
     private FLUXParty getRespondedFluxParty() {
         IDType idType = new IDType();
-        idType.setValue("LUX"); // TODO to be received from Global config
+        idType.setValue("XEU"); // TODO to be received from Global config
         idType.setSchemeID("FLUX_GP_PARTY");
 
         FLUXParty fluxParty = new FLUXParty();

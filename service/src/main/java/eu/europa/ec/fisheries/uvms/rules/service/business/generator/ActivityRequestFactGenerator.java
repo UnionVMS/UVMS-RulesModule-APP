@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
@@ -40,6 +41,7 @@ import java.util.List;
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@Slf4j
 public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private FLUXFAReportMessage fluxfaReportMessage;
@@ -158,46 +160,51 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private AbstractFact addAdditionalValidationFact(FishingActivity activity, FAReportDocument faReportDocument) {
         AbstractFact abstractFact = null;
-        if (activity != null) {
-            FishingActivityType fishingActivityType = FishingActivityType.valueOf(activity.getTypeCode().getValue());
-            switch (fishingActivityType) {
-                case DEPARTURE:
-                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity, faReportDocument);
-                    break;
-                case ARRIVAL:
-                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(activity, faReportDocument);
-                    }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
-                    }
-                    break;
-                case AREA_ENTRY:
-                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(activity, faReportDocument);
-                    }
-                    break;
-                case AREA_EXIT:
-                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(activity, faReportDocument);
-                    }
-                    break;
-                case FISHING_OPERATION:
-                    abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFishingOperation(activity, faReportDocument);
-                    break;
-                case LANDING:
-                      abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
-                    break;
-                case TRANSHIPMENT:
-                    if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForTranshipment(activity, faReportDocument);
-                    }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
-                    }
-                    break;
-                default:
-                    abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
+        try {
+            if (activity != null) {
+                FishingActivityType fishingActivityType = FishingActivityType.valueOf(activity.getTypeCode().getValue());
+                switch (fishingActivityType) {
+                    case DEPARTURE:
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity, faReportDocument);
+                        break;
+                    case ARRIVAL:
+                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(activity, faReportDocument);
+                        }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
+                        }
+                        break;
+                    case AREA_ENTRY:
+                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(activity, faReportDocument);
+                        }
+                        break;
+                    case AREA_EXIT:
+                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(activity, faReportDocument);
+                        }
+                        break;
+                    case JOINT_FISHING_OPERATION:
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForJointFishingOperation(activity, faReportDocument);
+                        break;
+                    case LANDING:
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
+                        break;
+                    case TRANSHIPMENT:
+                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForTranshipment(activity, faReportDocument);
+                        }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
+                        }
+                        break;
+                    default:
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
+                }
             }
+        } catch (IllegalArgumentException e) {
+            log.error("No such Fishing activity type", e);
         }
+
         return abstractFact;
     }
 
