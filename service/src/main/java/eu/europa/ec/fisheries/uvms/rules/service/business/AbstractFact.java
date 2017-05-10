@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 
 public abstract class AbstractFact {
 
@@ -28,11 +28,34 @@ public abstract class AbstractFact {
 
     protected List<RuleError> errors;
 
+    protected List<String> uniqueIds = new ArrayList<>();
+
     protected boolean ok = true;
+
+    private String disabledRuleId;
 
     public AbstractFact() {
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
+    }
+
+    public abstract void setFactType();
+
+    public void addWarningOrError(String type, String msg, String brId, String level) {
+        if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
+            getErrors().add(new RuleError(brId, msg, level));
+        } else {
+            getWarnings().add(new RuleWarning(brId, msg, level));
+        }
+    }
+
+    public boolean isUUID(String name) {
+        try {
+            UUID.fromString(name);
+        } catch (Exception e) {
+            return true;
+        }
+        return false;
     }
 
     public List<RuleWarning> getWarnings() {
@@ -55,22 +78,11 @@ public abstract class AbstractFact {
         return factType;
     }
 
-    public abstract void setFactType();
-
-    public void addWarningOrError(String type, String msg, String brId) {
-        if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
-            getErrors().add(new RuleError(brId, msg));
-        } else {
-            getWarnings().add(new RuleWarning(brId, msg));
-        }
+    public List<String> getUniqueIds() {
+        return uniqueIds;
     }
 
-    public boolean isUUID(String name) {
-        try {
-            UUID.fromString(name);
-        } catch (Exception e) {
-            return true;
-        }
-        return false;
+    public void setUniqueIds(List<String> uniqueIds) {
+        this.uniqueIds = uniqueIds;
     }
 }

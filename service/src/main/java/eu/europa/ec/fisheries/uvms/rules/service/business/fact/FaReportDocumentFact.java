@@ -143,6 +143,16 @@ public class FaReportDocumentFact extends AbstractFact {
     }
 
     @Override
+    public List<String> getUniqueIds() {
+        return uniqueIds;
+    }
+
+    @Override
+    public void setUniqueIds(List<String> uniqueIds) {
+        this.uniqueIds = uniqueIds;
+    }
+
+    @Override
     public void setFactType() {
         this.factType = FactType.FA_REPORT_DOCUMENT;
     }

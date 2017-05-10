@@ -14,9 +14,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -28,11 +28,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMe
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +50,7 @@ public class FactRuleEvaluatorTest {
         facts.add(getVesselTransportMeansFact());
 
         // First Validation
-        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
 
@@ -99,13 +95,13 @@ public class FactRuleEvaluatorTest {
     private TemplateRuleMapDto getTemplateRuleMapForFaReport() {
 
         TemplateType template = new TemplateType();
-        template.setInOutType(InOutType.IN);
         template.setTemplateName("Test Template");
         template.setType(FactType.FA_REPORT_DOCUMENT);
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(getRulesForFaReportDocumentFact());
         templateRuleMapDto.setTemplateType(template);
+        templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
 
         return templateRuleMapDto;
     }
@@ -127,7 +123,6 @@ public class FactRuleEvaluatorTest {
 
     private TemplateRuleMapDto getTemplateRuleMapForVesselTM() {
         TemplateType vsl = new TemplateType();
-        vsl.setInOutType(InOutType.IN);
         vsl.setTemplateName("Vessel Template");
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
@@ -136,6 +131,7 @@ public class FactRuleEvaluatorTest {
         TemplateRuleMapDto vesselTmp = new TemplateRuleMapDto();
         vesselTmp.setRules(Arrays.asList(vrule));
         vesselTmp.setTemplateType(vsl);
+        vesselTmp.setExternalRules(new ArrayList<ExternalRuleType>());
         return vesselTmp;
     }
 

@@ -28,7 +28,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.EnumUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -37,7 +36,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
  * @author Gregory Rinaldi
  */
 @Singleton
-public class MDRService {
+public class MDRCache {
 
     private LoadingCache<MDRAcronymType, List<String>> cache;
 
@@ -47,7 +46,7 @@ public class MDRService {
     @EJB
     private RulesMessageProducer producer;
 
-    public MDRService() {
+    public MDRCache() {
         if (cache == null) {
             cache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
@@ -64,17 +63,12 @@ public class MDRService {
         }
     }
 
-    private List<String> getEntry(MDRAcronymType acronymType) {
+    public List<String> getEntry(MDRAcronymType acronymType) {
         List<String> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
         return result;
-    }
-
-    public boolean isPresentInList(String listName, String codeValue){
-        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        return getEntry(anEnum).contains(codeValue);
     }
 
     @SneakyThrows

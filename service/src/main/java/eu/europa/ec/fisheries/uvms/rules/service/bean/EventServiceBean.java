@@ -60,6 +60,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
@@ -78,6 +79,9 @@ public class EventServiceBean implements EventService {
 
     @EJB
     RulesService rulesService;
+
+    @EJB
+    MessageService messageService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -236,7 +240,7 @@ public class EventServiceBean implements EventService {
             LOG.info("marshall RulesBaseRequest successful");
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
             LOG.info("marshall SetFLUXFAReportMessageRequest successful");
-            rulesService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType(), request.getUsername());
+            messageService.setFLUXFAReportMessageReceived(request.getRequest(), request.getType(), request.getUsername());
         } catch (RulesModelMarshallException e) {
             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
         } catch (RulesServiceException e) {
@@ -252,7 +256,7 @@ public class EventServiceBean implements EventService {
 	         LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
 	         SetFLUXMDRSyncMessageRulesRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesRequest.class);
 	         LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
-	         rulesService.mapAndSendFLUXMdrRequestToExchange(request.getRequest());
+             messageService.mapAndSendFLUXMdrRequestToExchange(request.getRequest());
     	 } catch (RulesModelMarshallException e) {
              LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
          }
@@ -266,7 +270,7 @@ public class EventServiceBean implements EventService {
             LOG.info("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
             SetFLUXMDRSyncMessageRulesResponse request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesResponse.class);
             LOG.info("SetFLUXMDRSyncMessageRequest Marshall was successful");
-            rulesService.mapAndSendFLUXMdrResponseToMdrModule(request.getRequest());
+            messageService.mapAndSendFLUXMdrResponseToMdrModule(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("[ Error when un marshalling RulesBaseRequest. ] {}", e);
         }

@@ -16,8 +16,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -281,6 +283,44 @@ public class CustomMapper {
             }
         }
         return codeTypes;
+    }
+
+    public static List<String> getIds(FLUXFAReportMessage fluxfaReportMessage) {
+        if (fluxfaReportMessage == null) {
+            return java.util.Collections.emptyList();
+        }
+        return getIds(fluxfaReportMessage.getFLUXReportDocument());
+    }
+
+    public static List<String> getIds(FAReportDocument faReportDocument) {
+        if (faReportDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        return getIds(faReportDocument.getRelatedFLUXReportDocument());
+    }
+
+    public static List<String> getIds(FLUXResponseDocument fluxResponseDocument) {
+        if (fluxResponseDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<IDType> idTypes = fluxResponseDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
+    }
+
+    public static List<String> getIds(FLUXReportDocument fluxReportDocument) {
+        if (fluxReportDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<IDType> idTypes = fluxReportDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
     }
 
 

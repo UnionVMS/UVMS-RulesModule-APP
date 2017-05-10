@@ -89,7 +89,8 @@ public interface ActivityFactMapper {
             @Mapping(target = "creationDateTime", source = "relatedFLUXReportDocument.creationDateTime"),
             @Mapping(target = "purposeCode", source = "relatedFLUXReportDocument.purposeCode"),
             @Mapping(target = "ids", source = "relatedFLUXReportDocument.IDS"),
-            @Mapping(target = "ownerFluxPartyIds", source = "relatedFLUXReportDocument.ownerFLUXParty.IDS")
+            @Mapping(target = "ownerFluxPartyIds", source = "relatedFLUXReportDocument.ownerFLUXParty.IDS"),
+            @Mapping(target = "uniqueIds", source = "relatedFLUXReportDocument")
     })
     FaReportDocumentFact generateFactForFaReportDocument(FAReportDocument faReportDocuments);
 
@@ -109,7 +110,8 @@ public interface ActivityFactMapper {
             @Mapping(target = "purposeCode", source = "FLUXReportDocument.purposeCode"),
             @Mapping(target = "ids", source = "FLUXReportDocument.IDS"),
             @Mapping(target = "ownerFluxPartyIds", source = "FLUXReportDocument.ownerFLUXParty.IDS"),
-            @Mapping(target = "faReportDocuments", source = "FAReportDocuments")
+            @Mapping(target = "faReportDocuments", source = "FAReportDocuments"),
+            @Mapping(target = "uniqueIds", source = "FLUXReportDocument")
     })
     FluxFaReportMessageFact generateFactForFluxReportMessage(FLUXFAReportMessage fluxfaReportMessage);
 
@@ -124,7 +126,11 @@ public interface ActivityFactMapper {
     List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMean);
 
     @Mappings({
-            @Mapping(target = "postcodeCode", source = "postcodeCode.value")
+            @Mapping(target = "postcodeCode", source = "postcodeCode.value"),
+            @Mapping(target = "streetName", source = "streetName.value"),
+            @Mapping(target = "cityName", source = "cityName.value"),
+            @Mapping(target = "countryID", source = "countryID.value"),
+            @Mapping(target = "plotIdentification", source = "plotIdentification.value")
     })
     StructuredAddressFact generateFactsForStructureAddress(StructuredAddress structuredAddress);
 

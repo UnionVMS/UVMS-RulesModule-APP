@@ -1,9 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -48,7 +48,7 @@ public class FaCatchEntityRuleTest {
         templates.add(templateRuleMapDto);
 
         // Validation
-        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
 
@@ -68,13 +68,14 @@ public class FaCatchEntityRuleTest {
     private TemplateRuleMapDto getTemplateRuleMapForFaCatch() {
 
         TemplateType template = new TemplateType();
-        template.setInOutType(InOutType.IN);
+        //template.setInOutType(InOutType.IN);
         template.setTemplateName("Test Template");
         template.setType(FactType.FA_CATCH);
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(getRulesForFaCatchFact());
         templateRuleMapDto.setTemplateType(template);
+        templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
 
         return templateRuleMapDto;
     }

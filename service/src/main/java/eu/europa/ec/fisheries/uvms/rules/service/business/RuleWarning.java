@@ -19,9 +19,13 @@ public class RuleWarning {
 
 	private String message;
 
-	public RuleWarning(String ruleId, String message) {
+	protected String level;
+
+
+	public RuleWarning(String ruleId, String message, String level) {
 		this.ruleId = ruleId;
 		this.message = message;
+		this.level = level;
 	}
 
 	public String getRuleId() {
@@ -38,5 +42,12 @@ public class RuleWarning {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+	public void setLevel(String level) {
+		this.level = level;
 	}
 }

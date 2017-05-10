@@ -11,39 +11,23 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
+package eu.europa.ec.fisheries.uvms.rules.service;
 
-import lombok.NoArgsConstructor;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+
+import javax.ejb.Local;
 
 /**
- * @author padhyad
- * @author Gregory Rinaldi
+ * Created by padhyad on 5/9/2017.
  */
-@NoArgsConstructor
-public class CodeType {
+@Local
+public interface MessageService {
 
-    private String value;
-    private String listId;
+    void setFLUXFAReportMessageReceived(String fluxFAReportMessage, PluginType pluginType, String username) throws RulesServiceException, RulesModelMarshallException;
 
-    public CodeType(String value) {
-        this.value = value;
-    }
+    void mapAndSendFLUXMdrRequestToExchange(String request);
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String typeCode) {
-        this.value = typeCode;
-    }
-
-    public String getListId() {
-        return listId;
-    }
-
-    public void setListId(String listId) {
-        this.listId = listId;
-    }
-
-
+    void mapAndSendFLUXMdrResponseToMdrModule(String request);
 }
