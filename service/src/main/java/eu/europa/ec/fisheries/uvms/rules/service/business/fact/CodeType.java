@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.NoArgsConstructor;
 
 /**
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
  * @author Gregory Rinaldi
  */
 @NoArgsConstructor
-public class CodeType {
+public class CodeType extends AbstractFact {
 
     private String value;
     private String listId;
@@ -43,5 +44,10 @@ public class CodeType {
 
     public void setListId(String listId) {
         this.listId = listId;
+    }
+
+    @Override
+    public void setFactType() {
+
     }
 }

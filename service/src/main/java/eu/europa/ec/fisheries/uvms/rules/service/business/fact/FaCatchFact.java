@@ -38,6 +38,7 @@ public class FaCatchFact extends AbstractFact {
     private List<MeasureType> resultAAPProductPackagingUnitQuantity;
 
 
+
     public CodeType getTypeCode() {
         return typeCode;
     }
@@ -142,7 +143,6 @@ public class FaCatchFact extends AbstractFact {
     public void setResultAAPProductWeightMeasure(List<MeasureType> resultAAPProductWeightMeasure) {
         this.resultAAPProductWeightMeasure = resultAAPProductWeightMeasure;
     }
-
 
 
     @Override

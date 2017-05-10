@@ -13,13 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -41,6 +34,13 @@ import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class FactRuleEvaluator {
@@ -79,7 +79,8 @@ public class FactRuleEvaluator {
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
-            ksession.fireAllRules();
+            int firedRules= ksession.fireAllRules();
+            System.out.println("firedRules:"+firedRules);
             ksession.dispose();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
