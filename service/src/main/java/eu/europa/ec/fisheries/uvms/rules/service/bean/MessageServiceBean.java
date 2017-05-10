@@ -157,6 +157,7 @@ public class MessageServiceBean implements MessageService {
             }
 
             fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
+
             fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
 
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
@@ -176,7 +177,8 @@ public class MessageServiceBean implements MessageService {
         validationResultDocument.setCreationDateTime(dateTime);
 
         IDType idType = new IDType();
-        // TODO set FLUX_GP_PARTY
+        idType.setValue("LUX"); // TODO to be received from Global config
+        idType.setSchemeID("FLUX_GP_PARTY");
         validationResultDocument.setValidatorID(idType);
 
         List<ValidationQualityAnalysis> validationQuality = new ArrayList<>();
@@ -210,8 +212,13 @@ public class MessageServiceBean implements MessageService {
     }
 
     private FLUXParty getRespondedFluxParty() {
-        //TODO FLUX_GP_PARTY
-        return null;
+        IDType idType = new IDType();
+        idType.setValue("LUX"); // TODO to be received from Global config
+        idType.setSchemeID("FLUX_GP_PARTY");
+
+        FLUXParty fluxParty = new FLUXParty();
+        fluxParty.setIDS(Arrays.asList(idType));
+        return fluxParty;
     }
 
     private void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, String username, FLUXFAReportMessage fluxfaReportMessage) throws RulesServiceException {
