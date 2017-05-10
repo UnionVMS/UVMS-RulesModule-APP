@@ -13,17 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -44,6 +36,11 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import java.io.InputStream;
+import java.util.*;
+
 @Slf4j
 @Singleton
 @LocalBean
@@ -60,11 +57,12 @@ public class FactRuleEvaluator {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
+            drlsAndRules.putAll(generateExternalRulesFromTemplate(templateName, templateFile, template.getExternalRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
-
         buildAllPackages(packages);
     }
+
 
     public void validateFact(Collection<AbstractFact> facts) {
         try {
@@ -78,7 +76,6 @@ public class FactRuleEvaluator {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-
     }
 
     public List<String> getFailedRules() {
@@ -99,6 +96,7 @@ public class FactRuleEvaluator {
             listener.newCell(rowNum, 2, ruleDto.getBrId(), 0);
             listener.newCell(rowNum, 3, ruleDto.getMessage(), 0);
             listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
+            listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
             listener.finishSheet();
             String drl = listener.renderDRL();
             log.debug("DRL for BR Id {} : {} ", ruleDto.getBrId(), drl);
@@ -107,6 +105,20 @@ public class FactRuleEvaluator {
         }
         return drlsAndBrId;
     }
+
+
+    private Map<? extends String, ? extends String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
+        InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
+        TemplateContainer tc = new DefaultTemplateContainer(templateStream);
+        Map<String, String> drlsAndBrId = new HashMap<>();
+        for (ExternalRuleType extRuleType : externalRules) {
+            String drl = extRuleType.getDrl();
+            log.debug("DRL for BR Id {} : {} ", extRuleType.getBrId(), drl);
+            drlsAndBrId.put(drl, extRuleType.getBrId());
+        }
+        return drlsAndBrId;
+    }
+
 
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();

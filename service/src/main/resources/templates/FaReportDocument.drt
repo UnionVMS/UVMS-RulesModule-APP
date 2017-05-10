@@ -5,6 +5,7 @@ expression
 brid
 rulemsg
 type
+level
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
@@ -21,7 +22,7 @@ when
 then
     try {
        $fact.setOk(false);
-       $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}");
+       $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
     catch (Exception e) {
 
     }

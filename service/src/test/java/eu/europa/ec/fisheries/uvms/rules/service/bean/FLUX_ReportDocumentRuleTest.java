@@ -11,7 +11,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -56,7 +55,6 @@ public class FLUX_ReportDocumentRuleTest {
         ruleReferencedID.setErrorType(ERROR);
         ruleReferencedID.setMessage("SchemeID Must be UUID.");
 
-        template.setInOutType(InOutType.IN);
         template.setTemplateName("Test Template");
         template.setType(FA_REPORT_DOCUMENT);
 
