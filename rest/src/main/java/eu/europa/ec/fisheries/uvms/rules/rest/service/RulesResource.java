@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -41,7 +41,7 @@ public class RulesResource {
     private RulesEngineBean rulesEngine;
 
     @EJB
-    private MDRService mdrCache;
+    private MDRServiceBean mdrService;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
@@ -67,7 +67,7 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/ispresentlist/{listname}/{codevalue}")
     public Response test(@PathParam("listname") String listName, @PathParam("codevalue") String codeValue) {
-        return Response.ok(mdrCache.isPresentInList(listName, codeValue)).build();
+        return Response.ok(mdrService.isPresentInList(listName, codeValue)).build();
     }
 
 }

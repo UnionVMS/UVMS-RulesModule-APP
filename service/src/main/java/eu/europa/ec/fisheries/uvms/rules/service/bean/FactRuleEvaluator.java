@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,22 +45,14 @@ import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
 @Slf4j
+@Singleton
+@LocalBean
 public class FactRuleEvaluator {
 
     private static FactRuleEvaluator factRuleEvaluator;
     private KieServices kieServices = KieServices.Factory.get();
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
-
-    private FactRuleEvaluator() {
-    }
-
-    public static FactRuleEvaluator getInstance() {
-        if (factRuleEvaluator == null) {
-            factRuleEvaluator = new FactRuleEvaluator();
-        }
-        return factRuleEvaluator;
-    }
 
     public void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();

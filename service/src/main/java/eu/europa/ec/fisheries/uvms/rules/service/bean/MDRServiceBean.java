@@ -11,6 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -21,8 +22,9 @@ import org.apache.commons.lang3.EnumUtils;
  * @author Gregory Rinaldi
  */
 @Stateless
+@LocalBean
 @Slf4j
-public class MDRService {
+public class MDRServiceBean {
 
     @EJB
     private MDRCache cache;

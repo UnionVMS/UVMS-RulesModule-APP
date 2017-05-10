@@ -54,7 +54,7 @@ public class FactRuleEvaluatorTest {
         facts.add(vesselTransportMeansFact);
 
         // First Validation
-        FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
 

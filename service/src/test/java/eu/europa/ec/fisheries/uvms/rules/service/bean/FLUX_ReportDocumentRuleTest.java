@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class FLUX_ReportDocumentRuleTest {
 
-    private FactRuleEvaluator generator = FactRuleEvaluator.getInstance();
+    private FactRuleEvaluator generator = new FactRuleEvaluator();
 
     private TemplateType template = new TemplateType();
     private TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
