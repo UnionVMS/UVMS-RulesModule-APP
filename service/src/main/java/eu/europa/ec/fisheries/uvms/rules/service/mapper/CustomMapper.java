@@ -16,14 +16,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -188,13 +184,25 @@ public class CustomMapper {
         }
         List<CodeType> codeTypes = new ArrayList<>();
         for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
-           if (fluxCharacteristic.getTypeCode() != null) {
+            if (fluxCharacteristic.getTypeCode() != null) {
                 codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(fluxCharacteristic.getTypeCode()));
-           }
+            }
         }
         return codeTypes;
     }
 
+    public static List<MeasureType> getApplicableFLUXCharacteristicsValueQuantity(List<FLUXCharacteristic> fluxCharacteristics) {
+        if (CollectionUtils.isEmpty(fluxCharacteristics)) {
+            return java.util.Collections.emptyList();
+        }
+        List<MeasureType> measureTypes = new ArrayList<>();
+        for (FLUXCharacteristic fluxCharacteristic : fluxCharacteristics) {
+            if (fluxCharacteristic.getValueQuantity() != null) {
+                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(fluxCharacteristic.getValueQuantity()));
+            }
+        }
+        return measureTypes;
+    }
 
     public static List<CodeType> getFLUXLocationTypeCodes(List<FLUXLocation> fluxLocations) {
         if (CollectionUtils.isEmpty(fluxLocations)) {
@@ -222,5 +230,98 @@ public class CustomMapper {
         }
         return codeTypes;
     }
+
+    public static List<CodeType> getVesselTransportMeansRoleCodes(List<VesselTransportMeans> vesselTransportMeanses) {
+        if (CollectionUtils.isEmpty(vesselTransportMeanses)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
+
+            if (vesselTransportMeans.getRoleCode()!=null) {
+                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(vesselTransportMeans.getRoleCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+  /**
+     * Fetch List<CodeType> from FACatch. CodeType List will be created from FACatch based on parameter methodToChoose
+     * i.e code type for FACatch or code type for specified fluxlocation
+     *
+     * @param faCatch
+    // * @param methodToChoose
+     * @return
+     */
+    public static List<CodeType> getCodeTypesFromFaCatch(List<FACatch> faCatch, String methodToChoose) {
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FACatch faCatches : faCatch) {
+
+
+            switch (methodToChoose) {
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH:
+                    if (faCatches.getTypeCode() != null) {
+                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+                    }
+                    break;
+
+                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH_FLUXLOCATION:
+
+                    if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
+                        for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations()) {
+                            if (specifiedFluxLocation.getTypeCode() != null) {
+                                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
+                            }
+                        }
+                    }
+                    break;
+
+            }
+        }
+        return codeTypes;
+    }
+
+    public static List<String> getIds(FLUXFAReportMessage fluxfaReportMessage) {
+        if (fluxfaReportMessage == null) {
+            return java.util.Collections.emptyList();
+        }
+        return getIds(fluxfaReportMessage.getFLUXReportDocument());
+    }
+
+    public static List<String> getIds(FAReportDocument faReportDocument) {
+        if (faReportDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        return getIds(faReportDocument.getRelatedFLUXReportDocument());
+    }
+
+    public static List<String> getIds(FLUXResponseDocument fluxResponseDocument) {
+        if (fluxResponseDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<IDType> idTypes = fluxResponseDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
+    }
+
+    public static List<String> getIds(FLUXReportDocument fluxReportDocument) {
+        if (fluxReportDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<IDType> idTypes = fluxReportDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
+    }
+
 
 }

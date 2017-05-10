@@ -20,7 +20,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
- * Created by padhyad on 4/21/2017.
+ * @author padhyad
+ * @author Gregory Rinaldi
  */
 public class ActivityQueryFactGenerator extends AbstractGenerator {
 
