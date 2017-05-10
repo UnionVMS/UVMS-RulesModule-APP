@@ -85,6 +85,16 @@ public class FluxFaReportMessageFact extends AbstractFact {
         this.faReportDocuments = faReportDocuments;
     }
 
+    @Override
+    public List<String> getUniqueIds() {
+        return uniqueIds;
+    }
+
+    @Override
+    public void setUniqueIds(List<String> uniqueIds) {
+        this.uniqueIds = uniqueIds;
+    }
+
     public FluxFaReportMessageFact() {
         setFactType();
     }

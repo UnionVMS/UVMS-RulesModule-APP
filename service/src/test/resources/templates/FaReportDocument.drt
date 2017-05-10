@@ -16,7 +16,7 @@ rule "FA Report Document @{tname} - @{brid}"
 
 when
 
-    $fact : fareportdocumentfact(@{expression})
+    $fact : FaReportDocumentFact(@{expression})
 
 then
 try {

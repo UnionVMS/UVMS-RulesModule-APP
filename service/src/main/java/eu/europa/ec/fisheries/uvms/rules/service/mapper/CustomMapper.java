@@ -16,8 +16,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -243,12 +245,12 @@ public class CustomMapper {
         return codeTypes;
     }
 
-    /**
+  /**
      * Fetch List<CodeType> from FACatch. CodeType List will be created from FACatch based on parameter methodToChoose
      * i.e code type for FACatch or code type for specified fluxlocation
      *
      * @param faCatch
-     * @param methodToChoose
+    // * @param methodToChoose
      * @return
      */
     public static List<CodeType> getCodeTypesFromFaCatch(List<FACatch> faCatch, String methodToChoose) {
@@ -274,52 +276,51 @@ public class CustomMapper {
                             if (specifiedFluxLocation.getTypeCode() != null) {
                                 codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
                             }
-                            break;
-
-
                         }
-
                     }
+                    break;
 
             }
         }
         return codeTypes;
     }
 
-
-    public static List<CodeType> getSpecifiedFaCatchFluxLocationTypeCodes(List<FACatch> faCatch) {
-        if (CollectionUtils.isEmpty(faCatch)) {
+    public static List<String> getIds(FLUXFAReportMessage fluxfaReportMessage) {
+        if (fluxfaReportMessage == null) {
             return java.util.Collections.emptyList();
         }
-        List<CodeType> codeTypes = new ArrayList<>();
-
-        for (FACatch faCatches : faCatch) {
-            if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
-                for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations())
-                    if (specifiedFluxLocation.getTypeCode() != null) {
-                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
-
-                    }
-
-            }
-
-        }
-        return codeTypes;
+        return getIds(fluxfaReportMessage.getFLUXReportDocument());
     }
 
-    public static List<CodeType> getSpecifiedFaCatchTypeCodes(List<FACatch> faCatch) {
-        if (CollectionUtils.isEmpty(faCatch)) {
+    public static List<String> getIds(FAReportDocument faReportDocument) {
+        if (faReportDocument == null) {
             return java.util.Collections.emptyList();
         }
-        List<CodeType> codeTypes = new ArrayList<>();
-        for (FACatch faCatches : faCatch) {
-            if (faCatches.getTypeCode() != null) {
-                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+        return getIds(faReportDocument.getRelatedFLUXReportDocument());
+    }
 
-            }
+    public static List<String> getIds(FLUXResponseDocument fluxResponseDocument) {
+        if (fluxResponseDocument == null) {
+            return java.util.Collections.emptyList();
         }
+        List<IDType> idTypes = fluxResponseDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
+    }
 
-        return codeTypes;
+    public static List<String> getIds(FLUXReportDocument fluxReportDocument) {
+        if (fluxReportDocument == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<IDType> idTypes = fluxReportDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));
+        }
+        return ids;
     }
 
 

@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -25,15 +20,27 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.InOutType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @autor padhyad
  * @author Gregory Rinaldi
  */
+@Slf4j
 public class FactRuleEvaluatorTest {
 
     @Test
@@ -43,48 +50,58 @@ public class FactRuleEvaluatorTest {
         templates.add(getTemplateRuleMapForVesselTM());
 
         Collection<AbstractFact> facts = new ArrayList<>();
-        FaReportDocumentFact fact = new FaReportDocumentFact();
-        CodeType codeType = new CodeType();
-        codeType.setValue("typecode");
-        fact.setTypeCode(codeType);
-        facts.add(fact);
-
-        VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
-        vesselTransportMeansFact.setRoleCode(new CodeType("ABC"));
-        facts.add(vesselTransportMeansFact);
+        facts.add(getFaReportDocumentFact());
+        facts.add(getVesselTransportMeansFact());
 
         // First Validation
         FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
 
-        //assertNotNull(fact.getErrors());
-        //assertNotNull(fact.getErrors().iterator().next().getRuleId());
-
-        //assertNotNull(vesselTransportMeansFact.getWarnings());
-        //assertNotNull(vesselTransportMeansFact.getWarnings().iterator().next().getRuleId());
+        // validate facts
+        validateFacts(facts);
 
         // Second Validation
         facts.clear();
-        FaReportDocumentFact newFaReport = new FaReportDocumentFact();
-        CodeType codeType1 = new CodeType();
-        codeType1.setValue("CODE");
-        newFaReport.setTypeCode(codeType1);
-        facts.add(newFaReport);
-        generator.validateFact(facts);
+
+    }
+
+    private VesselTransportMeansFact getVesselTransportMeansFact() {
+        VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
+        vesselTransportMeansFact.setRoleCode(new CodeType("ABC"));
+        return vesselTransportMeansFact;
+    }
+
+    private FaReportDocumentFact getFaReportDocumentFact() {
+        FaReportDocumentFact fact = new FaReportDocumentFact();
+        CodeType codeType = new CodeType();
+        codeType.setValue("typecode");
+        fact.setTypeCode(codeType);
+
+        CodeType purposeCode = new CodeType();
+        purposeCode.setValue("purpose2");
+        purposeCode.setListId("FLUX_GP_PURPOSE");
+        fact.setPurposeCode(purposeCode);
+
+        fact.setAcceptanceDateTime(new Date());
+        return fact;
+    }
+
+    private void validateFacts(Collection<AbstractFact> facts) {
+        for(AbstractFact abstractFact: facts){
+            log.debug("------"+abstractFact.getFactType()+"------");
+            List<RuleError> ruleErrors=  abstractFact.getErrors();
+            for(RuleError ruleError:ruleErrors){
+                log.debug("Id:"+ruleError.getRuleId()+" Error:"+ruleError.getMessage());
+            }
+            assertTrue(ruleErrors.isEmpty());
+            List<RuleWarning> ruleWarnings=abstractFact.getWarnings();
+            assertTrue(ruleWarnings.isEmpty());
+            log.debug("------"+abstractFact.getFactType()+" is successful------");
+        }
     }
 
     private TemplateRuleMapDto getTemplateRuleMapForFaReport() {
-        List<RuleType> rules = new ArrayList<>();
-        for (int i = 0; i < 10 ; i ++) {
-            RuleType rule = new RuleType();
-            rule.setExpression("typeCode.value != null");
-            rule.setBrId("1" + i);
-            rule.setNote("Test Notes");
-            rule.setErrorType(ErrorType.ERROR);
-            rule.setMessage("This is test message");
-            rules.add(rule);
-        }
 
         TemplateType template = new TemplateType();
         template.setInOutType(InOutType.IN);
@@ -92,10 +109,25 @@ public class FactRuleEvaluatorTest {
         template.setType(FactType.FA_REPORT_DOCUMENT);
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
-        templateRuleMapDto.setRules(rules);
+        templateRuleMapDto.setRules(getRulesForFaReportDocumentFact());
         templateRuleMapDto.setTemplateType(template);
 
         return templateRuleMapDto;
+    }
+
+    private List<RuleType> getRulesForFaReportDocumentFact() {
+        List<RuleType> rules = new ArrayList<>();
+
+        RuleType ruleTypeCode = createRuleType("typeCode.value == null","1" ,"Test Notes",ErrorType.ERROR,"typeCode value is null");
+        RuleType ruleAcceptanceDateTime = createRuleType("acceptanceDateTime == null","3" ,"Test Notes",ErrorType.ERROR,"acceptanceDateTime is null");
+        RuleType rulePurposeCode = createRuleType("purposeCode == null","4" ,"Test Notes",ErrorType.ERROR,"purposeCode is null");
+        RuleType rulePurposeCodeListId = createRuleType("purposeCode.listId != 'FLUX_GP_PURPOSE' ","5" ,"Test Notes",ErrorType.ERROR,"rulePurposeCodeListId is not FLUX_GP_PURPOSE");
+
+        rules.add(ruleTypeCode);
+        rules.add(ruleAcceptanceDateTime);
+        rules.add(rulePurposeCode);
+        rules.add(rulePurposeCodeListId);
+        return rules;
     }
 
     private TemplateRuleMapDto getTemplateRuleMapForVesselTM() {
@@ -104,17 +136,23 @@ public class FactRuleEvaluatorTest {
         vsl.setTemplateName("Vessel Template");
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
-        RuleType vrule = new RuleType();
-        vrule.setExpression("roleCode != null");
-        vrule.setBrId("1");
-        vrule.setNote("Test Notes");
-        vrule.setErrorType(ErrorType.WARNING);
-        vrule.setMessage("This is test message");
+        RuleType vrule = createRuleType("roleCode.value == null","2" ,"Test Notes",ErrorType.ERROR,"Role code value is null");
 
         TemplateRuleMapDto vesselTmp = new TemplateRuleMapDto();
         vesselTmp.setRules(Arrays.asList(vrule));
         vesselTmp.setTemplateType(vsl);
         return vesselTmp;
+    }
+
+    private RuleType createRuleType(String expression, String brId,String note, ErrorType type, String errorMessage){
+        RuleType ruleType = new RuleType();
+        ruleType.setExpression(expression);
+        ruleType.setBrId(brId );
+        ruleType.setNote(note);
+        ruleType.setErrorType(type);
+        ruleType.setMessage(errorMessage);
+
+        return ruleType;
     }
 
 }

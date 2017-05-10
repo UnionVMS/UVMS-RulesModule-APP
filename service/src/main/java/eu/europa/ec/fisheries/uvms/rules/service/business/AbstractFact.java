@@ -28,7 +28,13 @@ public abstract class AbstractFact {
 
     protected List<RuleError> errors;
 
+    protected List<String> uniqueIds = new ArrayList<>();
+
     protected boolean ok = true;
+
+    private String disabledRuleId;
+
+
 
     public AbstractFact() {
         this.warnings = new ArrayList<>();
@@ -72,5 +78,13 @@ public abstract class AbstractFact {
             return true;
         }
         return false;
+    }
+
+    public List<String> getUniqueIds() {
+        return uniqueIds;
+    }
+
+    public void setUniqueIds(List<String> uniqueIds) {
+        this.uniqueIds = uniqueIds;
     }
 }
