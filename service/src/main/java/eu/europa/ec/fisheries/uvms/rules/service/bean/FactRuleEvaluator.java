@@ -50,7 +50,6 @@ import java.util.Map;
 @LocalBean
 public class FactRuleEvaluator {
 
-    private static FactRuleEvaluator factRuleEvaluator;
     private KieServices kieServices = KieServices.Factory.get();
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
@@ -113,9 +112,10 @@ public class FactRuleEvaluator {
     }
 
 
-    private Map<? extends String, ? extends String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
-        InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
-        TemplateContainer tc = new DefaultTemplateContainer(templateStream);
+    private Map<String, String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
+        if (externalRules == null) {
+            return Collections.emptyMap();
+        }
         Map<String, String> drlsAndBrId = new HashMap<>();
         for (ExternalRuleType extRuleType : externalRules) {
             String drl = extRuleType.getDrl();

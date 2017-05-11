@@ -11,7 +11,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 
-template "@{templateName}"
+template "@{tname}"
 
 rule "FA Report Document @{tname} - @{brid}"
 
@@ -20,12 +20,8 @@ when
     $fact : FaReportDocumentFact(@{expression})
 
 then
-    try {
-       $fact.setOk(false);
-       $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
-    catch (Exception e) {
-
-    }
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
 end
 
 end template

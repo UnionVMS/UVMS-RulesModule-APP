@@ -16,16 +16,22 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
 @Singleton
+@Slf4j
+@Startup
 public class TemplateEngine {
 
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
@@ -36,6 +42,7 @@ public class TemplateEngine {
 
     @PostConstruct
     public void initialize() {
+        log.info("Initializing templates and rules");
         ruleEvaluator.initializeRules(getAllTemplates());
         updateFailedRules(ruleEvaluator.getFailedRules());
     }
