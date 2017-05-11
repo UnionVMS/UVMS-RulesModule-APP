@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 
 import java.math.BigDecimal;
@@ -36,5 +37,12 @@ public class RuleTestHelper {
         measureType.setValue(value);
         measureType.setUnitCode(unitCode);
         return measureType;
+    }
+
+    public static IdType getIdType(String value, String schemeId){
+        IdType idType = new IdType();
+        idType.setValue(value);
+        idType.setSchemeId(schemeId);
+        return idType;
     }
 }

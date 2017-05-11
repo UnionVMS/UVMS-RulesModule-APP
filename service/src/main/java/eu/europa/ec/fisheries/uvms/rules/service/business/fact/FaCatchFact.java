@@ -36,6 +36,7 @@ public class FaCatchFact extends AbstractFact {
     private List<CodeType> resultAAPProductPackagingTypeCode;
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
     private List<MeasureType> resultAAPProductPackagingUnitQuantity;
+    private List<String> testStringList;
 
 
 
@@ -144,6 +145,13 @@ public class FaCatchFact extends AbstractFact {
         this.resultAAPProductWeightMeasure = resultAAPProductWeightMeasure;
     }
 
+    public List<String> getTestStringList() {
+        return testStringList;
+    }
+
+    public void setTestStringList(List<String> testStringList) {
+        this.testStringList = testStringList;
+    }
 
     @Override
     public void setFactType() {

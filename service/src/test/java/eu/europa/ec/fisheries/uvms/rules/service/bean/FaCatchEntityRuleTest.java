@@ -90,7 +90,7 @@ public class FaCatchEntityRuleTest {
         RuleType ruleCatchWeightMeasure = RuleTestHelper.createRuleType("weightMeasure==null || weightMeasure.unitCode !='KGM' ","5" ,"Test Notes", ErrorType.ERROR,"FACatch weightMeasure is not present OR  unitCode is not KGM");
         RuleType ruleCatchWeightMeasureDecimal = RuleTestHelper.createRuleType("weightMeasure.value matches '^[0-9]*.*[0-9]{0,2}' == false ","5" ,"Test Notes", ErrorType.ERROR,"WeightMeasure is more than 2 decimal places");
 
-        //RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
+        RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
 
         rules.add(ruleTypeCode);
         rules.add(ruleSpeciesCode);
@@ -98,6 +98,7 @@ public class FaCatchEntityRuleTest {
         rules.add(ruleCatchUnitQuantityPositive);
         rules.add(ruleCatchWeightMeasure);
         rules.add(ruleCatchWeightMeasureDecimal);
+        rules.add(ruleTest);
 
 
         return rules;
@@ -118,6 +119,11 @@ public class FaCatchEntityRuleTest {
         List<CodeType> sizeClassList = new ArrayList<>();
         sizeClassList.add(RuleTestHelper.getCodeType("sizeClass","FISH_SIZE_CLASS"));
         fact.setSizeDistributionClassCode(sizeClassList);
+
+
+        List<String> valueList= new ArrayList<>();
+        valueList.add("test");
+        //fact.setTestStringList(valueList);
 
 
         return fact;
