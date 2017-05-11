@@ -40,11 +40,7 @@ import org.kie.internal.definition.KnowledgePackage;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Singleton
