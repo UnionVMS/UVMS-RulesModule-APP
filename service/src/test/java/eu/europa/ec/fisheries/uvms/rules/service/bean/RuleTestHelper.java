@@ -20,6 +20,7 @@ public class RuleTestHelper {
         ruleType.setNote(note);
         ruleType.setErrorType(type);
         ruleType.setMessage(errorMessage);
+        ruleType.setLevel("LevelName");
 
         return ruleType;
     }

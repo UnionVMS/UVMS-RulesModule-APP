@@ -55,6 +55,7 @@ public class FLUX_ReportDocumentRuleTest {
         ruleReferencedID.setBrId("FA-L00-00-0011");
         ruleReferencedID.setErrorType(ERROR);
         ruleReferencedID.setMessage("SchemeID Must be UUID.");
+        ruleReferencedID.setLevel("Level");
 
         template.setTemplateName("Test Template");
         template.setType(FA_REPORT_DOCUMENT);

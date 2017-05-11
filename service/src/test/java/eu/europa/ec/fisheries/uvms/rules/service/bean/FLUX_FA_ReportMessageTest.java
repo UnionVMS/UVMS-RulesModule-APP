@@ -96,9 +96,7 @@ public class FLUX_FA_ReportMessageTest {
 
     private FluxFaReportMessageFact getFLUXFaReportMessageFact() {
         FluxFaReportMessageFact fact = new FluxFaReportMessageFact();
-
-        fact.setIds(Collections.singletonList(RuleTestHelper.getIdType("id","schemeID")));
-
+         fact.setIds(Collections.singletonList(RuleTestHelper.getIdType("id","schemeID")));
         return fact;
     }
 

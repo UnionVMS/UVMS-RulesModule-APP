@@ -73,6 +73,7 @@ public class FactRuleEvaluatorTest {
 
         fact.setTypeCode(RuleTestHelper.getCodeType("typecode",null));
         fact.setPurposeCode(RuleTestHelper.getCodeType("purpose2","FLUX_GP_PURPOSE"));
+        fact.setAcceptanceDateTime(new Date());
 
         fact.setAcceptanceDateTime(new Date());
         return fact;
