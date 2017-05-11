@@ -40,7 +40,11 @@ import org.kie.internal.definition.KnowledgePackage;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Singleton
@@ -60,6 +64,7 @@ public class FactRuleEvaluator {
             drlsAndRules.putAll(generateExternalRulesFromTemplate(templateName, templateFile, template.getExternalRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
+
         buildAllPackages(packages);
     }
 
@@ -76,6 +81,7 @@ public class FactRuleEvaluator {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
     }
 
     public List<String> getFailedRules() {

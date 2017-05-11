@@ -10,14 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper.mapIsUniqueIdRequestRequest;
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToIsUniqueIdResponseFromResponse;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.TextMessage;
-
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.IsUniqueIdResponse;
@@ -26,6 +18,14 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.TextMessage;
+
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper.mapIsUniqueIdRequestRequest;
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToIsUniqueIdResponseFromResponse;
 
 @Stateless
 @LocalBean

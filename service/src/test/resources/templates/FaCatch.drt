@@ -1,0 +1,32 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+
+template "@{templateName}"
+
+rule "FA catch @{tname} - @{brid}"
+
+when
+
+    $fact : FaCatchFact(@{expression})
+
+then
+try {
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}" , "@{level}");
+ } catch (Exception e) {
+
+    }
+end
+
+end template
