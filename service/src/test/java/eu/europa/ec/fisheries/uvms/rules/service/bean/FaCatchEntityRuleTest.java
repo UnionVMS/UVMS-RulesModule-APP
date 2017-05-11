@@ -88,7 +88,7 @@ public class FaCatchEntityRuleTest {
         RuleType ruleResultAAPProductUnitQuantity = RuleTestHelper.createRuleType("resultAAPProductUnitQuantity.empty == true ","3" ,"Test Notes", ErrorType.ERROR,"ResultAAPProduct do not have unitQuantity");
         RuleType ruleCatchUnitQuantityPositive = RuleTestHelper.createRuleType("unitQuantity.value < 0 ","4" ,"Test Notes", ErrorType.ERROR,"FACatch unitQuantity is less than 0 ");
         RuleType ruleCatchWeightMeasure = RuleTestHelper.createRuleType("weightMeasure==null || weightMeasure.unitCode !='KGM' ","5" ,"Test Notes", ErrorType.ERROR,"FACatch weightMeasure is not present OR  unitCode is not KGM");
-        RuleType ruleCatchWeightMeasureDecimal = RuleTestHelper.createRuleType("weightMeasure.value matches '^[0-9]*.[0-9]{0,2}' == false ","5" ,"Test Notes", ErrorType.ERROR,"WeightMeasure is more than 2 decimal places");
+        RuleType ruleCatchWeightMeasureDecimal = RuleTestHelper.createRuleType("weightMeasure.value matches '^[0-9]*.*[0-9]{0,2}' == false ","5" ,"Test Notes", ErrorType.ERROR,"WeightMeasure is more than 2 decimal places");
 
         //RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
 
