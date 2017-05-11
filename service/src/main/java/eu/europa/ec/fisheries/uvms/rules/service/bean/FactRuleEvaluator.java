@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
@@ -89,6 +90,9 @@ public class FactRuleEvaluator {
     }
 
     private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
+        if (CollectionUtils.isEmpty(rules)) {
+            return Collections.emptyMap();
+        }
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
         Map<String, String> drlsAndBrId = new HashMap<>();
@@ -114,7 +118,7 @@ public class FactRuleEvaluator {
 
 
     private Map<String, String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
-        if (externalRules == null) {
+        if (CollectionUtils.isEmpty(externalRules)) {
             return Collections.emptyMap();
         }
         Map<String, String> drlsAndBrId = new HashMap<>();
