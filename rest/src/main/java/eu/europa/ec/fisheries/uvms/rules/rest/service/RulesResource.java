@@ -19,17 +19,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 /**
  * @author Gregory Rinaldi
@@ -39,28 +38,29 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 public class RulesResource {
 
     @EJB
-    private RulesEngineBean rulesEngine;
+    private MessageService messageService;
 
     @EJB
     private MDRServiceBean mdrService;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
-    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/{objectType}")
     public Response evaluate(FLUXFAReportMessage request, @PathParam("objectType") BusinessObjectType objectType) throws ServiceException {
 
-        List<AbstractFact> abstractFacts;
+        FLUXResponseMessage fluxResponseMessage;
 
         try {
 
-            abstractFacts = rulesEngine.evaluate(objectType, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessage(new ValidationResultDto(), request);
+            messageService.sendResponseToExchange(fluxResponseMessage, "user");
 
-        } catch (RulesValidationException e) {
+        } catch (RulesServiceException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
-        return Response.ok(abstractFacts).build();
+        return Response.ok(fluxResponseMessage).build();
 
     }
 
