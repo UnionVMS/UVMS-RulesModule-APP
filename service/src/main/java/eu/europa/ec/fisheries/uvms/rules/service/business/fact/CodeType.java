@@ -44,4 +44,6 @@ public class CodeType {
     public void setListId(String listId) {
         this.listId = listId;
     }
+
+
 }

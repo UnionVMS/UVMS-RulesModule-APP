@@ -16,6 +16,7 @@ import static java.util.Collections.emptyList;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.TextMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +79,7 @@ public class MDRCache {
         String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(s, TextMessage.class);
 
-        List<String> stringList = emptyList();
+        List<String> stringList = new ArrayList<>();
 
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);

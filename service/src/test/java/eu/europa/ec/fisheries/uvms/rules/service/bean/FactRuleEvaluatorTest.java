@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
@@ -22,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +63,29 @@ public class FactRuleEvaluatorTest {
 
     }
 
+    @Test
+    public void testComputeExternalRule() {
+        List<TemplateRuleMapDto> templates = new ArrayList<>();
+        templates.add(getTemplateExternalRuleMapForFaReport());
+        templates.add(getTemplateRuleMapForVesselTM());
+
+        Collection<AbstractFact> facts = new ArrayList<>();
+        facts.add(getFaReportDocumentFact());
+        facts.add(getVesselTransportMeansFact());
+
+        // First Validation
+        FactRuleEvaluator generator = new FactRuleEvaluator();
+        generator.initializeRules(templates);
+        generator.validateFact(facts);
+
+        // validate facts
+        validateFacts(facts);
+
+        // Second Validation
+        facts.clear();
+
+    }
+
     private VesselTransportMeansFact getVesselTransportMeansFact() {
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
         vesselTransportMeansFact.setRoleCode(new CodeType("ABC"));
@@ -69,16 +94,11 @@ public class FactRuleEvaluatorTest {
 
     private FaReportDocumentFact getFaReportDocumentFact() {
         FaReportDocumentFact fact = new FaReportDocumentFact();
-        CodeType codeType = new CodeType();
-        codeType.setValue("typecode");
-        fact.setTypeCode(codeType);
 
-        CodeType purposeCode = new CodeType();
-        purposeCode.setValue("purpose2");
-        purposeCode.setListId("FLUX_GP_PURPOSE");
-        fact.setPurposeCode(purposeCode);
-
-        fact.setAcceptanceDateTime(new Date());
+        fact.setTypeCode(RuleTestHelper.getCodeType("typecode",null));
+        fact.setPurposeCode(RuleTestHelper.getCodeType("purpose2","FLUX_GP_PURPOSE"));
+        fact.setAcceptanceDateTime(new DateType());
+        fact.setAcceptanceDateTime(new DateType());
         return fact;
     }
 
@@ -105,6 +125,20 @@ public class FactRuleEvaluatorTest {
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(getRulesForFaReportDocumentFact());
         templateRuleMapDto.setTemplateType(template);
+        templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
+
+        return templateRuleMapDto;
+    }
+
+    private TemplateRuleMapDto getTemplateExternalRuleMapForFaReport() {
+
+        TemplateType template = new TemplateType();
+        template.setTemplateName("Test Template");
+        template.setType(FactType.FA_REPORT_DOCUMENT);
+
+        TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
+        templateRuleMapDto.setExternalRules(getExternalRulesForFaReportDocumentFact());
+        templateRuleMapDto.setTemplateType(template);
 
         return templateRuleMapDto;
     }
@@ -112,10 +146,30 @@ public class FactRuleEvaluatorTest {
     private List<RuleType> getRulesForFaReportDocumentFact() {
         List<RuleType> rules = new ArrayList<>();
 
-        RuleType ruleTypeCode = createRuleType("typeCode.value == null","1" ,"Test Notes",ErrorType.ERROR,"typeCode value is null");
-        RuleType ruleAcceptanceDateTime = createRuleType("acceptanceDateTime == null","3" ,"Test Notes",ErrorType.ERROR,"acceptanceDateTime is null");
-        RuleType rulePurposeCode = createRuleType("purposeCode == null","4" ,"Test Notes",ErrorType.ERROR,"purposeCode is null");
-        RuleType rulePurposeCodeListId = createRuleType("purposeCode.listId != 'FLUX_GP_PURPOSE' ","5" ,"Test Notes",ErrorType.ERROR,"rulePurposeCodeListId is not FLUX_GP_PURPOSE");
+        RuleType ruleTypeCode = RuleTestHelper.createRuleType("typeCode.value == null","1" ,"Test Notes",ErrorType.ERROR,"typeCode value is null");
+        RuleType ruleAcceptanceDateTime = RuleTestHelper.createRuleType("acceptanceDateTime == null","3" ,"Test Notes",ErrorType.ERROR,"acceptanceDateTime is null");
+        RuleType rulePurposeCode = RuleTestHelper.createRuleType("purposeCode == null","4" ,"Test Notes",ErrorType.ERROR,"purposeCode is null");
+        RuleType rulePurposeCodeListId = RuleTestHelper.createRuleType("purposeCode.listId != 'FLUX_GP_PURPOSE' ","5" ,"Test Notes",ErrorType.ERROR,"rulePurposeCodeListId is not FLUX_GP_PURPOSE");
+
+        rules.add(ruleTypeCode);
+        rules.add(ruleAcceptanceDateTime);
+        rules.add(rulePurposeCode);
+        rules.add(rulePurposeCodeListId);
+        return rules;
+    }
+
+    private List<ExternalRuleType> getExternalRulesForFaReportDocumentFact() {
+        List<ExternalRuleType> rules = new ArrayList<>();
+
+        String drl1 = "SOMEDRLSTOPUTHERE";
+        String drl2 = "SOMEDRLSTOPUTHERE";
+        String drl3 = "SOMEDRLSTOPUTHERE";
+        String drl4 = "SOMEDRLSTOPUTHERE";
+
+        ExternalRuleType ruleTypeCode = createExternalRuleType("typeCode.value == null","1" ,drl1 ,ErrorType.ERROR,"typeCode value is null");
+        ExternalRuleType ruleAcceptanceDateTime = createExternalRuleType("acceptanceDateTime == null","3" ,"Test Notes",ErrorType.ERROR,"acceptanceDateTime is null");
+        ExternalRuleType rulePurposeCode = createExternalRuleType("purposeCode == null","4" ,drl1 ,ErrorType.ERROR,"purposeCode is null");
+        ExternalRuleType rulePurposeCodeListId = createExternalRuleType("purposeCode.listId != 'FLUX_GP_PURPOSE' ","5" ,drl1 ,ErrorType.ERROR,"rulePurposeCodeListId is not FLUX_GP_PURPOSE");
 
         rules.add(ruleTypeCode);
         rules.add(ruleAcceptanceDateTime);
@@ -129,17 +183,19 @@ public class FactRuleEvaluatorTest {
         vsl.setTemplateName("Vessel Template");
         vsl.setType(FactType.VESSEL_TRANSPORT_MEANS);
 
-        RuleType vrule = createRuleType("roleCode.value == null","2" ,"Test Notes",ErrorType.ERROR,"Role code value is null");
+        RuleType vrule = RuleTestHelper.createRuleType("roleCode.value == null","2" ,"Test Notes",ErrorType.ERROR,"Role code value is null");
 
         TemplateRuleMapDto vesselTmp = new TemplateRuleMapDto();
         vesselTmp.setRules(Arrays.asList(vrule));
         vesselTmp.setTemplateType(vsl);
+        vesselTmp.setExternalRules(new ArrayList<ExternalRuleType>());
         return vesselTmp;
     }
 
-    private RuleType createRuleType(String expression, String brId,String note, ErrorType type, String errorMessage){
-        RuleType ruleType = new RuleType();
-        ruleType.setExpression(expression);
+
+    private ExternalRuleType createExternalRuleType(String drl, String brId,String note, ErrorType type, String errorMessage){
+        ExternalRuleType ruleType = new ExternalRuleType();
+        ruleType.setDrl(drl);
         ruleType.setBrId(brId );
         ruleType.setNote(note);
         ruleType.setErrorType(type);

@@ -9,15 +9,15 @@ level
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessageFact;
 
 template "@{tname}"
 
-rule "FaReportDocumentFact @{tname} - @{brid}"
+rule "Vessel Transport means @{tname} - @{brid}"
 
 when
 
-    $fact : FaReportDocumentFact(@{expression})
+    $fact : FluxFaReportMessageFact(@{expression})
 
 then
     $fact.setOk(false);

@@ -14,14 +14,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/7/2017.
@@ -32,7 +31,7 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<IdType> relatedReportIDs;
 
-    private Date acceptanceDateTime;
+    private DateType acceptanceDateTime;
 
     private List<IdType> ids;
 
@@ -42,7 +41,7 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private IdType referencedID;
 
-    private Date creationDateTime;
+    private DateType creationDateTime;
 
     private List<IdType> ownerFluxPartyIds;
 
@@ -70,11 +69,11 @@ public class FaReportDocumentFact extends AbstractFact {
         this.relatedReportIDs = relatedReportIDs;
     }
 
-    public Date getAcceptanceDateTime() {
+    public DateType getAcceptanceDateTime() {
         return acceptanceDateTime;
     }
 
-    public void setAcceptanceDateTime(Date acceptanceDateTime) {
+    public void setAcceptanceDateTime(DateType acceptanceDateTime) {
         this.acceptanceDateTime = acceptanceDateTime;
     }
 
@@ -110,11 +109,11 @@ public class FaReportDocumentFact extends AbstractFact {
         this.referencedID = referencedID;
     }
 
-    public Date getCreationDateTime() {
+    public DateType getCreationDateTime() {
         return creationDateTime;
     }
 
-    public void setCreationDateTime(Date creationDateTime) {
+    public void setCreationDateTime(DateType creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
 

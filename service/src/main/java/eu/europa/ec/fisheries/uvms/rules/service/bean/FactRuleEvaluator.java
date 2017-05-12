@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
@@ -39,7 +40,12 @@ import org.kie.internal.definition.KnowledgePackage;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Singleton
@@ -59,6 +65,7 @@ public class FactRuleEvaluator {
             drlsAndRules.putAll(generateExternalRulesFromTemplate(templateName, templateFile, template.getExternalRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
+
         buildAllPackages(packages);
     }
 
@@ -75,6 +82,7 @@ public class FactRuleEvaluator {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
     }
 
     public List<String> getFailedRules() {
@@ -82,7 +90,7 @@ public class FactRuleEvaluator {
     }
 
     private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
-        if (rules == null || templateFile == null) {
+        if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyMap();
         }
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
@@ -110,7 +118,7 @@ public class FactRuleEvaluator {
 
 
     private Map<String, String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
-        if (externalRules == null) {
+        if (CollectionUtils.isEmpty(externalRules)) {
             return Collections.emptyMap();
         }
         Map<String, String> drlsAndBrId = new HashMap<>();

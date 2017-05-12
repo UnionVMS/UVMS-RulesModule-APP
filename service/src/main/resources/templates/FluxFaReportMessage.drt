@@ -13,7 +13,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessa
 
 template "@{tname}"
 
-rule "Vessel Transport means @{tname} - @{brid}"
+rule "Flux Fa ReportMessage @{tname} - @{brid}"
 
 when
 

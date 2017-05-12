@@ -17,7 +17,6 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private List<IdType> ids;
 
-    private Date creationDateTime;
+    private DateType creationDateTime;
 
     private CodeType purposeCode;
 
@@ -53,11 +52,11 @@ public class FluxFaReportMessageFact extends AbstractFact {
         this.ids = ids;
     }
 
-    public Date getCreationDateTime() {
+    public DateType getCreationDateTime() {
         return creationDateTime;
     }
 
-    public void setCreationDateTime(Date creationDateTime) {
+    public void setCreationDateTime(DateType creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
 

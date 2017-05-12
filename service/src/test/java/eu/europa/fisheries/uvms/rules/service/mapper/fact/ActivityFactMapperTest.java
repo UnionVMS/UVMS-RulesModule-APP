@@ -47,6 +47,7 @@ public class ActivityFactMapperTest {
     private QuantityType quantityType;
     private DateTimeType dateTimeType;
     private Date date;
+    private DateType datetype;
     private FLUXLocation fluxLocation;
     private FACatch faCatch;
     private FishingTrip fishingTrip;
@@ -66,6 +67,11 @@ public class ActivityFactMapperTest {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         date = sdf.parse("31-08-1982 10:20:56");
+
+        datetype = new DateType();
+        datetype.setDate(date);
+
+
 
         idType = new IDType();
         idType.setValue("value");
@@ -208,7 +214,7 @@ public class ActivityFactMapperTest {
         assertEquals(delimitedPeriod.getStartDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getStartDateTime());
         assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getFisheryTypeCode().getValue());
         assertEquals(quantityType.getValue().toString(), fishingActivityFacts.get(0).getOperationQuantity());
-        assertEquals(date, fishingActivityFacts.get(0).getOccurrenceDateTime());
+        assertEquals(datetype.getDate(), fishingActivityFacts.get(0).getOccurrenceDateTime().getDate());
         assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getSpeciesTargetCode().getValue());
         assertEquals(fishingActivity, fishingActivityFacts.get(0).getRelatedFishingActivities().get(0));
         assertEquals(fluxLocation, fishingActivityFacts.get(0).getRelatedFLUXLocations().get(0));
@@ -340,7 +346,7 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faDepartureFact.getFishingActivityTypeCode().getValue());
 
         assertEquals(codeType.getValue(), faDepartureFact.getReasonCode().getValue());
-        assertEquals(date, faDepartureFact.getOccurrenceDateTime());
+        assertEquals(date, faDepartureFact.getOccurrenceDateTime().getDate());
         assertEquals(fluxLocation, faDepartureFact.getRelatedFLUXLocations().get(0));
         assertEquals(fishingTrip, faDepartureFact.getSpecifiedFishingTrip());
         assertEquals(faCatch, faDepartureFact.getSpecifiedFACatches().get(0));
@@ -451,7 +457,7 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFishingActivityTypeCode().getValue());
         assertEquals(fluxLocation, faNotificationOfArrivalFact.getRelatedFLUXLocations().get(0));
         assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getReasonCode().getValue());
-        assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime());
+        assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime().getDate());
         assertEquals(faCatch, faNotificationOfArrivalFact.getSpecifiedFACatches().get(0));
 
     }
@@ -468,7 +474,7 @@ public class ActivityFactMapperTest {
 
         assertEquals(codeType.getValue(), faQueryFact.getTypeCode().getValue());
         assertEquals(idType.getValue(), faQueryFact.getId().getValue());
-        assertEquals(date, faQueryFact.getSubmittedDateTime());
+        assertEquals(date, faQueryFact.getSubmittedDateTime().getDate());
 
     }
 
