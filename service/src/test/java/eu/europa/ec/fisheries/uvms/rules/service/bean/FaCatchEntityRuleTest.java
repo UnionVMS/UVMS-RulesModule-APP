@@ -57,6 +57,7 @@ public class FaCatchEntityRuleTest {
 
            assertTrue(abstractFact.getErrors().isEmpty());
            assertTrue(abstractFact.getWarnings().isEmpty());
+            System.out.println(" fact Successful:"+abstractFact.getFactType());
 
         }
 
@@ -64,6 +65,8 @@ public class FaCatchEntityRuleTest {
         facts.clear();
 
     }
+
+
 
     private TemplateRuleMapDto getTemplateRuleMapForFaCatch() {
 
@@ -83,24 +86,23 @@ public class FaCatchEntityRuleTest {
     private List<RuleType> getRulesForFaCatchFact() {
         List<RuleType> rules = new ArrayList<>();
 
-        RuleType ruleTypeCode = RuleTestHelper.createRuleType("typeCode.value == null || typeCode.listId !='FA_CATCH_TYPE' ","1" ,"Test Notes", ErrorType.ERROR,"typeCode value is null or listId is not correct");
+       RuleType ruleTypeCode = RuleTestHelper.createRuleType("typeCode.value == null || typeCode.listId !='FA_CATCH_TYPE' ","1" ,"Test Notes", ErrorType.ERROR,"typeCode value is null or listId is not correct");
         RuleType ruleSpeciesCode = RuleTestHelper.createRuleType("speciesCode.value == null || speciesCode.listId !='FAO_SPECIES' ","2" ,"Test Notes", ErrorType.ERROR,"speciesCode value is null or listId is not correct");
         RuleType ruleResultAAPProductUnitQuantity = RuleTestHelper.createRuleType("resultAAPProductUnitQuantity.empty == true ","3" ,"Test Notes", ErrorType.ERROR,"ResultAAPProduct do not have unitQuantity");
         RuleType ruleCatchUnitQuantityPositive = RuleTestHelper.createRuleType("unitQuantity.value < 0 ","4" ,"Test Notes", ErrorType.ERROR,"FACatch unitQuantity is less than 0 ");
-        RuleType ruleCatchWeightMeasure = RuleTestHelper.createRuleType("weightMeasure==null || weightMeasure.unitCode !='KGM' ","5" ,"Test Notes", ErrorType.ERROR,"FACatch weightMeasure is not present OR  unitCode is not KGM");
-        RuleType ruleCatchWeightMeasureDecimal = RuleTestHelper.createRuleType("weightMeasure.value matches '^[0-9]*.*[0-9]{0,2}' == false ","5" ,"Test Notes", ErrorType.ERROR,"WeightMeasure is more than 2 decimal places");
 
-        RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
+        RuleType ruleCatchWeightMeasure = RuleTestHelper.createRuleType("weightMeasure==null || weightMeasure.unitCode !='KGM' ","5" ,"Test Notes", ErrorType.ERROR,"FACatch weightMeasure is not present OR  unitCode is not KGM");
+        RuleType ruleCatchWeightMeasureDecimal = RuleTestHelper.createRuleType("weightMeasure.value matches '^[0-9]*.[0-9]{0,2}' == false ","5" ,"Test Notes", ErrorType.ERROR,"WeightMeasure is more than 2 decimal places");
+
+       // RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
 
         rules.add(ruleTypeCode);
         rules.add(ruleSpeciesCode);
         rules.add(ruleResultAAPProductUnitQuantity);
         rules.add(ruleCatchUnitQuantityPositive);
         rules.add(ruleCatchWeightMeasure);
-        rules.add(ruleCatchWeightMeasureDecimal);
-        rules.add(ruleTest);
 
-
+    //   rules.add(ruleCatchWeightMeasureDecimal);
         return rules;
     }
 

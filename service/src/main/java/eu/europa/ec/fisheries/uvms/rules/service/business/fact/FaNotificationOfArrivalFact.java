@@ -13,13 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+
+import java.util.List;
 
 /**
  * @author padhyad
@@ -33,7 +32,7 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
-    private Date occurrenceDateTime;
+    private DateType occurrenceDateTime;
 
     private CodeType reasonCode;
 
@@ -72,11 +71,11 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
 
-    public Date getOccurrenceDateTime() {
+    public DateType getOccurrenceDateTime() {
         return occurrenceDateTime;
     }
 
-    public void setOccurrenceDateTime(Date occurrenceDateTime) {
+    public void setOccurrenceDateTime(DateType occurrenceDateTime) {
         this.occurrenceDateTime = occurrenceDateTime;
     }
 

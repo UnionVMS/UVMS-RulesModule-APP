@@ -15,6 +15,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
@@ -22,7 +23,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
 import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
@@ -93,7 +93,7 @@ public class FLUX_ReportDocumentRuleTest {
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         AbstractFact fact = new FaReportDocumentFact();
-        ((FaReportDocumentFact) fact).setCreationDateTime(new Date());
+        ((FaReportDocumentFact) fact).setCreationDateTime(new DateType());
 
         generator.validateFact(Collections.singletonList(fact));
 
