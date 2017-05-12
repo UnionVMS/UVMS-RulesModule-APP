@@ -83,7 +83,6 @@ public class FLUX_FA_ReportMessageTest {
 
         RuleType ruleTypeCode = RuleTestHelper.createRuleType("ids == null || ids.empty == true ","1" ,"Test Notes", ErrorType.ERROR,"ids is null or empty");
 
-
         //RuleType ruleTest = RuleTestHelper.createRuleType("$testStringList : testStringList ,  $testStringList contains 'test' ","7" ,"Test Notes", ErrorType.ERROR,"FISH_SIZE_CLASS do not exist");
 
         rules.add(ruleTypeCode);

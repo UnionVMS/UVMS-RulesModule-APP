@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
@@ -96,9 +97,8 @@ public class FactRuleEvaluatorTest {
 
         fact.setTypeCode(RuleTestHelper.getCodeType("typecode",null));
         fact.setPurposeCode(RuleTestHelper.getCodeType("purpose2","FLUX_GP_PURPOSE"));
-        fact.setAcceptanceDateTime(new Date());
-
-        fact.setAcceptanceDateTime(new Date());
+        fact.setAcceptanceDateTime(new DateType());
+        fact.setAcceptanceDateTime(new DateType());
         return fact;
     }
 
