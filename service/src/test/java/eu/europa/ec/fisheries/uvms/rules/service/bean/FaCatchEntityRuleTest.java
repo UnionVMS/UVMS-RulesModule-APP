@@ -38,7 +38,7 @@ public class FaCatchEntityRuleTest {
 
         facts = new ArrayList<>();
         fact=getFaCatchFact();
-        facts.add(getFaCatchFact());
+        facts.add(fact);
     }
 
 
