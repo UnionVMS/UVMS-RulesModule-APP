@@ -53,7 +53,7 @@ public class TemplateFactory {
             case FA_QUERY_PARAMETER:
                 return "/templates/FaQueryParameter.drt";
             case FA_RELOCATION:
-                return "/template/FaRelocation.drt";
+                return "/templates/FaRelocation.drt";
             case FA_RESPONSE:
                 return "/templates/FaResponse.drt";
             case FA_TRANSHIPMENT:
@@ -67,7 +67,7 @@ public class TemplateFactory {
             case FLUX_FA_REPORT_MESSAGE:
                 return "/templates/FluxFaReportMessage.drt";
             case FLUX_LOCATION:
-                return "/template/FluxLocation.drt";
+                return "/templates/FluxLocation.drt";
             case GEAR_CHARACTERISTIC:
                 return "/templates/GearCharacteristics.drt";
             case GEAR_PROBLEM:

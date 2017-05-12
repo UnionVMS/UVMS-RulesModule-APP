@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.Local;
 

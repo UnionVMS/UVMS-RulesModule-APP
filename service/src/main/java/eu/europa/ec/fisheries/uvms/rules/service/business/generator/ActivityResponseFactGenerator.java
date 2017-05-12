@@ -13,10 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 
 /**
@@ -25,19 +30,22 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
  */
 public class ActivityResponseFactGenerator extends AbstractGenerator {
 
-    private FLUXResponseDocument fluxResponseDocument;
+    private FLUXResponseMessage fluxResponseMessage;
 
     @Override
     public List<AbstractFact> getAllFacts() {
-        //TODO create Facts
-        return null;
+        AbstractFact fact = ActivityFactMapper.INSTANCE.generateFactsForFaResponse(fluxResponseMessage);
+        if (fact != null) {
+            return Arrays.asList(fact);
+        }
+        return Collections.emptyList();
     }
 
     @Override
-    public void setBusinessObjectMessage(Object businessObject) throws RulesServiceException {
-        if (!(businessObject instanceof FLUXResponseDocument)) {
-            throw new RulesServiceException("Business object does not match required type");
+    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
+        if (!(businessObject instanceof FLUXResponseMessage)) {
+            throw new RulesValidationException("Business object does not match required type");
         }
-        this.fluxResponseDocument = (FLUXResponseDocument)businessObject;
+        this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
     }
 }

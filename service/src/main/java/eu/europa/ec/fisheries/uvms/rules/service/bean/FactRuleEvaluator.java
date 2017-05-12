@@ -82,6 +82,9 @@ public class FactRuleEvaluator {
     }
 
     private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
+        if (rules == null || templateFile == null) {
+            return Collections.emptyMap();
+        }
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
         Map<String, String> drlsAndBrId = new HashMap<>();
@@ -145,7 +148,8 @@ public class FactRuleEvaluator {
     }
 
     private void buildAllPackages(Collection<KiePackage> packages) {
-        if (packages == null) {
+        if (packages == null || packages.isEmpty()) {
+            log.error("Rule not initialized as there is not Rules defined");
             return;
         }
         KieModuleModel kieModuleModel = kieServices.newKieModuleModel();

@@ -27,6 +27,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 
@@ -55,7 +56,7 @@ public class RulesResource {
 
             abstractFacts = rulesEngine.evaluate(objectType, request);
 
-        } catch (RulesServiceException e) {
+        } catch (RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }

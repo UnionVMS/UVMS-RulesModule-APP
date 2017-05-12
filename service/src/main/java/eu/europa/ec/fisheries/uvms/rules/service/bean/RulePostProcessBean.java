@@ -25,10 +25,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,8 @@ public class RulePostProcessBean {
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
 
-    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, List<String> ids, String rawMessage) throws RulesServiceException {
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage) throws RulesServiceException {
         try {
             boolean isError = false;
             boolean isWarning = false;
@@ -57,7 +60,7 @@ public class RulePostProcessBean {
                         validationMessage.setBrId(error.getRuleId());
                         validationMessage.setErrorType(ErrorType.ERROR);
                         validationMessage.setMessage(error.getMessage());
-                        validationMessage.getMessageId().addAll(ids);
+                        validationMessage.setLevel(error.getLevel());
                         validationMessage.getMessageId().addAll(fact.getUniqueIds());
                         validationMessages.add(validationMessage);
                     }
@@ -67,16 +70,16 @@ public class RulePostProcessBean {
                         validationMessage.setBrId(warning.getRuleId());
                         validationMessage.setErrorType(ErrorType.WARNING);
                         validationMessage.setMessage(warning.getMessage());
-                        validationMessage.getMessageId().addAll(ids);
+                        validationMessage.setLevel(warning.getLevel());
                         validationMessage.getMessageId().addAll(fact.getUniqueIds());
                         validationMessages.add(validationMessage);
                     }
                 }
             }
-            if (!validationMessages.isEmpty()) {
+            if (validationMessages.isEmpty()) {
                 isOk = true;
-                saveValidationResult(validationMessages, rawMessage);
             }
+            saveValidationResult(validationMessages, rawMessage);
             ValidationResultDto validationResultDto = new ValidationResultDto();
             validationResultDto.setIsError(isError);
             validationResultDto.setIsWarning(isWarning);
@@ -92,9 +95,11 @@ public class RulePostProcessBean {
     }
 
     private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage) throws RulesModelException {
-        RawMessageType message = new RawMessageType();
-        message.setMessage(rawMessage);
-        message.getValidationMessage().addAll(validationMessageTypes);
-        rulesDomainModel.saveValidationMessages(message);
+        if (!CollectionUtils.isEmpty(validationMessageTypes)) {
+            RawMessageType message = new RawMessageType();
+            message.setMessage(rawMessage);
+            message.getValidationMessage().addAll(validationMessageTypes);
+            rulesDomainModel.saveValidationMessages(message);
+        }
     }
 }

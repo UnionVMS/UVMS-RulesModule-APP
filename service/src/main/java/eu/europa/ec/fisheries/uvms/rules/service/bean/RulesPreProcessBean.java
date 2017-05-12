@@ -78,7 +78,7 @@ public class RulesPreProcessBean {
                     FAReportDocument faReportDocument = (FAReportDocument)it.next();
                     ValidationResultDto validationResultFa = getValidationResultIfExist(getIds(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
-                        fluxfaReportMessage.getFAReportDocuments().remove(faReportDocument);
+                        it.remove();
                         addToValidationResult(validationResult, validationResultFa);
                     }
                 }

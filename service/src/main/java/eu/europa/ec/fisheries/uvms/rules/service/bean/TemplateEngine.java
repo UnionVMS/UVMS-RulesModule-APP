@@ -26,6 +26,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -47,10 +49,11 @@ public class TemplateEngine {
         updateFailedRules(ruleEvaluator.getFailedRules());
     }
 
-    public void evaluateFacts(List<AbstractFact> facts) throws RulesModelException {
-        if (!CollectionUtils.isEmpty(facts)) {
-            ruleEvaluator.validateFact(facts);
+    public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
+        if (CollectionUtils.isEmpty(facts)) {
+            throw new RulesValidationException("No facts available for validation");
         }
+        ruleEvaluator.validateFact(facts);
     }
 
     private List<TemplateRuleMapDto> getAllTemplates() {

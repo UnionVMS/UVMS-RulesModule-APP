@@ -487,7 +487,7 @@ public class ActivityFactMapperTest {
         gears.add(fishingGear);
         fishingActivity.setSpecifiedFishingGears(gears);
 
-        FaDeclarationOfArrivalFact faDeclarationOfArrivalFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(fishingActivity, faReportDocument);
+        FaArrivalFact faDeclarationOfArrivalFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(fishingActivity, faReportDocument);
 
         assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getFaReportTypeCode().getValue());
         assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getFishingActivityTypeCode().getValue());
@@ -495,8 +495,6 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faDeclarationOfArrivalFact.getReasonCode().getValue());
         assertEquals(dateTimeType, faDeclarationOfArrivalFact.getOccurrenceDateTime());
         assertNotSame(0, faDeclarationOfArrivalFact.getFishingGearRoleCodes().size());
-
-
     }
 
     @Test

@@ -18,6 +18,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFa
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,6 +36,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,9 +49,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     private FLUXFAReportMessage fluxfaReportMessage;
 
     @Override
-    public void setBusinessObjectMessage(Object businessObject) throws RulesServiceException {
+    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
         if (!(businessObject instanceof FLUXFAReportMessage)) {
-            throw new RulesServiceException("Business object does not match required type");
+            throw new RulesValidationException("Business object does not match required type");
         }
         this.fluxfaReportMessage = (FLUXFAReportMessage) businessObject;
     }
@@ -64,6 +66,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument));
             }
         }
+        facts.removeAll(Collections.singleton(null));
         return facts;
     }
 
@@ -175,14 +178,10 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         }
                         break;
                     case AREA_ENTRY:
-                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(activity, faReportDocument);
-                        }
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForEntryIntoSea(activity, faReportDocument);
                         break;
                     case AREA_EXIT:
-                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
-                            abstractFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(activity, faReportDocument);
-                        }
+                        abstractFact = ActivityFactMapper.INSTANCE.generateFactsForExitArea(activity, faReportDocument);
                         break;
                     case JOINT_FISHING_OPERATION:
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForJointFishingOperation(activity, faReportDocument);
@@ -197,8 +196,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
                         }
                         break;
-                    default:
-                        abstractFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
                 }
             }
         } catch (IllegalArgumentException e) {

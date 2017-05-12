@@ -17,6 +17,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
@@ -34,9 +35,9 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
     }
 
     @Override
-    public void setBusinessObjectMessage(Object businessObject) throws RulesServiceException {
+    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
         if (!(businessObject instanceof  FAQuery)) {
-            throw new RulesServiceException("Business object does not match required type");
+            throw new RulesValidationException("Business object does not match required type");
         }
         this.faQuery = (FAQuery) businessObject;
     }

@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -39,18 +40,14 @@ public class RulesEngineBean {
     @EJB
 	private TemplateEngine templateEngine;
 
-    public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesServiceException {
-		try {
-			List<AbstractFact> facts = new ArrayList<>();
-			AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
-			generator.setBusinessObjectMessage(businessObject);
+    public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
+		List<AbstractFact> facts = new ArrayList<>();
+		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+		generator.setBusinessObjectMessage(businessObject);
 
-            facts.addAll(generator.getAllFacts());
-			templateEngine.evaluateFacts(facts);
-			return facts;
-		} catch (RulesModelException e) {
-			throw new RulesServiceException(e.getMessage(), e);
-		}
+		facts.addAll(generator.getAllFacts());
+		templateEngine.evaluateFacts(facts);
+		return facts;
     }
 
 }

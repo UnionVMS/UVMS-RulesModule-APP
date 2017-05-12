@@ -16,7 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDeclarationOfArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
@@ -290,17 +289,12 @@ public interface ActivityFactMapper {
             @Mapping(target = "fishingGearRoleCodes", source = "fishingActivity.specifiedFishingGears"),
             @Mapping(target = "fishingTripIds", source = "fishingActivity.specifiedFishingTrip.IDS")
     })
-    FaDeclarationOfArrivalFact generateFactsForDeclarationOfArrival(FishingActivity fishingActivity, FAReportDocument faReportDocument);
+    FaArrivalFact generateFactsForDeclarationOfArrival(FishingActivity fishingActivity, FAReportDocument faReportDocument);
 
     @Mappings({
             @Mapping(target = "id", source = "ID")
     })
     FaQueryFact generateFactsForFaQuery(FAQuery faQuery);
-
-    @Mappings({
-            @Mapping(target = "typeCode", source = "typeCode.value")
-    })
-    FaArrivalFact generateFactsForArrival(FishingActivity fishingActivity);
 
     @Mappings({
             @Mapping(target = "fishingActivityCodeType", source = "fishingActivity.typeCode"),
