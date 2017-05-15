@@ -10,23 +10,35 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author padhyad
@@ -69,17 +81,18 @@ public class CustomMapper {
         return contactPersonList;
     }
 
-  /*  public static Date getDate(DateTimeType dateTimeType) {
+    public static Date getDate(DateTimeType dateTimeType) {
         Date date = null;
-
         if (dateTimeType != null) {
             try {
                 if (dateTimeType.getDateTime() != null) {
                     date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                } else {
+                } else if (dateTimeType.getDateTimeString() != null && dateTimeType.getDateTimeString().getFormat() != null && dateTimeType.getDateTimeString().getValue() != null) {
                     String format = dateTimeType.getDateTimeString().getFormat();
                     String value = dateTimeType.getDateTimeString().getValue();
                     date = new SimpleDateFormat(format).parse(value);
+                    Calendar cal = new GregorianCalendar();
+                    cal.setTime(date);
                 }
             } catch (ParseException e) {
                 log.debug("Error while trying to parse dateTimeType", e);
@@ -87,35 +100,7 @@ public class CustomMapper {
         }
 
         return date;
-    }*/
-
-
-    public static DateType getDate(DateTimeType dateTimeType) {
-        Date date = null;
-
-        DateType dateType = new DateType();
-
-        if (dateTimeType != null) {
-            try {
-                if (dateTimeType.getDateTime() != null) {
-                    date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                    dateType.setDate(date);
-                } else {
-                    String format = dateTimeType.getDateTimeString().getFormat();
-                    String value = dateTimeType.getDateTimeString().getValue();
-                    date = new SimpleDateFormat(format).parse(value);
-                    dateType.setDate(date);
-                    dateType.setFormat(format);
-                }
-            } catch (ParseException e) {
-                log.debug("Error while trying to parse dateTimeType", e);
-            }
-        }
-
-        return dateType;
     }
-
-
 
     public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
         if (CollectionUtils.isEmpty(appliedAAPProcesses)) {

@@ -13,13 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public abstract class AbstractFact {
 
     protected FactType factType;
@@ -39,6 +44,30 @@ public abstract class AbstractFact {
         this.errors = new ArrayList<>();
     }
 
+    public static String toISO8601(Date date) {
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+
+        df.setTimeZone(tz);
+
+        String output = df.format(date);
+
+        int inset0 = 9;
+        int inset1 = 6;
+
+        String s0 = output.substring(0, output.length() - inset0);
+        String s1 = output.substring(output.length() - inset1, output.length());
+
+        String result = s0 + s1;
+
+        result = result.replaceAll("UTC", "+00:00");
+
+        return result;
+
+    }
+
     public abstract void setFactType();
 
     public void addWarningOrError(String type, String msg, String brId, String level) {
@@ -49,10 +78,27 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean isUUID(String name) {
+    public boolean validateDate(Date date) {
+        if (date == null) {
+            return true;
+        }
+        try {
+            toISO8601(date);
+        } catch (Exception e) {
+            log.debug(e.getMessage(), e);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean validateUUID(String name) {
+        if (name == null) {
+            return true;
+        }
         try {
             UUID.fromString(name);
         } catch (Exception e) {
+            log.debug(e.getMessage(), e);
             return true;
         }
         return false;

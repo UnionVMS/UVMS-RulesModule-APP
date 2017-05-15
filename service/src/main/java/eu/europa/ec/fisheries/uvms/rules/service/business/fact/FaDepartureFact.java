@@ -13,14 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-
-import java.util.List;
 
 /**
  * @author padhyad
@@ -32,7 +33,7 @@ public class FaDepartureFact extends AbstractFact {
 
     private CodeType faReportDocumentTypeCode;
 
-    private DateType occurrenceDateTime;
+    private Date occurrenceDateTime;
 
     private CodeType reasonCode;
 
@@ -67,14 +68,6 @@ public class FaDepartureFact extends AbstractFact {
 
     public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
         this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public DateType getOccurrenceDateTime() {
-        return occurrenceDateTime;
-    }
-
-    public void setOccurrenceDateTime(DateType occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
     }
 
     public CodeType getReasonCode() {
@@ -115,5 +108,13 @@ public class FaDepartureFact extends AbstractFact {
 
     public void setSpecifiedFishingTrip(FishingTrip specifiedFishingTrip) {
         this.specifiedFishingTrip = specifiedFishingTrip;
+    }
+
+    public Date getOccurrenceDateTime() {
+        return occurrenceDateTime;
+    }
+
+    public void setOccurrenceDateTime(Date occurrenceDateTime) {
+        this.occurrenceDateTime = occurrenceDateTime;
     }
 }
