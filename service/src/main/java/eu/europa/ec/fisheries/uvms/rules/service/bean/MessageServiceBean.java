@@ -106,9 +106,9 @@ public class MessageServiceBean implements MessageService {
                         log.info("Validation of Report is successful, forwarding message to Activity");
                         sendRequestToActivity(fluxFAReportMessage, username, pluginType);
                     }
-                    fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
+                    fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage.getFLUXReportDocument().getIDS());
                 } else {
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
+                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage.getFLUXReportDocument().getIDS());
                 }
                 sendResponseToExchange(fluxResponseMessageType, username);
             }
@@ -131,7 +131,7 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
+    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, List<IDType> idTypes) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -140,10 +140,7 @@ public class MessageServiceBean implements MessageService {
             responseId.setValue(String.valueOf(new Random().nextInt()));
             responseId.setSchemeID(UUID.randomUUID().toString());
             fluxResponseDocument.setIDS(Arrays.asList(responseId)); // Set random ID
-            if (fluxfaReportMessage.getFLUXReportDocument() != null) {
-                List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
-                fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
-            }
+            fluxResponseDocument.setReferencedID((idTypes != null && !idTypes.isEmpty()) ? idTypes.get(0) : null); // Set Request Id
             GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
             XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
             DateTimeType dateTime = new DateTimeType();
