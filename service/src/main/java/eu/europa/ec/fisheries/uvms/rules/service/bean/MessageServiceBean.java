@@ -13,20 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.schema.sales.SalesModuleMethod;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -45,6 +34,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.helper.SalesMessageServiceBeanHelper;
+import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -59,6 +50,13 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -82,6 +80,80 @@ public class MessageServiceBean implements MessageService {
     @EJB
     RulesPreProcessBean rulesPreProcessBean;
 
+    @EJB
+    SalesMessageServiceBeanHelper salesHelper;
+
+    @Override
+    public void receiveSalesQueryRequest(String request) {
+        try {
+            salesHelper.handleSalesQueryRequest(request, rulesEngine);
+            //TODO: update log in Exchange
+            String salesReportRequestAsString = salesHelper.createSalesQueryRequest(request, SalesModuleMethod.QUERY);
+            sendToSales(salesReportRequestAsString);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesReportRequest(String request) {
+        try {
+            salesHelper.handleSalesReportRequest(request, rulesEngine);
+            String salesReportRequestAsString = salesHelper.createSalesReportRequest(request, SalesModuleMethod.REPORT);
+            sendToSales(salesReportRequestAsString);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesResponseRequest(String request) {
+        try {
+            salesHelper.handleSalesResponseRequest(request, rulesEngine);
+            String sendSalesResponseRequestAsText = salesHelper.createReceiveResponseRequest(request,
+                    ExchangeModuleMethod.SEND_SALES_REPORT,
+                    "guid",
+                    "dataFlow",
+                    "senderOrReceiver",
+                    new Date()); //TODO: actual values from Sales module
+            sendToExchange(sendSalesResponseRequestAsText);
+            // TODO: send to exchange and log
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        }
+    }
+
+    @Override
+    public void sendSalesResponseRequest(String request) {
+        try {
+            salesHelper.handleSendSalesResponseRequest(request, rulesEngine);
+            String sendSalesResponseRequestAsText = salesHelper.createSendSalesResponseRequest(request,
+                    ExchangeModuleMethod.SEND_SALES_REPORT,
+                    "guid",
+                    "dataFlow",
+                    "senderOrReceiver",
+                    new Date()); //TODO: actual values from Sales module
+            sendToExchange(sendSalesResponseRequestAsText);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        }
+    }
+
+    @Override
+    public void sendSalesReportRequest(String request) {
+        try {
+            salesHelper.handleSendSalesReportRequest(request, rulesEngine);
+            String sendSalesReportRequestAsText = salesHelper.createSendSalesReportRequest(request,
+                    ExchangeModuleMethod.SEND_SALES_REPORT,
+                    "guid",
+                    "dataFlow",
+                    "senderOrReceiver",
+                    new Date()); //TODO: actual values from Sales module
+            sendToExchange(sendSalesReportRequestAsText);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        }
+    }
 
     @Override
     public void setFLUXFAReportMessageReceived(String fluxFAReportMessage, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, String username) throws RulesServiceException {
@@ -236,6 +308,14 @@ public class MessageServiceBean implements MessageService {
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
+    }
+
+    private void sendToSales(String message) throws MessageException {
+        producer.sendDataSourceMessage(message, DataSourceQueue.SALES);
+    }
+
+    private void sendToExchange(String message) throws MessageException {
+        producer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
     @Override

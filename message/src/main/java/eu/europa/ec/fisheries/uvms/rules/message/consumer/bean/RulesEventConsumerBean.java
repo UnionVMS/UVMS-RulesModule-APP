@@ -150,11 +150,21 @@ public class RulesEventConsumerBean implements MessageListener {
                 case GET_FLUX_MDR_SYNC_RESPONSE :
                     getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
                     break;
-                case RECEIVE_SALES_QUERY: break;
-                case RECEIVE_SALES_RESPONSE: break;
-                case RECEIVE_SALES_REPORT: break;
-                case SEND_SALES_REPORT: break;
-                case SEND_SALES_RESPONSE: break;
+                case RECEIVE_SALES_QUERY:
+                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_RESPONSE:
+                    receiveSalesResponseEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_REPORT:
+                    receiveSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_REPORT:
+                    sendSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_RESPONSE:
+                    sendSalesResponseEvent.fire(new EventMessage(textMessage));
+                    break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
                     errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));

@@ -26,6 +26,7 @@ public interface MessageConstants {
     String MOBILE_TERMINAL_MESSAGE_IN_QUEUE = "jms/queue/UVMSMobileTerminalEvent";
     String EXCHANGE_MESSAGE_IN_QUEUE = "jms/queue/UVMSExchangeEvent";
     String USER_MESSAGE_IN_QUEUE = "jms/queue/UVMSUserEvent";
+    String SALES_QUEUE = "jms/queue/UVMSSalesEvent";
     String AUDIT_MESSAGE_IN_QUEUE = "jms/queue/UVMSAuditEvent";
 
     String MDC_IDENTIFIER = "clientName";
