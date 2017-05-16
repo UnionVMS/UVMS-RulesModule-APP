@@ -13,8 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.SalesModuleMethod;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
@@ -36,6 +39,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.helper.SalesMessageServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -86,11 +90,19 @@ public class MessageServiceBean implements MessageService {
     @Override
     public void receiveSalesQueryRequest(String request) {
         try {
-            salesHelper.handleSalesQueryRequest(request, rulesEngine);
-            //TODO: update log in Exchange
-            String salesReportRequestAsString = salesHelper.createSalesQueryRequest(request, SalesModuleMethod.QUERY);
+            FLUXSalesQueryMessage fluxSalesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, FLUXSalesQueryMessage.class);
+
+            //validate
+            salesHelper.handleReceiveSalesQueryRequest(fluxSalesQueryMessage, rulesEngine);
+
+            //send to sales
+            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesQueryRequest(request, SalesModuleMethod.QUERY);
             sendToSales(salesReportRequestAsString);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+
+            //update log status
+            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest("guid", ExchangeLogStatusTypeType.FAILED);
+            sendToExchange(updateLogStatusRequest);
+        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
             log.error("Couldn't marshall FLUXSalesQueryMessage", e);
         }
     }
@@ -98,10 +110,20 @@ public class MessageServiceBean implements MessageService {
     @Override
     public void receiveSalesReportRequest(String request) {
         try {
-            salesHelper.handleSalesReportRequest(request, rulesEngine);
-            String salesReportRequestAsString = salesHelper.createSalesReportRequest(request, SalesModuleMethod.REPORT);
+            ReceiveSalesReportRequest receiveSalesReportRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesReportRequest.class);
+
+            //validate
+            salesHelper.handleReceiveSalesReportRequest(receiveSalesReportRequest, rulesEngine);
+
+            //send to sales
+            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(request, SalesModuleMethod.REPORT);
             sendToSales(salesReportRequestAsString);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+
+            //update log status
+            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(receiveSalesReportRequest.getLogGuid(), ExchangeLogStatusTypeType.FAILED);
+            sendToExchange(updateLogStatusRequest);
+
+        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
             log.error("Couldn't marshall FLUXSalesQueryMessage", e);
         }
     }
@@ -109,16 +131,15 @@ public class MessageServiceBean implements MessageService {
     @Override
     public void receiveSalesResponseRequest(String request) {
         try {
-            salesHelper.handleSalesResponseRequest(request, rulesEngine);
-            String sendSalesResponseRequestAsText = salesHelper.createReceiveResponseRequest(request,
-                    ExchangeModuleMethod.SEND_SALES_REPORT,
-                    "guid",
-                    "dataFlow",
-                    "senderOrReceiver",
-                    new Date()); //TODO: actual values from Sales module
-            sendToExchange(sendSalesResponseRequestAsText);
-            // TODO: send to exchange and log
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            ReceiveSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesResponseRequest.class);
+
+            //validate
+            salesHelper.handleReceiveSalesResponseRequest(rulesRequest, rulesEngine);
+
+            //update log status
+            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(rulesRequest.getLogGuid(), ExchangeLogStatusTypeType.FAILED);
+            sendToExchange(updateLogStatusRequest);
+        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
             log.error("Couldn't marshall FLUXSalesQueryMessage", e);
         }
     }
@@ -126,32 +147,20 @@ public class MessageServiceBean implements MessageService {
     @Override
     public void sendSalesResponseRequest(String request) {
         try {
-            salesHelper.handleSendSalesResponseRequest(request, rulesEngine);
-            String sendSalesResponseRequestAsText = salesHelper.createSendSalesResponseRequest(request,
-                    ExchangeModuleMethod.SEND_SALES_REPORT,
-                    "guid",
-                    "dataFlow",
-                    "senderOrReceiver",
-                    new Date()); //TODO: actual values from Sales module
+            String sendSalesResponseRequestAsText = salesHelper.handleSendSalesResponseRequest(request, rulesEngine);
             sendToExchange(sendSalesResponseRequestAsText);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
-            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        } catch (ExchangeModelMarshallException | RulesValidationException | MessageException | SalesMarshallException e) {
+            log.error("Couldn't marshall SendSalesResponseRequest", e);
         }
     }
 
     @Override
     public void sendSalesReportRequest(String request) {
         try {
-            salesHelper.handleSendSalesReportRequest(request, rulesEngine);
-            String sendSalesReportRequestAsText = salesHelper.createSendSalesReportRequest(request,
-                    ExchangeModuleMethod.SEND_SALES_REPORT,
-                    "guid",
-                    "dataFlow",
-                    "senderOrReceiver",
-                    new Date()); //TODO: actual values from Sales module
+            String sendSalesReportRequestAsText = salesHelper.handleSendSalesReportRequest(request, rulesEngine);
             sendToExchange(sendSalesReportRequestAsText);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
-            log.error("Couldn't marshall FLUXSalesQueryMessage", e);
+        } catch (ExchangeModelMarshallException | RulesValidationException | MessageException | SalesMarshallException e) {
+            log.error("Couldn't marshall SendSalesReportRequest", e);
         }
     }
 

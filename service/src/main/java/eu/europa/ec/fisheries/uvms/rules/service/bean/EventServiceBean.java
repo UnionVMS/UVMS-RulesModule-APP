@@ -260,7 +260,7 @@ public class EventServiceBean implements EventService {
     public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message){
         try {
             ReceiveSalesQueryRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesQueryRequest.class);
-            LOG.info("ReceiveSalesQueryRequest Marshall was successful");
+            LOG.info("ReceiveSalesQueryRequest marshall was successful");
             messageService.receiveSalesQueryRequest(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("Couldn't marshall ReceiveSalesQueryRequest", e);
@@ -271,7 +271,7 @@ public class EventServiceBean implements EventService {
     public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message){
         try {
             ReceiveSalesReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesReportRequest.class);
-            LOG.info("ReceiveSalesQueryRequest Marshall was successful");
+            LOG.info("ReceiveSalesQueryRequest marshall was successful");
             messageService.receiveSalesReportRequest(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("Couldn't marshall ReceiveSalesReportRequest", e);
@@ -282,7 +282,7 @@ public class EventServiceBean implements EventService {
     public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message){
         try {
             ReceiveSalesResponseRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesResponseRequest.class);
-            LOG.info("ReceiveSalesQueryRequest Marshall was successful");
+            LOG.info("ReceiveSalesQueryRequest marshall was successful");
             messageService.receiveSalesResponseRequest(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
@@ -293,7 +293,7 @@ public class EventServiceBean implements EventService {
     public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message){
         try {
             SendSalesReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SendSalesReportRequest.class);
-            LOG.info("ReceiveSalesQueryRequest Marshall was successful");
+            LOG.info("ReceiveSalesQueryRequest marshall was successful");
             messageService.sendSalesReportRequest(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
@@ -304,7 +304,7 @@ public class EventServiceBean implements EventService {
     public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message){
         try {
             SendSalesResponseRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SendSalesResponseRequest.class);
-            LOG.info("ReceiveSalesQueryRequest Marshall was successful");
+            LOG.info("ReceiveSalesQueryRequest marshall was successful");
             messageService.sendSalesResponseRequest(request.getRequest());
         } catch (RulesModelMarshallException e) {
             LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
