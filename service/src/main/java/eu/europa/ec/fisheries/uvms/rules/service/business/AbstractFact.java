@@ -14,7 +14,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +25,6 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 import org.joda.time.DateTime;
 
 @Slf4j
@@ -55,39 +57,25 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean validate(List<IdType> idTypes, String enumName) {
+    public boolean schemeIdContains(List<IdType> idTypes, String... values) {
 
-        try {
+        List<String> stringList = new ArrayList<>(Arrays.asList(values));
 
-            MethodType anEnum = EnumUtils.getEnum(MethodType.class, enumName);
-            switch (anEnum) {
-                case UUID:
-                    if (validateUUID(idTypes)) {
-                        return true;
-                    }
-                    break;
-                case FORMAT:
-                    break;
-                case UNIQUE:
-                    break;
+        Iterator<String> iterator = stringList.iterator();
 
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            for (IdType IdType : idTypes) {
+                if (next.equals(IdType.getSchemeId())) {
+                    iterator.remove();
+                }
             }
-
-        } catch (Exception e) {
-            log.debug(e.getMessage(), e);
-            return true;
         }
-        return false;
+        return !stringList.isEmpty();
     }
 
-    private boolean validateUUID(List<IdType> idTypes) {
-        for (IdType IdType : idTypes) {
-            String schemeId = IdType.getValue();
-            if (validateUUID(schemeId)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean schemeIdContains(IdType idType, String... values) {
+        return schemeIdContains(Collections.singletonList(idType), values);
     }
 
     public boolean checkDateInPast(Date date, int minusHours) {
@@ -100,12 +88,12 @@ public abstract class AbstractFact {
         return new DateTime();
     }
 
-    public boolean validateUUID(String name) {
-        if (name == null) {
+    public boolean validateUUID(String value) {
+        if (value == null) {
             return true;
         }
         try {
-            UUID.fromString(name);
+            UUID.fromString(value);
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
             return true;
@@ -139,10 +127,6 @@ public abstract class AbstractFact {
 
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
-    }
-
-    private enum MethodType {
-        UUID, FORMAT, UNIQUE
     }
 
 }
