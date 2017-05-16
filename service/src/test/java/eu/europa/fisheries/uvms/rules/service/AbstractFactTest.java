@@ -60,6 +60,7 @@ public class AbstractFactTest {
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
         //assertFalse(fact.schemeIdContains(idTypes, "UUID"));
+        assertTrue(fact.schemeIdContains(idTypes, "UUID"));
     }
 
     @Test

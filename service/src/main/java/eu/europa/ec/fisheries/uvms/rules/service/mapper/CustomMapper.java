@@ -63,6 +63,17 @@ public class CustomMapper {
         return codeTypes;
     }
 
+    public static String getUUID(List<IDType> ids) {
+        if (ids != null) {
+            for (IDType idType : ids) {
+                if (idType.getSchemeID().equalsIgnoreCase("UUID")) {
+                    return idType.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
 
