@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,10 +49,6 @@ public abstract class AbstractFact {
         } else {
             getWarnings().add(new RuleWarning(brId, msg, level));
         }
-    }
-
-    public boolean validateDate(Date date) {
-        return date == null;
     }
 
     public boolean validateUUID(String name) {
