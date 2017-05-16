@@ -63,7 +63,7 @@ public abstract class AbstractFact {
             switch (anEnum) {
                 case UUID:
                     if (validateUUID(idTypes)) {
-                        return false;
+                        return true;
                     }
                     break;
                 case FORMAT:
