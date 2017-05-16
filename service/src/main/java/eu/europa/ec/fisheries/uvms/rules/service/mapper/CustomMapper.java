@@ -10,12 +10,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -87,14 +84,12 @@ public class CustomMapper {
             try {
                 if (dateTimeType.getDateTime() != null) {
                     date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                } else if (dateTimeType.getDateTimeString() != null && dateTimeType.getDateTimeString().getFormat() != null && dateTimeType.getDateTimeString().getValue() != null) {
+                } else {
                     String format = dateTimeType.getDateTimeString().getFormat();
                     String value = dateTimeType.getDateTimeString().getValue();
                     date = new SimpleDateFormat(format).parse(value);
-                    Calendar cal = new GregorianCalendar();
-                    cal.setTime(date);
                 }
-            } catch (ParseException e) {
+            } catch (Exception e) {
                 log.debug("Error while trying to parse dateTimeType", e);
             }
         }

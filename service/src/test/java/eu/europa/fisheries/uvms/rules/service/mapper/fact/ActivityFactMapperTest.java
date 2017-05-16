@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
@@ -180,18 +179,6 @@ public class ActivityFactMapperTest {
         specifiedFACatch = new ArrayList<>();
         specifiedFACatch.add(faCatch);
 
-    }
-
-    @Test
-    public void testISODateTime1() {
-        AbstractFact faArrivalFact = new FaArrivalFact();
-        // assertTrue(faArrivalFact.isISODateTime(new DateTime("2017-05-15T12:28:07.151Z").getDate());
-    }
-
-    @Test
-    public void testISODateTime2() {
-        AbstractFact faArrivalFact = new FaArrivalFact();
-        // assertFalse(faArrivalFact.isISODate("2010-01-01"));
     }
 
     @Test
