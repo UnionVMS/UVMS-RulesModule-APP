@@ -13,8 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -25,9 +23,10 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
@@ -102,7 +101,7 @@ public class MessageServiceBean implements MessageService {
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
                     ValidationResultDto faReportValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest());
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isContinueValidation));
-                    
+
                     updateRequestMessageStatus(request.getLogGuid(), faReportValidationResult);
 
                     if (!faReportValidationResult.isError()) {

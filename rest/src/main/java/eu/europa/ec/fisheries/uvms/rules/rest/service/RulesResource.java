@@ -37,7 +37,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author Gregory Rinaldi

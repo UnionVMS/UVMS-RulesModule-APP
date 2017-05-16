@@ -65,7 +65,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 @Stateless
 public class EventServiceBean implements EventService {
