@@ -13,13 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.joda.time.DateTime;
+
+@Slf4j
 public abstract class AbstractFact {
 
     protected FactType factType;
@@ -49,10 +55,59 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean isUUID(String name) {
+    public boolean validate(List<IdType> idTypes, String enumName) {
+
+        try {
+
+            MethodType anEnum = EnumUtils.getEnum(MethodType.class, enumName);
+            switch (anEnum) {
+                case UUID:
+                    if (validateUUID(idTypes)) {
+                        return true;
+                    }
+                    break;
+                case FORMAT:
+                    break;
+                case UNIQUE:
+                    break;
+
+            }
+
+        } catch (Exception e) {
+            log.debug(e.getMessage(), e);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validateUUID(List<IdType> idTypes) {
+        for (IdType IdType : idTypes) {
+            String schemeId = IdType.getValue();
+            if (validateUUID(schemeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkDateInPast(Date date, int minusHours) {
+        DateTime now = getDateNow();
+        now.minusHours(minusHours);
+        return date == null || !new DateTime(date).isBefore(now);
+    }
+
+    protected DateTime getDateNow() {
+        return new DateTime();
+    }
+
+    public boolean validateUUID(String name) {
+        if (name == null) {
+            return true;
+        }
         try {
             UUID.fromString(name);
         } catch (Exception e) {
+            log.debug(e.getMessage(), e);
             return true;
         }
         return false;
@@ -85,4 +140,9 @@ public abstract class AbstractFact {
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
+
+    private enum MethodType {
+        UUID, FORMAT, UNIQUE
+    }
+
 }

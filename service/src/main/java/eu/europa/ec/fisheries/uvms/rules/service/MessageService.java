@@ -13,13 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import javax.ejb.Local;
+
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import javax.ejb.Local;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -28,6 +29,10 @@ import javax.ejb.Local;
 public interface MessageService {
 
     void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesServiceException, RulesModelMarshallException;
+
+    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
+
+    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, String username) throws RulesServiceException;
 
     void mapAndSendFLUXMdrRequestToExchange(String request);
 

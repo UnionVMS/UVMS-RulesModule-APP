@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -26,7 +28,7 @@ public class FaQueryFact extends AbstractFact {
 
     private IdType id;
 
-    private DateType submittedDateTime;
+    private Date submittedDateTime;
 
     public FaQueryFact() {
         setFactType();
@@ -53,11 +55,11 @@ public class FaQueryFact extends AbstractFact {
         this.id = id;
     }
 
-    public DateType getSubmittedDateTime() {
+    public Date getSubmittedDateTime() {
         return submittedDateTime;
     }
 
-    public void setSubmittedDateTime(DateType submittedDateTime) {
+    public void setSubmittedDateTime(Date submittedDateTime) {
         this.submittedDateTime = submittedDateTime;
     }
 }

@@ -21,15 +21,23 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author Gregory Rinaldi
@@ -39,28 +47,41 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 public class RulesResource {
 
     @EJB
-    private RulesEngineBean rulesEngine;
+    private MessageService messageService;
+
+    @EJB
+    private RulePostProcessBean rulePostProcessBean;
+
+    @EJB
+    private RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
     private MDRServiceBean mdrService;
 
+    @EJB
+    private RulesEngineBean rulesEngine;
+
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/evaluate/{objectType}")
-    public Response evaluate(FLUXFAReportMessage request, @PathParam("objectType") BusinessObjectType objectType) throws ServiceException {
+    @Produces(value = {MediaType.APPLICATION_XML})
+    @Path("/evaluate/fluxfareportmessage")
+    public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
 
-        List<AbstractFact> abstractFacts;
+        FLUXResponseMessage fluxResponseMessage;
 
         try {
 
-            abstractFacts = rulesEngine.evaluate(objectType, request);
+            List<AbstractFact> evaluate = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
+            String s = JAXBMarshaller.marshallJaxBObjectToString(request);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(evaluate, s);
 
-        } catch (RulesValidationException e) {
+            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+
+        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
-        return Response.ok(abstractFacts).build();
+        return Response.ok(fluxResponseMessage).build();
 
     }
 
