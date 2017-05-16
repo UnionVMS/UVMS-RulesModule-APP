@@ -14,12 +14,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -49,6 +51,16 @@ public abstract class AbstractFact {
         } else {
             getWarnings().add(new RuleWarning(brId, msg, level));
         }
+    }
+
+    public boolean checkDateInPast(Date date, int minusHours) {
+        DateTime now = getDateNow();
+        now.minusHours(minusHours);
+        return date == null || !new DateTime(date).isBefore(now);
+    }
+
+    protected DateTime getDateNow() {
+        return new DateTime();
     }
 
     public boolean validateUUID(String name) {
