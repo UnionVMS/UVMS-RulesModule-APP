@@ -84,7 +84,7 @@ public abstract class AbstractFact {
         while (iterator.hasNext()) {
             String next = iterator.next();
             for (CodeType IdType : codeTypes) {
-                if (next.equals(IdType.getListId())) {
+                if (next.equals(IdType.getListID())) {
                     iterator.remove();
                 }
             }

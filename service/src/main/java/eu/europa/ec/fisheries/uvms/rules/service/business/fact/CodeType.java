@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class CodeType {
 
     private String value;
-    private String listId;
+    private String listID;
 
     public CodeType(String value) {
         this.value = value;
@@ -37,12 +37,12 @@ public class CodeType {
         this.value = typeCode;
     }
 
-    public String getListId() {
-        return listId;
+    public String getListID() {
+        return listID;
     }
 
-    public void setListId(String listId) {
-        this.listId = listId;
+    public void setListID(String listID) {
+        this.listID = listID;
     }
 
 
