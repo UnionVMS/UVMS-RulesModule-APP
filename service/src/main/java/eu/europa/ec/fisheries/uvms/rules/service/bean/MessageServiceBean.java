@@ -102,7 +102,7 @@ public class MessageServiceBean implements MessageService {
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
                     ValidationResultDto faReportValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest());
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isContinueValidation));
-                    
+
                     updateRequestMessageStatus(request.getLogGuid(), faReportValidationResult);
 
                     if (!faReportValidationResult.isError()) {
@@ -112,6 +112,8 @@ public class MessageServiceBean implements MessageService {
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                 } else {
+                    log.info("Validation error exist. Validation cannot continue");
+                    updateRequestMessageStatus(request.getLogGuid(), validationMap.get(isContinueValidation));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
                 }
                 sendResponseToExchange(fluxResponseMessageType, request.getUsername());
