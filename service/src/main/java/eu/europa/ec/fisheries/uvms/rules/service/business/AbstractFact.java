@@ -82,7 +82,7 @@ public abstract class AbstractFact {
 
     private boolean validateUUID(List<IdType> idTypes) {
         for (IdType IdType : idTypes) {
-            String schemeId = IdType.getSchemeId();
+            String schemeId = IdType.getValue();
             if (validateUUID(schemeId)) {
                 return true;
             }
