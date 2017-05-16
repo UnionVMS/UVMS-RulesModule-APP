@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -66,8 +68,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
-import java.util.List;
-
 /**
  * @author padhyad
  * @author Gregory Rinaldi
@@ -104,7 +104,7 @@ public interface ActivityFactMapper {
     List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
 
     @Mappings({
-            @Mapping(target = "referencedID", source = "FLUXReportDocument.referencedID.value"),
+            @Mapping(target = "referencedID", source = "FLUXReportDocument.referencedID"),
             @Mapping(target = "creationDateTime", source = "FLUXReportDocument.creationDateTime"),
             @Mapping(target = "purposeCode", source = "FLUXReportDocument.purposeCode"),
             @Mapping(target = "ids", source = "FLUXReportDocument.IDS"),

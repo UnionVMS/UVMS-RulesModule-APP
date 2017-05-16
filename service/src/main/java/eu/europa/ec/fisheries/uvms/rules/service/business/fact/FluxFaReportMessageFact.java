@@ -25,7 +25,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
  */
 public class FluxFaReportMessageFact extends AbstractFact {
 
-    private String referencedID;
+    private IdType referencedID;
 
     private List<IdType> ids;
 
@@ -39,14 +39,6 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     public FluxFaReportMessageFact() {
         setFactType();
-    }
-
-    public String getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(String referencedID) {
-        this.referencedID = referencedID;
     }
 
     public List<IdType> getIds() {
@@ -102,5 +94,13 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     public void setCreationDateTime(Date creationDateTime) {
         this.creationDateTime = creationDateTime;
+    }
+
+    public IdType getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(IdType referencedID) {
+        this.referencedID = referencedID;
     }
 }
