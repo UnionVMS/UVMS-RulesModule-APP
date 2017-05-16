@@ -20,7 +20,9 @@ import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.joda.time.DateTime;
 
 @Slf4j
@@ -51,6 +53,41 @@ public abstract class AbstractFact {
         } else {
             getWarnings().add(new RuleWarning(brId, msg, level));
         }
+    }
+
+    public boolean validate(List<IdType> idTypes, String enumName) {
+
+        try {
+
+            MethodType anEnum = EnumUtils.getEnum(MethodType.class, enumName);
+            switch (anEnum) {
+                case UUID:
+                    if (validateUUID(idTypes)) {
+                        return false;
+                    }
+                    break;
+                case FORMAT:
+                    break;
+                case UNIQUE:
+                    break;
+
+            }
+
+        } catch (Exception e) {
+            log.debug(e.getMessage(), e);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validateUUID(List<IdType> idTypes) {
+        for (IdType IdType : idTypes) {
+            String schemeId = IdType.getSchemeId();
+            if (validateUUID(schemeId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean checkDateInPast(Date date, int minusHours) {
@@ -103,4 +140,9 @@ public abstract class AbstractFact {
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
+
+    private enum MethodType {
+        UUID, FORMAT, UNIQUE
+    }
+
 }

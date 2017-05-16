@@ -13,10 +13,13 @@ package eu.europa.fisheries.uvms.rules.service;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -40,6 +43,34 @@ public class AbstractFactTest {
 
         Date date = new DateTime(2222, 3, 26, 12, 0, 0, 0).toDate();
         assertTrue(fact.checkDateInPast(date, 20));
+
+    }
+
+
+    @Test
+    public void testValidateIDTypeHappy() {
+
+        IdType idType = new IdType();
+        idType.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
+
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("53e36fab361-7338327c7d81");
+
+        List<IdType> idTypes = Arrays.asList(idType, idType2);
+
+        assertTrue(fact.validate(idTypes, "UUID"));
+
+    }
+
+    @Test
+    public void testValidateIDType() {
+
+        IdType idType = new IdType();
+        idType.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
+        List<IdType> idTypes = Arrays.asList(idType, idType2);
+        assertFalse(fact.validate(idTypes, "UUID"));
 
     }
 
