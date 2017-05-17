@@ -185,8 +185,11 @@ public abstract class AbstractFact {
         return listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
+    public Date dateNow() {
+        return new Date();
+    }
     public Date dateNow(int hours) {
-        DateTime now = new DateTime(new Date());
+        DateTime now = new DateTime(dateNow());
         if (hours > 0) {
             now.plusHours(hours);
         } else if (hours < 0) {
