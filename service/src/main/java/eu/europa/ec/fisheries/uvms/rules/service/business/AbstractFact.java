@@ -67,7 +67,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return !(valLength == hits);
+        return valLength != hits;
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return !(valLength == hits);
+        return valLength != hits;
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
