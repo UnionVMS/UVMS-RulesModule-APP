@@ -125,21 +125,20 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean listIdContainsAll(List<CodeType> codeTypes, String... values) {
-
-        List<String> stringList = new ArrayList<>(Arrays.asList(values));
-
-        Iterator<String> iterator = stringList.iterator();
-
-        while (iterator.hasNext()) {
-            String next = iterator.next();
+    public boolean listIdContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits      = 0;
+        for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
-                if (next.equals(IdType.getListId())) {
-                    iterator.remove();
+                if (val.equals(IdType.getListId())) {
+                    hits++;
                 }
             }
         }
-        return !stringList.isEmpty();
+        return !(valLength == hits);
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
