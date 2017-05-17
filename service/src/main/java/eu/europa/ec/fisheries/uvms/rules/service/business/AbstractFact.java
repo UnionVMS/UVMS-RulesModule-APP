@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -124,8 +125,29 @@ public abstract class AbstractFact {
     }
 
 
+    public boolean listIdContains(List<CodeType> codeTypes, String... values) {
+
+        List<String> stringList = new ArrayList<>(Arrays.asList(values));
+
+        Iterator<String> iterator = stringList.iterator();
+
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            for (CodeType IdType : codeTypes) {
+                if (next.equals(IdType.getListID())) {
+                    iterator.remove();
+                }
+            }
+        }
+        return !stringList.isEmpty();
+    }
+
     public boolean schemeIdContains(IdType idType, String... values) {
         return schemeIdContains(Collections.singletonList(idType), values);
+    }
+
+    public boolean listIdContains(CodeType codeType, String... values) {
+        return listIdContains(Collections.singletonList(codeType), values);
     }
 
     public boolean checkDateInPast(Date date, int minusHours) {
