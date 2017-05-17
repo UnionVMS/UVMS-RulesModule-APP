@@ -13,19 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -57,22 +53,76 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean schemeIdContains(List<IdType> idTypes, String... values) {
-
-        List<String> stringList = new ArrayList<>(Arrays.asList(values));
-
-        Iterator<String> iterator = stringList.iterator();
-
-        while (iterator.hasNext()) {
-            String next = iterator.next();
+    public boolean schemeIdContains(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits      = 0;
+        for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
-                if (next.equals(IdType.getSchemeId())) {
-                    iterator.remove();
+                if (val.equals(IdType.getSchemeId())) {
+                    hits++;
                 }
             }
         }
-        return !stringList.isEmpty();
+        return !(valLength == hits);
     }
+
+    /**
+     * Checks if one of the String... array elements exists in the idTypes list.
+     *
+     * @param idTypes
+     * @param values
+     * @return
+     */
+    public boolean atLeastOneExists(List<IdType> idTypes, String... values){
+        if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        for (String val : values) {
+            for (IdType IdType : idTypes) {
+                if (val.equals(IdType.getSchemeId())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean validateFormat(List<IdType> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return true;
+        }
+        for (IdType id : ids) {
+            String value = id.getValue();
+            switch (id.getSchemeId()) {
+                case "UUID":
+                    return !validateUUID(value);
+                case "IRCS":
+                    return !validateFormat(value, FORMATS.IRCS.getFormatStr());
+                case "EXT_MARK":
+                    return !validateFormat(value, FORMATS.EXT_MARK.getFormatStr());
+                case "CFR":
+                    return !validateFormat(value, FORMATS.CFR.getFormatStr());
+                case "UVI":
+                    return !validateFormat(value, FORMATS.UVI.getFormatStr());
+                case "ICCAT":
+                    return !validateFormat(value, FORMATS.ICCAT.getFormatStr());
+                case "GFCM":
+                    return !validateFormat(value, FORMATS.GFCM.getFormatStr());
+            }
+        }
+        return true;
+    }
+
+    private boolean validateFormat(String value, String format) {
+        if(StringUtils.isEmpty(value)){
+            return false;
+        }
+        return value.matches(format);
+    }
+
 
     public boolean schemeIdContains(IdType idType, String... values) {
         return schemeIdContains(Collections.singletonList(idType), values);
@@ -127,6 +177,30 @@ public abstract class AbstractFact {
 
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
+    }
+
+    private enum FORMATS {
+
+        EXT_MARK("someFromat"),
+        IRCS("someFromat"),
+        CFR("someFromat"),
+        UVI("someFromat"),
+        ICCAT("someFromat"),
+        GFCM("someFromat");
+
+        String formatStr;
+
+        FORMATS(String someFromat) {
+            setFormatStr(someFromat);
+        }
+
+        public String getFormatStr() {
+            return formatStr;
+        }
+
+        public void setFormatStr(String formatStr) {
+            this.formatStr = formatStr;
+        }
     }
 
 }

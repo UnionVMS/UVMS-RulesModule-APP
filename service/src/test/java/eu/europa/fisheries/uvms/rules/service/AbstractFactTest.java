@@ -10,18 +10,18 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -74,8 +74,9 @@ public class AbstractFactTest {
         idType3.setSchemeId("EXT_MARK");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
 
-        boolean b = fact.schemeIdContains(idTypes, "IRCS", "CFR");
+        boolean result = fact.schemeIdContains(idTypes, "IRCS", "CFR");
 
+        assertTrue(!result);
 
         System.out.printf("eee");
     }
@@ -90,10 +91,8 @@ public class AbstractFactTest {
         IdType idType3 = new IdType();
         idType3.setSchemeId("UUID");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-
-        boolean b = fact.schemeIdContains(idTypes, "UUID");
-
-
+        boolean result = fact.schemeIdContains(idTypes, "UUID");
+        assertTrue(result);
         System.out.printf("eee");
     }
 
