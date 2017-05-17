@@ -49,7 +49,7 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e36fab361-7338327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        assertTrue(fact.schemeIdContains(idTypes, "UUID"));
+        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        //assertFalse(fact.schemeIdContains(idTypes, "UUID"));
-        assertTrue(fact.schemeIdContains(idTypes, "UUID"));
+        //assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
+        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class AbstractFactTest {
         idType3.setSchemeId("EXT_MARK");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
 
-        boolean result = fact.schemeIdContains(idTypes, "IRCS", "CFR");
+        boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
 
         assertTrue(!result);
 
@@ -91,7 +91,7 @@ public class AbstractFactTest {
         IdType idType3 = new IdType();
         idType3.setSchemeId("UUID");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-        boolean result = fact.schemeIdContains(idTypes, "UUID");
+        boolean result = fact.schemeIdContainsAll(idTypes, "UUID");
         assertTrue(result);
         System.out.printf("eee");
     }

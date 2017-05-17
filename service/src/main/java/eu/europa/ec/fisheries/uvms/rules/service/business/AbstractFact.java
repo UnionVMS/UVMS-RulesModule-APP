@@ -54,7 +54,7 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean schemeIdContains(List<IdType> idTypes, String... valuesToMatch) {
+    public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -77,7 +77,7 @@ public abstract class AbstractFact {
      * @param values
      * @return
      */
-    public boolean atLeastOneExists(List<IdType> idTypes, String... values){
+    public boolean schemeIdContainsAtLeastOne(List<IdType> idTypes, String... values){
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -125,7 +125,7 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean listIdContains(List<CodeType> codeTypes, String... values) {
+    public boolean listIdContainsAll(List<CodeType> codeTypes, String... values) {
 
         List<String> stringList = new ArrayList<>(Arrays.asList(values));
 
@@ -134,7 +134,7 @@ public abstract class AbstractFact {
         while (iterator.hasNext()) {
             String next = iterator.next();
             for (CodeType IdType : codeTypes) {
-                if (next.equals(IdType.getListID())) {
+                if (next.equals(IdType.getListId())) {
                     iterator.remove();
                 }
             }
@@ -142,12 +142,12 @@ public abstract class AbstractFact {
         return !stringList.isEmpty();
     }
 
-    public boolean schemeIdContains(IdType idType, String... values) {
-        return schemeIdContains(Collections.singletonList(idType), values);
+    public boolean schemeIdContainsAll(IdType idType, String... values) {
+        return schemeIdContainsAll(Collections.singletonList(idType), values);
     }
 
-    public boolean listIdContains(CodeType codeType, String... values) {
-        return listIdContains(Collections.singletonList(codeType), values);
+    public boolean listIdContainsAll(CodeType codeType, String... values) {
+        return listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
     public boolean checkDateInPast(Date date, int minusHours) {
