@@ -14,10 +14,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.SalesModuleMethod;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
@@ -90,13 +90,13 @@ public class MessageServiceBean implements MessageService {
     @Override
     public void receiveSalesQueryRequest(String request) {
         try {
-            FLUXSalesQueryMessage fluxSalesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, FLUXSalesQueryMessage.class);
+            ReceiveSalesQueryRequest receiveSalesQueryRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesQueryRequest.class);
 
             //validate
-            salesHelper.handleReceiveSalesQueryRequest(fluxSalesQueryMessage, rulesEngine);
+            salesHelper.handleReceiveSalesQueryRequest(receiveSalesQueryRequest, rulesEngine);
 
             //send to sales
-            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesQueryRequest(request, SalesModuleMethod.QUERY);
+            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), SalesModuleMethod.QUERY);
             sendToSales(salesReportRequestAsString);
 
             //update log status
@@ -116,7 +116,7 @@ public class MessageServiceBean implements MessageService {
             salesHelper.handleReceiveSalesReportRequest(receiveSalesReportRequest, rulesEngine);
 
             //send to sales
-            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(request, SalesModuleMethod.REPORT);
+            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(receiveSalesReportRequest.getRequest(), SalesModuleMethod.REPORT);
             sendToSales(salesReportRequestAsString);
 
             //update log status

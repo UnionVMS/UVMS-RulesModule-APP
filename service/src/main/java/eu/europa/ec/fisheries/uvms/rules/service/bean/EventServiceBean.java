@@ -44,6 +44,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.jms.JMSException;
 import java.util.List;
 
 @Stateless
@@ -259,55 +260,45 @@ public class EventServiceBean implements EventService {
     @Override
     public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message){
         try {
-            ReceiveSalesQueryRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesQueryRequest.class);
-            LOG.info("ReceiveSalesQueryRequest marshall was successful");
-            messageService.receiveSalesQueryRequest(request.getRequest());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("Couldn't marshall ReceiveSalesQueryRequest", e);
+            messageService.receiveSalesQueryRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            LOG.error("Couldn't read ReceiveSalesQueryRequest.", e);
         }
     }
 
     @Override
     public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message){
         try {
-            ReceiveSalesReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesReportRequest.class);
-            LOG.info("ReceiveSalesQueryRequest marshall was successful");
-            messageService.receiveSalesReportRequest(request.getRequest());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("Couldn't marshall ReceiveSalesReportRequest", e);
+            messageService.receiveSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            LOG.error("Couldn't read ReceiveSalesReportRequest.", e);
         }
     }
 
     @Override
     public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message){
         try {
-            ReceiveSalesResponseRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), ReceiveSalesResponseRequest.class);
-            LOG.info("ReceiveSalesQueryRequest marshall was successful");
-            messageService.receiveSalesResponseRequest(request.getRequest());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
+            messageService.receiveSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            LOG.error("Couldn't read ReceiveSalesResponseRequest.", e);
         }
     }
 
     @Override
     public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message){
         try {
-            SendSalesReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SendSalesReportRequest.class);
-            LOG.info("ReceiveSalesQueryRequest marshall was successful");
-            messageService.sendSalesReportRequest(request.getRequest());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
+            messageService.sendSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            LOG.error("Couldn't read SendSalesReportRequest.", e);
         }
     }
 
     @Override
     public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message){
         try {
-            SendSalesResponseRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SendSalesResponseRequest.class);
-            LOG.info("ReceiveSalesQueryRequest marshall was successful");
-            messageService.sendSalesResponseRequest(request.getRequest());
-        } catch (RulesModelMarshallException e) {
-            LOG.error("Couldn't marshall ReceiveSalesResponseRequest", e);
+            messageService.sendSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            LOG.error("Couldn't read SendSalesResponseRequest.", e);
         }
     }
 

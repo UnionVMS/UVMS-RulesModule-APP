@@ -1,11 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.helper;
 
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -18,7 +14,7 @@ import java.util.Date;
 @Singleton
 public class SalesMessageServiceBeanHelper {
 
-    public void handleReceiveSalesQueryRequest(FLUXSalesQueryMessage request, RulesEngineBean rulesEngine) throws SalesMarshallException, RulesValidationException {
+    public void handleReceiveSalesQueryRequest(ReceiveSalesQueryRequest request, RulesEngineBean rulesEngine) throws SalesMarshallException, RulesValidationException {
 
 //        List<AbstractFact> salesReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxSalesQueryMessage);
 //        ValidationResultDto faReportValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(faReportFacts, fluxFAReportMessage);
@@ -28,18 +24,8 @@ public class SalesMessageServiceBeanHelper {
 
     }
 
-    public String handleReceiveSalesResponseRequest(ReceiveSalesResponseRequest request, RulesEngineBean rulesEngine) throws SalesMarshallException, RulesValidationException, ExchangeModelMarshallException {
-
+    public void handleReceiveSalesResponseRequest(ReceiveSalesResponseRequest request, RulesEngineBean rulesEngine) throws SalesMarshallException, RulesValidationException, ExchangeModelMarshallException {
         //TODO: validate response with rules
-
-        String sendSalesResponseRequestAsText = ExchangeModuleRequestMapper.createReceiveSalesResponseRequest(request.getRequest(),
-                ExchangeModuleMethod.SEND_SALES_REPORT,
-                "guid",
-                "dataFlow",
-                "senderOrReceiver",
-                new Date()); //TODO: actual values from Sales module
-
-        return sendSalesResponseRequestAsText;
     }
 
     public String handleSendSalesResponseRequest(String request, RulesEngineBean rulesEngine) throws RulesValidationException, ExchangeModelMarshallException, SalesMarshallException {
