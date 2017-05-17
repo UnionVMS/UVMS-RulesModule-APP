@@ -91,30 +91,34 @@ public abstract class AbstractFact {
         return true;
     }
 
+    /**
+     *  Validate the format of the value depending on the schemeId
+     *
+     * @param ids
+     * @return
+     */
     public boolean validateFormat(List<IdType> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return true;
         }
+        boolean containsValidationErrors = false;
         for (IdType id : ids) {
             String value = id.getValue();
-            switch (id.getSchemeId()) {
-                case "UUID":
-                    return !validateUUID(value);
-                case "IRCS":
-                    return !validateFormat(value, FORMATS.IRCS.getFormatStr());
-                case "EXT_MARK":
-                    return !validateFormat(value, FORMATS.EXT_MARK.getFormatStr());
-                case "CFR":
-                    return !validateFormat(value, FORMATS.CFR.getFormatStr());
-                case "UVI":
-                    return !validateFormat(value, FORMATS.UVI.getFormatStr());
-                case "ICCAT":
-                    return !validateFormat(value, FORMATS.ICCAT.getFormatStr());
-                case "GFCM":
-                    return !validateFormat(value, FORMATS.GFCM.getFormatStr());
+            final String schemeId = id.getSchemeId();
+            if(StringUtils.isEmpty(value)){
+                return true;
+            }
+            try {
+                containsValidationErrors = validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr());
+            } catch (IllegalArgumentException ex){
+                log.error("The SchemeId : '"+value+"' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+                return true;
+            }
+            if(containsValidationErrors){
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private boolean validateFormat(String value, String format) {
@@ -202,6 +206,7 @@ public abstract class AbstractFact {
 
     private enum FORMATS {
 
+        UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
         EXT_MARK("someFromat"),
         IRCS("someFromat"),
         CFR("someFromat"),
@@ -214,6 +219,8 @@ public abstract class AbstractFact {
         FORMATS(String someFromat) {
             setFormatStr(someFromat);
         }
+
+
 
         public String getFormatStr() {
             return formatStr;
