@@ -13,6 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -21,8 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-
-import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -182,14 +185,14 @@ public abstract class AbstractFact {
         return listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
-    public boolean checkDateInPast(Date date, int minusHours) {
-        DateTime now = getDateNow();
-        now.minusHours(minusHours);
-        return date == null || !new DateTime(date).isBefore(now);
-    }
-
-    protected DateTime getDateNow() {
-        return new DateTime();
+    public Date dateNow(int hours) {
+        DateTime now = new DateTime(new Date());
+        if (hours > 0) {
+            now.plusHours(hours);
+        } else if (hours < 0) {
+            now.minusHours(hours);
+        }
+        return now.toDate();
     }
 
     public List<RuleWarning> getWarnings() {
