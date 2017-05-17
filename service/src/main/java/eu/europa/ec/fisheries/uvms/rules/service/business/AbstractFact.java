@@ -71,13 +71,28 @@ public abstract class AbstractFact {
     }
 
     /**
+     * Checks if the schemeId Contains Any then it checks if it contains all.
+     * Otherwise it means that it contains none.
+     *
+     * @param idTypes
+     * @param valuesToMatch
+     * @return
+     */
+    public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
+        if(schemeIdContainsAny(idTypes, valuesToMatch)){
+            return schemeIdContainsAll(idTypes, valuesToMatch);
+        }
+        return false;
+    }
+
+    /**
      * Checks if one of the String... array elements exists in the idTypes list.
      *
      * @param idTypes
      * @param values
      * @return
      */
-    public boolean schemeIdContainsAtLeastOne(List<IdType> idTypes, String... values){
+    public boolean schemeIdContainsAny(List<IdType> idTypes, String... values){
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -115,7 +130,7 @@ public abstract class AbstractFact {
      * @param id
      * @return
      */
-    private boolean validateFormat(IdType id) {
+    public boolean validateFormat(IdType id) {
         boolean validationIsOk;
         final String value    = id.getValue();
         final String schemeId = id.getSchemeId();
