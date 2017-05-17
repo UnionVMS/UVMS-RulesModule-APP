@@ -92,7 +92,7 @@ public abstract class AbstractFact {
     }
 
     /**
-     *  Validate the format of the value depending on the schemeId
+     *  Validate the format of the value depending on the schemeId for List<IdType>
      *
      * @param ids
      * @return
@@ -101,25 +101,39 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(ids)) {
             return true;
         }
-        boolean containsValidationErrors = false;
         for (IdType id : ids) {
-            String value = id.getValue();
-            final String schemeId = id.getSchemeId();
-            if(StringUtils.isEmpty(value)){
-                return true;
-            }
-            try {
-                containsValidationErrors = validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr());
-            } catch (IllegalArgumentException ex){
-                log.error("The SchemeId : '"+value+"' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
-                return true;
-            }
-            if(containsValidationErrors){
+            if (validateFormat(id)) {
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * Validate the format of the value depending on the schemeId for single IdType
+     *
+     * @param id
+     * @return
+     */
+    private boolean validateFormat(IdType id) {
+        boolean validationIsOk;
+        final String value    = id.getValue();
+        final String schemeId = id.getSchemeId();
+        if(StringUtils.isEmpty(value) || StringUtils.isEmpty(schemeId)){
+            return true;
+        }
+        try {
+            validationIsOk = validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr());
+        } catch (IllegalArgumentException ex){
+            log.error("The SchemeId : '"+value+"' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+            return true;
+        }
+        if(!validationIsOk){
+            return true;
+        }
+        return false;
+    }
+
 
     private boolean validateFormat(String value, String format) {
         if(StringUtils.isEmpty(value)){
@@ -161,19 +175,6 @@ public abstract class AbstractFact {
 
     protected DateTime getDateNow() {
         return new DateTime();
-    }
-
-    public boolean validateUUID(String value) {
-        if (value == null) {
-            return true;
-        }
-        try {
-            UUID.fromString(value);
-        } catch (Exception e) {
-            log.debug(e.getMessage(), e);
-            return true;
-        }
-        return false;
     }
 
     public List<RuleWarning> getWarnings() {
@@ -220,12 +221,9 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-
-
         public String getFormatStr() {
             return formatStr;
         }
-
         public void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }

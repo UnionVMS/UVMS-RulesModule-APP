@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -94,6 +95,26 @@ public class AbstractFactTest {
         boolean result = fact.schemeIdContainsAll(idTypes, "UUID");
         assertTrue(result);
         System.out.printf("eee");
+    }
+
+    @Test
+    public void testValidateFormatUUID_OK(){
+        IdType uuidIdType = new IdType();
+        uuidIdType.setSchemeId("UUID");
+        uuidIdType.setValue(UUID.randomUUID().toString());
+        List<IdType> idTypes = Arrays.asList(uuidIdType);
+        boolean result = fact.validateFormat(idTypes);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateFormatUUID_NOT_OK(){
+        IdType uuidIdType = new IdType();
+        uuidIdType.setSchemeId("UUID");
+        uuidIdType.setValue("ballshjshdhdfhsgfd");
+        List<IdType> idTypes = Arrays.asList(uuidIdType);
+        boolean result = fact.validateFormat(idTypes);
+        assertTrue(result);
     }
 
 
