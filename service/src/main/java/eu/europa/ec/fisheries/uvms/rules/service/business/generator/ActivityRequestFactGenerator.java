@@ -22,16 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,10 +50,12 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     public List<AbstractFact> getAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
         facts.add(ActivityFactMapper.INSTANCE.generateFactForFluxReportMessage(fluxfaReportMessage));
-        if (fluxfaReportMessage.getFAReportDocuments() != null) {
-            facts.addAll(ActivityFactMapper.INSTANCE.generateFactForFaReportDocuments(fluxfaReportMessage.getFAReportDocuments()));
-            for (FAReportDocument faReportDocument : fluxfaReportMessage.getFAReportDocuments()) {
+        List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
+        if (CollectionUtils.isNotEmpty(faReportDocuments)) {
+            facts.addAll(ActivityFactMapper.INSTANCE.generateFactForFaReportDocuments(faReportDocuments));
+            for (FAReportDocument faReportDocument : faReportDocuments) {
                 facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument));
+                facts.add(ActivityFactMapper.INSTANCE.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
             }
         }
         facts.removeAll(Collections.singleton(null));
@@ -99,7 +92,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
                 facts.add(addAdditionalValidationFact(activity, faReportDocument));
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
-
             }
         }
         return facts;

@@ -13,14 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 
+import java.util.List;
+
 public class VesselTransportMeansFact extends AbstractFact {
+
+    private boolean isFromFaReport;
 
     private List<IdType> ids;
 
@@ -33,6 +35,14 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<CodeType> specifiedContactPartyRoleCodes;
 
     private List<ContactPerson> specifiedContactPersons;
+
+    public boolean isFromFaReport() {
+        return isFromFaReport;
+    }
+
+    public void setIsFromFaReport(boolean fromFaReport) {
+        isFromFaReport = fromFaReport;
+    }
 
     public VesselTransportMeansFact() {
         setFactType();
