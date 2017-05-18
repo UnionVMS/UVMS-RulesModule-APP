@@ -178,11 +178,11 @@ public abstract class AbstractFact {
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
-        return schemeIdContainsAll(Collections.singletonList(idType), values);
+        return idType != null && schemeIdContainsAll(Collections.singletonList(idType), values);
     }
 
     public boolean listIdContainsAll(CodeType codeType, String... values) {
-        return listIdContainsAll(Collections.singletonList(codeType), values);
+        return codeType != null && listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
     public Date dateNow() {
