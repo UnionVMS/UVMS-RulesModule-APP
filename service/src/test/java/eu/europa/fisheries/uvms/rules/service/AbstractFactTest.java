@@ -32,13 +32,9 @@ public class AbstractFactTest {
     private AbstractFact fact = new FaArrivalFact();
 
     @Test
-    public void testCheckDateInPastHappy() {
+    public void testCheckDateNowHappy() {
         Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
-    }
-
-    @Test
-    public void testCheckDateInPast() {
-        Date date = new DateTime(2222, 3, 26, 12, 0, 0, 0).toDate();
+        assertTrue(date.before(fact.dateNow()));
     }
 
     @Test
