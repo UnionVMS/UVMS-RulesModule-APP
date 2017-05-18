@@ -10,19 +10,19 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.joda.time.DateTime;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.joda.time.DateTime;
+import org.junit.Test;
 
 /**
  * @author Gregory Rinaldi
@@ -34,13 +34,11 @@ public class AbstractFactTest {
     @Test
     public void testCheckDateInPastHappy() {
         Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
-        assertFalse(fact.checkDateInPast(date, 20));
     }
 
     @Test
     public void testCheckDateInPast() {
         Date date = new DateTime(2222, 3, 26, 12, 0, 0, 0).toDate();
-        assertTrue(fact.checkDateInPast(date, 20));
     }
 
     @Test

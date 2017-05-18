@@ -188,6 +188,7 @@ public abstract class AbstractFact {
     public Date dateNow() {
         return new Date();
     }
+
     public Date dateNow(int hours) {
         DateTime now = new DateTime(dateNow());
         if (hours > 0) {
