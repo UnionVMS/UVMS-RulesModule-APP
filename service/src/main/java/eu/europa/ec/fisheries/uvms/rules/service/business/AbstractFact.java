@@ -21,8 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -59,7 +64,7 @@ public abstract class AbstractFact {
             return true;
         }
         int valLength = valuesToMatch.length;
-        int hits      = 0;
+        int hits = 0;
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -79,7 +84,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        if(schemeIdContainsAny(idTypes, valuesToMatch)){
+        if (schemeIdContainsAny(idTypes, valuesToMatch)) {
             return schemeIdContainsAll(idTypes, valuesToMatch);
         }
         return false;
@@ -92,7 +97,7 @@ public abstract class AbstractFact {
      * @param values
      * @return
      */
-    public boolean schemeIdContainsAny(List<IdType> idTypes, String... values){
+    public boolean schemeIdContainsAny(List<IdType> idTypes, String... values) {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -107,7 +112,60 @@ public abstract class AbstractFact {
     }
 
     /**
-     *  Validate the format of the value depending on the schemeId for List<IdType>
+     *
+     * Checks if one of the String... array elements exists in the idTypes list.
+     * Depending on checkEmptyness value it also checks (or not) if the values are empty.
+     * Depending on isGivenName value it checks for GivenName or FamilyName.
+     *
+     * @param contactPersons
+     * @param checkEmptyness
+     * @return true/false
+     */
+    public boolean checkContactListContainsAny(List<ContactPerson> contactPersons, boolean checkEmptyness, boolean isGivenName) {
+        if (CollectionUtils.isEmpty(contactPersons)) {
+            return true;
+        }
+        for (ContactPerson contPers : contactPersons) {
+            TextType givenName      = contPers.getGivenName();
+            TextType familyName     = contPers.getFamilyName();
+            TextType nameToConsider = isGivenName ? givenName : familyName;
+            TextType alias          = contPers.getAlias();
+            // Check with emptyness.
+            if(checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
+                    && (alias == null || StringUtils.isEmpty(alias.getValue())))){
+                return true;
+                // Check without emptyness
+            } else if((nameToConsider == null || nameToConsider.getValue() == null)
+                           && (alias == null || alias.getValue() == null)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
+        if (CollectionUtils.isEmpty(contactPersons)) {
+            return true;
+        }
+        for (ContactPerson contPers : contactPersons) {
+            TextType givenName      = contPers.getGivenName();
+            TextType familyName     = contPers.getFamilyName();
+            TextType alias          = contPers.getAlias();
+            if(givenName == null && familyName == null){
+                if(alias == null){
+                    return true;
+                }
+                if(checkAliasEmptyness && StringUtils.isEmpty(alias.getValue())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Validate the format of the value depending on the schemeId for List<IdType>
      *
      * @param ids
      * @return
@@ -127,23 +185,22 @@ public abstract class AbstractFact {
     /**
      * Validate the format of the value depending on the schemeId for single IdType
      *
-     * @param id
+     * @param id IdType
      * @return
      */
     public boolean validateFormat(IdType id) {
         boolean validationIsOk;
-        final String value    = id.getValue();
+        final String value = id.getValue();
         final String schemeId = id.getSchemeId();
-        if(StringUtils.isEmpty(value) || StringUtils.isEmpty(schemeId)){
+        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(schemeId)) {
             return true;
         }
         try {
-            validationIsOk = validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr());
-        } catch (IllegalArgumentException ex){
-            log.error("The SchemeId : '"+value+"' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
-            return true;
-        }
-        if(!validationIsOk){
+            if(!validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr())){
+                return true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.error("The SchemeId : '" + value + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
             return true;
         }
         return false;
@@ -151,7 +208,7 @@ public abstract class AbstractFact {
 
 
     private boolean validateFormat(String value, String format) {
-        if(StringUtils.isEmpty(value)){
+        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
         return value.matches(format);
@@ -163,7 +220,7 @@ public abstract class AbstractFact {
             return true;
         }
         int valLength = valuesToMatch.length;
-        int hits      = 0;
+        int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
                 if (val.equals(IdType.getListId())) {
@@ -239,6 +296,7 @@ public abstract class AbstractFact {
         public String getFormatStr() {
             return formatStr;
         }
+
         public void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
