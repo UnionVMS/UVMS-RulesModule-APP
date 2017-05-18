@@ -67,7 +67,7 @@ public abstract class AbstractFact {
         int hits = 0;
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
-                if (val.equals(IdType.getSchemeId())) {
+                if (IdType !=null && val.equals(IdType.getSchemeId())) {
                     hits++;
                 }
             }
@@ -232,21 +232,25 @@ public abstract class AbstractFact {
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
-        return schemeIdContainsAll(Collections.singletonList(idType), values);
+        return idType != null && schemeIdContainsAll(Collections.singletonList(idType), values);
     }
 
     public boolean listIdContainsAll(CodeType codeType, String... values) {
-        return listIdContainsAll(Collections.singletonList(codeType), values);
+        return codeType != null && listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
-    public boolean checkDateInPast(Date date, int minusHours) {
-        DateTime now = getDateNow();
-        now.minusHours(minusHours);
-        return date == null || !new DateTime(date).isBefore(now);
+    public Date dateNow() {
+        return new Date();
     }
 
-    protected DateTime getDateNow() {
-        return new DateTime();
+    public Date dateNow(int hours) {
+        DateTime now = new DateTime(dateNow());
+        if (hours > 0) {
+            now.plusHours(hours);
+        } else if (hours < 0) {
+            now.minusHours(hours);
+        }
+        return now.toDate();
     }
 
     public List<RuleWarning> getWarnings() {

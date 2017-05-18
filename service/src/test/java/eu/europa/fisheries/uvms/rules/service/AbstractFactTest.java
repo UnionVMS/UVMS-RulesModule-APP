@@ -32,15 +32,9 @@ public class AbstractFactTest {
     private AbstractFact fact = new FaArrivalFact();
 
     @Test
-    public void testCheckDateInPastHappy() {
+    public void testCheckDateNowHappy() {
         Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
-        assertFalse(fact.checkDateInPast(date, 20));
-    }
-
-    @Test
-    public void testCheckDateInPast() {
-        Date date = new DateTime(2222, 3, 26, 12, 0, 0, 0).toDate();
-        assertTrue(fact.checkDateInPast(date, 20));
+        assertTrue(date.before(fact.dateNow(1)));
     }
 
     @Test
@@ -65,8 +59,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testContainsSchemeIdHAppy() {
-
+    public void testContainsSchemeIdHappy() {
         IdType idType = new IdType();
         idType.setSchemeId("CFR");
         IdType idType2 = new IdType();
@@ -76,7 +69,6 @@ public class AbstractFactTest {
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
         boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
         assertTrue(!result);
-        System.out.printf("eee");
     }
 
     @Test
@@ -91,7 +83,6 @@ public class AbstractFactTest {
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
         boolean result = fact.schemeIdContainsAll(idTypes, "UUID");
         assertFalse(result);
-        System.out.printf("eee");
     }
 
     @Test

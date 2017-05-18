@@ -187,6 +187,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
                         }
                         break;
+                    default: log.info("No rule to be applied for the received activity type:"+fishingActivityType);
+
                 }
             }
         } catch (IllegalArgumentException e) {
