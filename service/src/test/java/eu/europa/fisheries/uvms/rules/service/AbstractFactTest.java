@@ -63,8 +63,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testContainsSchemeIdHAppy() {
-
+    public void testContainsSchemeIdHappy() {
         IdType idType = new IdType();
         idType.setSchemeId("CFR");
         IdType idType2 = new IdType();
@@ -72,12 +71,8 @@ public class AbstractFactTest {
         IdType idType3 = new IdType();
         idType3.setSchemeId("EXT_MARK");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-
         boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
-
         assertTrue(!result);
-
-        System.out.printf("eee");
     }
 
     @Test
@@ -91,8 +86,7 @@ public class AbstractFactTest {
         idType3.setSchemeId("UUID");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
         boolean result = fact.schemeIdContainsAll(idTypes, "UUID");
-        assertTrue(result);
-        System.out.printf("eee");
+        assertFalse(result);
     }
 
     @Test
