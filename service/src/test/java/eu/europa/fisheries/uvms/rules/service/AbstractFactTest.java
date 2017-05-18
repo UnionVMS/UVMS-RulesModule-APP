@@ -34,7 +34,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckDateNowHappy() {
         Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
-        assertTrue(date.before(fact.dateNow()));
+        assertTrue(date.before(fact.dateNow(1)));
     }
 
     @Test
