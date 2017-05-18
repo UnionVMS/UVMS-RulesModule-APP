@@ -13,6 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -21,11 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -70,7 +70,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength == hits;
+        return valLength != hits;
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength == hits;
+        return valLength != hits;
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
