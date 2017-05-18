@@ -36,7 +36,7 @@ public class VesselTransportMeansFact extends AbstractFact {
 
     private List<ContactPerson> specifiedContactPersons;
 
-    public boolean isFromFaReport() {
+    public boolean getIsFromFaReport() {
         return isFromFaReport;
     }
 

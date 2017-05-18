@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -28,6 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -189,18 +189,15 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        boolean validationIsOk;
-        final String value = id.getValue();
-        final String schemeId = id.getSchemeId();
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(schemeId)) {
+        if(id == null){
             return true;
         }
         try {
-            if(!validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr())){
+            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + value + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
             return true;
         }
         return false;

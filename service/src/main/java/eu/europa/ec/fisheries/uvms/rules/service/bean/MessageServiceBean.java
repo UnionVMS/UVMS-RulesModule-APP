@@ -131,15 +131,15 @@ public class MessageServiceBean implements MessageService {
             if (faReportValidationResult.isError()) {
                 exchangeLogStatusTypeType = ExchangeLogStatusTypeType.FAILED;
             } else if (faReportValidationResult.isWarning()) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+                exchangeLogStatusTypeType = null;// = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
             } else {
                 exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL;
             }
 
-            String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
+            String statusMsg = "";// ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
-        } catch (ExchangeModelMarshallException | MessageException e) {
+        } catch (MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
@@ -276,7 +276,7 @@ public class MessageServiceBean implements MessageService {
             if (fluxResponseValidationResult.isError()) {
                 status = ExchangeLogStatusTypeType.FAILED;
             } else if (fluxResponseValidationResult.isWarning()) {
-                status = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+                status = ExchangeLogStatusTypeType.FAILED;
             } else {
                 status = ExchangeLogStatusTypeType.SUCCESSFUL;
             }
@@ -285,12 +285,11 @@ public class MessageServiceBean implements MessageService {
             String df = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2"; // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = "XEU";
             String messageGuid = CustomMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, fr, status, destination);
+            String fluxFAReponseText = "";//ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, fr, status, destination);
             log.debug("Message to exchange {}", fluxFAReponseText);
-
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             log.info("FLUXFAResponse has been sent back to Exchange.");
-        } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException | RulesValidationException e) {
+        } catch (RulesModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
