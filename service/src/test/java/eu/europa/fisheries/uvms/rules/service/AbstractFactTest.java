@@ -74,11 +74,8 @@ public class AbstractFactTest {
         IdType idType3 = new IdType();
         idType3.setSchemeId("EXT_MARK");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-
         boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
-
         assertTrue(!result);
-
         System.out.printf("eee");
     }
 
@@ -93,7 +90,7 @@ public class AbstractFactTest {
         idType3.setSchemeId("UUID");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
         boolean result = fact.schemeIdContainsAll(idTypes, "UUID");
-        assertTrue(result);
+        assertFalse(result);
         System.out.printf("eee");
     }
 
