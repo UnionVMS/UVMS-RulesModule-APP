@@ -10,19 +10,19 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.joda.time.DateTime;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.joda.time.DateTime;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
