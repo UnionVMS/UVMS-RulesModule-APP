@@ -205,7 +205,7 @@ public abstract class AbstractFact {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
-        return value.matches(format);
+        return value.toLowerCase().matches(format);
     }
 
 
@@ -278,12 +278,12 @@ public abstract class AbstractFact {
     private enum FORMATS {
 
         UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
-        EXT_MARK("someFromat"),
-        IRCS("someFromat"),
-        CFR("someFromat"),
-        UVI("someFromat"),
-        ICCAT("someFromat"),
-        GFCM("someFromat");
+        EXT_MARK("(.*?)"),
+        IRCS("(.*?)"),
+        CFR("(.*?)"),
+        UVI("(.*?)"),
+        ICCAT("(.*?)"),
+        GFCM("(.*?)");
 
         String formatStr;
 
