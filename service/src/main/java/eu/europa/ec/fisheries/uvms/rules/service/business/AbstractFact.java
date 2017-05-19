@@ -84,10 +84,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        if (schemeIdContainsAny(idTypes, valuesToMatch)) {
-            return schemeIdContainsAll(idTypes, valuesToMatch);
-        }
-        return false;
+        return schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
     }
 
     /**
@@ -229,11 +226,11 @@ public abstract class AbstractFact {
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
-        return idType != null && schemeIdContainsAll(Collections.singletonList(idType), values);
+        return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
     }
 
     public boolean listIdContainsAll(CodeType codeType, String... values) {
-        return codeType != null && listIdContainsAll(Collections.singletonList(codeType), values);
+        return codeType == null || listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
     public Date dateNow() {
