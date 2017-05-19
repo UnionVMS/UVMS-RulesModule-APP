@@ -16,7 +16,6 @@ import java.util.List;
 public class SalesFLUXSalesReportMessageFact extends AbstractFact {
 
     private FLUXReportDocumentType fluxReportDocument;
-
     private List<SalesReportType> salesReports;
 
     @Override
