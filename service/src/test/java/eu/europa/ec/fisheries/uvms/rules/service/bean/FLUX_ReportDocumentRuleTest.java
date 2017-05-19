@@ -16,13 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
@@ -41,7 +41,6 @@ public class FLUX_ReportDocumentRuleTest {
     private RuleType ruleCreationDateTime = new RuleType();
     private RuleType ruleReferencedID = new RuleType();
 
-
     @Before
     public void beforeClass() {
 
@@ -50,7 +49,7 @@ public class FLUX_ReportDocumentRuleTest {
         ruleCreationDateTime.setErrorType(ERROR);
         ruleCreationDateTime.setMessage("CreationDateTime Must be present.");
 
-        ruleReferencedID.setExpression("referencedID == null || referencedID.schemeId == null || isUUID(referencedID.schemeId)");
+        ruleReferencedID.setExpression("referencedID == null || referencedID.schemeId == null || isUUID(referencedID.schemeId) == false");
         ruleReferencedID.setBrId("FA-L00-00-0011");
         ruleReferencedID.setErrorType(ERROR);
         ruleReferencedID.setMessage("SchemeID Must be UUID.");
@@ -92,7 +91,7 @@ public class FLUX_ReportDocumentRuleTest {
         generator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         AbstractFact fact = new FaReportDocumentFact();
-        ((FaReportDocumentFact) fact).setCreationDateTime(new DateType());
+        ((FaReportDocumentFact) fact).setCreationDateTime(new Date());
 
         generator.validateFact(Collections.singletonList(fact));
 

@@ -37,7 +37,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author Gregory Rinaldi
@@ -74,9 +73,8 @@ public class RulesResource {
             List<AbstractFact> evaluate = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(evaluate, s);
-            List<IDType> ids = request.getFLUXReportDocument().getIDS();
 
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, ids);
+            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
 
         } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
             log.error(e.getMessage(), e);

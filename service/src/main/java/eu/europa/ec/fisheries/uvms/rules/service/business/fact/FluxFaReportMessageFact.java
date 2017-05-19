@@ -13,22 +13,23 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-
-import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
  */
 public class FluxFaReportMessageFact extends AbstractFact {
 
-    private String referencedID;
+    private IdType referencedID;
 
     private List<IdType> ids;
 
-    private DateType creationDateTime;
+    private Date creationDateTime;
 
     private CodeType purposeCode;
 
@@ -36,12 +37,8 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private List<FAReportDocument> faReportDocuments;
 
-    public String getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(String referencedID) {
-        this.referencedID = referencedID;
+    public FluxFaReportMessageFact() {
+        setFactType();
     }
 
     public List<IdType> getIds() {
@@ -50,14 +47,6 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     public void setIds(List<IdType> ids) {
         this.ids = ids;
-    }
-
-    public DateType getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(DateType creationDateTime) {
-        this.creationDateTime = creationDateTime;
     }
 
     public CodeType getPurposeCode() {
@@ -94,12 +83,24 @@ public class FluxFaReportMessageFact extends AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    public FluxFaReportMessageFact() {
-        setFactType();
-    }
-
     @Override
     public void setFactType() {
         this.factType = FactType.FLUX_FA_REPORT_MESSAGE;
+    }
+
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public IdType getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(IdType referencedID) {
+        this.referencedID = referencedID;
     }
 }

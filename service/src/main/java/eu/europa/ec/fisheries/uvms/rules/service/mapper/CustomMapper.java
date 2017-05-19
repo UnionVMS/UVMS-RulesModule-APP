@@ -11,7 +11,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.DateType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,10 +52,21 @@ public class CustomMapper {
         return codeTypes;
     }
 
+    public static String getUUID(List<IDType> ids) {
+        if (ids != null) {
+            for (IDType idType : ids) {
+                if (idType.getSchemeID().equalsIgnoreCase("UUID")) {
+                    return idType.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
 
-        if (CollectionUtils.isEmpty(contactPartyList)) {
+        if (CollectionUtils.isNotEmpty(contactPartyList)) {
 
             contactPersonList = Collections.newArrayList();
 
@@ -69,9 +78,8 @@ public class CustomMapper {
         return contactPersonList;
     }
 
-  /*  public static Date getDate(DateTimeType dateTimeType) {
+    public static Date getDate(DateTimeType dateTimeType) {
         Date date = null;
-
         if (dateTimeType != null) {
             try {
                 if (dateTimeType.getDateTime() != null) {
@@ -81,41 +89,13 @@ public class CustomMapper {
                     String value = dateTimeType.getDateTimeString().getValue();
                     date = new SimpleDateFormat(format).parse(value);
                 }
-            } catch (ParseException e) {
+            } catch (Exception e) {
                 log.debug("Error while trying to parse dateTimeType", e);
             }
         }
 
         return date;
-    }*/
-
-
-    public static DateType getDate(DateTimeType dateTimeType) {
-        Date date = null;
-
-        DateType dateType = new DateType();
-
-        if (dateTimeType != null) {
-            try {
-                if (dateTimeType.getDateTime() != null) {
-                    date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                    dateType.setDate(date);
-                } else {
-                    String format = dateTimeType.getDateTimeString().getFormat();
-                    String value = dateTimeType.getDateTimeString().getValue();
-                    date = new SimpleDateFormat(format).parse(value);
-                    dateType.setDate(date);
-                    dateType.setFormat(format);
-                }
-            } catch (ParseException e) {
-                log.debug("Error while trying to parse dateTimeType", e);
-            }
-        }
-
-        return dateType;
     }
-
-
 
     public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
         if (CollectionUtils.isEmpty(appliedAAPProcesses)) {

@@ -13,6 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
@@ -20,8 +23,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-
-import java.util.List;
 
 /**
  * @author padhyad
@@ -31,7 +32,7 @@ public class FishingActivityFact extends AbstractFact {
 
     private CodeType typeCode;
 
-    private DateType occurrenceDateTime;
+    private Date occurrenceDateTime;
 
     private FishingTrip specifiedFishingTrip;
 
@@ -73,14 +74,6 @@ public class FishingActivityFact extends AbstractFact {
     public void setSubActivity(boolean subActivity) {
 
         isSubActivity = subActivity;
-    }
-
-    public DateType getOccurrenceDateTime() {
-        return occurrenceDateTime;
-    }
-
-    public void setOccurrenceDateTime(DateType occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
     }
 
     public List<FishingActivity> getRelatedFishingActivities() {
@@ -161,5 +154,13 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Date getOccurrenceDateTime() {
+        return occurrenceDateTime;
+    }
+
+    public void setOccurrenceDateTime(Date occurrenceDateTime) {
+        this.occurrenceDateTime = occurrenceDateTime;
     }
 }
