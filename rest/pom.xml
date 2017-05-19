@@ -14,7 +14,7 @@
     </parent>
 
     <dependencies>
-        <!-- EJB DEPENDENCS -->
+        <!-- EJB DEPENDENCIES -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-service</artifactId>

@@ -78,6 +78,60 @@ public class TemplateFactory {
                 return "/templates/VesselStorageCharacteristics.drt";
             case VESSEL_TRANSPORT_MEANS:
                 return "/templates/VesselTransportMeans.drt";
+            case SALES_FLUX_SALES_REPORT_MESSAGE:
+                return "/templates/SalesFLUXSalesReportMessage.drt";
+            case SALES_FLUX_REPORT_DOCUMENT:
+                return "/templates/SalesFLUXReportDocument.drt";
+            case SALES_FLUX_PARTY:
+                return "/templates/SalesFLUXParty.drt";
+            case SALES_REPORT:
+                return "/templates/SalesReport.drt";
+            case SALES_DOCUMENT:
+                return "/templates/SalesDocument.drt";
+            case SALES_PARTY:
+                return "/templates/SalesParty.drt";
+            case SALES_EVENT:
+                return "/templates/SalesEvent.drt";
+            case SALES_BATCH:
+                return "/templates/SalesBatch.drt";
+            case SALES_AAP_PRODUCT:
+                return "/templates/SalesAAPProduct.drt";
+            case SALES_AAP_PROCESS:
+                return "/templates/SalesAAPProcess.drt";
+            case SALES_SIZE_DISTRIBUTION:
+                return "/templates/SalesSizeDistribution.drt";
+            case SALES_PRICE:
+                return "/templates/SalesPrice.drt";
+            case SALES_FLUX_ORGANIZATION:
+                return "/templates/SalesFLUXOrganization.drt";
+            case SALES_FISHING_ACTIVITY:
+                return "/templates/SalesFishingActivity.drt";
+            case SALES_DELIMITED_PERIOD:
+                return "/templates/SalesDelimitedPeriod.drt";
+            case SALES_VESSEL_TRANSPORT_MEANS:
+                return "/templates/SalesVesselTransportMeans.drt";
+            case SALES_VESSEL_COUNTRY:
+                return "/templates/SalesVesselCountry.drt";
+            case SALES_CONTACT_PARTY:
+                return "/templates/SalesContactParty.drt";
+            case SALES_CONTACT_PERSON:
+                return "/templates/SalesContactPerson.drt";
+            case SALES_FISHING_TRIP:
+                return "/templates/SalesFishingTrip.drt";
+            case SALES_FLUX_LOCATION:
+                return "/templates/SalesFluxLocation.drt";
+            case SALES_FLUX_GEOGRAPHICAL_COORDINATE:
+                return "/templates/SalesFluxGeographicalCoordinate.drt";
+            case SALES_STRUCTURED_ADDRESS:
+                return "/templates/SalesStructuredAddress.drt";
+            case SALES_QUERY:
+                return "/templates/SalesQuery.drt";
+            case SALES_FLUX_RESPONSE_DOCUMENT:
+                return "/templates/SalesFLUXResponseDocument.drt";
+            case SALES_VALIDATION_RESULT_DOCUMENT:
+                return "/templates/SalesValidationDocument.drt";
+            case SALES_VALIDATION_QUALITY_ANALYSIS:
+                return "/templates/SalesQualityAnalysis.drt";
         }
         return null;
     }

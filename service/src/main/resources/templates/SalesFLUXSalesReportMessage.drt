@@ -1,0 +1,27 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessage;
+
+template "@{tname}"
+
+rule "Sales FLUX Report Message @{tname} - @{brid}"
+
+when
+
+    $fact : SalesFLUXSalesReportMessage(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+end
+
+end template

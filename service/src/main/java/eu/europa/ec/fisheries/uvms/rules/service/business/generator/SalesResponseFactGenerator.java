@@ -22,10 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author padhyad
- * @author Gregory Rinaldi
- */
 public class SalesResponseFactGenerator extends AbstractGenerator {
 
     private FLUXResponseMessage fluxResponseMessage;
