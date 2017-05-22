@@ -13,19 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+
+import java.util.List;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
-public abstract class AbstractGenerator {
+public abstract class AbstractGenerator<T> {
 
     public abstract List<AbstractFact> getAllFacts();
 
-    public abstract void setBusinessObjectMessage(Object businessObject) throws RulesValidationException;
+    public abstract void setBusinessObjectMessage(T businessObject) throws RulesValidationException;
 }

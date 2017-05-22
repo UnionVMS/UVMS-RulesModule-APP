@@ -13,34 +13,76 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.SalesFactMapper;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.Collections;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class SalesQueryFactGenerator extends AbstractGenerator {
+@Slf4j
+public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
 
-    private FLUXResponseMessage fluxResponseMessage;
+    private FLUXSalesQueryMessage fluxSalesQueryMessage;
+    private SalesFactMapper mapper = SalesFactMapper.INSTANCE;
+    private List<AbstractFact> facts;
 
     @Override
     public List<AbstractFact> getAllFacts() {
-        //TODO: sales fact mapper
-        AbstractFact fact = ActivityFactMapper.INSTANCE.generateFactsForFaResponse(fluxResponseMessage);
-        if (fact != null) {
-            return Arrays.asList(fact);
+        facts = new ArrayList<>();
+
+        addFacts(forSalesQuery(), "SalesQuery");
+        addFacts(forFLUXParty(), "FLUXParty");
+        addFacts(forDelimitedPeriod(), "DelimitedPeriod");
+
+        return facts;
+    }
+
+    private void addFacts(Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> function, String context) {
+        try {
+            Collection<? extends AbstractFact> newFacts = function.apply(fluxSalesQueryMessage);
+            facts.addAll(newFacts);
+        } catch (NullPointerException ex) {
+            log.info("Could not generate facts for " + context);
         }
-        return Collections.emptyList();
+    }
+
+
+    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forSalesQuery() {
+        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
+            @Override
+            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
+                return Lists.newArrayList(mapper.generateFactForSalesQueryFact(fluxSalesQueryMessage.getSalesQuery()));
+            }
+        };
+    }
+
+    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forDelimitedPeriod() {
+        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
+            @Override
+            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
+                return Lists.newArrayList(mapper.generateFactForSalesDelimitedPeriodFact(fluxSalesQueryMessage.getSalesQuery().getSpecifiedDelimitedPeriod()));
+            }
+        };
+    }
+
+    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forFLUXParty() {
+        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
+            @Override
+            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
+                return Lists.newArrayList(mapper.generateFactForFLUXPartyFact(fluxSalesQueryMessage.getSalesQuery().getSubmitterFLUXParty()));
+            }
+        };
     }
 
     @Override
-    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
-        if (!(businessObject instanceof FLUXResponseMessage)) {
-            throw new RulesValidationException("Business object does not match required type");
-        }
-        this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
+    public void setBusinessObjectMessage(FLUXSalesQueryMessage businessObject) throws RulesValidationException {
+        this.fluxSalesQueryMessage = businessObject;
     }
 }

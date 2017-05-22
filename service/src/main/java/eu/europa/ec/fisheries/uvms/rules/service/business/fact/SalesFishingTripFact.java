@@ -1,18 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@EqualsAndHashCode
-@Getter
-@Setter
 public class SalesFishingTripFact extends AbstractFact {
 
     private List<IDType> ids;
@@ -22,5 +17,63 @@ public class SalesFishingTripFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.SALES_FISHING_TRIP;
+    }
+
+    public List<IDType> getIds() {
+        return this.ids;
+    }
+
+    public eu.europa.ec.fisheries.schema.sales.CodeType getTypeCode() {
+        return this.typeCode;
+    }
+
+    public List<DelimitedPeriodType> getSpecifiedDelimitedPeriods() {
+        return this.specifiedDelimitedPeriods;
+    }
+
+    public void setIds(List<IDType> ids) {
+        this.ids = ids;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public void setSpecifiedDelimitedPeriods(List<DelimitedPeriodType> specifiedDelimitedPeriods) {
+        this.specifiedDelimitedPeriods = specifiedDelimitedPeriods;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof SalesFishingTripFact)) return false;
+        final SalesFishingTripFact other = (SalesFishingTripFact) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$ids = this.getIds();
+        final Object other$ids = other.getIds();
+        if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
+        final Object this$typeCode = this.getTypeCode();
+        final Object other$typeCode = other.getTypeCode();
+        if (this$typeCode == null ? other$typeCode != null : !this$typeCode.equals(other$typeCode)) return false;
+        final Object this$specifiedDelimitedPeriods = this.getSpecifiedDelimitedPeriods();
+        final Object other$specifiedDelimitedPeriods = other.getSpecifiedDelimitedPeriods();
+        if (this$specifiedDelimitedPeriods == null ? other$specifiedDelimitedPeriods != null : !this$specifiedDelimitedPeriods.equals(other$specifiedDelimitedPeriods))
+            return false;
+        return true;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $ids = this.getIds();
+        result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
+        final Object $typeCode = this.getTypeCode();
+        result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
+        final Object $specifiedDelimitedPeriods = this.getSpecifiedDelimitedPeriods();
+        result = result * PRIME + ($specifiedDelimitedPeriods == null ? 43 : $specifiedDelimitedPeriods.hashCode());
+        return result;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof SalesFishingTripFact;
     }
 }
