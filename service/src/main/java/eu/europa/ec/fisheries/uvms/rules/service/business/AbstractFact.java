@@ -84,7 +84,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        return schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
     }
 
     /**
@@ -149,15 +149,13 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType alias          = contPers.getAlias();
             if(givenName == null && familyName == null){
-                if(alias == null){
+                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
                     return true;
                 }
-                if(checkAliasEmptyness && StringUtils.isEmpty(alias.getValue())){
-                    return true;
-                }
+            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+                return true;
             }
         }
-
         return false;
     }
 
