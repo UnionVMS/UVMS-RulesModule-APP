@@ -46,7 +46,9 @@ public class CustomMapper {
         if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
             measureTypes = new ArrayList<>();
             for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(delimitedPeriod.getDurationMeasure()));
+                if (delimitedPeriod.getDurationMeasure() != null) {
+                    measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(delimitedPeriod.getDurationMeasure()));
+                }
             }
         }
         return measureTypes;
