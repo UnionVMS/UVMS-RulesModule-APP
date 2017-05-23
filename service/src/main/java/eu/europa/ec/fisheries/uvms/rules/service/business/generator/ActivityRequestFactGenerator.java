@@ -188,7 +188,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         }
                         break;
                     default:
-                        log.info("No rule to be applied for the received activity type:" + fishingActivityType);
+                        log.info("No rule to be applied for the received activity type : "+fishingActivityType);
 
                 }
             }

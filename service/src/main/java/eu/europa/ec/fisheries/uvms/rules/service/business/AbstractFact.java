@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -30,6 +25,11 @@ import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -86,10 +86,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        if (schemeIdContainsAny(idTypes, valuesToMatch)) {
-            return schemeIdContainsAll(idTypes, valuesToMatch);
-        }
-        return false;
+        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
     }
 
     /**
@@ -154,15 +151,13 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType alias          = contPers.getAlias();
             if(givenName == null && familyName == null){
-                if(alias == null){
+                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
                     return true;
                 }
-                if(checkAliasEmptyness && StringUtils.isEmpty(alias.getValue())){
-                    return true;
-                }
+            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+                return true;
             }
         }
-
         return false;
     }
 
@@ -191,18 +186,15 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        boolean validationIsOk;
-        final String value = id.getValue();
-        final String schemeId = id.getSchemeId();
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(schemeId)) {
+        if(id == null){
             return true;
         }
         try {
-            if(!validateFormat(value, FORMATS.valueOf(schemeId).getFormatStr())){
+            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + value + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
             return true;
         }
         return false;
@@ -213,7 +205,7 @@ public abstract class AbstractFact {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
-        return value.matches(format);
+        return value.toLowerCase().matches(format);
     }
 
 
@@ -268,11 +260,11 @@ public abstract class AbstractFact {
 
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
-        return idType != null && schemeIdContainsAll(Collections.singletonList(idType), values);
+        return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
     }
 
     public boolean listIdContainsAll(CodeType codeType, String... values) {
-        return codeType != null && listIdContainsAll(Collections.singletonList(codeType), values);
+        return codeType == null || listIdContainsAll(Collections.singletonList(codeType), values);
     }
 
     public Date dateNow() {
@@ -320,12 +312,12 @@ public abstract class AbstractFact {
     private enum FORMATS {
 
         UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
-        EXT_MARK("someFromat"),
-        IRCS("someFromat"),
-        CFR("someFromat"),
-        UVI("someFromat"),
-        ICCAT("someFromat"),
-        GFCM("someFromat");
+        EXT_MARK("(.*?)"),
+        IRCS("(.*?)"),
+        CFR("(.*?)"),
+        UVI("(.*?)"),
+        ICCAT("(.*?)"),
+        GFCM("(.*?)");
 
         String formatStr;
 
