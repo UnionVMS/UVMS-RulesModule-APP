@@ -194,7 +194,7 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return true;
         }
         return false;
@@ -213,7 +213,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int valLength = valuesToMatch.length;
         int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
@@ -222,14 +221,13 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength != hits;
+        return valuesToMatch.length != hits;
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
             return true;
         }
-        int valLength = valuesToMatch.length;
         int hits = 0;
         for (String val : valuesToMatch) {
             for (MeasureType measureType : measureTypes) {
@@ -238,7 +236,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength != hits;
+        return valuesToMatch.length != hits;
     }
 
     public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
