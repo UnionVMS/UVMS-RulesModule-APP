@@ -200,10 +200,10 @@ public abstract class AbstractFact {
 
 
     private boolean validateFormat(String value, String format) {
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
+       if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
-        return value.toLowerCase().matches(format);
+        return value.matches(format);
     }
 
 
@@ -273,15 +273,17 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    private enum FORMATS {
+    public enum FORMATS {
+        // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
+        // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
 
-        UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
-        EXT_MARK("(.*?)"),
-        IRCS("(.*?)"),
-        CFR("(.*?)"),
-        UVI("(.*?)"),
-        ICCAT("(.*?)"),
-        GFCM("(.*?)");
+        UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+        EXT_MARK("[a-zA-Z0-9]{1,14}"),
+        IRCS("[a-zA-Z0-9]{1,7}"),
+        CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
+        UVI("[a-zA-Z0-9]{7}"),
+        ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
+        GFCM("[a-zA-Z0-9]{1,13}");
 
         String formatStr;
 
