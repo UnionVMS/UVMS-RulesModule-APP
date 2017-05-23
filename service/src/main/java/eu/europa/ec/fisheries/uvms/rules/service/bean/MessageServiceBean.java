@@ -16,7 +16,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.SalesModuleMethod;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
+import eu.europa.ec.fisheries.schema.sales.Report;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -24,7 +27,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
@@ -35,7 +37,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.helper.SalesMessageServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
@@ -69,39 +70,37 @@ import java.util.*;
 public class MessageServiceBean implements MessageService {
 
     @EJB
-    RulesResponseConsumer consumer;
-
-    @EJB
     RulesMessageProducer producer;
 
     @EJB
     RulesEngineBean rulesEngine;
 
     @EJB
-    RulePostProcessBean rulePostprocessBean;
+    RulePostProcessBean rulePostProcessBean;
 
     @EJB
     RulesPreProcessBean rulesPreProcessBean;
-
-    @EJB
-    SalesMessageServiceBeanHelper salesHelper;
 
     @Override
     public void receiveSalesQueryRequest(String request) {
         try {
             ReceiveSalesQueryRequest receiveSalesQueryRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesQueryRequest.class);
 
+            //get sales query message
+            String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
+            FLUXSalesQueryMessage salesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
+
             //validate
-            salesHelper.handleReceiveSalesQueryRequest(receiveSalesQueryRequest, rulesEngine);
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_QUERY_MSG, salesQueryMessage);
+            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesQueryMessageAsString);
 
             //send to sales
-            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), SalesModuleMethod.QUERY);
-            sendToSales(salesReportRequestAsString);
+            //TODO: extend with logic: send it to another endpoint when message is invalid
+            String requestForSales = SalesModuleRequestMapper.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), validationResult);
+            sendToSales(requestForSales);
 
-            //update log status
-            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(receiveSalesQueryRequest.getLogGuid(), ExchangeLogStatusTypeType.FAILED);
-            sendToExchange(updateLogStatusRequest);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
+            updateRequestMessageStatus(receiveSalesQueryRequest.getLogGuid(), validationResult);
+        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
             log.error("Couldn't validate sales query", e);
         }
     }
@@ -111,18 +110,22 @@ public class MessageServiceBean implements MessageService {
         try {
             ReceiveSalesReportRequest receiveSalesReportRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesReportRequest.class);
 
+            //get sales report message
+            String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
+            Report salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
+
             //validate
-            salesHelper.handleReceiveSalesReportRequest(receiveSalesReportRequest, rulesEngine);
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_REPORT_MSG, salesReportMessage);
+            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString);
 
             //send to sales
-            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(receiveSalesReportRequest.getRequest(), SalesModuleMethod.REPORT);
+            //TODO: extend with logic: send it to another endpoint when message is invalid
+            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(receiveSalesReportRequest.getRequest(), validationResult);
             sendToSales(salesReportRequestAsString);
 
             //update log status
-            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(receiveSalesReportRequest.getLogGuid(), ExchangeLogStatusTypeType.FAILED);
-            sendToExchange(updateLogStatusRequest);
-
-        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
+            updateRequestMessageStatus(receiveSalesReportRequest.getLogGuid(), validationResult);
+        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
             log.error("Couldn't validate sales report", e);
         }
     }
@@ -132,13 +135,16 @@ public class MessageServiceBean implements MessageService {
         try {
             ReceiveSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesResponseRequest.class);
 
-            //validate
-            salesHelper.handleReceiveSalesResponseRequest(rulesRequest, rulesEngine);
+            //get sales response message
+            String salesResponseMessageAsString = rulesRequest.getRequest();
+            FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
-            //update log status
-            String updateLogStatusRequest = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(rulesRequest.getLogGuid(), ExchangeLogStatusTypeType.FAILED);
-            sendToExchange(updateLogStatusRequest);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | ExchangeModelMarshallException e) {
+            //validate
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
+            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
+
+            updateRequestMessageStatus(rulesRequest.getLogGuid(), validationResult);
+        } catch (SalesMarshallException | RulesValidationException | RulesServiceException e) {
             log.error("Couldn't validate sales response", e);
         }
     }
@@ -148,15 +154,24 @@ public class MessageServiceBean implements MessageService {
         try {
             SendSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, SendSalesResponseRequest.class);
 
-            salesHelper.handleSendSalesResponseRequest(rulesRequest, rulesEngine);
+            //get sales response message
+            String salesResponseMessageAsString = rulesRequest.getRequest();
+            FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
+            //validate
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
+            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
+            ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
+
+            //send to exchange
             String requestForExchange = ExchangeModuleRequestMapper.createSendSalesResponseRequest(rulesRequest.getRequest(),
                     rulesRequest.getMessageGuid(),
                     rulesRequest.getFluxDataFlow(),
                     rulesRequest.getRecipient(),
-                    rulesRequest.getDateSent());
+                    rulesRequest.getDateSent(),
+                    validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | RulesValidationException | MessageException | SalesMarshallException e) {
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesServiceException | RulesValidationException e) {
             log.error("Couldn't validate sales response", e);
         }
     }
@@ -166,15 +181,24 @@ public class MessageServiceBean implements MessageService {
         try {
             SendSalesReportRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, SendSalesReportRequest.class);
 
-            salesHelper.handleSendSalesReportRequest(request, rulesEngine);
+            //get sales report message
+            String salesReportMessageAsString = rulesRequest.getRequest();
+            FLUXSalesResponseMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
 
+            //validate
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_REPORT_MSG, salesReportMessage);
+            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString);
+            ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
+
+            //send to exchange
             String requestForExchange = ExchangeModuleRequestMapper.createSendSalesReportRequest(rulesRequest.getRequest(),
                     rulesRequest.getMessageGuid(),
                     rulesRequest.getFluxDataFlow(),
                     rulesRequest.getRecipient(),
-                    rulesRequest.getDateSent());
+                    rulesRequest.getDateSent(),
+                    validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | RulesValidationException | MessageException | SalesMarshallException e) {
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | RulesServiceException e) {
             log.error("Couldn't validate sales report", e);
         }
     }
@@ -193,7 +217,7 @@ public class MessageServiceBean implements MessageService {
                 if (isContinueValidation) {
                     log.info("Trigger rule engine to do validation of incoming message");
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
-                    ValidationResultDto faReportValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest());
+                    ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest());
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isContinueValidation));
 
                     updateRequestMessageStatus(request.getLogGuid(), faReportValidationResult);
@@ -219,22 +243,26 @@ public class MessageServiceBean implements MessageService {
         }
     }
 
-    private void updateRequestMessageStatus(String logGuid, ValidationResultDto faReportValidationResult) throws RulesServiceException {
+    private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) throws RulesServiceException {
         try {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
-            if (faReportValidationResult.isError()) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.FAILED;
-            } else if (faReportValidationResult.isWarning()) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-            } else {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL;
-            }
+            exchangeLogStatusTypeType = calculateMessageValidationStatus(validationResult);
 
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
+        }
+    }
+
+    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+        if (validationResult.isError()) {
+            return ExchangeLogStatusTypeType.FAILED;
+        } else if (validationResult.isWarning()) {
+            return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+        } else {
+            return ExchangeLogStatusTypeType.SUCCESSFUL;
         }
     }
 
@@ -372,16 +400,10 @@ public class MessageServiceBean implements MessageService {
             //Validate response message
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
             List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType);
-            ValidationResultDto fluxResponseValidationResult = rulePostprocessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse);
+            ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse);
 
-            ExchangeLogStatusTypeType status;
-            if (fluxResponseValidationResult.isError()) {
-                status = ExchangeLogStatusTypeType.FAILED;
-            } else if (fluxResponseValidationResult.isWarning()) {
-                status = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-            } else {
-                status = ExchangeLogStatusTypeType.SUCCESSFUL;
-            }
+            ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
+
             //Create Response
             String fr = "AHR:VMS"; // TODO change it to nation code
             String df = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2"; // TODO should come from subscription. Also could be a link between DF and AD value

@@ -132,6 +132,10 @@ public class TemplateFactory {
                 return "/templates/SalesValidationDocument.drt";
             case SALES_VALIDATION_QUALITY_ANALYSIS:
                 return "/templates/SalesQualityAnalysis.drt";
+            case SALES_REPORT_WRAPPER:
+                return "/templates/SalesReportWrapper.drt";
+            case SALES_AUCTION_SALE:
+                return "/templates/SalesAuctionSale.drt";
         }
         return null;
     }
