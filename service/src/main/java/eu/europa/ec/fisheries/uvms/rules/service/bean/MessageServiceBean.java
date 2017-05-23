@@ -236,7 +236,7 @@ public class MessageServiceBean implements MessageService {
             analysis.getResults().add(text);
 
             TextType referenceItem = new TextType();
-            text.setValue("X-path"); // SET Xpath
+            referenceItem.setValue("X-path"); // SET Xpath
             analysis.getReferencedItems().add(referenceItem);
 
             validationQuality.add(analysis);

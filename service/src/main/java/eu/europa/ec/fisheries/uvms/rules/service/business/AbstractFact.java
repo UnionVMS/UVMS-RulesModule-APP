@@ -22,11 +22,13 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
@@ -230,6 +232,40 @@ public abstract class AbstractFact {
         }
         return valLength != hits;
     }
+
+    public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (MeasureType measureType : measureTypes) {
+                if (val.equals(measureType.getUnitCode())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength != hits;
+    }
+
+    public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
+        if (delimitedPeriods == null || delimitedPeriods.isEmpty()) {
+            return true;
+        }
+        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+            if (start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            } else if (start && !end && delimitedPeriod.getStartDateTime() == null) {
+                return true;
+            } else if (end && !start && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType != null && schemeIdContainsAll(Collections.singletonList(idType), values);

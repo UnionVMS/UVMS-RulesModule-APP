@@ -54,9 +54,28 @@ public interface ActivityFactMapper {
 
     @Mappings({
             @Mapping(target = "delimitedPeriods", source = "specifiedDelimitedPeriods"),
-            @Mapping(target = "operationQuantity", source = "operationsQuantity.value")
+            @Mapping(target = "operationQuantity", source = "operationsQuantity.value"),
+            @Mapping(target = "isDateProvided", source = "occurrenceDateTime"),
+            @Mapping(target = "relatedFishingTrip", source = "relatedFishingActivities"),
+            @Mapping(target = "fluxCharacteristicsTypeCode", source = "specifiedFLUXCharacteristics"),
+            @Mapping(target = "relatedDelimitedPeriods", source = "relatedFishingActivities"),
+            @Mapping(target = "relatedActivityFluxLocations", source = "relatedFishingActivities"),
+            @Mapping(target = "durationMeasure", source = "specifiedDelimitedPeriods")
     })
     FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity);
+
+    @Mappings({
+            @Mapping(target = "delimitedPeriods", source = "fishingActivity.specifiedDelimitedPeriods"),
+            @Mapping(target = "operationQuantity", source = "fishingActivity.operationsQuantity.value"),
+            @Mapping(target = "isDateProvided", source = "fishingActivity.occurrenceDateTime"),
+            @Mapping(target = "relatedFishingTrip", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "fluxCharacteristicsTypeCode", source = "fishingActivity.specifiedFLUXCharacteristics"),
+            @Mapping(target = "relatedDelimitedPeriods", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "relatedActivityFluxLocations", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "durationMeasure", source = "fishingActivity.specifiedDelimitedPeriods"),
+            @Mapping(target = "isSubActivity", source = "isSubActivity")
+    })
+    FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, boolean isSubActivity);
 
     List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
 
