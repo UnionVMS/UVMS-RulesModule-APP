@@ -10,11 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
@@ -22,20 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -46,6 +35,62 @@ public class CustomMapper {
 
     private CustomMapper() {
 
+    }
+
+    public static boolean isDatePresent(DateTimeType dateTimeType) {
+        return (dateTimeType != null);
+    }
+
+    public static List<MeasureType> getDurationMeasure(List<DelimitedPeriod> delimitedPeriods) {
+        List<MeasureType> measureTypes = null;
+        if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
+            measureTypes = new ArrayList<>();
+            for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+                if (delimitedPeriod.getDurationMeasure() != null) {
+                    measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(delimitedPeriod.getDurationMeasure()));
+                }
+            }
+        }
+        return measureTypes;
+    }
+
+    public static List<FishingTrip> getRelatedFishingTrips(List<FishingActivity> relatedFishingActivities) {
+        List<FishingTrip> fishingTrips = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            fishingTrips = new ArrayList<>();
+            for (FishingActivity fishingActivity : relatedFishingActivities) {
+                if(fishingActivity.getSpecifiedFishingTrip() != null) {
+                    fishingTrips.add(fishingActivity.getSpecifiedFishingTrip());
+                }
+            }
+        }
+        return fishingTrips;
+    }
+
+    public static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
+        List<DelimitedPeriod> delimitedPeriod = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            delimitedPeriod = new ArrayList<>();
+            for (FishingActivity activity : relatedFishingActivities) {
+                if (activity.getSpecifiedDelimitedPeriods() != null) {
+                    delimitedPeriod.addAll(activity.getSpecifiedDelimitedPeriods());
+                }
+            }
+        }
+        return delimitedPeriod;
+    }
+
+    public static List<FLUXLocation> getFluxLocations(List<FishingActivity> relatedFishingActivities) {
+        List<FLUXLocation> fluxLocations = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            fluxLocations = new ArrayList<>();
+            for (FishingActivity activity : relatedFishingActivities) {
+                if (activity.getRelatedFLUXLocations() != null) {
+                    fluxLocations.addAll(activity.getRelatedFLUXLocations());
+                }
+            }
+        }
+        return fluxLocations;
     }
 
     public static List<CodeType> mapToIdTypeList(List<ContactParty> contactPartyList) {
@@ -77,7 +122,7 @@ public class CustomMapper {
     public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
 
-        if (CollectionUtils.isEmpty(contactPartyList)) {
+        if (CollectionUtils.isNotEmpty(contactPartyList)) {
 
             contactPersonList = Collections.newArrayList();
 

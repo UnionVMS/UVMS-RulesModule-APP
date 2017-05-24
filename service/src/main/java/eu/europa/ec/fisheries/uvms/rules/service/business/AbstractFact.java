@@ -17,11 +17,13 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.util.ArrayList;
@@ -84,7 +86,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        return schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
     }
 
     /**
@@ -149,15 +151,13 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType alias          = contPers.getAlias();
             if(givenName == null && familyName == null){
-                if(alias == null){
+                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
                     return true;
                 }
-                if(checkAliasEmptyness && StringUtils.isEmpty(alias.getValue())){
-                    return true;
-                }
+            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+                return true;
             }
         }
-
         return false;
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
+            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return true;
         }
         return false;
@@ -202,7 +202,7 @@ public abstract class AbstractFact {
 
 
     private boolean validateFormat(String value, String format) {
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
+       if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
         return value.matches(format);
@@ -213,7 +213,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int valLength = valuesToMatch.length;
         int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
@@ -222,8 +221,41 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength != hits;
+        return valuesToMatch.length != hits;
     }
+
+    public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
+            return true;
+        }
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (MeasureType measureType : measureTypes) {
+                if (val.equals(measureType.getUnitCode())) {
+                    hits++;
+                }
+            }
+        }
+        return valuesToMatch.length != hits;
+    }
+
+    public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
+        if (delimitedPeriods == null || delimitedPeriods.isEmpty()) {
+            return true;
+        }
+        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+            if (start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            } else if (start && !end && delimitedPeriod.getStartDateTime() == null) {
+                return true;
+            } else if (end && !start && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
@@ -275,15 +307,17 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    private enum FORMATS {
+    public enum FORMATS {
+        // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
+        // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
 
-        UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
-        EXT_MARK("someFromat"),
-        IRCS("someFromat"),
-        CFR("someFromat"),
-        UVI("someFromat"),
-        ICCAT("someFromat"),
-        GFCM("someFromat");
+        UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+        EXT_MARK("[a-zA-Z0-9]{1,14}"),
+        IRCS("[a-zA-Z0-9]{1,7}"),
+        CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
+        UVI("[a-zA-Z0-9]{7}"),
+        ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
+        GFCM("[a-zA-Z0-9]{1,13}");
 
         String formatStr;
 

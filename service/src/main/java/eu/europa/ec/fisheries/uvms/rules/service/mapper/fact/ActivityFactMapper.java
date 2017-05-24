@@ -13,7 +13,39 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,9 +53,20 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-
-import java.util.List;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 /**
  * @author padhyad
@@ -46,7 +89,9 @@ public interface ActivityFactMapper {
             @Mapping(target = "purposeCode", source = "relatedFLUXReportDocument.purposeCode"),
             @Mapping(target = "ids", source = "relatedFLUXReportDocument.IDS"),
             @Mapping(target = "ownerFluxPartyIds", source = "relatedFLUXReportDocument.ownerFLUXParty.IDS"),
-            @Mapping(target = "uniqueIds", source = "relatedFLUXReportDocument")
+            @Mapping(target = "uniqueIds", source = "relatedFLUXReportDocument"),
+            @Mapping(target = "relatedFLUXReportDocumentIDs", source = "relatedFLUXReportDocument.IDS"),
+            @Mapping(target = "relatedFLUXReportDocumentReferencedID", source = "relatedFLUXReportDocument.referencedID")
     })
     FaReportDocumentFact generateFactForFaReportDocument(FAReportDocument faReportDocuments);
 
@@ -54,9 +99,28 @@ public interface ActivityFactMapper {
 
     @Mappings({
             @Mapping(target = "delimitedPeriods", source = "specifiedDelimitedPeriods"),
-            @Mapping(target = "operationQuantity", source = "operationsQuantity.value")
+            @Mapping(target = "operationQuantity", source = "operationsQuantity.value"),
+            @Mapping(target = "isDateProvided", source = "occurrenceDateTime"),
+            @Mapping(target = "relatedFishingTrip", source = "relatedFishingActivities"),
+            @Mapping(target = "fluxCharacteristicsTypeCode", source = "specifiedFLUXCharacteristics"),
+            @Mapping(target = "relatedDelimitedPeriods", source = "relatedFishingActivities"),
+            @Mapping(target = "relatedActivityFluxLocations", source = "relatedFishingActivities"),
+            @Mapping(target = "durationMeasure", source = "specifiedDelimitedPeriods")
     })
     FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity);
+
+    @Mappings({
+            @Mapping(target = "delimitedPeriods", source = "fishingActivity.specifiedDelimitedPeriods"),
+            @Mapping(target = "operationQuantity", source = "fishingActivity.operationsQuantity.value"),
+            @Mapping(target = "isDateProvided", source = "fishingActivity.occurrenceDateTime"),
+            @Mapping(target = "relatedFishingTrip", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "fluxCharacteristicsTypeCode", source = "fishingActivity.specifiedFLUXCharacteristics"),
+            @Mapping(target = "relatedDelimitedPeriods", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "relatedActivityFluxLocations", source = "fishingActivity.relatedFishingActivities"),
+            @Mapping(target = "durationMeasure", source = "fishingActivity.specifiedDelimitedPeriods"),
+            @Mapping(target = "isSubActivity", source = "isSubActivity")
+    })
+    FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, boolean isSubActivity);
 
     List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities);
 
