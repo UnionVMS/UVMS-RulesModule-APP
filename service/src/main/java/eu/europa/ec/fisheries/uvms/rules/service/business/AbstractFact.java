@@ -334,4 +334,69 @@ public abstract class AbstractFact {
         }
     }
 
+
+
+
+    /**
+     * Checks if one of the String... array elements exists in the idTypes list.
+     *
+     * @param codeTypes
+     * @param values
+     * @return false/true
+     */
+    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+        if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (String val : values) {
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getListId())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean valueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (CodeType IdType : codeTypes) {
+                if (val.equals(IdType.getValue())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength != hits;
+    }
+    public boolean valueMustContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int valLength = codeTypes.size();
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (CodeType IdType : codeTypes) {
+                if (val.equals(IdType.getValue())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength != hits;
+    }
+
+    public boolean listMustContains(CodeType codeType1,String valueToMatch1, CodeType codeType2,String valueToMatch2){
+        if (codeType1 == null || codeType2 == null || valueToMatch1==null || valueToMatch2 == null || valueToMatch1.trim().length()==0 || valueToMatch2.trim().length()==0)
+            return true;
+        if (codeType1.getValue().equals(valueToMatch1) && codeType2.getValue().equals(valueToMatch2))
+            return false;
+
+        return  true;
+    }
+
+
 }
