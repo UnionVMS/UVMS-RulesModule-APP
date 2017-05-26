@@ -195,7 +195,7 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            return true;
+            return false;
         }
         return false;
     }
@@ -332,6 +332,14 @@ public abstract class AbstractFact {
         public void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
+    }
+
+    public boolean isEmpty(List<?> list){
+        return CollectionUtils.isEmpty(list);
+    }
+
+    public boolean isEmpty(String str){
+        return StringUtils.isEmpty(str);
     }
 
 }
