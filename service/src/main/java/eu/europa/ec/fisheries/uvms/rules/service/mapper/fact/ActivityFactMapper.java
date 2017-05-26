@@ -331,8 +331,8 @@ public interface ActivityFactMapper {
             @Mapping(target = "fishingActivityCodeType", source = "fishingActivity.typeCode"),
             @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
             @Mapping(target = "relatedFluxLocations", source = "fishingActivity.relatedFLUXLocations"),
-            @Mapping(target = "relatedFluxLocationTypeCode", source = "fishingActivity.relatedFLUXLocations"),
-            @Mapping(target = "specifiedFaCatchesSpecifiedFLUXLocations",source = "fishingActivity.specifiedFACatches"),
+            @Mapping(target = "relatedFluxLocationTypeCodes", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "specifiedFaCatches",source = "fishingActivity.specifiedFACatches"),
             @Mapping(target = "specifiedFaCatchTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH))"),
             @Mapping(target = "specifiedFaCatchFluxLocationTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH_FLUXLOCATION))")
     })
