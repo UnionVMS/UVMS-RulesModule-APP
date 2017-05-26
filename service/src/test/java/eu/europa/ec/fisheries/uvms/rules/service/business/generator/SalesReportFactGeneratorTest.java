@@ -62,13 +62,10 @@ public class SalesReportFactGeneratorTest {
 
         assertEquals(allCorrectFacts.size(), allFacts.size());
 
-
-//        Doesn't work..
-//        for (AbstractFact fact : allCorrectFacts) {
-//            boolean doesContain = allFacts.contains(fact);
-//
-//            assertTrue(doesContain);
-//        }
+        /*TODO MATHIAS: fix: mapping is incomplete?
+        for (AbstractFact fact : allCorrectFacts) {
+            assertTrue(allFacts.contains(fact));
+        }*/
     }
 
     private Report generateObjectToConvertToFact() {
@@ -182,7 +179,7 @@ public class SalesReportFactGeneratorTest {
 
 
         SalesReportWrapperFact reportFact = new SalesReportWrapperFact();
-        reportFact.setFluxSalesReportMessage(fluxSalesReportMessage);
+        reportFact.setFLUXSalesReportMessage(fluxSalesReportMessage);
         reportFact.setAuctionSale(new AuctionSaleType());
 
         SalesAuctionSaleFact salesAuctionSaleFact = new SalesAuctionSaleFact();

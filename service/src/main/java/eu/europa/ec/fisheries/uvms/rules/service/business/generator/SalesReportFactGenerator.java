@@ -19,33 +19,28 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Stateless
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
     private Report report;
     private List<AbstractFact> facts;
     private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
-
-    @Inject
     private MapperFacade mapper;
-
-    @EJB
     private FactGeneratorHelper factGeneratorHelper;
 
 
     public SalesReportFactGenerator() {
+        this.factGeneratorHelper = new FactGeneratorHelper();
+        this.mapper = new DefaultOrikaMapper().getMapper();
         mappingsToFacts = new HashMap<>();
         fillMap();
     }

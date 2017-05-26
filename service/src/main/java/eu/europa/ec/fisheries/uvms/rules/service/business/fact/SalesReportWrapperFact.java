@@ -15,11 +15,11 @@ public class SalesReportWrapperFact extends AbstractFact {
         this.factType = FactType.SALES_REPORT_WRAPPER;
     }
 
-    public FLUXSalesReportMessage getFluxSalesReportMessage() {
+    public FLUXSalesReportMessage getFLUXSalesReportMessage() {
         return fluxSalesReportMessage;
     }
 
-    public void setFluxSalesReportMessage(FLUXSalesReportMessage fluxSalesReportMessage) {
+    public void setFLUXSalesReportMessage(FLUXSalesReportMessage fluxSalesReportMessage) {
         this.fluxSalesReportMessage = fluxSalesReportMessage;
     }
 

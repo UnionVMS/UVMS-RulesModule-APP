@@ -95,9 +95,14 @@ public class MessageServiceBean implements MessageService {
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesQueryMessageAsString);
 
             //send to sales
-            //TODO: extend with logic: send it to another endpoint when message is invalid
-            String requestForSales = SalesModuleRequestMapper.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), validationResult);
-            sendToSales(requestForSales);
+            if (validationResult.isError()) {
+                String requestForSales = SalesModuleRequestMapper.createRespondToInvalidMessageRequest(receiveSalesQueryRequest.getMessageGuid(), validationResult, receiveSalesQueryRequest.getPluginType(), receiveSalesQueryRequest.getSender());
+                sendToSales(requestForSales);
+            } else {
+                String requestForSales = SalesModuleRequestMapper.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), validationResult, receiveSalesQueryRequest.getPluginType());
+                sendToSales(requestForSales);
+            }
+
 
             updateRequestMessageStatus(receiveSalesQueryRequest.getLogGuid(), validationResult);
         } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
@@ -119,9 +124,14 @@ public class MessageServiceBean implements MessageService {
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString);
 
             //send to sales
-            //TODO: extend with logic: send it to another endpoint when message is invalid
-            String salesReportRequestAsString = SalesModuleRequestMapper.createSalesReportRequest(receiveSalesReportRequest.getRequest(), validationResult);
-            sendToSales(salesReportRequestAsString);
+            if (validationResult.isError()) {
+                String requestForSales = SalesModuleRequestMapper.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult, receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender());
+                sendToSales(requestForSales);
+            } else {
+                String requestForSales = SalesModuleRequestMapper.createSalesReportRequest(receiveSalesReportRequest.getRequest(), validationResult, receiveSalesReportRequest.getPluginType());
+                sendToSales(requestForSales);
+            }
+
 
             //update log status
             updateRequestMessageStatus(receiveSalesReportRequest.getLogGuid(), validationResult);

@@ -17,7 +17,7 @@ public class SalesFLUXSalesReportMessageFact extends AbstractFact {
         this.factType = FactType.SALES_FLUX_SALES_REPORT_MESSAGE;
     }
 
-    public FLUXReportDocumentType getFluxReportDocument() {
+    public FLUXReportDocumentType getFLUXReportDocument() {
         return this.fluxReportDocument;
     }
 
@@ -25,7 +25,7 @@ public class SalesFLUXSalesReportMessageFact extends AbstractFact {
         return this.salesReports;
     }
 
-    public void setFluxReportDocument(FLUXReportDocumentType fluxReportDocument) {
+    public void setFLUXReportDocument(FLUXReportDocumentType fluxReportDocument) {
         this.fluxReportDocument = fluxReportDocument;
     }
 
@@ -38,8 +38,8 @@ public class SalesFLUXSalesReportMessageFact extends AbstractFact {
         if (!(o instanceof SalesFLUXSalesReportMessageFact)) return false;
         final SalesFLUXSalesReportMessageFact other = (SalesFLUXSalesReportMessageFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$fluxReportDocument = this.getFluxReportDocument();
-        final Object other$fluxReportDocument = other.getFluxReportDocument();
+        final Object this$fluxReportDocument = this.getFLUXReportDocument();
+        final Object other$fluxReportDocument = other.getFLUXReportDocument();
         if (this$fluxReportDocument == null ? other$fluxReportDocument != null : !this$fluxReportDocument.equals(other$fluxReportDocument))
             return false;
         final Object this$salesReports = this.getSalesReports();
@@ -52,7 +52,7 @@ public class SalesFLUXSalesReportMessageFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $fluxReportDocument = this.getFluxReportDocument();
+        final Object $fluxReportDocument = this.getFLUXReportDocument();
         result = result * PRIME + ($fluxReportDocument == null ? 43 : $fluxReportDocument.hashCode());
         final Object $salesReports = this.getSalesReports();
         result = result * PRIME + ($salesReports == null ? 43 : $salesReports.hashCode());

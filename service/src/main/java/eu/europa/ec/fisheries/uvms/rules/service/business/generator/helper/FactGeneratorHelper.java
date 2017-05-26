@@ -1,12 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
-import javax.ejb.Stateless;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Stateless
 public class FactGeneratorHelper {
 
     public List<Object> findAllObjectsWithOneOfTheFollowingClasses(Object object, Collection<Class<?>> classesToSearchFor) throws IllegalAccessException, ClassNotFoundException {
@@ -38,8 +36,8 @@ public class FactGeneratorHelper {
                     }
                 }
 
-                //is the field an object? Let's repeat this logic for that object
-                if (!fieldClazz.isPrimitive()) {
+                //is the field an object of Union/UNCEFACT? Let's repeat this logic for that object
+                if (fieldClazz.getName().startsWith("eu.") || fieldClazz.getName().startsWith("un.")) {
                     foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(fieldObject, classesToSearchFor));
                 }
 

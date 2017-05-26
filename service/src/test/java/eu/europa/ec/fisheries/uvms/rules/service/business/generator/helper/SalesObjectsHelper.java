@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
-import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.schema.sales.CodeType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import org.joda.time.DateTime;
 
@@ -17,7 +17,7 @@ public class SalesObjectsHelper {
 
     public SalesFLUXSalesReportMessageFact getSalesFLUXSalesReportMessageFact(FLUXReportDocumentType fluxReportDocument, SalesDocumentType salesDocument) {
         SalesFLUXSalesReportMessageFact fluxSalesReportMessageFact = new SalesFLUXSalesReportMessageFact();
-        fluxSalesReportMessageFact.setFluxReportDocument(fluxReportDocument);
+        fluxSalesReportMessageFact.setFLUXReportDocument(fluxReportDocument);
         fluxSalesReportMessageFact.setSalesReports(newArrayList(new SalesReportType().withIncludedSalesDocuments(salesDocument)));
         return fluxSalesReportMessageFact;
     }
