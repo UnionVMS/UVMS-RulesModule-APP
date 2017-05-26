@@ -388,4 +388,20 @@ public class CustomMapper {
     }
 
 
+    public static  List<FLUXLocation> getFluxLocationFromFaCatch(List<FACatch> faCatch){
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<FLUXLocation> specifiedFaCatchSpecifiedFluxLocationList=new ArrayList<>();
+        for (FACatch faCatc : faCatch){
+            specifiedFaCatchSpecifiedFluxLocationList.addAll(faCatc.getSpecifiedFLUXLocations());
+
+
+
+
+        }
+
+        return  specifiedFaCatchSpecifiedFluxLocationList;
+    }
+
 }

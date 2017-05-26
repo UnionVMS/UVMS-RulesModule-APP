@@ -111,6 +111,7 @@ public class MessageServiceBean implements MessageService {
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                 } else {
+                    updateRequestMessageStatus(request.getLogGuid(), validationMap.get(isContinueValidation));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }

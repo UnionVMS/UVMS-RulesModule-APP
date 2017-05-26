@@ -210,7 +210,8 @@ public interface ActivityFactMapper {
     List<VesselStorageCharacteristicsFact> generateFactsForVesselStorageCharacteristics(List<VesselStorageCharacteristic> vesselStorageCharacteristics);
 
     @Mappings({
-            @Mapping(target = "ids", source = "IDS")
+            @Mapping(target = "ids", source = "IDS"),
+            @Mapping(target = "typeCode", source = "typeCode")
     })
     FishingTripFact generateFactForFishingTrip(FishingTrip fishingTrip);
 
@@ -330,6 +331,8 @@ public interface ActivityFactMapper {
             @Mapping(target = "fishingActivityCodeType", source = "fishingActivity.typeCode"),
             @Mapping(target = "faReportDocumentTypeCode", source = "faReportDocument.typeCode"),
             @Mapping(target = "relatedFluxLocations", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "relatedFluxLocationTypeCode", source = "fishingActivity.relatedFLUXLocations"),
+            @Mapping(target = "specifiedFaCatchesSpecifiedFLUXLocations",source = "fishingActivity.specifiedFACatches"),
             @Mapping(target = "specifiedFaCatchTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH))"),
             @Mapping(target = "specifiedFaCatchFluxLocationTypeCode", expression = "java(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(),CODE_TYPE_FOR_FACATCH_FLUXLOCATION))")
     })

@@ -26,10 +26,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -74,7 +71,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength != hits;
+        return valLength > hits;
     }
 
     /**
@@ -213,15 +210,14 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
-                if (val.equals(IdType.getListId())) {
-                    hits++;
+                if (!val.equals(IdType.getListId())) {
+                    return true;
                 }
             }
         }
-        return valuesToMatch.length != hits;
+        return false;
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
@@ -236,7 +232,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valuesToMatch.length != hits;
+        return valuesToMatch.length > hits;
     }
 
     public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
@@ -332,6 +328,83 @@ public abstract class AbstractFact {
         public void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
+    }
+
+
+
+
+    /**
+     * Checks if one of the String... array elements exists in the idTypes list.
+     *
+     * @param codeTypes
+     * @param values
+     * @return false/true
+     */
+    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+        if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (String val : values) {
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getListId())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
+        return valueContainsAny(Arrays.asList(codeType), valuesToMatch);
+    }
+
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+
+    public boolean AnyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+
+        outer : for (String val : valuesToMatch) {
+            for (CodeType IdType : codeTypes) {
+                if (val.equals(IdType.getValue())) {
+                    isMatchFound = true;
+                    continue outer;
+                }
+            }
+            isMatchFound = false;
+        }
+        return !isMatchFound;
+    }
+
+    public boolean AllValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
+        if (valueToMatch == null || valueToMatch.length() == 0) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            if (!valueToMatch.equals(codeType.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isEmpty(List<?> list){
