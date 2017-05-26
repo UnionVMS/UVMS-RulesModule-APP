@@ -1,10 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
-import eu.europa.ec.fisheries.schema.sales.NumericType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProcessFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesReportFact;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,5 +32,27 @@ public class SalesFactMapperTest {
         assertEquals(BigDecimal.ONE, salesAAPProcessFact.getConversionFactorNumeric().getValue());
         assertEquals("Freddy Fish", salesAAPProcessFact.getResultAAPProducts().get(0).getSpeciesCode().getValue());
         assertEquals("Loebas", salesAAPProcessFact.getTypeCodes().get(0).getValue());
+    }
+
+    @Test
+    public void testFLUXPartyTypeWithIDS() {
+        FLUXPartyType fluxPartyType = new FLUXPartyType()
+                .withIDS(new IDType().withValue("ID"))
+                .withNames(new TextType().withValue("NAME"));
+
+        SalesFLUXPartyFact salesFLUXPartyFact = SalesFactMapper.INSTANCE.generateFactForFLUXPartyFact(fluxPartyType);
+
+        assertEquals("ID", salesFLUXPartyFact.getIDS().get(0).getValue());
+        assertEquals("NAME", salesFLUXPartyFact.getNames().get(0).getValue());
+    }
+
+    @Test
+    public void testSalesReportWithID() {
+        SalesReportType salesReportType = new SalesReportType();
+        salesReportType.withID(new IDType().withValue("ID"));
+
+        SalesReportFact salesReportFact = SalesFactMapper.INSTANCE.generateFactForSalesReportFact(salesReportType);
+
+        assertEquals("ID", salesReportFact.getID().getValue());
     }
 }

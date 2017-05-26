@@ -13,11 +13,11 @@ public class SalesVesselCountryFact extends AbstractFact {
         this.factType = FactType.SALES_VESSEL_COUNTRY;
     }
 
-    public IDType getId() {
+    public IDType getID() {
         return this.id;
     }
 
-    public void setId(IDType id) {
+    public void setID(IDType id) {
         this.id = id;
     }
 
@@ -26,8 +26,8 @@ public class SalesVesselCountryFact extends AbstractFact {
         if (!(o instanceof SalesVesselCountryFact)) return false;
         final SalesVesselCountryFact other = (SalesVesselCountryFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getId();
-        final Object other$id = other.getId();
+        final Object this$id = this.getID();
+        final Object other$id = other.getID();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
         return true;
     }
@@ -35,7 +35,7 @@ public class SalesVesselCountryFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $id = this.getId();
+        final Object $id = this.getID();
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
         return result;
     }

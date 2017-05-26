@@ -17,7 +17,7 @@ public class SalesFLUXPartyFact extends AbstractFact {
         this.factType = FactType.SALES_FLUX_PARTY;
     }
 
-    public List<IDType> getIds() {
+    public List<IDType> getIDS() {
         return this.ids;
     }
 
@@ -25,7 +25,7 @@ public class SalesFLUXPartyFact extends AbstractFact {
         return this.names;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIDS(List<IDType> ids) {
         this.ids = ids;
     }
 
@@ -38,8 +38,8 @@ public class SalesFLUXPartyFact extends AbstractFact {
         if (!(o instanceof SalesFLUXPartyFact)) return false;
         final SalesFLUXPartyFact other = (SalesFLUXPartyFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIds();
-        final Object other$ids = other.getIds();
+        final Object this$ids = this.getIDS();
+        final Object other$ids = other.getIDS();
         if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
         final Object this$names = this.getNames();
         final Object other$names = other.getNames();
@@ -50,7 +50,7 @@ public class SalesFLUXPartyFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $ids = this.getIds();
+        final Object $ids = this.getIDS();
         result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
         final Object $names = this.getNames();
         result = result * PRIME + ($names == null ? 43 : $names.hashCode());

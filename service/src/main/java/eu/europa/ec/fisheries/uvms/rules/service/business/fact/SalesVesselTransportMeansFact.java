@@ -41,7 +41,7 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
         this.factType = FactType.SALES_VESSEL_TRANSPORT_MEANS;
     }
 
-    public List<IDType> getIds() {
+    public List<IDType> getIDS() {
         return this.ids;
     }
 
@@ -141,7 +141,7 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
         return this.grantedFLAPDocuments;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIDS(List<IDType> ids) {
         this.ids = ids;
     }
 
@@ -246,8 +246,8 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
         if (!(o instanceof SalesVesselTransportMeansFact)) return false;
         final SalesVesselTransportMeansFact other = (SalesVesselTransportMeansFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIds();
-        final Object other$ids = other.getIds();
+        final Object this$ids = this.getIDS();
+        final Object other$ids = other.getIDS();
         if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
         final Object this$names = this.getNames();
         final Object other$names = other.getNames();
@@ -348,7 +348,7 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $ids = this.getIds();
+        final Object $ids = this.getIDS();
         result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
         final Object $names = this.getNames();
         result = result * PRIME + ($names == null ? 43 : $names.hashCode());

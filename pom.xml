@@ -22,6 +22,7 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
+        <orika.version>1.5.0</orika.version>
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>
@@ -48,6 +49,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>${orika.version}</version>
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
             <artifactId>sales-model</artifactId>

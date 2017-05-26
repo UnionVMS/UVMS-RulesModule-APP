@@ -19,7 +19,7 @@ public class SalesBatchFact extends AbstractFact {
         this.factType = FactType.SALES_BATCH;
     }
 
-    public List<IDType> getIds() {
+    public List<IDType> getIDS() {
         return this.ids;
     }
 
@@ -31,7 +31,7 @@ public class SalesBatchFact extends AbstractFact {
         return this.totalSalesPrice;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIDS(List<IDType> ids) {
         this.ids = ids;
     }
 
@@ -48,8 +48,8 @@ public class SalesBatchFact extends AbstractFact {
         if (!(o instanceof SalesBatchFact)) return false;
         final SalesBatchFact other = (SalesBatchFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIds();
-        final Object other$ids = other.getIds();
+        final Object this$ids = this.getIDS();
+        final Object other$ids = other.getIDS();
         if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
         final Object this$specifiedAAPProducts = this.getSpecifiedAAPProducts();
         final Object other$specifiedAAPProducts = other.getSpecifiedAAPProducts();
@@ -65,7 +65,7 @@ public class SalesBatchFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $ids = this.getIds();
+        final Object $ids = this.getIDS();
         result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
         final Object $specifiedAAPProducts = this.getSpecifiedAAPProducts();
         result = result * PRIME + ($specifiedAAPProducts == null ? 43 : $specifiedAAPProducts.hashCode());

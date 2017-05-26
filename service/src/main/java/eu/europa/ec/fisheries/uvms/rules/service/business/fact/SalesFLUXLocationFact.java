@@ -36,7 +36,7 @@ public class SalesFLUXLocationFact extends AbstractFact {
         return this.countryID;
     }
 
-    public IDType getId() {
+    public IDType getID() {
         return this.id;
     }
 
@@ -88,7 +88,7 @@ public class SalesFLUXLocationFact extends AbstractFact {
         this.countryID = countryID;
     }
 
-    public void setId(IDType id) {
+    public void setID(IDType id) {
         this.id = id;
     }
 
@@ -143,8 +143,8 @@ public class SalesFLUXLocationFact extends AbstractFact {
         final Object this$countryID = this.getCountryID();
         final Object other$countryID = other.getCountryID();
         if (this$countryID == null ? other$countryID != null : !this$countryID.equals(other$countryID)) return false;
-        final Object this$id = this.getId();
-        final Object other$id = other.getId();
+        final Object this$id = this.getID();
+        final Object other$id = other.getID();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
         final Object this$geopoliticalRegionCode = this.getGeopoliticalRegionCode();
         final Object other$geopoliticalRegionCode = other.getGeopoliticalRegionCode();
@@ -195,7 +195,7 @@ public class SalesFLUXLocationFact extends AbstractFact {
         result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
         final Object $countryID = this.getCountryID();
         result = result * PRIME + ($countryID == null ? 43 : $countryID.hashCode());
-        final Object $id = this.getId();
+        final Object $id = this.getID();
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
         final Object $geopoliticalRegionCode = this.getGeopoliticalRegionCode();
         result = result * PRIME + ($geopoliticalRegionCode == null ? 43 : $geopoliticalRegionCode.hashCode());

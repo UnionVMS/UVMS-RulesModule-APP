@@ -31,7 +31,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         this.factType = FactType.SALES_STRUCTURED_ADDRESS;
     }
 
-    public IDType getId() {
+    public IDType getID() {
         return this.id;
     }
 
@@ -99,7 +99,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         return this.postalArea;
     }
 
-    public void setId(IDType id) {
+    public void setID(IDType id) {
         this.id = id;
     }
 
@@ -172,8 +172,8 @@ public class SalesStructuredAddressFact extends AbstractFact {
         if (!(o instanceof SalesStructuredAddressFact)) return false;
         final SalesStructuredAddressFact other = (SalesStructuredAddressFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getId();
-        final Object other$id = other.getId();
+        final Object this$id = this.getID();
+        final Object other$id = other.getID();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
         final Object this$postcodeCode = this.getPostcodeCode();
         final Object other$postcodeCode = other.getPostcodeCode();
@@ -242,7 +242,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $id = this.getId();
+        final Object $id = this.getID();
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
         final Object $postcodeCode = this.getPostcodeCode();
         result = result * PRIME + ($postcodeCode == null ? 43 : $postcodeCode.hashCode());

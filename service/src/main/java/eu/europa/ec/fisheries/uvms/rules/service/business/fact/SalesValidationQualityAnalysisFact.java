@@ -34,7 +34,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         return this.results;
     }
 
-    public IDType getId() {
+    public IDType getID() {
         return this.id;
     }
 
@@ -58,7 +58,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         this.results = results;
     }
 
-    public void setId(IDType id) {
+    public void setID(IDType id) {
         this.id = id;
     }
 
@@ -84,8 +84,8 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         final Object this$results = this.getResults();
         final Object other$results = other.getResults();
         if (this$results == null ? other$results != null : !this$results.equals(other$results)) return false;
-        final Object this$id = this.getId();
-        final Object other$id = other.getId();
+        final Object this$id = this.getID();
+        final Object other$id = other.getID();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
         final Object this$description = this.getDescription();
         final Object other$description = other.getDescription();
@@ -107,7 +107,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
         final Object $results = this.getResults();
         result = result * PRIME + ($results == null ? 43 : $results.hashCode());
-        final Object $id = this.getId();
+        final Object $id = this.getID();
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
         final Object $description = this.getDescription();
         result = result * PRIME + ($description == null ? 43 : $description.hashCode());

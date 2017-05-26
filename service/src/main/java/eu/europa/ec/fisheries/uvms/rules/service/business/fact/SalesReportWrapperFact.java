@@ -7,7 +7,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 public class SalesReportWrapperFact extends AbstractFact {
 
-    private  FLUXSalesReportMessage fluxSalesReportMessage;
+    private FLUXSalesReportMessage fluxSalesReportMessage;
     private AuctionSaleType auctionSale;
 
     @Override

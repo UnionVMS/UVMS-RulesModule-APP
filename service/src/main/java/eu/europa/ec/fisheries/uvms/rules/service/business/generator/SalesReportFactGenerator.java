@@ -13,30 +13,118 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.schema.sales.Report;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.SalesFactMapper;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
+@Stateless
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
     private Report report;
     private List<AbstractFact> facts;
-    private SalesFactMapper mapper = SalesFactMapper.INSTANCE;
+    private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
+
+    @Inject
+    private MapperFacade mapper;
+
+    @EJB
+    private FactGeneratorHelper factGeneratorHelper;
+
+
+    public SalesReportFactGenerator() {
+        mappingsToFacts = new HashMap<>();
+        fillMap();
+    }
+
+    public SalesReportFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade) {
+        this();
+        this.factGeneratorHelper = factGeneratorHelper;
+        this.mapper = mapperFacade;
+    }
+
+    private List<Class<?>> findAllClassesFromOrikaMapperMap() {
+        List<Class<?>> classes = Lists.newArrayList();
+
+        for (Map.Entry<Class<?>, Class<? extends AbstractFact>> classClassEntry : mappingsToFacts.entrySet()) {
+            classes.add(classClassEntry.getKey());
+        }
+
+        return classes;
+    }
 
     @Override
     public List<AbstractFact> getAllFacts() {
         facts = new ArrayList<>();
+
+        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
+
+        for (Object objectToMapToFact : objectsToMapToFacts) {
+            AbstractFact fact = mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            facts.add(fact);
+        }
+
         return facts;
+    }
+
+    private List<Object> findObjectsToMapToFacts() {
+        try {
+            return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(report, findAllClassesFromOrikaMapperMap());
+        } catch (IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace(); // TODO
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
         this.report = businessObject;
     }
+
+    private void fillMap() {
+        mappingsToFacts.put(Report.class, SalesReportWrapperFact.class);
+        mappingsToFacts.put(AuctionSaleType.class, SalesAuctionSaleFact.class);
+        mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
+        mappingsToFacts.put(AAPProcessType.class, SalesAAPProcessFact.class);
+        mappingsToFacts.put(AAPProductType.class, SalesAAPProcessFact.class);
+        mappingsToFacts.put(SalesBatchType.class, SalesBatchFact.class);
+        mappingsToFacts.put(ContactPartyType.class, SalesContactPartyFact.class);
+        mappingsToFacts.put(ContactPersonType.class, SalesContactPersonFact.class);
+        mappingsToFacts.put(DelimitedPeriodType.class, SalesDelimitedPeriodFact.class);
+        mappingsToFacts.put(SalesDocumentType.class, SalesDocumentFact.class);
+        mappingsToFacts.put(SalesEventType.class, SalesEventFact.class);
+        mappingsToFacts.put(FishingActivityType.class, SalesFishingActivityFact.class);
+        mappingsToFacts.put(FishingTripType.class, SalesFishingTripFact.class);
+        mappingsToFacts.put(FLUXGeographicalCoordinateType.class, SalesFLUXGeographicalCoordinateFact.class);
+        mappingsToFacts.put(FLUXLocationType.class, SalesFLUXLocationFact.class);
+        mappingsToFacts.put(FLUXOrganizationType.class, SalesFLUXOrganizationFact.class);
+        mappingsToFacts.put(FLUXPartyType.class, SalesFLUXPartyFact.class);
+        mappingsToFacts.put(FLUXReportDocumentType.class, SalesFLUXReportDocumentFact.class);
+        mappingsToFacts.put(FLUXResponseDocumentType.class, SalesFLUXResponseDocumentFact.class);
+        mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
+        mappingsToFacts.put(SalesPartyType.class, SalesPartyFact.class);
+        mappingsToFacts.put(SalesPriceType.class, SalesPriceFact.class);
+        mappingsToFacts.put(SalesQueryType.class, SalesQueryFact.class);
+        mappingsToFacts.put(SalesReportType.class, SalesReportFact.class);
+        mappingsToFacts.put(SizeDistributionType.class, SalesSizeDistributionFact.class);
+        mappingsToFacts.put(StructuredAddressType.class, SalesStructuredAddressFact.class);
+        mappingsToFacts.put(ValidationQualityAnalysisType.class, SalesValidationResultDocumentFact.class);
+        mappingsToFacts.put(VesselCountryType.class, SalesVesselCountryFact.class);
+        mappingsToFacts.put(VesselTransportMeansType.class, SalesVesselTransportMeansFact.class);
+    }
+
+
 }

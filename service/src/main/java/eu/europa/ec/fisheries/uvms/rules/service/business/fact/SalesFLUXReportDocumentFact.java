@@ -12,9 +12,9 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
     private List<IDType> ids;
     private IDType referencedID;
     private DateTimeType creationDateTime;
-    private eu.europa.ec.fisheries.schema.sales.CodeType purposeCode;
+    private CodeType purposeCode;
     private TextType purpose;
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType typeCode;
     private FLUXPartyType ownerFLUXParty;
 
     @Override
@@ -22,7 +22,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.factType = FactType.SALES_FLUX_REPORT_DOCUMENT;
     }
 
-    public List<IDType> getIds() {
+    public List<IDType> getIDS() {
         return this.ids;
     }
 
@@ -50,7 +50,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         return this.ownerFLUXParty;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIDS(List<IDType> ids) {
         this.ids = ids;
     }
 
@@ -83,8 +83,8 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         if (!(o instanceof SalesFLUXReportDocumentFact)) return false;
         final SalesFLUXReportDocumentFact other = (SalesFLUXReportDocumentFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIds();
-        final Object other$ids = other.getIds();
+        final Object this$ids = this.getIDS();
+        final Object other$ids = other.getIDS();
         if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
         final Object this$referencedID = this.getReferencedID();
         final Object other$referencedID = other.getReferencedID();
@@ -114,7 +114,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $ids = this.getIds();
+        final Object $ids = this.getIDS();
         result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
         final Object $referencedID = this.getReferencedID();
         result = result * PRIME + ($referencedID == null ? 43 : $referencedID.hashCode());

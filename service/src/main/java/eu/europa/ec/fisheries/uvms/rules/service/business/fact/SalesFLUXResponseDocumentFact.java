@@ -24,7 +24,7 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
         this.factType = FactType.SALES_FLUX_RESPONSE_DOCUMENT;
     }
 
-    public List<IDType> getIds() {
+    public List<IDType> getIDS() {
         return this.ids;
     }
 
@@ -60,7 +60,7 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
         return this.respondentFLUXParty;
     }
 
-    public void setIds(List<IDType> ids) {
+    public void setIDS(List<IDType> ids) {
         this.ids = ids;
     }
 
@@ -101,8 +101,8 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
         if (!(o instanceof SalesFLUXResponseDocumentFact)) return false;
         final SalesFLUXResponseDocumentFact other = (SalesFLUXResponseDocumentFact) o;
         if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIds();
-        final Object other$ids = other.getIds();
+        final Object this$ids = this.getIDS();
+        final Object other$ids = other.getIDS();
         if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
         final Object this$referencedID = this.getReferencedID();
         final Object other$referencedID = other.getReferencedID();
@@ -140,7 +140,7 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        final Object $ids = this.getIds();
+        final Object $ids = this.getIDS();
         result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
         final Object $referencedID = this.getReferencedID();
         result = result * PRIME + ($referencedID == null ? 43 : $referencedID.hashCode());

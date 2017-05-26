@@ -36,41 +36,54 @@ public interface SalesFactMapper {
     String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
 
-//    @Mappings({
-//            @Mapping(target = "fluxReportDocument", source = "fluxReportDocument"),
-//            @Mapping(target = "salesReports", source = "salesReports")
-//    })
     SalesFLUXSalesReportMessageFact generateFactForFLUXSalesReportMessage(FLUXSalesReportMessage fluxSalesReportMessage);
 
     SalesAAPProcessFact generateFactForAAPProcessFact(AAPProcessType salesFact);
+    List<SalesAAPProcessFact> generateFactForAAPProcessFact(List<AAPProcessType> salesFact);
     SalesAAPProductFact generateFactForAAPProductFact(AAPProductType salesFact);
+    List<SalesAAPProductFact> generateFactForAAPProductFact(List<AAPProductType> salesFact);
     SalesBatchFact generateFactForBatchFact(SalesBatchType salesFact);
+    List<SalesBatchFact> generateFactForBatchFact(List<SalesBatchType> salesFact);
     SalesContactPartyFact generateFactForContactPartyFact(ContactPartyType salesFact);
+    List<SalesContactPartyFact> generateFactForContactPartyFact(List<ContactPartyType> salesFact);
     SalesContactPersonFact generateFactForContactPersonFact(ContactPersonType salesFact);
+    List<SalesContactPersonFact> generateFactForContactPersonFact(List<ContactPersonType> salesFact);
     SalesDelimitedPeriodFact generateFactForSalesDelimitedPeriodFact(DelimitedPeriodType salesFact);
+    List<SalesDelimitedPeriodFact> generateFactForSalesDelimitedPeriodFact(List<DelimitedPeriodType> salesFact);
     SalesDocumentFact generateFactForSalesDocument(SalesDocumentType salesFact);
     List<SalesDocumentFact> generateFactForSalesDocument(List<SalesDocumentType> salesFact);
     SalesEventFact generateFactForSalesEvent(SalesEventType salesFact);
+    List<SalesEventFact> generateFactForSalesEvent(List<SalesEventType> salesFact);
     SalesFishingActivityFact generateFactForSalesFishingActivity(FishingActivityType salesFact);
+    List<SalesFishingActivityFact> generateFactForSalesFishingActivity(List<FishingActivityType> salesFact);
     SalesFishingTripFact generateFactForSalesFishingTrip(FishingTripType salesFact);
+    List<SalesFishingTripFact> generateFactForSalesFishingTrip(List<FishingTripType> salesFact);
     SalesFLUXGeographicalCoordinateFact generateFactForFLUXGeographicalCoordinateFact(FLUXGeographicalCoordinateType salesFact);
     SalesFLUXLocationFact generateFactForFLUXLocationFact(FLUXLocationType salesFact);
+    List<SalesFLUXLocationFact> generateFactForFLUXLocationFact(List<FLUXLocationType> salesFact);
     SalesFLUXOrganizationFact generateFactForFLUXOrganizationFact(FLUXOrganizationType salesFact);
+
     SalesFLUXPartyFact generateFactForFLUXPartyFact(FLUXPartyType salesFact);
+
     SalesFLUXReportDocumentFact generateFactForSalesFLUXReportDocumentFact(FLUXReportDocumentType salesFact);
     SalesFLUXResponseDocumentFact generateFactForSalesFLUXResponseDocumentFact(FLUXResponseDocumentType salesFact);
     SalesFLUXSalesReportMessageFact generateFactForSalesFLUXSalesReportMessageFact(FLUXSalesReportMessage salesFact);
     SalesPartyFact generateFactForSalesPartyFact(SalesPartyType salesFact);
+    List<SalesPartyFact> generateFactForSalesPartyFact(List<SalesPartyType> salesFact);
     SalesPriceFact generateFactForSalesPriceFact(SalesPriceType salesFact);
+    List<SalesPriceFact> generateFactForSalesPriceFact(List<SalesPriceType> salesFact);
     SalesQueryFact generateFactForSalesQueryFact(SalesQueryType salesFact);
     SalesReportFact generateFactForSalesReportFact(SalesReportType salesFact);
     List<SalesReportFact> generateFactForSalesReportFact(List<SalesReportType> salesFact);
     SalesSizeDistributionFact generateFactForSalesSizeDistributionFact(SizeDistributionType salesFact);
+    List<SalesSizeDistributionFact> generateFactForSalesSizeDistributionFact(List<SizeDistributionType> salesFact);
     SalesStructuredAddressFact generateFactForSalesStructuredAddressFact(StructuredAddressType salesFact);
     SalesValidationQualityAnalysisFact generateFactForSalesValidationQualityAnalysisFact(ValidationQualityAnalysisType salesFact);
     SalesValidationResultDocumentFact generateFactForSalesValidationResultDocumentFact(ValidationResultDocumentType salesFact);
     SalesVesselCountryFact generateFactForSalesVesselCountryFact(VesselCountryType salesFact);
+    List<SalesVesselCountryFact> generateFactForSalesVesselCountryFact(List<VesselCountryType> salesFact);
     SalesVesselTransportMeansFact generateFactForSalesVesselTransportMeansFact(VesselTransportMeansType salesFact);
+    List<SalesVesselTransportMeansFact> generateFactForSalesVesselTransportMeansFact(List<VesselTransportMeansType> salesFact);
 
 
 }
