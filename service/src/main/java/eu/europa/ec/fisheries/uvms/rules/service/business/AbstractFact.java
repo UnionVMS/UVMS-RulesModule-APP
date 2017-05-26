@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.util.*;
@@ -132,7 +134,7 @@ public abstract class AbstractFact {
                 return true;
                 // Check without emptyness
             } else if((nameToConsider == null || nameToConsider.getValue() == null)
-                           && (alias == null || alias.getValue() == null)){
+                    && (alias == null || alias.getValue() == null)){
                 return true;
             }
         }
@@ -199,7 +201,7 @@ public abstract class AbstractFact {
 
 
     private boolean validateFormat(String value, String format) {
-       if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
+        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
         return value.matches(format);
@@ -405,6 +407,26 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+
+    /**
+     * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
+     *
+     * @param  faCatches
+     * @return false/true
+     */
+
+
+    public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
+        boolean isValid = true;
+        for (FACatch faCatch : faCatches) {
+            List<FLUXLocation> checkList = faCatch.getSpecifiedFLUXLocations();
+            if (checkList == null || checkList.isEmpty()) {
+                isValid = false;
+            }
+        }
+        return !isValid;
     }
 
     public boolean isEmpty(List<?> list){
