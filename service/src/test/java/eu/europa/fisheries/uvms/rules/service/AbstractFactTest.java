@@ -18,7 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
@@ -35,6 +37,12 @@ public class AbstractFactTest {
     public void testCheckDateNowHappy() {
         Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
         assertTrue(date.before(fact.dateNow(1)));
+    }
+
+    @Test
+    public void testListIdContainsAll() {
+        List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
+        assertFalse(fact.listIdContainsAll(codeTypes, "AREA"));
     }
 
     @Test

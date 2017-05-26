@@ -26,10 +26,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -74,7 +71,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength != hits;
+        return valLength > hits;
     }
 
     /**
@@ -213,15 +210,14 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
-                if (val.equals(IdType.getListId())) {
-                    hits++;
+                if (!val.equals(IdType.getListId())) {
+                    return true;
                 }
             }
         }
-        return valuesToMatch.length != hits;
+        return false;
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
@@ -236,7 +232,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valuesToMatch.length != hits;
+        return valuesToMatch.length > hits;
     }
 
     public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
@@ -358,45 +354,56 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean valueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
+        return valueContainsAny(Arrays.asList(codeType), valuesToMatch);
+    }
+
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
+
+        boolean isMatchFound = false;
         for (String val : valuesToMatch) {
-            for (CodeType IdType : codeTypes) {
-                if (val.equals(IdType.getValue())) {
-                    hits++;
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
                 }
             }
         }
-        return valLength != hits;
+        return !isMatchFound;
     }
-    public boolean valueMustContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+
+    public boolean AnyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int valLength = codeTypes.size();
-        int hits = 0;
-        for (String val : valuesToMatch) {
+
+        boolean isMatchFound = false;
+
+        outer : for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
                 if (val.equals(IdType.getValue())) {
-                    hits++;
+                    isMatchFound = true;
+                    continue outer;
                 }
             }
+            isMatchFound = false;
         }
-        return valLength != hits;
+        return !isMatchFound;
     }
 
-    public boolean listMustContains(CodeType codeType1,String valueToMatch1, CodeType codeType2,String valueToMatch2){
-        if (codeType1 == null || codeType2 == null || valueToMatch1==null || valueToMatch2 == null || valueToMatch1.trim().length()==0 || valueToMatch2.trim().length()==0)
+    public boolean AllValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
+        if (valueToMatch == null || valueToMatch.length() == 0) {
             return true;
-        if (codeType1.getValue().equals(valueToMatch1) && codeType2.getValue().equals(valueToMatch2))
-            return false;
+        }
 
-        return  true;
+        for (CodeType codeType : codeTypes) {
+            if (!valueToMatch.equals(codeType.getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
-
-
 }
