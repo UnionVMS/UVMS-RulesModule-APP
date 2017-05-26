@@ -375,7 +375,7 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
-    public boolean AnyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+    public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
@@ -394,7 +394,7 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
-    public boolean AllValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
+    public boolean allValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
         if (valueToMatch == null || valueToMatch.length() == 0) {
             return true;
         }
