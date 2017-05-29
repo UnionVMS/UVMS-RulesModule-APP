@@ -71,16 +71,21 @@ public class FactRuleEvaluator {
 
 
     public void validateFact(Collection<AbstractFact> facts) {
+        KieSession ksession = null;
         try {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-            KieSession ksession = container.newKieSession();
+            ksession = container.newKieSession();
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
             ksession.fireAllRules();
             ksession.dispose();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.debug(e.getMessage(), e);
+            Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) ksession.getObjects();
+            facts.removeAll(failedFacts);
+            // TODO add error or warning
+            validateFact(facts);
         }
 
     }
