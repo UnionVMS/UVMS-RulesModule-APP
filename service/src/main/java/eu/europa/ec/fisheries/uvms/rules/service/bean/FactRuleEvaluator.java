@@ -55,6 +55,7 @@ public class FactRuleEvaluator {
     private KieServices kieServices = KieServices.Factory.get();
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
+    private List<AbstractFact> exceptionsList = new ArrayList<>();
 
     public void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();
@@ -83,11 +84,20 @@ public class FactRuleEvaluator {
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
             Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) ksession.getObjects();
-            facts.removeAll(failedFacts);
-            // TODO add error or warning
+            AbstractFact next = failedFacts.iterator().next();
+            String message = e.getMessage();
+            String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
+            next.addWarningOrError("WARNING", message, brId, "L099");
+            next.setOk(false);
+            facts.remove(next);
+            exceptionsList.add(next);
             validateFact(facts);
         }
 
+    }
+
+    public List<AbstractFact> getExceptionsList() {
+        return exceptionsList;
     }
 
     public List<String> getFailedRules() {

@@ -51,6 +51,7 @@ public class TemplateEngine {
             throw new RulesValidationException("No facts available for validation");
         }
         ruleEvaluator.validateFact(facts);
+        facts.addAll(ruleEvaluator.getExceptionsList());
     }
 
     private List<TemplateRuleMapDto> getAllTemplates() {
