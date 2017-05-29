@@ -416,8 +416,6 @@ public abstract class AbstractFact {
      * @param  faCatches
      * @return false/true
      */
-
-
     public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
         for (FACatch faCatch : faCatches) {
