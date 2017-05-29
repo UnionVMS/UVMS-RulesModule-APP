@@ -394,9 +394,11 @@ public class CustomMapper {
         }
         List<FLUXLocation> specifiedFaCatchSpecifiedFluxLocationList=new ArrayList<>();
         for (FACatch faCatc : faCatch){
-            specifiedFaCatchSpecifiedFluxLocationList.addAll(faCatc.getSpecifiedFLUXLocations());
 
+       if(faCatc.getSpecifiedFLUXLocations()!=null) {
+           specifiedFaCatchSpecifiedFluxLocationList.addAll(faCatc.getSpecifiedFLUXLocations());
 
+       }
 
 
         }

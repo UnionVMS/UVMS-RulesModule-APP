@@ -13,6 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -27,8 +33,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -68,7 +72,7 @@ public abstract class AbstractFact {
         int hits = 0;
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
-                if (IdType !=null && val.equals(IdType.getSchemeId())) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
                     hits++;
                 }
             }
@@ -305,36 +309,6 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    public enum FORMATS {
-        // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
-        // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
-
-        UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
-        EXT_MARK("[a-zA-Z0-9]{1,14}"),
-        IRCS("[a-zA-Z0-9]{1,7}"),
-        CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
-        UVI("[a-zA-Z0-9]{7}"),
-        ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
-        GFCM("[a-zA-Z0-9]{1,13}");
-
-        String formatStr;
-
-        FORMATS(String someFromat) {
-            setFormatStr(someFromat);
-        }
-
-        public String getFormatStr() {
-            return formatStr;
-        }
-
-        public void setFormatStr(String formatStr) {
-            this.formatStr = formatStr;
-        }
-    }
-
-
-
-
     /**
      * Checks if one of the String... array elements exists in the idTypes list.
      *
@@ -409,7 +383,6 @@ public abstract class AbstractFact {
         return false;
     }
 
-
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
@@ -433,6 +406,33 @@ public abstract class AbstractFact {
 
     public boolean isEmpty(String str){
         return StringUtils.isEmpty(str);
+    }
+
+    public enum FORMATS {
+        // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
+        // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
+
+        UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+        EXT_MARK("[a-zA-Z0-9]{1,14}"),
+        IRCS("[a-zA-Z0-9]{1,7}"),
+        CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
+        UVI("[a-zA-Z0-9]{7}"),
+        ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
+        GFCM("[a-zA-Z0-9]{1,13}");
+
+        String formatStr;
+
+        FORMATS(String someFromat) {
+            setFormatStr(someFromat);
+        }
+
+        public String getFormatStr() {
+            return formatStr;
+        }
+
+        public void setFormatStr(String formatStr) {
+            this.formatStr = formatStr;
+        }
     }
 
 }
