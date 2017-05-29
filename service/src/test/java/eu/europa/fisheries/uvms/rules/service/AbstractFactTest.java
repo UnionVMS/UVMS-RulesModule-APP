@@ -42,7 +42,7 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAll() {
         List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
-        assertFalse(fact.listIdContainsAll(codeTypes, "AREA"));
+        assertTrue(fact.listIdContainsAll(codeTypes, "AREA"));
     }
 
     @Test
