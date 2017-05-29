@@ -65,7 +65,19 @@ public abstract class AbstractFact {
     }
 
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
-        throw new NullPointerException();
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength > hits;
     }
 
     /**
