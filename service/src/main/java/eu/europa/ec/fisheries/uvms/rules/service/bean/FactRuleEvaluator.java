@@ -100,6 +100,10 @@ public class FactRuleEvaluator {
         return exceptionsList;
     }
 
+    public void setExceptionsList(List<AbstractFact> exceptionsList) {
+        this.exceptionsList = exceptionsList;
+    }
+
     public List<String> getFailedRules() {
         return failedRules;
     }

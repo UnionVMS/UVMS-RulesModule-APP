@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
@@ -50,6 +51,7 @@ public class TemplateEngine {
         if (CollectionUtils.isEmpty(facts)) {
             throw new RulesValidationException("No facts available for validation");
         }
+        ruleEvaluator.setExceptionsList(new ArrayList<AbstractFact>());
         ruleEvaluator.validateFact(facts);
         facts.addAll(ruleEvaluator.getExceptionsList());
     }
