@@ -13,13 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
@@ -28,6 +21,13 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 @Slf4j
@@ -45,6 +45,12 @@ public class TemplateEngine {
         log.info("Initializing templates and rules");
         ruleEvaluator.initializeRules(getAllTemplates());
         updateFailedRules(ruleEvaluator.getFailedRules());
+    }
+
+    public void reInitialize() {
+        log.info("Initializing templates and rules");
+        ruleEvaluator.reInitializeKieSystem();
+        initialize();
     }
 
     public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {

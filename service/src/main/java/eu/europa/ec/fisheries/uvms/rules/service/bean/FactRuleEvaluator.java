@@ -13,16 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
@@ -47,6 +37,11 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import java.io.InputStream;
+import java.util.*;
+
 @Slf4j
 @Singleton
 @LocalBean
@@ -56,6 +51,14 @@ public class FactRuleEvaluator {
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
+
+
+    public void reInitializeKieSystem() {
+        kieServices = KieServices.Factory.get();
+        kieFileSystem = kieServices.newKieFileSystem();
+        failedRules = new ArrayList<>();
+        exceptionsList = new ArrayList<>();
+    }
 
     public void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();
