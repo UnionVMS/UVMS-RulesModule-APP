@@ -81,54 +81,32 @@ public class SalesPartyFact extends AbstractFact {
         this.specifiedFLUXOrganization = specifiedFLUXOrganization;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof SalesPartyFact)) return false;
-        final SalesPartyFact other = (SalesPartyFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getID();
-        final Object other$id = other.getID();
-        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
-        final Object this$name = this.getName();
-        final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
-        final Object this$typeCode = this.getTypeCode();
-        final Object other$typeCode = other.getTypeCode();
-        if (this$typeCode == null ? other$typeCode != null : !this$typeCode.equals(other$typeCode)) return false;
-        final Object this$countryID = this.getCountryID();
-        final Object other$countryID = other.getCountryID();
-        if (this$countryID == null ? other$countryID != null : !this$countryID.equals(other$countryID)) return false;
-        final Object this$roleCodes = this.getRoleCodes();
-        final Object other$roleCodes = other.getRoleCodes();
-        if (this$roleCodes == null ? other$roleCodes != null : !this$roleCodes.equals(other$roleCodes)) return false;
-        final Object this$specifiedStructuredAddresses = this.getSpecifiedStructuredAddresses();
-        final Object other$specifiedStructuredAddresses = other.getSpecifiedStructuredAddresses();
-        if (this$specifiedStructuredAddresses == null ? other$specifiedStructuredAddresses != null : !this$specifiedStructuredAddresses.equals(other$specifiedStructuredAddresses))
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SalesPartyFact that = (SalesPartyFact) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (typeCode != null ? !typeCode.equals(that.typeCode) : that.typeCode != null) return false;
+        if (countryID != null ? !countryID.equals(that.countryID) : that.countryID != null) return false;
+        if (roleCodes != null ? !roleCodes.equals(that.roleCodes) : that.roleCodes != null) return false;
+        if (specifiedStructuredAddresses != null ? !specifiedStructuredAddresses.equals(that.specifiedStructuredAddresses) : that.specifiedStructuredAddresses != null)
             return false;
-        final Object this$specifiedFLUXOrganization = this.getSpecifiedFLUXOrganization();
-        final Object other$specifiedFLUXOrganization = other.getSpecifiedFLUXOrganization();
-        if (this$specifiedFLUXOrganization == null ? other$specifiedFLUXOrganization != null : !this$specifiedFLUXOrganization.equals(other$specifiedFLUXOrganization))
-            return false;
-        return true;
+        return specifiedFLUXOrganization != null ? specifiedFLUXOrganization.equals(that.specifiedFLUXOrganization) : that.specifiedFLUXOrganization == null;
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $id = this.getID();
-        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        final Object $name = this.getName();
-        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
-        final Object $typeCode = this.getTypeCode();
-        result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
-        final Object $countryID = this.getCountryID();
-        result = result * PRIME + ($countryID == null ? 43 : $countryID.hashCode());
-        final Object $roleCodes = this.getRoleCodes();
-        result = result * PRIME + ($roleCodes == null ? 43 : $roleCodes.hashCode());
-        final Object $specifiedStructuredAddresses = this.getSpecifiedStructuredAddresses();
-        result = result * PRIME + ($specifiedStructuredAddresses == null ? 43 : $specifiedStructuredAddresses.hashCode());
-        final Object $specifiedFLUXOrganization = this.getSpecifiedFLUXOrganization();
-        result = result * PRIME + ($specifiedFLUXOrganization == null ? 43 : $specifiedFLUXOrganization.hashCode());
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (typeCode != null ? typeCode.hashCode() : 0);
+        result = 31 * result + (countryID != null ? countryID.hashCode() : 0);
+        result = 31 * result + (roleCodes != null ? roleCodes.hashCode() : 0);
+        result = 31 * result + (specifiedStructuredAddresses != null ? specifiedStructuredAddresses.hashCode() : 0);
+        result = 31 * result + (specifiedFLUXOrganization != null ? specifiedFLUXOrganization.hashCode() : 0);
         return result;
     }
 

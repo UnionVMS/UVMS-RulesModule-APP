@@ -150,6 +150,60 @@ public class SalesDocumentFact extends AbstractFact {
         this.arrivalSpecifiedFLUXLocation = arrivalSpecifiedFLUXLocation;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SalesDocumentFact that = (SalesDocumentFact) o;
+
+        if (ids != null ? !ids.equals(that.ids) : that.ids != null) return false;
+        if (currencyCode != null ? !currencyCode.equals(that.currencyCode) : that.currencyCode != null) return false;
+        if (transportDocumentIDs != null ? !transportDocumentIDs.equals(that.transportDocumentIDs) : that.transportDocumentIDs != null)
+            return false;
+        if (salesNoteIDs != null ? !salesNoteIDs.equals(that.salesNoteIDs) : that.salesNoteIDs != null) return false;
+        if (takeoverDocumentIDs != null ? !takeoverDocumentIDs.equals(that.takeoverDocumentIDs) : that.takeoverDocumentIDs != null)
+            return false;
+        if (specifiedSalesBatches != null ? !specifiedSalesBatches.equals(that.specifiedSalesBatches) : that.specifiedSalesBatches != null)
+            return false;
+        if (specifiedSalesEvents != null ? !specifiedSalesEvents.equals(that.specifiedSalesEvents) : that.specifiedSalesEvents != null)
+            return false;
+        if (specifiedFishingActivities != null ? !specifiedFishingActivities.equals(that.specifiedFishingActivities) : that.specifiedFishingActivities != null)
+            return false;
+        if (specifiedFLUXLocations != null ? !specifiedFLUXLocations.equals(that.specifiedFLUXLocations) : that.specifiedFLUXLocations != null)
+            return false;
+        if (specifiedSalesParties != null ? !specifiedSalesParties.equals(that.specifiedSalesParties) : that.specifiedSalesParties != null)
+            return false;
+        if (specifiedVehicleTransportMeans != null ? !specifiedVehicleTransportMeans.equals(that.specifiedVehicleTransportMeans) : that.specifiedVehicleTransportMeans != null)
+            return false;
+        if (relatedValidationResultDocuments != null ? !relatedValidationResultDocuments.equals(that.relatedValidationResultDocuments) : that.relatedValidationResultDocuments != null)
+            return false;
+        if (totalSalesPrice != null ? !totalSalesPrice.equals(that.totalSalesPrice) : that.totalSalesPrice != null)
+            return false;
+        if (departureSpecifiedFLUXLocation != null ? !departureSpecifiedFLUXLocation.equals(that.departureSpecifiedFLUXLocation) : that.departureSpecifiedFLUXLocation != null)
+            return false;
+        return arrivalSpecifiedFLUXLocation != null ? arrivalSpecifiedFLUXLocation.equals(that.arrivalSpecifiedFLUXLocation) : that.arrivalSpecifiedFLUXLocation == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ids != null ? ids.hashCode() : 0;
+        result = 31 * result + (currencyCode != null ? currencyCode.hashCode() : 0);
+        result = 31 * result + (transportDocumentIDs != null ? transportDocumentIDs.hashCode() : 0);
+        result = 31 * result + (salesNoteIDs != null ? salesNoteIDs.hashCode() : 0);
+        result = 31 * result + (takeoverDocumentIDs != null ? takeoverDocumentIDs.hashCode() : 0);
+        result = 31 * result + (specifiedSalesBatches != null ? specifiedSalesBatches.hashCode() : 0);
+        result = 31 * result + (specifiedSalesEvents != null ? specifiedSalesEvents.hashCode() : 0);
+        result = 31 * result + (specifiedFishingActivities != null ? specifiedFishingActivities.hashCode() : 0);
+        result = 31 * result + (specifiedFLUXLocations != null ? specifiedFLUXLocations.hashCode() : 0);
+        result = 31 * result + (specifiedSalesParties != null ? specifiedSalesParties.hashCode() : 0);
+        result = 31 * result + (specifiedVehicleTransportMeans != null ? specifiedVehicleTransportMeans.hashCode() : 0);
+        result = 31 * result + (relatedValidationResultDocuments != null ? relatedValidationResultDocuments.hashCode() : 0);
+        result = 31 * result + (totalSalesPrice != null ? totalSalesPrice.hashCode() : 0);
+        result = 31 * result + (departureSpecifiedFLUXLocation != null ? departureSpecifiedFLUXLocation.hashCode() : 0);
+        result = 31 * result + (arrivalSpecifiedFLUXLocation != null ? arrivalSpecifiedFLUXLocation.hashCode() : 0);
+        return result;
+    }
 
     protected boolean canEqual(Object other) {
         return other instanceof SalesDocumentFact;

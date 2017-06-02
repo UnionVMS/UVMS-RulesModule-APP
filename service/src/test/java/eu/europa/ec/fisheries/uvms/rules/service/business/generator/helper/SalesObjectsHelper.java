@@ -34,7 +34,7 @@ public class SalesObjectsHelper {
 
     public SalesPartyFact getSalesPartyFact(String buyerOrSeller, FLUXOrganizationType mathiblaaOrganization) {
         SalesPartyFact salesParty1Fact = new SalesPartyFact();
-        salesParty1Fact.setRoleCodes(newArrayList(new CodeType().withValue("BUYER")));
+        salesParty1Fact.setRoleCodes(newArrayList(new CodeType().withValue(buyerOrSeller)));
         salesParty1Fact.setSpecifiedFLUXOrganization(mathiblaaOrganization);
         return salesParty1Fact;
     }

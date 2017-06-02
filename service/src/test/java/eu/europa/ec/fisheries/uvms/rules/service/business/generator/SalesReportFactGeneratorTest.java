@@ -61,11 +61,6 @@ public class SalesReportFactGeneratorTest {
         List<AbstractFact> allCorrectFacts = generateFacts();
 
         assertEquals(allCorrectFacts.size(), allFacts.size());
-
-        /*TODO MATHIAS: fix: mapping is incomplete?
-        for (AbstractFact fact : allCorrectFacts) {
-            assertTrue(allFacts.contains(fact));
-        }*/
     }
 
     private Report generateObjectToConvertToFact() {
