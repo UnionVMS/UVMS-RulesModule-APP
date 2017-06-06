@@ -282,9 +282,9 @@ public class MessageServiceBean implements MessageService {
                 status = ExchangeLogStatusTypeType.SUCCESSFUL;
             }
             //Create Response
-            String fr = "AHR:VMS"; // TODO change it to nation code
+            String fr = "XEU"; // TODO change it to nation code
             String df = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2"; // TODO should come from subscription. Also could be a link between DF and AD value
-            String destination = "XEU";
+            String destination = "AHR:VMS";
             String messageGuid = CustomMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
             String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, fr, status, destination);
             log.debug("Message to exchange {}", fluxFAReponseText);
