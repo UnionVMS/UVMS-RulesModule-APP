@@ -51,6 +51,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -119,7 +120,7 @@ public class MessageServiceBean implements MessageService {
             }
         } catch (RulesValidationException e) {
             log.error(e.getMessage(), e);
-            // TODO send exchange ACK and send Response
+            updateRequestMessageStatus(request.getLogGuid(), null);
         }
         catch (RulesModelMarshallException e) {
             throw new RulesServiceException(e.getMessage(), e);
@@ -129,14 +130,17 @@ public class MessageServiceBean implements MessageService {
     private void updateRequestMessageStatus(String logGuid, ValidationResultDto faReportValidationResult) throws RulesServiceException {
         try {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
-            if (faReportValidationResult.isError()) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.FAILED;
-            } else if (faReportValidationResult.isWarning()) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+            if (faReportValidationResult != null) {
+                if (faReportValidationResult.isError()) {
+                    exchangeLogStatusTypeType = ExchangeLogStatusTypeType.FAILED;
+                } else if (faReportValidationResult.isWarning()) {
+                    exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+                } else {
+                    exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL;
+                }
             } else {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.SUCCESSFUL;
+                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNKNOWN;
             }
-
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
