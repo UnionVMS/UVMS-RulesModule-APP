@@ -26,6 +26,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -64,6 +65,7 @@ public class FLUX_ReportDocumentRuleTest {
     }
 
     @Test
+    @Ignore
     public void testRuleReferencedID() {
 
         templateRuleMapDto.setRules(Collections.singletonList(ruleReferencedID));

@@ -13,21 +13,26 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -67,12 +72,12 @@ public abstract class AbstractFact {
         int hits = 0;
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
-                if (IdType !=null && val.equals(IdType.getSchemeId())) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
                     hits++;
                 }
             }
         }
-        return valLength != hits;
+        return valLength > hits;
     }
 
     /**
@@ -84,7 +89,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        return schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
     }
 
     /**
@@ -133,7 +138,7 @@ public abstract class AbstractFact {
                 return true;
                 // Check without emptyness
             } else if((nameToConsider == null || nameToConsider.getValue() == null)
-                           && (alias == null || alias.getValue() == null)){
+                    && (alias == null || alias.getValue() == null)){
                 return true;
             }
         }
@@ -149,15 +154,13 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType alias          = contPers.getAlias();
             if(givenName == null && familyName == null){
-                if(alias == null){
+                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
                     return true;
                 }
-                if(checkAliasEmptyness && StringUtils.isEmpty(alias.getValue())){
-                    return true;
-                }
+            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+                return true;
             }
         }
-
         return false;
     }
 
@@ -194,8 +197,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex);
-            return true;
+            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return false;
         }
         return false;
     }
@@ -205,7 +208,7 @@ public abstract class AbstractFact {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
-        return value.toLowerCase().matches(format);
+        return value.matches(format);
     }
 
 
@@ -213,17 +216,48 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
         for (String val : valuesToMatch) {
             for (CodeType IdType : codeTypes) {
-                if (val.equals(IdType.getListId())) {
+                if (!val.equals(IdType.getListId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
+            return true;
+        }
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (MeasureType measureType : measureTypes) {
+                if (val.equals(measureType.getUnitCode())) {
                     hits++;
                 }
             }
         }
-        return valLength != hits;
+        return valuesToMatch.length > hits;
     }
+
+    public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
+        if (delimitedPeriods == null || delimitedPeriods.isEmpty()) {
+            return true;
+        }
+        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+            if (start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            } else if (start && !end && delimitedPeriod.getStartDateTime() == null) {
+                return true;
+            } else if (end && !start && delimitedPeriod.getEndDateTime() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
@@ -275,15 +309,116 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    private enum FORMATS {
+    /**
+     * Checks if one of the String... array elements exists in the idTypes list.
+     *
+     * @param codeTypes
+     * @param values
+     * @return false/true
+     */
+    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+        if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (String val : values) {
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getListId())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-        UUID("[a-f0-9]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"),
-        EXT_MARK("(.*?)"),
-        IRCS("(.*?)"),
-        CFR("(.*?)"),
-        UVI("(.*?)"),
-        ICCAT("(.*?)"),
-        GFCM("(.*?)");
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
+        return valueContainsAny(Arrays.asList(codeType), valuesToMatch);
+    }
+
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType CodeTypes : codeTypes) {
+                if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+
+    public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+
+        outer : for (String val : valuesToMatch) {
+            for (CodeType IdType : codeTypes) {
+                if (val.equals(IdType.getValue())) {
+                    isMatchFound = true;
+                    continue outer;
+                }
+            }
+            isMatchFound = false;
+        }
+        return !isMatchFound;
+    }
+
+    public boolean allValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
+        if (valueToMatch == null || valueToMatch.length() == 0) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            if (!valueToMatch.equals(codeType.getValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
+     *
+     * @param  faCatches
+     * @return false/true
+     */
+    public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
+        boolean isValid = true;
+        for (FACatch faCatch : faCatches) {
+            List<FLUXLocation> checkList = faCatch.getSpecifiedFLUXLocations();
+            if (checkList == null || checkList.isEmpty()) {
+                isValid = false;
+            }
+        }
+        return !isValid;
+    }
+
+    public boolean isEmpty(List<?> list){
+        return CollectionUtils.isEmpty(list);
+    }
+
+    public boolean isEmpty(String str){
+        return StringUtils.isEmpty(str);
+    }
+
+    public enum FORMATS {
+        // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
+        // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
+
+        UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+        EXT_MARK("[a-zA-Z0-9]{1,14}"),
+        IRCS("[a-zA-Z0-9]{1,7}"),
+        CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
+        UVI("[a-zA-Z0-9]{7}"),
+        ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
+        GFCM("[a-zA-Z0-9]{1,13}");
 
         String formatStr;
 

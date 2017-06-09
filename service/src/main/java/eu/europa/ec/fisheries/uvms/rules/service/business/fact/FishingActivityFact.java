@@ -34,11 +34,15 @@ public class FishingActivityFact extends AbstractFact {
 
     private Date occurrenceDateTime;
 
+    private boolean isDateProvided;
+
     private FishingTrip specifiedFishingTrip;
+
+    private List<FishingTrip> relatedFishingTrip;
 
     private List<FishingActivity> relatedFishingActivities;
 
-    private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
+    private List<CodeType> fluxCharacteristicsTypeCode;
 
     private CodeType reasonCode;
 
@@ -46,13 +50,21 @@ public class FishingActivityFact extends AbstractFact {
 
     private CodeType speciesTargetCode;
 
-    private String operationQuantity;
+    private Integer operationQuantity;
 
-    private boolean isSubActivity;
+    private boolean isSubActivity = false;
+
+    private List<MeasureType> durationMeasure;
 
     private List<DelimitedPeriod> delimitedPeriods;
 
+    private List<DelimitedPeriod> relatedDelimitedPeriods;
+
     private List<FLUXLocation> relatedFLUXLocations;
+
+    private List<FLUXLocation> relatedActivityFluxLocations;
+
+    private CodeType vesselRelatedActivityCode;
 
     public FishingActivityFact() {
         setFactType();
@@ -67,7 +79,7 @@ public class FishingActivityFact extends AbstractFact {
         this.isSubActivity = isSubActivity;
     }
 
-    public boolean isSubActivity() {
+    public boolean getIsSubActivity() {
         return isSubActivity;
     }
 
@@ -124,11 +136,11 @@ public class FishingActivityFact extends AbstractFact {
         this.speciesTargetCode = speciesTargetCode;
     }
 
-    public String getOperationQuantity() {
+    public Integer getOperationQuantity() {
         return operationQuantity;
     }
 
-    public void setOperationQuantity(String operationQuantity) {
+    public void setOperationQuantity(Integer operationQuantity) {
         this.operationQuantity = operationQuantity;
     }
 
@@ -140,12 +152,12 @@ public class FishingActivityFact extends AbstractFact {
         this.specifiedFishingTrip = specifiedFishingTrip;
     }
 
-    public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
-        return specifiedFLUXCharacteristics;
+    public List<CodeType> getFluxCharacteristicsTypeCode() {
+        return fluxCharacteristicsTypeCode;
     }
 
-    public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
-        this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
+    public void setFluxCharacteristicsTypeCode(List<CodeType> fluxCharacteristicsTypeCode) {
+        this.fluxCharacteristicsTypeCode = fluxCharacteristicsTypeCode;
     }
 
     public CodeType getTypeCode() {
@@ -162,5 +174,53 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setOccurrenceDateTime(Date occurrenceDateTime) {
         this.occurrenceDateTime = occurrenceDateTime;
+    }
+
+    public boolean getIsDateProvided() {
+        return isDateProvided;
+    }
+
+    public void setIsDateProvided(boolean isDateProvided) {
+        this.isDateProvided = isDateProvided;
+    }
+
+    public List<FishingTrip> getRelatedFishingTrip() {
+        return relatedFishingTrip;
+    }
+
+    public void setRelatedFishingTrip(List<FishingTrip> relatedFishingTrip) {
+        this.relatedFishingTrip = relatedFishingTrip;
+    }
+
+    public List<FLUXLocation> getRelatedActivityFluxLocations() {
+        return relatedActivityFluxLocations;
+    }
+
+    public void setRelatedActivityFluxLocations(List<FLUXLocation> relatedActivityFluxLocations) {
+        this.relatedActivityFluxLocations = relatedActivityFluxLocations;
+    }
+
+    public CodeType getVesselRelatedActivityCode() {
+        return vesselRelatedActivityCode;
+    }
+
+    public void setVesselRelatedActivityCode(CodeType vesselRelatedActivityCode) {
+        this.vesselRelatedActivityCode = vesselRelatedActivityCode;
+    }
+
+    public List<DelimitedPeriod> getRelatedDelimitedPeriods() {
+        return relatedDelimitedPeriods;
+    }
+
+    public void setRelatedDelimitedPeriods(List<DelimitedPeriod> relatedDelimitedPeriods) {
+        this.relatedDelimitedPeriods = relatedDelimitedPeriods;
+    }
+
+    public List<MeasureType> getDurationMeasure() {
+        return durationMeasure;
+    }
+
+    public void setDurationMeasure(List<MeasureType> durationMeasure) {
+        this.durationMeasure = durationMeasure;
     }
 }

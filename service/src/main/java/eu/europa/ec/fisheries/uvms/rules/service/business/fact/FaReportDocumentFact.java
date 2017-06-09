@@ -50,6 +50,10 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<FishingActivity> specifiedFishingActivities;
 
+    private List<IdType> relatedFLUXReportDocumentIDs;
+
+    private IdType relatedFLUXReportDocumentReferencedID;
+
     public FaReportDocumentFact() {
         setFactType();
     }
@@ -155,6 +159,22 @@ public class FaReportDocumentFact extends AbstractFact {
 
     public void setCreationDateTime(Date creationDateTime) {
         this.creationDateTime = creationDateTime;
+    }
+
+    public List<IdType> getRelatedFLUXReportDocumentIDs() {
+        return relatedFLUXReportDocumentIDs;
+    }
+
+    public void setRelatedFLUXReportDocumentIDs(List<IdType> relatedFLUXReportDocumentIDs) {
+        this.relatedFLUXReportDocumentIDs = relatedFLUXReportDocumentIDs;
+    }
+
+    public IdType getRelatedFLUXReportDocumentReferencedID() {
+        return relatedFLUXReportDocumentReferencedID;
+    }
+
+    public void setRelatedFLUXReportDocumentReferencedID(IdType relatedFLUXReportDocumentReferencedID) {
+        this.relatedFLUXReportDocumentReferencedID = relatedFLUXReportDocumentReferencedID;
     }
 }
 

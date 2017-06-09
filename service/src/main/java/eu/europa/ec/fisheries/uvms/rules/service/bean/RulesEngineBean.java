@@ -19,12 +19,10 @@ import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @LocalBean
 public class RulesEngineBean {
 
-    @EJB
+	@EJB
 	private TemplateEngine templateEngine;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {

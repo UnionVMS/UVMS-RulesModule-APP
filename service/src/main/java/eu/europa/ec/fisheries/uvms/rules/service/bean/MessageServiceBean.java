@@ -56,11 +56,17 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -239,6 +245,7 @@ public class MessageServiceBean implements MessageService {
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                 } else {
+                    updateRequestMessageStatus(request.getLogGuid(), validationMap.get(isContinueValidation));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
@@ -246,7 +253,7 @@ public class MessageServiceBean implements MessageService {
             }
         } catch (RulesValidationException e) {
             log.error(e.getMessage(), e);
-            // TODO send exchange ACK and send Response
+            updateRequestMessageStatus(request.getLogGuid(), null);
         }
         catch (RulesModelMarshallException e) {
             throw new RulesServiceException(e.getMessage(), e);
@@ -257,6 +264,10 @@ public class MessageServiceBean implements MessageService {
         try {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
             exchangeLogStatusTypeType = calculateMessageValidationStatus(validationResult);
+
+            if (exchangeLogStatusTypeType == null) {
+                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNKNOWN;
+            }
 
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
@@ -368,7 +379,7 @@ public class MessageServiceBean implements MessageService {
             analysis.getResults().add(text);
 
             TextType referenceItem = new TextType();
-            text.setValue("X-path"); // SET Xpath
+            referenceItem.setValue("X-path"); // SET Xpath
             analysis.getReferencedItems().add(referenceItem);
 
             validationQuality.add(analysis);
@@ -415,9 +426,9 @@ public class MessageServiceBean implements MessageService {
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
 
             //Create Response
-            String fr = "AHR:VMS"; // TODO change it to nation code
+            String fr = "XEU"; // TODO change it to nation code
             String df = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2"; // TODO should come from subscription. Also could be a link between DF and AD value
-            String destination = "XEU";
+            String destination = "AHR:VMS";
             String messageGuid = CustomMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
             String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, fr, status, destination);
             log.debug("Message to exchange {}", fluxFAReponseText);
