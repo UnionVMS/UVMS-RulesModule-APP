@@ -119,9 +119,9 @@ public class TemplateFactory {
             case SALES_FISHING_TRIP:
                 return "/templates/SalesFishingTrip.drt";
             case SALES_FLUX_LOCATION:
-                return "/templates/SalesFluxLocation.drt";
+                return "/templates/SalesFLUXLocation.drt";
             case SALES_FLUX_GEOGRAPHICAL_COORDINATE:
-                return "/templates/SalesFluxGeographicalCoordinate.drt";
+                return "/templates/SalesFLUXGeographicalCoordinate.drt";
             case SALES_STRUCTURED_ADDRESS:
                 return "/templates/SalesStructuredAddress.drt";
             case SALES_QUERY:

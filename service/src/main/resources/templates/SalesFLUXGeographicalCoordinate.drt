@@ -9,7 +9,7 @@ level
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeophraphicalCoordinateFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeographicalCoordinateFact;
 
 template "@{tname}"
 
@@ -17,7 +17,7 @@ rule "Sales Geographical Coordinate @{tname} - @{brid}"
 
 when
 
-    $fact : SalesFLUXGeophraphicalCoordinateFact(@{expression})
+    $fact : SalesFLUXGeographicalCoordinateFact(@{expression})
 
 then
     $fact.setOk(false);
