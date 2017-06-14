@@ -59,7 +59,7 @@ public class FLUXSalesReportMessageRuleTest {
         template.setTemplateName("SalesFLUXSalesReportMessage");
         template.setType(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);
 
-        RuleType ruleType = RuleTestHelper.createRuleType("fluxReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
+        RuleType ruleType = RuleTestHelper.createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(Arrays.asList(ruleType));
