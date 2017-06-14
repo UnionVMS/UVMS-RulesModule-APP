@@ -1,14 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
 
 public class SalesSizeDistributionFact extends AbstractFact {
 
-    private eu.europa.ec.fisheries.schema.sales.CodeType categoryCode;
+    private CodeType categoryCode;
     private List<CodeType> classCodes;
 
     @Override

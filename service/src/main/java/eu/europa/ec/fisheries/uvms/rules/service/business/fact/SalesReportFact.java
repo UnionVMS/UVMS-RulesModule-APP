@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
 import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
@@ -12,7 +11,7 @@ import java.util.List;
 public class SalesReportFact extends AbstractFact {
 
     private IDType id;
-    private eu.europa.ec.fisheries.schema.sales.CodeType itemTypeCode;
+    private CodeType itemTypeCode;
     private List<SalesDocumentType> includedSalesDocuments;
     private List<ValidationResultDocumentType> includedValidationResultDocuments;
 
@@ -25,7 +24,7 @@ public class SalesReportFact extends AbstractFact {
         return this.id;
     }
 
-    public eu.europa.ec.fisheries.schema.sales.CodeType getItemTypeCode() {
+    public CodeType getItemTypeCode() {
         return this.itemTypeCode;
     }
 

@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -13,9 +12,9 @@ public class SalesContactPartyFact extends AbstractFact {
     private TextType name;
     private List<TextType> descriptions;
     private List<IDType> nationalityCountryIDs;
-    private List<eu.europa.ec.fisheries.schema.sales.CodeType> languageCodes;
+    private List<CodeType> languageCodes;
     private IDType residenceCountryID;
-    private List<eu.europa.ec.fisheries.schema.sales.CodeType> roleCodes;
+    private List<CodeType> roleCodes;
     private List<StructuredAddressType> specifiedStructuredAddresses;
     private List<ContactPersonType> specifiedContactPersons;
     private List<TelecommunicationCommunicationType> telephoneTelecommunicationCommunications;

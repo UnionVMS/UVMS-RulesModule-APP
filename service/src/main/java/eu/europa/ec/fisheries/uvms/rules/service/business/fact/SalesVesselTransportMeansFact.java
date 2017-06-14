@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -12,10 +11,10 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
 
     private List<IDType> ids;
     private List<TextType> names;
-    private List<eu.europa.ec.fisheries.schema.sales.CodeType> typeCodes;
+    private List<CodeType> typeCodes;
     private DateTimeType commissioningDateTime;
-    private eu.europa.ec.fisheries.schema.sales.CodeType operationalStatusCode;
-    private eu.europa.ec.fisheries.schema.sales.CodeType hullMaterialCode;
+    private CodeType operationalStatusCode;
+    private CodeType hullMaterialCode;
     private eu.europa.ec.fisheries.schema.sales.MeasureType draughtMeasure;
     private eu.europa.ec.fisheries.schema.sales.MeasureType speedMeasure;
     private eu.europa.ec.fisheries.schema.sales.MeasureType trawlingSpeedMeasure;

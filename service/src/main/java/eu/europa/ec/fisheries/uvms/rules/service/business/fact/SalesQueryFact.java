@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -11,7 +10,7 @@ public class SalesQueryFact extends AbstractFact {
 
     private IDType id;
     private DateTimeType submittedDateTime;
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType typeCode;
     private DelimitedPeriodType specifiedDelimitedPeriod;
     private FLUXPartyType submitterFLUXParty;
     private List<SalesQueryParameterType> simpleSalesQueryParameters;

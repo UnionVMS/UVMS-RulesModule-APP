@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -15,7 +14,7 @@ public class SalesContactPersonFact extends AbstractFact {
     private TextType familyNamePrefix;
     private TextType familyName;
     private TextType nameSuffix;
-    private eu.europa.ec.fisheries.schema.sales.CodeType genderCode;
+    private CodeType genderCode;
     private TextType alias;
     private DateTimeType birthDateTime;
     private TextType birthplaceName;

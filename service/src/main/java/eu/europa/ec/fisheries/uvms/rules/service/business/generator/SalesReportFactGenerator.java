@@ -94,7 +94,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         mappingsToFacts.put(AuctionSaleType.class, SalesAuctionSaleFact.class);
         mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
         mappingsToFacts.put(AAPProcessType.class, SalesAAPProcessFact.class);
-        mappingsToFacts.put(AAPProductType.class, SalesAAPProcessFact.class);
+        mappingsToFacts.put(AAPProductType.class, SalesAAPProductFact.class);
         mappingsToFacts.put(SalesBatchType.class, SalesBatchFact.class);
         mappingsToFacts.put(ContactPartyType.class, SalesContactPartyFact.class);
         mappingsToFacts.put(ContactPersonType.class, SalesContactPersonFact.class);

@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -34,7 +35,7 @@ public class SalesObjectsHelper {
 
     public SalesPartyFact getSalesPartyFact(String buyerOrSeller, FLUXOrganizationType mathiblaaOrganization) {
         SalesPartyFact salesParty1Fact = new SalesPartyFact();
-        salesParty1Fact.setRoleCodes(newArrayList(new CodeType().withValue(buyerOrSeller)));
+        salesParty1Fact.setRoleCodes(Lists.newArrayList(new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType(buyerOrSeller)));
         salesParty1Fact.setSpecifiedFLUXOrganization(mathiblaaOrganization);
         return salesParty1Fact;
     }

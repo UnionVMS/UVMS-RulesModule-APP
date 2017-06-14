@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -12,10 +11,10 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
     private List<IDType> ids;
     private IDType referencedID;
     private DateTimeType creationDateTime;
-    private eu.europa.ec.fisheries.schema.sales.CodeType responseCode;
+    private CodeType responseCode;
     private TextType remarks;
     private TextType rejectionReason;
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType typeCode;
     private List<ValidationResultDocumentType> relatedValidationResultDocuments;
     private FLUXPartyType respondentFLUXParty;
 
