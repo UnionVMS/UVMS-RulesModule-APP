@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -353,6 +354,14 @@ public abstract class AbstractFact {
             }
         }
         return !isMatchFound;
+    }
+
+    public int numberOfDecimals(BigDecimal value) {
+        if (value == null) {
+            return -1;
+        }
+
+        return value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
     }
 
     public boolean isPositive(BigDecimal value) {
