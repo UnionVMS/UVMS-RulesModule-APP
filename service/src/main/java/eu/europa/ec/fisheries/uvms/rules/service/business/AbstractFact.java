@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -354,15 +355,29 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean isPositive(BigDecimal value) {
+        if (value == null) {
+            return true;
+        }
+        return !(value.compareTo(BigDecimal.ZERO) > 0);
+    }
+
+    public boolean isInRange(BigDecimal value, int min, int max) {
+        if (value == null) {
+            return true;
+        }
+        return !((value.compareTo(new BigDecimal(min)) == 1) && (value.compareTo(new BigDecimal(max)) == -1));
+    }
+
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
+        ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
         outer : for (String val : valuesToMatch) {
-            for (CodeType IdType : codeTypes) {
+            for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
                     continue outer;
