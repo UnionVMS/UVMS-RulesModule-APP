@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -10,8 +9,8 @@ import java.util.List;
 
 public class SalesValidationQualityAnalysisFact extends AbstractFact {
 
-    private eu.europa.ec.fisheries.schema.sales.CodeType levelCode;
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType levelCode;
+    private CodeType typeCode;
     private List<TextType> results;
     private IDType id;
     private TextType description;
@@ -22,7 +21,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         this.factType = FactType.SALES_VALIDATION_QUALITY_ANALYSIS;
     }
 
-    public eu.europa.ec.fisheries.schema.sales.CodeType getLevelCode() {
+    public CodeType getLevelCode() {
         return this.levelCode;
     }
 

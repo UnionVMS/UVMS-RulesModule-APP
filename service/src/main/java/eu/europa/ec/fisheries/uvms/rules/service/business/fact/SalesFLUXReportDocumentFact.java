@@ -1,8 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         return this.creationDateTime;
     }
 
-    public eu.europa.ec.fisheries.schema.sales.CodeType getPurposeCode() {
+    public CodeType getPurposeCode() {
         return this.purposeCode;
     }
 

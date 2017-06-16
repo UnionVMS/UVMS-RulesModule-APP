@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public class SalesDocumentFact extends AbstractFact {
 
     private List<IDType> ids;
-    private eu.europa.ec.fisheries.schema.sales.CodeType currencyCode;
+    private CodeType currencyCode;
     private List<IDType> transportDocumentIDs;
     private List<IDType> salesNoteIDs;
     private List<IDType> takeoverDocumentIDs;

@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -9,14 +8,14 @@ import java.util.List;
 
 public class SalesFLUXLocationFact extends AbstractFact {
 
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType typeCode;
     private IDType countryID;
     private IDType id;
-    private eu.europa.ec.fisheries.schema.sales.CodeType geopoliticalRegionCode;
+    private CodeType geopoliticalRegionCode;
     private List<TextType> names;
     private IDType sovereignRightsCountryID;
     private IDType jurisdictionCountryID;
-    private eu.europa.ec.fisheries.schema.sales.CodeType regionalFisheriesManagementOrganizationCode;
+    private CodeType regionalFisheriesManagementOrganizationCode;
     private FLUXGeographicalCoordinateType specifiedPhysicalFLUXGeographicalCoordinate;
     private List<StructuredAddressType> postalStructuredAddresses;
     private StructuredAddressType physicalStructuredAddress;

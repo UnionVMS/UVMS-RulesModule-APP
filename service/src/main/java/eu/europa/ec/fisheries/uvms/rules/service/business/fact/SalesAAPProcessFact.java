@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.FACatchType;
 import eu.europa.ec.fisheries.schema.sales.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;

@@ -14,7 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
@@ -30,7 +30,10 @@ import java.util.Map;
 
 @Slf4j
 public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
+
     private FLUXSalesQueryMessage query;
+
+    private FLUXSalesQueryMessage fluxSalesQueryMessage;
     private List<AbstractFact> facts;
     private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
     private MapperFacade mapper;
@@ -76,7 +79,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
 
     @Override
     public void setBusinessObjectMessage(FLUXSalesQueryMessage businessObject) throws RulesValidationException {
-        this.query = businessObject;
+        this.fluxSalesQueryMessage = businessObject;
     }
 
     private List<Object> findObjectsToMapToFacts() {

@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -9,7 +8,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 public class SalesStructuredAddressFact extends AbstractFact {
 
     private IDType id;
-    private eu.europa.ec.fisheries.schema.sales.CodeType postcodeCode;
+    private CodeType postcodeCode;
     private TextType buildingName;
     private TextType streetName;
     private TextType cityName;
@@ -35,7 +34,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         return this.id;
     }
 
-    public eu.europa.ec.fisheries.schema.sales.CodeType getPostcodeCode() {
+    public CodeType getPostcodeCode() {
         return this.postcodeCode;
     }
 

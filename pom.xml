@@ -22,7 +22,7 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
-        <orika.version>1.5.0</orika.version>
+        <orika.version>1.5.1</orika.version>
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>

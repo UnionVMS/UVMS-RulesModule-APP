@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -11,7 +10,7 @@ import java.util.List;
 public class SalesFishingTripFact extends AbstractFact {
 
     private List<IDType> ids;
-    private eu.europa.ec.fisheries.schema.sales.CodeType typeCode;
+    private CodeType typeCode;
     private List<DelimitedPeriodType> specifiedDelimitedPeriods;
 
     @Override
@@ -23,7 +22,7 @@ public class SalesFishingTripFact extends AbstractFact {
         return this.ids;
     }
 
-    public eu.europa.ec.fisheries.schema.sales.CodeType getTypeCode() {
+    public CodeType getTypeCode() {
         return this.typeCode;
     }
 
