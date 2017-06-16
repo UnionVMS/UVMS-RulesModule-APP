@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import org.joda.time.DateTime;
