@@ -94,7 +94,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         mappingsToFacts.put(AuctionSaleType.class, SalesAuctionSaleFact.class);
         mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
         mappingsToFacts.put(AAPProcessType.class, SalesAAPProcessFact.class);
-        mappingsToFacts.put(AAPProductType.class, SalesAAPProcessFact.class);
+        mappingsToFacts.put(AAPProductType.class, SalesAAPProductFact.class);
         mappingsToFacts.put(SalesBatchType.class, SalesBatchFact.class);
         mappingsToFacts.put(ContactPartyType.class, SalesContactPartyFact.class);
         mappingsToFacts.put(ContactPersonType.class, SalesContactPersonFact.class);
@@ -108,15 +108,12 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         mappingsToFacts.put(FLUXOrganizationType.class, SalesFLUXOrganizationFact.class);
         mappingsToFacts.put(FLUXPartyType.class, SalesFLUXPartyFact.class);
         mappingsToFacts.put(FLUXReportDocumentType.class, SalesFLUXReportDocumentFact.class);
-        mappingsToFacts.put(FLUXResponseDocumentType.class, SalesFLUXResponseDocumentFact.class);
         mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
         mappingsToFacts.put(SalesPartyType.class, SalesPartyFact.class);
         mappingsToFacts.put(SalesPriceType.class, SalesPriceFact.class);
-        mappingsToFacts.put(SalesQueryType.class, SalesQueryFact.class);
         mappingsToFacts.put(SalesReportType.class, SalesReportFact.class);
         mappingsToFacts.put(SizeDistributionType.class, SalesSizeDistributionFact.class);
         mappingsToFacts.put(StructuredAddressType.class, SalesStructuredAddressFact.class);
-        mappingsToFacts.put(ValidationQualityAnalysisType.class, SalesValidationResultDocumentFact.class);
         mappingsToFacts.put(VesselCountryType.class, SalesVesselCountryFact.class);
         mappingsToFacts.put(VesselTransportMeansType.class, SalesVesselTransportMeansFact.class);
     }

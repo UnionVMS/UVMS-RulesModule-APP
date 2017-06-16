@@ -13,34 +13,88 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import ma.glasnost.orika.MapperFacade;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SalesResponseFactGenerator extends AbstractGenerator {
+public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
-    private FLUXResponseMessage fluxResponseMessage;
+    private FLUXSalesResponseMessage fluxResponseMessage;
 
-    @Override
-    public List<AbstractFact> getAllFacts() {
-        //TODO: sales fact mapper
-        AbstractFact fact = ActivityFactMapper.INSTANCE.generateFactsForFaResponse(fluxResponseMessage);
-        if (fact != null) {
-            return Arrays.asList(fact);
+    private List<AbstractFact> facts;
+    private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
+    private MapperFacade mapper;
+    private FactGeneratorHelper factGeneratorHelper;
+
+
+    public SalesResponseFactGenerator() {
+        this.factGeneratorHelper = new FactGeneratorHelper();
+        this.mapper = new DefaultOrikaMapper().getMapper();
+        mappingsToFacts = new HashMap<>();
+        fillMap();
+    }
+
+    public SalesResponseFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade) {
+        this();
+        this.factGeneratorHelper = factGeneratorHelper;
+        this.mapper = mapperFacade;
+    }
+
+    private List<Class<?>> findAllClassesFromOrikaMapperMap() {
+        List<Class<?>> classes = Lists.newArrayList();
+
+        for (Map.Entry<Class<?>, Class<? extends AbstractFact>> classClassEntry : mappingsToFacts.entrySet()) {
+            classes.add(classClassEntry.getKey());
         }
-        return Collections.emptyList();
+
+        return classes;
     }
 
     @Override
-    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
-        if (!(businessObject instanceof FLUXResponseMessage)) {
-            throw new RulesValidationException("Business object does not match required type");
+    public List<AbstractFact> getAllFacts() {
+        facts = new ArrayList<>();
+
+        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
+
+        for (Object objectToMapToFact : objectsToMapToFacts) {
+            AbstractFact fact = mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            facts.add(fact);
         }
-        this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
+
+        return facts;
+    }
+
+
+    @Override
+    public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {
+        this.fluxResponseMessage = businessObject;
+    }
+
+    private List<Object> findObjectsToMapToFacts() {
+        try {
+            return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(fluxResponseMessage, findAllClassesFromOrikaMapperMap());
+        } catch (IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace(); // TODO
+            throw new RuntimeException();
+        }
+    }
+
+
+    private void fillMap() {
+        mappingsToFacts.put(FLUXSalesResponseMessage.class, SalesFLUXSalesResponseMessageFact.class);
+        mappingsToFacts.put(FLUXResponseDocumentType.class, SalesFLUXResponseDocumentFact.class);
+        mappingsToFacts.put(FLUXPartyType.class, SalesFLUXPartyFact.class);
+        mappingsToFacts.put(ValidationResultDocumentType.class, SalesValidationResultDocumentFact.class);
+        mappingsToFacts.put(ValidationQualityAnalysisType.class, SalesValidationQualityAnalysisFact.class);
     }
 }

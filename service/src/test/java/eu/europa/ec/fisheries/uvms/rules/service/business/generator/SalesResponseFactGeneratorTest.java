@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -8,7 +7,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactG
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,11 +17,10 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by MATBUL on 22/05/2017.
+ * Created by MATBUL on 16/06/2017.
  */
-public class SalesQueryFactGeneratorTest {
-
-    private SalesQueryFactGenerator salesQueryFactGenerator;
+public class SalesResponseFactGeneratorTest {
+    private SalesResponseFactGenerator salesResponseFactGenerator;
 
     private MapperFacade mapper;
 
@@ -36,30 +33,25 @@ public class SalesQueryFactGeneratorTest {
         helper = new SalesObjectsHelper();
 
         mapper = defaultOrikaMapper.getMapper();
-        salesQueryFactGenerator = new SalesQueryFactGenerator(factGeneratorHelper, mapper);
+        salesResponseFactGenerator = new SalesResponseFactGenerator(factGeneratorHelper, mapper);
     }
 
     @Test
     public void getAllFactsWhenChainDoesntContainNull() throws Exception {
-        FLUXSalesQueryMessage fluxSalesQueryMessage = new FLUXSalesQueryMessage();
+        FLUXResponseDocumentType fluxResponseDocumentType = new FLUXResponseDocumentType()
+                .withRespondentFLUXParty(new FLUXPartyType())
+                .withRelatedValidationResultDocuments(new ValidationResultDocumentType().withRelatedValidationQualityAnalysises(new ValidationQualityAnalysisType()));
 
-        SalesQueryType query = new SalesQueryType()
-                .withID(new IDType().withValue("bla"))
-                .withSpecifiedDelimitedPeriod(new DelimitedPeriodType().withStartDateTime(new DateTimeType().withDateTime(DateTime.now())))
-                .withSubmittedDateTime(new DateTimeType().withDateTime(DateTime.now()))
-                .withSubmitterFLUXParty(new FLUXPartyType().withIDS(new IDType().withValue("This is my ID")))
-                .withTypeCode(new CodeType().withValue("My codeType"))
-                .withSimpleSalesQueryParameters(new SalesQueryParameterType());
+        FLUXSalesResponseMessage fluxSalesResponseMessage = new FLUXSalesResponseMessage()
+                .withFLUXResponseDocument(fluxResponseDocumentType)
+                .withSalesReports(new SalesReportType());
 
-
-        fluxSalesQueryMessage.setSalesQuery(query);
-
-        salesQueryFactGenerator.setBusinessObjectMessage(fluxSalesQueryMessage);
-        List<AbstractFact> allFacts = salesQueryFactGenerator.getAllFacts();
+        salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
+        List<AbstractFact> allFacts = salesResponseFactGenerator.getAllFacts();
 
         List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
-                Arrays.asList(SalesFLUXSalesQueryMessageFact.class, SalesFLUXPartyFact.class,
-                        SalesDelimitedPeriodFact.class, SalesQueryFact.class, SalesQueryParameterFact.class);
+                Arrays.asList(SalesFLUXSalesResponseMessageFact.class, SalesFLUXResponseDocumentFact.class,
+                        SalesFLUXPartyFact.class, SalesValidationResultDocumentFact.class, SalesValidationQualityAnalysisFact.class);
         List<Class> listOfClassesThatWereCreated = newArrayList();
 
         for (Class clazz : listOfClassesThatShouldBeCreated) {

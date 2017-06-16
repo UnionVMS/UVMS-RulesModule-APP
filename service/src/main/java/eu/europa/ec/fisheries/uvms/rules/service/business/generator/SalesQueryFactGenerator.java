@@ -13,76 +13,87 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.SalesFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
-
-    private FLUXSalesQueryMessage fluxSalesQueryMessage;
-    private SalesFactMapper mapper = SalesFactMapper.INSTANCE;
+    private FLUXSalesQueryMessage query;
     private List<AbstractFact> facts;
+    private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
+    private MapperFacade mapper;
+    private FactGeneratorHelper factGeneratorHelper;
+
+
+    public SalesQueryFactGenerator() {
+        this.factGeneratorHelper = new FactGeneratorHelper();
+        this.mapper = new DefaultOrikaMapper().getMapper();
+        mappingsToFacts = new HashMap<>();
+        fillMap();
+    }
+
+    public SalesQueryFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade) {
+        this();
+        this.factGeneratorHelper = factGeneratorHelper;
+        this.mapper = mapperFacade;
+    }
+
+    private List<Class<?>> findAllClassesFromOrikaMapperMap() {
+        List<Class<?>> classes = Lists.newArrayList();
+
+        for (Map.Entry<Class<?>, Class<? extends AbstractFact>> classClassEntry : mappingsToFacts.entrySet()) {
+            classes.add(classClassEntry.getKey());
+        }
+
+        return classes;
+    }
 
     @Override
     public List<AbstractFact> getAllFacts() {
         facts = new ArrayList<>();
 
-        addFacts(forSalesQuery(), "SalesQuery");
-        addFacts(forFLUXParty(), "FLUXParty");
-        addFacts(forDelimitedPeriod(), "DelimitedPeriod");
+        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
+
+        for (Object objectToMapToFact : objectsToMapToFacts) {
+            AbstractFact fact = mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            facts.add(fact);
+        }
 
         return facts;
     }
 
-    private void addFacts(Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> function, String context) {
+    @Override
+    public void setBusinessObjectMessage(FLUXSalesQueryMessage businessObject) throws RulesValidationException {
+        this.query = businessObject;
+    }
+
+    private List<Object> findObjectsToMapToFacts() {
         try {
-            Collection<? extends AbstractFact> newFacts = function.apply(fluxSalesQueryMessage);
-            facts.addAll(newFacts);
-        } catch (NullPointerException ex) {
-            log.info("Could not generate facts for " + context);
+            return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(query, findAllClassesFromOrikaMapperMap());
+        } catch (IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace(); // TODO
+            throw new RuntimeException();
         }
     }
 
 
-    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forSalesQuery() {
-        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
-            @Override
-            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
-                return Lists.newArrayList(mapper.generateFactForSalesQueryFact(fluxSalesQueryMessage.getSalesQuery()));
-            }
-        };
-    }
-
-    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forDelimitedPeriod() {
-        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
-            @Override
-            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
-                return Lists.newArrayList(mapper.generateFactForSalesDelimitedPeriodFact(fluxSalesQueryMessage.getSalesQuery().getSpecifiedDelimitedPeriod()));
-            }
-        };
-    }
-
-    private Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>> forFLUXParty() {
-        return new Function<FLUXSalesQueryMessage, Collection<? extends AbstractFact>>() {
-            @Override
-            public Collection<? extends AbstractFact> apply(@Nullable FLUXSalesQueryMessage fluxSalesQueryMessage) {
-                return Lists.newArrayList(mapper.generateFactForFLUXPartyFact(fluxSalesQueryMessage.getSalesQuery().getSubmitterFLUXParty()));
-            }
-        };
-    }
-
-    @Override
-    public void setBusinessObjectMessage(FLUXSalesQueryMessage businessObject) throws RulesValidationException {
-        this.fluxSalesQueryMessage = businessObject;
+    private void fillMap() {
+        mappingsToFacts.put(FLUXSalesQueryMessage.class, SalesFLUXSalesQueryMessageFact.class);
+        mappingsToFacts.put(SalesQueryType.class, SalesQueryFact.class);
+        mappingsToFacts.put(FLUXPartyType.class, SalesFLUXPartyFact.class);
+        mappingsToFacts.put(DelimitedPeriodType.class, SalesDelimitedPeriodFact.class);
+        mappingsToFacts.put(SalesQueryParameterType.class, SalesQueryParameterFact.class);
     }
 }
