@@ -226,4 +226,21 @@ public class SalesAAPProductFact extends AbstractFact {
     protected boolean canEqual(Object other) {
         return other instanceof SalesAAPProductFact;
     }
+
+    public boolean isInvalidUsageCode(){
+        String[] validUsages = new String[10];
+        validUsages[0] = "HCN";
+        validUsages[1] = "HCN-INDIRECT";
+        validUsages[2] = "IND";
+        validUsages[3] = "BAI";
+        validUsages[4] = "ANF";
+        validUsages[5] = "WST";
+        validUsages[6] = "WDR";
+        validUsages[7] = "COV";
+        validUsages[8] = "UNK";
+        validUsages[9] = "STO";
+
+        return valueContainsAny(usageCode, validUsages);
+    }
+
 }

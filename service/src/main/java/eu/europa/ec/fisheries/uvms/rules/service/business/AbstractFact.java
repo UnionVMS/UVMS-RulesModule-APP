@@ -28,6 +28,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Slf4j
@@ -426,6 +427,12 @@ public abstract class AbstractFact {
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
         return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
+        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        int index = string.indexOf(".");
+        return index < 0 ? 0 : string.length() - index - 1;
     }
 
     public enum FORMATS {
