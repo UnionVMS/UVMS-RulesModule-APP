@@ -105,15 +105,6 @@ public class SalesObjectsHelper {
         return fluxSalesReportMessageFact;
     }
 
-    public SalesDocumentFact getSalesDocumentFact(FLUXLocationType fluxLocation1, FishingActivityType fishingActivity, SalesEventType salesEvent, List<SalesPartyType> salesParties) {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setIDS(newArrayList(new IDType().withValue("AAA")));
-        salesDocumentFact.setSpecifiedFLUXLocations(newArrayList(fluxLocation1));
-        salesDocumentFact.setSpecifiedSalesEvents(newArrayList(salesEvent));
-        salesDocumentFact.setSpecifiedFishingActivities(newArrayList(fishingActivity));
-        salesDocumentFact.setSpecifiedSalesParties(salesParties);
-        return salesDocumentFact;
-    }
 
     public SalesPartyFact getSalesPartyFact(String buyerOrSeller, FLUXOrganizationType mathiblaaOrganization) {
         SalesPartyFact salesParty1Fact = new SalesPartyFact();
@@ -142,19 +133,7 @@ public class SalesObjectsHelper {
         return delimitedPeriodFact;
     }
 
-    public SalesVesselTransportMeansFact getSalesVesselTransportMeansFact(String vesselName, String vesselExtId, RegistrationEventType registrationEvent) {
-        SalesVesselTransportMeansFact vesselTransportMeansFact = new SalesVesselTransportMeansFact();
-        vesselTransportMeansFact.setNames(newArrayList(new TextType().withValue("vesselName")));
-        vesselTransportMeansFact.setIDS(newArrayList(new IDType().withValue("vesselExtId")));
-        vesselTransportMeansFact.setSpecifiedRegistrationEvents(newArrayList(registrationEvent));
-        return vesselTransportMeansFact;
-    }
 
-    public SalesFLUXLocationFact getSalesFLUXLocationFact(String id) {
-        SalesFLUXLocationFact fluxLocation1Fact = new SalesFLUXLocationFact();
-        fluxLocation1Fact.setID(new IDType().withValue(id));
-        return fluxLocation1Fact;
-    }
 
     public FLUXSalesReportMessage getFluxSalesReportMessage(FLUXReportDocumentType fluxReportDocument, SalesDocumentType salesDocument) {
         return new FLUXSalesReportMessage()
