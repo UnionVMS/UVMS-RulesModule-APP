@@ -136,6 +136,12 @@ public class TemplateFactory {
                 return "/templates/SalesReportWrapper.drt";
             case SALES_AUCTION_SALE:
                 return "/templates/SalesAuctionSale.drt";
+            case SALES_FLUX_SALES_QUERY_MESSAGE:
+                return "/templates/SalesFLUXSalesQuery.drt";
+            case SALES_QUERY_PARAMETER:
+                return "/templates/SalesQueryParameter.drt";
+            case SALES_FLUX_SALES_RESPONSE_MESSAGE:
+                return "/templates/SalesFLUXSalesResponseMessage.drt";
         }
         return null;
     }
