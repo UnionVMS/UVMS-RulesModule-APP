@@ -1,18 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.IdType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 public class SalesStructuredAddressFact extends AbstractFact {
 
-    private IDType id;
+    private IdType id;
     private CodeType postcodeCode;
     private TextType buildingName;
     private TextType streetName;
     private TextType cityName;
-    private IDType countryID;
+    private IdType countryID;
     private TextType citySubDivisionName;
     private TextType countryName;
     private TextType countrySubDivisionName;
@@ -30,7 +30,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         this.factType = FactType.SALES_STRUCTURED_ADDRESS;
     }
 
-    public IDType getID() {
+    public IdType getID() {
         return this.id;
     }
 
@@ -50,7 +50,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         return this.cityName;
     }
 
-    public IDType getCountryID() {
+    public IdType getCountryID() {
         return this.countryID;
     }
 
@@ -98,7 +98,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         return this.postalArea;
     }
 
-    public void setID(IDType id) {
+    public void setID(IdType id) {
         this.id = id;
     }
 
@@ -118,7 +118,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         this.cityName = cityName;
     }
 
-    public void setCountryID(IDType countryID) {
+    public void setCountryID(IdType countryID) {
         this.countryID = countryID;
     }
 

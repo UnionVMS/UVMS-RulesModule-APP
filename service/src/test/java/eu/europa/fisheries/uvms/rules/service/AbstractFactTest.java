@@ -112,5 +112,19 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
+    @Test
+    public void testValidateFormatWhenPassingAStringAndResultIsOK(){
+        //todo: STIJN
+    }
+
+    @Test
+    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentIsNull(){
+        //todo: STIJN
+    }
+
+    @Test
+    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentDoesNotApplyToTheFormat(){
+        //todo: STIJN
+    }
 
 }

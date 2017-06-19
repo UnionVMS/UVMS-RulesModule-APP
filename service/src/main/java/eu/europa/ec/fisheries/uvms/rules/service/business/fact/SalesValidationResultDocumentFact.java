@@ -2,7 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.IdType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SalesValidationResultDocumentFact extends AbstractFact {
 
-    private IDType validatorID;
+    private IdType validatorID;
     private DateTimeType creationDateTime;
     private List<ValidationQualityAnalysisType> relatedValidationQualityAnalysises;
 
@@ -19,7 +19,7 @@ public class SalesValidationResultDocumentFact extends AbstractFact {
         this.factType = FactType.SALES_VALIDATION_RESULT_DOCUMENT;
     }
 
-    public IDType getValidatorID() {
+    public IdType getValidatorID() {
         return this.validatorID;
     }
 
@@ -31,7 +31,7 @@ public class SalesValidationResultDocumentFact extends AbstractFact {
         return this.relatedValidationQualityAnalysises;
     }
 
-    public void setValidatorID(IDType validatorID) {
+    public void setValidatorID(IdType validatorID) {
         this.validatorID = validatorID;
     }
 

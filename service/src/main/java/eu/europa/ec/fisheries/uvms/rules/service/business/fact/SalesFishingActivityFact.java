@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SalesFishingActivityFact extends AbstractFact {
 
-    private List<IDType> ids;
+    private List<IdType> ids;
     private CodeType typeCode;
     private DateTimeType occurrenceDateTime;
     private CodeType reasonCode;
@@ -36,7 +36,7 @@ public class SalesFishingActivityFact extends AbstractFact {
         this.factType = FactType.SALES_FISHING_ACTIVITY;
     }
 
-    public List<IDType> getIDS() {
+    public List<IdType> getIDS() {
         return this.ids;
     }
 
@@ -120,7 +120,7 @@ public class SalesFishingActivityFact extends AbstractFact {
         return this.relatedVesselTransportMeans;
     }
 
-    public void setIDS(List<IDType> ids) {
+    public void setIDS(List<IdType> ids) {
         this.ids = ids;
     }
 

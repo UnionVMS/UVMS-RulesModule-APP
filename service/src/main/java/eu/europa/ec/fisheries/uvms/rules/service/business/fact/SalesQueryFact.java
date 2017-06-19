@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SalesQueryFact extends AbstractFact {
 
-    private IDType id;
+    private IdType id;
     private DateTimeType submittedDateTime;
     private CodeType typeCode;
     private DelimitedPeriodType specifiedDelimitedPeriod;
@@ -20,7 +20,7 @@ public class SalesQueryFact extends AbstractFact {
         this.factType = FactType.SALES_QUERY;
     }
 
-    public IDType getID() {
+    public IdType getID() {
         return this.id;
     }
 
@@ -44,7 +44,7 @@ public class SalesQueryFact extends AbstractFact {
         return this.simpleSalesQueryParameters;
     }
 
-    public void setID(IDType id) {
+    public void setID(IdType id) {
         this.id = id;
     }
 

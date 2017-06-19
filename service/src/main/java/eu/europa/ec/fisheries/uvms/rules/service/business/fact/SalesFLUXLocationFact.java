@@ -9,12 +9,12 @@ import java.util.List;
 public class SalesFLUXLocationFact extends AbstractFact {
 
     private CodeType typeCode;
-    private IDType countryID;
-    private IDType id;
+    private IdType countryID;
+    private IdType id;
     private CodeType geopoliticalRegionCode;
     private List<TextType> names;
-    private IDType sovereignRightsCountryID;
-    private IDType jurisdictionCountryID;
+    private IdType sovereignRightsCountryID;
+    private IdType jurisdictionCountryID;
     private CodeType regionalFisheriesManagementOrganizationCode;
     private FLUXGeographicalCoordinateType specifiedPhysicalFLUXGeographicalCoordinate;
     private List<StructuredAddressType> postalStructuredAddresses;
@@ -31,11 +31,11 @@ public class SalesFLUXLocationFact extends AbstractFact {
         return this.typeCode;
     }
 
-    public IDType getCountryID() {
+    public IdType getCountryID() {
         return this.countryID;
     }
 
-    public IDType getID() {
+    public IdType getID() {
         return this.id;
     }
 
@@ -47,11 +47,11 @@ public class SalesFLUXLocationFact extends AbstractFact {
         return this.names;
     }
 
-    public IDType getSovereignRightsCountryID() {
+    public IdType getSovereignRightsCountryID() {
         return this.sovereignRightsCountryID;
     }
 
-    public IDType getJurisdictionCountryID() {
+    public IdType getJurisdictionCountryID() {
         return this.jurisdictionCountryID;
     }
 
@@ -83,11 +83,11 @@ public class SalesFLUXLocationFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public void setCountryID(IDType countryID) {
+    public void setCountryID(IdType countryID) {
         this.countryID = countryID;
     }
 
-    public void setID(IDType id) {
+    public void setID(IdType id) {
         this.id = id;
     }
 
@@ -99,11 +99,11 @@ public class SalesFLUXLocationFact extends AbstractFact {
         this.names = names;
     }
 
-    public void setSovereignRightsCountryID(IDType sovereignRightsCountryID) {
+    public void setSovereignRightsCountryID(IdType sovereignRightsCountryID) {
         this.sovereignRightsCountryID = sovereignRightsCountryID;
     }
 
-    public void setJurisdictionCountryID(IDType jurisdictionCountryID) {
+    public void setJurisdictionCountryID(IdType jurisdictionCountryID) {
         this.jurisdictionCountryID = jurisdictionCountryID;
     }
 

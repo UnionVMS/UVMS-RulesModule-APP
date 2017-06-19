@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.IdType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -12,7 +12,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
     private CodeType levelCode;
     private CodeType typeCode;
     private List<TextType> results;
-    private IDType id;
+    private IdType id;
     private TextType description;
     private List<TextType> referencedItems;
 
@@ -33,7 +33,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         return this.results;
     }
 
-    public IDType getID() {
+    public IdType getID() {
         return this.id;
     }
 
@@ -57,7 +57,7 @@ public class SalesValidationQualityAnalysisFact extends AbstractFact {
         this.results = results;
     }
 
-    public void setID(IDType id) {
+    public void setID(IdType id) {
         this.id = id;
     }
 

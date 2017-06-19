@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SalesVesselTransportMeansFact extends AbstractFact {
 
-    private List<IDType> ids;
+    private List<IdType> ids;
     private List<TextType> names;
     private List<CodeType> typeCodes;
     private DateTimeType commissioningDateTime;
@@ -40,7 +40,7 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
         this.factType = FactType.SALES_VESSEL_TRANSPORT_MEANS;
     }
 
-    public List<IDType> getIDS() {
+    public List<IdType> getIDS() {
         return this.ids;
     }
 
@@ -140,7 +140,7 @@ public class SalesVesselTransportMeansFact extends AbstractFact {
         return this.grantedFLAPDocuments;
     }
 
-    public void setIDS(List<IDType> ids) {
+    public void setIDS(List<IdType> ids) {
         this.ids = ids;
     }
 

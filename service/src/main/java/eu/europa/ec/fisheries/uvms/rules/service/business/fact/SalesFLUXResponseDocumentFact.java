@@ -8,8 +8,8 @@ import java.util.List;
 
 public class SalesFLUXResponseDocumentFact extends AbstractFact {
 
-    private List<IDType> ids;
-    private IDType referencedID;
+    private List<IdType> ids;
+    private IdType referencedID;
     private DateTimeType creationDateTime;
     private CodeType responseCode;
     private TextType remarks;
@@ -23,11 +23,11 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
         this.factType = FactType.SALES_FLUX_RESPONSE_DOCUMENT;
     }
 
-    public List<IDType> getIDS() {
+    public List<IdType> getIDS() {
         return this.ids;
     }
 
-    public IDType getReferencedID() {
+    public IdType getReferencedID() {
         return this.referencedID;
     }
 
@@ -59,11 +59,11 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
         return this.respondentFLUXParty;
     }
 
-    public void setIDS(List<IDType> ids) {
+    public void setIDS(List<IdType> ids) {
         this.ids = ids;
     }
 
-    public void setReferencedID(IDType referencedID) {
+    public void setReferencedID(IdType referencedID) {
         this.referencedID = referencedID;
     }
 

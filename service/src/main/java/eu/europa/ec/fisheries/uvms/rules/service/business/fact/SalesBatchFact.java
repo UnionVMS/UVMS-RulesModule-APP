@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class SalesBatchFact extends AbstractFact {
 
-    private List<IDType> ids;
+    private List<IdType> ids;
     private List<AAPProductType> specifiedAAPProducts;
     private SalesPriceType totalSalesPrice;
 
@@ -19,7 +18,7 @@ public class SalesBatchFact extends AbstractFact {
         this.factType = FactType.SALES_BATCH;
     }
 
-    public List<IDType> getIDS() {
+    public List<IdType> getIDS() {
         return this.ids;
     }
 
@@ -31,7 +30,7 @@ public class SalesBatchFact extends AbstractFact {
         return this.totalSalesPrice;
     }
 
-    public void setIDS(List<IDType> ids) {
+    public void setIDS(List<IdType> ids) {
         this.ids = ids;
     }
 

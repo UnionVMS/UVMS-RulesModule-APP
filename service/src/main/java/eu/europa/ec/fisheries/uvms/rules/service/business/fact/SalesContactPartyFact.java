@@ -8,12 +8,12 @@ import java.util.List;
 
 public class SalesContactPartyFact extends AbstractFact {
 
-    private List<IDType> ids;
+    private List<IdType> ids;
     private TextType name;
     private List<TextType> descriptions;
-    private List<IDType> nationalityCountryIDs;
+    private List<IdType> nationalityCountryIDs;
     private List<CodeType> languageCodes;
-    private IDType residenceCountryID;
+    private IdType residenceCountryID;
     private List<CodeType> roleCodes;
     private List<StructuredAddressType> specifiedStructuredAddresses;
     private List<ContactPersonType> specifiedContactPersons;
@@ -27,7 +27,7 @@ public class SalesContactPartyFact extends AbstractFact {
         this.factType = FactType.SALES_CONTACT_PARTY;
     }
 
-    public List<IDType> getIDS() {
+    public List<IdType> getIDS() {
         return this.ids;
     }
 
@@ -39,7 +39,7 @@ public class SalesContactPartyFact extends AbstractFact {
         return this.descriptions;
     }
 
-    public List<IDType> getNationalityCountryIDs() {
+    public List<IdType> getNationalityCountryIDs() {
         return this.nationalityCountryIDs;
     }
 
@@ -47,7 +47,7 @@ public class SalesContactPartyFact extends AbstractFact {
         return this.languageCodes;
     }
 
-    public IDType getResidenceCountryID() {
+    public IdType getResidenceCountryID() {
         return this.residenceCountryID;
     }
 
@@ -79,7 +79,7 @@ public class SalesContactPartyFact extends AbstractFact {
         return this.specifiedUniversalCommunications;
     }
 
-    public void setIDS(List<IDType> ids) {
+    public void setIDS(List<IdType> ids) {
         this.ids = ids;
     }
 
@@ -91,7 +91,7 @@ public class SalesContactPartyFact extends AbstractFact {
         this.descriptions = descriptions;
     }
 
-    public void setNationalityCountryIDs(List<IDType> nationalityCountryIDs) {
+    public void setNationalityCountryIDs(List<IdType> nationalityCountryIDs) {
         this.nationalityCountryIDs = nationalityCountryIDs;
     }
 
@@ -99,7 +99,7 @@ public class SalesContactPartyFact extends AbstractFact {
         this.languageCodes = languageCodes;
     }
 
-    public void setResidenceCountryID(IDType residenceCountryID) {
+    public void setResidenceCountryID(IdType residenceCountryID) {
         this.residenceCountryID = residenceCountryID;
     }
 

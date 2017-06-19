@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -11,10 +10,10 @@ import java.util.List;
 
 public class SalesPartyFact extends AbstractFact {
 
-    private IDType id;
+    private IdType id;
     private TextType name;
     private CodeType typeCode;
-    private IDType countryID;
+    private IdType countryID;
     private List<CodeType> roleCodes;
     private List<StructuredAddressType> specifiedStructuredAddresses;
     private FLUXOrganizationType specifiedFLUXOrganization;
@@ -24,7 +23,7 @@ public class SalesPartyFact extends AbstractFact {
         this.factType = FactType.SALES_PARTY;
     }
 
-    public IDType getID() {
+    public IdType getID() {
         return this.id;
     }
 
@@ -36,7 +35,7 @@ public class SalesPartyFact extends AbstractFact {
         return this.typeCode;
     }
 
-    public IDType getCountryID() {
+    public IdType getCountryID() {
         return this.countryID;
     }
 
@@ -52,7 +51,7 @@ public class SalesPartyFact extends AbstractFact {
         return this.specifiedFLUXOrganization;
     }
 
-    public void setID(IDType id) {
+    public void setID(IdType id) {
         this.id = id;
     }
 
@@ -64,7 +63,7 @@ public class SalesPartyFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public void setCountryID(IDType countryID) {
+    public void setCountryID(IdType countryID) {
         this.countryID = countryID;
     }
 

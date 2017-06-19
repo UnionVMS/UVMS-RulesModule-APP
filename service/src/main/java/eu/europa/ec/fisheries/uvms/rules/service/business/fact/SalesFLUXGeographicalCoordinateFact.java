@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.IdType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -10,7 +10,7 @@ public class SalesFLUXGeographicalCoordinateFact extends AbstractFact {
     private eu.europa.ec.fisheries.schema.sales.MeasureType longitudeMeasure;
     private eu.europa.ec.fisheries.schema.sales.MeasureType latitudeMeasure;
     private eu.europa.ec.fisheries.schema.sales.MeasureType altitudeMeasure;
-    private IDType systemID;
+    private IdType systemID;
 
     @Override
     public void setFactType() {
@@ -29,7 +29,7 @@ public class SalesFLUXGeographicalCoordinateFact extends AbstractFact {
         return this.altitudeMeasure;
     }
 
-    public IDType getSystemID() {
+    public IdType getSystemID() {
         return this.systemID;
     }
 
@@ -45,7 +45,7 @@ public class SalesFLUXGeographicalCoordinateFact extends AbstractFact {
         this.altitudeMeasure = altitudeMeasure;
     }
 
-    public void setSystemID(IDType systemID) {
+    public void setSystemID(IdType systemID) {
         this.systemID = systemID;
     }
 
