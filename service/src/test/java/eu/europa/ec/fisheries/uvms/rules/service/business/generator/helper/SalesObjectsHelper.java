@@ -1,8 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import org.joda.time.DateTime;
 
@@ -15,6 +16,87 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class SalesObjectsHelper {
 
+    public Report generateFullFLUXSalesReportMessage() {
+        FLUXReportDocumentType fluxReportDocument = new FLUXReportDocumentType()
+                .withIDS(new IDType().withValue("fluxReportDocumentExtId"))
+                .withOwnerFLUXParty(new FLUXPartyType().withIDS(new IDType().withValue("I own this crib")));
+
+        FLUXGeographicalCoordinateType fluxGeographicalCoordinateType = new FLUXGeographicalCoordinateType();
+
+        FLUXLocationType fluxLocation1 = getFluxLocationType("BEL")
+                .withSpecifiedPhysicalFLUXGeographicalCoordinate(fluxGeographicalCoordinateType)
+                .withPhysicalStructuredAddress(new StructuredAddressType());
+        FLUXLocationType fluxLocation2 = getFluxLocationType("NED")
+                .withSpecifiedPhysicalFLUXGeographicalCoordinate(fluxGeographicalCoordinateType)
+                .withPhysicalStructuredAddress(new StructuredAddressType());
+
+        RegistrationLocationType registrationLocation = getRegistrationLocationType("FRA");
+
+        RegistrationEventType registrationEvent = getRegistrationEventType(registrationLocation);
+
+        ContactPersonType contactPersonType = new ContactPersonType();
+        ContactPartyType contactPartyType = new ContactPartyType().withSpecifiedContactPersons(contactPersonType);
+
+        VesselTransportMeansType vesselTransportMeansType = getVesselTransportMeansType("vesselName", "vesselExtId", registrationEvent)
+                .withSpecifiedContactParties(contactPartyType)
+                .withRegistrationVesselCountry(new VesselCountryType());
+
+
+        SalesFishingTripFact salesFishingTripFact = new SalesFishingTripFact();
+        FishingTripType fishingTripType = new FishingTripType();
+
+        DelimitedPeriodType delimitedPeriodType = getDelimitedPeriodType();
+
+        FishingActivityType fishingActivity = getFishingActivityType(fluxLocation2, vesselTransportMeansType, delimitedPeriodType);
+        fishingActivity.withRelatedVesselTransportMeans(vesselTransportMeansType);
+        fishingActivity.withSpecifiedFishingTrip(fishingTripType);
+
+        FLUXOrganizationType superstijnOrganization = new FLUXOrganizationType().withName(new TextType().withValue("Superstijn"));
+
+        FLUXOrganizationType mathiblaaOrganization = new FLUXOrganizationType().withName(new TextType().withValue("Mathiblaa"));
+        SalesEventType salesEvent = getSalesEventType();
+
+        SalesPartyType salesParty1 = new SalesPartyType()
+                .withRoleCodes(new CodeType().withValue("BUYER"))
+                .withSpecifiedFLUXOrganization(mathiblaaOrganization);
+
+        SalesPartyType salesParty2 = new SalesPartyType()
+                .withRoleCodes(new CodeType().withValue("SELLER"))
+                .withSpecifiedFLUXOrganization(superstijnOrganization);
+
+        List<SalesPartyType> salesParties = newArrayList(salesParty1, salesParty2);
+
+        AAPProductType aapProductType = new AAPProductType()
+                .withAppliedAAPProcesses(new AAPProcessType())
+                .withSpecifiedSizeDistribution(new SizeDistributionType())
+                .withTotalSalesPrice(new SalesPriceType());
+
+        List<AAPProductType> products = newArrayList(aapProductType);
+
+        SalesDocumentType salesDocument = getSalesDocumentType(fluxLocation1, fishingActivity, salesEvent, salesParties, products);
+
+        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
+        fluxSalesReportMessage.withFLUXReportDocument(fluxReportDocument);
+        fluxSalesReportMessage.withSalesReports(new SalesReportType().withIncludedSalesDocuments(salesDocument));
+
+        Report report = new Report()
+                .withFLUXSalesReportMessage(fluxSalesReportMessage)
+                .withAuctionSale(new AuctionSaleType());
+
+        return report;
+    }
+
+    public boolean checkIfFactsContainClass(List<AbstractFact> allFacts, List<Class> listOfClassesThatWereCreated, Class<? extends AbstractFact> clazz, boolean testValid) {
+        for (AbstractFact fact : allFacts) {
+            if (fact.getClass().equals(clazz)) {
+                listOfClassesThatWereCreated.add(fact.getClass());
+                testValid = true;
+                break;
+            }
+            testValid = false;
+        }
+        return testValid;
+    }
 
     public SalesFLUXSalesReportMessageFact getSalesFLUXSalesReportMessageFact(FLUXReportDocumentType fluxReportDocument, SalesDocumentType salesDocument) {
         SalesFLUXSalesReportMessageFact fluxSalesReportMessageFact = new SalesFLUXSalesReportMessageFact();
@@ -23,15 +105,6 @@ public class SalesObjectsHelper {
         return fluxSalesReportMessageFact;
     }
 
-    public SalesDocumentFact getSalesDocumentFact(FLUXLocationType fluxLocation1, FishingActivityType fishingActivity, SalesEventType salesEvent, List<SalesPartyType> salesParties) {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setIDS(newArrayList(new IDType().withValue("AAA")));
-        salesDocumentFact.setSpecifiedFLUXLocations(newArrayList(fluxLocation1));
-        salesDocumentFact.setSpecifiedSalesEvents(newArrayList(salesEvent));
-        salesDocumentFact.setSpecifiedFishingActivities(newArrayList(fishingActivity));
-        salesDocumentFact.setSpecifiedSalesParties(salesParties);
-        return salesDocumentFact;
-    }
 
     public SalesPartyFact getSalesPartyFact(String buyerOrSeller, FLUXOrganizationType mathiblaaOrganization) {
         SalesPartyFact salesParty1Fact = new SalesPartyFact();
@@ -60,32 +133,22 @@ public class SalesObjectsHelper {
         return delimitedPeriodFact;
     }
 
-    public SalesVesselTransportMeansFact getSalesVesselTransportMeansFact(String vesselName, String vesselExtId, RegistrationEventType registrationEvent) {
-        SalesVesselTransportMeansFact vesselTransportMeansFact = new SalesVesselTransportMeansFact();
-        vesselTransportMeansFact.setNames(newArrayList(new TextType().withValue("vesselName")));
-        vesselTransportMeansFact.setIDS(newArrayList(new IDType().withValue("vesselExtId")));
-        vesselTransportMeansFact.setSpecifiedRegistrationEvents(newArrayList(registrationEvent));
-        return vesselTransportMeansFact;
-    }
 
-    public SalesFLUXLocationFact getSalesFLUXLocationFact(String id) {
-        SalesFLUXLocationFact fluxLocation1Fact = new SalesFLUXLocationFact();
-        fluxLocation1Fact.setID(new IDType().withValue(id));
-        return fluxLocation1Fact;
-    }
+
     public FLUXSalesReportMessage getFluxSalesReportMessage(FLUXReportDocumentType fluxReportDocument, SalesDocumentType salesDocument) {
         return new FLUXSalesReportMessage()
                 .withFLUXReportDocument(fluxReportDocument)
                 .withSalesReports(new SalesReportType().withIncludedSalesDocuments(salesDocument));
     }
 
-    public SalesDocumentType getSalesDocumentType(FLUXLocationType fluxLocation1, FishingActivityType fishingActivity, SalesEventType salesEvent, List<SalesPartyType> salesParties) {
+    public SalesDocumentType getSalesDocumentType(FLUXLocationType fluxLocation1, FishingActivityType fishingActivity, SalesEventType salesEvent, List<SalesPartyType> salesParties, List<AAPProductType> products) {
         return new SalesDocumentType()
                 .withIDS(new IDType().withValue("id"))
                 .withSpecifiedFLUXLocations(fluxLocation1)
                 .withSpecifiedSalesEvents(salesEvent)
                 .withSpecifiedFishingActivities(fishingActivity)
-                .withSpecifiedSalesParties(salesParties);
+                .withSpecifiedSalesParties(salesParties)
+                .withSpecifiedSalesBatches(Lists.newArrayList(new SalesBatchType().withSpecifiedAAPProducts(products)));
     }
 
     public SalesPartyType getSalesPartyType(String buyerOrSeller, FLUXOrganizationType fluxOrganizationType) {

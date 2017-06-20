@@ -9,16 +9,15 @@ level
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryParameterFact;
 
 template "@{tname}"
 
-rule "Sales Document @{tname} - @{brid}"
+rule "Sales FLUX Sales Report Message @{tname} - @{brid}"
 
 when
 
-    $fact : SalesDocumentFact(@{expression})
+    $fact : SalesQueryParameterFact(@{expression})
 
 then
     $fact.setOk(false);
