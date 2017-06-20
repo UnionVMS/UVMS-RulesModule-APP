@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -257,8 +258,6 @@ public abstract class AbstractFact {
         return false;
     }
 
-
-
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
     }
@@ -351,6 +350,10 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+    }
+
     public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -435,6 +438,11 @@ public abstract class AbstractFact {
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
+    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound)
+    {
+        return  value.compareTo(lowBound) > 0  && value.compareTo(upperBound) < 0;
+    }
+
     public enum FORMATS {
         // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
         // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
@@ -449,7 +457,8 @@ public abstract class AbstractFact {
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
-        EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}");
+        EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}"),
+        EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}");
 
         String formatStr;
 

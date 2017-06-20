@@ -33,9 +33,7 @@ public class SalesContactPersonFact extends AbstractFact {
         return this.title;
     }
 
-    public TextType getGivenName() {
-        return this.givenName;
-    }
+    public TextType getGivenName() { return this.givenName; }
 
     public TextType getMiddleName() {
         return this.middleName;

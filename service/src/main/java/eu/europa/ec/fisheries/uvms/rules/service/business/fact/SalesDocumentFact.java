@@ -208,6 +208,7 @@ public class SalesDocumentFact extends AbstractFact {
         return other instanceof SalesDocumentFact;
     }
 
+    // TODO test
     public boolean isInvalidCurencyCode(){
         String[] validCurrencies = new String[161];
         validCurrencies[0] = "AWG";

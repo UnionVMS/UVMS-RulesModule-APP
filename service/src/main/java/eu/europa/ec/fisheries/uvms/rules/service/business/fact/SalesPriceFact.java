@@ -4,6 +4,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class SalesPriceFact extends AbstractFact {
@@ -45,5 +46,27 @@ public class SalesPriceFact extends AbstractFact {
 
     protected boolean canEqual(Object other) {
         return other instanceof SalesPriceFact;
+    }
+
+    // TODO test
+    public boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes){
+        for (AmountType amountType:amountTypes) {
+            if (amountType == null || amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // TODO test
+    public boolean anyValueEqualToZero(List<AmountType> amountTypes){
+        for (AmountType amountType:amountTypes) {
+            if (amountType == null || amountType.getValue().compareTo(BigDecimal.ZERO) == 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
