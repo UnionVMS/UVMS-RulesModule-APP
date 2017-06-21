@@ -259,7 +259,7 @@ public class MessageServiceBean implements MessageService {
     }
 
     private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
-      if (faReportValidationResult != null) {
+      if (validationResult != null) {
           if (validationResult.isError()) {
               return ExchangeLogStatusTypeType.FAILED;
           } else if (validationResult.isWarning()) {
