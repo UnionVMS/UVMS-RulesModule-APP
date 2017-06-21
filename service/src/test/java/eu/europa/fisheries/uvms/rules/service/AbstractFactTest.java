@@ -10,14 +10,6 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -25,6 +17,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -114,17 +114,20 @@ public class AbstractFactTest {
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsOK(){
-        //todo: STIJN
+        boolean b = fact.validateFormat("aaa", "aaa");
+        assertTrue(b);
     }
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentIsNull(){
-        //todo: STIJN
+        boolean b = fact.validateFormat(null, null);
+        assertFalse(b);
     }
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentDoesNotApplyToTheFormat(){
-        //todo: STIJN
+        boolean b = fact.validateFormat("aap", "paa");
+        assertFalse(b);
     }
 
 }

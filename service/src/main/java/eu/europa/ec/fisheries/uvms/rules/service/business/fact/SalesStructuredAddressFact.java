@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 public class SalesStructuredAddressFact extends AbstractFact {
 
@@ -279,5 +280,10 @@ public class SalesStructuredAddressFact extends AbstractFact {
 
     protected boolean canEqual(Object other) {
         return other instanceof SalesStructuredAddressFact;
+    }
+
+    // TODO test
+    public boolean isCountryIdValid() {
+        return SalesFactHelper.isCountryIdValid(countryID);
     }
 }

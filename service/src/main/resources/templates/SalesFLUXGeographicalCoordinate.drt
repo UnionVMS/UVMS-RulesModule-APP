@@ -10,6 +10,7 @@ level
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeographicalCoordinateFact;
+import java.math.BigDecimal;
 
 template "@{tname}"
 

@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -16,7 +15,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
     private CodeType purposeCode;
     private TextType purpose;
     private CodeType typeCode;
-    private FLUXPartyType ownerFLUXParty;
+    private SalesFLUXPartyFact ownerFLUXParty;
 
     @Override
     public void setFactType() {
@@ -47,9 +46,6 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         return this.typeCode;
     }
 
-    public FLUXPartyType getOwnerFLUXParty() {
-        return this.ownerFLUXParty;
-    }
 
     public void setIDS(List<IdType> ids) {
         this.ids = ids;
@@ -75,60 +71,48 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public void setOwnerFLUXParty(FLUXPartyType ownerFLUXParty) {
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public SalesFLUXPartyFact getOwnerFLUXParty() {
+        return ownerFLUXParty;
+    }
+
+    public void setOwnerFLUXParty(SalesFLUXPartyFact ownerFLUXParty) {
         this.ownerFLUXParty = ownerFLUXParty;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof SalesFLUXReportDocumentFact)) return false;
-        final SalesFLUXReportDocumentFact other = (SalesFLUXReportDocumentFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIDS();
-        final Object other$ids = other.getIDS();
-        if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
-        final Object this$referencedID = this.getReferencedID();
-        final Object other$referencedID = other.getReferencedID();
-        if (this$referencedID == null ? other$referencedID != null : !this$referencedID.equals(other$referencedID))
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SalesFLUXReportDocumentFact that = (SalesFLUXReportDocumentFact) o;
+
+        if (ids != null ? !ids.equals(that.ids) : that.ids != null) return false;
+        if (referencedID != null ? !referencedID.equals(that.referencedID) : that.referencedID != null) return false;
+        if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null)
             return false;
-        final Object this$creationDateTime = this.getCreationDateTime();
-        final Object other$creationDateTime = other.getCreationDateTime();
-        if (this$creationDateTime == null ? other$creationDateTime != null : !this$creationDateTime.equals(other$creationDateTime))
-            return false;
-        final Object this$purposeCode = this.getPurposeCode();
-        final Object other$purposeCode = other.getPurposeCode();
-        if (this$purposeCode == null ? other$purposeCode != null : !this$purposeCode.equals(other$purposeCode))
-            return false;
-        final Object this$purpose = this.getPurpose();
-        final Object other$purpose = other.getPurpose();
-        if (this$purpose == null ? other$purpose != null : !this$purpose.equals(other$purpose)) return false;
-        final Object this$typeCode = this.getTypeCode();
-        final Object other$typeCode = other.getTypeCode();
-        if (this$typeCode == null ? other$typeCode != null : !this$typeCode.equals(other$typeCode)) return false;
-        final Object this$ownerFLUXParty = this.getOwnerFLUXParty();
-        final Object other$ownerFLUXParty = other.getOwnerFLUXParty();
-        if (this$ownerFLUXParty == null ? other$ownerFLUXParty != null : !this$ownerFLUXParty.equals(other$ownerFLUXParty))
-            return false;
-        return true;
+        if (purposeCode != null ? !purposeCode.equals(that.purposeCode) : that.purposeCode != null) return false;
+        if (purpose != null ? !purpose.equals(that.purpose) : that.purpose != null) return false;
+        if (typeCode != null ? !typeCode.equals(that.typeCode) : that.typeCode != null) return false;
+        return ownerFLUXParty != null ? ownerFLUXParty.equals(that.ownerFLUXParty) : that.ownerFLUXParty == null;
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $ids = this.getIDS();
-        result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
-        final Object $referencedID = this.getReferencedID();
-        result = result * PRIME + ($referencedID == null ? 43 : $referencedID.hashCode());
-        final Object $creationDateTime = this.getCreationDateTime();
-        result = result * PRIME + ($creationDateTime == null ? 43 : $creationDateTime.hashCode());
-        final Object $purposeCode = this.getPurposeCode();
-        result = result * PRIME + ($purposeCode == null ? 43 : $purposeCode.hashCode());
-        final Object $purpose = this.getPurpose();
-        result = result * PRIME + ($purpose == null ? 43 : $purpose.hashCode());
-        final Object $typeCode = this.getTypeCode();
-        result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
-        final Object $ownerFLUXParty = this.getOwnerFLUXParty();
-        result = result * PRIME + ($ownerFLUXParty == null ? 43 : $ownerFLUXParty.hashCode());
+        int result = ids != null ? ids.hashCode() : 0;
+        result = 31 * result + (referencedID != null ? referencedID.hashCode() : 0);
+        result = 31 * result + (creationDateTime != null ? creationDateTime.hashCode() : 0);
+        result = 31 * result + (purposeCode != null ? purposeCode.hashCode() : 0);
+        result = 31 * result + (purpose != null ? purpose.hashCode() : 0);
+        result = 31 * result + (typeCode != null ? typeCode.hashCode() : 0);
+        result = 31 * result + (ownerFLUXParty != null ? ownerFLUXParty.hashCode() : 0);
         return result;
     }
 

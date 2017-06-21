@@ -15,7 +15,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -88,6 +87,17 @@ public abstract class AbstractFact {
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
         return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+    }
+
+    /**
+     * Checks if one of the String... array elements exists in the idType.
+     *
+     * @param idType
+     * @param values
+     * @return
+     */
+    public boolean schemeIdContainsAny(IdType idType, String... values) {
+        return schemeIdContainsAny(Arrays.asList(idType), values);
     }
 
     /**
@@ -203,9 +213,6 @@ public abstract class AbstractFact {
 
 
     public boolean validateFormat(String value, String format) {
-        if(value == null){
-            return true;
-        }
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
@@ -348,6 +355,12 @@ public abstract class AbstractFact {
             }
         }
         return !isMatchFound;
+    }
+
+    public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
+        IdType idType = new IdType();
+        idType.setValue(value);
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
     }
 
     public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
