@@ -13,11 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-
-import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
@@ -37,8 +37,14 @@ public class FaCatchFact extends AbstractFact {
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
     private List<MeasureType> resultAAPProductPackagingUnitQuantity;
     private List<String> testStringList;
+    private List<IdType> fluxLocationId;
+    private CodeType weighingMeansCode;
+    private CodeType categoryCode;
+    private List<NumericType> appliedAAPProcessConversionFactorNumber;
 
-
+    public FaCatchFact() {
+        setFactType();
+    }
 
     public CodeType getTypeCode() {
         return typeCode;
@@ -80,8 +86,6 @@ public class FaCatchFact extends AbstractFact {
         this.weightMeasure = weightMeasure;
     }
 
-
-
     public List<CodeType> getSizeDistributionClassCode() {
         return sizeDistributionClassCode;
     }
@@ -90,9 +94,13 @@ public class FaCatchFact extends AbstractFact {
         this.sizeDistributionClassCode = sizeDistributionClassCode;
     }
 
-
     public List<CodeType> getAppliedAAPProcessTypeCodes() {
         return appliedAAPProcessTypeCodes;
+    }
+
+    public void setAppliedAAPProcessTypeCodes(List<CodeType> appliedAAPProcessTypeCodes) {
+        this.appliedAAPProcessTypeCodes = appliedAAPProcessTypeCodes;
+
     }
 
     public List<MeasureType> getResultAAPProductPackagingUnitQuantity() {
@@ -102,12 +110,6 @@ public class FaCatchFact extends AbstractFact {
     public void setResultAAPProductPackagingUnitQuantity(List<MeasureType> resultAAPProductPackagingUnitQuantity) {
         this.resultAAPProductPackagingUnitQuantity = resultAAPProductPackagingUnitQuantity;
     }
-
-    public void setAppliedAAPProcessTypeCodes(List<CodeType> appliedAAPProcessTypeCodes) {
-        this.appliedAAPProcessTypeCodes = appliedAAPProcessTypeCodes;
-
-    }
-
 
     public List<CodeType> getResultAAPProductPackagingTypeCode() {
         return resultAAPProductPackagingTypeCode;
@@ -133,10 +135,6 @@ public class FaCatchFact extends AbstractFact {
         this.resultAAPProductUnitQuantity = resultAAPProductUnitQuantity;
     }
 
-    public FaCatchFact() {
-        setFactType();
-    }
-
     public List<MeasureType> getResultAAPProductWeightMeasure() {
         return resultAAPProductWeightMeasure;
     }
@@ -156,5 +154,37 @@ public class FaCatchFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_CATCH;
+    }
+
+    public List<IdType> getFluxLocationId() {
+        return fluxLocationId;
+    }
+
+    public void setFluxLocationId(List<IdType> fluxLocationId) {
+        this.fluxLocationId = fluxLocationId;
+    }
+
+    public CodeType getWeighingMeansCode() {
+        return weighingMeansCode;
+    }
+
+    public void setWeighingMeansCode(CodeType weighingMeansCode) {
+        this.weighingMeansCode = weighingMeansCode;
+    }
+
+    public CodeType getCategoryCode() {
+        return categoryCode;
+    }
+
+    public void setCategoryCode(CodeType categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public List<NumericType> getAppliedAAPProcessConversionFactorNumber() {
+        return appliedAAPProcessConversionFactorNumber;
+    }
+
+    public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
+        this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
     }
 }
