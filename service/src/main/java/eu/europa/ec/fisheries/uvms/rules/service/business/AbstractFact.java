@@ -13,6 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -337,10 +347,10 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
+        ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
-            for (CodeType CodeTypes : codeTypes) {
+            for (CodeType CodeTypes : removeNull) {
                 if (val.equals(CodeTypes.getValue())) {
                     isMatchFound = true;
                     break;
@@ -367,15 +377,29 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean isPositive(BigDecimal value) {
+        if (value == null) {
+            return true;
+        }
+        return !(value.compareTo(BigDecimal.ZERO) > 0);
+    }
+
+    public boolean isInRange(BigDecimal value, int min, int max) {
+        if (value == null) {
+            return true;
+        }
+        return !((value.compareTo(new BigDecimal(min)) == 1) && (value.compareTo(new BigDecimal(max)) == -1));
+    }
+
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
+        ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
         outer : for (String val : valuesToMatch) {
-            for (CodeType IdType : codeTypes) {
+            for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
                     continue outer;
