@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.impl.KnowledgeBaseImpl;
+import org.drools.core.util.StringUtils;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -51,13 +52,22 @@ public class FactRuleEvaluator {
     private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
+    private List<String> systemPackagesPaths = new ArrayList<>();
 
 
     public void reInitializeKieSystem() {
-        kieServices = KieServices.Factory.get();
-        kieFileSystem = kieServices.newKieFileSystem();
         failedRules = new ArrayList<>();
         exceptionsList = new ArrayList<>();
+        log.info("[START] --> Reinitializing KieSession and cleaning KiePackages..");
+        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
+        Collection<KiePackage> kiePackages = kBase.getKiePackages();
+        if(CollectionUtils.isNotEmpty(kiePackages)){
+         kBase.removeKiePackage(kiePackages.iterator().next().getName());
+        }
+        kieFileSystem.delete(systemPackagesPaths.toArray(new String[systemPackagesPaths.size()]));
+        log.info("[END] --> Deleted [" + systemPackagesPaths.size() + "] packages from KieFileSystem.");
+        systemPackagesPaths.clear();
     }
 
     public void initializeRules(Collection<TemplateRuleMapDto> templates) {
@@ -69,7 +79,6 @@ public class FactRuleEvaluator {
             drlsAndRules.putAll(generateExternalRulesFromTemplate(templateName, templateFile, template.getExternalRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
-
         buildAllPackages(packages);
     }
 
@@ -90,7 +99,7 @@ public class FactRuleEvaluator {
             AbstractFact next = failedFacts.iterator().next();
             String message = e.getMessage();
             String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-            next.addWarningOrError("WARNING", message, brId, "L099");
+            next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
             next.setOk(false);
             facts.remove(next);
             exceptionsList.add(next);
@@ -129,6 +138,7 @@ public class FactRuleEvaluator {
             listener.newCell(rowNum, 3, ruleDto.getMessage(), 0);
             listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
             listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
+            listener.newCell(rowNum, 6, ruleDto.getPropertyNames(), 0);
             listener.finishSheet();
             String drl = listener.renderDRL();
             log.debug("DRL for BR Id {} : {} ", ruleDto.getBrId(), drl);
@@ -158,8 +168,9 @@ public class FactRuleEvaluator {
         for (String rule : drlsAndRules.keySet()) {
             String brId = drlsAndRules.get(rule);
             StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
-            ruleName.append(brId).append(".drl");
-            kieFileSystem.write(ruleName.toString(), rule);
+            String systemPackage = ruleName.append(brId).append(".drl").toString();
+            systemPackagesPaths.add(systemPackage);
+            kieFileSystem.write(systemPackage, rule);
             KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
 
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {

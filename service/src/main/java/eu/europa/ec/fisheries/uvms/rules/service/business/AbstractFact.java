@@ -29,6 +29,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +40,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -53,22 +56,39 @@ public abstract class AbstractFact {
 
     protected boolean ok = true;
 
-    private String disabledRuleId;
+    private Integer sequence = 0;
+
 
     public AbstractFact() {
+        this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
     }
 
     public abstract void setFactType();
 
-    public void addWarningOrError(String type, String msg, String brId, String level) {
+    public void addWarningOrError(String type, String msg, String brId, String level, String propertyNames) {
+        final List<String> xpathsForProps = getXpathsForProps(propertyNames);
         if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
-            getErrors().add(new RuleError(brId, msg, level));
+            RuleError ruleError = new RuleError(brId, msg, level, xpathsForProps);
+            errors.add(ruleError);
         } else {
-            getWarnings().add(new RuleWarning(brId, msg, level));
+            RuleWarning ruleWarning = new RuleWarning(brId, msg, level, xpathsForProps);
+            warnings.add(ruleWarning);
         }
     }
+
+    private List<String> getXpathsForProps(String propertyNames) {
+        List<String> xpathsList = new ArrayList<>();
+        if(StringUtils.isNotEmpty(propertyNames)){
+            String[] propNames = propertyNames.split(",");
+            for(String propName : propNames) {
+                xpathsList.add(XPathRepository.INSTANCE.getForSequence(this.getSequence(), propName));
+            }
+        }
+        return xpathsList;
+    }
+
 
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
@@ -499,6 +519,14 @@ public abstract class AbstractFact {
         public void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
 }
