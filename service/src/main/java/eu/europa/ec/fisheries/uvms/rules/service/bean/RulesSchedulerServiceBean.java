@@ -34,7 +34,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     private static final String RULES_SCHEDULER_CONFIG_KEY = "RULES_SCHEDULER_CONFIG";
 
     @EJB
-    private ConfigServiceBean configService;
+    private RulesConfigurationCache rulesConfigCache;
 
     @EJB
     private TemplateEngine templateEngine;
@@ -60,7 +60,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
      */
     @Override
     public String getActualSchedulerConfiguration() {
-        return configService.getConfiguration(RULES_SCHEDULER_CONFIG_KEY);
+        return rulesConfigCache.getSingleConfig(RULES_SCHEDULER_CONFIG_KEY);
     }
 
     /**

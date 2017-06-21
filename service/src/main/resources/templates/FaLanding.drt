@@ -6,6 +6,8 @@ brid
 rulemsg
 type
 level
+propertyNames
+
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
@@ -21,7 +23,7 @@ when
 
 then
     $fact.setOk(false);
-    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 

@@ -35,7 +35,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -84,6 +86,9 @@ public class MessageServiceBean implements MessageService {
     @EJB
     RulesPreProcessBean rulesPreProcessBean;
 
+    @EJB
+    RulesConfigurationCache ruleModuleCache;
+
 
     @Override
     public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesServiceException {
@@ -110,6 +115,7 @@ public class MessageServiceBean implements MessageService {
                         sendRequestToActivity(request.getRequest(), request.getUsername(), request.getType());
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
+                    XPathRepository.INSTANCE.clear();
                 } else {
                     updateRequestMessageStatus(request.getLogGuid(), validationMap.get(isContinueValidation));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
@@ -152,6 +158,55 @@ public class MessageServiceBean implements MessageService {
             faReportValidationResult.setIsOk(faReportValidationResult.isOk() || previousValidationResultDto.isOk());
             faReportValidationResult.getValidationMessages().addAll(previousValidationResultDto.getValidationMessages());
         }
+    }
+
+    private List<ValidationResultDocument> getValidationResultDocument(ValidationResultDto faReportValidationResult) throws DatatypeConfigurationException {
+        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
+
+        GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
+        XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+        DateTimeType dateTime = new DateTimeType();
+        dateTime.setDateTime(calender);
+        validationResultDocument.setCreationDateTime(dateTime);
+
+        IDType idType = new IDType();
+        idType.setValue("XEU"); // TODO to be received from Global config nation_code
+        idType.setSchemeID("FLUX_GP_PARTY");
+        validationResultDocument.setValidatorID(idType);
+
+        List<ValidationQualityAnalysis> validationQuality = new ArrayList<>();
+        for (ValidationMessageType validationMessage : faReportValidationResult.getValidationMessages()) {
+            ValidationQualityAnalysis analysis = new ValidationQualityAnalysis();
+
+            IDType identification = new IDType();
+            identification.setValue(validationMessage.getBrId());
+            analysis.setID(identification);
+
+            CodeType level = new CodeType();
+            level.setValue(validationMessage.getLevel());
+            analysis.setLevelCode(level);
+
+            CodeType type = new CodeType();
+            type.setValue(validationMessage.getErrorType().value());
+            analysis.setTypeCode(type);
+
+            TextType text = new TextType();
+            text.setValue(validationMessage.getMessage());
+            analysis.getResults().add(text);
+
+            List<String> xpaths = validationMessage.getXpaths();
+            if(CollectionUtils.isNotEmpty(xpaths)){
+                for(String xpath : xpaths){
+                    TextType referenceItem = new TextType();
+                    referenceItem.setValue(xpath);
+                    analysis.getReferencedItems().add(referenceItem);
+                }
+            }
+
+            validationQuality.add(analysis);
+        }
+        validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
+        return Arrays.asList(validationResultDocument);
     }
 
     @Override
@@ -202,55 +257,12 @@ public class MessageServiceBean implements MessageService {
         return responseMessage;
     }
 
-    private List<ValidationResultDocument> getValidationResultDocument(ValidationResultDto faReportValidationResult) throws DatatypeConfigurationException {
-        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
-
-        GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
-        XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
-        DateTimeType dateTime = new DateTimeType();
-        dateTime.setDateTime(calender);
-        validationResultDocument.setCreationDateTime(dateTime);
-
-        IDType idType = new IDType();
-        idType.setValue("XEU"); // TODO to be received from Global config nation_code
-        idType.setSchemeID("FLUX_GP_PARTY");
-        validationResultDocument.setValidatorID(idType);
-
-        List<ValidationQualityAnalysis> validationQuality = new ArrayList<>();
-        for (ValidationMessageType validationMessage : faReportValidationResult.getValidationMessages()) {
-            ValidationQualityAnalysis analysis = new ValidationQualityAnalysis();
-
-            IDType identification = new IDType();
-            identification.setValue(validationMessage.getBrId());
-            analysis.setID(identification);
-
-            CodeType level = new CodeType();
-            level.setValue(validationMessage.getLevel());
-            analysis.setLevelCode(level);
-
-            CodeType type = new CodeType();
-            type.setValue(validationMessage.getErrorType().value());
-            analysis.setTypeCode(type);
-
-            TextType text = new TextType();
-            text.setValue(validationMessage.getMessage());
-            analysis.getResults().add(text);
-
-            TextType referenceItem = new TextType();
-            referenceItem.setValue("X-path"); // SET Xpath
-            analysis.getReferencedItems().add(referenceItem);
-
-            validationQuality.add(analysis);
-        }
-        validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
-        return Arrays.asList(validationResultDocument);
-    }
-
     private FLUXParty getRespondedFluxParty() {
         IDType idType = new IDType();
-        idType.setValue("XEU"); // TODO to be received from Global config nation_code
+        String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+        String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
+        idType.setValue(nationCode);
         idType.setSchemeID("FLUX_GP_PARTY");
-
         FLUXParty fluxParty = new FLUXParty();
         fluxParty.setIDS(Arrays.asList(idType));
         return fluxParty;
@@ -290,6 +302,7 @@ public class MessageServiceBean implements MessageService {
             log.debug("Message to exchange {}", fluxFAReponseText);
 
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+            XPathRepository.INSTANCE.clear();
             log.info("FLUXFAResponse has been sent back to Exchange.");
         } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);

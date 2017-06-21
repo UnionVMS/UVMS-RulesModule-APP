@@ -62,6 +62,7 @@ public class RulePostProcessBean {
                         validationMessage.setMessage(error.getMessage());
                         validationMessage.setLevel(error.getLevel());
                         validationMessage.getMessageId().addAll(fact.getUniqueIds());
+                        validationMessage.getXpaths().addAll(error.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                     for (RuleWarning warning : fact.getWarnings()) {
@@ -72,6 +73,7 @@ public class RulePostProcessBean {
                         validationMessage.setMessage(warning.getMessage());
                         validationMessage.setLevel(warning.getLevel());
                         validationMessage.getMessageId().addAll(fact.getUniqueIds());
+                        validationMessage.getXpaths().addAll(warning.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                 }

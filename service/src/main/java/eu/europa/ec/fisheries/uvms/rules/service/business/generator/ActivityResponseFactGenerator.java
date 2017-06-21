@@ -33,7 +33,7 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
     private FLUXResponseMessage fluxResponseMessage;
 
     @Override
-    public List<AbstractFact> getAllFacts() {
+    public List<AbstractFact> generateAllFacts() {
         AbstractFact fact = ActivityFactMapper.INSTANCE.generateFactsForFaResponse(fluxResponseMessage);
         if (fact != null) {
             return Arrays.asList(fact);
