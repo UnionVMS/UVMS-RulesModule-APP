@@ -95,6 +95,11 @@
 			<version>${mdr.model.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
+            <artifactId>config-model</artifactId>
+            <version>${uvms.config.version}</version>
+        </dependency>
 
 		<!-- drools dependencies -->
         <dependency>

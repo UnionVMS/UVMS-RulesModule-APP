@@ -26,6 +26,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -60,26 +61,6 @@ public class FLUX_ReportDocumentRuleTest {
 
         templateRuleMapDto.setTemplateType(template);
         templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
-
-    }
-
-    @Test
-    public void testRuleReferencedID() {
-
-        templateRuleMapDto.setRules(Collections.singletonList(ruleReferencedID));
-        templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
-        generator.initializeRules(Collections.singletonList(templateRuleMapDto));
-
-        AbstractFact fact = new FaReportDocumentFact();
-        IdType idType = new IdType();
-        idType.setValue("id1");
-        idType.setSchemeId("1cc5c060-2b84-11e7-93ae-92361f002671");
-        ((FaReportDocumentFact) fact).setReferencedID(idType);
-
-        generator.validateFact(Collections.singletonList(fact));
-
-        assertTrue(fact.getErrors().isEmpty());
-        assertTrue(fact.getWarnings().isEmpty());
 
     }
 

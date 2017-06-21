@@ -37,6 +37,62 @@ public class CustomMapper {
 
     }
 
+    public static boolean isDatePresent(DateTimeType dateTimeType) {
+        return (dateTimeType != null);
+    }
+
+    public static List<MeasureType> getDurationMeasure(List<DelimitedPeriod> delimitedPeriods) {
+        List<MeasureType> measureTypes = null;
+        if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
+            measureTypes = new ArrayList<>();
+            for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+                if (delimitedPeriod.getDurationMeasure() != null) {
+                    measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(delimitedPeriod.getDurationMeasure()));
+                }
+            }
+        }
+        return measureTypes;
+    }
+
+    public static List<FishingTrip> getRelatedFishingTrips(List<FishingActivity> relatedFishingActivities) {
+        List<FishingTrip> fishingTrips = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            fishingTrips = new ArrayList<>();
+            for (FishingActivity fishingActivity : relatedFishingActivities) {
+                if(fishingActivity.getSpecifiedFishingTrip() != null) {
+                    fishingTrips.add(fishingActivity.getSpecifiedFishingTrip());
+                }
+            }
+        }
+        return fishingTrips;
+    }
+
+    public static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
+        List<DelimitedPeriod> delimitedPeriod = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            delimitedPeriod = new ArrayList<>();
+            for (FishingActivity activity : relatedFishingActivities) {
+                if (activity.getSpecifiedDelimitedPeriods() != null) {
+                    delimitedPeriod.addAll(activity.getSpecifiedDelimitedPeriods());
+                }
+            }
+        }
+        return delimitedPeriod;
+    }
+
+    public static List<FLUXLocation> getFluxLocations(List<FishingActivity> relatedFishingActivities) {
+        List<FLUXLocation> fluxLocations = null;
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            fluxLocations = new ArrayList<>();
+            for (FishingActivity activity : relatedFishingActivities) {
+                if (activity.getRelatedFLUXLocations() != null) {
+                    fluxLocations.addAll(activity.getRelatedFLUXLocations());
+                }
+            }
+        }
+        return fluxLocations;
+    }
+
     public static List<CodeType> mapToIdTypeList(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
 
@@ -331,5 +387,23 @@ public class CustomMapper {
         return ids;
     }
 
+
+    public static  List<FLUXLocation> getFluxLocationFromFaCatch(List<FACatch> faCatch){
+        if (CollectionUtils.isEmpty(faCatch)) {
+            return java.util.Collections.emptyList();
+        }
+        List<FLUXLocation> specifiedFaCatchSpecifiedFluxLocationList=new ArrayList<>();
+        for (FACatch faCatc : faCatch){
+
+       if(faCatc.getSpecifiedFLUXLocations()!=null) {
+           specifiedFaCatchSpecifiedFluxLocationList.addAll(faCatc.getSpecifiedFLUXLocations());
+
+       }
+
+
+        }
+
+        return  specifiedFaCatchSpecifiedFluxLocationList;
+    }
 
 }

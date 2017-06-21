@@ -13,15 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 
-import java.util.List;
-
 /**
- * Created by padhyad on 4/21/2017.
+ * @autor padhyad
+ * @author Gregory Rinaldi
  */
 public class FluxLocationFact extends AbstractFact {
 
@@ -32,6 +33,9 @@ public class FluxLocationFact extends AbstractFact {
     private StructuredAddress physicalStructuredAddress;
     private List<CodeType> applicableFLUXCharacteristicTypeCode;
 
+    public FluxLocationFact() {
+        setFactType();
+    }
 
     public CodeType getTypeCode() {
         return typeCode;
@@ -79,10 +83,6 @@ public class FluxLocationFact extends AbstractFact {
 
     public void setApplicableFLUXCharacteristicTypeCode(List<CodeType> applicableFLUXCharacteristicTypeCode) {
         this.applicableFLUXCharacteristicTypeCode = applicableFLUXCharacteristicTypeCode;
-    }
-
-    public FluxLocationFact() {
-        setFactType();
     }
 
     @Override

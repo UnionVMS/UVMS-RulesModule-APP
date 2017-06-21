@@ -68,23 +68,23 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             for (FishingActivity activity : specifiedFishingActivities) {
                 facts.add(ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity));
 
-                List<VesselTransportMeans> vesselTransportMeanses=activity.getRelatedVesselTransportMeans();
+                List<VesselTransportMeans> vesselTransportMeanses = activity.getRelatedVesselTransportMeans();
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactForVesselTransportMeans(vesselTransportMeanses));
                 addFactsForVesselTransportMeans(facts, vesselTransportMeanses);
 
-                List<FACatch> faCatches= activity.getSpecifiedFACatches();
+                List<FACatch> faCatches = activity.getSpecifiedFACatches();
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(faCatches));
                 addFactsForFaCatches(facts, faCatches);
 
-                List<FishingGear> fishingGears=  activity.getSpecifiedFishingGears();
+                List<FishingGear> fishingGears = activity.getSpecifiedFishingGears();
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(fishingGears));
-                addFactsForFishingGearAndCharacteristics(facts,fishingGears);
+                addFactsForFishingGearAndCharacteristics(facts, fishingGears);
 
-                List<GearProblem>  gearProblems=activity.getSpecifiedGearProblems();
+                List<GearProblem> gearProblems = activity.getSpecifiedGearProblems();
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForGearProblems(gearProblems));
                 addFactsForGearProblems(facts, gearProblems);
 
-                List<FLUXLocation> fluxLocations=  activity.getRelatedFLUXLocations();
+                List<FLUXLocation> fluxLocations = activity.getRelatedFLUXLocations();
                 facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFluxLocations(fluxLocations));
                 addFactsForFLUXLocation(facts, fluxLocations);
 
@@ -98,16 +98,16 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     private void addFactsForGearProblems(List<AbstractFact> facts, List<GearProblem> gearProblems) {
-        for(GearProblem gearProblem:gearProblems){
-            List<FishingGear> relatedfishingGears= gearProblem.getRelatedFishingGears();
+        for (GearProblem gearProblem : gearProblems) {
+            List<FishingGear> relatedfishingGears = gearProblem.getRelatedFishingGears();
             addFactsForFishingGearAndCharacteristics(facts, relatedfishingGears);
             addFactsForFLUXLocation(facts, gearProblem.getSpecifiedFLUXLocations());
         }
     }
 
     private void addFactsForFaCatches(List<AbstractFact> facts, List<FACatch> faCatches) {
-        for(FACatch faCatch:faCatches){
-            List<FishingGear> fishingGears=  faCatch.getUsedFishingGears();
+        for (FACatch faCatch : faCatches) {
+            List<FishingGear> fishingGears = faCatch.getUsedFishingGears();
             addFactsForFishingGearAndCharacteristics(facts, fishingGears);
             addFactsForFLUXLocation(facts, faCatch.getSpecifiedFLUXLocations());
             addFactsForFLUXLocation(facts, faCatch.getDestinationFLUXLocations());
@@ -116,10 +116,10 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     private void addFactsForVesselTransportMeans(List<AbstractFact> facts, List<VesselTransportMeans> vesselTransportMeanses) {
-        for(VesselTransportMeans vesselTransportMeans:vesselTransportMeanses){
-            if(CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())){
-                for(ContactParty contactParty:vesselTransportMeans.getSpecifiedContactParties()){
-                    List<StructuredAddress> structuredAddresses= contactParty.getSpecifiedStructuredAddresses();
+        for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
+            if (CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
+                for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
+                    List<StructuredAddress> structuredAddresses = contactParty.getSpecifiedStructuredAddresses();
                     addFactsForStructuredAddress(facts, structuredAddresses);
                 }
             }
@@ -127,25 +127,25 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     private void addFactsForFLUXLocation(List<AbstractFact> facts, List<FLUXLocation> fluxLocations) {
-        for(FLUXLocation fluxLocation:fluxLocations){
-            List<StructuredAddress> structuredAddresses= fluxLocation.getPostalStructuredAddresses();
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            List<StructuredAddress> structuredAddresses = fluxLocation.getPostalStructuredAddresses();
             addFactsForStructuredAddress(facts, structuredAddresses);
             facts.add(ActivityFactMapper.INSTANCE.generateFactsForStructureAddress(fluxLocation.getPhysicalStructuredAddress()));
         }
     }
 
     private void addFactsForStructuredAddress(List<AbstractFact> facts, List<StructuredAddress> structuredAddresses) {
-        if(CollectionUtils.isNotEmpty(structuredAddresses)){
+        if (CollectionUtils.isNotEmpty(structuredAddresses)) {
             facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForStructureAddresses(structuredAddresses));
         }
     }
 
     private void addFactsForFishingGearAndCharacteristics(List<AbstractFact> facts, List<FishingGear> fishingGears) {
-        if(CollectionUtils.isNotEmpty(fishingGears)){
+        if (CollectionUtils.isNotEmpty(fishingGears)) {
             facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(fishingGears));
-            for(FishingGear fishingGear: fishingGears){
-                List<GearCharacteristic>  gearCharacteristics= fishingGear.getApplicableGearCharacteristics();
-                if(CollectionUtils.isNotEmpty(gearCharacteristics)) {
+            for (FishingGear fishingGear : fishingGears) {
+                List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
+                if (CollectionUtils.isNotEmpty(gearCharacteristics)) {
                     facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(gearCharacteristics));
                 }
             }
@@ -155,7 +155,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     private AbstractFact addAdditionalValidationFact(FishingActivity activity, FAReportDocument faReportDocument) {
         AbstractFact abstractFact = null;
         try {
-            if (activity != null) {
+            if (activity != null && activity.getTypeCode() != null) {
                 FishingActivityType fishingActivityType = FishingActivityType.valueOf(activity.getTypeCode().getValue());
                 switch (fishingActivityType) {
                     case DEPARTURE:
@@ -164,7 +164,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     case ARRIVAL:
                         if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(activity, faReportDocument);
-                        }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                        } else if (FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
                         }
                         break;
@@ -183,11 +183,12 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     case TRANSHIPMENT:
                         if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForTranshipment(activity, faReportDocument);
-                        }else if(FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())){
+                        } else if (FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
                         }
                         break;
-                    default: log.info("No rule to be applied for the received activity type : "+fishingActivityType);
+                    default:
+                        log.info("No rule to be applied for the received activity type : "+fishingActivityType);
 
                 }
             }
@@ -202,7 +203,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         List<AbstractFact> facts = new ArrayList<>();
         if (fishingActivities != null) {
             for (FishingActivity activity : fishingActivities) {
-                FishingActivityFact fishingActivityFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity);
+                FishingActivityFact fishingActivityFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity, true);
                 fishingActivityFact.setIsSubActivity(true);
                 facts.add(fishingActivityFact);
             }

@@ -37,7 +37,29 @@ public class FaLandingFact extends AbstractFact {
 
     private List<FACatch> specifiedFaCatches;
 
+    private List<FLUXLocation> specifiedFaCatchesSpecifiedFLUXLocations;
+
+
     private List<CodeType> specifiedFaCatchTypeCode;
+
+
+    private List<CodeType> relatedFluxLocationTypeCodes;
+
+    public List<CodeType> getRelatedFluxLocationTypeCodes() {
+        return relatedFluxLocationTypeCodes;
+    }
+
+    public void setRelatedFluxLocationTypeCodes(List<CodeType> relatedFluxLocationTypeCodes) {
+        this.relatedFluxLocationTypeCodes = relatedFluxLocationTypeCodes;
+    }
+
+    public List<FLUXLocation> getSpecifiedFaCatchesSpecifiedFLUXLocations() {
+        return specifiedFaCatchesSpecifiedFLUXLocations;
+    }
+
+    public void setSpecifiedFaCatchesSpecifiedFLUXLocations(List<FLUXLocation> specifiedFaCatchesSpecifiedFLUXLocations) {
+        this.specifiedFaCatchesSpecifiedFLUXLocations = specifiedFaCatchesSpecifiedFLUXLocations;
+    }
 
     public List<CodeType> getSpecifiedFaCatchFluxLocationTypeCode() {
         return specifiedFaCatchFluxLocationTypeCode;
