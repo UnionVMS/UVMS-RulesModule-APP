@@ -269,6 +269,7 @@ public class MessageServiceBean implements MessageService {
           }
       } else {
         return ExchangeLogStatusTypeType.UNKNOWN;
+      }
     }
 
     private void updateValidationResultWithExisting(ValidationResultDto faReportValidationResult, ValidationResultDto previousValidationResultDto) {
