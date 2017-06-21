@@ -290,7 +290,7 @@ public class ActivityFactMapperTest {
         faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
 
 
-        FaCatchFact faCatchFact = ActivityFactMapper.INSTANCE.generateFactsForFaCatchs(faCatch);
+        FaCatchFact faCatchFact = ActivityFactMapper.INSTANCE.generateFactsForFaCatch(faCatch, null);
 
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());

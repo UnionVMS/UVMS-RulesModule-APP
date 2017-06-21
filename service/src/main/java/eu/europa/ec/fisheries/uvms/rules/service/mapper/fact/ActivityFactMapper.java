@@ -185,12 +185,14 @@ public interface ActivityFactMapper {
 
     List<GearProblemFact> generateFactsForGearProblems(List<GearProblem> gearProblems);
 
-
     @Mappings({
             @Mapping(target = "typeCode", source = "faCatches.typeCode"),
             @Mapping(target = "speciesCode", source = "faCatches.speciesCode"),
             @Mapping(target = "sizeDistributionClassCode", source = "faCatches.specifiedSizeDistribution.classCodes"),
             @Mapping(target = "resultAAPProduct", source = "faCatches.appliedAAPProcesses"),
+            @Mapping(target = "fluxLocationId", source = "fluxLocations"),
+            @Mapping(target = "appliedAAPProcessConversionFactorNumber", source = "faCatches.appliedAAPProcesses"),
+            @Mapping(target = "categoryCode", source = "faCatches.specifiedSizeDistribution.categoryCode"),
             @Mapping(target = "appliedAAPProcessTypeCodes", expression = "java(CustomMapper.getAppliedProcessTypeCodes(faCatches.getAppliedAAPProcesses()))"),
             @Mapping(target = "resultAAPProductPackagingTypeCode", expression = "java(CustomMapper.getAAPProductPackagingTypeCode(faCatches.getAppliedAAPProcesses()))"),
             @Mapping(target = "resultAAPProductPackagingUnitQuantity", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_PACKAGING_UNIT_QUANTITY))"),
@@ -198,9 +200,7 @@ public interface ActivityFactMapper {
             @Mapping(target = "resultAAPProductPackagingUnitAverageWeightMeasure", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE))"),
             @Mapping(target = "resultAAPProductUnitQuantity", expression = "java(CustomMapper.getMeasureTypeFromAAPProcess(faCatches.getAppliedAAPProcesses(),AAP_PRODUCT_UNIT_QUANTITY))")
     })
-    FaCatchFact generateFactsForFaCatchs(FACatch faCatches);
-
-    List<FaCatchFact> generateFactsForFaCatchs(List<FACatch> faCatches);
+    FaCatchFact generateFactsForFaCatch(FACatch faCatches, List<FLUXLocation> fluxLocations);
 
     @Mappings({
             @Mapping(target = "typeCodes", source = "vesselStorageCharacteristic.typeCodes")

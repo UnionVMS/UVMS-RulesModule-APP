@@ -37,6 +37,10 @@ public class FaCatchFact extends AbstractFact {
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
     private List<MeasureType> resultAAPProductPackagingUnitQuantity;
     private List<String> testStringList;
+    private List<IdType> fluxLocationId;
+    private CodeType weighingMeansCode;
+    private CodeType categoryCode;
+    private List<NumericType> appliedAAPProcessConversionFactorNumber;
 
     public FaCatchFact() {
         setFactType();
@@ -150,5 +154,37 @@ public class FaCatchFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_CATCH;
+    }
+
+    public List<IdType> getFluxLocationId() {
+        return fluxLocationId;
+    }
+
+    public void setFluxLocationId(List<IdType> fluxLocationId) {
+        this.fluxLocationId = fluxLocationId;
+    }
+
+    public CodeType getWeighingMeansCode() {
+        return weighingMeansCode;
+    }
+
+    public void setWeighingMeansCode(CodeType weighingMeansCode) {
+        this.weighingMeansCode = weighingMeansCode;
+    }
+
+    public CodeType getCategoryCode() {
+        return categoryCode;
+    }
+
+    public void setCategoryCode(CodeType categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public List<NumericType> getAppliedAAPProcessConversionFactorNumber() {
+        return appliedAAPProcessConversionFactorNumber;
+    }
+
+    public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
+        this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
     }
 }

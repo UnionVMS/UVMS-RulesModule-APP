@@ -29,6 +29,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -78,6 +79,22 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
                 if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength > hits;
+    }
+
+    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getValue())) {
                     hits++;
                 }
             }
@@ -364,6 +381,19 @@ public abstract class AbstractFact {
         return value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
     }
 
+    public boolean isPositive(List<MeasureType> value) {
+        if (value == null) {
+            return true;
+        }
+        for (MeasureType type : value) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isPositive(BigDecimal value) {
         if (value == null) {
             return true;
@@ -429,6 +459,15 @@ public abstract class AbstractFact {
 
     public boolean isEmpty(List<?> list){
         return CollectionUtils.isEmpty(list);
+    }
+
+    public boolean isNumeric(List<NumericType> list) {
+        for (NumericType type : list) {
+            if (type.getValue() == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isEmpty(String str){
