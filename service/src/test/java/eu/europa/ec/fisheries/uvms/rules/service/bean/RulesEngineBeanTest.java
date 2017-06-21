@@ -51,6 +51,9 @@ public class RulesEngineBeanTest {
     RulesEngineBean rulesEngineBean;
 
     @Mock
+    MDRServiceBean mdrServiceBean;
+
+    @Mock
     TemplateEngine templateEngine;
 
     @Mock
@@ -73,6 +76,8 @@ public class RulesEngineBeanTest {
                 return null;
             }
         }).when(templateEngine).evaluateFacts(Mockito.anyList());
+
+      //  when(mdrServiceBean.loadMDRCache().getFishingTripsForMatchingFilterCriteria(query)).thenReturn(Arrays.asList(MapperUtil.getFishingTripEntity()));
         List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);

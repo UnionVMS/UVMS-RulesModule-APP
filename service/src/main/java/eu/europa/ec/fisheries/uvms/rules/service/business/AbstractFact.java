@@ -13,14 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -29,9 +21,10 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -39,6 +32,13 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -86,7 +86,7 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -100,9 +100,7 @@ public abstract class AbstractFact {
             }
         }
         return valLength > hits;
-    }
-
-    /**
+    }    /**
      * Checks if the schemeId Contains Any then it checks if it contains all.
      * Otherwise it means that it contains none.
      *
@@ -373,7 +371,7 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
-    public int numberOfDecimals(BigDecimal value) {
+public int numberOfDecimals(BigDecimal value) {
         if (value == null) {
             return -1;
         }
@@ -392,9 +390,7 @@ public abstract class AbstractFact {
             }
         }
         return false;
-    }
-
-    public boolean isPositive(BigDecimal value) {
+    }    public boolean isPositive(BigDecimal value) {
         if (value == null) {
             return true;
         }
@@ -457,20 +453,19 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
+
     public boolean isEmpty(List<?> list){
         return CollectionUtils.isEmpty(list);
     }
 
-    public boolean isNumeric(List<NumericType> list) {
+public boolean isNumeric(List<NumericType> list) {
         for (NumericType type : list) {
             if (type.getValue() == null) {
                 return true;
             }
         }
         return false;
-    }
-
-    public boolean isEmpty(String str){
+    }    public boolean isEmpty(String str){
         return StringUtils.isEmpty(str);
     }
 
@@ -500,5 +495,34 @@ public abstract class AbstractFact {
             this.formatStr = formatStr;
         }
     }
+
+    public boolean isPresentInList(String listName, String codeValue){
+        log.info("Check if isPresentInList for list:"+listName +" and for value : "+codeValue);
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
+        if(CollectionUtils.isNotEmpty(values)){
+            return values.contains(codeValue);
+        }
+        return false;
+    }
+
+    public boolean isPresentInList(String listName, List<String> valuesToMatch){
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
+            return false;
+
+        for(String value: valuesToMatch){
+            if(!codeListValues.contains(value))
+                return false;
+        }
+
+        return true;
+    }
+
+
+
 
 }

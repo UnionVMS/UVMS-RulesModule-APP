@@ -7,42 +7,41 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Gregory Rinaldi
+ * Created by sanera on 20/06/2017.
  */
-@Stateless
-@LocalBean
-@Slf4j
-public class MDRServiceBean {
+public class MDRCacheHolder {
 
-    @EJB
-    private MDRCache cache;
+    private Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
 
-    public boolean isPresentInList(String listName, String codeValue){
-        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        return cache.getEntry(anEnum).contains(codeValue);
+    private static class Holder {
+        static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
     }
 
-    public void loadMDRCache(){
-    log.info("Load MDR Cache");
-        for(MDRAcronymType acronymType :  MDRAcronymType.values()){
-            List<String> values= cache.getEntry(acronymType);
-            MDRCacheHolder.getInstance().addToCache(acronymType,values);
+    public static MDRCacheHolder getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public void addToCache(MDRAcronymType type, List<String> values){
+         synchronized (cache){
+             cache.put(type,values);
+         }
+    }
+
+    public List<String> getList(MDRAcronymType type){
+        List<String> values;
+        synchronized (cache){
+            values=   cache.get(type);
         }
-    log.info("Cache loading is complete.");
+        return values;
     }
 
 }
