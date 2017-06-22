@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -29,16 +24,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
@@ -99,16 +90,17 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.add(ActivityFactMapperPOC.INSTANCE.generateFactForFishingActivity(activity));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                List<VesselTransportMeans> vesselTransportMeanses = activity.getRelatedVesselTransportMeans();
-                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactForVesselTransportMeans(vesselTransportMeanses));
-                addFactsForVesselTransportMeans(facts, vesselTransportMeanses);
+                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactForVesselTransportMeans(activity.getRelatedVesselTransportMeans()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                List<FACatch> faCatches = activity.getSpecifiedFACatches();
-                for (FACatch faCatch : faCatches) {
-                    facts.add(ActivityFactMapper.INSTANCE.generateFactsForFaCatch(faCatch, activity.getRelatedFLUXLocations()));
-                }
-                addFactsForFaCatches(facts, faCatches);
+                addFactsForVesselTransportMeans(facts, activity.getRelatedVesselTransportMeans());
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactsForFaCatch(activity));
+
+                // Todo here
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                addFactsForFaCatches(facts, activity.getSpecifiedFACatches());
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 List<FishingGear> fishingGears = activity.getSpecifiedFishingGears();
@@ -121,11 +113,10 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForGearProblems(facts, gearProblems);
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                List<FLUXLocation> fluxLocations = activity.getRelatedFLUXLocations();
-                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactsForFluxLocations(fluxLocations));
+                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactsForFluxLocations(activity.getRelatedFLUXLocations()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                addFactsForFLUXLocation(facts, fluxLocations);
+                addFactsForFLUXLocation(facts, activity.getRelatedFLUXLocations(), RELATED_FLUX_LOCATION);
 
                 // Until here
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
@@ -136,6 +127,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
+
+                index++;
             }
         }
 
@@ -148,61 +141,68 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         for (GearProblem gearProblem : gearProblems) {
             List<FishingGear> relatedfishingGears = gearProblem.getRelatedFishingGears();
             addFactsForFishingGearAndCharacteristics(facts, relatedfishingGears);
-            addFactsForFLUXLocation(facts, gearProblem.getSpecifiedFLUXLocations());
+            addFactsForFLUXLocation(facts, gearProblem.getSpecifiedFLUXLocations(), SPECIFIED_FLUX_LOCATION);
         }
     }
 
     private void addFactsForFaCatches(List<AbstractFact> facts, List<FACatch> faCatches) {
-        for (FACatch faCatch : faCatches) {
-            List<FishingGear> fishingGears = faCatch.getUsedFishingGears();
-            addFactsForFishingGearAndCharacteristics(facts, fishingGears);
-            addFactsForFLUXLocation(facts, faCatch.getSpecifiedFLUXLocations());
-            addFactsForFLUXLocation(facts, faCatch.getDestinationFLUXLocations());
-            facts.addAll(ActivityFactMapper.INSTANCE.generateFactForFishingTrips(faCatch.getRelatedFishingTrips()));
+        String partialXpath = xPathUtil.getValue();
+        if(CollectionUtils.isNotEmpty(faCatches)) {
+            int index = 1;
+            for (FACatch faCatch : faCatches) {
+
+                String partialCatchXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
+
+                addFactsForFishingGearAndCharacteristics(facts, faCatch.getUsedFishingGears());
+
+
+                addFactsForFLUXLocation(facts, faCatch.getSpecifiedFLUXLocations(), SPECIFIED_FLUX_LOCATION);
+
+
+                addFactsForFLUXLocation(facts, faCatch.getDestinationFLUXLocations(), DESTINATION_FLUX_LOCATION);
+
+
+                facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactForFishingTrips(faCatch.getRelatedFishingTrips()));
+
+                index++;
+            }
         }
+        xPathUtil.clear();
     }
 
     private void addFactsForVesselTransportMeans(List<AbstractFact> facts, List<VesselTransportMeans> vesselTransportMeanses) {
+        String partialXpath = xPathUtil.getValue();
+        int index = 1;
         for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
             if (CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
+                String partialXpath2 = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).getValue();
                 for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                     List<StructuredAddress> structuredAddresses = contactParty.getSpecifiedStructuredAddresses();
+                    xPathUtil.appendWithoutWrapping(partialXpath2);
                     addFactsForStructuredAddress(facts, structuredAddresses, SPECIFIED_STRUCTURED_ADDRESS);
                 }
             }
+            index++;
         }
+        xPathUtil.clear();
     }
 
-    private void addFactsForFLUXLocation(List<AbstractFact> facts, List<FLUXLocation> fluxLocations) {
+    private void addFactsForFLUXLocation(List<AbstractFact> facts, List<FLUXLocation> fluxLocations, String fluxLocationType) {
         final String partialXpath = xPathUtil.getValue();
         int index = 1;
         for (FLUXLocation fluxLocation : fluxLocations) {
-
-            List<StructuredAddress> structuredAddresses = fluxLocation.getPostalStructuredAddresses();
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION, index);
-            addFactsForStructuredAddress(facts, structuredAddresses, POSTAL_STRUCTURED_ADDRESS);
-            // Sopped here
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION, index).append(PHYSICAL_STRUCTURED_ADDRESS);
-            facts.add(ActivityFactMapper.INSTANCE.generateFactsForStructureAddress(fluxLocation.getPhysicalStructuredAddress()));
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index);
+            addFactsForStructuredAddress(facts, fluxLocation.getPostalStructuredAddresses(), POSTAL_STRUCTURED_ADDRESS);
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index).append(PHYSICAL_STRUCTURED_ADDRESS);
+            facts.add(ActivityFactMapperPOC.INSTANCE.generateFactsForStructureAddress(fluxLocation.getPhysicalStructuredAddress()));
+            index++;
         }
+        xPathUtil.clear();
     }
 
     private void addFactsForStructuredAddress(List<AbstractFact> facts, List<StructuredAddress> structuredAddresses, String adressType) {
         if (CollectionUtils.isNotEmpty(structuredAddresses)) {
             facts.addAll(ActivityFactMapperPOC.INSTANCE.generateFactsForStructureAddresses(structuredAddresses, adressType));
-        }
-        xPathUtil.clear();
-    }
-
-    private void addFactsForFishingGearAndCharacteristics(List<AbstractFact> facts, List<FishingGear> fishingGears) {
-        if (CollectionUtils.isNotEmpty(fishingGears)) {
-            facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(fishingGears));
-            for (FishingGear fishingGear : fishingGears) {
-                List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
-                if (CollectionUtils.isNotEmpty(gearCharacteristics)) {
-                    facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(gearCharacteristics));
-                }
-            }
         }
     }
 
@@ -251,6 +251,18 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         }
 
         return abstractFact;
+    }
+
+    private void addFactsForFishingGearAndCharacteristics(List<AbstractFact> facts, List<FishingGear> fishingGears) {
+        if (CollectionUtils.isNotEmpty(fishingGears)) {
+            facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForFishingGears(fishingGears));
+            for (FishingGear fishingGear : fishingGears) {
+                List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
+                if (CollectionUtils.isNotEmpty(gearCharacteristics)) {
+                    facts.addAll(ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(gearCharacteristics));
+                }
+            }
+        }
     }
 
     private Collection<AbstractFact> addAdditionalValidationfactForSubActivities(List<FishingActivity> fishingActivities) {

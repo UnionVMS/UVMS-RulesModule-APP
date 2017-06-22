@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
@@ -112,6 +113,7 @@ public class ActivityFactMapperPOC {
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
             list.add(generateFactForFaReportDocument(fAReportDocument));
+            index++;
         }
 
         return list;
@@ -132,10 +134,10 @@ public class ActivityFactMapperPOC {
             fishingActivityFact.setDelimitedPeriods(new ArrayList<>(fishingActivity.getSpecifiedDelimitedPeriods()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD).storeInRepo(fishingActivityFact, "delimitedPeriods");
         }
-        fishingActivityFact.setRelatedFishingTrip(CustomMapper.getRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
+        fishingActivityFact.setRelatedFishingTrip(CustomMapper.mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "relatedFishingTrip");
 
-        fishingActivityFact.setDurationMeasure(CustomMapper.getDurationMeasure(fishingActivity.getSpecifiedDelimitedPeriods()));
+        fishingActivityFact.setDurationMeasure(CustomMapper.mapDurationMeasure(fishingActivity.getSpecifiedDelimitedPeriods()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, DURATION_MEASURE).storeInRepo(fishingActivityFact, "durationMeasure");
 
         BigDecimal operatQuantity = fishingActivityOperationsQuantityValue(fishingActivity);
@@ -200,8 +202,8 @@ public class ActivityFactMapperPOC {
             if (fishingActivity.getSpecifiedDelimitedPeriods() != null) {
                 fishingActivityFact.setDelimitedPeriods(new ArrayList<>(fishingActivity.getSpecifiedDelimitedPeriods()));
             }
-            fishingActivityFact.setRelatedFishingTrip(CustomMapper.getRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
-            fishingActivityFact.setDurationMeasure(CustomMapper.getDurationMeasure(fishingActivity.getSpecifiedDelimitedPeriods()));
+            fishingActivityFact.setRelatedFishingTrip(CustomMapper.mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
+            fishingActivityFact.setDurationMeasure(CustomMapper.mapDurationMeasure(fishingActivity.getSpecifiedDelimitedPeriods()));
             if (fishingActivityOperationsQuantityValue_(fishingActivity) != null) {
                 fishingActivityFact.setOperationQuantity(fishingActivityOperationsQuantityValue_(fishingActivity).intValue());
             }
@@ -323,7 +325,7 @@ public class ActivityFactMapperPOC {
         vesselTransportMeansFact.setIds(mapToIdType(vesselTransportMean.getIDS()));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(ID).storeInRepo(vesselTransportMeansFact, "ids");
 
-        vesselTransportMeansFact.setSpecifiedContactPartyRoleCodes(CustomMapper.mapToIdTypeList(vesselTransportMean.getSpecifiedContactParties()));
+        vesselTransportMeansFact.setSpecifiedContactPartyRoleCodes(CustomMapper.mapFromContactPartyToCodeType(vesselTransportMean.getSpecifiedContactParties()));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, ROLE_CODE).storeInRepo(vesselTransportMeansFact, "specifiedContactPartyRoleCodes");
 
         vesselTransportMeansFact.setRoleCode(mapToCodeType(vesselTransportMean.getRoleCode()));
@@ -378,6 +380,7 @@ public class ActivityFactMapperPOC {
         for (StructuredAddress structuredAddress : structuredAddresses) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(adressType, index);
             list.add(generateFactsForStructureAddress(structuredAddress));
+            index++;
         }
         return list;
     }
@@ -415,6 +418,7 @@ public class ActivityFactMapperPOC {
         for (FishingGear fishingGear : fishingGears) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_GEAR, index);
             list.add(generateFactsForFishingGear(fishingGear));
+            index++;
         }
 
         return list;
@@ -474,76 +478,86 @@ public class ActivityFactMapperPOC {
         for (GearProblem gearProblem : gearProblems) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_GEAR_PROBLEM ,index);
             list.add(generateFactsForGearProblem(gearProblem));
+            index++;
         }
 
         return list;
     }
 
+    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity) {
 
-    public FaCatchFact generateFactsForFaCatchs(FACatch faCatch) {
-        if (faCatch == null) {
+        List<FACatch> faCatches = activity.getSpecifiedFACatches();
+        List<FLUXLocation> relatedFLUXLocations = activity.getRelatedFLUXLocations();
+        List<FaCatchFact> facts = new ArrayList<>();
+
+        if (CollectionUtils.isEmpty(faCatches) && relatedFLUXLocations == null) {
             xPathUtil.clear();
             return null;
         }
 
         String partialXPath = xPathUtil.getValue();
-
-        FaCatchFact faCatchFact = new FaCatchFact();
-
-        faCatchFact.setSpeciesCode(mapToCodeType(faCatch.getSpeciesCode()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIES_CODE).storeInRepo(faCatchFact, "speciesCode");
-
-        faCatchFact.setResultAAPProduct(CustomMapper.getAppliedProcessAAPProducts(faCatch.getAppliedAAPProcesses()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT).storeInRepo(faCatchFact, "resultAAPProduct");
-
-        faCatchFact.setTypeCode(mapToCodeType(faCatch.getTypeCode()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "typeCode");
-
-        faCatchFact.setSizeDistributionClassCode(mapToCodeType(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_SIZE_DISTRIBUTION, CLASS_CODE).storeInRepo(faCatchFact, "sizeDistributionClassCode");
-
-        faCatchFact.setUnitQuantity(mapQuantityTypeToMeasureType(faCatch.getUnitQuantity()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(UNIT_QUANTITY).storeInRepo(faCatchFact, "unitQuantity");
-
-        faCatchFact.setWeightMeasure(mapToMeasureType(faCatch.getWeightMeasure()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(WEIGHT_MEASURE).storeInRepo(faCatchFact, "weightMeasure");
-
-        faCatchFact.setResultAAPProductPackagingTypeCode(CustomMapper.getAAPProductPackagingTypeCode(faCatch.getAppliedAAPProcesses()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_TYPE_CODE).storeInRepo(faCatchFact, "resultAAPProductPackagingTypeCode");
-
-        faCatchFact.setResultAAPProductPackagingUnitQuantity(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AAP_PRODUCT_PACKAGING_UNIT_QUANTITY));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_QUANTITY).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitQuantity");
-
-        faCatchFact.setResultAAPProductWeightMeasure(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AAP_PRODUCT_WEIGHT_MEASURE));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductWeightMeasure");
-
-        faCatchFact.setResultAAPProductUnitQuantity(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AAP_PRODUCT_UNIT_QUANTITY));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, UNIT_QUANTITY).storeInRepo(faCatchFact, "resultAAPProductUnitQuantity");
-
-        faCatchFact.setResultAAPProductPackagingUnitAverageWeightMeasure(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitAverageWeightMeasure");
-
-        faCatchFact.setAppliedAAPProcessTypeCodes(CustomMapper.getAppliedProcessTypeCodes(faCatch.getAppliedAAPProcesses()));
-        xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, TYPE_CODE).storeInRepo(faCatchFact, "appliedAAPProcessTypeCodes");
-
-        return faCatchFact;
-    }
-
-
-    public List<FaCatchFact> generateFactsForFaCatchs(List<FACatch> faCatches) {
-        if (faCatches == null) {
-            xPathUtil.clear();
-            return null;
-        }
-        String partialXpath = xPathUtil.getValue();
         int index = 1;
-        List<FaCatchFact> list = new ArrayList<>();
-        for (FACatch fACatch : faCatches) {
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index);
-            list.add(generateFactsForFaCatchs(fACatch));
-        }
+        for (FACatch faCatch : faCatches) {
 
-        return list;
+            FaCatchFact faCatchFact = new FaCatchFact();
+
+            xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index);
+
+            faCatchFact.setResultAAPProduct(CustomMapper.getAppliedProcessAAPProducts( faCatch.getAppliedAAPProcesses()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT).storeInRepo(faCatchFact, "resultAAPProduct");
+
+            faCatchFact.setSpeciesCode( mapToCodeType(faCatch.getSpeciesCode()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIES_CODE).storeInRepo(faCatchFact, "speciesCode");
+
+            faCatchFact.setAppliedAAPProcessConversionFactorNumber(CustomMapper.mapAAPProcessList( faCatch.getAppliedAAPProcesses()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, CONVERSION_FACTOR_NUMERIC).storeInRepo(faCatchFact, "appliedAAPProcessConversionFactorNumber");
+
+            faCatchFact.setCategoryCode(mapToCodeType(faCatchSpecifiedSizeDistributionCategoryCode(faCatch)));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_SIZE_DISTRIBUTION, CATEGORY_CODE).storeInRepo(faCatchFact, "categoryCode");
+
+            faCatchFact.setTypeCode(mapToCodeType(faCatch.getTypeCode()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "typeCode");
+
+            faCatchFact.setSizeDistributionClassCode(mapToCodeType(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_SIZE_DISTRIBUTION, CLASS_CODE).storeInRepo(faCatchFact, "sizeDistributionClassCode");
+
+            faCatchFact.setUnitQuantity(mapQuantityTypeToMeasureType(faCatch.getUnitQuantity()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(UNIT_QUANTITY).storeInRepo(faCatchFact, "unitQuantity");
+
+            faCatchFact.setWeightMeasure(mapToMeasureType(faCatch.getWeightMeasure()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(WEIGHT_MEASURE).storeInRepo(faCatchFact, "weightMeasure");
+
+            faCatchFact.setWeighingMeansCode(mapToCodeType(faCatch.getWeighingMeansCode()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(WEIGHING_MEANS_CODE).storeInRepo(faCatchFact, "weighingMeansCode");
+
+            faCatchFact.setResultAAPProductWeightMeasure(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(),AAP_PRODUCT_WEIGHT_MEASURE));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductWeightMeasure");
+
+            faCatchFact.setResultAAPProductUnitQuantity(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(),AAP_PRODUCT_UNIT_QUANTITY));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, UNIT_QUANTITY).storeInRepo(faCatchFact, "resultAAPProductUnitQuantity");
+
+            faCatchFact.setAppliedAAPProcessTypeCodes(CustomMapper.getAppliedProcessTypeCodes(faCatch.getAppliedAAPProcesses()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, TYPE_CODE).storeInRepo(faCatchFact, "appliedAAPProcessTypeCodes");
+
+            faCatchFact.setResultAAPProductPackagingTypeCode(CustomMapper.getAAPProductPackagingTypeCode(faCatch.getAppliedAAPProcesses()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_TYPE_CODE).storeInRepo(faCatchFact, "resultAAPProductPackagingTypeCode");
+
+            faCatchFact.setResultAAPProductPackagingUnitQuantity(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(),AAP_PRODUCT_PACKAGING_UNIT_QUANTITY));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_QUANTITY).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitQuantity");
+
+            faCatchFact.setResultAAPProductPackagingUnitAverageWeightMeasure(CustomMapper.getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(),AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitAverageWeightMeasure");
+
+            if (relatedFLUXLocations != null) {
+                faCatchFact.setFluxLocationId(CustomMapper.mapFLUXLocationList(relatedFLUXLocations));
+                xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
+            }
+
+            facts.add(faCatchFact);
+
+            index++;
+        }
+        return facts;
     }
 
 
@@ -645,6 +659,7 @@ public class ActivityFactMapperPOC {
         for (FLUXLocation fLUXLocation : fluxLocation) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION ,index);
             list.add(generateFactForFluxLocation(fLUXLocation));
+            index++;
         }
         return list;
     }
@@ -1000,12 +1015,12 @@ public class ActivityFactMapperPOC {
             return null;
         }
 
-        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType_________________________________________________ = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType_ = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
 
-        codeType_________________________________________________.setListId(codeType.getListID());
-        codeType_________________________________________________.setValue(codeType.getValue());
+        codeType_.setListId(codeType.getListID());
+        codeType_.setValue(codeType.getValue());
 
-        return codeType_________________________________________________;
+        return codeType_;
     }
 
 
@@ -1014,12 +1029,12 @@ public class ActivityFactMapperPOC {
             return null;
         }
 
-        IdType idType________ = new IdType();
+        IdType idType_ = new IdType();
 
-        idType________.setSchemeId(idType.getSchemeID());
-        idType________.setValue(idType.getValue());
+        idType_.setSchemeId(idType.getSchemeID());
+        idType_.setValue(idType.getValue());
 
-        return idType________;
+        return idType_;
     }
 
 
@@ -1028,12 +1043,12 @@ public class ActivityFactMapperPOC {
             return null;
         }
 
-        List<IdType> list__________ = new ArrayList<>();
+        List<IdType> list_ = new ArrayList<>();
         for (IDType iDType : idTypes) {
-            list__________.add(mapToCodeType(iDType));
+            list_.add(mapToCodeType(iDType));
         }
 
-        return list__________;
+        return list_;
     }
 
 
@@ -1580,5 +1595,22 @@ public class ActivityFactMapperPOC {
         }
         return value;
     }
+
+    private un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faCatchSpecifiedSizeDistributionCategoryCode(FACatch fACatch) {
+
+        if (fACatch == null) {
+            return null;
+        }
+        SizeDistribution specifiedSizeDistribution = fACatch.getSpecifiedSizeDistribution();
+        if (specifiedSizeDistribution == null) {
+            return null;
+        }
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType categoryCode = specifiedSizeDistribution.getCategoryCode();
+        if (categoryCode == null) {
+            return null;
+        }
+        return categoryCode;
+    }
+
 
 }

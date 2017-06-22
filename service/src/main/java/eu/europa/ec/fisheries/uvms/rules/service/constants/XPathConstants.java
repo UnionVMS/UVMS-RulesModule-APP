@@ -69,4 +69,10 @@ public class XPathConstants {
     public static final String STREET_NAME = "StreetName";
     public static final String PLOT_IDENTIFICATION = "PlotIdentification";
     public static final String SPECIFIED_STRUCTURED_ADDRESS = "SpecifiedStructuredAddress";
+    public static final String RELATED_VESSEL_TRANSPORT_MEANS = "RelatedVesselTransportMeans";
+    public static final String SPECIFIED_FLUX_LOCATION = "SpecifiedFLUXLocation";
+    public static final String DESTINATION_FLUX_LOCATION = "DestinationFLUXLocation";
+    public static final String CONVERSION_FACTOR_NUMERIC = "ConversionFactorNumeric";
+    public static final String CATEGORY_CODE = "CategoryCode";
+    public static final String WEIGHING_MEANS_CODE = "WeighingMeansCode";
 }

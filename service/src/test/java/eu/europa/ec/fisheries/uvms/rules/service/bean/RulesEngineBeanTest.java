@@ -66,7 +66,7 @@ public class RulesEngineBeanTest {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
                 for (AbstractFact obj : (ArrayList<AbstractFact>)facts) {
-                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01");
+                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
                 System.out.println("called with arguments: " + Arrays.toString(args));
