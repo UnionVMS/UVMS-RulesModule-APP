@@ -120,7 +120,7 @@ public class ActivityFactMapper {
     }
 
 
-    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity) {
+    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
         if (fishingActivity == null) {
             xPathUtil.clear();
             return null;
@@ -186,6 +186,11 @@ public class ActivityFactMapper {
 
         fishingActivityFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(fishingActivityFact, "vesselRelatedActivityCode");
+
+        if (faReportDocument != null) {
+            fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FLUX_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(fishingActivityFact, "faReportDocumentTypeCode");
+        }
 
         return fishingActivityFact;
     }
@@ -264,14 +269,14 @@ public class ActivityFactMapper {
     }
 
 
-    public List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities) {
+    public List<FishingActivityFact> generateFactForFishingActivities(List<FishingActivity> fishingActivities, FAReportDocument faReportDocument) {
         if (fishingActivities == null) {
             return null;
         }
 
         List<FishingActivityFact> list = new ArrayList<>();
         for (FishingActivity fishingActivity : fishingActivities) {
-            list.add(generateFactForFishingActivity(fishingActivity));
+            list.add(generateFactForFishingActivity(fishingActivity, faReportDocument));
         }
 
         return list;
