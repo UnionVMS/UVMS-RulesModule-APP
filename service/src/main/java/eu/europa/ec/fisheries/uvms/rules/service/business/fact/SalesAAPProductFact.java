@@ -227,7 +227,7 @@ public class SalesAAPProductFact extends AbstractFact {
         return other instanceof SalesAAPProductFact;
     }
 
-    // TODO test
+
     public boolean isInvalidUsageCode(){
         String[] validUsages = new String[10];
         validUsages[0] = "HCN";
