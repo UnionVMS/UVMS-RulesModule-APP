@@ -3,7 +3,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by MATBUL on 21/06/2017.
@@ -11,6 +13,9 @@ import java.util.HashSet;
 public class SalesFactHelper {
 
     static HashSet<String> validCountries = new HashSet<>();
+
+    static List<String> validCategories;
+
 
     static {
         validCountries.add("ABW");
@@ -261,7 +266,12 @@ public class SalesFactHelper {
         validCountries.add("ZAF");
         validCountries.add("ZMB");
         validCountries.add("ZWE");
+
+        validCategories = Arrays.asList("1", "2", "3", "4", "4a", "4b", "4c", "6", "7", "7a", "7b", "8", "N/A");
     }
+
+
+
     // TODO test
     public static boolean isCountryIdValid(IdType idType){
         if (idType == null || StringUtils.isBlank(idType.getValue()) || idType.getValue().length() != 3) {
@@ -270,4 +280,9 @@ public class SalesFactHelper {
 
         return validCountries.contains(idType.getValue());
     }
+
+    public static String[] getValidCategories() {
+        return (String[])validCategories.toArray();
+    }
+
 }

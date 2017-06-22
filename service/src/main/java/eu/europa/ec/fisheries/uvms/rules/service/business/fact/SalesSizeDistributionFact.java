@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.List;
 
@@ -61,22 +62,9 @@ public class SalesSizeDistributionFact extends AbstractFact {
         return other instanceof SalesSizeDistributionFact;
     }
 
-    // TODO test
+
     public boolean isInvalidCategoryCode(){
-        String[] validCategories = new String[10];
-        validCategories[0] = "1";
-        validCategories[1] = "2";
-        validCategories[2] = "3";
-        validCategories[3] = "4";
-        validCategories[4] = "4a";
-        validCategories[5] = "4b";
-        validCategories[6] = "4c";
-        validCategories[7] = "6";
-        validCategories[8] = "7";
-        validCategories[9] = "7a";
-        validCategories[9] = "7b";
-        validCategories[9] = "8";
-        validCategories[9] = "N/A";
+        String[] validCategories = SalesFactHelper.getValidCategories();
 
         return valueContainsAny(categoryCode, validCategories);
     }
