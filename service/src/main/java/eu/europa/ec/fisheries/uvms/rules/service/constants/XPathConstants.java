@@ -75,4 +75,10 @@ public class XPathConstants {
     public static final String CONVERSION_FACTOR_NUMERIC = "ConversionFactorNumeric";
     public static final String CATEGORY_CODE = "CategoryCode";
     public static final String WEIGHING_MEANS_CODE = "WeighingMeansCode";
+    public static final String RELATED_FISHING_TRIP = "RelatedFishingTrip";
+    public static final String VALUE_QUANTITY = "ValueQuantity";
+    public static final String RELATED_FISHING_GEAR = "RelatedFishingGear";
+    public static final String USED_FISHING_GEAR = "UsedFishingGear";
+    public static final String FLUX_RESPONSE_DOCUMENT = "FLUXResponseDocument";
+    public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
 }

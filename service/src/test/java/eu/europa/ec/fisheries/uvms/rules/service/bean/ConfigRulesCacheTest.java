@@ -67,7 +67,7 @@ public class ConfigRulesCacheTest {
     @SneakyThrows
     @Test
     public void testCacheInitilialization() {
-        when(rulesSettingsCache.getProducer().sendDataSourceMessage(anyString(), eq(DataSourceQueue.CONFIG))).thenReturn("SomeCorrId");
+        when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.CONFIG))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
         Map<String, String> allSettingsForModel = rulesSettingsCache.getAllSettingsForModule();

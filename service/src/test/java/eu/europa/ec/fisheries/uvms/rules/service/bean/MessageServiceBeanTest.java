@@ -42,6 +42,13 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 /**
  * Created by padhyad on 6/7/2017.
  */
@@ -68,8 +75,12 @@ public class MessageServiceBeanTest {
     @Mock
     RulesPreProcessBean rulesPreProcessBean;
 
+    @Mock
+    RulesConfigurationCache ruleModuleCache;
+
     @Test
     public void testGenerateFluxResponseMessage() {
+        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
@@ -82,12 +93,13 @@ public class MessageServiceBeanTest {
 
     @Test
     public void testSendRequestToActivity() throws RulesServiceException, MessageException {
-        Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), Mockito.any(DataSourceQueue.class));
+        Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
         messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX);
     }
 
     @Test
     public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
+        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(Collections.emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());

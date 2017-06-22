@@ -252,7 +252,7 @@ public class ActivityFactMapperTest {
         GearCharacteristic gearCharacteristic = new GearCharacteristic();
         gearCharacteristic.setTypeCode(codeType);
 
-        List<GearCharacteristicsFact> gearCharacteristicsFacts = ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(Collections.singletonList(gearCharacteristic));
+        List<GearCharacteristicsFact> gearCharacteristicsFacts = ActivityFactMapper.INSTANCE.generateFactsForGearCharacteristics(Collections.singletonList(gearCharacteristic), "null");
 
         assertEquals(codeType.getValue(), gearCharacteristicsFacts.get(0).getTypeCode().getValue());
 
@@ -265,7 +265,7 @@ public class ActivityFactMapperTest {
         fishingTrip.setIDS(Collections.singletonList(idType));
         fishingTrip.setTypeCode(codeType);
 
-        List<FishingTripFact> fishingTripFacts = ActivityFactMapper.INSTANCE.generateFactForFishingTrips(Collections.singletonList(fishingTrip));
+        List<FishingTripFact> fishingTripFacts = ActivityFactMapper.INSTANCE.generateFactForFishingTrips(Collections.singletonList(fishingTrip), "null");
 
         assertEquals(idType.getValue(), fishingTripFacts.get(0).getIds().get(0).getValue());
         assertEquals(idType.getSchemeID(), fishingTripFacts.get(0).getIds().get(0).getSchemeId());
@@ -276,7 +276,7 @@ public class ActivityFactMapperTest {
     @Test
     public void testGenerateFactForFaCatch() {
 
-        FACatch faCatch = new FACatch();
+        final FACatch faCatch = new FACatch();
         faCatch.setTypeCode(codeType);
         faCatch.setSpeciesCode(codeType);
         faCatch.setUnitQuantity(quantityType);
@@ -288,8 +288,11 @@ public class ActivityFactMapperTest {
 
         faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
 
+        FishingActivity faActivity = new FishingActivity();
+        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>(){{add(faCatch);}});
+        faActivity.setRelatedFLUXLocations(null);
 
-        FaCatchFact faCatchFact = ActivityFactMapper.INSTANCE.generateFactsForFaCatch(faCatch, null);
+        FaCatchFact faCatchFact = ActivityFactMapper.INSTANCE.generateFactsForFaCatch(faActivity).get(0);
 
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());

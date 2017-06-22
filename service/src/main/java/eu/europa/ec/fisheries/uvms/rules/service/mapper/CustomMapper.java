@@ -385,7 +385,6 @@ public class CustomMapper {
         List<CodeType> codeTypes = new ArrayList<>();
         for (FACatch faCatches : faCatch) {
 
-
             switch (methodToChoose) {
 
                 case ActivityFactMapper.CODE_TYPE_FOR_FACATCH:
