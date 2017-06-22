@@ -28,6 +28,7 @@ import java.util.List;
 @Slf4j
 public class MDRServiceBean {
 
+
     @EJB
     private MDRCache cache;
 
