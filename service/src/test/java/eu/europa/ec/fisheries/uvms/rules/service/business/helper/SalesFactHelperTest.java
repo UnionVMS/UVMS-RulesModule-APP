@@ -16,6 +16,18 @@ import static org.junit.Assert.assertTrue;
 public class SalesFactHelperTest {
 
     @Test
+    public void setContainsAnyValueWhenValueIsFound() throws Exception {
+        boolean valid = SalesFactHelper.doesSetContainAnyValue(Arrays.asList("EUR"), SalesFactHelper.getValidCurrencies());
+        assertTrue(valid);
+    }
+
+    @Test
+    public void setContainsAnyValueWhenValueIsNotFound() throws Exception {
+        boolean valid = SalesFactHelper.doesSetContainAnyValue(Arrays.asList("AAAAAAAAAAAAAAAAAAAAAAAAA"), SalesFactHelper.getValidCurrencies());
+        assertFalse(valid);
+    }
+
+    @Test
     public void testAllValuesGreaterOrEqualToZeroWhenValuesAreGreaterOrEqualToZero() throws Exception {
         boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(BigDecimal.ONE), new AmountType().withValue(BigDecimal.TEN), new AmountType().withValue(BigDecimal.ZERO)));
         assertTrue(allValuesGreaterOrEqualToZero);
