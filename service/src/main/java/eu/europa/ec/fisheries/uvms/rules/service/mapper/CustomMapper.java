@@ -10,11 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -23,21 +18,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -87,7 +75,7 @@ public class CustomMapper {
         return (dateTimeType != null);
     }
 
-    public static List<MeasureType> mapDelimitedPeriodList(List<DelimitedPeriod> delimitedPeriods) {
+    public static List<MeasureType> mapDurationMeasure(List<DelimitedPeriod> delimitedPeriods) {
         List<MeasureType> measureTypes = null;
         if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
             measureTypes = new ArrayList<>();
@@ -100,7 +88,7 @@ public class CustomMapper {
         return measureTypes;
     }
 
-    public static List<FishingTrip> mapFishingActivityList(List<FishingActivity> relatedFishingActivities) {
+    public static List<FishingTrip> mapRelatedFishingTrips(List<FishingActivity> relatedFishingActivities) {
         List<FishingTrip> fishingTrips = null;
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
             fishingTrips = new ArrayList<>();
@@ -126,7 +114,7 @@ public class CustomMapper {
         return fluxLocations;
     }
 
-    public static List<DelimitedPeriod> map(List<FishingActivity> relatedFishingActivities) {
+    public static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
         List<DelimitedPeriod> delimitedPeriod = null;
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
             delimitedPeriod = new ArrayList<>();
@@ -139,7 +127,7 @@ public class CustomMapper {
         return delimitedPeriod;
     }
 
-    public static List<CodeType> mapContactPartyList(List<ContactParty> contactPartyList) {
+    public static List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
 
         if (!CollectionUtils.isEmpty(contactPartyList)) {
