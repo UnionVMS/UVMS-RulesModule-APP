@@ -1,8 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
+import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -270,9 +272,6 @@ public class SalesFactHelper {
         validCategories = Arrays.asList("1", "2", "3", "4", "4a", "4b", "4c", "6", "7", "7a", "7b", "8", "N/A");
     }
 
-
-
-    // TODO test
     public static boolean isCountryIdValid(IdType idType){
         if (idType == null || StringUtils.isBlank(idType.getValue()) || idType.getValue().length() != 3) {
             return false;
@@ -285,4 +284,23 @@ public class SalesFactHelper {
         return (String[])validCategories.toArray();
     }
 
+    public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes){
+        for (AmountType amountType:amountTypes) {
+            if (amountType == null || amountType.getValue() == null || amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean anyValueEqualToZero(List<AmountType> amountTypes){
+        for (AmountType amountType:amountTypes) {
+            if (amountType == null || amountType.getValue() == null || amountType.getValue().compareTo(BigDecimal.ZERO) == 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
