@@ -282,7 +282,7 @@ public class SalesStructuredAddressFact extends AbstractFact {
         return other instanceof SalesStructuredAddressFact;
     }
 
-    // TODO test
+
     public boolean isCountryIdValid() {
         return SalesFactHelper.isCountryIdValid(countryID);
     }
