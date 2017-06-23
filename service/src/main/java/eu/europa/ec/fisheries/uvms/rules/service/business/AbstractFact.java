@@ -523,7 +523,6 @@ public abstract class AbstractFact {
     }
 
     public boolean isPresentInList(String listName, String codeValue){
-        log.info("Check if isPresentInList for list:"+listName +" and for value : "+codeValue);
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
         if(CollectionUtils.isNotEmpty(values)){

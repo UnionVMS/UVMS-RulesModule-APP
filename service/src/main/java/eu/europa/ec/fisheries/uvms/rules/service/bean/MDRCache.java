@@ -76,7 +76,7 @@ public class MDRCache {
 
     @SneakyThrows
     private List<String> mdrCodeListByAcronymType(MDRAcronymType acronym) {
-        log.info("Contact MDR to get lists");
+        log.debug("Contact MDR to get lists");
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
         String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(s, TextMessage.class);
