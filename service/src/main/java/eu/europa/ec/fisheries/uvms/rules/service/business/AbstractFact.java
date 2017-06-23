@@ -175,17 +175,21 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
             TextType alias          = contPers.getAlias();
-            // Check with emptyness.
-            if(checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
-                    && (alias == null || StringUtils.isEmpty(alias.getValue())))){
-                return true;
-                // Check without emptyness
-            } else if((nameToConsider == null || nameToConsider.getValue() == null)
-                    && (alias == null || alias.getValue() == null)){
+            if(checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)){
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean checkWithoutEmptyness(TextType nameToConsider, TextType alias) {
+        return (nameToConsider == null || nameToConsider.getValue() == null)
+                && (alias == null || alias.getValue() == null);
+    }
+
+    private boolean checkWithEmptyness(boolean checkEmptyness, TextType nameToConsider, TextType alias) {
+        return checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
+                && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
     public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
@@ -289,11 +293,9 @@ public abstract class AbstractFact {
             return true;
         }
         for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-            if (start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null) {
-                return true;
-            } else if (start && !end && delimitedPeriod.getStartDateTime() == null) {
-                return true;
-            } else if (end && !start && delimitedPeriod.getEndDateTime() == null) {
+            if ((start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null)
+                    || (start && !end && delimitedPeriod.getStartDateTime() == null)
+                    || (end && !start && delimitedPeriod.getEndDateTime() == null)) {
                 return true;
             }
         }

@@ -76,7 +76,7 @@ public class FactRuleEvaluator {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
-            drlsAndRules.putAll(generateExternalRulesFromTemplate(templateName, templateFile, template.getExternalRules()));
+            drlsAndRules.putAll(generateExternalRulesFromTemplate(template.getExternalRules()));
         }
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
         buildAllPackages(packages);
@@ -95,15 +95,18 @@ public class FactRuleEvaluator {
             ksession.dispose();
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
-            Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) ksession.getObjects();
-            AbstractFact next = failedFacts.iterator().next();
-            String message = e.getMessage();
-            String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-            next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
-            next.setOk(false);
-            facts.remove(next);
-            exceptionsList.add(next);
-            validateFact(facts);
+            Collection<?> objects = ksession.getObjects();
+            if(CollectionUtils.isNotEmpty(objects)){
+                Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
+                AbstractFact next = failedFacts.iterator().next();
+                String message = e.getMessage();
+                String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
+                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
+                next.setOk(false);
+                facts.remove(next);
+                exceptionsList.add(next);
+                validateFact(facts);
+            }
         }
 
     }
@@ -149,7 +152,7 @@ public class FactRuleEvaluator {
     }
 
 
-    private Map<String, String> generateExternalRulesFromTemplate(String templateName, String templateFile, List<ExternalRuleType> externalRules) {
+    private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
         if (CollectionUtils.isEmpty(externalRules)) {
             return Collections.emptyMap();
         }
@@ -165,8 +168,9 @@ public class FactRuleEvaluator {
 
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
-        for (String rule : drlsAndRules.keySet()) {
-            String brId = drlsAndRules.get(rule);
+        for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
+            String rule = ruleEntrySet.getKey();
+            String brId = ruleEntrySet.getValue();
             StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
             String systemPackage = ruleName.append(brId).append(".drl").toString();
             systemPackagesPaths.add(systemPackage);

@@ -66,16 +66,17 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     /**
      * Given the schedulerExpressionStr creates a new timer for this bean.
      *
+     *  1. Parse the Cron-Job expression;
+     *  2. Cancel the current timer, if already exists one;
+     *  3. Set up the new timer for this EJB;
+     *
      * @param schedulerExpressionStr
      */
     @Override
     public void setUpScheduler(String schedulerExpressionStr) throws IllegalArgumentException {
         try {
-            // Parse the Cron-Job expression;
             ScheduleExpression expression = parseExpression(schedulerExpressionStr);
-            // Firstly, we need to cancel the current timer, if already exists one;
             cancelPreviousTimer();
-            // Set up the new timer for this EJB;
             timerServ.createCalendarTimer(expression, TIMER_CONFIG);
         } catch (IllegalArgumentException ex) {
             log.warn("Error creating new scheduled synchronization timer!", ex);

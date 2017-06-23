@@ -10,11 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -23,21 +18,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.ap.internal.util.Collections;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 /**
  * @author padhyad
@@ -242,34 +232,37 @@ public class CustomMapper {
         List<MeasureType> measureTypes = new ArrayList<>();
         for (AAPProcess aapProcess : appliedAAPProcesses) {
             if (CollectionUtils.isNotEmpty(aapProcess.getResultAAPProducts())) {
-                for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
-                    switch (methodToChoose) {
-                        case ActivityFactMapper.AAP_PRODUCT_PACKAGING_UNIT_QUANTITY:
-                            if (aapProduct.getPackagingUnitQuantity() != null) {
-                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
-                            }
-                            break;
-                        case ActivityFactMapper.AAP_PRODUCT_AVERAGE_WEIGHT_MEASURE:
-                            if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
-                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
-                            }
-                            break;
-                        case ActivityFactMapper.AAP_PRODUCT_WEIGHT_MEASURE:
-                            if (aapProduct.getWeightMeasure() != null) {
-                                measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
-                            }
-                            break;
-                        case ActivityFactMapper.AAP_PRODUCT_UNIT_QUANTITY:
-                            if (aapProduct.getUnitQuantity() != null) {
-                                measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
-                            }
-                            break;
-                    }
-
-                }
+                mapAapProductToMeasureType(methodToChoose, measureTypes, aapProcess);
             }
         }
         return measureTypes;
+    }
+
+    private static void mapAapProductToMeasureType(String methodToChoose, List<MeasureType> measureTypes, AAPProcess aapProcess) {
+        for (AAPProduct aapProduct : aapProcess.getResultAAPProducts()) {
+            switch (methodToChoose) {
+                case PACKAGING_UNIT_QUANTITY:
+                    if (aapProduct.getPackagingUnitQuantity() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getPackagingUnitQuantity()));
+                    }
+                    break;
+                case AVERAGE_WEIGHT_MEASURE:
+                    if (aapProduct.getPackagingUnitAverageWeightMeasure() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getPackagingUnitAverageWeightMeasure()));
+                    }
+                    break;
+                case WEIGHT_MEASURE:
+                    if (aapProduct.getWeightMeasure() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapToMeasureType(aapProduct.getWeightMeasure()));
+                    }
+                    break;
+                case UNIT_QUANTITY:
+                    if (aapProduct.getUnitQuantity() != null) {
+                        measureTypes.add(ActivityFactMapper.INSTANCE.mapQuantityTypeToMeasureType(aapProduct.getUnitQuantity()));
+                    }
+                    break;
+            }
+        }
     }
 
     public static List<CodeType> getAAPProductPackagingTypeCode(List<AAPProcess> appliedAAPProcesses) {
@@ -384,29 +377,25 @@ public class CustomMapper {
         }
         List<CodeType> codeTypes = new ArrayList<>();
         for (FACatch faCatches : faCatch) {
-
-            switch (methodToChoose) {
-
-                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH:
-                    if (faCatches.getTypeCode() != null) {
-                        codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
-                    }
-                    break;
-
-                case ActivityFactMapper.CODE_TYPE_FOR_FACATCH_FLUXLOCATION:
-
-                    if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
-                        for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations()) {
-                            if (specifiedFluxLocation.getTypeCode() != null) {
-                                codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
-                            }
-                        }
-                    }
-                    break;
-
+            if(CODE_TYPE_FOR_FACATCH.equals(methodToChoose)){
+                if (faCatches.getTypeCode() != null) {
+                    codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(faCatches.getTypeCode()));
+                }
+            } else if(CODE_TYPE_FOR_FACATCH_FLUXLOCATION.equals(methodToChoose)){
+                mapSpecifiedFluxLocationsCodeTypeList(codeTypes, faCatches);
             }
         }
         return codeTypes;
+    }
+
+    private static void mapSpecifiedFluxLocationsCodeTypeList(List<CodeType> codeTypes, FACatch faCatches) {
+        if (CollectionUtils.isNotEmpty(faCatches.getSpecifiedFLUXLocations())) {
+            for (FLUXLocation specifiedFluxLocation : faCatches.getSpecifiedFLUXLocations()) {
+                if (specifiedFluxLocation.getTypeCode() != null) {
+                    codeTypes.add(ActivityFactMapper.INSTANCE.mapToCodeType(specifiedFluxLocation.getTypeCode()));
+                }
+            }
+        }
     }
 
     public static List<String> getIds(FLUXReportDocument fluxReportDocument) {

@@ -24,15 +24,24 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
  */
 public class BusinessObjectFactory {
 
+    private BusinessObjectFactory(){
+        super();
+    }
+
     public static final AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
+        AbstractGenerator generator = null;
         switch (businessObjectType) {
             case FLUX_ACTIVITY_REQUEST_MSG:
-                return new ActivityRequestFactGenerator();
+                generator = new ActivityRequestFactGenerator();
+                break;
             case FLUX_ACTIVITY_RESPONSE_MSG:
-                return new ActivityResponseFactGenerator();
+                generator = new ActivityResponseFactGenerator();
+                break;
             case FLUX_ACTIVITY_QUERY_MSG:
-                return new ActivityQueryFactGenerator();
+                generator = new ActivityQueryFactGenerator();
+                break;
+            default: break;
         }
-        return null;
+        return generator;
     }
 }
