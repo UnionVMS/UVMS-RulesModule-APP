@@ -7,39 +7,35 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-package eu.europa.ec.fisheries.uvms.rules.service.constants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public enum MDRAcronymType {
+/**
+ * Created by sanera on 20/06/2017.
+ */
+public class MDRCacheHolder {
 
-    FLUX_GP_PURPOSE,
-    FA_VESSEL_ROLE,
-    TERRITORY,
-    FLUX_CONTACT_ROLE,
-    FLUX_FA_TYPE,
-    FA_FISHERY,
-    FAO_SPECIES,
-    TARGET_SPECIES_GROUP,
-    VESSEL_ACTIVITY,
-    GEAR_TYPE,
-    FA_GEAR_ROLE,
-    GEAR_CHARACTERISTIC,
-    FA_GEAR_PROBLEM,
-    FA_GEAR_RECOVERY,
-    FA_CATCH_TYPE,
-    WEIGHT_MEANS,
-    FISH_SIZE_CLASS,
-    FA_BFT_SIZE_CATEGORY,
-    FLUX_PROCESS_TYPE,
-    FISH_PACKAGING,
-    FISHING_TRIP_TYPE,
-    FLUX_LOCATION_TYPE,
-    RFMO,
-    FLUX_LOCATION_CHARACTERISTIC,
-    VESSEL_STORAGE_TYPE,
-    FA_QUERY_TYPE,
-    FLUX_GP_RESPONSE,
-    FA_BR,
-    FLUX_GP_VALIDATION_TYPE;
+    private static Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
+
+    private static class Holder {
+        static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
+    }
+
+    public static MDRCacheHolder getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public void addToCache(MDRAcronymType type, List<String> values){
+             cache.put(type,values);
+    }
+
+    public List<String> getList(MDRAcronymType type){
+        return cache.get(type);
+    }
+
 }

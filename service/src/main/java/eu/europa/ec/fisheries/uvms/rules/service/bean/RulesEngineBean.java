@@ -36,12 +36,16 @@ import java.util.List;
 public class RulesEngineBean {
 
 	@EJB
+	private MDRServiceBean mdrServiceBean;
+
+	@EJB
 	private TemplateEngine templateEngine;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
+		mdrServiceBean.loadMDRCache();
 		facts.addAll(generator.generateAllFacts());
 		templateEngine.evaluateFacts(facts);
 		return facts;
