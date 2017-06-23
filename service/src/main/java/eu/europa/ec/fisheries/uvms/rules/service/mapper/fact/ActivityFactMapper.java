@@ -183,7 +183,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIES_TARGET_CODE).storeInRepo(fishingActivityFact, SPECIES_TARGET_CODE_PROP);
 
         fishingActivityFact.setSpecifiedFishingTrip(fishingActivity.getSpecifiedFishingTrip());
-        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "specifiedFishingTrip");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, SPECIFIED_FISHING_TRIP_PROP);
 
         fishingActivityFact.setTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fishingActivityFact, TYPE_CODE_PROP);
@@ -781,7 +781,7 @@ public class ActivityFactMapper {
             faDepartureFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faDepartureFact, REASON_CODE_PROP);
             faDepartureFact.setSpecifiedFishingTrip(fishingActivity.getSpecifiedFishingTrip());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP).storeInRepo(faDepartureFact, "specifiedFishingTrip");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP).storeInRepo(faDepartureFact, SPECIFIED_FISHING_TRIP_PROP);
             faDepartureFact.setOccurrenceDateTime(CustomMapper.getDate(fishingActivity.getOccurrenceDateTime()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(OCCURRENCE_DATE_TIME).storeInRepo(faDepartureFact, OCCURRENCE_DATE_TIME_PROP);
         }

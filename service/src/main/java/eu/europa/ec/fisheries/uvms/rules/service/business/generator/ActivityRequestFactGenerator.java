@@ -213,9 +213,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForFaDeparture(activity, faReportDocument);
                         break;
                     case ARRIVAL:
-                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForDeclarationOfArrival(activity, faReportDocument);
-                        } else if (FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        } else if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForPriorNotificationOfArrival(activity, faReportDocument);
                         }
                         break;
@@ -232,9 +232,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = ActivityFactMapper.INSTANCE.generateFactsForLanding(activity, faReportDocument);
                         break;
                     case TRANSHIPMENT:
-                        if (FaReportDocumentType.DECLARATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForTranshipment(activity, faReportDocument);
-                        } else if (FaReportDocumentType.NOTIFICATION.equals(faReportDocument.getTypeCode().getValue())) {
+                        } else if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = ActivityFactMapper.INSTANCE.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
                         }
                         break;

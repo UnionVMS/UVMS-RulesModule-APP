@@ -95,7 +95,10 @@ public class FactRuleEvaluator {
             ksession.dispose();
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
-            Collection<?> objects = ksession.getObjects();
+            Collection<?> objects = null;
+            if(ksession != null){
+                objects = ksession.getObjects();
+            }
             if(CollectionUtils.isNotEmpty(objects)){
                 Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
                 AbstractFact next = failedFacts.iterator().next();
