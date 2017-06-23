@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MDRCacheHolder {
 
-    private Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
+    private static Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
 
     private static class Holder {
         static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
@@ -31,17 +31,11 @@ public class MDRCacheHolder {
     }
 
     public void addToCache(MDRAcronymType type, List<String> values){
-         synchronized (cache){
              cache.put(type,values);
-         }
     }
 
     public List<String> getList(MDRAcronymType type){
-        List<String> values;
-        synchronized (cache){
-            values=   cache.get(type);
-        }
-        return values;
+        return cache.get(type);
     }
 
 }
