@@ -84,6 +84,9 @@ public class XPathStringWrapper {
      * @return
      */
     public String getValue(){
+        if(strBuff.length() == 0){
+            return StringUtils.EMPTY;
+        }
         String resultingString = strBuff.toString();
         clear();
         return resultingString;
@@ -107,7 +110,10 @@ public class XPathStringWrapper {
      * Clears the strBuffer of this wrapper.
      *
      */
-    public void clear(){
-        strBuff.delete(0, strBuff.length());
+    public XPathStringWrapper clear(){
+        if(strBuff.length() > 0){
+            strBuff.delete(0, strBuff.length());
+        }
+        return INSTANCE;
     }
 }
