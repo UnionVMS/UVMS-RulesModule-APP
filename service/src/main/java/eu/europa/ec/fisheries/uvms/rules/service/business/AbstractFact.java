@@ -78,7 +78,7 @@ public abstract class AbstractFact {
             String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
             String[] propNames = propNamesTrimmed.split(",");
             for(String propName : propNames) {
-                xpathsList.add(XPathRepository.INSTANCE.getForSequence(this.getSequence(), propName));
+                xpathsList.add(XPathRepository.INSTANCE.getMapForSequence(this.getSequence(), propName));
             }
         }
         return xpathsList;
