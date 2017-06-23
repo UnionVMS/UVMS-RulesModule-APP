@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -55,22 +56,40 @@ public abstract class AbstractFact {
 
     protected boolean ok = true;
 
-    private String disabledRuleId;
+    private Integer sequence = 0;
+
 
     public AbstractFact() {
+        this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
     }
 
     public abstract void setFactType();
 
-    public void addWarningOrError(String type, String msg, String brId, String level) {
+    public void addWarningOrError(String type, String msg, String brId, String level, String propertyNames) {
+        final List<String> xpathsForProps = getXpathsForProps(propertyNames);
         if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
-            getErrors().add(new RuleError(brId, msg, level));
+            RuleError ruleError = new RuleError(brId, msg, level, xpathsForProps);
+            errors.add(ruleError);
         } else {
-            getWarnings().add(new RuleWarning(brId, msg, level));
+            RuleWarning ruleWarning = new RuleWarning(brId, msg, level, xpathsForProps);
+            warnings.add(ruleWarning);
         }
     }
+
+    private List<String> getXpathsForProps(String propertyNames) {
+        List<String> xpathsList = new ArrayList<>();
+        if(StringUtils.isNotEmpty(propertyNames)){
+            String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
+            String[] propNames = propNamesTrimmed.split(",");
+            for(String propName : propNames) {
+                xpathsList.add(XPathRepository.INSTANCE.getForSequence(this.getSequence(), propName));
+            }
+        }
+        return xpathsList;
+    }
+
 
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
@@ -88,7 +107,7 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
@@ -102,7 +121,9 @@ public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
             }
         }
         return valLength > hits;
-    }    /**
+    }
+
+    /**
      * Checks if the schemeId Contains Any then it checks if it contains all.
      * Otherwise it means that it contains none.
      *
@@ -373,7 +394,7 @@ public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         return !isMatchFound;
     }
 
-public int numberOfDecimals(BigDecimal value) {
+    public int numberOfDecimals(BigDecimal value) {
         if (value == null) {
             return -1;
         }
@@ -392,7 +413,9 @@ public int numberOfDecimals(BigDecimal value) {
             }
         }
         return false;
-    }    public boolean isPositive(BigDecimal value) {
+    }
+
+    public boolean isPositive(BigDecimal value) {
         if (value == null) {
             return true;
         }
@@ -455,19 +478,20 @@ public int numberOfDecimals(BigDecimal value) {
         return !isValid;
     }
 
-
     public boolean isEmpty(List<?> list){
         return CollectionUtils.isEmpty(list);
     }
 
-public boolean isNumeric(List<NumericType> list) {
+    public boolean isNumeric(List<NumericType> list) {
         for (NumericType type : list) {
             if (type.getValue() == null) {
                 return true;
             }
         }
         return false;
-    }    public boolean isEmpty(String str){
+    }
+
+    public boolean isEmpty(String str){
         return StringUtils.isEmpty(str);
     }
 
@@ -526,5 +550,13 @@ public boolean isNumeric(List<NumericType> list) {
 
 
 
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 
 }

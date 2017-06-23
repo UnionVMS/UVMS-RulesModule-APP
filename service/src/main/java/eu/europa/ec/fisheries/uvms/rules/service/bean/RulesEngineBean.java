@@ -35,8 +35,8 @@ import java.util.List;
 @LocalBean
 public class RulesEngineBean {
 
-//	@EJB
-//	private MDRServiceBean mdrServiceBean;
+	@EJB
+	private MDRServiceBean mdrServiceBean;
 
 	@EJB
 	private TemplateEngine templateEngine;
@@ -45,13 +45,10 @@ public class RulesEngineBean {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
-	//	mdrServiceBean.loadMDRCache();
-		facts.addAll(generator.getAllFacts());
+		mdrServiceBean.loadMDRCache();
+		facts.addAll(generator.generateAllFacts());
 		templateEngine.evaluateFacts(facts);
 		return facts;
     }
-
-
-
 
 }

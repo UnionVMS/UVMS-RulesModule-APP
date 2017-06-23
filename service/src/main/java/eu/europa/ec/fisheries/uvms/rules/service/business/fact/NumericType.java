@@ -10,7 +10,6 @@
  *
  *
  */
-
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.math.BigDecimal;

@@ -135,6 +135,12 @@
             <artifactId>activity-model</artifactId>
             <version>${activity.model.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-client</artifactId>
+            <version>1.1.0.wildfly-008</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

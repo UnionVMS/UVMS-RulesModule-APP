@@ -29,7 +29,7 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
     private FAQuery faQuery;
 
     @Override
-    public List<AbstractFact> getAllFacts() {
+    public List<AbstractFact> generateAllFacts() {
         //TODO facts
         return null;
     }

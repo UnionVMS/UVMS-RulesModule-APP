@@ -33,12 +33,9 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -71,7 +68,7 @@ public class TemplateEngineBeanTest {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
                 for (AbstractFact obj : (ArrayList<AbstractFact>) facts) {
-                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01");
+                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
                 System.out.println("called with arguments: " + Arrays.toString(args));
@@ -82,7 +79,7 @@ public class TemplateEngineBeanTest {
         List<AbstractFact> facts = new ArrayList<>();
         ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
         generator.setBusinessObjectMessage(getFluxFaReportMessage());
-        facts.addAll(generator.getAllFacts());
+        facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
 
         assertNotNull(facts);
