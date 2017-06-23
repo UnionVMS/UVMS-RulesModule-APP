@@ -22,9 +22,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -35,7 +37,11 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -515,6 +521,34 @@ public abstract class AbstractFact {
             this.formatStr = formatStr;
         }
     }
+
+    public boolean isPresentInList(String listName, String codeValue){
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
+        if(CollectionUtils.isNotEmpty(values)){
+            return values.contains(codeValue);
+        }
+        return false;
+    }
+
+    public boolean isPresentInList(String listName, List<String> valuesToMatch){
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
+            return false;
+
+        for(String value: valuesToMatch){
+            if(!codeListValues.contains(value))
+                return false;
+        }
+
+        return true;
+    }
+
+
+
 
     public Integer getSequence() {
         return sequence;
