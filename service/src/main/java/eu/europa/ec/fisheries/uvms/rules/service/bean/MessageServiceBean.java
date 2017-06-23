@@ -259,10 +259,6 @@ public class MessageServiceBean implements MessageService {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
             exchangeLogStatusTypeType = calculateMessageValidationStatus(validationResult);
 
-            if (exchangeLogStatusTypeType == null) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNKNOWN;
-            }
-
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
@@ -272,13 +268,17 @@ public class MessageServiceBean implements MessageService {
     }
 
     private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
-        if (validationResult.isError()) {
-            return ExchangeLogStatusTypeType.FAILED;
-        } else if (validationResult.isWarning()) {
-            return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-        } else {
-            return ExchangeLogStatusTypeType.SUCCESSFUL;
-        }
+      if (validationResult != null) {
+          if (validationResult.isError()) {
+              return ExchangeLogStatusTypeType.FAILED;
+          } else if (validationResult.isWarning()) {
+              return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+          } else {
+              return ExchangeLogStatusTypeType.SUCCESSFUL;
+          }
+      } else {
+        return ExchangeLogStatusTypeType.UNKNOWN;
+      }
     }
 
     private void updateValidationResultWithExisting(ValidationResultDto faReportValidationResult, ValidationResultDto previousValidationResultDto) {
