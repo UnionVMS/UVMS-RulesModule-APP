@@ -222,7 +222,7 @@ public class ActivityFactMapper {
         fishingActivityFact.setDurationMeasure(CustomMapper.mapDurationMeasure(fishingActivity.getSpecifiedDelimitedPeriods()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, DURATION_MEASURE).storeInRepo(fishingActivityFact, "durationMeasure");
 
-        BigDecimal operatQuantity = fishingActivityOperationsQuantityValue_(fishingActivity);
+        BigDecimal operatQuantity = fishingActivityOperationsQuantityValue(fishingActivity);
         if (operatQuantity != null) {
             fishingActivityFact.setOperationQuantity(operatQuantity.intValue());
             xPathUtil.appendWithoutWrapping(partialXpath).append(OPERATIONS_QUANTITY).storeInRepo(fishingActivityFact, "operationQuantity");
@@ -834,8 +834,10 @@ public class ActivityFactMapper {
             if (fishingActivity.getRelatedFLUXLocations() != null) {
                 faFishingOperationFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
             }
-            if (fishingActivityOperationsQuantityValue__(fishingActivity) != null) {
-                faFishingOperationFact.setOperationsQuantity(fishingActivityOperationsQuantityValue__(fishingActivity).toString());
+
+            BigDecimal operatQuantity = fishingActivityOperationsQuantityValue(fishingActivity);
+            if (operatQuantity != null) {
+                faFishingOperationFact.setOperationsQuantity(operatQuantity.toString());
             }
             faFishingOperationFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
         }
@@ -1062,14 +1064,14 @@ public class ActivityFactMapper {
                 faLandingFact.setRelatedFluxLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faLandingFact, "relatedFluxLocations");
             }
+
+            faLandingFact.setSpecifiedFaCatchFluxLocationTypeCode(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), CODE_TYPE_FOR_FACATCH_FLUXLOCATION));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, SPECIFIED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faLandingFact, "specifiedFaCatchFluxLocationTypeCode");
         }
         if (faReportDocument != null) {
             faLandingFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faLandingFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
         }
-        faLandingFact.setSpecifiedFaCatchFluxLocationTypeCode(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), CODE_TYPE_FOR_FACATCH_FLUXLOCATION));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, SPECIFIED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faLandingFact, "specifiedFaCatchFluxLocationTypeCode");
-
         faLandingFact.setSpecifiedFaCatchTypeCode(CustomMapper.getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), CODE_TYPE_FOR_FACATCH));
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faLandingFact, "specifiedFaCatchTypeCode");
 
@@ -1352,38 +1354,6 @@ public class ActivityFactMapper {
         return purposeCode;
     }
 
-    private BigDecimal fishingActivityOperationsQuantityValue(FishingActivity fishingActivity) {
-
-        if (fishingActivity == null) {
-            return null;
-        }
-        QuantityType operationsQuantity = fishingActivity.getOperationsQuantity();
-        if (operationsQuantity == null) {
-            return null;
-        }
-        BigDecimal value = operationsQuantity.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
-    private BigDecimal fishingActivityOperationsQuantityValue_(FishingActivity fishingActivity) {
-
-        if (fishingActivity == null) {
-            return null;
-        }
-        QuantityType operationsQuantity = fishingActivity.getOperationsQuantity();
-        if (operationsQuantity == null) {
-            return null;
-        }
-        BigDecimal value = operationsQuantity.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
     private DateTimeType fluxfaReportMessageFLUXReportDocumentCreationDateTime(FLUXFAReportMessage fLUXFAReportMessage) {
 
         if (fLUXFAReportMessage == null) {
@@ -1627,7 +1597,7 @@ public class ActivityFactMapper {
         return value;
     }
 
-    private BigDecimal fishingActivityOperationsQuantityValue__(FishingActivity fishingActivity) {
+    private BigDecimal fishingActivityOperationsQuantityValue(FishingActivity fishingActivity) {
 
         if (fishingActivity == null) {
             return null;
