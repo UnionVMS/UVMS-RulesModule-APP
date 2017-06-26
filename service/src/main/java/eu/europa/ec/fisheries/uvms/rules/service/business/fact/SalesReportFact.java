@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesReportFact extends AbstractFact {
 
@@ -51,44 +52,19 @@ public class SalesReportFact extends AbstractFact {
         this.includedValidationResultDocuments = includedValidationResultDocuments;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesReportFact)) return false;
-        final SalesReportFact other = (SalesReportFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getID();
-        final Object other$id = other.getID();
-        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
-        final Object this$itemTypeCode = this.getItemTypeCode();
-        final Object other$itemTypeCode = other.getItemTypeCode();
-        if (this$itemTypeCode == null ? other$itemTypeCode != null : !this$itemTypeCode.equals(other$itemTypeCode))
-            return false;
-        final Object this$includedSalesDocuments = this.getIncludedSalesDocuments();
-        final Object other$includedSalesDocuments = other.getIncludedSalesDocuments();
-        if (this$includedSalesDocuments == null ? other$includedSalesDocuments != null : !this$includedSalesDocuments.equals(other$includedSalesDocuments))
-            return false;
-        final Object this$includedValidationResultDocuments = this.getIncludedValidationResultDocuments();
-        final Object other$includedValidationResultDocuments = other.getIncludedValidationResultDocuments();
-        if (this$includedValidationResultDocuments == null ? other$includedValidationResultDocuments != null : !this$includedValidationResultDocuments.equals(other$includedValidationResultDocuments))
-            return false;
-        return true;
+        SalesReportFact that = (SalesReportFact) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(itemTypeCode, that.itemTypeCode) &&
+                Objects.equals(includedSalesDocuments, that.includedSalesDocuments) &&
+                Objects.equals(includedValidationResultDocuments, that.includedValidationResultDocuments);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $id = this.getID();
-        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        final Object $itemTypeCode = this.getItemTypeCode();
-        result = result * PRIME + ($itemTypeCode == null ? 43 : $itemTypeCode.hashCode());
-        final Object $includedSalesDocuments = this.getIncludedSalesDocuments();
-        result = result * PRIME + ($includedSalesDocuments == null ? 43 : $includedSalesDocuments.hashCode());
-        final Object $includedValidationResultDocuments = this.getIncludedValidationResultDocuments();
-        result = result * PRIME + ($includedValidationResultDocuments == null ? 43 : $includedValidationResultDocuments.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesReportFact;
+        return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments);
     }
 }

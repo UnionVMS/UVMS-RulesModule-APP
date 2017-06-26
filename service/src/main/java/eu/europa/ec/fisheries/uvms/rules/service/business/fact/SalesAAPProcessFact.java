@@ -5,9 +5,12 @@ import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.FACatchType;
 import eu.europa.ec.fisheries.schema.sales.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.ToString;
 
 import java.util.List;
+import java.util.Objects;
 
+@ToString
 public class SalesAAPProcessFact extends AbstractFact {
 
     private List<CodeType> typeCodes;
@@ -52,44 +55,19 @@ public class SalesAAPProcessFact extends AbstractFact {
         this.resultAAPProducts = resultAAPProducts;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesAAPProcessFact)) return false;
-        final SalesAAPProcessFact other = (SalesAAPProcessFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$typeCodes = this.getTypeCodes();
-        final Object other$typeCodes = other.getTypeCodes();
-        if (this$typeCodes == null ? other$typeCodes != null : !this$typeCodes.equals(other$typeCodes)) return false;
-        final Object this$conversionFactorNumeric = this.getConversionFactorNumeric();
-        final Object other$conversionFactorNumeric = other.getConversionFactorNumeric();
-        if (this$conversionFactorNumeric == null ? other$conversionFactorNumeric != null : !this$conversionFactorNumeric.equals(other$conversionFactorNumeric))
-            return false;
-        final Object this$usedFACatches = this.getUsedFACatches();
-        final Object other$usedFACatches = other.getUsedFACatches();
-        if (this$usedFACatches == null ? other$usedFACatches != null : !this$usedFACatches.equals(other$usedFACatches))
-            return false;
-        final Object this$resultAAPProducts = this.getResultAAPProducts();
-        final Object other$resultAAPProducts = other.getResultAAPProducts();
-        if (this$resultAAPProducts == null ? other$resultAAPProducts != null : !this$resultAAPProducts.equals(other$resultAAPProducts))
-            return false;
-        return true;
+        SalesAAPProcessFact that = (SalesAAPProcessFact) o;
+        return Objects.equals(typeCodes, that.typeCodes) &&
+                Objects.equals(conversionFactorNumeric, that.conversionFactorNumeric) &&
+                Objects.equals(usedFACatches, that.usedFACatches) &&
+                Objects.equals(resultAAPProducts, that.resultAAPProducts);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $typeCodes = this.getTypeCodes();
-        result = result * PRIME + ($typeCodes == null ? 43 : $typeCodes.hashCode());
-        final Object $conversionFactorNumeric = this.getConversionFactorNumeric();
-        result = result * PRIME + ($conversionFactorNumeric == null ? 43 : $conversionFactorNumeric.hashCode());
-        final Object $usedFACatches = this.getUsedFACatches();
-        result = result * PRIME + ($usedFACatches == null ? 43 : $usedFACatches.hashCode());
-        final Object $resultAAPProducts = this.getResultAAPProducts();
-        result = result * PRIME + ($resultAAPProducts == null ? 43 : $resultAAPProducts.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesAAPProcessFact;
+        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts);
     }
 }

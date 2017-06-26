@@ -23,6 +23,7 @@
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
+        <equalsverifier.version>2.3</equalsverifier.version>
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>
@@ -108,6 +109,13 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
+            <version>${equalsverifier.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

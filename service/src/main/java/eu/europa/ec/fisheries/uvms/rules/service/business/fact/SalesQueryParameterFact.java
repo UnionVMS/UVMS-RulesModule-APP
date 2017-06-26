@@ -4,9 +4,8 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
-/**
- * Created by MATBUL on 16/06/2017.
- */
+import java.util.Objects;
+
 public class SalesQueryParameterFact extends AbstractFact {
 
     protected CodeType typeCode;
@@ -52,5 +51,21 @@ public class SalesQueryParameterFact extends AbstractFact {
 
     public void setValueID(IDType valueID) {
         this.valueID = valueID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SalesQueryParameterFact)) return false;
+        SalesQueryParameterFact that = (SalesQueryParameterFact) o;
+        return Objects.equals(typeCode, that.typeCode) &&
+                Objects.equals(valueCode, that.valueCode) &&
+                Objects.equals(valueDateTime, that.valueDateTime) &&
+                Objects.equals(valueID, that.valueID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
     }
 }

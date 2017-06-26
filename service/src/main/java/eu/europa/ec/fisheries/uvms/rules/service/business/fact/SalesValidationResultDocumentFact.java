@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesValidationResultDocumentFact extends AbstractFact {
 
@@ -42,39 +43,18 @@ public class SalesValidationResultDocumentFact extends AbstractFact {
         this.relatedValidationQualityAnalysises = relatedValidationQualityAnalysises;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesValidationResultDocumentFact)) return false;
-        final SalesValidationResultDocumentFact other = (SalesValidationResultDocumentFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$validatorID = this.getValidatorID();
-        final Object other$validatorID = other.getValidatorID();
-        if (this$validatorID == null ? other$validatorID != null : !this$validatorID.equals(other$validatorID))
-            return false;
-        final Object this$creationDateTime = this.getCreationDateTime();
-        final Object other$creationDateTime = other.getCreationDateTime();
-        if (this$creationDateTime == null ? other$creationDateTime != null : !this$creationDateTime.equals(other$creationDateTime))
-            return false;
-        final Object this$relatedValidationQualityAnalysises = this.getRelatedValidationQualityAnalysises();
-        final Object other$relatedValidationQualityAnalysises = other.getRelatedValidationQualityAnalysises();
-        if (this$relatedValidationQualityAnalysises == null ? other$relatedValidationQualityAnalysises != null : !this$relatedValidationQualityAnalysises.equals(other$relatedValidationQualityAnalysises))
-            return false;
-        return true;
+        SalesValidationResultDocumentFact that = (SalesValidationResultDocumentFact) o;
+        return Objects.equals(validatorID, that.validatorID) &&
+                Objects.equals(creationDateTime, that.creationDateTime) &&
+                Objects.equals(relatedValidationQualityAnalysises, that.relatedValidationQualityAnalysises);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $validatorID = this.getValidatorID();
-        result = result * PRIME + ($validatorID == null ? 43 : $validatorID.hashCode());
-        final Object $creationDateTime = this.getCreationDateTime();
-        result = result * PRIME + ($creationDateTime == null ? 43 : $creationDateTime.hashCode());
-        final Object $relatedValidationQualityAnalysises = this.getRelatedValidationQualityAnalysises();
-        result = result * PRIME + ($relatedValidationQualityAnalysises == null ? 43 : $relatedValidationQualityAnalysises.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesValidationResultDocumentFact;
+        return Objects.hash(validatorID, creationDateTime, relatedValidationQualityAnalysises);
     }
 }

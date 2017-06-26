@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.SalesReportType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesFLUXSalesResponseMessageFact extends AbstractFact {
 
@@ -33,5 +34,19 @@ public class SalesFLUXSalesResponseMessageFact extends AbstractFact {
 
     public void setSalesReports(List<SalesReportType> salesReports) {
         this.salesReports = salesReports;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SalesFLUXSalesResponseMessageFact)) return false;
+        SalesFLUXSalesResponseMessageFact that = (SalesFLUXSalesResponseMessageFact) o;
+        return Objects.equals(fluxResponseDocument, that.fluxResponseDocument) &&
+                Objects.equals(salesReports, that.salesReports);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fluxResponseDocument, salesReports);
     }
 }

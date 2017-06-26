@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesEventFact extends AbstractFact {
 
@@ -52,44 +53,19 @@ public class SalesEventFact extends AbstractFact {
         this.relatedSalesBatches = relatedSalesBatches;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesEventFact)) return false;
-        final SalesEventFact other = (SalesEventFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$occurrenceDateTime = this.getOccurrenceDateTime();
-        final Object other$occurrenceDateTime = other.getOccurrenceDateTime();
-        if (this$occurrenceDateTime == null ? other$occurrenceDateTime != null : !this$occurrenceDateTime.equals(other$occurrenceDateTime))
-            return false;
-        final Object this$sellerName = this.getSellerName();
-        final Object other$sellerName = other.getSellerName();
-        if (this$sellerName == null ? other$sellerName != null : !this$sellerName.equals(other$sellerName))
-            return false;
-        final Object this$buyerName = this.getBuyerName();
-        final Object other$buyerName = other.getBuyerName();
-        if (this$buyerName == null ? other$buyerName != null : !this$buyerName.equals(other$buyerName)) return false;
-        final Object this$relatedSalesBatches = this.getRelatedSalesBatches();
-        final Object other$relatedSalesBatches = other.getRelatedSalesBatches();
-        if (this$relatedSalesBatches == null ? other$relatedSalesBatches != null : !this$relatedSalesBatches.equals(other$relatedSalesBatches))
-            return false;
-        return true;
+        SalesEventFact that = (SalesEventFact) o;
+        return Objects.equals(occurrenceDateTime, that.occurrenceDateTime) &&
+                Objects.equals(sellerName, that.sellerName) &&
+                Objects.equals(buyerName, that.buyerName) &&
+                Objects.equals(relatedSalesBatches, that.relatedSalesBatches);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $occurrenceDateTime = this.getOccurrenceDateTime();
-        result = result * PRIME + ($occurrenceDateTime == null ? 43 : $occurrenceDateTime.hashCode());
-        final Object $sellerName = this.getSellerName();
-        result = result * PRIME + ($sellerName == null ? 43 : $sellerName.hashCode());
-        final Object $buyerName = this.getBuyerName();
-        result = result * PRIME + ($buyerName == null ? 43 : $buyerName.hashCode());
-        final Object $relatedSalesBatches = this.getRelatedSalesBatches();
-        result = result * PRIME + ($relatedSalesBatches == null ? 43 : $relatedSalesBatches.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesEventFact;
+        return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches);
     }
 }

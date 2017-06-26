@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesFishingTripFact extends AbstractFact {
 
@@ -42,37 +43,18 @@ public class SalesFishingTripFact extends AbstractFact {
         this.specifiedDelimitedPeriods = specifiedDelimitedPeriods;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesFishingTripFact)) return false;
-        final SalesFishingTripFact other = (SalesFishingTripFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIDS();
-        final Object other$ids = other.getIDS();
-        if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
-        final Object this$typeCode = this.getTypeCode();
-        final Object other$typeCode = other.getTypeCode();
-        if (this$typeCode == null ? other$typeCode != null : !this$typeCode.equals(other$typeCode)) return false;
-        final Object this$specifiedDelimitedPeriods = this.getSpecifiedDelimitedPeriods();
-        final Object other$specifiedDelimitedPeriods = other.getSpecifiedDelimitedPeriods();
-        if (this$specifiedDelimitedPeriods == null ? other$specifiedDelimitedPeriods != null : !this$specifiedDelimitedPeriods.equals(other$specifiedDelimitedPeriods))
-            return false;
-        return true;
+        SalesFishingTripFact that = (SalesFishingTripFact) o;
+        return Objects.equals(ids, that.ids) &&
+                Objects.equals(typeCode, that.typeCode) &&
+                Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $ids = this.getIDS();
-        result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
-        final Object $typeCode = this.getTypeCode();
-        result = result * PRIME + ($typeCode == null ? 43 : $typeCode.hashCode());
-        final Object $specifiedDelimitedPeriods = this.getSpecifiedDelimitedPeriods();
-        result = result * PRIME + ($specifiedDelimitedPeriods == null ? 43 : $specifiedDelimitedPeriods.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesFishingTripFact;
+        return Objects.hash(ids, typeCode, specifiedDelimitedPeriods);
     }
 }

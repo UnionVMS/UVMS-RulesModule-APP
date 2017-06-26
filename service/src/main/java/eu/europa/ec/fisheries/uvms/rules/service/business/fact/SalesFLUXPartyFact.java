@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesFLUXPartyFact extends AbstractFact {
 
@@ -30,34 +31,6 @@ public class SalesFLUXPartyFact extends AbstractFact {
 
     public void setNames(List<TextType> names) {
         this.names = names;
-    }
-
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof SalesFLUXPartyFact)) return false;
-        final SalesFLUXPartyFact other = (SalesFLUXPartyFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$ids = this.getIDS();
-        final Object other$ids = other.getIDS();
-        if (this$ids == null ? other$ids != null : !this$ids.equals(other$ids)) return false;
-        final Object this$names = this.getNames();
-        final Object other$names = other.getNames();
-        if (this$names == null ? other$names != null : !this$names.equals(other$names)) return false;
-        return true;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $ids = this.getIDS();
-        result = result * PRIME + ($ids == null ? 43 : $ids.hashCode());
-        final Object $names = this.getNames();
-        result = result * PRIME + ($names == null ? 43 : $names.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesFLUXPartyFact;
     }
 
     public boolean anyInvalidPartyId(){
@@ -312,5 +285,19 @@ public class SalesFLUXPartyFact extends AbstractFact {
         validParties[247] = "ZWE";
 
         return valueIdTypeContainsAny(getIDS(), validParties);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SalesFLUXPartyFact)) return false;
+        SalesFLUXPartyFact that = (SalesFLUXPartyFact) o;
+        return Objects.equals(ids, that.ids) &&
+                Objects.equals(names, that.names);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ids, names);
     }
 }

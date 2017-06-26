@@ -5,6 +5,8 @@ import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
+import java.util.Objects;
+
 public class SalesReportWrapperFact extends AbstractFact {
 
     private FLUXSalesReportMessage fluxSalesReportMessage;
@@ -34,19 +36,14 @@ public class SalesReportWrapperFact extends AbstractFact {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof SalesReportWrapperFact)) return false;
         SalesReportWrapperFact that = (SalesReportWrapperFact) o;
-
-        if (fluxSalesReportMessage != null ? !fluxSalesReportMessage.equals(that.fluxSalesReportMessage) : that.fluxSalesReportMessage != null)
-            return false;
-        return auctionSale != null ? auctionSale.equals(that.auctionSale) : that.auctionSale == null;
+        return Objects.equals(fluxSalesReportMessage, that.fluxSalesReportMessage) &&
+                Objects.equals(auctionSale, that.auctionSale);
     }
 
     @Override
     public int hashCode() {
-        int result = fluxSalesReportMessage != null ? fluxSalesReportMessage.hashCode() : 0;
-        result = 31 * result + (auctionSale != null ? auctionSale.hashCode() : 0);
-        return result;
+        return Objects.hash(fluxSalesReportMessage, auctionSale);
     }
 }
