@@ -129,13 +129,13 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInList(){
+    public void testIsPresentInMDRList(){
         boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
         assertEquals(true,result);
     }
 
     @Test
-    public void testIsPresentInList_MultipleValues(){
+    public void testIsCodeTypePresentInMDRList(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED"));
