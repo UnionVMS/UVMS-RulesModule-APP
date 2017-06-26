@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -128,16 +129,19 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInList(){
-        boolean result=fact.isPresentInList("GEAR_TYPE","LA");
+    public void testIsPresentInMDRList(){
+        boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
         assertEquals(true,result);
     }
 
     @Test
-    public void testIsPresentInList_MultipleValues(){
+    public void testIsCodeTypePresentInMDRList(){
 
-        String[] faCatchCodeValues = new String[] {  "RELEASED", "DISCARDED", "DEMINIMIS"};
-        boolean result=fact.isPresentInList("FA_CATCH_TYPE",Arrays.asList(faCatchCodeValues));
+        List<CodeType> codeTypes = new ArrayList<>();
+        codeTypes.add(new CodeType("RELEASED"));
+        codeTypes.add(new CodeType("DISCARDED"));
+        codeTypes.add(new CodeType("DEMINIMIS"));
+        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
     }
 
