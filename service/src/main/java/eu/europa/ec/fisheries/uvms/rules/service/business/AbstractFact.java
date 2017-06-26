@@ -524,7 +524,7 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean isPresentInList(String listName, String codeValue){
+    public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
         if(CollectionUtils.isNotEmpty(values)){
@@ -533,7 +533,8 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean isPresentInList(String listName, List<String> valuesToMatch){
+
+     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
@@ -541,8 +542,8 @@ public abstract class AbstractFact {
         if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
             return false;
 
-        for(String value: valuesToMatch){
-            if(!codeListValues.contains(value))
+        for(CodeType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
