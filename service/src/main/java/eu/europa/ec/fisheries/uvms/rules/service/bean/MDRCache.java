@@ -54,7 +54,7 @@ public class MDRCache {
             cache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
                     .expireAfterWrite(1, TimeUnit.HOURS)
-                    //.refreshAfterWrite(1, TimeUnit.HOURS)
+                    .refreshAfterWrite(1, TimeUnit.HOURS)
                     .build(
                             new CacheLoader<MDRAcronymType, List<String>>() {
                                 @Override
