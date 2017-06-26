@@ -105,8 +105,8 @@ public class MessageServiceBean implements MessageService {
 
 
             updateRequestMessageStatus(receiveSalesQueryRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
-            log.error("Couldn't validate sales query", e);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            throw new RulesServiceException("Couldn't validate sales query", e);
         }
     }
 
@@ -135,8 +135,8 @@ public class MessageServiceBean implements MessageService {
 
             //update log status
             updateRequestMessageStatus(receiveSalesReportRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
-            log.error("Couldn't validate sales report", e);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 
@@ -154,8 +154,8 @@ public class MessageServiceBean implements MessageService {
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
 
             updateRequestMessageStatus(rulesRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | RulesServiceException e) {
-            log.error("Couldn't validate sales response", e);
+        } catch (SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
 
@@ -181,8 +181,8 @@ public class MessageServiceBean implements MessageService {
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesServiceException | RulesValidationException e) {
-            log.error("Couldn't validate sales response", e);
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
 
@@ -208,8 +208,8 @@ public class MessageServiceBean implements MessageService {
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | RulesServiceException e) {
-            log.error("Couldn't validate sales report", e);
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 

@@ -262,7 +262,7 @@ public class EventServiceBean implements EventService {
         try {
             messageService.receiveSalesQueryRequest(message.getJmsMessage().getText());
         } catch (JMSException e) {
-            LOG.error("Couldn't read ReceiveSalesQueryRequest.", e);
+            throw new RulesServiceException("Couldn't read ReceiveSalesQueryRequest.", e);
         }
     }
 
@@ -271,7 +271,7 @@ public class EventServiceBean implements EventService {
         try {
             messageService.receiveSalesReportRequest(message.getJmsMessage().getText());
         } catch (JMSException e) {
-            LOG.error("Couldn't read ReceiveSalesReportRequest.", e);
+            throw new RulesServiceException("Couldn't read ReceiveSalesReportRequest.", e);
         }
     }
 
@@ -280,7 +280,7 @@ public class EventServiceBean implements EventService {
         try {
             messageService.receiveSalesResponseRequest(message.getJmsMessage().getText());
         } catch (JMSException e) {
-            LOG.error("Couldn't read ReceiveSalesResponseRequest.", e);
+            throw new RulesServiceException("Couldn't read ReceiveSalesResponseRequest.", e);
         }
     }
 
@@ -289,7 +289,7 @@ public class EventServiceBean implements EventService {
         try {
             messageService.sendSalesReportRequest(message.getJmsMessage().getText());
         } catch (JMSException e) {
-            LOG.error("Couldn't read SendSalesReportRequest.", e);
+            throw new RulesServiceException("Couldn't read SendSalesReportRequest.", e);
         }
     }
 
@@ -298,7 +298,7 @@ public class EventServiceBean implements EventService {
         try {
             messageService.sendSalesResponseRequest(message.getJmsMessage().getText());
         } catch (JMSException e) {
-            LOG.error("Couldn't read SendSalesResponseRequest.", e);
+            throw new RulesServiceException("Couldn't read SendSalesResponseRequest.", e);
         }
     }
 
