@@ -46,13 +46,17 @@ public class XPathRepository {
         sequence = 10000;
     }
 
-    public String getForSequence(Integer sequence, String propName) {
+    public String getMapForSequence(Integer sequence, String propName) {
         String xpath = null;
         Map<String, String> propsMap = INSTANCE.getXpathsMap().get(sequence);
         if(MapUtils.isNotEmpty(propsMap)){
             xpath = propsMap.get(propName);
         }
         return xpath;
+    }
+
+    public Map<String, String> getMapForSequence(Integer sequence){
+        return xpathsMap.get(sequence);
     }
 
     public Integer getNewSequence(){

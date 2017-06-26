@@ -22,6 +22,10 @@ public class MDRCacheHolder {
 
     private static Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
 
+    private MDRCacheHolder(){
+        super();
+    }
+
     private static class Holder {
         static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
     }

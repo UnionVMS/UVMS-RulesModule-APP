@@ -148,9 +148,4 @@ public abstract class AbstractConfigCache {
 
     protected abstract String getModuleName();
 
-    private LoadingCache<String, Map<String, String>> getCache() {
-        return cache;
-    }
-
-
 }
