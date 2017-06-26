@@ -43,6 +43,11 @@
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
 
+        <!-- Packages that need to be exluded from sonar coverage -->
+        <sonar.exclusions>
+            *src/main/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/*
+        </sonar.exclusions>
+
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
     </properties>
 
@@ -91,7 +96,17 @@
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.ximpleware/vtd-xml -->
+        <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+            <version>2.13</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>

@@ -47,7 +47,6 @@ public class ActivityFactMapper {
     private static final String SPECIFIED_FISHING_TRIP_PROP = "specifiedFishingTrip";
     private static final String OCCURRENCE_DATE_TIME_PROP = "occurrenceDateTime";
 
-
     private static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     private static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
 
@@ -332,7 +331,6 @@ public class ActivityFactMapper {
             xPathUtil.clear();
             return null;
         }
-        xPathUtil.append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
         VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean);
         vesselTransportMeansFact.setIsFromFaReport(isCommingFromFaReportDocument);
         return vesselTransportMeansFact;
@@ -398,7 +396,7 @@ public class ActivityFactMapper {
             return null;
         }
 
-        final String partialXpath = xPathUtil.getValue();
+        String partialXpath = xPathUtil.getValue();
 
         StructuredAddressFact structuredAddressFact = new StructuredAddressFact();
 
@@ -426,7 +424,7 @@ public class ActivityFactMapper {
             xPathUtil.clear();
             return Collections.emptyList();
         }
-        final String partialXpath = xPathUtil.getValue();
+        String partialXpath = xPathUtil.getValue();
         List<StructuredAddressFact> list = new ArrayList<>();
         int index = 1;
         for (StructuredAddress structuredAddress : structuredAddresses) {
@@ -559,7 +557,7 @@ public class ActivityFactMapper {
 
             FaCatchFact faCatchFact = new FaCatchFact();
 
-            xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index);
+            partialXPath = xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
             faCatchFact.setResultAAPProduct(CustomMapper.getAppliedProcessAAPProducts( faCatch.getAppliedAAPProcesses()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT).storeInRepo(faCatchFact, "resultAAPProduct");
@@ -653,11 +651,13 @@ public class ActivityFactMapper {
         }
         FishingTripFact fishingTripFact = new FishingTripFact();
 
+        String partialXpath = xPathUtil.getValue();
+
         fishingTripFact.setIds(mapToIdType(fishingTrip.getIDS()));
-        xPathUtil.append(ID).storeInRepo(fishingTripFact, "ids");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(fishingTripFact, "ids");
 
         fishingTripFact.setTypeCode(mapToCodeType(fishingTrip.getTypeCode()));
-        xPathUtil.append(TYPE_CODE).storeInRepo(fishingTripFact, TYPE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fishingTripFact, TYPE_CODE_PROP);
 
         return fishingTripFact;
     }

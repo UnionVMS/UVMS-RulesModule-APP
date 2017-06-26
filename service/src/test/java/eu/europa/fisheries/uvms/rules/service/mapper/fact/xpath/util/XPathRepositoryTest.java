@@ -13,6 +13,7 @@ package eu.europa.fisheries.uvms.rules.service.mapper.fact.xpath.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ximpleware.*;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -26,11 +27,13 @@ import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,8 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by kovian on 23/06/2017.
@@ -88,10 +90,65 @@ public class XPathRepositoryTest {
         for(AbstractFact fact : factList){
             Map<String, String> xpathMap = repo.getMapForSequence(fact.getSequence());
             assertNotNull(xpathMap);
-            System.out.print("Fact Class : ["+fact.getClass().getName()+"] \\n XPathsMap : "  +preetyPrint(xpathMap)+"\n");
+            System.out.print("\nFact Class : ["+fact.getClass().getName()+"] \\n XPathsMap : "  +preetyPrint(xpathMap)+"\n");
         }
     }
 
+    @Test
+    @SneakyThrows
+    public void testFirstElementIsAlwaysFluxFaMessage(){
+
+        assertNotNull(factList);
+        assertTrue(CollectionUtils.isNotEmpty(factList));
+        assertTrue(MapUtils.isNotEmpty(repo.getXpathsMap()));
+
+        for(AbstractFact fact : factList){
+            Map<String, String> xpathMap = repo.getMapForSequence(fact.getSequence());
+            assertNotNull(xpathMap);
+            for(Map.Entry<String, String> entrySet : xpathMap.entrySet()){
+                String value = entrySet.getValue();
+                int matches = StringUtils.countMatches(value, "FLUXFAReportMessage");
+                if(matches == 2){ // Control for dubble appending!
+                    System.out.print("\nFact Class : "+fact.getClass().getName());
+                    System.out.print("\nValue xpath : "+value);
+                    fail("Found 'FLUXFAReportMessage' twice in the same XPATH!");
+                }
+                System.out.print("\nTesting value : " + value);
+                int valMaxLength = value.length() >= 50 ? 50 : value.length();
+                String val = value.substring(0, valMaxLength);
+                if(!val.contains("FLUXFAReportMessage")){
+                    System.out.print("Testing value fails : "+value+"\n Fact Class : "+fact.getClass().getName());
+                }
+                assertTrue(val.contains("FLUXFAReportMessage"));
+            }
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    public void testXpathCorrectness(){
+
+        String filePath = new File(".", testXmlPath).getAbsolutePath();
+
+        VTDGen vdGen =  new VTDGen();
+        boolean fileParsed = vdGen.parseFile(filePath, true);
+
+        assertTrue(fileParsed);
+
+        VTDNav vn = vdGen.getNav();
+        AutoPilot ap = new AutoPilot(vn);
+
+        for(AbstractFact fact : factList){
+            Map<String, String> xpathMap = repo.getMapForSequence(fact.getSequence());
+            assertNotNull(xpathMap);
+            for(Map.Entry<String, String> entrySet : xpathMap.entrySet()){
+                String xpathVal = entrySet.getValue();
+                if(!validateXPath(xpathVal, ap, vn, fact)){
+                    fail("\nTesting xpathVal fails : "+xpathVal+"\nFact Class : "+fact.getClass().getName());
+                }
+            }
+        }
+    }
 
     @Test
     public void testManualInsertion(){
@@ -147,6 +204,58 @@ public class XPathRepositoryTest {
 
     public static String preetyPrint(Object obj) throws JsonProcessingException {
         return new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true).writeValueAsString(obj);
+    }
+
+    private boolean validateXPath(String xpathVal, AutoPilot ap, VTDNav vn, AbstractFact fact) throws XPathParseException, NavException, XPathEvalException {
+
+
+        System.out.println("Validating factClass : "+fact.getClass().getName());
+
+        ap.selectXPath(xpathVal);
+        final int evalResult = ap.evalXPath();
+        int i = -1;
+        if(evalResult != -1){
+            printXMLFragment(ap, vn, evalResult);
+            return true;
+        } else {
+            int lastIndexOfSlashSlashStar = xpathVal.lastIndexOf("//*");
+
+            if(lastIndexOfSlashSlashStar <= 0){ // We already cut "a lot"
+                System.out.println("\nFailed in the tentative to cut last appended strings... Probably this XPath doesn't exist!\nFaulty xpath : "+xpathVal);
+                return false;
+            }
+
+            String newXpath = cutLastAppend(xpathVal, lastIndexOfSlashSlashStar);
+
+            if(StringUtils.isEmpty(newXpath)){
+                return false;
+            }
+
+            System.out.println("Retrying with altered XPATH (Cutting last append) : \nPrev xpath : \n" + xpathVal + "\nNew xpath : \n" + newXpath);
+            return validateXPath(newXpath, ap, vn, fact);
+        }
+    }
+
+    private String cutLastAppend(String xpathVal, int lastIndexOfSlashSlashStar) {
+        String newXpath = xpathVal.substring(0, lastIndexOfSlashSlashStar);
+        String testPath = xpathVal.substring(lastIndexOfSlashSlashStar, xpathVal.length());
+
+        // If it is indexed append, cut the first '(' character.
+        if(StringUtils.countMatches(testPath, "[") == 2){
+            newXpath = newXpath.substring(1, newXpath.length());
+        }
+
+        return newXpath;
+    }
+
+
+    private void printXMLFragment(AutoPilot ap, VTDNav vn, int evalResult) throws XPathEvalException, NavException {
+        int i = evalResult;
+        while(i != -1){
+            i = ap.evalXPath();
+            int pos = (int) vn.getContentFragment();
+            System.out.println("\nVal != null (Xpath exists) :  "+ vn.toString(pos, (pos >> 30)));
+        }
     }
 
 }
