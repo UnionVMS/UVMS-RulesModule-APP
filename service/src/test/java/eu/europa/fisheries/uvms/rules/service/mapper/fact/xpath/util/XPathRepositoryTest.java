@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  */
 public class XPathRepositoryTest {
 
-    String testXmlPath = "src/test/resources/fluxFaResponseMessage.xml";
+    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
 
     XPathStringWrapper xpathUtil;
 

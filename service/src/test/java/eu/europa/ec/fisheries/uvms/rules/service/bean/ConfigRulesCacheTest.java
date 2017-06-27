@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class ConfigRulesCacheTest {
 
     @Mock
-    private RulesConfigurationCache rulesSettingsCache;
+    private AbstractConfigCache rulesSettingsCache;
 
     @Mock
     private RulesResponseConsumer consumer;
@@ -70,6 +70,8 @@ public class ConfigRulesCacheTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.CONFIG))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
+        rulesSettingsCache.initializeCache();
+
         Map<String, String> allSettingsForModel = rulesSettingsCache.getAllSettingsForModule();
         assertEquals(11, allSettingsForModel.size());
 
@@ -83,7 +85,6 @@ public class ConfigRulesCacheTest {
         assertNull(rulesSettingsCache.getSingleConfig("YYYYY"));
         assertNull(rulesSettingsCache.getSingleConfig("nation_code"));
 
-        //verify(rulesSettingsCache, times(1)).initializeCache();
     }
 
 
