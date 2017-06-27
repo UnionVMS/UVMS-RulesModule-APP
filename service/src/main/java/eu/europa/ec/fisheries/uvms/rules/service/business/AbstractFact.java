@@ -244,7 +244,7 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return false;
         }
         return false;
@@ -507,7 +507,8 @@ public abstract class AbstractFact {
         CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
-        GFCM("[a-zA-Z0-9]{1,13}");
+        GFCM("[a-zA-Z0-9]{1,13}"),
+        EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}");
 
         String formatStr;
 
