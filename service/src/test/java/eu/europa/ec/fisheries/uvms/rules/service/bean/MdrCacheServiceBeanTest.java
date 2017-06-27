@@ -29,13 +29,13 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by padhyad on 6/7/2017.
  */
-public class MdrServiceBeanTest {
+public class MdrCacheServiceBeanTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @InjectMocks
-    MDRServiceBean mdrServiceBean;
+    MDRCacheServiceBean mdrCacheServiceBean;
 
     @Mock
     MDRCache cache;
@@ -43,7 +43,7 @@ public class MdrServiceBeanTest {
     @Test
     public void isPresentInList() {
         Mockito.doReturn(Arrays.asList("abc", "def")).when(cache).getEntry(Mockito.any(MDRAcronymType.class));
-        boolean isPresent = mdrServiceBean.isPresentInList("abc", "abc");
+        boolean isPresent = mdrCacheServiceBean.isPresentInList("abc", "abc");
         assertTrue(isPresent);
     }
 }

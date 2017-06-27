@@ -26,6 +26,9 @@ public class TemplateFactory {
     }
 
     public static String getTemplateFileName(FactType factType) {
+        if(factType == null){
+            return StringUtils.EMPTY;
+        }
         String drtPath;
         switch (factType) {
             case FA_DEPARTURE:

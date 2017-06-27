@@ -27,7 +27,12 @@ public class MDRCacheHolder {
     }
 
     private static class Holder {
-        static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
+
+        private Holder(){
+            super();
+        }
+
+        private static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
     }
 
     public static MDRCacheHolder getInstance() {

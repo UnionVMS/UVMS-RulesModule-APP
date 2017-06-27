@@ -51,7 +51,7 @@ public class RulesEngineBeanTest {
     RulesEngineBean rulesEngineBean;
 
     @Mock
-    MDRServiceBean mdrServiceBean;
+    MDRCacheServiceBean mdrCacheServiceBean;
 
     @Mock
     TemplateEngine templateEngine;

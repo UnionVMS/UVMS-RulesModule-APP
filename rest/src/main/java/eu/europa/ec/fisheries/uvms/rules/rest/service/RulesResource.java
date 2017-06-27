@@ -48,7 +48,7 @@ public class RulesResource {
     private RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
-    private MDRServiceBean mdrService;
+    private MDRCacheServiceBean mdrService;
 
     @EJB
     private RulesEngineBean rulesEngine;

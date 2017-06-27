@@ -26,7 +26,7 @@ import java.util.List;
 @Stateless
 @LocalBean
 @Slf4j
-public class MDRServiceBean {
+public class MDRCacheServiceBean {
 
 
     @EJB
