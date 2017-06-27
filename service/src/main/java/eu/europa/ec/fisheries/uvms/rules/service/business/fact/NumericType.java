@@ -12,11 +12,15 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import lombok.ToString;
+
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Created by sanera on 03/05/2017.
  */
+@ToString
 public class NumericType {
     private BigDecimal value;
     private String format;
@@ -35,5 +39,19 @@ public class NumericType {
 
     public void setFormat(String format) {
         this.format = format;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NumericType)) return false;
+        NumericType that = (NumericType) o;
+        return Objects.equals(value, that.value) &&
+                Objects.equals(format, that.format);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, format);
     }
 }

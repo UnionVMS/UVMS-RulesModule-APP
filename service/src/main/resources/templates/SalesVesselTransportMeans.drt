@@ -1,0 +1,27 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselTransportMeansFact;
+
+template "@{tname}"
+
+rule "Sales Vessel Transport Means @{tname} - @{brid}"
+
+when
+
+    $fact : SalesVesselTransportMeansFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+end
+
+end template

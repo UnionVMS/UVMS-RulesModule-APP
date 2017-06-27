@@ -13,10 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 
 /**
@@ -32,6 +29,12 @@ public class BusinessObjectFactory {
                 return new ActivityResponseFactGenerator();
             case FLUX_ACTIVITY_QUERY_MSG:
                 return new ActivityQueryFactGenerator();
+            case FLUX_SALES_QUERY_MSG:
+                return new SalesQueryFactGenerator();
+            case FLUX_SALES_REPORT_MSG:
+                return new SalesReportFactGenerator();
+            case FLUX_SALES_RESPONSE_MSG:
+                return new SalesResponseFactGenerator();
         }
         return null;
     }

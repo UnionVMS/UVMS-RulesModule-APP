@@ -22,6 +22,8 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
+        <orika.version>1.5.1</orika.version>
+        <equalsverifier.version>2.3</equalsverifier.version>
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>
@@ -37,6 +39,7 @@
         <asset.model.version>3.0.4</asset.model.version>
         <audit.model.version>3.0.4</audit.model.version>
         <rules.model.version>3.0.5-SNAPSHOT</rules.model.version>
+        <sales.model.version>1.0.0-SNAPSHOT</sales.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
@@ -47,6 +50,16 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>${orika.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
+            <artifactId>sales-model</artifactId>
+            <version>${sales.model.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -96,6 +109,13 @@
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
+            <version>${equalsverifier.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

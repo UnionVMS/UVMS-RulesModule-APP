@@ -13,21 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +33,11 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import java.math.BigDecimal;
+import java.util.*;
+
 @Slf4j
+@ToString
 public abstract class AbstractFact {
 
     protected FactType factType;
@@ -50,8 +49,6 @@ public abstract class AbstractFact {
     protected List<String> uniqueIds = new ArrayList<>();
 
     protected boolean ok = true;
-
-    private String disabledRuleId;
 
     public AbstractFact() {
         this.warnings = new ArrayList<>();
@@ -94,6 +91,17 @@ public abstract class AbstractFact {
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
         return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+    }
+
+    /**
+     * Checks if one of the String... array elements exists in the idType.
+     *
+     * @param idType
+     * @param values
+     * @return
+     */
+    public boolean schemeIdContainsAny(IdType idType, String... values) {
+        return schemeIdContainsAny(Arrays.asList(idType), values);
     }
 
     /**
@@ -208,7 +216,7 @@ public abstract class AbstractFact {
     }
 
 
-    private boolean validateFormat(String value, String format) {
+    public boolean validateFormat(String value, String format) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
@@ -228,6 +236,53 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
+        return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
+    }
+
+
+    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyType> salesPartyTypes, String... valuesToMatch) {
+        List<eu.europa.ec.fisheries.schema.sales.CodeType> codeTypes = new ArrayList<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        for (SalesPartyType salesPartyType : salesPartyTypes) {
+            codeTypes.addAll(salesPartyType.getRoleCodes());
+        }
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (eu.europa.ec.fisheries.schema.sales.CodeType codeType : codeTypes) {
+            String value = codeType.getValue();
+
+            if (valuesToBeFound.contains(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean listIdDoesNotContainAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        HashSet<String> valuesFoundInListOfCodeTypes = new HashSet<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            String listId = codeType.getListId();
+
+            if (valuesToBeFound.contains(listId)) {
+                valuesFoundInListOfCodeTypes.add(listId);
+            }
+        }
+
+        return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
@@ -260,8 +315,6 @@ public abstract class AbstractFact {
         }
         return false;
     }
-
-
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
@@ -355,6 +408,49 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
+        IdType idType = new IdType();
+        idType.setValue(value);
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+    }
+
+    public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+    }
+
+    public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (IdType idType : idTypes) {
+                if (val.equals(idType.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+    public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType codeType : codeTypes) {
+                if (val.equals(codeType.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+
     public boolean isPositive(BigDecimal value) {
         if (value == null) {
             return true;
@@ -426,6 +522,21 @@ public abstract class AbstractFact {
         return StringUtils.isEmpty(str);
     }
 
+    public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
+        return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
+        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        int index = string.indexOf(".");
+        return index < 0 ? 0 : string.length() - index - 1;
+    }
+
+    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound)
+    {
+        return  value.compareTo(lowBound) > 0  && value.compareTo(upperBound) < 0;
+    }
+
     public enum FORMATS {
         // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
         // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
@@ -436,7 +547,12 @@ public abstract class AbstractFact {
         CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
-        GFCM("[a-zA-Z0-9]{1,13}");
+        GFCM("[a-zA-Z0-9]{1,13}"),
+        EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
+        EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
+        EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
+        EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}"),
+        EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}");
 
         String formatStr;
 

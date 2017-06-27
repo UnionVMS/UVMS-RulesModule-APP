@@ -11,7 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.exception;
 
-public class RulesServiceException extends Exception {
+public class RulesServiceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public RulesServiceException() {

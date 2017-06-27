@@ -11,21 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+
 import javax.ejb.Local;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
-
-import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 
 @Local
 public interface EventService {
@@ -52,4 +44,13 @@ public interface EventService {
 
     void getFLUXMDRSyncResponseMessageReceivedEvent(@Observes @GetFLUXMDRSyncMessageResponseEvent EventMessage message);
 
+    void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message);
+
+    void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message);
+
+    void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message);
+
+    void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message);
+
+    void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message);
 }

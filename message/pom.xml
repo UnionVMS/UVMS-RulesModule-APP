@@ -53,7 +53,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
-                <version>2.3</version>
+                <version>${equalsverifier.version}</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>

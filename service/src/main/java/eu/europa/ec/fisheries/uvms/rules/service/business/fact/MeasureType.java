@@ -13,6 +13,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Created by sanera on 03/05/2017.
@@ -36,5 +37,19 @@ public class MeasureType {
 
     public void setUnitCode(String unitCode) {
         this.unitCode = unitCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MeasureType)) return false;
+        MeasureType that = (MeasureType) o;
+        return Objects.equals(value, that.value) &&
+                Objects.equals(unitCode, that.unitCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, unitCode);
     }
 }
