@@ -10,14 +10,7 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -25,6 +18,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -42,7 +43,7 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAll() {
         List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
-        assertTrue(fact.listIdContainsAll(codeTypes, "AREA"));
+        assertTrue(fact.listIdContainsAll(codeTypes, "AREA", "AREA1", "BLA"));
     }
 
     @Test
@@ -114,17 +115,118 @@ public class AbstractFactTest {
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsOK(){
-        //todo: STIJN
+        boolean b = fact.validateFormat("aaa", "aaa");
+        assertTrue(b);
     }
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentIsNull(){
-        //todo: STIJN
+        boolean b = fact.validateFormat(null, null);
+        assertFalse(b);
     }
 
     @Test
     public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentDoesNotApplyToTheFormat(){
-        //todo: STIJN
+        boolean b = fact.validateFormat("aap", "paa");
+        assertFalse(b);
+    }
+
+
+    @Test
+    public void testValidateFormatWhenSalesSpecificIDAndResultIsOK() {
+        boolean b = fact.validateFormat("BEL-SN-2017-123456", AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
+        assertTrue(b);
+    }
+
+    @Test
+    public void testListIdDoesNotContainAllWhenListIdDoesNotContainAllValues() {
+        CodeType codeType1 = getCodeTypeWithListID("bla");
+        CodeType codeType2 = getCodeTypeWithListID("alb");
+
+        List<CodeType> codeTypeList = Arrays.asList(codeType1, codeType2);
+
+        assertTrue(fact.listIdDoesNotContainAll(codeTypeList, "bla", "notbla"));
+    }
+
+    @Test
+    public void testListIdDoesNotContainAllWhenListIdDoesContainAllValues() {
+        CodeType codeType1 = getCodeTypeWithListID("bla");
+        CodeType codeType2 = getCodeTypeWithListID("alb");
+
+        List<CodeType> codeTypeList = Arrays.asList(codeType1, codeType2);
+
+        assertFalse(fact.listIdDoesNotContainAll(codeTypeList, "bla", "alb"));
+    }
+
+
+    @Test
+    public void testAnyValueDoesNotContainAllWhenValueDoesNotContainAnyValue() {
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType1 = getCodeTypeWithValue("BUYER");
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType2 = getCodeTypeWithValue("SELLER");
+
+        SalesPartyType salesPartyType1 = new SalesPartyType();
+        salesPartyType1.withRoleCodes(codeType1);
+
+        SalesPartyType salesPartyType2 = new SalesPartyType();
+        salesPartyType2.withRoleCodes(codeType2);
+
+
+        assertTrue(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2),"SENDER"));
+    }
+
+    @Test
+    public void testAnyValueDoesNotContainAllWhenValueContainsAnyValue() {
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType1 = getCodeTypeWithValue("BUYER");
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType2 = getCodeTypeWithValue("SELLER");
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType3 = getCodeTypeWithValue("SENDER");
+
+        SalesPartyType salesPartyType1 = new SalesPartyType();
+        salesPartyType1.withRoleCodes(codeType1);
+
+        SalesPartyType salesPartyType2 = new SalesPartyType();
+        salesPartyType2.withRoleCodes(codeType2);
+
+        SalesPartyType salesPartyType3 = new SalesPartyType();
+        salesPartyType3.withRoleCodes(codeType3);
+
+        assertFalse(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2, salesPartyType3),"SENDER"));
+    }
+
+    @Test
+    public void testValueIdTypeContainsAnyWhenValueIsPresent() {
+        IdType idType1 = new IdType();
+        idType1.setValue("value");
+        IdType idType2 = new IdType();
+        idType2.setValue("MASTER");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+
+        assertFalse(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
+    }
+
+    @Test
+    public void testValueIdTypeContainsAnyWhenValueIsNotPresent() {
+        IdType idType1 = new IdType();
+        idType1.setValue("value");
+        IdType idType2 = new IdType();
+        idType2.setValue("eulav");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+
+        assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
+    }
+
+
+    private CodeType getCodeTypeWithListID(String listId) {
+        CodeType codeType = new CodeType();
+        codeType.setListId(listId);
+        return codeType;
+    }
+
+    private eu.europa.ec.fisheries.schema.sales.CodeType getCodeTypeWithValue(String value) {
+        eu.europa.ec.fisheries.schema.sales.CodeType codeType = new eu.europa.ec.fisheries.schema.sales.CodeType();
+        codeType.setValue(value);
+        return codeType;
     }
 
 }

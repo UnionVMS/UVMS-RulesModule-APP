@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.Objects;
 
@@ -194,5 +195,10 @@ public class SalesStructuredAddressFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea);
+    }
+
+
+    public boolean isCountryIdValid() {
+        return SalesFactHelper.isCountryIdValid(countryID);
     }
 }

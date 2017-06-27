@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.Objects;
 
@@ -33,5 +34,9 @@ public class SalesVesselCountryFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public boolean isIdValid(){
+        return SalesFactHelper.isCountryIdValid(getID());
     }
 }

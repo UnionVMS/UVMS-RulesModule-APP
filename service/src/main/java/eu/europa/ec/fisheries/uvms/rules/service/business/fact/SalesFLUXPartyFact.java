@@ -33,6 +33,7 @@ public class SalesFLUXPartyFact extends AbstractFact {
         this.names = names;
     }
 
+
     public boolean anyInvalidPartyId(){
         String[] validParties = new String[248];
         validParties[0] = "ABW";

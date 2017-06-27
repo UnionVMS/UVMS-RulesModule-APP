@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -90,6 +91,17 @@ public abstract class AbstractFact {
      */
     public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
         return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
+    }
+
+    /**
+     * Checks if one of the String... array elements exists in the idType.
+     *
+     * @param idType
+     * @param values
+     * @return
+     */
+    public boolean schemeIdContainsAny(IdType idType, String... values) {
+        return schemeIdContainsAny(Arrays.asList(idType), values);
     }
 
     /**
@@ -205,9 +217,6 @@ public abstract class AbstractFact {
 
 
     public boolean validateFormat(String value, String format) {
-        if(value == null){
-            return true;
-        }
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
@@ -227,6 +236,53 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
+        return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
+    }
+
+
+    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyType> salesPartyTypes, String... valuesToMatch) {
+        List<eu.europa.ec.fisheries.schema.sales.CodeType> codeTypes = new ArrayList<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        for (SalesPartyType salesPartyType : salesPartyTypes) {
+            codeTypes.addAll(salesPartyType.getRoleCodes());
+        }
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (eu.europa.ec.fisheries.schema.sales.CodeType codeType : codeTypes) {
+            String value = codeType.getValue();
+
+            if (valuesToBeFound.contains(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean listIdDoesNotContainAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        HashSet<String> valuesFoundInListOfCodeTypes = new HashSet<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            String listId = codeType.getListId();
+
+            if (valuesToBeFound.contains(listId)) {
+                valuesFoundInListOfCodeTypes.add(listId);
+            }
+        }
+
+        return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
@@ -259,8 +315,6 @@ public abstract class AbstractFact {
         }
         return false;
     }
-
-
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
@@ -354,6 +408,16 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
+        IdType idType = new IdType();
+        idType.setValue(value);
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+    }
+
+    public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
+        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+    }
+
     public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -363,6 +427,22 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (IdType idType : idTypes) {
                 if (val.equals(idType.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+    public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType codeType : codeTypes) {
+                if (val.equals(codeType.getValue())) {
                     isMatchFound = true;
                     break;
                 }
@@ -446,6 +526,17 @@ public abstract class AbstractFact {
         return textType == null || StringUtils.isBlank(textType.getValue());
     }
 
+    public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
+        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        int index = string.indexOf(".");
+        return index < 0 ? 0 : string.length() - index - 1;
+    }
+
+    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound)
+    {
+        return  value.compareTo(lowBound) > 0  && value.compareTo(upperBound) < 0;
+    }
+
     public enum FORMATS {
         // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
         // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
@@ -460,7 +551,8 @@ public abstract class AbstractFact {
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
-        EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}");
+        EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}"),
+        EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}");
 
         String formatStr;
 

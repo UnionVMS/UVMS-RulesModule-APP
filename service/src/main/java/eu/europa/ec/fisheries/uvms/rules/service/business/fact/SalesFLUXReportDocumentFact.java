@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
@@ -17,7 +16,7 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
     private CodeType purposeCode;
     private TextType purpose;
     private CodeType typeCode;
-    private FLUXPartyType ownerFLUXParty;
+    private SalesFLUXPartyFact ownerFLUXParty;
 
     @Override
     public void setFactType() {
@@ -48,9 +47,6 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         return this.typeCode;
     }
 
-    public FLUXPartyType getOwnerFLUXParty() {
-        return this.ownerFLUXParty;
-    }
 
     public void setIDS(List<IdType> ids) {
         this.ids = ids;
@@ -76,9 +72,15 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public void setOwnerFLUXParty(FLUXPartyType ownerFLUXParty) {
+
+    public SalesFLUXPartyFact getOwnerFLUXParty() {
+        return ownerFLUXParty;
+    }
+
+    public void setOwnerFLUXParty(SalesFLUXPartyFact ownerFLUXParty) {
         this.ownerFLUXParty = ownerFLUXParty;
     }
+
 
     @Override
     public boolean equals(Object o) {

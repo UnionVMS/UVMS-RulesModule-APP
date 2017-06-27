@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.List;
 import java.util.Objects;
@@ -132,6 +133,10 @@ public class SalesFLUXLocationFact extends AbstractFact {
         this.applicableFLUXCharacteristics = applicableFLUXCharacteristics;
     }
 
+    public boolean isCountryIdValid(){
+        return SalesFactHelper.isCountryIdValid(countryID);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -156,5 +161,4 @@ public class SalesFLUXLocationFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(typeCode, countryID, id, geopoliticalRegionCode, names, sovereignRightsCountryID, jurisdictionCountryID, regionalFisheriesManagementOrganizationCode, specifiedPhysicalFLUXGeographicalCoordinate, postalStructuredAddresses, physicalStructuredAddress, boundarySpecifiedPolygons, applicableFLUXCharacteristics);
     }
-
 }

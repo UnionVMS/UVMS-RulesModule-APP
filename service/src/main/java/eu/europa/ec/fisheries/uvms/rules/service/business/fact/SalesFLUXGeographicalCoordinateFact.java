@@ -34,9 +34,7 @@ public class SalesFLUXGeographicalCoordinateFact extends AbstractFact {
         return this.systemID;
     }
 
-    public void setLongitudeMeasure(MeasureType longitudeMeasure) {
-        this.longitudeMeasure = longitudeMeasure;
-    }
+    public void setLongitudeMeasure(MeasureType longitudeMeasure) { this.longitudeMeasure = longitudeMeasure; }
 
     public void setLatitudeMeasure(MeasureType latitudeMeasure) {
         this.latitudeMeasure = latitudeMeasure;
