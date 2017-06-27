@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -234,6 +235,53 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
+        return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
+    }
+
+
+    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyType> salesPartyTypes, String... valuesToMatch) {
+        List<eu.europa.ec.fisheries.schema.sales.CodeType> codeTypes = new ArrayList<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        for (SalesPartyType salesPartyType : salesPartyTypes) {
+            codeTypes.addAll(salesPartyType.getRoleCodes());
+        }
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (eu.europa.ec.fisheries.schema.sales.CodeType codeType : codeTypes) {
+            String value = codeType.getValue();
+
+            if (valuesToBeFound.contains(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean listIdDoesNotContainAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        HashSet<String> valuesFoundInListOfCodeTypes = new HashSet<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            String listId = codeType.getListId();
+
+            if (valuesToBeFound.contains(listId)) {
+                valuesFoundInListOfCodeTypes.add(listId);
+            }
+        }
+
+        return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
+    }
+
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
             return true;
@@ -376,6 +424,22 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (IdType idType : idTypes) {
                 if (val.equals(idType.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+    public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType codeType : codeTypes) {
+                if (val.equals(codeType.getValue())) {
                     isMatchFound = true;
                     break;
                 }
