@@ -14,12 +14,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.Objects;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
 @NoArgsConstructor
+@ToString
 public class CodeType {
 
     private String value;
@@ -45,5 +49,17 @@ public class CodeType {
         this.listId = listId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CodeType)) return false;
+        CodeType codeType = (CodeType) o;
+        return Objects.equals(value, codeType.value) &&
+                Objects.equals(listId, codeType.listId);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, listId);
+    }
 }

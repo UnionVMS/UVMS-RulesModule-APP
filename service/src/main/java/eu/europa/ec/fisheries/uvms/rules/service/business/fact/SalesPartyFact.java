@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesPartyFact extends AbstractFact {
 
@@ -82,33 +83,19 @@ public class SalesPartyFact extends AbstractFact {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof SalesPartyFact)) return false;
         SalesPartyFact that = (SalesPartyFact) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (typeCode != null ? !typeCode.equals(that.typeCode) : that.typeCode != null) return false;
-        if (countryID != null ? !countryID.equals(that.countryID) : that.countryID != null) return false;
-        if (roleCodes != null ? !roleCodes.equals(that.roleCodes) : that.roleCodes != null) return false;
-        if (specifiedStructuredAddresses != null ? !specifiedStructuredAddresses.equals(that.specifiedStructuredAddresses) : that.specifiedStructuredAddresses != null)
-            return false;
-        return specifiedFLUXOrganization != null ? specifiedFLUXOrganization.equals(that.specifiedFLUXOrganization) : that.specifiedFLUXOrganization == null;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(typeCode, that.typeCode) &&
+                Objects.equals(countryID, that.countryID) &&
+                Objects.equals(roleCodes, that.roleCodes) &&
+                Objects.equals(specifiedStructuredAddresses, that.specifiedStructuredAddresses) &&
+                Objects.equals(specifiedFLUXOrganization, that.specifiedFLUXOrganization);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (typeCode != null ? typeCode.hashCode() : 0);
-        result = 31 * result + (countryID != null ? countryID.hashCode() : 0);
-        result = 31 * result + (roleCodes != null ? roleCodes.hashCode() : 0);
-        result = 31 * result + (specifiedStructuredAddresses != null ? specifiedStructuredAddresses.hashCode() : 0);
-        result = 31 * result + (specifiedFLUXOrganization != null ? specifiedFLUXOrganization.hashCode() : 0);
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesPartyFact;
+        return Objects.hash(id, name, typeCode, countryID, roleCodes, specifiedStructuredAddresses, specifiedFLUXOrganization);
     }
 }

@@ -4,9 +4,8 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
-/**
- * Created by MATBUL on 16/06/2017.
- */
+import java.util.Objects;
+
 public class SalesFLUXSalesQueryMessageFact extends AbstractFact {
 
     protected SalesQueryType salesQuery;
@@ -23,4 +22,16 @@ public class SalesFLUXSalesQueryMessageFact extends AbstractFact {
         this.salesQuery = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SalesFLUXSalesQueryMessageFact)) return false;
+        SalesFLUXSalesQueryMessageFact that = (SalesFLUXSalesQueryMessageFact) o;
+        return Objects.equals(salesQuery, that.salesQuery);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(salesQuery);
+    }
 }

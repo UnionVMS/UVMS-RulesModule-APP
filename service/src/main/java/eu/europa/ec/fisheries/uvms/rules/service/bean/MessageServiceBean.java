@@ -105,8 +105,8 @@ public class MessageServiceBean implements MessageService {
 
 
             updateRequestMessageStatus(receiveSalesQueryRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
-            log.error("Couldn't validate sales query", e);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            throw new RulesServiceException("Couldn't validate sales query", e);
         }
     }
 
@@ -135,8 +135,8 @@ public class MessageServiceBean implements MessageService {
 
             //update log status
             updateRequestMessageStatus(receiveSalesReportRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException | RulesServiceException e) {
-            log.error("Couldn't validate sales report", e);
+        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 
@@ -154,8 +154,8 @@ public class MessageServiceBean implements MessageService {
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
 
             updateRequestMessageStatus(rulesRequest.getLogGuid(), validationResult);
-        } catch (SalesMarshallException | RulesValidationException | RulesServiceException e) {
-            log.error("Couldn't validate sales response", e);
+        } catch (SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
 
@@ -181,8 +181,8 @@ public class MessageServiceBean implements MessageService {
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesServiceException | RulesValidationException e) {
-            log.error("Couldn't validate sales response", e);
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
 
@@ -208,8 +208,8 @@ public class MessageServiceBean implements MessageService {
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | RulesServiceException e) {
-            log.error("Couldn't validate sales report", e);
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 
@@ -259,10 +259,6 @@ public class MessageServiceBean implements MessageService {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
             exchangeLogStatusTypeType = calculateMessageValidationStatus(validationResult);
 
-            if (exchangeLogStatusTypeType == null) {
-                exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNKNOWN;
-            }
-
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, exchangeLogStatusTypeType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
@@ -272,13 +268,17 @@ public class MessageServiceBean implements MessageService {
     }
 
     private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
-        if (validationResult.isError()) {
-            return ExchangeLogStatusTypeType.FAILED;
-        } else if (validationResult.isWarning()) {
-            return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-        } else {
-            return ExchangeLogStatusTypeType.SUCCESSFUL;
-        }
+      if (validationResult != null) {
+          if (validationResult.isError()) {
+              return ExchangeLogStatusTypeType.FAILED;
+          } else if (validationResult.isWarning()) {
+              return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+          } else {
+              return ExchangeLogStatusTypeType.SUCCESSFUL;
+          }
+      } else {
+        return ExchangeLogStatusTypeType.UNKNOWN;
+      }
     }
 
     private void updateValidationResultWithExisting(ValidationResultDto faReportValidationResult, ValidationResultDto previousValidationResultDto) {

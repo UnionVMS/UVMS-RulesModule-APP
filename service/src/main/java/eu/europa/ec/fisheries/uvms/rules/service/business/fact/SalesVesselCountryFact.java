@@ -4,6 +4,8 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
+import java.util.Objects;
+
 public class SalesVesselCountryFact extends AbstractFact {
 
     private IdType id;
@@ -21,27 +23,17 @@ public class SalesVesselCountryFact extends AbstractFact {
         this.id = id;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesVesselCountryFact)) return false;
-        final SalesVesselCountryFact other = (SalesVesselCountryFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$id = this.getID();
-        final Object other$id = other.getID();
-        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
-        return true;
+        SalesVesselCountryFact that = (SalesVesselCountryFact) o;
+        return Objects.equals(id, that.id);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $id = this.getID();
-        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesVesselCountryFact;
+        return Objects.hash(id);
     }
 
     public boolean isIdValid(){

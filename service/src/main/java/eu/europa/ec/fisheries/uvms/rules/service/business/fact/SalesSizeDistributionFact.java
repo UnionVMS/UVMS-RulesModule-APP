@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesSizeDistributionFact extends AbstractFact {
 
@@ -32,34 +33,18 @@ public class SalesSizeDistributionFact extends AbstractFact {
         this.classCodes = classCodes;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesSizeDistributionFact)) return false;
-        final SalesSizeDistributionFact other = (SalesSizeDistributionFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$categoryCode = this.getCategoryCode();
-        final Object other$categoryCode = other.getCategoryCode();
-        if (this$categoryCode == null ? other$categoryCode != null : !this$categoryCode.equals(other$categoryCode))
-            return false;
-        final Object this$classCodes = this.getClassCodes();
-        final Object other$classCodes = other.getClassCodes();
-        if (this$classCodes == null ? other$classCodes != null : !this$classCodes.equals(other$classCodes))
-            return false;
-        return true;
+        SalesSizeDistributionFact that = (SalesSizeDistributionFact) o;
+        return Objects.equals(categoryCode, that.categoryCode) &&
+                Objects.equals(classCodes, that.classCodes);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $categoryCode = this.getCategoryCode();
-        result = result * PRIME + ($categoryCode == null ? 43 : $categoryCode.hashCode());
-        final Object $classCodes = this.getClassCodes();
-        result = result * PRIME + ($classCodes == null ? 43 : $classCodes.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesSizeDistributionFact;
+        return Objects.hash(categoryCode, classCodes);
     }
 
 

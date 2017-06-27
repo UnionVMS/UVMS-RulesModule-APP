@@ -13,12 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Slf4j
+@ToString
 public abstract class AbstractFact {
 
     protected FactType factType;
@@ -44,8 +49,6 @@ public abstract class AbstractFact {
     protected List<String> uniqueIds = new ArrayList<>();
 
     protected boolean ok = true;
-
-    private String disabledRuleId;
 
     public AbstractFact() {
         this.warnings = new ArrayList<>();
@@ -392,10 +395,10 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
+        ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
-            for (CodeType CodeTypes : codeTypes) {
+            for (CodeType CodeTypes : removeNull) {
                 if (val.equals(CodeTypes.getValue())) {
                     isMatchFound = true;
                     break;
@@ -448,15 +451,29 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean isPositive(BigDecimal value) {
+        if (value == null) {
+            return true;
+        }
+        return !(value.compareTo(BigDecimal.ZERO) > 0);
+    }
+
+    public boolean isInRange(BigDecimal value, int min, int max) {
+        if (value == null) {
+            return true;
+        }
+        return !((value.compareTo(new BigDecimal(min)) == 1) && (value.compareTo(new BigDecimal(max)) == -1));
+    }
+
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
+        ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
         outer : for (String val : valuesToMatch) {
-            for (CodeType IdType : codeTypes) {
+            for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
                     continue outer;

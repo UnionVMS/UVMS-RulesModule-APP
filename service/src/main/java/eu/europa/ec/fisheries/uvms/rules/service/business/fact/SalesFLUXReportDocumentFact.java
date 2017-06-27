@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesFLUXReportDocumentFact extends AbstractFact {
 
@@ -71,13 +72,6 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
 
     public SalesFLUXPartyFact getOwnerFLUXParty() {
         return ownerFLUXParty;
@@ -87,36 +81,23 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.ownerFLUXParty = ownerFLUXParty;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof SalesFLUXReportDocumentFact)) return false;
         SalesFLUXReportDocumentFact that = (SalesFLUXReportDocumentFact) o;
-
-        if (ids != null ? !ids.equals(that.ids) : that.ids != null) return false;
-        if (referencedID != null ? !referencedID.equals(that.referencedID) : that.referencedID != null) return false;
-        if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null)
-            return false;
-        if (purposeCode != null ? !purposeCode.equals(that.purposeCode) : that.purposeCode != null) return false;
-        if (purpose != null ? !purpose.equals(that.purpose) : that.purpose != null) return false;
-        if (typeCode != null ? !typeCode.equals(that.typeCode) : that.typeCode != null) return false;
-        return ownerFLUXParty != null ? ownerFLUXParty.equals(that.ownerFLUXParty) : that.ownerFLUXParty == null;
+        return Objects.equals(ids, that.ids) &&
+                Objects.equals(referencedID, that.referencedID) &&
+                Objects.equals(creationDateTime, that.creationDateTime) &&
+                Objects.equals(purposeCode, that.purposeCode) &&
+                Objects.equals(purpose, that.purpose) &&
+                Objects.equals(typeCode, that.typeCode) &&
+                Objects.equals(ownerFLUXParty, that.ownerFLUXParty);
     }
 
     @Override
     public int hashCode() {
-        int result = ids != null ? ids.hashCode() : 0;
-        result = 31 * result + (referencedID != null ? referencedID.hashCode() : 0);
-        result = 31 * result + (creationDateTime != null ? creationDateTime.hashCode() : 0);
-        result = 31 * result + (purposeCode != null ? purposeCode.hashCode() : 0);
-        result = 31 * result + (purpose != null ? purpose.hashCode() : 0);
-        result = 31 * result + (typeCode != null ? typeCode.hashCode() : 0);
-        result = 31 * result + (ownerFLUXParty != null ? ownerFLUXParty.hashCode() : 0);
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesFLUXReportDocumentFact;
+        return Objects.hash(ids, referencedID, creationDateTime, purposeCode, purpose, typeCode, ownerFLUXParty);
     }
 }

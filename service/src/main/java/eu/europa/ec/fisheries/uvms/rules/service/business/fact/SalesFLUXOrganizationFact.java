@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SalesFLUXOrganizationFact extends AbstractFact {
 
@@ -33,32 +34,17 @@ public class SalesFLUXOrganizationFact extends AbstractFact {
         this.postalStructuredAddresses = postalStructuredAddresses;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
+        if (this == o) return true;
         if (!(o instanceof SalesFLUXOrganizationFact)) return false;
-        final SalesFLUXOrganizationFact other = (SalesFLUXOrganizationFact) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$name = this.getName();
-        final Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
-        final Object this$postalStructuredAddresses = this.getPostalStructuredAddresses();
-        final Object other$postalStructuredAddresses = other.getPostalStructuredAddresses();
-        if (this$postalStructuredAddresses == null ? other$postalStructuredAddresses != null : !this$postalStructuredAddresses.equals(other$postalStructuredAddresses))
-            return false;
-        return true;
+        SalesFLUXOrganizationFact that = (SalesFLUXOrganizationFact) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(postalStructuredAddresses, that.postalStructuredAddresses);
     }
 
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $name = this.getName();
-        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
-        final Object $postalStructuredAddresses = this.getPostalStructuredAddresses();
-        result = result * PRIME + ($postalStructuredAddresses == null ? 43 : $postalStructuredAddresses.hashCode());
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesFLUXOrganizationFact;
+        return Objects.hash(name, postalStructuredAddresses);
     }
 }

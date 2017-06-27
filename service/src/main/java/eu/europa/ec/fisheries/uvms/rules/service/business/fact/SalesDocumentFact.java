@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SalesDocumentFact extends AbstractFact {
 
@@ -151,66 +152,35 @@ public class SalesDocumentFact extends AbstractFact {
         this.arrivalSpecifiedFLUXLocation = arrivalSpecifiedFLUXLocation;
     }
 
+
+    public boolean isInvalidCurrencyCode(){
+        return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof SalesDocumentFact)) return false;
         SalesDocumentFact that = (SalesDocumentFact) o;
-
-        if (ids != null ? !ids.equals(that.ids) : that.ids != null) return false;
-        if (currencyCode != null ? !currencyCode.equals(that.currencyCode) : that.currencyCode != null) return false;
-        if (transportDocumentIDs != null ? !transportDocumentIDs.equals(that.transportDocumentIDs) : that.transportDocumentIDs != null)
-            return false;
-        if (salesNoteIDs != null ? !salesNoteIDs.equals(that.salesNoteIDs) : that.salesNoteIDs != null) return false;
-        if (takeoverDocumentIDs != null ? !takeoverDocumentIDs.equals(that.takeoverDocumentIDs) : that.takeoverDocumentIDs != null)
-            return false;
-        if (specifiedSalesBatches != null ? !specifiedSalesBatches.equals(that.specifiedSalesBatches) : that.specifiedSalesBatches != null)
-            return false;
-        if (specifiedSalesEvents != null ? !specifiedSalesEvents.equals(that.specifiedSalesEvents) : that.specifiedSalesEvents != null)
-            return false;
-        if (specifiedFishingActivities != null ? !specifiedFishingActivities.equals(that.specifiedFishingActivities) : that.specifiedFishingActivities != null)
-            return false;
-        if (specifiedFLUXLocations != null ? !specifiedFLUXLocations.equals(that.specifiedFLUXLocations) : that.specifiedFLUXLocations != null)
-            return false;
-        if (specifiedSalesParties != null ? !specifiedSalesParties.equals(that.specifiedSalesParties) : that.specifiedSalesParties != null)
-            return false;
-        if (specifiedVehicleTransportMeans != null ? !specifiedVehicleTransportMeans.equals(that.specifiedVehicleTransportMeans) : that.specifiedVehicleTransportMeans != null)
-            return false;
-        if (relatedValidationResultDocuments != null ? !relatedValidationResultDocuments.equals(that.relatedValidationResultDocuments) : that.relatedValidationResultDocuments != null)
-            return false;
-        if (totalSalesPrice != null ? !totalSalesPrice.equals(that.totalSalesPrice) : that.totalSalesPrice != null)
-            return false;
-        if (departureSpecifiedFLUXLocation != null ? !departureSpecifiedFLUXLocation.equals(that.departureSpecifiedFLUXLocation) : that.departureSpecifiedFLUXLocation != null)
-            return false;
-        return arrivalSpecifiedFLUXLocation != null ? arrivalSpecifiedFLUXLocation.equals(that.arrivalSpecifiedFLUXLocation) : that.arrivalSpecifiedFLUXLocation == null;
+        return Objects.equals(ids, that.ids) &&
+                Objects.equals(currencyCode, that.currencyCode) &&
+                Objects.equals(transportDocumentIDs, that.transportDocumentIDs) &&
+                Objects.equals(salesNoteIDs, that.salesNoteIDs) &&
+                Objects.equals(takeoverDocumentIDs, that.takeoverDocumentIDs) &&
+                Objects.equals(specifiedSalesBatches, that.specifiedSalesBatches) &&
+                Objects.equals(specifiedSalesEvents, that.specifiedSalesEvents) &&
+                Objects.equals(specifiedFishingActivities, that.specifiedFishingActivities) &&
+                Objects.equals(specifiedFLUXLocations, that.specifiedFLUXLocations) &&
+                Objects.equals(specifiedSalesParties, that.specifiedSalesParties) &&
+                Objects.equals(specifiedVehicleTransportMeans, that.specifiedVehicleTransportMeans) &&
+                Objects.equals(relatedValidationResultDocuments, that.relatedValidationResultDocuments) &&
+                Objects.equals(totalSalesPrice, that.totalSalesPrice) &&
+                Objects.equals(departureSpecifiedFLUXLocation, that.departureSpecifiedFLUXLocation) &&
+                Objects.equals(arrivalSpecifiedFLUXLocation, that.arrivalSpecifiedFLUXLocation);
     }
 
     @Override
     public int hashCode() {
-        int result = ids != null ? ids.hashCode() : 0;
-        result = 31 * result + (currencyCode != null ? currencyCode.hashCode() : 0);
-        result = 31 * result + (transportDocumentIDs != null ? transportDocumentIDs.hashCode() : 0);
-        result = 31 * result + (salesNoteIDs != null ? salesNoteIDs.hashCode() : 0);
-        result = 31 * result + (takeoverDocumentIDs != null ? takeoverDocumentIDs.hashCode() : 0);
-        result = 31 * result + (specifiedSalesBatches != null ? specifiedSalesBatches.hashCode() : 0);
-        result = 31 * result + (specifiedSalesEvents != null ? specifiedSalesEvents.hashCode() : 0);
-        result = 31 * result + (specifiedFishingActivities != null ? specifiedFishingActivities.hashCode() : 0);
-        result = 31 * result + (specifiedFLUXLocations != null ? specifiedFLUXLocations.hashCode() : 0);
-        result = 31 * result + (specifiedSalesParties != null ? specifiedSalesParties.hashCode() : 0);
-        result = 31 * result + (specifiedVehicleTransportMeans != null ? specifiedVehicleTransportMeans.hashCode() : 0);
-        result = 31 * result + (relatedValidationResultDocuments != null ? relatedValidationResultDocuments.hashCode() : 0);
-        result = 31 * result + (totalSalesPrice != null ? totalSalesPrice.hashCode() : 0);
-        result = 31 * result + (departureSpecifiedFLUXLocation != null ? departureSpecifiedFLUXLocation.hashCode() : 0);
-        result = 31 * result + (arrivalSpecifiedFLUXLocation != null ? arrivalSpecifiedFLUXLocation.hashCode() : 0);
-        return result;
-    }
-
-    protected boolean canEqual(Object other) {
-        return other instanceof SalesDocumentFact;
-    }
-
-    public boolean isInvalidCurrencyCode(){
-        return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
+        return Objects.hash(ids, currencyCode, transportDocumentIDs, salesNoteIDs, takeoverDocumentIDs, specifiedSalesBatches, specifiedSalesEvents, specifiedFishingActivities, specifiedFLUXLocations, specifiedSalesParties, specifiedVehicleTransportMeans, relatedValidationResultDocuments, totalSalesPrice, departureSpecifiedFLUXLocation, arrivalSpecifiedFLUXLocation);
     }
 }
