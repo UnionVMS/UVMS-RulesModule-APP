@@ -10,9 +10,12 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,8 +44,12 @@ public class XPathRepository {
         }
     }
 
-    public void clear(){
-        xpathsMap.clear();
+    public void clear(List<AbstractFact> facts){
+        if(CollectionUtils.isNotEmpty(facts)){
+            for(AbstractFact fact : facts){
+                xpathsMap.remove(fact.getSequence());
+            }
+        }
         sequence = 10000;
     }
 

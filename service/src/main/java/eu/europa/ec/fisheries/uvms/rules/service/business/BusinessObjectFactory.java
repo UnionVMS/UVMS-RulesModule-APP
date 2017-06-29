@@ -28,7 +28,7 @@ public class BusinessObjectFactory {
         super();
     }
 
-    public static final AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
+    public static AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
         AbstractGenerator generator = null;
         switch (businessObjectType) {
             case FLUX_ACTIVITY_REQUEST_MSG:

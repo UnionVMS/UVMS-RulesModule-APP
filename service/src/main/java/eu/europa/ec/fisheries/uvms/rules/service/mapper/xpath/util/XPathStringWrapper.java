@@ -18,9 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class XPathStringWrapper {
 
-    public static final XPathStringWrapper INSTANCE = new XPathStringWrapper();
-
-    private static StringBuffer strBuff = new StringBuffer();
+    private StringBuffer strBuff;
 
     private final static String LOCAL_NODE_START = "//*[local-name()='";
     private final static String LOCAL_NODE_END = "']";
@@ -34,8 +32,8 @@ public class XPathStringWrapper {
     /**
      * Singleton. Single instance.
      */
-    private XPathStringWrapper(){
-        super();
+    public XPathStringWrapper(){
+        strBuff = new StringBuffer();
     }
 
     /**
@@ -46,7 +44,7 @@ public class XPathStringWrapper {
      */
     public XPathStringWrapper appendWithoutWrapping(String stringsToAppend){
         strBuff.append(stringsToAppend);
-        return INSTANCE;
+        return this;
     }
 
     /**
@@ -61,7 +59,7 @@ public class XPathStringWrapper {
                 strBuff.append(LOCAL_NODE_START).append(strToAppend).append(LOCAL_NODE_END);
             }
         }
-        return INSTANCE;
+        return this;
     }
 
     /**
@@ -75,7 +73,7 @@ public class XPathStringWrapper {
         append(strToAppend);
         String actualValue = getValue();
         strBuff.append(PARENTHESIS_OPEN).append(actualValue).append(PARENTHESIS_CLOSE).append(SQUARE_BRACKET_START).append(index).append(SQUARE_BRACKET_END);
-        return INSTANCE;
+        return this;
     }
 
     /**
@@ -103,7 +101,7 @@ public class XPathStringWrapper {
         if(fact.getSequence() == 0){
             fact.setSequence(XPathRepository.INSTANCE.getNewSequence());
         }
-        XPathRepository.INSTANCE.addToMap(fact.getSequence(), key, INSTANCE.getValue());
+        XPathRepository.INSTANCE.addToMap(fact.getSequence(), key, this.getValue());
     }
 
     /**
@@ -114,6 +112,6 @@ public class XPathStringWrapper {
         if(strBuff.length() > 0){
             strBuff.delete(0, strBuff.length());
         }
-        return INSTANCE;
+        return this;
     }
 }

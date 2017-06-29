@@ -34,7 +34,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -110,7 +110,7 @@ public class MessageServiceBean implements MessageService {
                         sendRequestToActivity(request.getRequest(), request.getUsername(), request.getType());
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
-                    XPathRepository.INSTANCE.clear();
+                    XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
                     updateRequestMessageStatus(request.getLogGuid(), validationMap.get(isContinueValidation));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
@@ -292,15 +292,16 @@ public class MessageServiceBean implements MessageService {
                 status = ExchangeLogStatusTypeType.SUCCESSFUL;
             }
             //Create Response
-            String fr = "XEU"; // TODO change it to nation code
+            String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+            String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
             String df = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2"; // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = "AHR:VMS";
-            String messageGuid = CustomMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, fr, status, destination);
+            String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
+            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, username, df, messageGuid, nationCode, status, destination);
             log.debug("Message to exchange {}", fluxFAReponseText);
 
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
-            XPathRepository.INSTANCE.clear();
+            XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("FLUXFAResponse has been sent back to Exchange.");
         } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);

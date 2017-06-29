@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import java.util.Arrays;
@@ -30,9 +31,19 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
 
     private FLUXResponseMessage fluxResponseMessage;
 
+    private XPathStringWrapper xPathUtil;
+
+    private ActivityFactMapper activityFactMapper;
+
+    public ActivityResponseFactGenerator(){
+        xPathUtil = new XPathStringWrapper();
+        activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
+
+
     @Override
     public List<AbstractFact> generateAllFacts() {
-        AbstractFact fact = ActivityFactMapper.INSTANCE.generateFactsForFaResponse(fluxResponseMessage);
+        AbstractFact fact = activityFactMapper.generateFactsForFaResponse(fluxResponseMessage);
         if (fact != null) {
             return Arrays.asList(fact);
         }

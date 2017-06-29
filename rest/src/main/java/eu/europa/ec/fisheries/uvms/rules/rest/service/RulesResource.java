@@ -66,12 +66,11 @@ public class RulesResource {
         FLUXResponseMessage fluxResponseMessage;
 
         try {
-
-            List<AbstractFact> evaluate = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
-            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(evaluate, s);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
-            XPathRepository.INSTANCE.clear();
+            XPathRepository.INSTANCE.clear(facts);
         } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
