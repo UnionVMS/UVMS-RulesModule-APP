@@ -41,6 +41,7 @@ public class FaCatchFact extends AbstractFact {
     private CodeType weighingMeansCode;
     private CodeType categoryCode;
     private List<NumericType> appliedAAPProcessConversionFactorNumber;
+    private List<CodeType> specifiedFluxLocationRFMOCodeList;
 
     public FaCatchFact() {
         setFactType();
@@ -186,5 +187,13 @@ public class FaCatchFact extends AbstractFact {
 
     public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
         this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
+    }
+
+    public List<CodeType> getSpecifiedFluxLocationRFMOCodeList() {
+        return specifiedFluxLocationRFMOCodeList;
+    }
+
+    public void setSpecifiedFluxLocationRFMOCodeList(List<CodeType> specifiedFluxLocationRFMOCodeList) {
+        this.specifiedFluxLocationRFMOCodeList = specifiedFluxLocationRFMOCodeList;
     }
 }
