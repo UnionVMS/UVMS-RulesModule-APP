@@ -87,9 +87,12 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
         if (specifiedFishingActivities != null) {
             int index = 1;
+
+            String partialXpath = xPathUtil.getValue();
+
             for (FishingActivity activity : specifiedFishingActivities) {
 
-                String partialSpecFishActXpath = xPathUtil.appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
+                String partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.add(activityFactMapper.generateFactForFishingActivity(activity, faReportDocument));
