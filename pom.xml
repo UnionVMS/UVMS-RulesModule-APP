@@ -25,9 +25,9 @@
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>
-        <uvms.common.version>2.0.18-SNAPSHOT</uvms.common.version>
+        <uvms.common.version>2.0.22-SNAPSHOT</uvms.common.version>
         <movement.model.version>3.0.4</movement.model.version>
-        <exchange.model.version>3.0.5-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>3.0.6-SNAPSHOT</exchange.model.version>
         <mobileterminal.model.version>3.0.4</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
 
@@ -36,7 +36,7 @@
 
         <asset.model.version>3.0.4</asset.model.version>
         <audit.model.version>3.0.4</audit.model.version>
-        <rules.model.version>3.0.5-SNAPSHOT</rules.model.version>
+        <rules.model.version>3.0.6-SNAPSHOT</rules.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
