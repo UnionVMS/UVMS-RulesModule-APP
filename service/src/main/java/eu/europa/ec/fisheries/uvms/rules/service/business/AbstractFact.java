@@ -421,7 +421,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) <= 0;
+        return !(value.compareTo(BigDecimal.ZERO) > 0);
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
@@ -527,6 +527,10 @@ public abstract class AbstractFact {
 
     public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+
+        if(anEnum ==null)
+            return false;
+
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
         if(CollectionUtils.isNotEmpty(values)){
             return values.contains(codeValue);
@@ -538,6 +542,9 @@ public abstract class AbstractFact {
      public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if(anEnum ==null)
+             return false;
+
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
         if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
