@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class FaCatchFact extends AbstractFact {
     private CodeType weighingMeansCode;
     private CodeType categoryCode;
     private List<NumericType> appliedAAPProcessConversionFactorNumber;
+    private List<FLUXLocation> specifiedFLUXLocations;
+    private List<CodeType> specifiedFluxLocationRFMOCodeList;
 
     public FaCatchFact() {
         setFactType();
@@ -186,5 +189,21 @@ public class FaCatchFact extends AbstractFact {
 
     public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
         this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
+    }
+
+    public List<CodeType> getSpecifiedFluxLocationRFMOCodeList() {
+        return specifiedFluxLocationRFMOCodeList;
+    }
+
+    public void setSpecifiedFluxLocationRFMOCodeList(List<CodeType> specifiedFluxLocationRFMOCodeList) {
+        this.specifiedFluxLocationRFMOCodeList = specifiedFluxLocationRFMOCodeList;
+    }
+
+    public List<FLUXLocation> getSpecifiedFLUXLocations() {
+        return specifiedFLUXLocations;
+    }
+
+    public void setSpecifiedFLUXLocations(List<FLUXLocation> specifiedFLUXLocations) {
+        this.specifiedFLUXLocations = specifiedFLUXLocations;
     }
 }

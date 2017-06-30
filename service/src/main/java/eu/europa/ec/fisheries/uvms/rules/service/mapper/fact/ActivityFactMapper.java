@@ -276,6 +276,9 @@ public class ActivityFactMapper {
         fishingActivityFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(fishingActivityFact, "vesselRelatedActivityCode");
 
+        fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact,"relatedFluxLocationRFMOCodeList");
+
         fishingActivityFact.setIsSubActivity(isSubActivity);
 
         return fishingActivityFact;
@@ -608,6 +611,12 @@ public class ActivityFactMapper {
 
             faCatchFact.setResultAAPProductPackagingUnitAverageWeightMeasure(getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AVERAGE_WEIGHT_MEASURE));
             xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitAverageWeightMeasure");
+
+            faCatchFact.setSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact,"specifiedFLUXLocations");
+
+            faCatchFact.setSpecifiedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(faCatch.getSpecifiedFLUXLocations()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(faCatchFact, "specifiedFluxLocationRFMOCodeList");
 
             if (relatedFLUXLocations != null) {
                 faCatchFact.setFluxLocationId(mapFLUXLocationList(relatedFLUXLocations));
@@ -2010,6 +2019,19 @@ public class ActivityFactMapper {
         for (FLUXLocation fluxLocation : fluxLocations) {
             if (fluxLocation.getTypeCode() != null) {
                 codeTypes.add(mapToCodeType(fluxLocation.getTypeCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public List<CodeType> getFLUXLocationRFMOCodes(List<FLUXLocation> fluxLocations) {
+        if (CollectionUtils.isEmpty(fluxLocations)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            if (fluxLocation.getRegionalFisheriesManagementOrganizationCode() != null) {
+                codeTypes.add(mapToCodeType(fluxLocation.getRegionalFisheriesManagementOrganizationCode()));
             }
         }
         return codeTypes;

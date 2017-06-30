@@ -13,15 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -68,6 +68,8 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType faReportDocumentTypeCode;
 
     private List<CodeType> relatedFishingActivityCodeTypes;
+
+    private List<CodeType> relatedFluxLocationRFMOCodeList;
 
     public FishingActivityFact() {
         setFactType();
@@ -241,5 +243,13 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setRelatedFishingActivityCodeTypes(List<CodeType> relatedFishingActivityCodeTypes) {
         this.relatedFishingActivityCodeTypes = relatedFishingActivityCodeTypes;
+    }
+
+    public List<CodeType> getRelatedFluxLocationRFMOCodeList() {
+        return relatedFluxLocationRFMOCodeList;
+    }
+
+    public void setRelatedFluxLocationRFMOCodeList(List<CodeType> relatedFluxLocationRFMOCodeList) {
+        this.relatedFluxLocationRFMOCodeList = relatedFluxLocationRFMOCodeList;
     }
 }
