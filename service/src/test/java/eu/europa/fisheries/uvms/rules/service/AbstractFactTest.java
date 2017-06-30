@@ -26,9 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -39,11 +37,11 @@ public class AbstractFactTest {
 
     @Before
     public void before() {
-
-        String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
-        String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED" };
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE,Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE,Arrays.asList(faCatchCodes));
+        String[] gearTypeCodes = new String[]{"PS1", "LA", "SB", "SDN", "PTB"};
+        String[] faCatchCodes = new String[]{"ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED"};
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, Arrays.asList("OTR", "OSS", "NCC", "OHL"));
     }
 
 
@@ -107,7 +105,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_OK(){
+    public void testValidateFormatUUID_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue(UUID.randomUUID().toString());
@@ -117,7 +115,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_NOT_OK(){
+    public void testValidateFormatUUID_NOT_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue("ballshjshdhdfhsgfd");
@@ -128,18 +126,41 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInList(){
-        boolean result=fact.isPresentInList("GEAR_TYPE","LA");
-        assertEquals(true,result);
+    public void testIsPresentInList() {
+        boolean result = fact.isPresentInList("GEAR_TYPE", "LA");
+        assertEquals(true, result);
     }
 
     @Test
-    public void testIsPresentInList_MultipleValues(){
+    public void testIsPresentInList_MultipleValues() {
 
-        String[] faCatchCodeValues = new String[] {  "RELEASED", "DISCARDED", "DEMINIMIS"};
-        boolean result=fact.isPresentInList("FA_CATCH_TYPE",Arrays.asList(faCatchCodeValues));
-        assertEquals(true,result);
+        String[] faCatchCodeValues = new String[]{"RELEASED", "DISCARDED", "DEMINIMIS"};
+        boolean result = fact.isPresentInList("FA_CATCH_TYPE", Arrays.asList(faCatchCodeValues));
+        assertEquals(true, result);
     }
 
+    @Test
+    public void testIsTypeCodeValuePresentInList() {
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("FAKE_LIST_ID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCodes);
+        assertEquals(true, typeCodeValuePresentInList);
+    }
+
+    @Test
+    public void testGetValueForListId() {
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OHL");
+        List<CodeType> typeCodes = Arrays.asList(typeCode);
+        String valueForListId = fact.getValueForListId("VESSEL_STORAGE_TYPE", typeCodes);
+        assertNotNull(valueForListId);
+        assertEquals("OHL", valueForListId);
+    }
 
 }

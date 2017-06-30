@@ -81,4 +81,6 @@ public class XPathConstants {
     public static final String USED_FISHING_GEAR = "UsedFishingGear";
     public static final String FLUX_RESPONSE_DOCUMENT = "FLUXResponseDocument";
     public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
+    public static final String SOURCE_VESSEL_STORAGE_CHARACTERISTIC = "SourceVesselStorageCharacteristic";
+    public static final String DESTINATION_VESSEL_STORAGE_CHARACTERISTIC = "DestinationVesselStorageCharacteristic";
 }

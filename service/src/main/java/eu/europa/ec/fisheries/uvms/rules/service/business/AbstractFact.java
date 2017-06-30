@@ -37,11 +37,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -80,10 +76,10 @@ public abstract class AbstractFact {
 
     private List<String> getXpathsForProps(String propertyNames) {
         List<String> xpathsList = new ArrayList<>();
-        if(StringUtils.isNotEmpty(propertyNames)){
+        if (StringUtils.isNotEmpty(propertyNames)) {
             String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
             String[] propNames = propNamesTrimmed.split(",");
-            for(String propName : propNames) {
+            for (String propName : propNames) {
                 xpathsList.add(XPathRepository.INSTANCE.getForSequence(this.getSequence(), propName));
             }
         }
@@ -157,7 +153,6 @@ public abstract class AbstractFact {
     }
 
     /**
-     *
      * Checks if one of the String... array elements exists in the idTypes list.
      * Depending on checkEmptyness value it also checks (or not) if the values are empty.
      * Depending on isGivenName value it checks for GivenName or FamilyName.
@@ -171,36 +166,36 @@ public abstract class AbstractFact {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName      = contPers.getGivenName();
-            TextType familyName     = contPers.getFamilyName();
+            TextType givenName = contPers.getGivenName();
+            TextType familyName = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
-            TextType alias          = contPers.getAlias();
+            TextType alias = contPers.getAlias();
             // Check with emptyness.
-            if(checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
-                    && (alias == null || StringUtils.isEmpty(alias.getValue())))){
+            if (checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
+                    && (alias == null || StringUtils.isEmpty(alias.getValue())))) {
                 return true;
                 // Check without emptyness
-            } else if((nameToConsider == null || nameToConsider.getValue() == null)
-                    && (alias == null || alias.getValue() == null)){
+            } else if ((nameToConsider == null || nameToConsider.getValue() == null)
+                    && (alias == null || alias.getValue() == null)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
+    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
         if (CollectionUtils.isEmpty(contactPersons)) {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName      = contPers.getGivenName();
-            TextType familyName     = contPers.getFamilyName();
-            TextType alias          = contPers.getAlias();
-            if(givenName == null && familyName == null){
-                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
+            TextType givenName = contPers.getGivenName();
+            TextType familyName = contPers.getFamilyName();
+            TextType alias = contPers.getAlias();
+            if (givenName == null && familyName == null) {
+                if (alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))) {
                     return true;
                 }
-            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+            } else if (checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())) {
                 return true;
             }
         }
@@ -232,11 +227,11 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if(id == null){
+        if (id == null) {
             return true;
         }
         try {
-            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
+            if (!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -299,7 +294,6 @@ public abstract class AbstractFact {
         }
         return false;
     }
-
 
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
@@ -436,7 +430,8 @@ public abstract class AbstractFact {
         ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
-        outer : for (String val : valuesToMatch) {
+        outer:
+        for (String val : valuesToMatch) {
             for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
@@ -464,10 +459,10 @@ public abstract class AbstractFact {
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
-     * @param  faCatches
+     * @param faCatches
      * @return false/true
      */
-    public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
+    public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
         for (FACatch faCatch : faCatches) {
             List<FLUXLocation> checkList = faCatch.getSpecifiedFLUXLocations();
@@ -478,7 +473,7 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
-    public boolean isEmpty(List<?> list){
+    public boolean isEmpty(List<?> list) {
         return CollectionUtils.isEmpty(list);
     }
 
@@ -491,7 +486,7 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean isEmpty(String str){
+    public boolean isEmpty(String str) {
         return StringUtils.isEmpty(str);
     }
 
@@ -522,32 +517,56 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean isPresentInList(String listName, String codeValue){
+    public boolean isPresentInList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if(CollectionUtils.isNotEmpty(values)){
+        if (CollectionUtils.isNotEmpty(values)) {
             return values.contains(codeValue);
         }
         return false;
     }
 
-    public boolean isPresentInList(String listName, List<String> valuesToMatch){
+    public boolean isPresentInList(String listName, List<String> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
             return false;
 
-        for(String value: valuesToMatch){
-            if(!codeListValues.contains(value))
+        for (String value : valuesToMatch) {
+            if (!codeListValues.contains(value))
                 return false;
         }
 
         return true;
     }
 
+    public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
+        String typeCodeValue = getValueForListId(listName, typeCodes);
 
+        if (typeCodeValue == null) {
+            return false;
+        }
+
+        return isPresentInList(listName, typeCodeValue);
+    }
+
+    public String getValueForListId(String listId, List<CodeType> typeCodes) {
+        if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
+            return null;
+        }
+
+        for (CodeType typeCode : typeCodes) {
+            String typeCodeListId = typeCode.getListId();
+
+            if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
+                return typeCode.getValue();
+            }
+        }
+
+        return null;
+    }
 
 
     public Integer getSequence() {

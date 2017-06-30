@@ -124,6 +124,12 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(addAdditionalValidationfactForSubActivities(activity.getRelatedFishingActivities()));
 
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC);
+                facts.add(ActivityFactMapper.INSTANCE.generateFactsForVesselStorageCharacteristic(activity.getSourceVesselStorageCharacteristic()));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
+                facts.add(ActivityFactMapper.INSTANCE.generateFactsForVesselStorageCharacteristic(activity.getDestinationVesselStorageCharacteristic()));
+
                 index++;
             }
         }
@@ -143,7 +149,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private void addFactsForFaCatches(List<AbstractFact> facts, List<FACatch> faCatches) {
         String partialXpath = xPathUtil.getValue();
-        if(CollectionUtils.isNotEmpty(faCatches)) {
+        if (CollectionUtils.isNotEmpty(faCatches)) {
             int index = 1;
             for (FACatch faCatch : faCatches) {
 
@@ -239,7 +245,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         }
                         break;
                     default:
-                        log.info("No rule to be applied for the received activity type : "+fishingActivityType);
+                        log.info("No rule to be applied for the received activity type : " + fishingActivityType);
 
                 }
             }
@@ -276,7 +282,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         if (fishingActivities != null) {
             int index = 1;
             for (FishingActivity activity : fishingActivities) {
-                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY ,index);
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index);
                 FishingActivityFact fishingActivityFact = ActivityFactMapper.INSTANCE.generateFactForFishingActivity(activity, true);
                 fishingActivityFact.setIsSubActivity(true);
                 facts.add(fishingActivityFact);
