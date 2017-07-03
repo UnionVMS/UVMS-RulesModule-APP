@@ -165,6 +165,8 @@ public class ActivityFactMapper {
 
     private static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     private static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
+    private static final String SPECIFIED_FA_CATCH_PROP = "specifiedFACatches";
+
 
 
     private ActivityFactMapper(){
@@ -944,6 +946,8 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIES_TARGET_CODE).storeInRepo(faEntryToSeaFact, SPECIES_TARGET_CODE_PROP);
             faEntryToSeaFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faEntryToSeaFact, REASON_CODE_PROP);
+            faEntryToSeaFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faEntryToSeaFact, SPECIFIED_FA_CATCH_PROP);
         }
         if (faReportDocument != null) {
             faEntryToSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
