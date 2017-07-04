@@ -1056,7 +1056,7 @@ public class ActivityFactMapper {
                 faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
 
-                faExitFromSeaFact.setGetRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
+                faExitFromSeaFact.setRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
 
             }
