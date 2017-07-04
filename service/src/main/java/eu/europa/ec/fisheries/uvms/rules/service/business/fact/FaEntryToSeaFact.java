@@ -13,14 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author padhyad
@@ -38,7 +35,11 @@ public class FaEntryToSeaFact extends AbstractFact {
 
     private CodeType speciesTargetCode;
 
-    private List<FACatch> specifiedFACatches;
+    private List<CodeType> specifiedFACatchesTypeCodes;
+
+    private List<CodeType> relatedFluxLocationTypeCodes;
+
+    private List<IdType> relatedFluxLocationIDs;
 
     public FaEntryToSeaFact() {
         setFactType();
@@ -89,75 +90,27 @@ public class FaEntryToSeaFact extends AbstractFact {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
 
-    public List<CodeType> getRelatedFluxLocationTypeCode(){
-
-        List<CodeType> codeTypes = null;
-
-        if (relatedFLUXLocations != null){
-            codeTypes = new ArrayList<>();
-
-            for(FLUXLocation location : relatedFLUXLocations){
-                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = location.getTypeCode();
-                if(typeCode != null){
-                    CodeType codeType = new CodeType();
-                    codeType.setListId(typeCode.getListID());
-                    codeType.setValue(typeCode.getValue());
-                    codeTypes.add(codeType);
-                }
-            }
-        }
-
-        return codeTypes;
+    public List<CodeType> getSpecifiedFACatchesTypeCodes() {
+        return specifiedFACatchesTypeCodes;
     }
 
-    public List<CodeType> getSpecifiedFACatchesTypeCode(){
-
-        List<CodeType> codeTypes = null;
-
-        if (specifiedFACatches != null){
-            codeTypes = new ArrayList<>();
-
-            for(FACatch faCatch : specifiedFACatches){
-                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getTypeCode();
-
-                if(typeCode != null){
-                    CodeType codeType = new CodeType();
-                    codeType.setListId(typeCode.getListID());
-                    codeType.setValue(typeCode.getValue());
-                    codeTypes.add(codeType);
-                }
-            }
-        }
-
-        return codeTypes;
+    public void setSpecifiedFACatchesTypeCodes(List<CodeType> specifiedFACatchesTypeCodes) {
+        this.specifiedFACatchesTypeCodes = specifiedFACatchesTypeCodes;
     }
 
-    public List<IdType> getRelatedFluxLocationID(){
-
-        List<IdType> idTypes = null;
-
-        if (relatedFLUXLocations != null){
-            idTypes = new ArrayList<>();
-
-            for(FLUXLocation location : relatedFLUXLocations){
-                IDType id = location.getID();
-                if(id != null){
-                    IdType idType = new IdType();
-                    idType.setValue(id.getValue());
-                    idType.setSchemeId(id.getSchemeID());
-                    idTypes.add(idType);
-                }
-            }
-        }
-
-        return idTypes;
+    public List<CodeType> getRelatedFluxLocationTypeCodes() {
+        return relatedFluxLocationTypeCodes;
     }
 
-    public List<FACatch> getSpecifiedFACatches() {
-        return specifiedFACatches;
+    public void setRelatedFluxLocationTypeCodes(List<CodeType> relatedFluxLocationTypeCodes) {
+        this.relatedFluxLocationTypeCodes = relatedFluxLocationTypeCodes;
     }
 
-    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
-        this.specifiedFACatches = specifiedFACatches;
+    public List<IdType> getRelatedFluxLocationIDs() {
+        return relatedFluxLocationIDs;
+    }
+
+    public void setRelatedFluxLocationIDs(List<IdType> relatedFluxLocationIDs) {
+        this.relatedFluxLocationIDs = relatedFluxLocationIDs;
     }
 }
