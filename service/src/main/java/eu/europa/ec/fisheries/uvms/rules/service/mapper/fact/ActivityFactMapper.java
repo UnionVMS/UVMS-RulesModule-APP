@@ -1046,17 +1046,17 @@ public class ActivityFactMapper {
         if (fishingActivity != null) {
             faExitFromSeaFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faExitFromSeaFact, "fishingActivityTypeCode");
-            faExitFromSeaFact.setSpecifiedFACatchesTypeCodes(getSpecifiedFACatchesTypeCode(fishingActivity.getSpecifiedFACatches()));
+            faExitFromSeaFact.setSpecifiedFACatchesTypeCodes(getFACatchesTypeCodes(fishingActivity.getSpecifiedFACatches()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faExitFromSeaFact, SPECIFIED_FA_CATCHES_TYPE_CODE_PROP);
 
             if (fishingActivity.getRelatedFLUXLocations() != null) {
                 faExitFromSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_PROP);
 
-                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getRelatedFluxLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFluxLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
 
-                faExitFromSeaFact.setGetRelatedFluxLocationIDs(getRelatedFluxLocationIDs(fishingActivity.getRelatedFLUXLocations()));
+                faExitFromSeaFact.setGetRelatedFluxLocationIDs(getFluxLocationIDs(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
 
             }
@@ -1069,7 +1069,7 @@ public class ActivityFactMapper {
         return faExitFromSeaFact;
     }
 
-    public List<IdType> getRelatedFluxLocationIDs(List<FLUXLocation> fluxLocations) {
+    public List<IdType> getFluxLocationIDs(List<FLUXLocation> fluxLocations) {
 
         List<IdType> idTypes = null;
 
@@ -1090,7 +1090,7 @@ public class ActivityFactMapper {
         return idTypes;
     }
 
-    public List<CodeType> getRelatedFluxLocationTypeCodes(List<FLUXLocation> fluxLocations) {
+    public List<CodeType> getFluxLocationTypeCodes(List<FLUXLocation> fluxLocations) {
 
         List<CodeType> codeTypes = null;
 
@@ -1111,7 +1111,7 @@ public class ActivityFactMapper {
         return codeTypes;
     }
 
-    public List<CodeType> getSpecifiedFACatchesTypeCode(List<FACatch> faCatches) {
+    public List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
 
         List<CodeType> codeTypes = null;
 
