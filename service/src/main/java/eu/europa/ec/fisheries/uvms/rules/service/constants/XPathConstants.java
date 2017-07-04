@@ -31,7 +31,6 @@ public class XPathConstants {
     public static final String ACCEPTANCE_DATE_TIME = "AcceptanceDateTime";
     public static final String RELATED_FLUX_REPORT_DOCUMENT = "RelatedFLUXReportDocument";
     public static final String TYPE_CODE = "TypeCode";
-    public static final String IDTYPE = "IDType";
     public static final String RELATED_REPORT_ID = "RelatedReportID";
     public static final String SPECIFIED_VESSEL_TRANSPORT_MEANS = "SpecifiedVesselTransportMeans";
     public static final String RELATED_FISHING_ACTIVITY = "RelatedFishingActivity";
