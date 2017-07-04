@@ -165,9 +165,9 @@ public class ActivityFactMapper {
 
     private static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     private static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
-    private static final String SPECIFIED_FA_CATCH_PROP = "specifiedFACatches";
-
-
+    private static final String SPECIFIED_FA_CATCHES_TYPE_CODE_PROP = "specifiedFACatchesTypeCodes";
+    private static final String RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP = "relatedFluxLocationTypeCodes";
+    private static final String RELATED_FLUX_LOCATIONS_ID_PROP = "relatedFluxLocationIDs";
 
     private ActivityFactMapper(){
         super();
@@ -947,7 +947,7 @@ public class ActivityFactMapper {
             faEntryToSeaFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faEntryToSeaFact, REASON_CODE_PROP);
             faEntryToSeaFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faEntryToSeaFact, SPECIFIED_FA_CATCH_PROP);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faEntryToSeaFact, SPECIFIED_FA_CATCHES_TYPE_CODE_PROP);
         }
         if (faReportDocument != null) {
             faEntryToSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
@@ -1046,9 +1046,19 @@ public class ActivityFactMapper {
         if (fishingActivity != null) {
             faExitFromSeaFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faExitFromSeaFact, "fishingActivityTypeCode");
+            faExitFromSeaFact.setSpecifiedFACatchesTypeCodes(getFACatchesTypeCodes(fishingActivity.getSpecifiedFACatches()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faExitFromSeaFact, SPECIFIED_FA_CATCHES_TYPE_CODE_PROP);
+
             if (fishingActivity.getRelatedFLUXLocations() != null) {
                 faExitFromSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_PROP);
+
+                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
+
+                faExitFromSeaFact.setRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
+
             }
         }
         if (faReportDocument != null) {
@@ -1057,6 +1067,28 @@ public class ActivityFactMapper {
         }
 
         return faExitFromSeaFact;
+    }
+
+    public List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
+
+        List<CodeType> codeTypes = null;
+
+        if (faCatches != null) {
+            codeTypes = new ArrayList<>();
+
+            for (FACatch faCatch : faCatches) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getTypeCode();
+
+                if (typeCode != null) {
+                    CodeType codeType = new CodeType();
+                    codeType.setListId(typeCode.getListID());
+                    codeType.setValue(typeCode.getValue());
+                    codeTypes.add(codeType);
+                }
+            }
+        }
+
+        return codeTypes;
     }
 
 
@@ -1948,21 +1980,6 @@ public class ActivityFactMapper {
         }
         return delimitedPeriod;
     }
-
-    public List<CodeType> mapFromFishingActivityListToCodeTypeList(List<FishingActivity> fishingActivities) {
-        List<CodeType> codeTypes = null;
-
-        if (!CollectionUtils.isEmpty(fishingActivities)) {
-            codeTypes = org.mapstruct.ap.internal.util.Collections.newArrayList();
-
-            for (FishingActivity activity : fishingActivities) {
-                codeTypes.add(mapToCodeType(activity.getTypeCode()));
-            }
-        }
-        return codeTypes;
-
-    }
-
 
     public List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
