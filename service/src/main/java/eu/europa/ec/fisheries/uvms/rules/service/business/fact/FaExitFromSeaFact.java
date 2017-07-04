@@ -31,6 +31,12 @@ public class FaExitFromSeaFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
+    private List<CodeType> specifiedFACatchesTypeCodes;
+
+    private List<CodeType> relatedFluxLocationTypeCodes;
+
+    private List<IdType> getRelatedFluxLocationIDs;
+
     public FaExitFromSeaFact() {
         setFactType();
     }
@@ -62,5 +68,29 @@ public class FaExitFromSeaFact extends AbstractFact {
 
     public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
         this.relatedFLUXLocations = relatedFLUXLocations;
+    }
+
+    public List<CodeType> getSpecifiedFACatchesTypeCodes() {
+        return specifiedFACatchesTypeCodes;
+    }
+
+    public void setSpecifiedFACatchesTypeCodes(List<CodeType> specifiedFACatchesTypeCodes) {
+        this.specifiedFACatchesTypeCodes = specifiedFACatchesTypeCodes;
+    }
+
+    public void setRelatedFluxLocationTypeCodes(List<CodeType> relatedFluxLocationTypeCodes) {
+        this.relatedFluxLocationTypeCodes = relatedFluxLocationTypeCodes;
+    }
+
+    public List<IdType> getGetRelatedFluxLocationIDs() {
+        return getRelatedFluxLocationIDs;
+    }
+
+    public void setGetRelatedFluxLocationIDs(List<IdType> getRelatedFluxLocationIDs) {
+        this.getRelatedFluxLocationIDs = getRelatedFluxLocationIDs;
+    }
+
+    public List<CodeType> getRelatedFluxLocationTypeCodes() {
+        return relatedFluxLocationTypeCodes;
     }
 }
