@@ -1053,10 +1053,10 @@ public class ActivityFactMapper {
                 faExitFromSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_PROP);
 
-                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFluxLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
 
-                faExitFromSeaFact.setGetRelatedFluxLocationIDs(getFluxLocationIDs(fishingActivity.getRelatedFLUXLocations()));
+                faExitFromSeaFact.setGetRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
 
             }
@@ -1067,48 +1067,6 @@ public class ActivityFactMapper {
         }
 
         return faExitFromSeaFact;
-    }
-
-    public List<IdType> getFluxLocationIDs(List<FLUXLocation> fluxLocations) {
-
-        List<IdType> idTypes = null;
-
-        if (fluxLocations != null) {
-            idTypes = new ArrayList<>();
-
-            for (FLUXLocation location : fluxLocations) {
-                IDType id = location.getID();
-                if (id != null) {
-                    IdType idType = new IdType();
-                    idType.setValue(id.getValue());
-                    idType.setSchemeId(id.getSchemeID());
-                    idTypes.add(idType);
-                }
-            }
-        }
-
-        return idTypes;
-    }
-
-    public List<CodeType> getFluxLocationTypeCodes(List<FLUXLocation> fluxLocations) {
-
-        List<CodeType> codeTypes = null;
-
-        if (fluxLocations != null) {
-            codeTypes = new ArrayList<>();
-
-            for (FLUXLocation location : fluxLocations) {
-                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = location.getTypeCode();
-                if (typeCode != null) {
-                    CodeType codeType = new CodeType();
-                    codeType.setListId(typeCode.getListID());
-                    codeType.setValue(typeCode.getValue());
-                    codeTypes.add(codeType);
-                }
-            }
-        }
-
-        return codeTypes;
     }
 
     public List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
@@ -2022,21 +1980,6 @@ public class ActivityFactMapper {
         }
         return delimitedPeriod;
     }
-
-    public List<CodeType> mapFromFishingActivityListToCodeTypeList(List<FishingActivity> fishingActivities) {
-        List<CodeType> codeTypes = null;
-
-        if (!CollectionUtils.isEmpty(fishingActivities)) {
-            codeTypes = org.mapstruct.ap.internal.util.Collections.newArrayList();
-
-            for (FishingActivity activity : fishingActivities) {
-                codeTypes.add(mapToCodeType(activity.getTypeCode()));
-            }
-        }
-        return codeTypes;
-
-    }
-
 
     public List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
