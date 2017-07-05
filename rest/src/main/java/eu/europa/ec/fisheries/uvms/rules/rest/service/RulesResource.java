@@ -62,9 +62,7 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
-
         FLUXResponseMessage fluxResponseMessage;
-
         try {
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);

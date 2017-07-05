@@ -14,17 +14,23 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 public abstract class AbstractGenerator {
 
     public abstract List<AbstractFact> generateAllFacts();
 
     public abstract void setBusinessObjectMessage(Object businessObject) throws RulesValidationException;
+
+    public abstract <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType);
+
 }

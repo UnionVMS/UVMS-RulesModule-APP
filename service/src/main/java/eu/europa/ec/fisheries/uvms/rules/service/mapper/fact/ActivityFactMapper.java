@@ -39,6 +39,8 @@ public class ActivityFactMapper {
 
     private XPathStringWrapper xPathUtil;
 
+    private List<IdTypeWithFlagState> assetList;
+
     private static final String TYPE_CODE_PROP = "typeCode";
     private static final String REASON_CODE_PROP = "reasonCode";
     private static final String FA_REPORT_DOCUMENT_TYPE_CODE_PROP = "faReportDocumentTypeCode";
@@ -371,27 +373,45 @@ public class ActivityFactMapper {
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
 
+        List<ContactParty> specifiedContactParties = vesselTransportMean.getSpecifiedContactParties();
+
         vesselTransportMeansFact.setRegistrationVesselCountryId(mapToCodeType(vesselTransportMeanRegistrationVesselCountryID_(vesselTransportMean)));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(REGISTRATION_VESSEL_COUNTRY, ID).storeInRepo(vesselTransportMeansFact, "registrationVesselCountryId");
 
-        vesselTransportMeansFact.setSpecifiedContactPersons(mapToContactPersonList(vesselTransportMean.getSpecifiedContactParties()));
+        vesselTransportMeansFact.setSpecifiedContactPersons(mapToContactPersonList(specifiedContactParties));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_CONTACT_PERSON).storeInRepo(vesselTransportMeansFact, "specifiedContactPersons");
 
         vesselTransportMeansFact.setIds(mapToIdType(vesselTransportMean.getIDS()));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(ID).storeInRepo(vesselTransportMeansFact, "ids");
 
-        vesselTransportMeansFact.setSpecifiedContactPartyRoleCodes(mapFromContactPartyToCodeType(vesselTransportMean.getSpecifiedContactParties()));
+        vesselTransportMeansFact.setSpecifiedContactPartyRoleCodes(mapFromContactPartyToCodeType(specifiedContactParties));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, ROLE_CODE).storeInRepo(vesselTransportMeansFact, "specifiedContactPartyRoleCodes");
 
         vesselTransportMeansFact.setRoleCode(mapToCodeType(vesselTransportMean.getRoleCode()));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(ROLE_CODE).storeInRepo(vesselTransportMeansFact, "roleCode");
 
-        if (vesselTransportMean.getSpecifiedContactParties() != null) {
-            vesselTransportMeansFact.setSpecifiedContactParties(new ArrayList<>(vesselTransportMean.getSpecifiedContactParties()));
-            xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY).storeInRepo(vesselTransportMeansFact, "specifiedContactParties");
+        if (specifiedContactParties != null) {
+            vesselTransportMeansFact.setSpecifiedContactParties(new ArrayList<>(specifiedContactParties));
         }
+        xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY).storeInRepo(vesselTransportMeansFact, "specifiedContactParties");
+
+        vesselTransportMeansFact.setSpecifiedStructuredAddresses(mapSpecifiedStructuredAddresses(specifiedContactParties));
+        xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_STRUCTURED_ADDRESS).storeInRepo(vesselTransportMeansFact, "specifiedStructuredAddresses");
+
+        vesselTransportMeansFact.setAssetList(assetList);
 
         return vesselTransportMeansFact;
+    }
+
+    private List<StructuredAddress> mapSpecifiedStructuredAddresses(List<ContactParty> specifiedContactParties) {
+        List<StructuredAddress> structAdrList = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(specifiedContactParties)){
+            for(ContactParty contParty : specifiedContactParties){
+                structAdrList.addAll(contParty.getSpecifiedStructuredAddresses());
+            }
+        }
+        structAdrList.removeAll(Collections.singleton(null));
+        return structAdrList;
     }
 
 
@@ -2092,5 +2112,8 @@ public class ActivityFactMapper {
 
     public void setxPathUtil(XPathStringWrapper xPathUtil_) {
         this.xPathUtil = xPathUtil_;
+    }
+    public void setAssetList(List<IdTypeWithFlagState> assetList) {
+        this.assetList = assetList;
     }
 }

@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +42,16 @@ public class RulesEngineBean {
 	@EJB
 	private TemplateEngine templateEngine;
 
+	@EJB
+	private RuleAssetsBean ruleAssetsBean;
+
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
+		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
+			generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
+		}
 		mdrCacheServiceBean.loadMDRCache();
 		facts.addAll(generator.generateAllFacts());
 		templateEngine.evaluateFacts(facts);

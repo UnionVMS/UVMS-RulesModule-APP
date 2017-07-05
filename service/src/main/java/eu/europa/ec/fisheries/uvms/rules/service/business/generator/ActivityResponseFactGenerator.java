@@ -14,12 +14,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,5 +58,10 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
             throw new RulesValidationException("Business object does not match required type");
         }
         this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
+    }
+
+    @Override
+    public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
+        // Set internal Validation Object if needed.
     }
 }
