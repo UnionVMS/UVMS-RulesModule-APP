@@ -546,6 +546,10 @@ public abstract class AbstractFact {
      public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+         if(anEnum == null){
+             log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+             return false;
+         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
         if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){

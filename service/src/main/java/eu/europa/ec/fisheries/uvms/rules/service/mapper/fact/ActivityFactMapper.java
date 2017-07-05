@@ -10,17 +10,68 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ACCEPTANCE_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_FLUX_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLIED_AAP_PROCESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.AVERAGE_WEIGHT_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CATEGORY_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CITY_NAME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CLASS_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CONVERSION_FACTOR_NUMERIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COUNTRY_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DURATION_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FISHERY_TYPE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OCCURRENCE_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OPERATIONS_QUANTITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OWNER_FLUX_PARTY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_TYPE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_UNIT_QUANTITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PLOT_IDENTIFICATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTCODE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REASON_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REFERENCED_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_REPORT_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESULT_AAP_PRODUCT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ROLE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIES_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIES_TARGET_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PARTY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PERSON;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_DELIMITED_PERIOD;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FA_CATCH;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_GEAR_PROBLEM;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_SIZE_DISTRIBUTION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.STREET_NAME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.UNIT_QUANTITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_QUANTITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_RELATED_ACTIVITY_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.WEIGHING_MEANS_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.WEIGHT_MEASURE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -29,7 +80,71 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 /**
  * Created by kovian on 14/06/2017.
@@ -49,10 +164,11 @@ public class ActivityFactMapper {
     private static final String SPECIES_TARGET_CODE_PROP = "speciesTargetCode";
     private static final String SPECIFIED_FISHING_TRIP_PROP = "specifiedFishingTrip";
     private static final String OCCURRENCE_DATE_TIME_PROP = "occurrenceDateTime";
-
     private static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     private static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
-
+    private static final String SPECIFIED_FA_CATCHES_TYPE_CODE_PROP = "specifiedFACatchesTypeCodes";
+    private static final String RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP = "relatedFluxLocationTypeCodes";
+    private static final String RELATED_FLUX_LOCATIONS_ID_PROP = "relatedFluxLocationIDs";
 
     private ActivityFactMapper(){
         super();
@@ -200,6 +316,9 @@ public class ActivityFactMapper {
         fishingActivityFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(fishingActivityFact, "vesselRelatedActivityCode");
 
+        fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, "relatedFluxLocationRFMOCodeList");
+
         if (faReportDocument != null) {
             fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FLUX_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(fishingActivityFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
@@ -277,6 +396,9 @@ public class ActivityFactMapper {
 
         fishingActivityFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(fishingActivityFact, "vesselRelatedActivityCode");
+
+        fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact,"relatedFluxLocationRFMOCodeList");
 
         fishingActivityFact.setIsSubActivity(isSubActivity);
 
@@ -629,6 +751,12 @@ public class ActivityFactMapper {
             faCatchFact.setResultAAPProductPackagingUnitAverageWeightMeasure(getMeasureTypeFromAAPProcess(faCatch.getAppliedAAPProcesses(), AVERAGE_WEIGHT_MEASURE));
             xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT, PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE).storeInRepo(faCatchFact, "resultAAPProductPackagingUnitAverageWeightMeasure");
 
+            faCatchFact.setSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact,"specifiedFLUXLocations");
+
+            faCatchFact.setSpecifiedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(faCatch.getSpecifiedFLUXLocations()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(faCatchFact, "specifiedFluxLocationRFMOCodeList");
+
             if (relatedFLUXLocations != null) {
                 faCatchFact.setFluxLocationId(mapFLUXLocationList(relatedFLUXLocations));
                 xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
@@ -832,11 +960,19 @@ public class ActivityFactMapper {
             if (fishingActivity.getRelatedFLUXLocations() != null) {
                 faEntryToSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faEntryToSeaFact, RELATED_FLUX_LOCATIONS_PROP);
+
+                faEntryToSeaFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faEntryToSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
+
+                faEntryToSeaFact.setRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faEntryToSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
             }
             faEntryToSeaFact.setSpeciesTargetCode(mapToCodeType(fishingActivity.getSpeciesTargetCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIES_TARGET_CODE).storeInRepo(faEntryToSeaFact, SPECIES_TARGET_CODE_PROP);
             faEntryToSeaFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faEntryToSeaFact, REASON_CODE_PROP);
+            faEntryToSeaFact.setSpecifiedFACatchesTypeCodes(getFACatchesTypeCodes(fishingActivity.getSpecifiedFACatches()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faEntryToSeaFact, SPECIFIED_FA_CATCHES_TYPE_CODE_PROP);
         }
         if (faReportDocument != null) {
             faEntryToSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
@@ -846,6 +982,38 @@ public class ActivityFactMapper {
         return faEntryToSeaFact;
     }
 
+    public FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+        if (fishingActivity == null && faReportDocument == null) {
+            return null;
+        }
+
+        FaExitFromSeaFact faExitFromSeaFact = new FaExitFromSeaFact();
+        String partialXpath = xPathUtil.getValue();
+        if (fishingActivity != null) {
+            faExitFromSeaFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faExitFromSeaFact, "fishingActivityTypeCode");
+            faExitFromSeaFact.setSpecifiedFACatchesTypeCodes(getFACatchesTypeCodes(fishingActivity.getSpecifiedFACatches()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faExitFromSeaFact, SPECIFIED_FA_CATCHES_TYPE_CODE_PROP);
+
+            if (fishingActivity.getRelatedFLUXLocations() != null) {
+                faExitFromSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_PROP);
+
+                faExitFromSeaFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
+
+                faExitFromSeaFact.setRelatedFluxLocationIDs(mapFLUXLocationList(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_ID_PROP);
+
+            }
+        }
+        if (faReportDocument != null) {
+            faExitFromSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faExitFromSeaFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+        }
+
+        return faExitFromSeaFact;
+    }
 
     public FaFishingOperationFact generateFactsForFishingOperation(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
         if (fishingActivity == null && faReportDocument == null) {
@@ -924,28 +1092,26 @@ public class ActivityFactMapper {
         return faDiscardFact;
     }
 
+    public List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
 
-    public FaExitFromSeaFact generateFactsForExitArea(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
-        if (fishingActivity == null && faReportDocument == null) {
-            return null;
-        }
+        List<CodeType> codeTypes = null;
 
-        FaExitFromSeaFact faExitFromSeaFact = new FaExitFromSeaFact();
-        String partialXpath = xPathUtil.getValue();
-        if (fishingActivity != null) {
-            faExitFromSeaFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faExitFromSeaFact, "fishingActivityTypeCode");
-            if (fishingActivity.getRelatedFLUXLocations() != null) {
-                faExitFromSeaFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
-                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faExitFromSeaFact, RELATED_FLUX_LOCATIONS_PROP);
+        if (faCatches != null) {
+            codeTypes = new ArrayList<>();
+
+            for (FACatch faCatch : faCatches) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getTypeCode();
+
+                if (typeCode != null) {
+                    CodeType codeType = new CodeType();
+                    codeType.setListId(typeCode.getListID());
+                    codeType.setValue(typeCode.getValue());
+                    codeTypes.add(codeType);
+                }
             }
         }
-        if (faReportDocument != null) {
-            faExitFromSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faExitFromSeaFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
-        }
 
-        return faExitFromSeaFact;
+        return codeTypes;
     }
 
 
@@ -1511,20 +1677,29 @@ public class ActivityFactMapper {
         return value;
     }
 
-    private String structuredAddressCountryIDValue(StructuredAddress structuredAddress) {
+    private IdType structuredAddressCountryIDValue(StructuredAddress structuredAddress) {
 
         if (structuredAddress == null) {
             return null;
         }
         IDType countryID = structuredAddress.getCountryID();
+
         if (countryID == null) {
             return null;
         }
+
         String value = countryID.getValue();
-        if (value == null) {
+        String schemeID = countryID.getSchemeID();
+
+        if (schemeID == null && value == null) {
             return null;
         }
-        return value;
+
+        IdType idType = new IdType();
+        idType.setSchemeId(schemeID);
+        idType.setValue(value);
+
+        return idType;
     }
 
     private String structuredAddressCityNameValue(StructuredAddress structuredAddress) {
@@ -1829,21 +2004,6 @@ public class ActivityFactMapper {
         return delimitedPeriod;
     }
 
-    public List<CodeType> mapFromFishingActivityListToCodeTypeList(List<FishingActivity> fishingActivities) {
-        List<CodeType> codeTypes = null;
-
-        if (!CollectionUtils.isEmpty(fishingActivities)) {
-            codeTypes = org.mapstruct.ap.internal.util.Collections.newArrayList();
-
-            for (FishingActivity activity : fishingActivities) {
-                codeTypes.add(mapToCodeType(activity.getTypeCode()));
-            }
-        }
-        return codeTypes;
-
-    }
-
-
     public List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
 
@@ -2030,6 +2190,19 @@ public class ActivityFactMapper {
         for (FLUXLocation fluxLocation : fluxLocations) {
             if (fluxLocation.getTypeCode() != null) {
                 codeTypes.add(mapToCodeType(fluxLocation.getTypeCode()));
+            }
+        }
+        return codeTypes;
+    }
+
+    public List<CodeType> getFLUXLocationRFMOCodes(List<FLUXLocation> fluxLocations) {
+        if (CollectionUtils.isEmpty(fluxLocations)) {
+            return java.util.Collections.emptyList();
+        }
+        List<CodeType> codeTypes = new ArrayList<>();
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            if (fluxLocation.getRegionalFisheriesManagementOrganizationCode() != null) {
+                codeTypes.add(mapToCodeType(fluxLocation.getRegionalFisheriesManagementOrganizationCode()));
             }
         }
         return codeTypes;
