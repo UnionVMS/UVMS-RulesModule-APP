@@ -86,4 +86,8 @@ public class XPathConstants {
     public static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
     public static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
     public static final String REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE = "RegionalFisheriesManagementOrganizationCode";
+    public static final String VALUE = "Value";
+    public static final String VALUE_INDICATOR = "ValueIndicator";
+    public static final String VALUE_MEASURE = "ValueMeasure";
+    public static final String VALUE_CODE = "ValueCode";
 }

@@ -42,6 +42,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -91,6 +92,11 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 @Slf4j
 public class ActivityFactMapper {
 
+    public static final String VALUE_PROP = "value";
+    public static final String VALUE_INDICATOR_PROP = "valueIndicator";
+    public static final String VALUE_MEASURE_PROP = "valueMeasure";
+    public static final String VALUE_CODE_PROP = "valueCode";
+    public static final String VALUE_QUANTITY_PROP = "valueQuantity";
     private XPathStringWrapper xPathUtil;
 
     private static final String TYPE_CODE_PROP = "typeCode";
@@ -551,13 +557,19 @@ public class ActivityFactMapper {
         xPathUtil.append(TYPE_CODE).storeInRepo(gearCharacteristicsFact, TYPE_CODE_PROP);
 
         gearCharacteristicsFact.setValue(gearCharacteristic.getValue());
-        
+        xPathUtil.append(VALUE).storeInRepo(gearCharacteristicsFact, VALUE_PROP);
+
         gearCharacteristicsFact.setValueIndicator(gearCharacteristic.getValueIndicator());
+        xPathUtil.append(VALUE_INDICATOR).storeInRepo(gearCharacteristicsFact, VALUE_INDICATOR_PROP);
+
         gearCharacteristicsFact.setValueMeasure(mapToMeasureType(gearCharacteristic.getValueMeasure()));
+        xPathUtil.append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
+
         gearCharacteristicsFact.setValueCode(mapToCodeType(gearCharacteristic.getValueCode()));
+        xPathUtil.append(XPathConstants.VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
+
         gearCharacteristicsFact.setValueQuantity(mapQuantityTypeToMeasureType(gearCharacteristic.getValueQuantity()));
-
-
+        xPathUtil.append(XPathConstants.VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
 
         return gearCharacteristicsFact;
     }
@@ -1178,7 +1190,7 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, "fluxLocationTypeCode");
 
             faNotificationOfTranshipmentFact.setFluxCharacteristicValueQuantity(getApplicableFLUXCharacteristicsValueQuantity(fishingActivity.getSpecifiedFLUXCharacteristics()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, VALUE_QUANTITY).storeInRepo(faNotificationOfTranshipmentFact, "fluxCharacteristicValueQuantity");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, XPathConstants.VALUE_QUANTITY).storeInRepo(faNotificationOfTranshipmentFact, "fluxCharacteristicValueQuantity");
 
             if (fishingActivity.getRelatedVesselTransportMeans() != null) {
                 faNotificationOfTranshipmentFact.setRelatedVesselTransportMeans(new ArrayList<>(fishingActivity.getRelatedVesselTransportMeans()));
