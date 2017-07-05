@@ -26,6 +26,8 @@ public class FishingGearFact extends AbstractFact {
 
     private CodeType typeCode;
 
+    protected List<CodeType> roleCodes;
+
     private List<GearCharacteristic> applicableGearCharacteristics;
 
     public CodeType getTypeCode() {
@@ -34,6 +36,14 @@ public class FishingGearFact extends AbstractFact {
 
     public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public List<CodeType> getRoleCodes() {
+        return roleCodes;
+    }
+
+    public void setRoleCodes(List<CodeType> roleCodes) {
+        this.roleCodes = roleCodes;
     }
 
     public List<GearCharacteristic> getApplicableGearCharacteristics() {
@@ -47,6 +57,7 @@ public class FishingGearFact extends AbstractFact {
     public FishingGearFact() {
         setFactType();
     }
+
     @Override
     public void setFactType() {
         this.factType = FactType.FISHING_GEAR;

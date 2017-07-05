@@ -21,15 +21,9 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -41,10 +35,10 @@ public class AbstractFactTest {
     @Before
     public void before() {
 
-        String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
-        String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED" };
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE,Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE,Arrays.asList(faCatchCodes));
+        String[] gearTypeCodes = new String[]{"PS1", "LA", "SB", "SDN", "PTB"};
+        String[] faCatchCodes = new String[]{"ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED"};
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
     }
 
 
@@ -58,6 +52,19 @@ public class AbstractFactTest {
     public void testListIdContainsAll() {
         List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
         assertTrue(fact.listIdContainsAll(codeTypes, "AREA"));
+    }
+
+    @Test
+    public void testListIdContainsAnySingle() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", "GEAR_TYPE");
+        assertFalse(fact.listIdContainsAny(typeCode, "GEAR_TYPE"));
+    }
+
+    @Test
+    public void testListIdContainsAnyMultiple() {
+        List<CodeType> typeCodes = Arrays.asList(RuleTestHelper.getCodeType("PS", "GEAR_TYPE"), RuleTestHelper.getCodeType("LT", "VESSEL_ACTIVITY"));
+
+        assertFalse(fact.listIdContainsAny(typeCodes, "GEAR_TYPE"));
     }
 
     @Test
@@ -108,7 +115,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_OK(){
+    public void testValidateFormatUUID_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue(UUID.randomUUID().toString());
@@ -118,7 +125,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_NOT_OK(){
+    public void testValidateFormatUUID_NOT_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue("ballshjshdhdfhsgfd");
@@ -129,20 +136,20 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInMDRList(){
-        boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
-        assertEquals(true,result);
+    public void testIsPresentInMDRList() {
+        boolean result = fact.isPresentInMDRList("GEAR_TYPE", "LA");
+        assertEquals(true, result);
     }
 
     @Test
-    public void testIsCodeTypePresentInMDRList(){
+    public void testIsCodeTypePresentInMDRList() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED"));
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
-        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
-        assertEquals(true,result);
+        boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(true, result);
     }
 
 
