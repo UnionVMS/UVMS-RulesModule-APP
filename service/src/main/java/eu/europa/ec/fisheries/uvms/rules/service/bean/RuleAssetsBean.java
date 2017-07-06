@@ -36,6 +36,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,12 +54,8 @@ public class RuleAssetsBean {
     @EJB
     private RulesMessageProducer producer;
 
-    private List<String> supportedIds = new ArrayList<String>(){{
-        add("IRCS");
-        add("CFR");
-        add("EXT_MARK");
-        add("NAME");
-    }};
+    private List<String> supportedIds = Arrays.asList("IRCS","CFR","EXT_MARK","NAME");
+
 
 
     public List<IdTypeWithFlagState> getAssetList(Object message){

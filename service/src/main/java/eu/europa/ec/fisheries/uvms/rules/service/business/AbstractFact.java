@@ -432,7 +432,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return !((value.compareTo(new BigDecimal(min)) == 1) && (value.compareTo(new BigDecimal(max)) == -1));
+        return !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
     }
 
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
