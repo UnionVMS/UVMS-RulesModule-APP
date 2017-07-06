@@ -529,6 +529,12 @@ public abstract class AbstractFact {
         }
     }
 
+    /**
+     *  Check if value passed is present in the MDR list speified
+     * @param listName - MDR list name to be ckecked against
+     * @param codeValue - This value will be checked in MDR list
+     * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
+     */
     public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if(anEnum == null){
@@ -542,7 +548,12 @@ public abstract class AbstractFact {
         return false;
     }
 
-
+    /**
+     *  This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
+     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
+     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     */
      public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
@@ -564,9 +575,21 @@ public abstract class AbstractFact {
         return true;
     }
 
+
+    /**
+     *  This function checks that all the IdType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
+     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
+     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     */
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            return false;
+        }
+
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
         if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){

@@ -16,11 +16,13 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -154,6 +156,65 @@ public class AbstractFactTest {
         codeTypes.add(new IdType("DEMINIMIS"));
         boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
+    }
+
+
+    @Test
+    public void testValueContainsAll() {
+
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+        IdType idType3= RuleTestHelper.getIdType("value13","UUID");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+        boolean result = fact.valueContainsAll(idTypes, "value1");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIsNumeric() {
+
+        NumericType numericType1= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+        NumericType numericType2= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+        NumericType numericType3= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+
+
+        List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
+        boolean result = fact.isNumeric(numericTypes);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIdListContainsValue() {
+
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.idListContainsValue(idTypes, "value1","CFR");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsAny() {
+
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.schemeIdContainsAny(idTypes, "CFR");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsAllOrNone() {
+
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
+        assertFalse(result);
     }
 
 
