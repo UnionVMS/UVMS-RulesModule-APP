@@ -15,6 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -57,6 +59,16 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         }
         this.fluxfaReportMessage = (FLUXFAReportMessage) businessObject;
     }
+
+    @Override
+    public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
+        if(additionalObject != null){
+            if(AdditionalValidationObjectType.ASSET_LIST.equals(validationType)){
+                activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
+            }
+        }
+    }
+
 
     @Override
     public List<AbstractFact> generateAllFacts() {

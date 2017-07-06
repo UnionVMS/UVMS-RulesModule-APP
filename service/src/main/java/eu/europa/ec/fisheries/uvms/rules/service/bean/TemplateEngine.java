@@ -42,15 +42,16 @@ public class TemplateEngine {
 
     @PostConstruct
     public void initialize() {
-        log.info("Initializing templates and rules");
+        log.info("Initializing templates and rules [START]");
         ruleEvaluator.initializeRules(getAllTemplates());
         updateFailedRules(ruleEvaluator.getFailedRules());
     }
 
     public void reInitialize() {
-        log.info("Initializing templates and rules");
+        log.info("Re-Initializing templates and rules [START]");
         ruleEvaluator.reInitializeKieSystem();
         initialize();
+        log.info("Re-Initialization of templates and rules [FINISH]");
     }
 
     public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {

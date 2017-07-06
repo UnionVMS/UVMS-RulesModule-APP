@@ -43,8 +43,8 @@ public class AbstractFactTest {
 
         String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
         String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED" };
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE,Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE,Arrays.asList(faCatchCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
     }
 
 
@@ -142,6 +142,17 @@ public class AbstractFactTest {
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
         boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
+        assertEquals(true,result);
+    }
+
+    @Test
+    public void testIsIdTypePresentInMDRList(){
+
+        List<IdType> codeTypes = new ArrayList<>();
+        codeTypes.add(new IdType("RELEASED"));
+        codeTypes.add(new IdType("DISCARDED"));
+        codeTypes.add(new IdType("DEMINIMIS"));
+        boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
     }
 

@@ -87,4 +87,6 @@ public class GearCharacteristicsFact extends AbstractFact {
     public void setValueIndicator(IndicatorType valueIndicator) {
         this.valueIndicator = valueIndicator;
     }
+
+
 }

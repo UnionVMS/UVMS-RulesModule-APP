@@ -18,10 +18,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +102,19 @@ public abstract class AbstractFact {
             }
         }
         return valLength > hits;
+    }
+
+    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor){
+        if(StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)){
+            return false;
+        }
+        String flagStateToMatch = StringUtils.EMPTY;
+        for(IdType idType : idTypes){
+            if(schemeIdToSearchFor.equals(idType.getSchemeId())){
+                flagStateToMatch = idType.getValue();
+            }
+        }
+        return StringUtils.equals(valueToMatch, flagStateToMatch);
     }
 
     public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
@@ -329,27 +339,21 @@ public abstract class AbstractFact {
     public List<RuleWarning> getWarnings() {
         return warnings;
     }
-
     public List<RuleError> getErrors() {
         return errors;
     }
-
     public boolean isOk() {
         return ok;
     }
-
     public void setOk(boolean ok) {
         this.ok = ok;
     }
-
     public FactType getFactType() {
         return factType;
     }
-
     public List<String> getUniqueIds() {
         return uniqueIds;
     }
-
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
@@ -527,10 +531,10 @@ public abstract class AbstractFact {
 
     public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-
-        if(anEnum ==null)
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
             return false;
-
+        }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
         if(CollectionUtils.isNotEmpty(values)){
             return values.contains(codeValue);
@@ -542,13 +546,15 @@ public abstract class AbstractFact {
      public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum ==null)
+         if(anEnum == null){
+             log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
              return false;
-
+         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues))
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
             return false;
+        }
 
         for(CodeType codeType: valuesToMatch){
             if(!codeListValues.contains(codeType.getValue()))
@@ -558,13 +564,45 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch){
 
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
+            return false;
+        }
+
+        for(IdType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList){
+        if(CollectionUtils.isEmpty(additionalObjectList)){
+            return false;
+        }
+        List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
+        for(IdType idType : vesselIds){
+            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+        }
+
+        for(IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched){
+            if(!additionalObjectList.contains(elemFromListToBeMatched)){
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 
     public Integer getSequence() {
         return sequence;
     }
-
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
