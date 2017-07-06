@@ -218,4 +218,39 @@ public class AbstractFactTest {
     }
 
 
+    @Test
+    public void testListIdContainsAny() {
+
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+
+        List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
+        boolean result = fact.listIdContainsAny(codeTypes, "CFR");
+        assertFalse(result);
+    }
+
+
+    @Test
+    public void testValueContainsAny() {
+
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+
+        List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
+        boolean result = fact.valueContainsAny(codeTypes, "value1");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testAnyValueContainsAll() {
+
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+
+        List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
+        boolean result = fact.anyValueContainsAll(codeTypes, "value1");
+        assertFalse(result);
+    }
+
+
 }
