@@ -10,9 +10,13 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Created by kovian on 20/06/2017.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class XPathConstants {
 
     public static final String FLUXFA_REPORT_MESSAGE = "FLUXFAReportMessage";
@@ -81,7 +85,6 @@ public class XPathConstants {
     public static final String USED_FISHING_GEAR = "UsedFishingGear";
     public static final String FLUX_RESPONSE_DOCUMENT = "FLUXResponseDocument";
     public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
-
     public static final String AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
     public static final String REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE = "RegionalFisheriesManagementOrganizationCode";
 }

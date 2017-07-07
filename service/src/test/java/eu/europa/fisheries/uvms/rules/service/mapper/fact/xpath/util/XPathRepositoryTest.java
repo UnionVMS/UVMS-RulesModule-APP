@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -37,6 +38,7 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -273,6 +275,14 @@ public class XPathRepositoryTest {
 
     }
 
+    @Test
+    @SneakyThrows
+    public void testAllXPathConstants(){
+        final Field[] fields = XPathConstants.class.getFields();
+        for(Field field : fields){
+            System.out.print("Constant : "+field.get(field));
+        }
+    }
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
