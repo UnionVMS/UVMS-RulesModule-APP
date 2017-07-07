@@ -5,6 +5,8 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +22,7 @@ public class SalesDocumentFact extends AbstractFact {
     private List<SalesEventType> specifiedSalesEvents;
     private List<FishingActivityType> specifiedFishingActivities;
     private List<FLUXLocationType> specifiedFLUXLocations;
-    private List<SalesPartyType> specifiedSalesParties;
+    private List<SalesPartyFact> specifiedSalesParties;
     private VehicleTransportMeansType specifiedVehicleTransportMeans;
     private List<ValidationResultDocumentType> relatedValidationResultDocuments;
     private SalesPriceType totalSalesPrice;
@@ -68,7 +70,7 @@ public class SalesDocumentFact extends AbstractFact {
         return this.specifiedFLUXLocations;
     }
 
-    public List<SalesPartyType> getSpecifiedSalesParties() {
+    public List<SalesPartyFact> getSpecifiedSalesParties() {
         return this.specifiedSalesParties;
     }
 
@@ -128,7 +130,7 @@ public class SalesDocumentFact extends AbstractFact {
         this.specifiedFLUXLocations = specifiedFLUXLocations;
     }
 
-    public void setSpecifiedSalesParties(List<SalesPartyType> specifiedSalesParties) {
+    public void setSpecifiedSalesParties(List<SalesPartyFact> specifiedSalesParties) {
         this.specifiedSalesParties = specifiedSalesParties;
     }
 
@@ -153,7 +155,7 @@ public class SalesDocumentFact extends AbstractFact {
     }
 
 
-    public boolean isInvalidCurrencyCode(){
+    public boolean isInvalidCurrencyCode() {
         return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
     }
 
@@ -182,5 +184,97 @@ public class SalesDocumentFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(ids, currencyCode, transportDocumentIDs, salesNoteIDs, takeoverDocumentIDs, specifiedSalesBatches, specifiedSalesEvents, specifiedFishingActivities, specifiedFLUXLocations, specifiedSalesParties, specifiedVehicleTransportMeans, relatedValidationResultDocuments, totalSalesPrice, departureSpecifiedFLUXLocation, arrivalSpecifiedFLUXLocation);
+    }
+
+    // TODO test
+    public boolean doesDocumentContainDuplicateSalesPartyRoles() {
+        if (isEmpty(specifiedSalesParties)) {
+            return false;
+        }
+
+        List<String> roles = new ArrayList<>();
+        for (SalesPartyFact salesParty : specifiedSalesParties) {
+            if (salesParty != null && !isEmpty(salesParty.getRoleCodes())) {
+                for (CodeType roleCode : salesParty.getRoleCodes()) {
+                    if (roleCode != null && !roleCode.getValue().isEmpty()) {
+                        if (roles.contains(roleCode.getValue())) {
+                            return true;
+                        } else {
+                            roles.add(roleCode.getValue());
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // TODO test
+    public boolean isLadingDateBeforeAnySalesDate() {
+        if (isEmpty(specifiedFishingActivities) || isEmpty(specifiedSalesEvents)) {
+            return false;
+        }
+
+        // Due to the setup of the domain design (and related rules) there can be only a single FishingActivity with one delimited period
+        List<DelimitedPeriodType> delimitedPeriods = getSpecifiedFishingActivities().get(0).getSpecifiedDelimitedPeriods();
+        if (delimitedPeriods == null || delimitedPeriods.size() == 0 || delimitedPeriods.get(0).getStartDateTime() == null) {
+            return false;
+        }
+
+        long startTimeInMillis = delimitedPeriods.get(0).getStartDateTime().getDateTime().getMillis();
+        for (SalesEventType salesEvent:getSpecifiedSalesEvents()){
+            if(salesEvent!= null && salesEvent.getOccurrenceDateTime() != null
+                    && startTimeInMillis > salesEvent.getOccurrenceDateTime().getDateTime().getMillis()){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // TODO test
+    public boolean isTotalPriceFieldDifferentFromSumOfProducts(){
+        // Field is optional so no value is ok
+        if(totalSalesPrice == null ||  isEmpty(totalSalesPrice.getChargeAmounts())){
+            return false;
+        }
+
+        return getTotalOfAllProducts().compareTo(getSum(totalSalesPrice.getChargeAmounts())) != 0;
+    }
+
+    private BigDecimal getTotalOfAllProducts(){
+
+        if(isEmpty(specifiedSalesBatches))        {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (SalesBatchType salesBatch :specifiedSalesBatches) {
+            if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
+                for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
+                    if (product != null && product.getTotalSalesPrice() != null){
+                        total.add(getSum(product.getTotalSalesPrice().getChargeAmounts()));
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    private BigDecimal getSum(List<AmountType> amounts){
+        if(isEmpty(amounts))        {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal total = BigDecimal.ZERO;
+        for (AmountType amount :amounts) {
+            if (amount != null){
+                total.add(amount.getValue());
+            }
+        }
+
+        return total;
     }
 }

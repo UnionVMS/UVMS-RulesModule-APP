@@ -175,4 +175,33 @@ public class SalesAAPProductFact extends AbstractFact {
         return valueContainsAny(usageCode, validUsages);
     }
 
+    // todo test
+    public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsuption(){
+        if (specifiedSizeDistribution == null || isEmpty(specifiedSizeDistribution.getClassCodes())){
+            return false;
+        }
+
+        // If the class code (can only be one) is BMS and the usage code is anything but
+        if(specifiedSizeDistribution.getClassCodes().get(0).getValue() == "BMS"
+                && (usageCode == null || usageCode.getValue() != "HCN-INDIRECT")){
+            return true;
+        }
+
+        return false;
+    }
+
+    // todo test
+    public boolean isOriginFLUXLocationEmptyOrTypeNotLocation() {
+        if (isEmpty(originFLUXLocations)){
+            return true;
+        }
+
+        for (FLUXLocationType location: originFLUXLocations) {
+            if (location != null && location.getTypeCode() != null && location.getTypeCode().getValue() == "LOCATION"){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

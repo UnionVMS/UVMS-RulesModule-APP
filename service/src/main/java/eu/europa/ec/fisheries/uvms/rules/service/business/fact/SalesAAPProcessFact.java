@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.schema.sales.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,5 +70,27 @@ public class SalesAAPProcessFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts);
+    }
+
+    // TODO test
+    public boolean isTypeCodesNotUnique(){
+        if (isEmpty(typeCodes)){
+            return false;
+        }
+
+        List<String> uniqueCodes = new ArrayList<>();
+        for (CodeType typeCode: typeCodes) {
+            if (typeCode == null){
+                continue;
+            }
+
+            if (uniqueCodes.contains(typeCode.getValue())){
+                return true;
+            }
+
+            uniqueCodes.add(typeCode.getValue());
+        }
+
+        return false;
     }
 }
