@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rules-service</artifactId>
@@ -9,7 +10,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>2.1.3-SNAPSHOT</version>
+        <version>3.0.2-SNAPSHOT</version>
     </parent>
     
     <!-- PROPERTIES USED FOR LOGBACK -->
@@ -62,6 +63,7 @@
             <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>
             <artifactId>mobileterminal-model</artifactId>
             <version>${mobileterminal.model.version}</version>
+            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
@@ -86,7 +88,20 @@
             <version>${joda-time.version}</version>
         </dependency>
 
-        <!-- drools dependencies -->
+
+		<dependency>
+			<groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
+			<artifactId>mdr-model</artifactId>
+			<version>${mdr.model.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
+            <artifactId>config-model</artifactId>
+            <version>${uvms.config.version}</version>
+        </dependency>
+
+		<!-- drools dependencies -->
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
@@ -108,6 +123,23 @@
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>uvms-commons</artifactId>
             <version>${uvms.common.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.geotools</groupId>
+                    <artifactId>gt-geojson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+            <artifactId>activity-model</artifactId>
+            <version>${activity.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-client</artifactId>
+            <version>1.1.0.wildfly-008</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
