@@ -34,7 +34,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.drools.core.impl.KnowledgeBaseImpl;
-import org.drools.core.util.StringUtils;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -100,8 +99,8 @@ public class FactRuleEvaluator {
             ksession.fireAllRules();
             ksession.dispose();
         } catch (Exception e) {
-            log.debug(e.getMessage(), e);
-            Collection<?> objects = null;
+            log.error(e.getMessage(), e);
+            Collection<?> objects = null; // FIXME whole fact is remove this is not right
             if(ksession != null){
                 objects = ksession.getObjects();
             }
@@ -110,8 +109,8 @@ public class FactRuleEvaluator {
                 AbstractFact next = failedFacts.iterator().next();
                 String message = e.getMessage();
                 String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
-                next.setOk(false);
+                //     next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
+                //     next.setOk(false);
                 facts.remove(next);
                 exceptionsList.add(next);
                 validateFact(facts);
