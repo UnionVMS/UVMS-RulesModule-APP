@@ -18,17 +18,19 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQuer
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by padhyad on 4/19/2017.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BusinessObjectFactory {
 
-    private BusinessObjectFactory(){
-        super();
-    }
-
     public static AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
+        if(businessObjectType == null){
+            return null;
+        }
         AbstractGenerator generator = null;
         switch (businessObjectType) {
             case FLUX_ACTIVITY_REQUEST_MSG:

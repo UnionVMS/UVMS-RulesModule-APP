@@ -83,7 +83,5 @@ public class XPathConstants {
     public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
 
     public static final String AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
-    public static final String CODE_TYPE_FOR_FACATCH_FLUXLOCATION = "facatchFluxlocationTypeCode";
-    public static final String CODE_TYPE_FOR_FACATCH = "facatchTypeCode";
     public static final String REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE = "RegionalFisheriesManagementOrganizationCode";
 }
