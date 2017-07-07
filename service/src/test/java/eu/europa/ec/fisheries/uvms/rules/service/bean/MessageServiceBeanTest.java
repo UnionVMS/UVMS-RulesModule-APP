@@ -13,14 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -29,6 +27,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -42,10 +42,13 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +56,8 @@ import static org.mockito.Mockito.when;
  * Created by padhyad on 6/7/2017.
  */
 public class MessageServiceBeanTest {
+
+    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -89,6 +94,35 @@ public class MessageServiceBeanTest {
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
+    }
+
+    @Test
+    public void testSetFLUXFAReportMessageReceivedNULL(){
+        boolean threw = false;
+        try {
+            messageServiceBean.setFLUXFAReportMessageReceived(null);
+        } catch (RulesServiceException | NullPointerException e) {
+            threw = true;
+        }
+        assertTrue(threw);
+    }
+
+    @Test
+    @SneakyThrows
+    public void testSetFLUXFAReportMessageReceived(){
+
+        SetFLUXFAReportMessageRequest req = new SetFLUXFAReportMessageRequest();
+        req.setRequest(IOUtils.toString(new FileInputStream(testXmlPath)));
+        req.setType(PluginType.MANUAL);
+        req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
+        req.setLogGuid("SOME-GUID");
+
+        try {
+            messageServiceBean.setFLUXFAReportMessageReceived(req);
+        } catch (NoSuchElementException ex){
+
+        }
+
     }
 
     @Test
@@ -137,4 +171,12 @@ public class MessageServiceBeanTest {
         msg.setFAReportDocuments(Arrays.asList(doc));
         return msg;
     }
+
+
+    @SneakyThrows
+    private FLUXFAReportMessage loadTestData(String filePath) {
+        String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
+        return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
+    }
+
 }

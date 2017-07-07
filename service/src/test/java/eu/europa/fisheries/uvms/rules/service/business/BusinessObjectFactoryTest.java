@@ -16,12 +16,15 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -76,6 +79,28 @@ public class BusinessObjectFactoryTest {
         assertTrue(factTypes.contains(FactType.FA_JOINT_FISHING_OPERATION));
         assertTrue(factTypes.contains(FactType.FA_LANDING));
         assertTrue(factTypes.contains(FactType.FA_TRANSHIPMENT));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testActivityResponseGeneration(){
+        ActivityResponseFactGenerator actRespGenerator = new ActivityResponseFactGenerator();
+        actRespGenerator.setBusinessObjectMessage(new FLUXResponseMessage());
+        List<AbstractFact> abstractFacts = actRespGenerator.generateAllFacts();
+
+        assertTrue(abstractFacts.size() == 1);
+    }
+
+    @Test
+    public void testActivityResponseGenerationNULL(){
+        ActivityResponseFactGenerator actRespGenerator = new ActivityResponseFactGenerator();
+        boolean threw = false;
+        try {
+            actRespGenerator.setBusinessObjectMessage(null);
+        } catch (RulesValidationException e) {
+           threw = true;
+        }
+        assertTrue(threw);
     }
 
 
