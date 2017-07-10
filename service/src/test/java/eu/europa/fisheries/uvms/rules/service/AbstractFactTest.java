@@ -92,7 +92,7 @@ public class AbstractFactTest {
         measureType2.setValue(new BigDecimal("20"));
         measureType2.setUnitCode("KK");
 
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KK"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2), "K", "KK"));
     }
 
     @Test
@@ -184,6 +184,13 @@ public class AbstractFactTest {
 
         assertTrue(fact.allValueContainsMatch(codeTypes, "dd"));
 
+        assertTrue(fact.allValueContainsMatch(codeTypes, null));
+
+    }
+
+    @Test
+    public void TestIsEmpty() {
+        assertTrue(fact.isEmpty(new ArrayList<>()));
     }
 
 
@@ -551,11 +558,18 @@ public class AbstractFactTest {
     public void testListIdContainsAny() {
 
         CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdContainsAny(codeTypes, "CFR");
         assertFalse(result);
+
+        result = fact.listIdContainsAny(codeTypes, null);
+        assertTrue(result);
+
+        CodeType newCodeType = RuleTestHelper.getCodeType("value1","CFR");
+        result = fact.listIdContainsAny(codeTypes, "ABC");
+        assertTrue(result);
     }
 
 
@@ -567,6 +581,9 @@ public class AbstractFactTest {
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
+        assertFalse(result);
+
+        result = fact.valueContainsAny(codeType1, "value1");
         assertFalse(result);
     }
 
