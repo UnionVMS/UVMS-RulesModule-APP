@@ -120,7 +120,7 @@ public class TemplateEngineBeanTest {
             Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
             Mockito.doNothing().when(ruleEvaluator).reInitializeKieSystem();
             Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
-            templateEngine.initialize();
+            templateEngine.reInitialize();
         } catch (Exception e) {
             assertNull(e);
         }
