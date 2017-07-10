@@ -13,6 +13,10 @@ package eu.europa.ec.fisheries.uvms.rules.message.constants;
 
 public class MessageConstants {
 
+    private MessageConstants() {
+        super();
+    }
+
     public static final String CONNECTION_FACTORY = "ConnectionFactory";
     public static final String CONNECTION_TYPE = "javax.jms.MessageListener";
     public static final String DESTINATION_TYPE_QUEUE = "javax.jms.Queue";

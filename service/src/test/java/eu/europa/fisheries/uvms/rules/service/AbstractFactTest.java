@@ -484,6 +484,29 @@ public class AbstractFactTest {
         assertFalse(result);
     }
 
+    @Test
+    public void testSchemeIdContainsAllWithNull() {
+
+        assertTrue(fact.schemeIdContainsAll(new ArrayList<IdType>(), null));
+    }
+
+    @Test
+    public void testValueContainsAllWithNull() {
+
+        assertTrue(fact.valueContainsAll(new ArrayList<IdType>(), null));
+    }
+
+    @Test
+    public void testSchemeIdContainsAnyWithNull() {
+
+        assertTrue(fact.schemeIdContainsAny(new ArrayList<IdType>(), null));
+    }
+
+    @Test
+    public void testCheckContactListContainsAnyWithNull() {
+
+        assertTrue(fact.checkContactListContainsAny(null, true, true));
+    }
 
     @Test
     public void testListIdContainsAny() {
