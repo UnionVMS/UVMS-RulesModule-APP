@@ -574,6 +574,10 @@ public class ActivityFactMapper {
 
     public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity) {
 
+        if(activity == null){
+            return Collections.emptyList();
+        }
+
         List<FACatch> faCatches = activity.getSpecifiedFACatches();
         List<FLUXLocation> relatedFLUXLocations = activity.getRelatedFLUXLocations();
         List<FaCatchFact> facts = new ArrayList<>();
