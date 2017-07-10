@@ -13,12 +13,24 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +43,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 public abstract class AbstractFact {
@@ -260,14 +264,12 @@ public abstract class AbstractFact {
         return false;
     }
 
-
     private boolean validateFormat(String value, String format) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
         }
         return value.matches(format);
     }
-
 
     public boolean listIdContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
@@ -283,6 +285,12 @@ public abstract class AbstractFact {
         return false;
     }
 
+    /**
+     * Checks if valuesToMatch strings are ALL present in list of measureTypes
+     * @param measureTypes
+     * @param valuesToMatch
+     * @return
+     */
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
             return true;
@@ -311,8 +319,6 @@ public abstract class AbstractFact {
         }
         return false;
     }
-
-
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
         return idType == null || schemeIdContainsAll(Collections.singletonList(idType), values);
@@ -405,7 +411,8 @@ public abstract class AbstractFact {
             return -1;
         }
 
-        return value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
+        int i = value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
+        return Integer.toString(i).length();
     }
 
     public boolean isPositive(List<MeasureType> value) {
@@ -455,7 +462,7 @@ public abstract class AbstractFact {
     }
 
     public boolean allValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
-        if (valueToMatch == null || valueToMatch.length() == 0) {
+        if (valueToMatch == null || valueToMatch.length() == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
 
@@ -520,11 +527,11 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-        public String getFormatStr() {
+        String getFormatStr() {
             return formatStr;
         }
 
-        public void setFormatStr(String formatStr) {
+        void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
     }
@@ -622,10 +629,10 @@ public abstract class AbstractFact {
         return true;
     }
 
-
     public Integer getSequence() {
         return sequence;
     }
+
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }

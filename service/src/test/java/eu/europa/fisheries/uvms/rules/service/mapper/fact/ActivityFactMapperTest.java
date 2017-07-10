@@ -10,6 +10,40 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -21,8 +55,28 @@ import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -33,6 +87,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 /**
  * @author Gregory Rinaldi
@@ -508,5 +564,69 @@ public class ActivityFactMapperTest {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(testXmlPath));
         return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
+
+    @Test
+    public void testGenerateFactsForRelocation() {
+
+        FishingActivity fishingActivity = new FishingActivity();
+
+        fishingActivity.setTypeCode(codeType);
+
+        FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(fishingActivity);
+
+        assertEquals(codeType.getValue(), faRelocationFact.getTypeCode());
+    }
+
+
+    @Test
+    public void testGenerateFactsForDiscard() {
+
+        FishingActivity fishingActivity = new FishingActivity();
+
+        fishingActivity.setTypeCode(codeType);
+
+        FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity);
+
+        assertEquals(codeType.getValue(), faDiscardFact.getTypeCode());
+    }
+
+    @Test
+    public void testGenerateFactsForFluxCharacteristics() {
+
+        FLUXCharacteristic characteristic = new FLUXCharacteristic();
+        characteristic.setTypeCode(codeType);
+
+        List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(Arrays.asList(characteristic));
+
+        assertEquals(codeType.getValue(), fluxCharacteristicsFacts.get(0).getTypeCode());
+    }
+
+    @Test
+    public void testGenerateFactsForVesselStorageCharacteristics() {
+
+        VesselStorageCharacteristic vesselStorageCharacteristic = new VesselStorageCharacteristic();
+        vesselStorageCharacteristic.setTypeCodes(Arrays.asList(codeType));
+
+        List<VesselStorageCharacteristicsFact> vesselStorageCharacteristicsFacts = activityMapper.generateFactsForVesselStorageCharacteristics(Arrays.asList(vesselStorageCharacteristic));
+
+        assertEquals(codeType.getValue(), vesselStorageCharacteristicsFacts.get(0).getTypeCodes().get(0).getValue());
+    }
+
+    @Test
+    public void testGenerateFactsForGearProblem() {
+
+        GearProblem gearProblem = new GearProblem();
+        gearProblem.setTypeCode(codeType);
+
+        GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(gearProblem);
+
+        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode());
+
+    }
+
+
+
+
+
 
 }

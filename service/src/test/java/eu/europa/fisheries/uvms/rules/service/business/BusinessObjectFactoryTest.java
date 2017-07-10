@@ -15,6 +15,7 @@ import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -25,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -103,12 +105,34 @@ public class BusinessObjectFactoryTest {
         assertTrue(threw);
     }
 
+    @Test
+    public void testSetBusinessObjectMessageNull_ActivityQueryFactGenerator() {
+        try {
+            ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+            activityQueryFactGenerator.setBusinessObjectMessage(new FAQuery());
+        } catch (RulesValidationException e) {
+            assertNull(e);
+        }
+    }
+
+    @Test(expected = RulesValidationException.class)
+    @SneakyThrows
+    public void testSetBusinessObjectMessageException_ActivityQueryFactGenerator() {
+        ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+        activityQueryFactGenerator.setBusinessObjectMessage(new Object());
+    }
+
+    @Test
+    public void testGenerateAllFacts_ActivityQueryFactGenerator() {
+        ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+        List<AbstractFact> facts = activityQueryFactGenerator.generateAllFacts();
+        assertNull(facts);
+    }
+
 
     @SneakyThrows
     private FLUXFAReportMessage loadTestData(String filePath) {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
         return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
-
-
 }
