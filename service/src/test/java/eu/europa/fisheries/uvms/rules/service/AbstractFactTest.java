@@ -10,10 +10,6 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +34,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -81,7 +79,7 @@ public class AbstractFactTest {
         MeasureType measureType = new MeasureType();
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
 
     @Test
@@ -107,7 +105,7 @@ public class AbstractFactTest {
         measureType2.setValue(new BigDecimal("20"));
         measureType2.setUnitCode("KK");
 
-        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KKKKK"));
+        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2), "K", "KKKKK"));
     }
 
 
@@ -123,7 +121,7 @@ public class AbstractFactTest {
 
         periods.add(period);
 
-        assertFalse(fact.validateDelimitedPeriod(periods, true,true));
+        assertFalse(fact.validateDelimitedPeriod(periods, true, true));
     }
 
     @Test
@@ -137,7 +135,7 @@ public class AbstractFactTest {
 
         periods.add(period);
 
-        assertTrue(fact.validateDelimitedPeriod(periods, true,false));
+        assertTrue(fact.validateDelimitedPeriod(periods, true, false));
     }
 
     @Test
@@ -317,7 +315,7 @@ public class AbstractFactTest {
     @Test
     public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
 
-        assertTrue(fact.validateDelimitedPeriod(null, true,false));
+        assertTrue(fact.validateDelimitedPeriod(null, true, false));
     }
 
     @Test
@@ -325,7 +323,7 @@ public class AbstractFactTest {
         MeasureType measureType = new MeasureType();
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
 
 
@@ -394,6 +392,47 @@ public class AbstractFactTest {
         List<IdType> idTypes = Arrays.asList(uuidIdType);
         boolean result = fact.validateFormat(idTypes);
         assertTrue(result);
+    }
+
+    @Test
+    public void testValidateFormat_Exception() {
+        IdType uuidIdType = new IdType();
+        uuidIdType.setSchemeId("ABC");
+        uuidIdType.setValue("ballshjshdhdfhsgfd");
+        List<IdType> idTypes = Arrays.asList(uuidIdType);
+        boolean result = fact.validateFormat(idTypes);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateFormat_IdNull() {
+        List<IdType> ids = null;
+        boolean result = fact.validateFormat(ids);
+        assertTrue(result);
+
+        IdType id = null;
+        result = fact.validateFormat(id);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsAll() {
+        IdType id = null;
+        boolean result = fact.schemeIdContainsAll(id, "ABC");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testListIdContainsAll_WithoutList() {
+        CodeType codeType = null;
+        boolean result = fact.listIdContainsAll(codeType, "ABC");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testDateNow() {
+        Date date = fact.dateNow(-10);
+        assertNotNull(date);
     }
 
 
