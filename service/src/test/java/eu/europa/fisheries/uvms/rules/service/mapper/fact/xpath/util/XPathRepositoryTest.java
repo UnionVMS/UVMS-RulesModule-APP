@@ -293,20 +293,10 @@ public class XPathRepositoryTest {
 
 
     private FLUXFAReportMessage loadTestData() throws IOException, MdrModelMarshallException {
-        String fluxFaMessageStr = readTestFile(testXmlPath);
+        String fluxFaMessageStr = IOUtils.toString(new FileInputStream(testXmlPath));
         return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
 
-
-    /**
-     * Read test data xml file and return it asa string.
-     *
-     * @return
-     * @throws IOException
-     */
-    private String readTestFile(String fileName) throws IOException {
-        return IOUtils.toString(new FileInputStream(fileName));
-    }
 
     public static String preetyPrint(Object obj) throws JsonProcessingException {
         return new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true).writeValueAsString(obj);

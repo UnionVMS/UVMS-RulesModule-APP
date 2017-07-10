@@ -10,18 +10,24 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
 import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,6 +38,9 @@ import static org.junit.Assert.*;
  * @author Gregory Rinaldi
  */
 public class ActivityFactMapperTest {
+
+    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
+    FLUXFAReportMessage fluxFaTestMessage;
 
     private IDType idType;
     private CodeType codeType;
@@ -141,6 +150,8 @@ public class ActivityFactMapperTest {
         specifiedFACatch = new ArrayList<>();
         specifiedFACatch.add(faCatch);
 
+        fluxFaTestMessage = loadTestData();
+
     }
 
     @Test
@@ -180,32 +191,19 @@ public class ActivityFactMapperTest {
     @Test
     public void testGenerateFactForFishingActivity() {
 
-        FishingActivity fishingActivity = new FishingActivity();
+        List<FAReportDocument> faReportDocuments = fluxFaTestMessage.getFAReportDocuments();
+        FAReportDocument faReportDocument = faReportDocuments.iterator().next();
+        List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
 
-        fishingActivity.setReasonCode(codeType);
-        fishingActivity.setTypeCode(codeType);
-        fishingActivity.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
-        fishingActivity.setFisheryTypeCode(codeType);
-        fishingActivity.setOperationsQuantity(quantityType);
-        fishingActivity.setOccurrenceDateTime(dateTimeType);
-        fishingActivity.setSpeciesTargetCode(codeType);
-        fishingActivity.setRelatedFishingActivities(Collections.singletonList(fishingActivity));
-        fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
-        fishingActivity.setSpecifiedFishingTrip(fishingTrip);
+        List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(specifiedFishingActivities, faReportDocument);
 
-        //List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(Collections.singletonList(fishingActivity, null));
+        assertNotNull(fishingActivityFacts);
+        assertTrue(fishingActivityFacts.size() == 1);
 
-        //assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getReasonCode().getValue());
-        //assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getTypeCode().getValue());
-        //assertEquals(delimitedPeriod.getDurationMeasure(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getDurationMeasure());
-        //assertEquals(delimitedPeriod.getEndDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getEndDateTime());
-        //assertEquals(delimitedPeriod.getStartDateTime(), fishingActivityFacts.get(0).getDelimitedPeriods().get(0).getStartDateTime());
-        //assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getFisheryTypeCode().getValue());
-        //assertEquals(quantityType.getValue().intValue(), fishingActivityFacts.get(0).getOperationQuantity(), 0);
-        //assertEquals(codeType.getValue(), fishingActivityFacts.get(0).getSpeciesTargetCode().getValue());
-        //assertEquals(fishingActivity, fishingActivityFacts.get(0).getRelatedFishingActivities().get(0));
-        //assertEquals(fluxLocation, fishingActivityFacts.get(0).getRelatedFLUXLocations().get(0));
-        //assertEquals(fishingTrip, fishingActivityFacts.get(0).getSpecifiedFishingTrip());
+        FishingActivityFact fishingActivityFact = fishingActivityFacts.get(0);
+
+        assertEquals(fishingActivityFact.getTypeCode().getValue(), "LANDING");
+        assertEquals(fishingActivityFact.getOccurrenceDateTime().toString(), "Sun Apr 17 09:02:00 CEST 2016");
 
     }
 
@@ -505,5 +503,10 @@ public class ActivityFactMapperTest {
 
     }
 
+
+    private FLUXFAReportMessage loadTestData() throws IOException, MdrModelMarshallException {
+        String fluxFaMessageStr = IOUtils.toString(new FileInputStream(testXmlPath));
+        return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
+    }
 
 }
