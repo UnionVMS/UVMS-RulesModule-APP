@@ -527,11 +527,11 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-        public String getFormatStr() {
+        String getFormatStr() {
             return formatStr;
         }
 
-        public void setFormatStr(String formatStr) {
+        void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
     }
