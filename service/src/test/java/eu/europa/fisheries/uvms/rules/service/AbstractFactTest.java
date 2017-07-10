@@ -10,17 +10,9 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,9 +21,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 /**
  * @author Gregory Rinaldi
@@ -61,6 +66,214 @@ public class AbstractFactTest {
         List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
         assertTrue(fact.listIdContainsAll(codeTypes, "AREA"));
     }
+
+    @Test
+    public void testUnitCodeContainsAllWithEmptyList() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("200"));
+        measureType.setUnitCode("K");
+        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType)));
+    }
+
+    @Test
+    public void testUnitCodeContainsAllShouldReturnFalseWhenValueToMachSame() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("200"));
+        measureType.setUnitCode("K");
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+    }
+
+    @Test
+    public void testUnitCodeContainsAllShouldReturnFalseWhenValuesToMachSame() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("200"));
+        measureType.setUnitCode("K");
+
+        MeasureType measureType2 = new MeasureType();
+        measureType2.setValue(new BigDecimal("20"));
+        measureType2.setUnitCode("KK");
+
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KK"));
+    }
+
+    @Test
+    public void testUnitCodeContainsAllShouldReturnTrueWhenValuesToMachNotMatchAll() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("200"));
+        measureType.setUnitCode("K");
+
+        MeasureType measureType2 = new MeasureType();
+        measureType2.setValue(new BigDecimal("20"));
+        measureType2.setUnitCode("KK");
+
+        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KKKKK"));
+    }
+
+
+    @Test
+    public void testValidateDelimitedPeriodShouldReturnFalseWhenStartEndDatePresent() {
+
+        List<DelimitedPeriod> periods = new ArrayList<>();
+
+        DelimitedPeriod period = new DelimitedPeriod();
+        period.setStartDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+
+        period.setEndDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+
+        periods.add(period);
+
+        assertFalse(fact.validateDelimitedPeriod(periods, true,true));
+    }
+
+    @Test
+    public void testValidateDelimitedPeriodShouldReturnTrueWhenStartDateNotPresent() {
+
+        List<DelimitedPeriod> periods = new ArrayList<>();
+
+        DelimitedPeriod period = new DelimitedPeriod();
+
+        period.setEndDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+
+        periods.add(period);
+
+        assertTrue(fact.validateDelimitedPeriod(periods, true,false));
+    }
+
+    @Test
+    public void testValidateFluxLocationsForFaCatchShouldReturnFalseWithEmptyList() {
+        List<FACatch> faCatchFacts = new ArrayList<>();
+        assertFalse(fact.validateFluxLocationsForFaCatch(faCatchFacts));
+    }
+
+    @Test
+    public void testValidateFluxLocationsForFaCatchShouldReturnTrueWithEmptySpecifiedFLUXLocationsList() {
+        List<FACatch> faCatchFacts = new ArrayList<>();
+
+        FACatch faCatch = new FACatch();
+        faCatch.setSpecifiedFLUXLocations(new ArrayList<FLUXLocation>());
+
+        faCatchFacts.add(faCatch);
+
+        assertTrue(fact.validateFluxLocationsForFaCatch(faCatchFacts));
+    }
+
+    @Test
+    public void testValidateFluxLocationsForFaCatchShouldReturnFalseWithNonEmptySpecifiedFLUXLocationsList() {
+        List<FACatch> faCatchFacts = new ArrayList<>();
+
+        FACatch faCatch = new FACatch();
+        ArrayList<FLUXLocation> fluxLocations = new ArrayList<>();
+
+        FLUXLocation fluxLocation = new FLUXLocation();
+        fluxLocations.add(fluxLocation);
+
+        faCatch.setSpecifiedFLUXLocations(fluxLocations);
+
+        faCatchFacts.add(faCatch);
+
+        assertFalse(fact.validateFluxLocationsForFaCatch(faCatchFacts));
+    }
+
+
+    @Test
+    public void testAllValueContainsMatchShouldReturnTrueWithNonMatchingValue() {
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setValue("ddd");
+        codeTypes.add(codeType);
+
+        assertTrue(fact.allValueContainsMatch(codeTypes, "dd"));
+
+    }
+
+
+    @Test
+    public void testAllValueContainsMatchShouldReturnTrueWithNotAllMatchingValue() {
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setValue("ddd");
+        codeTypes.add(codeType);
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("dd");
+        codeTypes.add(codeType2);
+
+        assertTrue(fact.allValueContainsMatch(codeTypes, "dd"));
+
+    }
+
+    @Test
+    public void testAllValueContainsMatchHappy() {
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setValue("dd");
+        codeTypes.add(codeType);
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("dd");
+        codeTypes.add(codeType2);
+
+        assertFalse(fact.allValueContainsMatch(codeTypes, "dd"));
+
+    }
+
+    @Test
+    public void testNumberOfDecimalsHappy() {
+        assertEquals(4, fact.numberOfDecimals(new BigDecimal("10.3902")));
+    }
+
+    @Test
+    public void testNumberOfDecimalsSad() {
+        assertEquals(-1, fact.numberOfDecimals(null));
+    }
+
+    @Test
+    public void testIsInRangeHappy() {
+        assertFalse(fact.isInRange(new BigDecimal("-9"), -10, 200));
+    }
+
+    @Test
+    public void testIsInRangeSad() {
+        assertTrue(fact.isInRange(new BigDecimal("-10"), -10, 200));
+    }
+
+    @Test
+    public void testIsInRangeNull() {
+        assertTrue(fact.isInRange(null, -10, 200));
+    }
+
+    @Test
+    public void testIsPositiveShouldReturnTrueWithNegativeValue() {
+        assertTrue(fact.isPositive(new BigDecimal("-10")));
+    }
+
+    @Test
+    public void testIsPositiveShouldReturnTrueWithNull() {
+        assertTrue(fact.isPositive((BigDecimal) null));
+    }
+
+    @Test
+    public void testIsPositiveShouldReturnFalseWithPositiveValue() {
+        assertFalse(fact.isPositive(new BigDecimal("10")));
+    }
+
+    @Test
+    public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
+
+        assertTrue(fact.validateDelimitedPeriod(null, true,false));
+    }
+
+    @Test
+    public void testUnitCodeContainsAllHappy() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("200"));
+        measureType.setUnitCode("K");
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+    }
+
 
     @Test
     public void testValidateIDTypeHappy() {
