@@ -156,6 +156,14 @@ public class ActivityFactMapperTest {
     }
 
     @Test
+    public void testGenerateFactsForNotificationOfTranshipment(){
+        final FAReportDocument farep = fluxFaTestMessage.getFAReportDocuments().iterator().next();
+        final FishingActivity fishAct = farep.getSpecifiedFishingActivities().iterator().next();
+        final FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = activityMapper.generateFactsForNotificationOfTranshipment(fishAct, farep);
+        assertNotNull(faNotificationOfTranshipmentFact);
+    }
+
+    @Test
     public void testGenerateFactForVesselTransportMean() {
 
         VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
@@ -623,6 +631,13 @@ public class ActivityFactMapperTest {
         final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null);
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
+        final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
+        final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null);
+        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristics(null);
+        final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
+        final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
+        final FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = activityMapper.generateFactsForNotificationOfTranshipment(null, null);
+
         assertTrue(CollectionUtils.isEmpty(vesselStorageCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(fluxCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(faCatchFacts));
@@ -635,6 +650,7 @@ public class ActivityFactMapperTest {
         assertTrue(CollectionUtils.isEmpty(fishingGearFacts));
         assertTrue(CollectionUtils.isEmpty(faReportDocumentFacts));
         assertTrue(CollectionUtils.isEmpty(gearProblemFacts));
+        assertTrue(CollectionUtils.isEmpty(fluxLocationFacts));
 
         assertNull(faDiscardFact);
         assertNull(faRelocationFact);
@@ -657,7 +673,20 @@ public class ActivityFactMapperTest {
         assertNull(gearCharacteristicsFact);
         assertNull(gearProblemFact);
         assertNull(fishingActivityFact1);
+        assertNull(fishingTripFact);
+        assertNull(fluxCharacteristicsFact);
+        assertNull(faExitFromSeaFact);
+        assertNull(faTranshipmentFact);
+        assertNull(faNotificationOfTranshipmentFact);
 
+    }
+
+    public void testNullInsideObjects(){
+        FishingActivity faAct = new FishingActivity();
+        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct);
+
+        List<GearProblem> gearList = new ArrayList<GearProblem>(){{add(new GearProblem());}};
+        activityMapper.generateFactsForGearProblems(gearList);
     }
 
 
