@@ -237,4 +237,19 @@ public class SalesFishingActivityFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans);
     }
+
+    // todo test
+    public boolean isRelatedFLUXLocationsEmptyOrTypeLocation() {
+        if (isEmpty(relatedFLUXLocations)){
+            return true;
+        }
+
+        for (FLUXLocationType location: relatedFLUXLocations) {
+            if (location != null && location.getTypeCode() != null && location.getTypeCode().getValue() != "LOCATION"){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

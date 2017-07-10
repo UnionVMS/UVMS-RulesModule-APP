@@ -68,4 +68,5 @@ public class SalesEventFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches);
     }
+
 }

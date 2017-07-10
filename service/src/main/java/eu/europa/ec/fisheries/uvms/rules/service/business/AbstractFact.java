@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -524,6 +525,58 @@ public abstract class AbstractFact {
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
         return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    // TODO test
+    public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
+        return sourceList == null || (sourceList.size() <= maxNumberOfItems && sourceList.size() <= minNumberOfItems);
+    }
+
+    // TODO test
+    public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
+        return sourceList != null && sourceList.size() <= maxNumberOfItems && sourceList.size() <= minNumberOfItems;
+    }
+
+    // TODO test
+    public boolean isListEmptyOrAllValuesUnique(List<CodeType> sourceList){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> values = new ArrayList<>();
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                continue;
+            }
+
+            if (values.contains(codeType.getValue())) {
+                return false;
+            }
+
+            values.add(codeType.getValue());
+        }
+
+        return true;
+    }
+
+    // TODO test
+    public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> matchList =  Arrays.asList(valuesToMatch);
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                return false;
+            }
+
+            if (matchList.contains(codeType.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
