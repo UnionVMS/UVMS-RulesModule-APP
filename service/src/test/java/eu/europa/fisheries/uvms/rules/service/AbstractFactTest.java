@@ -11,20 +11,12 @@
 package eu.europa.fisheries.uvms.rules.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -191,6 +183,25 @@ public class AbstractFactTest {
     @Test
     public void TestIsEmpty() {
         assertTrue(fact.isEmpty(new ArrayList<>()));
+    }
+
+    @Test
+    public void testVesselIdsMatch() {
+        List<IdType> vesselIds = null;
+        IdType vesselCountryId = null;
+        List<IdTypeWithFlagState> additionalObjectList = null;
+        boolean result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertFalse(result);
+
+        vesselIds = Arrays.asList(RuleTestHelper.getIdType("VSl1", "TESTVSL"));
+        vesselCountryId = RuleTestHelper.getIdType("BEL", "TESTCOUNTRY");
+        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));;
+        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertFalse(result);
+
+        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
+        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertTrue(result);
     }
 
 
