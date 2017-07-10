@@ -38,7 +38,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -278,10 +277,78 @@ public class XPathRepositoryTest {
     @Test
     @SneakyThrows
     public void testAllXPathConstants(){
-        final Field[] fields = XPathConstants.class.getFields();
-        for(Field field : fields){
-            System.out.print("Constant : "+field.get(field));
-        }
+        List<String> constantsList = new ArrayList<>();
+        constantsList.add(XPathConstants.FLUXFA_REPORT_MESSAGE);
+        constantsList.add(XPathConstants.FA_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_ACTIVITY);
+        constantsList.add(XPathConstants.FLUX_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.CREATION_DATE_TIME);
+        constantsList.add(XPathConstants.ID);
+        constantsList.add(XPathConstants.REFERENCED_ID);
+        constantsList.add(XPathConstants.OWNER_FLUX_PARTY);
+        constantsList.add(XPathConstants.PURPOSE_CODE);
+        constantsList.add(XPathConstants.REGISTRATION_VESSEL_COUNTRY);
+        constantsList.add(XPathConstants.SPECIFIED_CONTACT_PARTY);
+        constantsList.add(XPathConstants.SPECIFIED_CONTACT_PERSON);
+        constantsList.add(XPathConstants.ROLE_CODE);
+        constantsList.add(XPathConstants.ACCEPTANCE_DATE_TIME);
+        constantsList.add(XPathConstants.RELATED_FLUX_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.TYPE_CODE);
+        constantsList.add(XPathConstants.RELATED_REPORT_ID);
+        constantsList.add(XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS);
+        constantsList.add(XPathConstants.RELATED_FISHING_ACTIVITY);
+        constantsList.add(XPathConstants.SPECIFIED_DELIMITED_PERIOD);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_TRIP);
+        constantsList.add(XPathConstants.DURATION_MEASURE);
+        constantsList.add(XPathConstants.OPERATIONS_QUANTITY);
+        constantsList.add(XPathConstants.RELATED_FLUX_LOCATION);
+        constantsList.add(XPathConstants.OCCURRENCE_DATE_TIME);
+        constantsList.add(XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC);
+        constantsList.add(XPathConstants.REASON_CODE);
+        constantsList.add(XPathConstants.FISHERY_TYPE_CODE);
+        constantsList.add(XPathConstants.SPECIES_TARGET_CODE);
+        constantsList.add(XPathConstants.VESSEL_RELATED_ACTIVITY_CODE);
+        constantsList.add(XPathConstants.SPECIFIED_FA_CATCH);
+        constantsList.add(XPathConstants.SPECIES_CODE);
+        constantsList.add(XPathConstants.APPLIED_AAP_PROCESS);
+        constantsList.add(XPathConstants.RESULT_AAP_PRODUCT);
+        constantsList.add(XPathConstants.CLASS_CODE);
+        constantsList.add(XPathConstants.SPECIFIED_SIZE_DISTRIBUTION);
+        constantsList.add(XPathConstants.UNIT_QUANTITY);
+        constantsList.add(XPathConstants.WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.PACKAGING_TYPE_CODE);
+        constantsList.add(XPathConstants.PACKAGING_UNIT_QUANTITY);
+        constantsList.add(XPathConstants.PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_GEAR);
+        constantsList.add(XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC);
+        constantsList.add(XPathConstants.SPECIFIED_GEAR_PROBLEM);
+        constantsList.add(XPathConstants.APPLICABLE_FLUX_CHARACTERISTIC);
+        constantsList.add(XPathConstants.COUNTRY_ID);
+        constantsList.add(XPathConstants.SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE);
+        constantsList.add(XPathConstants.PHYSICAL_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.POSTAL_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.POSTCODE_CODE);
+        constantsList.add(XPathConstants.CITY_NAME);
+        constantsList.add(XPathConstants.STREET_NAME);
+        constantsList.add(XPathConstants.PLOT_IDENTIFICATION);
+        constantsList.add(XPathConstants.SPECIFIED_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS);
+        constantsList.add(XPathConstants.SPECIFIED_FLUX_LOCATION);
+        constantsList.add(XPathConstants.DESTINATION_FLUX_LOCATION);
+        constantsList.add(XPathConstants.CONVERSION_FACTOR_NUMERIC);
+        constantsList.add(XPathConstants.CATEGORY_CODE);
+        constantsList.add(XPathConstants.WEIGHING_MEANS_CODE);
+        constantsList.add(XPathConstants.RELATED_FISHING_TRIP);
+        constantsList.add(XPathConstants.VALUE_QUANTITY);
+        constantsList.add(XPathConstants.RELATED_FISHING_GEAR);
+        constantsList.add(XPathConstants.USED_FISHING_GEAR);
+        constantsList.add(XPathConstants.FLUX_RESPONSE_DOCUMENT);
+        constantsList.add(XPathConstants.FLUX_RESPONSE_MESSAGE);
+        constantsList.add(XPathConstants.AVERAGE_WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE);
+
+        assertTrue(CollectionUtils.isNotEmpty(constantsList));
+
     }
 
     private void generateFactList() throws RulesValidationException {
