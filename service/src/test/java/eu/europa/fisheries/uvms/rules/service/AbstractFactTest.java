@@ -480,6 +480,15 @@ public class AbstractFactTest {
         codeTypes.add(new IdType("DEMINIMIS"));
         boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
+
+        result=fact.isIdTypePresentInMDRList(null,codeTypes);
+        assertFalse(result);
+
+        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Collections.<IdType>emptyList());
+        assertFalse(result);
+
+        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Arrays.asList(new IdType("BOARD")));
+        assertFalse(result);
     }
 
 
