@@ -650,6 +650,7 @@ public class ActivityFactMapperTest {
         assertTrue(CollectionUtils.isEmpty(fishingGearFacts));
         assertTrue(CollectionUtils.isEmpty(faReportDocumentFacts));
         assertTrue(CollectionUtils.isEmpty(gearProblemFacts));
+        assertTrue(CollectionUtils.isEmpty(fluxLocationFacts));
 
         assertNull(faDiscardFact);
         assertNull(faRelocationFact);
@@ -673,7 +674,6 @@ public class ActivityFactMapperTest {
         assertNull(gearProblemFact);
         assertNull(fishingActivityFact1);
         assertNull(fishingTripFact);
-        assertNull(fluxLocationFacts);
         assertNull(fluxCharacteristicsFact);
         assertNull(faExitFromSeaFact);
         assertNull(faTranshipmentFact);
