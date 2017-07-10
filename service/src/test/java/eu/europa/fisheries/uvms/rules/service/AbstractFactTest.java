@@ -15,11 +15,17 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 
 import java.util.*;
 
@@ -152,5 +158,105 @@ public class AbstractFactTest {
         assertEquals(true, result);
     }
 
+    @Test
+    public void testRetrieveFishingGearTypeCode() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("GEAR_TYPE");
+        typeCode.setValue("PS");
+
+        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
+        assertEquals(FishingGearTypeCode.PS, fishingGearTypeCode);
+    }
+
+    @Test
+    public void testRetrieveFishingGearTypeCodeIsNull() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("GEAR_TYPE");
+        typeCode.setValue(StringUtils.EMPTY);
+
+        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
+        assertNull(fishingGearTypeCode);
+    }
+
+    @Test
+    public void testGearCharacteristicCode() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("PS");
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("ME");
+        gearCharacteristic.setTypeCode(codeType);
+
+        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
+        assertEquals(FishingGearCharacteristicCode.ME, fishingGearCharacteristicCode);
+    }
+
+    @Test
+    public void testGearCharacteristicCodeIsNull() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue(StringUtils.EMPTY);
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue(StringUtils.EMPTY);
+
+        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
+        assertNull(fishingGearCharacteristicCode);
+    }
+
+    @Test
+    public void testIsRequiredGearCharacteristicsPresent() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("ME");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GM");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GN");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("TBB");
+
+        fishingGearFact.setTypeCode(typeCode);
+        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+
+        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
+    public void testIsRequiredGearCharacteristicsPresentNoRequired() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
+
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("RG");
+
+        fishingGearFact.setTypeCode(typeCode);
+        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+
+        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
 
 }

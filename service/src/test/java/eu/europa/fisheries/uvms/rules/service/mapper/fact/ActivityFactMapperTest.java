@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
 import static org.junit.Assert.*;
 
 /**
@@ -252,7 +253,9 @@ public class ActivityFactMapperTest {
         faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
 
         FishingActivity faActivity = new FishingActivity();
-        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>(){{add(faCatch);}});
+        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>() {{
+            add(faCatch);
+        }});
         faActivity.setRelatedFLUXLocations(null);
 
         FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity).get(0);
@@ -293,7 +296,7 @@ public class ActivityFactMapperTest {
         fishingGear.setTypeCode(codeType);
         fishingGear.setApplicableGearCharacteristics(applicableGearCharacteristics);
 
-        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear);
+        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear, SPECIFIED_FISHING_GEAR);
 
         assertEquals(codeType.getValue(), fishingGearFact.getTypeCode().getValue());
         assertNotNull(fishingGearFact.getApplicableGearCharacteristics());
@@ -504,6 +507,5 @@ public class ActivityFactMapperTest {
 
 
     }
-
 
 }
