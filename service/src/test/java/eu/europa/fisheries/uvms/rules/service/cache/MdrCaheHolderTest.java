@@ -10,13 +10,13 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.cache;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -36,10 +36,8 @@ public class MdrCaheHolderTest {
     @Test
     public void testCacheFillAndGet(){
 
-        String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
-        String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED"};
-        mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
-        mdrCacheHolder.addToCache(MDRAcronymType.FA_CATCH_TYPE,Arrays.asList(faCatchCodes));
+        mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
+        mdrCacheHolder.addToCache(MDRAcronymType.FA_CATCH_TYPE,RuleTestHelper.getObjectRepresentationForFA_CATCH());
 
         final List<String> gearTypeList = mdrCacheHolder.getList(MDRAcronymType.GEAR_TYPE);
         final List<String> faCatchType = mdrCacheHolder.getList(MDRAcronymType.FA_CATCH_TYPE);

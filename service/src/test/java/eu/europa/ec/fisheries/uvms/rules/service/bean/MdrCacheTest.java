@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.jms.TextMessage;
 import java.util.List;
@@ -80,7 +81,7 @@ public class MdrCacheTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
-        List<String> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
+        List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
 
         assertTrue(CollectionUtils.isNotEmpty(faCatchTypeEntries));
     }

@@ -27,7 +27,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.TextMessage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,14 +39,16 @@ import static java.util.Collections.emptyList;
 @Singleton
 @Slf4j
 public class MDRCache {
-
-    private LoadingCache<MDRAcronymType, List<String>> cache;
+    public static MDRCache reference;
+    private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
     private RulesResponseConsumer consumer;
 
     @EJB
     private RulesMessageProducer producer;
+
+
 
     public MDRCache() {
         if (cache == null) {
@@ -56,9 +57,9 @@ public class MDRCache {
                     .expireAfterWrite(1, TimeUnit.HOURS)
                     .refreshAfterWrite(1, TimeUnit.HOURS)
                     .build(
-                            new CacheLoader<MDRAcronymType, List<String>>() {
+                            new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
                                 @Override
-                                public List<String> load(MDRAcronymType acronymType) throws Exception {
+                                public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
                                     return mdrCodeListByAcronymType(acronymType);
                                 }
                             }
@@ -66,8 +67,8 @@ public class MDRCache {
         }
     }
 
-    public List<String> getEntry(MDRAcronymType acronymType) {
-        List<String> result = emptyList();
+    public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
+        List<ObjectRepresentation> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
@@ -75,22 +76,20 @@ public class MDRCache {
     }
 
     @SneakyThrows
-    private List<String> mdrCodeListByAcronymType(MDRAcronymType acronym) {
+    private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         log.debug("Contact MDR to get lists");
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
         String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(s, TextMessage.class);
 
-        List<String> stringList = new ArrayList<>();
-
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
-            for (ObjectRepresentation objectRep : response.getDataSets()) {
-                extractCodes(stringList, objectRep);
-            }
+            return response.getDataSets();
+
         }
-        return stringList;
+      return null;
     }
+
 
     private void extractCodes(List<String> stringList, ObjectRepresentation objectRep) {
         for (ColumnDataType nameVal : objectRep.getFields()) {

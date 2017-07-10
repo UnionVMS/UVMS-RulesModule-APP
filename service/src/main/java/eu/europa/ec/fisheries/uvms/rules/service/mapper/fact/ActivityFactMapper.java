@@ -532,10 +532,10 @@ public class ActivityFactMapper {
         xPathUtil.append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
 
         gearCharacteristicsFact.setValueCode(mapToCodeType(gearCharacteristic.getValueCode()));
-        xPathUtil.append(XPathConstants.VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
+        xPathUtil.append(VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
 
         gearCharacteristicsFact.setValueQuantity(mapQuantityTypeToMeasureType(gearCharacteristic.getValueQuantity()));
-        xPathUtil.append(XPathConstants.VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
+        xPathUtil.append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
 
         return gearCharacteristicsFact;
     }

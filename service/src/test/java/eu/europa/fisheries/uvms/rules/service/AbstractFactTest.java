@@ -43,10 +43,8 @@ public class AbstractFactTest {
     @Before
     public void before() {
 
-        String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
-        String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED" };
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
     }
 
 

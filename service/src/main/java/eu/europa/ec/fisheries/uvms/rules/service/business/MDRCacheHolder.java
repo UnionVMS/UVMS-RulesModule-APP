@@ -10,7 +10,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MDRCacheHolder {
 
-    private static Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
+    private static Map<MDRAcronymType, List<ObjectRepresentation>> cache =new ConcurrentHashMap<>();
 
     private MDRCacheHolder(){
         super();
@@ -39,12 +43,28 @@ public class MDRCacheHolder {
         return Holder.INSTANCE;
     }
 
-    public void addToCache(MDRAcronymType type, List<String> values){
+    public void addToCache(MDRAcronymType type, List<ObjectRepresentation> values){
              cache.put(type,values);
     }
 
     public List<String> getList(MDRAcronymType type){
-        return cache.get(type);
+        List<String> codeColumnValues=new ArrayList<>();
+
+        List<ObjectRepresentation>  ObjectRepresentationList= cache.get(type);
+
+        for(ObjectRepresentation representation:ObjectRepresentationList){
+            List<ColumnDataType> columnDataTypes= representation.getFields();
+            if(CollectionUtils.isEmpty(columnDataTypes)){
+                continue;
+            }
+            for (ColumnDataType nameVal : columnDataTypes) {
+                if ("code".equals(nameVal.getColumnName())) {
+                    codeColumnValues.add(nameVal.getColumnValue());
+                }
+            }
+        }
+
+        return codeColumnValues;
     }
 
 }
