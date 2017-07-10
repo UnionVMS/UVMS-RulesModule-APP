@@ -608,12 +608,24 @@ public class ActivityFactMapperTest {
         final FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(null, true);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
 
+
+        final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
+        final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxReportMessage(null);
+        final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
+        final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
+        final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null);
+        final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null);
+
         assertTrue(CollectionUtils.isEmpty(vesselStorageCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(fluxCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(faCatchFacts));
         assertTrue(CollectionUtils.isEmpty(gearList));
         assertTrue(CollectionUtils.isEmpty(fishingTripFacts));
         assertTrue(CollectionUtils.isEmpty(gearCharacteristicsFacts));
+        assertTrue(CollectionUtils.isEmpty(fishingActivityFacts));
+        assertTrue(CollectionUtils.isEmpty(vesselTransportMeansFacts));
+        assertTrue(CollectionUtils.isEmpty(structuredAddressFacts));
+        assertTrue(CollectionUtils.isEmpty(fishingGearFacts));
 
         assertNull(faDiscardFact);
         assertNull(faRelocationFact);
@@ -629,6 +641,8 @@ public class ActivityFactMapperTest {
         assertNull(faLandingFact);
         assertNull(vesselTransportMeansFact);
         assertNull(fishingActivityFact);
+        assertNull(fluxFaReportMessageFact);
+        assertNull(fishingGearFact);
 
     }
 
