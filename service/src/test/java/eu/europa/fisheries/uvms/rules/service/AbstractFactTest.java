@@ -33,6 +33,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
@@ -244,6 +245,59 @@ public class AbstractFactTest {
     public void testIsInRangeNull() {
         assertTrue(fact.isInRange(null, -10, 200));
     }
+
+    @Test
+    public void testIsPositiveListOfMeasureShouldReturnFalseWithEmptyList() {
+        List<MeasureType> measureTypes = new ArrayList<>();
+        assertFalse(fact.isPositive(measureTypes));
+    }
+
+    @Test
+    public void testIsPositiveListOfMeasureHappy() {
+        List<MeasureType> measureTypes = new ArrayList<>();
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("1292"));
+        measureTypes.add(measureType);
+        assertTrue(fact.isPositive(measureTypes));
+    }
+
+
+    @Test
+    public void testIsPositiveListOfMeasureShouldReturnFalseWithNegative() {
+        List<MeasureType> measureTypes = new ArrayList<>();
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("-1292"));
+        measureTypes.add(measureType);
+        assertFalse(fact.isPositive(measureTypes));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnTrueWithEmptyList() {
+        List<ContactPerson> contactPeople = new ArrayList<>();
+        assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnHappy() {
+        List<ContactPerson> contactPeople = new ArrayList<>();
+
+        ContactPerson contactPerson = new ContactPerson();
+        contactPeople.add(contactPerson);
+
+        assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+    }
+
+    @Test
+    public void testCheckContactListContainsAnyHappy() {
+        List<ContactPerson> contactPeople = new ArrayList<>();
+
+        ContactPerson contactPerson = new ContactPerson();
+        contactPeople.add(contactPerson);
+
+        assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
+    }
+
+
 
     @Test
     public void testIsPositiveShouldReturnTrueWithNegativeValue() {
