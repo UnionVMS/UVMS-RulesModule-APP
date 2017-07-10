@@ -3,3 +3,4 @@ target
 *.iml
 logging.properties
 /rest/src/main/webapp
+*.DS_Store

@@ -11,11 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 
 public class RawMovementFact {
     // TODO: Add asset id to RawMovement for FLUX stuff.
@@ -240,16 +238,16 @@ public class RawMovementFact {
         return mobileTerminalMemberNumber;
     }
 
+    public void setMobileTerminalMemberNumber(String mobileTerminalMemberNumber) {
+        this.mobileTerminalMemberNumber = mobileTerminalMemberNumber;
+    }
+
     public String getMobileTerminalSerialNumber() {
         return mobileTerminalSerialNumber;
     }
 
     public void setMobileTerminalSerialNumber(String mobileTerminalSerialNumber) {
         this.mobileTerminalSerialNumber = mobileTerminalSerialNumber;
-    }
-
-    public void setMobileTerminalMemberNumber(String mobileTerminalMemberNumber) {
-        this.mobileTerminalMemberNumber = mobileTerminalMemberNumber;
     }
 
     public String getMobileTerminalDnid() {

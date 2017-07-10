@@ -1,0 +1,32 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+
+template "@{tname}"
+
+rule "FA Landing @{tname} - @{brid}"
+
+when
+
+    $fact : FaLandingFact(@{expression})
+
+then
+
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}","@{level}", "@{propertyNames}");
+
+end
+
+end template

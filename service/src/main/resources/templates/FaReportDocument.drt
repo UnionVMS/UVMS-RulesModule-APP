@@ -1,0 +1,29 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+
+template "@{tname}"
+
+rule "FA Report Document @{tname} - @{brid}"
+
+when
+
+    $fact : FaReportDocumentFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
+end
+
+end template

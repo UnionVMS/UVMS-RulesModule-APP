@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--File created from ACC_JFO_FRA20160509500024.xml.-->
+<!--Based on ON: FRA20160509500024-->
+<!--Sample UN/CEFACT file. The contents of this FLUXFAReportMessage may differ from the contents of the related EU-ERS 3.1 message.-->
+<rsm:FLUXFAReportMessage xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20" xsi:schemaLocation="urn:un:unece:uncefact:data:standard:FLUXFAReportMessage:3 xsd/FLUXFAReportMessage_3p1/FLUXFAReportMessage_3p1.xsd" xmlns:rsm="urn:un:unece:uncefact:data:standard:FLUXFAReportMessage:3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <ram:TypeCode listID="FLUX_FA_REPORT_TYPE">DECLARATION</ram:TypeCode>
+    <ram:RelatedReportID schemeID="EU-ERS3.1_ON">FRA20160509500024</ram:RelatedReportID>
+    <ram:RelatedReportID schemeID="EU-ERS3.1_ON-QUE">GBR20160501791295</ram:RelatedReportID>
+    <ram:RelatedReportID schemeID="EU-ERS3.1_RN">FRA20160509500012</ram:RelatedReportID>
+
+    <rsm:FLUXReportDocument>
+        <ram:ID schemeID="UUID">71D25BAA-E107-4A14-80A3-0D2AC545FF39</ram:ID>
+        <ram:CreationDateTime>
+            <udt:DateTime>2016-05-09T10:48:00Z</udt:DateTime>
+        </ram:CreationDateTime>
+        <ram:PurposeCode listID="FLUX_GP_PURPOSE">9</ram:PurposeCode>
+        <ram:OwnerFLUXParty>
+            <ram:ID schemeID="FLUX_GP_PARTY">FRA</ram:ID>
+        </ram:OwnerFLUXParty>
+    </rsm:FLUXReportDocument>
+
+    <ram:AcceptanceDateTime>
+        <udt:DateTime>2016-05-09T10:48:00Z</udt:DateTime>
+    </ram:AcceptanceDateTime>
+
+    <ram:RelatedFLUXReportDocument>
+        <ram:ID schemeID="UUID">C6991644-4B4C-4647-8051-178D1D2737E0</ram:ID>
+        <ram:CreationDateTime>
+            <udt:DateTime>2016-05-09T10:49:00Z</udt:DateTime>
+        </ram:CreationDateTime>
+        <ram:PurposeCode listID="FLUX_GP_PURPOSE">9</ram:PurposeCode>
+        <ram:OwnerFLUXParty>
+            <ram:ID schemeID="FLUX_GP_PARTY">FRA</ram:ID>
+        </ram:OwnerFLUXParty>
+    </ram:RelatedFLUXReportDocument>
+
+
+    <rsm:FAReportDocument>
+
+        <ram:TypeCode listID="FLUX_FA_REPORT_TYPE">DECLARATION</ram:TypeCode>
+        <ram:RelatedReportID schemeID="EU-ERS3.1_ON">FRA20160509500024</ram:RelatedReportID>
+        <ram:RelatedReportID schemeID="EU-ERS3.1_ON-QUE">GBR20160501791295</ram:RelatedReportID>
+        <ram:RelatedReportID schemeID="EU-ERS3.1_RN">FRA20160509500012</ram:RelatedReportID>
+
+        <ram:AcceptanceDateTime>
+            <udt:DateTime>2016-05-09T10:48:00Z</udt:DateTime>
+        </ram:AcceptanceDateTime>
+
+        <ram:RelatedFLUXReportDocument>
+            <ram:ID schemeID="UUID">C6991644-4B4C-4647-8051-178D1D2737E0</ram:ID>
+            <ram:CreationDateTime>
+                <udt:DateTime>2016-05-09T10:49:00Z</udt:DateTime>
+            </ram:CreationDateTime>
+            <ram:PurposeCode listID="FLUX_GP_PURPOSE">9</ram:PurposeCode>
+            <ram:OwnerFLUXParty>
+                <ram:ID schemeID="FLUX_GP_PARTY">FRA</ram:ID>
+            </ram:OwnerFLUXParty>
+        </ram:RelatedFLUXReportDocument>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">LANDING</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">DEPARTURE</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">ARRIVAL</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">AREA_ENTRY</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">AREA_EXIT</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">JOINT_FISHING_OPERATION</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">TRANSHIPMENT</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedFishingActivity>
+            <ram:TypeCode listID="FLUX_FA_TYPE">NON_SUPPORTED_TYPE</ram:TypeCode>
+            <ram:OccurrenceDateTime>
+                <udt:DateTime>2016-04-17T07:02:00Z</udt:DateTime>
+            </ram:OccurrenceDateTime>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">CFB</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">10</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">200</ram:WeightMeasure>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ConversionFactorNumeric>1.4</ram:ConversionFactorNumeric>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">142</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">20</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">10</ram:PackagingUnitAverageWeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">27.3.d.24</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="ICES_STAT_RECTANGLE">24E3</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">50</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                    <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">400</ram:WeightMeasure>
+                    </ram:ResultAAPProduct>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:SpecifiedFACatch>
+                <ram:SpeciesCode listID="FAO_SPECIES">BFT</ram:SpeciesCode>
+                <ram:UnitQuantity unitCode="C62">9950</ram:UnitQuantity>
+                <ram:WeightMeasure unitCode="KGM">199600</ram:WeightMeasure>
+                <ram:WeighingMeansCode listID="WEIGHT_MEANS">ESTIMATED</ram:WeighingMeansCode>
+                <ram:TypeCode listID="FA_CATCH_TYPE">UNLOADED</ram:TypeCode>
+                <ram:SpecifiedSizeDistribution>
+                    <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                </ram:SpecifiedSizeDistribution>
+                <ram:AppliedAAPProcess>
+                    <ram:TypeCode listID="FISH_PRESENTATION">WHL</ram:TypeCode>
+                    <ram:TypeCode listID="FISH_PRESERVATION">ALI</ram:TypeCode>
+                </ram:AppliedAAPProcess>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:SpecifiedFLUXLocation>
+                    <ram:TypeCode listID="FLUX_LOCATION_TYPE">AREA</ram:TypeCode>
+                    <ram:ID schemeID="FAO_AREA">37.1.2</ram:ID>
+                </ram:SpecifiedFLUXLocation>
+                <ram:UsedFishingGear>
+                    <ram:TypeCode listID="GEAR_TYPE">PTB</ram:TypeCode>
+                </ram:UsedFishingGear>
+            </ram:SpecifiedFACatch>
+            <ram:RelatedFLUXLocation>
+                <ram:TypeCode listID="FLUX_LOCATION_TYPE">LOCATION</ram:TypeCode>
+                <ram:ID schemeID="LOCATION">FRLCT</ram:ID>
+            </ram:RelatedFLUXLocation>
+            <ram:SpecifiedFishingTrip>
+                <ram:ID schemeID="EU_TRIP_ID">FRA-TRP-20160509500012</ram:ID>
+            </ram:SpecifiedFishingTrip>
+
+            <ram:RelatedVesselTransportMeans>
+                <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+                <ram:ID schemeID="IRCS">FW20150</ram:ID>
+                <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+                <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+                <ram:RoleCode listID="FA_VESSEL_ROLE">MASTER</ram:RoleCode>
+                <ram:Name>Marie-Pierre André</ram:Name>
+                <ram:RegistrationVesselCountry>
+                    <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+                </ram:RegistrationVesselCountry>
+                <ram:SpecifiedContactParty>
+                    <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                    <ram:SpecifiedStructuredAddress>
+                        <ram:StreetName>la ciotat</ram:StreetName>
+                        <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                    </ram:SpecifiedStructuredAddress>
+                    <ram:SpecifiedContactPerson>
+                        <ram:Alias>AMA capitaine BFT</ram:Alias>
+                    </ram:SpecifiedContactPerson>
+                </ram:SpecifiedContactParty>
+            </ram:RelatedVesselTransportMeans>
+
+
+        </ram:SpecifiedFishingActivity>
+
+        <ram:SpecifiedVesselTransportMeans>
+            <ram:ID schemeID="CFR">FRA201504172</ram:ID>
+            <ram:ID schemeID="IRCS">FW20150</ram:ID>
+            <ram:ID schemeID="EXT_MARK">MA201504</ram:ID>
+            <ram:ID schemeID="ICCAT">ATEU0MAR00000</ram:ID>
+            <ram:Name>Marie-Pierre André</ram:Name>
+            <ram:RegistrationVesselCountry>
+                <ram:ID schemeID="TERRITORY">FRA</ram:ID>
+            </ram:RegistrationVesselCountry>
+            <ram:SpecifiedContactParty>
+                <ram:RoleCode listID="FLUX_CONTACT_ROLE_BLA">MASTER</ram:RoleCode>
+                <ram:SpecifiedStructuredAddress>
+                    <ram:StreetName>la ciotat</ram:StreetName>
+                    <ram:CountryID schemeID="TERRITORY">FRA</ram:CountryID>
+                </ram:SpecifiedStructuredAddress>
+                <ram:SpecifiedContactPerson>
+                    <ram:FamilyName>hhh</ram:FamilyName>
+                    <ram:Alias></ram:Alias>
+                </ram:SpecifiedContactPerson>
+            </ram:SpecifiedContactParty>
+        </ram:SpecifiedVesselTransportMeans>
+
+    </rsm:FAReportDocument>
+
+</rsm:FLUXFAReportMessage>

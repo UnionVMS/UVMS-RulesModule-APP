@@ -31,4 +31,7 @@ public class MessageConstants {
     public static final String MDC_IDENTIFIER = "clientName";
 
     public static final String MODULE_NAME = "rules";
+
+    public static final String ACTIVITY_MESSAGE_IN_QUEUE = "jms/queue/UVMSActivityEvent";
+    public static final String MDR_EVENT = "jms/queue/UVMSMdrEvent";
 }
