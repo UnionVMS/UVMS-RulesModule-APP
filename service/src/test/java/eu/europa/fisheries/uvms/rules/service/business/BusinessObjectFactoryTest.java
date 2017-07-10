@@ -10,17 +10,34 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import lombok.SneakyThrows;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
-import static org.junit.Assert.assertNotNull;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by kovian on 28/06/2017.
  */
 public class BusinessObjectFactoryTest {
+
+    String testXmlPath = "src/test/resources/testData/manyFishingActivityTypes.xml";
 
     @Test
     public void testAllValuesAreInGenerateor(){
@@ -32,4 +49,66 @@ public class BusinessObjectFactoryTest {
         }
 
     }
+
+    @Test
+    public void testGetBusinessObjFactoryNull(){
+        AbstractGenerator businessObjFactGenerator = BusinessObjectFactory.getBusinessObjFactGenerator(null);
+        assertNull(businessObjFactGenerator);
+    }
+
+
+    @Test
+    @SneakyThrows
+    public void testAllFishingActivityTypeFromGenerator(){
+        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        generator.setBusinessObjectMessage(loadTestData(testXmlPath));
+        List<AbstractFact> facts = generator.generateAllFacts();
+
+        assertNotNull(facts);
+        assertTrue(CollectionUtils.isNotEmpty(facts));
+
+        List<FactType> factTypes = new ArrayList<>();
+        for(AbstractFact fact : facts){
+            factTypes.add(fact.getFactType());
+        }
+
+        assertTrue(factTypes.contains(FactType.FISHING_ACTIVITY));
+        assertTrue(factTypes.contains(FactType.FA_DEPARTURE));
+        assertTrue(factTypes.contains(FactType.FA_EXIT_FROM_SEA));
+        assertTrue(factTypes.contains(FactType.FA_ENTRY_TO_SEA));
+        assertTrue(factTypes.contains(FactType.FA_JOINT_FISHING_OPERATION));
+        assertTrue(factTypes.contains(FactType.FA_LANDING));
+        assertTrue(factTypes.contains(FactType.FA_TRANSHIPMENT));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testActivityResponseGeneration(){
+        ActivityResponseFactGenerator actRespGenerator = new ActivityResponseFactGenerator();
+        actRespGenerator.setBusinessObjectMessage(new FLUXResponseMessage());
+        List<AbstractFact> abstractFacts = actRespGenerator.generateAllFacts();
+
+        assertTrue(abstractFacts.size() == 1);
+    }
+
+    @Test
+    public void testActivityResponseGenerationNULL(){
+        ActivityResponseFactGenerator actRespGenerator = new ActivityResponseFactGenerator();
+        boolean threw = false;
+        try {
+            actRespGenerator.setBusinessObjectMessage(null);
+        } catch (RulesValidationException e) {
+           threw = true;
+        }
+        assertTrue(threw);
+    }
+
+
+    @SneakyThrows
+    private FLUXFAReportMessage loadTestData(String filePath) {
+        String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
+        return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
+    }
+
+
 }

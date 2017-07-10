@@ -88,6 +88,18 @@ public class TemplateEngineBeanTest {
         assertEquals(false, fact.getErrors().isEmpty());
     }
 
+    @Test
+    public void testGenaratorThrows(){
+        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        boolean threw = false;
+        try {
+            generator.setBusinessObjectMessage(new String());
+        } catch (RulesValidationException e) {
+            threw = true;
+        }
+        assertTrue(threw);
+    }
+
     private FLUXFAReportMessage getFluxFaReportMessage() {
         FLUXReportDocument fluxReportDocument = new FLUXReportDocument();
         IDType id = new IDType();

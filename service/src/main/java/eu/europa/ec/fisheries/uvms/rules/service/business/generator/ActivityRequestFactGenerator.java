@@ -62,10 +62,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     @Override
     public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
-        if(additionalObject != null){
-            if(AdditionalValidationObjectType.ASSET_LIST.equals(validationType)){
-                activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-            }
+        if(additionalObject != null && AdditionalValidationObjectType.ASSET_LIST.equals(validationType)){
+            activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
         }
     }
 

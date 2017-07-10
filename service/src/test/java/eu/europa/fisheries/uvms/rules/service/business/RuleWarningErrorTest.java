@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,13 +23,22 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by kovian on 27/06/2017.
  */
-public class RuleWorningErrorTest {
+public class RuleWarningErrorTest {
 
     @Test
     public void createRuleWarning() {
         List<String> xpathProps = Arrays.asList("ids", "roleCode");
         RuleWarning ruleWarning = new RuleWarning("fake-brid", "fake warning message", "L01", xpathProps);
         assertNotNull(ruleWarning);
+        ruleWarning.setLevel("L03");
+        assertNotNull(ruleWarning.getLevel());
+        ruleWarning.setMessage("Message");
+        assertNotNull(ruleWarning.getMessage());
+        ruleWarning.setRuleId("F023-0001");
+        assertNotNull(ruleWarning.getLevel());
+        ruleWarning.setXpaths(new ArrayList<String>());
+        assertNotNull(ruleWarning.getXpaths());
+
     }
 
     @Test
@@ -36,6 +46,14 @@ public class RuleWorningErrorTest {
         List<String> xpathProps = Arrays.asList("ids", "roleCode");
         RuleError ruleError = new RuleError("fake-brid", "fake warning message", "L01", xpathProps);
         assertNotNull(ruleError);
+        ruleError.setLevel("L03");
+        assertNotNull(ruleError.getLevel());
+        ruleError.setMessage("Message");
+        assertNotNull(ruleError.getMessage());
+        ruleError.setRuleId("F023-0001");
+        assertNotNull(ruleError.getLevel());
+        ruleError.setXpaths(new ArrayList<String>());
+        assertNotNull(ruleError.getXpaths());
     }
 
 }

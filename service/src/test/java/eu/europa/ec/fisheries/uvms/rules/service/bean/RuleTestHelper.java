@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 
 import java.math.BigDecimal;
 
@@ -45,5 +46,12 @@ public class RuleTestHelper {
         idType.setValue(value);
         idType.setSchemeId(schemeId);
         return idType;
+    }
+
+    public static NumericType getNumericType(BigDecimal value, String format){
+        NumericType numericType = new NumericType();
+        numericType.setValue(value);
+        numericType.setFormat(format);
+        return numericType;
     }
 }

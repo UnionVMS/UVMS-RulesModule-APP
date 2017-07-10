@@ -13,7 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -37,11 +48,6 @@ import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
-
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.*;
 
 @Slf4j
 @Singleton
@@ -133,10 +139,9 @@ public class FactRuleEvaluator {
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
         TemplateContainer tc = new DefaultTemplateContainer(templateStream);
         Map<String, String> drlsAndBrId = new HashMap<>();
-
+        TemplateDataListener listener = new TemplateDataListener(tc);
         int rowNum = 0;
         for (RuleType ruleDto : rules) {
-            TemplateDataListener listener = new TemplateDataListener(tc);
             listener.newRow(rowNum, 0);
             listener.newCell(rowNum, 0, templateName, 0);
             listener.newCell(rowNum, 1, ruleDto.getExpression(), 0);
@@ -145,15 +150,22 @@ public class FactRuleEvaluator {
             listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
             listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
             listener.newCell(rowNum, 6, ruleDto.getPropertyNames(), 0);
-            listener.finishSheet();
-            String drl = listener.renderDRL();
-            log.debug("DRL for BR Id {} : {} ", ruleDto.getBrId(), drl);
-            drlsAndBrId.put(drl, ruleDto.getBrId());
             rowNum++;
         }
+        listener.finishSheet();
+        String drl = listener.renderDRL();
+        log.debug(drl);
+        drlsAndBrId.put(drl, rulesIds(rules));
         return drlsAndBrId;
     }
 
+    private String rulesIds(List<RuleType> rules) {
+        List<String> rulesIds = new ArrayList<>();
+        for (RuleType rule : rules) {
+            rulesIds.add(rule.getBrId());
+        }
+        return Joiner.on(",").join(rulesIds);
+    }
 
     private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
         if (CollectionUtils.isEmpty(externalRules)) {
