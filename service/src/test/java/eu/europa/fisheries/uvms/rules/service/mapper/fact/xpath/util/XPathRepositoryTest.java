@@ -275,6 +275,12 @@ public class XPathRepositoryTest {
     }
 
     @Test
+    public void testXpathNullPassing(){
+        xpathUtil.append();
+        xpathUtil.append(StringUtils.EMPTY);
+    }
+
+    @Test
     @SneakyThrows
     public void testAllXPathConstants(){
         List<String> constantsList = new ArrayList<>();

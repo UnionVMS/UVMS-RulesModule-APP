@@ -619,6 +619,10 @@ public class ActivityFactMapperTest {
         final GearCharacteristicsFact gearCharacteristicsFact = activityMapper.generateFactsForGearCharacteristic(null);
         final GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(null);
 
+        final List<FaReportDocumentFact> faReportDocumentFacts = activityMapper.generateFactForFaReportDocuments(null);
+        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null);
+        final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
+
         assertTrue(CollectionUtils.isEmpty(vesselStorageCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(fluxCharacteristicsFacts));
         assertTrue(CollectionUtils.isEmpty(faCatchFacts));
@@ -629,6 +633,8 @@ public class ActivityFactMapperTest {
         assertTrue(CollectionUtils.isEmpty(vesselTransportMeansFacts));
         assertTrue(CollectionUtils.isEmpty(structuredAddressFacts));
         assertTrue(CollectionUtils.isEmpty(fishingGearFacts));
+        assertTrue(CollectionUtils.isEmpty(faReportDocumentFacts));
+        assertTrue(CollectionUtils.isEmpty(gearProblemFacts));
 
         assertNull(faDiscardFact);
         assertNull(faRelocationFact);
@@ -650,6 +656,7 @@ public class ActivityFactMapperTest {
 
         assertNull(gearCharacteristicsFact);
         assertNull(gearProblemFact);
+        assertNull(fishingActivityFact1);
 
     }
 
