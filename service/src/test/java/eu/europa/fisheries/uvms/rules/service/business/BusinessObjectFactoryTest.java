@@ -18,6 +18,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
@@ -30,6 +31,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -120,6 +122,16 @@ public class BusinessObjectFactoryTest {
     public void testSetBusinessObjectMessageException_ActivityQueryFactGenerator() {
         ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
         activityQueryFactGenerator.setBusinessObjectMessage(new Object());
+    }
+
+    @Test
+    public void testSetAdditionalValidation_ActivityQueryFactGenerator() {
+        try {
+            ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+            activityQueryFactGenerator.setAdditionalValidationObject(Collections.emptyList(), AdditionalValidationObjectType.ASSET_LIST);
+        } catch (Exception e) {
+            assertNull(e);
+        }
     }
 
     @Test
