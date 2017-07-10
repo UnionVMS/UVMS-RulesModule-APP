@@ -14,9 +14,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import lombok.SneakyThrows;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,6 +35,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -98,6 +101,29 @@ public class TemplateEngineBeanTest {
             threw = true;
         }
         assertTrue(threw);
+    }
+
+    @Test
+    public void testInitialize() {
+        try {
+            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
+            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
+            templateEngine.initialize();
+        } catch (Exception e) {
+            assertNull(e);
+        }
+    }
+
+    @Test
+    public void testReInitialize() {
+        try {
+            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
+            Mockito.doNothing().when(ruleEvaluator).reInitializeKieSystem();
+            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
+            templateEngine.initialize();
+        } catch (Exception e) {
+            assertNull(e);
+        }
     }
 
     private FLUXFAReportMessage getFluxFaReportMessage() {
