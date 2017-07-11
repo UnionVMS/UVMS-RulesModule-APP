@@ -10,25 +10,13 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -38,6 +26,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -81,7 +71,7 @@ public class AbstractFactTest {
         MeasureType measureType = new MeasureType();
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
 
     @Test
@@ -94,7 +84,7 @@ public class AbstractFactTest {
         measureType2.setValue(new BigDecimal("20"));
         measureType2.setUnitCode("KK");
 
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KK"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2), "K", "KK"));
     }
 
     @Test
@@ -107,7 +97,7 @@ public class AbstractFactTest {
         measureType2.setValue(new BigDecimal("20"));
         measureType2.setUnitCode("KK");
 
-        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2),"K", "KKKKK"));
+        assertTrue(fact.unitCodeContainsAll(Arrays.asList(measureType, measureType2), "K", "KKKKK"));
     }
 
 
@@ -123,7 +113,7 @@ public class AbstractFactTest {
 
         periods.add(period);
 
-        assertFalse(fact.validateDelimitedPeriod(periods, true,true));
+        assertFalse(fact.validateDelimitedPeriod(periods, true, true));
     }
 
     @Test
@@ -137,7 +127,7 @@ public class AbstractFactTest {
 
         periods.add(period);
 
-        assertTrue(fact.validateDelimitedPeriod(periods, true,false));
+        assertTrue(fact.validateDelimitedPeriod(periods, true, false));
     }
 
     @Test
@@ -186,6 +176,32 @@ public class AbstractFactTest {
 
         assertTrue(fact.allValueContainsMatch(codeTypes, "dd"));
 
+        assertTrue(fact.allValueContainsMatch(codeTypes, null));
+
+    }
+
+    @Test
+    public void TestIsEmpty() {
+        assertTrue(fact.isEmpty(new ArrayList<>()));
+    }
+
+    @Test
+    public void testVesselIdsMatch() {
+        List<IdType> vesselIds = null;
+        IdType vesselCountryId = null;
+        List<IdTypeWithFlagState> additionalObjectList = null;
+        boolean result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertFalse(result);
+
+        vesselIds = Arrays.asList(RuleTestHelper.getIdType("VSl1", "TESTVSL"));
+        vesselCountryId = RuleTestHelper.getIdType("BEL", "TESTCOUNTRY");
+        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));;
+        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertFalse(result);
+
+        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
+        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
+        assertTrue(result);
     }
 
 
@@ -317,7 +333,7 @@ public class AbstractFactTest {
     @Test
     public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
 
-        assertTrue(fact.validateDelimitedPeriod(null, true,false));
+        assertTrue(fact.validateDelimitedPeriod(null, true, false));
     }
 
     @Test
@@ -325,7 +341,7 @@ public class AbstractFactTest {
         MeasureType measureType = new MeasureType();
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
-        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType),"K"));
+        assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
 
 
@@ -396,6 +412,47 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
+    @Test
+    public void testValidateFormat_Exception() {
+        IdType uuidIdType = new IdType();
+        uuidIdType.setSchemeId("ABC");
+        uuidIdType.setValue("ballshjshdhdfhsgfd");
+        List<IdType> idTypes = Arrays.asList(uuidIdType);
+        boolean result = fact.validateFormat(idTypes);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testValidateFormat_IdNull() {
+        List<IdType> ids = null;
+        boolean result = fact.validateFormat(ids);
+        assertTrue(result);
+
+        IdType id = null;
+        result = fact.validateFormat(id);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsAll() {
+        IdType id = null;
+        boolean result = fact.schemeIdContainsAll(id, "ABC");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testListIdContainsAll_WithoutList() {
+        CodeType codeType = null;
+        boolean result = fact.listIdContainsAll(codeType, "ABC");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testDateNow() {
+        Date date = fact.dateNow(-10);
+        assertNotNull(date);
+    }
+
 
     @Test
     public void testIsPresentInMDRList(){
@@ -423,6 +480,15 @@ public class AbstractFactTest {
         codeTypes.add(new IdType("DEMINIMIS"));
         boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
+
+        result=fact.isIdTypePresentInMDRList(null,codeTypes);
+        assertFalse(result);
+
+        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Collections.<IdType>emptyList());
+        assertFalse(result);
+
+        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Arrays.asList(new IdType("BOARD")));
+        assertFalse(result);
     }
 
 
@@ -512,11 +578,18 @@ public class AbstractFactTest {
     public void testListIdContainsAny() {
 
         CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdContainsAny(codeTypes, "CFR");
         assertFalse(result);
+
+        result = fact.listIdContainsAny(codeTypes, null);
+        assertTrue(result);
+
+        CodeType newCodeType = RuleTestHelper.getCodeType("value1","CFR");
+        result = fact.listIdContainsAny(codeTypes, "ABC");
+        assertTrue(result);
     }
 
 
@@ -528,6 +601,9 @@ public class AbstractFactTest {
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
+        assertFalse(result);
+
+        result = fact.valueContainsAny(codeType1, "value1");
         assertFalse(result);
     }
 
