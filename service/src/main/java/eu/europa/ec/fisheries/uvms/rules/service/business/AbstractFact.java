@@ -25,7 +25,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -527,17 +526,24 @@ public abstract class AbstractFact {
         return textType == null || StringUtils.isBlank(textType.getValue());
     }
 
-    // TODO test
-    public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
-        return sourceList == null || (sourceList.size() <= maxNumberOfItems && sourceList.size() <= minNumberOfItems);
+    public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {
+        compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
+
+        return (sourceList != null && sourceList.isEmpty()) || (sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems);
     }
 
-    // TODO test
     public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
-        return sourceList != null && sourceList.size() <= maxNumberOfItems && sourceList.size() <= minNumberOfItems;
+        compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
+
+        return (sourceList != null && !sourceList.isEmpty()) && sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems;
     }
 
-    // TODO test
+    private void compareMinimumToMaximum(int minNumberOfItems, int maxNumberOfItems) {
+        if (minNumberOfItems > maxNumberOfItems) {
+            throw new IllegalArgumentException("minNumberOfItems '" + minNumberOfItems + "' can't be bigger than '" + maxNumberOfItems + "'.");
+        }
+    }
+
     public boolean isListEmptyOrAllValuesUnique(List<CodeType> sourceList){
         if (isEmpty(sourceList)) {
             return true;
@@ -559,7 +565,6 @@ public abstract class AbstractFact {
         return true;
     }
 
-    // TODO test
     public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch){
         if (isEmpty(sourceList)) {
             return true;
@@ -571,7 +576,7 @@ public abstract class AbstractFact {
                 return false;
             }
 
-            if (matchList.contains(codeType.getValue())) {
+            if (!matchList.contains(codeType.getValue())) {
                 return false;
             }
         }

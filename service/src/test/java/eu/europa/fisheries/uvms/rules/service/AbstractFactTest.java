@@ -17,12 +17,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.joda.time.DateTime;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +32,9 @@ import static org.junit.Assert.assertTrue;
 public class AbstractFactTest {
 
     private AbstractFact fact = new FaArrivalFact();
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testCheckDateNowHappy() {
@@ -215,6 +217,114 @@ public class AbstractFactTest {
 
         assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
     }
+
+    @Test
+    public void testIsListEmptyOrBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween1And1() throws Exception {
+        List<String> list = Arrays.asList("", "");
+
+        boolean listEmptyOrBetweenNumberOfItems = fact.isListEmptyOrBetweenNumberOfItems(list, 1, 1);
+        assertFalse(listEmptyOrBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListEmptyOrBetweenNumberOfItemsWhenListSizeIs1AndShouldBeBetween1And1() throws Exception {
+        List<String> list = Arrays.asList("");
+
+        boolean listEmptyOrBetweenNumberOfItems = fact.isListEmptyOrBetweenNumberOfItems(list, 1, 1);
+        assertTrue(listEmptyOrBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListEmptyOrBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween1And5() throws Exception {
+        List<String> list = Arrays.asList("", "");
+
+        boolean listEmptyOrBetweenNumberOfItems = fact.isListEmptyOrBetweenNumberOfItems(list, 1, 5);
+        assertTrue(listEmptyOrBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListEmptyOrBetweenNumberOfItemsWhenListIsEmpty() throws Exception {
+        List<String> list = Collections.emptyList();
+
+        boolean listEmptyOrBetweenNumberOfItems = fact.isListEmptyOrBetweenNumberOfItems(list, 1, 5);
+        assertTrue(listEmptyOrBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListEmptyOrBetweenNumberOfItemsWhenMinNumberOfItemsIsBiggerThanMaxNumberOfItems() throws Exception {
+        expectedException.expectMessage("minNumberOfItems '5' can't be bigger than '1'");
+        expectedException.expect(IllegalArgumentException.class);
+
+        List<String> list = Collections.emptyList();
+
+        boolean listEmptyOrBetweenNumberOfItems = fact.isListEmptyOrBetweenNumberOfItems(list, 5, 1);
+        assertTrue(listEmptyOrBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListNotEmptyAndBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween1And5() throws Exception {
+        List<String> list = Arrays.asList("", "");
+
+        boolean listNotEmptyAndBetweenNumberOfItems = fact.isListNotEmptyAndBetweenNumberOfItems(list, 1, 5);
+        assertTrue(listNotEmptyAndBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListNotEmptyAndBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween3And5() throws Exception {
+        List<String> list = Arrays.asList("", "");
+
+        boolean listNotEmptyAndBetweenNumberOfItems = fact.isListNotEmptyAndBetweenNumberOfItems(list, 3, 5);
+        assertFalse(listNotEmptyAndBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListNotEmptyAndBetweenNumberOfItemsWhenListSizeIs1AndShouldBeBetween1And1() throws Exception {
+        List<String> list = Arrays.asList("");
+
+        boolean listNotEmptyAndBetweenNumberOfItems = fact.isListNotEmptyAndBetweenNumberOfItems(list, 1, 1);
+        assertTrue(listNotEmptyAndBetweenNumberOfItems);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllValuesUniqueWhenListContainsUniqueValues() throws Exception {
+        List<CodeType> uniqueValues = Arrays.asList(new CodeType("a"), new CodeType("b"), new CodeType("c"));
+
+        boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(uniqueValues);
+        assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllValuesUniqueWhenListContainsDuplicateValues() throws Exception {
+        List<CodeType> uniqueValues = Arrays.asList(new CodeType("a"), new CodeType("a"), new CodeType("c"));
+
+        boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(uniqueValues);
+        assertFalse(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllValuesUniqueWhenListIsEmpty() throws Exception {
+        List<CodeType> uniqueValues = Collections.emptyList();
+
+        boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(uniqueValues);
+        assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrValuesMatchPassedArgumentsWhenPassedArgumentsAreAllFound() throws Exception {
+        List<CodeType> list = Arrays.asList(new CodeType("a"), new CodeType("a"), new CodeType("b"), new CodeType("c"), new CodeType("d"), new CodeType("e"));
+
+        boolean listEmptyOrValuesMatchPassedArguments = fact.isListEmptyOrValuesMatchPassedArguments(list, "a", "b", "c", "d", "e");
+        assertTrue(listEmptyOrValuesMatchPassedArguments);
+    }
+
+    @Test
+    public void testIsListEmptyOrValuesMatchPassedArgumentsWhenNotAllPassedArgumentsAreFound() throws Exception {
+        List<CodeType> list = Arrays.asList(new CodeType("a"), new CodeType("b"), new CodeType("c"), new CodeType("d"), new CodeType("e"));
+
+        boolean listEmptyOrValuesMatchPassedArguments = fact.isListEmptyOrValuesMatchPassedArguments(list, "a", "b", "c", "d");
+        assertFalse(listEmptyOrValuesMatchPassedArguments);
+    }
+
 
 
     private CodeType getCodeTypeWithListID(String listId) {

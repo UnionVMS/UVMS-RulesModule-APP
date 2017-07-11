@@ -81,7 +81,6 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
         this.ownerFLUXParty = ownerFLUXParty;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

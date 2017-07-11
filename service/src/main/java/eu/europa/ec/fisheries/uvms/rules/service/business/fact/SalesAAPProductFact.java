@@ -175,8 +175,7 @@ public class SalesAAPProductFact extends AbstractFact {
         return valueContainsAny(usageCode, validUsages);
     }
 
-    // todo test
-    public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsuption(){
+    public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption(){
         if (specifiedSizeDistribution == null || isEmpty(specifiedSizeDistribution.getClassCodes())){
             return false;
         }
@@ -190,14 +189,14 @@ public class SalesAAPProductFact extends AbstractFact {
         return false;
     }
 
-    // todo test
+
     public boolean isOriginFLUXLocationEmptyOrTypeNotLocation() {
         if (isEmpty(originFLUXLocations)){
             return true;
         }
 
         for (FLUXLocationType location: originFLUXLocations) {
-            if (location != null && location.getTypeCode() != null && location.getTypeCode().getValue() == "LOCATION"){
+            if (location != null && location.getTypeCode() != null && Objects.equals(location.getTypeCode().getValue(), "LOCATION")){
                 return false;
             }
         }

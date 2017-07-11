@@ -68,9 +68,8 @@ public class SalesReportFact extends AbstractFact {
         return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments);
     }
 
-    // TODO test
     public boolean isSellerRoleNotSpecifiedForSalesNote(){
-        if(itemTypeCode != null && itemTypeCode.getValue() == "SN" && !isEmpty(includedSalesDocuments))
+        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "SN") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
                 if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
@@ -79,7 +78,7 @@ public class SalesReportFact extends AbstractFact {
 
                 boolean sellerAvailable = false;
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueContainsAny(salesParty.getRoleCodes(), "SELLER")) {
+                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
                         sellerAvailable = true;
                     }
                 }
@@ -93,9 +92,8 @@ public class SalesReportFact extends AbstractFact {
         return false;
     }
 
-    // TODO test
         public boolean isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase(){
-        if(itemTypeCode != null && itemTypeCode.getValue() == "SN" && !isEmpty(includedSalesDocuments))
+        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "SN") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
                 // If the document does not have a price greater than zero it can not pass the test since it is not considered a purchase
@@ -111,26 +109,25 @@ public class SalesReportFact extends AbstractFact {
                 boolean sellerAvailable = false;
                 boolean buyerAvailable = false;
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueContainsAny(salesParty.getRoleCodes(), "SELLER")) {
+                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
                         sellerAvailable = true;
                     }
-                    if (salesParty != null && !valueContainsAny(salesParty.getRoleCodes(), "BUYER")) {
+                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "BUYER")) {
                         buyerAvailable = true;
                     }
                 }
 
-                if (!sellerAvailable || !buyerAvailable) {
-                    return true;
+                if (sellerAvailable || buyerAvailable) {
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
-    // TODO test
     public boolean isRecipientRoleNotSpecifiedForTakeOverDocument(){
-        if(itemTypeCode != null && itemTypeCode.getValue() == "TOD" && !isEmpty(includedSalesDocuments))
+        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "TOD") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
                 if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
@@ -139,7 +136,7 @@ public class SalesReportFact extends AbstractFact {
 
                 boolean recipientAvailable = false;
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueContainsAny(salesParty.getRoleCodes(), "RECIPIENT")) {
+                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "RECIPIENT")) {
                         recipientAvailable = true;
                     }
                 }
@@ -153,9 +150,8 @@ public class SalesReportFact extends AbstractFact {
         return false;
     }
 
-    // TODO test
     public boolean isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocument(){
-        if(itemTypeCode != null && itemTypeCode.getValue() == "TOD" && !isEmpty(includedSalesDocuments))
+        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "TOD") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
                 if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
@@ -173,9 +169,9 @@ public class SalesReportFact extends AbstractFact {
         return false;
     }
 
-    // TODO test
+
     public boolean isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProducts(){
-        if(itemTypeCode != null && itemTypeCode.getValue() == "TOD" && !isEmpty(includedSalesDocuments))
+        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "TOD") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
                 if (isAnyProductSetWithStorageAsUsage(salesDocument)){

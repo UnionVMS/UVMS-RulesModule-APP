@@ -186,7 +186,6 @@ public class SalesDocumentFact extends AbstractFact {
         return Objects.hash(ids, currencyCode, transportDocumentIDs, salesNoteIDs, takeoverDocumentIDs, specifiedSalesBatches, specifiedSalesEvents, specifiedFishingActivities, specifiedFLUXLocations, specifiedSalesParties, specifiedVehicleTransportMeans, relatedValidationResultDocuments, totalSalesPrice, departureSpecifiedFLUXLocation, arrivalSpecifiedFLUXLocation);
     }
 
-    // TODO test
     public boolean doesDocumentContainDuplicateSalesPartyRoles() {
         if (isEmpty(specifiedSalesParties)) {
             return false;
@@ -210,8 +209,7 @@ public class SalesDocumentFact extends AbstractFact {
         return false;
     }
 
-    // TODO test
-    public boolean isLadingDateBeforeAnySalesDate() {
+    public boolean isLandingDateBeforeAnySalesDate() {
         if (isEmpty(specifiedFishingActivities) || isEmpty(specifiedSalesEvents)) {
             return false;
         }
@@ -225,7 +223,7 @@ public class SalesDocumentFact extends AbstractFact {
         long startTimeInMillis = delimitedPeriods.get(0).getStartDateTime().getDateTime().getMillis();
         for (SalesEventType salesEvent:getSpecifiedSalesEvents()){
             if(salesEvent!= null && salesEvent.getOccurrenceDateTime() != null
-                    && startTimeInMillis > salesEvent.getOccurrenceDateTime().getDateTime().getMillis()){
+                    && startTimeInMillis < salesEvent.getOccurrenceDateTime().getDateTime().getMillis()){
                 return true;
             }
         }
@@ -233,7 +231,6 @@ public class SalesDocumentFact extends AbstractFact {
         return false;
     }
 
-    // TODO test
     public boolean isTotalPriceFieldDifferentFromSumOfProducts(){
         // Field is optional so no value is ok
         if(totalSalesPrice == null ||  isEmpty(totalSalesPrice.getChargeAmounts())){
@@ -254,7 +251,7 @@ public class SalesDocumentFact extends AbstractFact {
             if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
                 for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
                     if (product != null && product.getTotalSalesPrice() != null){
-                        total.add(getSum(product.getTotalSalesPrice().getChargeAmounts()));
+                        total = total.add(getSum(product.getTotalSalesPrice().getChargeAmounts()));
                     }
                 }
             }
@@ -264,14 +261,14 @@ public class SalesDocumentFact extends AbstractFact {
     }
 
     private BigDecimal getSum(List<AmountType> amounts){
-        if(isEmpty(amounts))        {
+        if(isEmpty(amounts)) {
             return BigDecimal.ZERO;
         }
 
         BigDecimal total = BigDecimal.ZERO;
         for (AmountType amount :amounts) {
             if (amount != null){
-                total.add(amount.getValue());
+                total = total.add(amount.getValue());
             }
         }
 
