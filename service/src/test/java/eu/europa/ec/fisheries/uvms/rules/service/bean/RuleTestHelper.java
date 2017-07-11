@@ -76,6 +76,11 @@ public class RuleTestHelper {
         return objectRepresentations;
     }
 
+
+
+
+
+
     public static List<ObjectRepresentation> getObjectRepresentationForGEAR_TYPE_CODES(){
 
         List<ObjectRepresentation>  objectRepresentations = new ArrayList<>();
@@ -89,6 +94,26 @@ public class RuleTestHelper {
         return objectRepresentations;
     }
 
+    public static List<ObjectRepresentation> getObjectRepresentationForGEAR_CHARACTERISTIC(){
+
+        List<ObjectRepresentation>  objectRepresentations = new ArrayList<>();
+
+        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
+        objectRepresentations.add(getObjectRepresentation("code","KEPT_IN_NET","string"));
+
+
+        return objectRepresentations;
+    }
+
+    public static ObjectRepresentation getObjectRepresentationForGearCharacteristic(){
+
+        List<ColumnDataType>  columnDataTypes = new ArrayList<>();
+
+        columnDataTypes.add(new ColumnDataType("code","ME","String"));
+        columnDataTypes.add(new ColumnDataType("dataType","MEASURE","String"));
+
+        return new ObjectRepresentation(columnDataTypes);
+    }
 
     public static ObjectRepresentation getObjectRepresentation(String columnName,String columnValue, String columnDataType){
 

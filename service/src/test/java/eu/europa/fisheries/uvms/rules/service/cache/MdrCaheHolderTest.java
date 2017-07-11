@@ -16,6 +16,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import java.util.List;
 
@@ -46,5 +47,17 @@ public class MdrCaheHolderTest {
         assertTrue(CollectionUtils.isNotEmpty(faCatchType));
 
     }
+
+
+    @Test
+    public void testGetObjectRepresntationList(){
+
+        mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
+
+        final List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresntationList(MDRAcronymType.GEAR_TYPE);
+        assertTrue(CollectionUtils.isNotEmpty(gearTypeList));
+
+    }
+
 
 }

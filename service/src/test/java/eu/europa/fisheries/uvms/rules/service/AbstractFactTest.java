@@ -10,17 +10,6 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
@@ -39,6 +28,17 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Gregory Rinaldi
  */
@@ -51,6 +51,7 @@ public class AbstractFactTest {
 
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
     }
 
 
@@ -515,6 +516,13 @@ public class AbstractFactTest {
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
         assertFalse(result);
+    }
+
+    @Test
+    public void testGetDataTypeForMDRList() {
+
+        String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC","ME");
+        assertEquals("MEASURE",result);
     }
 
 
