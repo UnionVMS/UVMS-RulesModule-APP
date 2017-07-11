@@ -24,6 +24,13 @@ public class MessageConstants {
     public static final String RULES_MESSAGE_IN_QUEUE_NAME = "UVMSRulesEvent";
     public static final String RULES_RESPONSE_QUEUE = "jms/queue/UVMSRules";
     public static final String QUEUE_DATASOURCE_INTERNAL = "jms/queue/UVMSRulesModel";
+    public static final String MOVEMENT_MESSAGE_IN_QUEUE = "jms/queue/UVMSMovementEvent";
+    public static final String ASSET_MESSAGE_IN_QUEUE = "jms/queue/UVMSAssetEvent";
+    public static final String MOBILE_TERMINAL_MESSAGE_IN_QUEUE = "jms/queue/UVMSMobileTerminalEvent";
+    public static final String EXCHANGE_MESSAGE_IN_QUEUE = "jms/queue/UVMSExchangeEvent";
+    public static final String USER_MESSAGE_IN_QUEUE = "jms/queue/UVMSUserEvent";
+    public static final String SALES_QUEUE = "jms/queue/UVMSSalesEvent";
+    public static final String AUDIT_MESSAGE_IN_QUEUE = "jms/queue/UVMSAuditEvent";
 
     public static final String MOVEMENT_MESSAGE_IN_QUEUE = "jms/queue/UVMSMovementEvent";
     public static final String ASSET_MESSAGE_IN_QUEUE = "jms/queue/UVMSAssetEvent";

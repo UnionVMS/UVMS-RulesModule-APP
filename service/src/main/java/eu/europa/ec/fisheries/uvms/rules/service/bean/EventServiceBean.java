@@ -48,6 +48,16 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import java.util.List;
+
 @Stateless
 public class EventServiceBean implements EventService {
 
@@ -258,6 +268,52 @@ public class EventServiceBean implements EventService {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         }
     }
+
+    @Override
+    public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message){
+        try {
+            messageService.receiveSalesQueryRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesQueryRequest.", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message){
+        try {
+            messageService.receiveSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesReportRequest.", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message){
+        try {
+            messageService.receiveSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesResponseRequest.", e);
+        }
+    }
+
+    @Override
+    public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message){
+        try {
+            messageService.sendSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read SendSalesReportRequest.", e);
+        }
+    }
+
+    @Override
+    public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message){
+        try {
+            messageService.sendSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read SendSalesResponseRequest.", e);
+        }
+    }
+
 
     @SuppressWarnings("unused")
 	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {

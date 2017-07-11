@@ -80,6 +80,7 @@ public class FactRuleEvaluator {
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
+            log.info("Initializing template: " + templateName);
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
             drlsAndRules.putAll(generateExternalRulesFromTemplate(template.getExternalRules()));
         }

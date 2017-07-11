@@ -13,10 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -27,23 +24,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BusinessObjectFactory {
 
-    public static AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
-        if(businessObjectType == null){
-            return null;
-        }
-        AbstractGenerator generator = null;
+    public static final AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
         switch (businessObjectType) {
             case FLUX_ACTIVITY_REQUEST_MSG:
-                generator = new ActivityRequestFactGenerator();
-                break;
+                return new ActivityRequestFactGenerator();
             case FLUX_ACTIVITY_RESPONSE_MSG:
-                generator = new ActivityResponseFactGenerator();
-                break;
+                return new ActivityResponseFactGenerator();
             case FLUX_ACTIVITY_QUERY_MSG:
-                generator = new ActivityQueryFactGenerator();
-                break;
-            default: break;
+                return new ActivityQueryFactGenerator();
+            case FLUX_SALES_QUERY_MSG:
+                return new SalesQueryFactGenerator();
+            case FLUX_SALES_REPORT_MSG:
+                return new SalesReportFactGenerator();
+            case FLUX_SALES_RESPONSE_MSG:
+                return new SalesResponseFactGenerator();
         }
-        return generator;
+        return null;
     }
 }

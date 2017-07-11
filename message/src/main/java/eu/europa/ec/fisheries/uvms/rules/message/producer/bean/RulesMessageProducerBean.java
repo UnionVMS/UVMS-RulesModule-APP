@@ -11,21 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Observes;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.naming.InitialContext;
-
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
@@ -40,6 +25,15 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Observes;
+import javax.jms.*;
+import javax.naming.InitialContext;
 
 @Stateless
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
@@ -57,6 +51,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Queue auditQueue;
     private Queue activityQueue;
     private Queue mdrEventQueue;
+    private Queue salesQueue;
 
     @PostConstruct
     public void init() {
@@ -77,6 +72,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
         activityQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
         mdrEventQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MDR_EVENT);
+        salesQueue = JMSUtils.lookupQueue(ctx, MessageConstants.SALES_QUEUE);
     }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {
@@ -124,6 +120,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     break;
                 case MDR_EVENT:
                     getProducer(session, mdrEventQueue).send(message);
+                    break;
+                case SALES:
+                    getProducer(session, salesQueue).send(message);
                     break;
                 default:
                     break;

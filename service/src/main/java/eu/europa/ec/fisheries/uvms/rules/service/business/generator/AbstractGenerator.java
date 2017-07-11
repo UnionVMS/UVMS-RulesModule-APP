@@ -25,12 +25,11 @@ import java.util.List;
  * @author Gregory Rinaldi
  * @author Andi Kovi
  */
-public abstract class AbstractGenerator {
+public abstract class AbstractGenerator<T> {
 
     public abstract List<AbstractFact> generateAllFacts();
 
-    public abstract void setBusinessObjectMessage(Object businessObject) throws RulesValidationException;
+    public abstract void setBusinessObjectMessage(T businessObject) throws RulesValidationException;
 
     public abstract <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType);
-
 }
