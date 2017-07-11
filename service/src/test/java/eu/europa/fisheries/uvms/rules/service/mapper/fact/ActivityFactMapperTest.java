@@ -70,6 +70,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
@@ -80,6 +81,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -734,6 +736,26 @@ public class ActivityFactMapperTest {
         assertNull(faTranshipmentFact);
         assertNull(faNotificationOfTranshipmentFact);
 
+    }
+
+    @Test
+    public void testStructuredAddressPostcodeCodeValue() {
+
+        StructuredAddress structuredAddress = new StructuredAddress();
+        structuredAddress.setPostcodeCode(codeType);
+        String s = activityMapper.structuredAddressPostcodeCodeValue(structuredAddress);
+
+        assertEquals(codeType.getValue(), s);
+    }
+
+    @Test
+    public void tesFaQueryParameterTypeCodeValue() {
+
+        FAQueryParameter faQueryParameter = new FAQueryParameter();
+        faQueryParameter.setTypeCode(codeType);
+        String s = activityMapper.faQueryParameterTypeCodeValue(faQueryParameter);
+
+        assertEquals(codeType.getValue(), s);
     }
 
     @Test

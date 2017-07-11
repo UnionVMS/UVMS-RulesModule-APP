@@ -1592,7 +1592,7 @@ public class ActivityFactMapper {
         return iD;
     }
 
-    private String structuredAddressPostcodeCodeValue(StructuredAddress structuredAddress) {
+    public String structuredAddressPostcodeCodeValue(StructuredAddress structuredAddress) {
 
         if (structuredAddress == null) {
             return null;
@@ -1793,7 +1793,7 @@ public class ActivityFactMapper {
         return iDS;
     }
 
-    private String faQueryParameterTypeCodeValue(FAQueryParameter fAQueryParameter) {
+    public String faQueryParameterTypeCodeValue(FAQueryParameter fAQueryParameter) {
 
         if (fAQueryParameter == null) {
             return null;
