@@ -29,11 +29,8 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -53,8 +50,8 @@ public class RulesPostProcessBeanTest {
     public void testCheckAndUpdateValidationErrorExist() throws RulesModelException, RulesServiceException {
         Mockito.doNothing().when(rulesDomainModel).saveValidationMessages(Mockito.any(RawMessageType.class));
         AbstractFact fact = new FaReportDocumentFact();
-        fact.addWarningOrError("ERROR", "Test Error", "br01", "L00");
-        fact.addWarningOrError("WARNING", "Test Warning", "br02", "L01");
+        fact.addWarningOrError("ERROR", "Test Error", "br01", "L00", "null");
+        fact.addWarningOrError("WARNING", "Test Warning", "br02", "L01", "null");
         fact.setOk(false);
 
         ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Arrays.asList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>");

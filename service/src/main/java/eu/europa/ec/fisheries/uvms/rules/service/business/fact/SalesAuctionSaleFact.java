@@ -1,10 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
-import java.util.Objects;
 
 public class SalesAuctionSaleFact extends AbstractFact {
 

@@ -34,7 +34,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     private static final String RULES_SCHEDULER_CONFIG_KEY = "RULES_SCHEDULER_CONFIG";
 
     @EJB
-    private ConfigServiceBean configService;
+    private RulesConfigurationCache rulesConfigCache;
 
     @EJB
     private TemplateEngine templateEngine;
@@ -60,22 +60,23 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
      */
     @Override
     public String getActualSchedulerConfiguration() {
-        return configService.getConfiguration(RULES_SCHEDULER_CONFIG_KEY);
+        return rulesConfigCache.getSingleConfig(RULES_SCHEDULER_CONFIG_KEY);
     }
 
     /**
      * Given the schedulerExpressionStr creates a new timer for this bean.
+     *
+     *  1. Parse the Cron-Job expression;
+     *  2. Cancel the current timer, if already exists one;
+     *  3. Set up the new timer for this EJB;
      *
      * @param schedulerExpressionStr
      */
     @Override
     public void setUpScheduler(String schedulerExpressionStr) throws IllegalArgumentException {
         try {
-            // Parse the Cron-Job expression;
             ScheduleExpression expression = parseExpression(schedulerExpressionStr);
-            // Firstly, we need to cancel the current timer, if already exists one;
             cancelPreviousTimer();
-            // Set up the new timer for this EJB;
             timerServ.createCalendarTimer(expression, TIMER_CONFIG);
         } catch (IllegalArgumentException ex) {
             log.warn("Error creating new scheduled synchronization timer!", ex);

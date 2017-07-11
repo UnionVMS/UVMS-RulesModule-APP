@@ -13,6 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -21,10 +30,15 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -32,9 +46,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.util.*;
 
 @Slf4j
 @ToString
@@ -50,20 +61,40 @@ public abstract class AbstractFact {
 
     protected boolean ok = true;
 
+    private Integer sequence = 0;
+
+
     public AbstractFact() {
+        this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
     }
 
     public abstract void setFactType();
 
-    public void addWarningOrError(String type, String msg, String brId, String level) {
+    public void addWarningOrError(String type, String msg, String brId, String level, String propertyNames) {
+        final List<String> xpathsForProps = getXpathsForProps(propertyNames);
         if (type.equalsIgnoreCase(ErrorType.ERROR.value())) {
-            getErrors().add(new RuleError(brId, msg, level));
+            RuleError ruleError = new RuleError(brId, msg, level, xpathsForProps);
+            errors.add(ruleError);
         } else {
-            getWarnings().add(new RuleWarning(brId, msg, level));
+            RuleWarning ruleWarning = new RuleWarning(brId, msg, level, xpathsForProps);
+            warnings.add(ruleWarning);
         }
     }
+
+    private List<String> getXpathsForProps(String propertyNames) {
+        List<String> xpathsList = new ArrayList<>();
+        if(StringUtils.isNotEmpty(propertyNames)){
+            String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
+            String[] propNames = propNamesTrimmed.split(",");
+            for(String propName : propNames) {
+                xpathsList.add(XPathRepository.INSTANCE.getMapForSequence(this.getSequence(), propName));
+            }
+        }
+        return xpathsList;
+    }
+
 
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
@@ -74,6 +105,35 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (IdType IdType : idTypes) {
                 if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength > hits;
+    }
+
+    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor){
+        if(StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)){
+            return false;
+        }
+        String flagStateToMatch = StringUtils.EMPTY;
+        for(IdType idType : idTypes){
+            if(schemeIdToSearchFor.equals(idType.getSchemeId())){
+                flagStateToMatch = idType.getValue();
+            }
+        }
+        return StringUtils.equals(valueToMatch, flagStateToMatch);
+    }
+
+    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getValue())) {
                     hits++;
                 }
             }
@@ -144,17 +204,21 @@ public abstract class AbstractFact {
             TextType familyName     = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
             TextType alias          = contPers.getAlias();
-            // Check with emptyness.
-            if(checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
-                    && (alias == null || StringUtils.isEmpty(alias.getValue())))){
-                return true;
-                // Check without emptyness
-            } else if((nameToConsider == null || nameToConsider.getValue() == null)
-                    && (alias == null || alias.getValue() == null)){
+            if(checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)){
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean checkWithoutEmptyness(TextType nameToConsider, TextType alias) {
+        return (nameToConsider == null || nameToConsider.getValue() == null)
+                && (alias == null || alias.getValue() == null);
+    }
+
+    private boolean checkWithEmptyness(boolean checkEmptyness, TextType nameToConsider, TextType alias) {
+        return checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
+                && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
     public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
@@ -209,12 +273,11 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getValue() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return false;
         }
         return false;
     }
-
 
     public boolean validateFormat(String value, String format) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
@@ -222,7 +285,6 @@ public abstract class AbstractFact {
         }
         return value.matches(format);
     }
-
 
     public boolean listIdContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
@@ -238,6 +300,12 @@ public abstract class AbstractFact {
         return false;
     }
 
+    /**
+     * Checks if valuesToMatch strings are ALL present in list of measureTypes
+     * @param codeType
+     * @param valuesToMatch
+     * @return
+     */
     public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
         return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
     }
@@ -305,11 +373,9 @@ public abstract class AbstractFact {
             return true;
         }
         for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-            if (start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null) {
-                return true;
-            } else if (start && !end && delimitedPeriod.getStartDateTime() == null) {
-                return true;
-            } else if (end && !start && delimitedPeriod.getEndDateTime() == null) {
+            if ((start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null)
+                    || (start && !end && delimitedPeriod.getStartDateTime() == null)
+                    || (end && !start && delimitedPeriod.getEndDateTime() == null)) {
                 return true;
             }
         }
@@ -341,27 +407,21 @@ public abstract class AbstractFact {
     public List<RuleWarning> getWarnings() {
         return warnings;
     }
-
     public List<RuleError> getErrors() {
         return errors;
     }
-
     public boolean isOk() {
         return ok;
     }
-
     public void setOk(boolean ok) {
         this.ok = ok;
     }
-
     public FactType getFactType() {
         return factType;
     }
-
     public List<String> getUniqueIds() {
         return uniqueIds;
     }
-
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
@@ -408,6 +468,28 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public int numberOfDecimals(BigDecimal value) {
+        if (value == null) {
+            return -1;
+        }
+
+        int i = value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
+        return Integer.toString(i).length();
+    }
+
+    public boolean isPositive(List<MeasureType> value) {
+        if (value == null) {
+            return true;
+        }
+        for (MeasureType type : value) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
@@ -434,6 +516,7 @@ public abstract class AbstractFact {
         }
         return !isMatchFound;
     }
+
     public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -455,14 +538,14 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return !(value.compareTo(BigDecimal.ZERO) > 0);
+        return value.compareTo(BigDecimal.ZERO) <= 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
         if (value == null) {
             return true;
         }
-        return !((value.compareTo(new BigDecimal(min)) == 1) && (value.compareTo(new BigDecimal(max)) == -1));
+        return !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
     }
 
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
@@ -485,7 +568,7 @@ public abstract class AbstractFact {
     }
 
     public boolean allValueContainsMatch(List<CodeType> codeTypes, String valueToMatch) {
-        if (valueToMatch == null || valueToMatch.length() == 0) {
+        if (valueToMatch == null || valueToMatch.length() == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
 
@@ -518,6 +601,15 @@ public abstract class AbstractFact {
         return CollectionUtils.isEmpty(list);
     }
 
+    public boolean isNumeric(List<NumericType> list) {
+        for (NumericType type : list) {
+            if (type.getValue() == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isEmpty(String str){
         return StringUtils.isEmpty(str);
     }
@@ -532,9 +624,8 @@ public abstract class AbstractFact {
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
-    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound)
-    {
-        return  value.compareTo(lowBound) > 0  && value.compareTo(upperBound) < 0;
+    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound) {
+        return value.compareTo(lowBound) > 0 && value.compareTo(upperBound) < 0;
     }
 
     public enum FORMATS {
@@ -548,6 +639,7 @@ public abstract class AbstractFact {
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
+        //EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}"),
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
@@ -560,13 +652,114 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-        public String getFormatStr() {
+        String getFormatStr() {
             return formatStr;
         }
 
-        public void setFormatStr(String formatStr) {
+        void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
+    }
+
+    /**
+     *  Check if value passed is present in the MDR list speified
+     * @param listName - MDR list name to be ckecked against
+     * @param codeValue - This value will be checked in MDR list
+     * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
+     */
+    public boolean isPresentInMDRList(String listName, String codeValue){
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            return false;
+        }
+        List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
+        if(CollectionUtils.isNotEmpty(values)){
+            return values.contains(codeValue);
+        }
+        return false;
+    }
+
+    /**
+     *  This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
+     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
+     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     */
+     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+         if(anEnum == null){
+             log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+             return false;
+         }
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
+            return false;
+        }
+
+        for(CodeType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
+                return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     *  This function checks that all the IdType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
+     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
+     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     */
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch){
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            return false;
+        }
+
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
+            return false;
+        }
+
+        for(IdType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList){
+        if(CollectionUtils.isEmpty(additionalObjectList)){
+            return false;
+        }
+        List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
+        for(IdType idType : vesselIds){
+            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+        }
+
+        for(IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched){
+            if(!additionalObjectList.contains(elemFromListToBeMatched)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
 }

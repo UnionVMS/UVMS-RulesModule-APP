@@ -12,10 +12,10 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import lombok.ToString;
-
 import java.math.BigDecimal;
 import java.util.Objects;
+
+import lombok.ToString;
 
 /**
  * Created by sanera on 03/05/2017.

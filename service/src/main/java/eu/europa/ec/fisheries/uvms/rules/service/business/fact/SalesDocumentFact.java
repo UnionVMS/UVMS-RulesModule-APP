@@ -1,13 +1,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
+import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
+import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
+import eu.europa.ec.fisheries.schema.sales.SalesEventType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
+import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import eu.europa.ec.fisheries.schema.sales.VehicleTransportMeansType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 public class SalesDocumentFact extends AbstractFact {
 
@@ -153,7 +160,7 @@ public class SalesDocumentFact extends AbstractFact {
     }
 
 
-    public boolean isInvalidCurrencyCode(){
+    public boolean isInvalidCurrencyCode() {
         return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
     }
 

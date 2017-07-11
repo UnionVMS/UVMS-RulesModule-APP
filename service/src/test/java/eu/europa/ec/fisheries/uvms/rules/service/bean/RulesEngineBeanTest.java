@@ -51,6 +51,9 @@ public class RulesEngineBeanTest {
     RulesEngineBean rulesEngineBean;
 
     @Mock
+    MDRCacheServiceBean mdrCacheServiceBean;
+
+    @Mock
     TemplateEngine templateEngine;
 
     @Mock
@@ -59,6 +62,9 @@ public class RulesEngineBeanTest {
     @Mock
     FactRuleEvaluator ruleEvaluator;
 
+    @Mock
+    RuleAssetsBean ruleAssetsBean;
+
     @Test
     public void testEvaluate() throws RulesValidationException {
         Mockito.doAnswer(new Answer<Void>() {
@@ -66,13 +72,14 @@ public class RulesEngineBeanTest {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
                 for (AbstractFact obj : (ArrayList<AbstractFact>)facts) {
-                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01");
+                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
                 System.out.println("called with arguments: " + Arrays.toString(args));
                 return null;
             }
         }).when(templateEngine).evaluateFacts(Mockito.anyList());
+
         List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);

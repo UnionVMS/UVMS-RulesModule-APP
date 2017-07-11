@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -47,7 +48,7 @@ public class RulesResource {
     private RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
-    private MDRServiceBean mdrService;
+    private MDRCacheServiceBean mdrService;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -61,17 +62,13 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
-
         FLUXResponseMessage fluxResponseMessage;
-
         try {
-
-            List<AbstractFact> evaluate = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
-            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(evaluate, s);
-
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
-
+            XPathRepository.INSTANCE.clear(facts);
         } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
@@ -92,7 +89,7 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/reinitialize")
     public Response initializeRules() {
-        templateEngine.reInitialize();
+            templateEngine.reInitialize();
         return Response.ok("Initialization successfully finished. The Rules DRLs were reloaded.").build();
     }
 

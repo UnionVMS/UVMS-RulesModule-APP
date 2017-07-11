@@ -10,19 +10,19 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import static org.junit.Assert.assertNull;
-
-import java.util.Date;
-
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
+import java.util.Date;
+
+import static org.junit.Assert.assertNull;
+
 /**
  * TODO create test
  */
-public class CustomMapperTest {
+public class ActivityFactMapperDateTest {
 
     private DateTimeType.DateTimeString dateTimeString = new DateTimeType.DateTimeString();
 
@@ -38,7 +38,7 @@ public class CustomMapperTest {
 
         dateTimeString.setFormat("");
         dateTimeType.setDateTimeString(dateTimeString);
-        Date date = CustomMapper.getDate(dateTimeType);
+        Date date = ActivityFactMapper.getDate(dateTimeType);
         assertNull(date);
 
     }
@@ -48,16 +48,14 @@ public class CustomMapperTest {
 
         dateTimeString.setFormat(null);
         dateTimeType.setDateTimeString(dateTimeString);
-        Date date = CustomMapper.getDate(dateTimeType);
+        Date date = ActivityFactMapper.getDate(dateTimeType);
         assertNull(date);
 
     }
 
     @Test
     public void testGetDateWithNullShouldReturnNull() {
-
-        Date date = CustomMapper.getDate(null);
+        Date date = ActivityFactMapper.getDate(null);
         assertNull(date);
-
     }
 }

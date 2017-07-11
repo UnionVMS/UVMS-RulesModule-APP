@@ -1,14 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
-import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.junit.Test;
 
 /**
  * Created by MATBUL on 21/06/2017.
@@ -38,6 +38,7 @@ public class SalesFactHelperTest {
         boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(new BigDecimal(-5)), new AmountType().withValue(BigDecimal.TEN), new AmountType().withValue(BigDecimal.ZERO)));
         assertFalse(allValuesGreaterOrEqualToZero);
     }
+
     @Test
     public void testAllValuesGreaterOrEqualToZeroWhenOneOfTheValuesIsNull() throws Exception {
         boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(null), new AmountType().withValue(BigDecimal.TEN), new AmountType().withValue(BigDecimal.ZERO)));

@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.List;
+
 public class RuleWarning {
 
 	private String ruleId;
@@ -21,33 +23,38 @@ public class RuleWarning {
 
 	protected String level;
 
+	protected List<String> xpaths;
 
-	public RuleWarning(String ruleId, String message, String level) {
+	public RuleWarning(String ruleId, String message, String level, List<String> xpathsForProps) {
 		this.ruleId = ruleId;
 		this.message = message;
 		this.level = level;
+		this.xpaths = xpathsForProps;
 	}
 
 	public String getRuleId() {
 		return ruleId;
 	}
-
 	public void setRuleId(String ruleId) {
 		this.ruleId = ruleId;
 	}
-
 	public String getMessage() {
 		return message;
 	}
-
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 	public String getLevel() {
 		return level;
 	}
 	public void setLevel(String level) {
 		this.level = level;
 	}
+	public List<String> getXpaths() {
+		return xpaths;
+	}
+	public void setXpaths(List<String> xpaths) {
+		this.xpaths = xpaths;
+	}
+
 }

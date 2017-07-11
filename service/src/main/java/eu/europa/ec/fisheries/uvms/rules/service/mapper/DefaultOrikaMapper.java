@@ -1,5 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Produces;
+
 import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.IDType;
 import ma.glasnost.orika.MapperFacade;
@@ -7,9 +10,6 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.converter.builtin.PassThroughConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-
-import javax.ejb.Singleton;
-import javax.enterprise.inject.Produces;
 
 @Singleton
 public class DefaultOrikaMapper {

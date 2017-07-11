@@ -7,31 +7,44 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Gregory Rinaldi
+ * Created by sanera on 20/06/2017.
  */
-@Stateless
-@LocalBean
-@Slf4j
-public class MDRServiceBean {
+public class MDRCacheHolder {
 
-    @EJB
-    private MDRCache cache;
+    private static Map<MDRAcronymType, List<String>> cache =new ConcurrentHashMap<>();
 
-    public boolean isPresentInList(String listName, String codeValue){
-        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        return cache.getEntry(anEnum).contains(codeValue);
+    private MDRCacheHolder(){
+        super();
+    }
+
+    private static class Holder {
+
+        private Holder(){
+            super();
+        }
+
+        private static final MDRCacheHolder INSTANCE = new MDRCacheHolder();
+    }
+
+    public static MDRCacheHolder getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public void addToCache(MDRAcronymType type, List<String> values){
+             cache.put(type,values);
+    }
+
+    public List<String> getList(MDRAcronymType type){
+        return cache.get(type);
     }
 
 }

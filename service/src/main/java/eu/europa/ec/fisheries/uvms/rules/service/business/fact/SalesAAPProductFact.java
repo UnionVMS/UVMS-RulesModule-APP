@@ -1,12 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 import java.util.List;
 import java.util.Objects;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
+import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
+import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
+import eu.europa.ec.fisheries.schema.sales.MeasureType;
+import eu.europa.ec.fisheries.schema.sales.QuantityType;
+import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
+import eu.europa.ec.fisheries.schema.sales.SizeDistributionType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 public class SalesAAPProductFact extends AbstractFact {
 
@@ -159,7 +164,7 @@ public class SalesAAPProductFact extends AbstractFact {
     }
 
 
-    public boolean isInvalidUsageCode(){
+    public boolean isInvalidUsageCode() {
         String[] validUsages = new String[10];
         validUsages[0] = "HCN";
         validUsages[1] = "HCN-INDIRECT";

@@ -1,20 +1,29 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.schema.sales.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+
+import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
+import eu.europa.ec.fisheries.schema.sales.FLUXResponseDocumentType;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
+import eu.europa.ec.fisheries.schema.sales.SalesReportType;
+import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
+import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesResponseMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationQualityAnalysisFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationResultDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by MATBUL on 16/06/2017.
@@ -47,7 +56,7 @@ public class SalesResponseFactGeneratorTest {
                 .withSalesReports(new SalesReportType());
 
         salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
-        List<AbstractFact> allFacts = salesResponseFactGenerator.getAllFacts();
+        List<AbstractFact> allFacts = salesResponseFactGenerator.generateAllFacts();
 
         List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesResponseMessageFact.class, SalesFLUXResponseDocumentFact.class,

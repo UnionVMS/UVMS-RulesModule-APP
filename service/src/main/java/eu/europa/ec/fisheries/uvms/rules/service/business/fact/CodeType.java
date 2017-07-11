@@ -13,10 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.Objects;
 
 /**
  * @author padhyad
