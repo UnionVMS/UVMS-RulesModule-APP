@@ -612,6 +612,31 @@ public class ActivityFactMapperTest {
 
     }
 
+    @Test
+    public void testMapToMeasureType() {
+
+        List<MeasureType> measureTypeList = new ArrayList<>();
+        measureTypeList.add(measureType);
+
+        List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType> measureTypes = activityMapper.mapToMeasureType(measureTypeList);
+
+        assertEquals(measureType.getValue(), measureTypes.get(0).getValue());
+    }
+
+    @Test
+    public void testVesselTransportMeanRegistrationVesselCountryID() {
+
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+        VesselCountry vesselCountry = new VesselCountry();
+        vesselCountry.setID(idType);
+        vesselTransportMeans.setRegistrationVesselCountry(vesselCountry);
+
+        IDType idType = activityMapper.vesselTransportMeanRegistrationVesselCountryID(vesselTransportMeans);
+
+        assertEquals(idType.getValue(), idType.getValue());
+    }
+
+
 
 
 

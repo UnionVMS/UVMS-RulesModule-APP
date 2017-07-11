@@ -499,7 +499,7 @@ public class ActivityFactMapper {
 
         List<ContactParty> specifiedContactParties = vesselTransportMean.getSpecifiedContactParties();
 
-        vesselTransportMeansFact.setRegistrationVesselCountryId(mapToCodeType(vesselTransportMeanRegistrationVesselCountryID_(vesselTransportMean)));
+        vesselTransportMeansFact.setRegistrationVesselCountryId(mapToCodeType(vesselTransportMeanRegistrationVesselCountryID(vesselTransportMean)));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(REGISTRATION_VESSEL_COUNTRY, ID).storeInRepo(vesselTransportMeansFact, "registrationVesselCountryId");
 
         vesselTransportMeansFact.setSpecifiedContactPersons(mapToContactPersonList(specifiedContactParties));
@@ -1632,23 +1632,7 @@ public class ActivityFactMapper {
         return purposeCode;
     }
 
-    private IDType vesselTransportMeanRegistrationVesselCountryID(VesselTransportMeans vesselTransportMeans) {
-        if (vesselTransportMeans == null) {
-            return null;
-        }
-        VesselCountry registrationVesselCountry = vesselTransportMeans.getRegistrationVesselCountry();
-        if (registrationVesselCountry == null) {
-            return null;
-        }
-        IDType iD = registrationVesselCountry.getID();
-        if (iD == null) {
-            return null;
-        }
-        return iD;
-    }
-
-    private IDType vesselTransportMeanRegistrationVesselCountryID_(VesselTransportMeans vesselTransportMeans) {
-
+    public IDType vesselTransportMeanRegistrationVesselCountryID(VesselTransportMeans vesselTransportMeans) {
         if (vesselTransportMeans == null) {
             return null;
         }
