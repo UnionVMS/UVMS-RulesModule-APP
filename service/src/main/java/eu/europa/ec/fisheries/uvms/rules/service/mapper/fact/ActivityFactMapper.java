@@ -10,77 +10,6 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ACCEPTANCE_DATE_TIME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_FLUX_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLIED_AAP_PROCESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.AVERAGE_WEIGHT_MEASURE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CATEGORY_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CITY_NAME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CLASS_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CONVERSION_FACTOR_NUMERIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COUNTRY_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DURATION_MEASURE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_REPORT_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FISHERY_TYPE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OCCURRENCE_DATE_TIME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OPERATIONS_QUANTITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OWNER_FLUX_PARTY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_TYPE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_UNIT_QUANTITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PLOT_IDENTIFICATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTCODE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REASON_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REFERENCED_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_ACTIVITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_REPORT_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_REPORT_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESULT_AAP_PRODUCT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ROLE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIES_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIES_TARGET_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PARTY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PERSON;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_DELIMITED_PERIOD;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FA_CATCH;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_GEAR_PROBLEM;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_SIZE_DISTRIBUTION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.STREET_NAME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.UNIT_QUANTITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_QUANTITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_RELATED_ACTIVITY_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.WEIGHING_MEANS_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.WEIGHT_MEASURE;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -147,6 +76,15 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 /**
  * Created by kovian on 14/06/2017.

@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -55,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -772,6 +764,13 @@ public abstract class AbstractFact {
         this.sequence = sequence;
     }
 
+
+    /**
+     *  This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
+     * @param listName MDR list name to be matched with
+     * @param codeValue value for CODE column to be matched with
+     * @return DATATYPE column value for the matching record
+     */
     public String getDataTypeForMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if(anEnum == null || codeValue ==null){
