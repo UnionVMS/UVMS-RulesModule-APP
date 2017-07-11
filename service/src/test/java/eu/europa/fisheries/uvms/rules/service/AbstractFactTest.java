@@ -10,13 +10,28 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -26,8 +41,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -195,7 +208,8 @@ public class AbstractFactTest {
 
         vesselIds = Arrays.asList(RuleTestHelper.getIdType("VSl1", "TESTVSL"));
         vesselCountryId = RuleTestHelper.getIdType("BEL", "TESTCOUNTRY");
-        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));;
+        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
+        ;
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
         assertFalse(result);
 
@@ -481,13 +495,13 @@ public class AbstractFactTest {
         boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
         assertEquals(true,result);
 
-        result=fact.isIdTypePresentInMDRList(null,codeTypes);
+        result = fact.isIdTypePresentInMDRList(null, codeTypes);
         assertFalse(result);
 
-        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Collections.<IdType>emptyList());
+        result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Collections.<IdType>emptyList());
         assertFalse(result);
 
-        result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Arrays.asList(new IdType("BOARD")));
+        result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Arrays.asList(new IdType("BOARD")));
         assertFalse(result);
     }
 
@@ -578,7 +592,7 @@ public class AbstractFactTest {
     public void testListIdContainsAny() {
 
         CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdContainsAny(codeTypes, "CFR");
@@ -587,7 +601,7 @@ public class AbstractFactTest {
         result = fact.listIdContainsAny(codeTypes, null);
         assertTrue(result);
 
-        CodeType newCodeType = RuleTestHelper.getCodeType("value1","CFR");
+        CodeType newCodeType = RuleTestHelper.getCodeType("value1", "CFR");
         result = fact.listIdContainsAny(codeTypes, "ABC");
         assertTrue(result);
     }
