@@ -471,7 +471,7 @@ public class AbstractFactTest {
     @Test
     public void testIsPresentInMDRList(){
         boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
-        assertEquals(true,result);
+        assertEquals(true, result);
     }
 
     @Test
@@ -481,8 +481,26 @@ public class AbstractFactTest {
         codeTypes.add(new CodeType("RELEASED"));
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
-        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
-        assertEquals(true,result);
+        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void testIsPresentInMdrList() {
+        boolean result = fact.isPresentInMDRList("TEST", "TEST");
+        assertFalse(false);
+    }
+
+    @Test
+    public void testGetSetUniqueId() {
+        fact.setUniqueIds(Arrays.asList("TEST"));
+        List<String> ids = fact.getUniqueIds();
+        assertTrue(ids.contains("TEST"));
+    }
+
+    @Test
+    public void testIsEmpty() {
+        assertTrue(fact.isEmpty(""));
     }
 
     @Test
