@@ -39,7 +39,7 @@ import static java.util.Collections.emptyList;
 @Singleton
 @Slf4j
 public class MDRCache {
-    public static MDRCache reference;
+   
     private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
