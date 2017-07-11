@@ -21,7 +21,7 @@ public class XPathStringWrapper {
     private StringBuffer strBuff;
 
     private static final String LOCAL_NODE_START = "//*[local-name()='";
-    private static final  String LOCAL_NODE_END = "']";
+    private static final String LOCAL_NODE_END = "']";
 
     private static final String SQUARE_BRACKET_START = "[";
     private static final String SQUARE_BRACKET_END = "]";
@@ -54,7 +54,7 @@ public class XPathStringWrapper {
      * @return
      */
     public XPathStringWrapper append(String... stringsToAppend){
-        if(stringsToAppend != null && stringsToAppend.length != 0 && StringUtils.isNotEmpty(stringsToAppend[0])){
+        if (stringsToAppend != null && stringsToAppend.length != 0 && StringUtils.isNotEmpty(stringsToAppend[0])) {
             for(String strToAppend : stringsToAppend){
                 strBuff.append(LOCAL_NODE_START).append(strToAppend).append(LOCAL_NODE_END);
             }
