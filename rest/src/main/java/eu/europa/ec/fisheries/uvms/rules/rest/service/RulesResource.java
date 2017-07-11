@@ -77,14 +77,7 @@ public class RulesResource {
 
     }
 
-    @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/ispresentlist/{listname}/{codevalue}")
-    public Response checkCodeListValueExists(@PathParam("listname") String listName, @PathParam("codevalue") String codeValue) {
-        return Response.ok(mdrService.isPresentInList(listName, codeValue)).build();
-    }
-
-
+   
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/reinitialize")

@@ -13,7 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -32,15 +32,12 @@ public class MDRCacheServiceBean {
     @EJB
     private MDRCache cache;
 
-    public boolean isPresentInList(String listName, String codeValue){
-        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        return cache.getEntry(anEnum).contains(codeValue);
-    }
+
 
     public void loadMDRCache(){
     log.info("Load MDR Cache");
         for(MDRAcronymType acronymType :  MDRAcronymType.values()){
-            List<String> values= cache.getEntry(acronymType);
+            List<ObjectRepresentation> values= cache.getEntry(acronymType);
             MDRCacheHolder.getInstance().addToCache(acronymType,values);
         }
     log.info("Cache loading is complete.");
