@@ -37,4 +37,16 @@ public interface MessageService {
     void mapAndSendFLUXMdrRequestToExchange(String request);
 
     void mapAndSendFLUXMdrResponseToMdrModule(String request);
+
+    void receiveSalesQueryRequest(String request);
+
+    void receiveSalesReportRequest(String request);
+
+    void sendSalesReportRequest(String request);
+
+    void receiveSalesResponseRequest(String request);
+
+    void sendSalesResponseRequest(String request);
+
+
 }

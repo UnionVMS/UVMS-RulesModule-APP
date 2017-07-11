@@ -10,13 +10,24 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.business;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
@@ -25,12 +36,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
  * Created by kovian on 28/06/2017.
@@ -103,12 +109,44 @@ public class BusinessObjectFactoryTest {
         assertTrue(threw);
     }
 
+    @Test
+    public void testSetBusinessObjectMessageNull_ActivityQueryFactGenerator() {
+        try {
+            ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+            activityQueryFactGenerator.setBusinessObjectMessage(new FAQuery());
+        } catch (RulesValidationException e) {
+            assertNull(e);
+        }
+    }
+
+    @Test(expected = RulesValidationException.class)
+    @SneakyThrows
+    public void testSetBusinessObjectMessageException_ActivityQueryFactGenerator() {
+        ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+        activityQueryFactGenerator.setBusinessObjectMessage(new Object());
+    }
+
+    @Test
+    public void testSetAdditionalValidation_ActivityQueryFactGenerator() {
+        try {
+            ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+            activityQueryFactGenerator.setAdditionalValidationObject(Collections.emptyList(), AdditionalValidationObjectType.ASSET_LIST);
+        } catch (Exception e) {
+            assertNull(e);
+        }
+    }
+
+    @Test
+    public void testGenerateAllFacts_ActivityQueryFactGenerator() {
+        ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+        List<AbstractFact> facts = activityQueryFactGenerator.generateAllFacts();
+        assertNull(facts);
+    }
+
 
     @SneakyThrows
     private FLUXFAReportMessage loadTestData(String filePath) {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
         return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
-
-
 }

@@ -17,6 +17,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -27,23 +30,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BusinessObjectFactory {
 
-    public static AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
-        if(businessObjectType == null){
-            return null;
+    public static final AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
+        if (businessObjectType != null) {
+            switch (businessObjectType) {
+                case FLUX_ACTIVITY_REQUEST_MSG:
+                    return new ActivityRequestFactGenerator();
+                case FLUX_ACTIVITY_RESPONSE_MSG:
+                    return new ActivityResponseFactGenerator();
+                case FLUX_ACTIVITY_QUERY_MSG:
+                    return new ActivityQueryFactGenerator();
+                case FLUX_SALES_QUERY_MSG:
+                    return new SalesQueryFactGenerator();
+                case FLUX_SALES_REPORT_MSG:
+                    return new SalesReportFactGenerator();
+                case FLUX_SALES_RESPONSE_MSG:
+                    return new SalesResponseFactGenerator();
+            }
         }
-        AbstractGenerator generator = null;
-        switch (businessObjectType) {
-            case FLUX_ACTIVITY_REQUEST_MSG:
-                generator = new ActivityRequestFactGenerator();
-                break;
-            case FLUX_ACTIVITY_RESPONSE_MSG:
-                generator = new ActivityResponseFactGenerator();
-                break;
-            case FLUX_ACTIVITY_QUERY_MSG:
-                generator = new ActivityQueryFactGenerator();
-                break;
-            default: break;
-        }
-        return generator;
+        return null;
     }
 }

@@ -57,6 +57,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Queue auditQueue;
     private Queue activityQueue;
     private Queue mdrEventQueue;
+    private Queue salesQueue;
 
     @PostConstruct
     public void init() {
@@ -77,6 +78,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
         activityQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
         mdrEventQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MDR_EVENT);
+        salesQueue = JMSUtils.lookupQueue(ctx, MessageConstants.SALES_QUEUE);
     }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {
@@ -124,6 +126,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                     break;
                 case MDR_EVENT:
                     getProducer(session, mdrEventQueue).send(message);
+                    break;
+                case SALES:
+                    getProducer(session, salesQueue).send(message);
                     break;
                 default:
                     break;

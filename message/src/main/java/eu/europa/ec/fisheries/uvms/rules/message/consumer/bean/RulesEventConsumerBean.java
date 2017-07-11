@@ -31,6 +31,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResp
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
@@ -96,6 +101,26 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> getFluxMdrSynchMessageResponse;
 
     @Inject
+    @ReceiveSalesQueryEvent
+    Event<EventMessage> receiveSalesQueryEvent;
+
+    @Inject
+    @ReceiveSalesReportEvent
+    Event<EventMessage> receiveSalesReportEvent;
+
+    @Inject
+    @ReceiveSalesResponseEvent
+    Event<EventMessage> receiveSalesResponseEvent;
+
+    @Inject
+    @SendSalesReportEvent
+    Event<EventMessage> sendSalesReportEvent;
+
+    @Inject
+    @SendSalesResponseEvent
+    Event<EventMessage> sendSalesResponseEvent;
+
+    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -139,6 +164,21 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case GET_FLUX_MDR_SYNC_RESPONSE :
                     getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_QUERY:
+                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_RESPONSE:
+                    receiveSalesResponseEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_REPORT:
+                    receiveSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_REPORT:
+                    sendSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_RESPONSE:
+                    sendSalesResponseEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());

@@ -22,6 +22,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResp
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
@@ -52,4 +57,13 @@ public interface EventService {
 
     void getFLUXMDRSyncResponseMessageReceivedEvent(@Observes @GetFLUXMDRSyncMessageResponseEvent EventMessage message);
 
+    void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message);
+
+    void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message);
+
+    void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message);
+
+    void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message);
+
+    void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message);
 }

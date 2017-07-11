@@ -10,10 +10,35 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.mapper.fact.xpath.util;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ROLE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PARTY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PERSON;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.ximpleware.*;
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -34,18 +59,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
-import static org.junit.Assert.*;
 
 /**
  * Created by kovian on 23/06/2017.
@@ -276,12 +289,86 @@ public class XPathRepositoryTest {
     }
 
     @Test
+    public void testXpathNullPassing() {
+        xpathUtil.append();
+        xpathUtil.append(StringUtils.EMPTY);
+    }
+
+    @Test
     @SneakyThrows
     public void testAllXPathConstants(){
-        final Field[] fields = XPathConstants.class.getFields();
-        for(Field field : fields){
-            System.out.print("Constant : "+field.get(field));
-        }
+        List<String> constantsList = new ArrayList<>();
+        constantsList.add(XPathConstants.FLUXFA_REPORT_MESSAGE);
+        constantsList.add(XPathConstants.FA_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_ACTIVITY);
+        constantsList.add(XPathConstants.FLUX_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.CREATION_DATE_TIME);
+        constantsList.add(XPathConstants.ID);
+        constantsList.add(XPathConstants.REFERENCED_ID);
+        constantsList.add(XPathConstants.OWNER_FLUX_PARTY);
+        constantsList.add(XPathConstants.PURPOSE_CODE);
+        constantsList.add(XPathConstants.REGISTRATION_VESSEL_COUNTRY);
+        constantsList.add(XPathConstants.SPECIFIED_CONTACT_PARTY);
+        constantsList.add(XPathConstants.SPECIFIED_CONTACT_PERSON);
+        constantsList.add(XPathConstants.ROLE_CODE);
+        constantsList.add(XPathConstants.ACCEPTANCE_DATE_TIME);
+        constantsList.add(XPathConstants.RELATED_FLUX_REPORT_DOCUMENT);
+        constantsList.add(XPathConstants.TYPE_CODE);
+        constantsList.add(XPathConstants.RELATED_REPORT_ID);
+        constantsList.add(XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS);
+        constantsList.add(XPathConstants.RELATED_FISHING_ACTIVITY);
+        constantsList.add(XPathConstants.SPECIFIED_DELIMITED_PERIOD);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_TRIP);
+        constantsList.add(XPathConstants.DURATION_MEASURE);
+        constantsList.add(XPathConstants.OPERATIONS_QUANTITY);
+        constantsList.add(XPathConstants.RELATED_FLUX_LOCATION);
+        constantsList.add(XPathConstants.OCCURRENCE_DATE_TIME);
+        constantsList.add(XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC);
+        constantsList.add(XPathConstants.REASON_CODE);
+        constantsList.add(XPathConstants.FISHERY_TYPE_CODE);
+        constantsList.add(XPathConstants.SPECIES_TARGET_CODE);
+        constantsList.add(XPathConstants.VESSEL_RELATED_ACTIVITY_CODE);
+        constantsList.add(XPathConstants.SPECIFIED_FA_CATCH);
+        constantsList.add(XPathConstants.SPECIES_CODE);
+        constantsList.add(XPathConstants.APPLIED_AAP_PROCESS);
+        constantsList.add(XPathConstants.RESULT_AAP_PRODUCT);
+        constantsList.add(XPathConstants.CLASS_CODE);
+        constantsList.add(XPathConstants.SPECIFIED_SIZE_DISTRIBUTION);
+        constantsList.add(XPathConstants.UNIT_QUANTITY);
+        constantsList.add(XPathConstants.WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.PACKAGING_TYPE_CODE);
+        constantsList.add(XPathConstants.PACKAGING_UNIT_QUANTITY);
+        constantsList.add(XPathConstants.PACKAGING_UNIT_AVERAGE_WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.SPECIFIED_FISHING_GEAR);
+        constantsList.add(XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC);
+        constantsList.add(XPathConstants.SPECIFIED_GEAR_PROBLEM);
+        constantsList.add(XPathConstants.APPLICABLE_FLUX_CHARACTERISTIC);
+        constantsList.add(XPathConstants.COUNTRY_ID);
+        constantsList.add(XPathConstants.SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE);
+        constantsList.add(XPathConstants.PHYSICAL_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.POSTAL_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.POSTCODE_CODE);
+        constantsList.add(XPathConstants.CITY_NAME);
+        constantsList.add(XPathConstants.STREET_NAME);
+        constantsList.add(XPathConstants.PLOT_IDENTIFICATION);
+        constantsList.add(XPathConstants.SPECIFIED_STRUCTURED_ADDRESS);
+        constantsList.add(XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS);
+        constantsList.add(XPathConstants.SPECIFIED_FLUX_LOCATION);
+        constantsList.add(XPathConstants.DESTINATION_FLUX_LOCATION);
+        constantsList.add(XPathConstants.CONVERSION_FACTOR_NUMERIC);
+        constantsList.add(XPathConstants.CATEGORY_CODE);
+        constantsList.add(XPathConstants.WEIGHING_MEANS_CODE);
+        constantsList.add(XPathConstants.RELATED_FISHING_TRIP);
+        constantsList.add(XPathConstants.VALUE_QUANTITY);
+        constantsList.add(XPathConstants.RELATED_FISHING_GEAR);
+        constantsList.add(XPathConstants.USED_FISHING_GEAR);
+        constantsList.add(XPathConstants.FLUX_RESPONSE_DOCUMENT);
+        constantsList.add(XPathConstants.FLUX_RESPONSE_MESSAGE);
+        constantsList.add(XPathConstants.AVERAGE_WEIGHT_MEASURE);
+        constantsList.add(XPathConstants.REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE);
+
+        assertTrue(CollectionUtils.isNotEmpty(constantsList));
+
     }
 
     private void generateFactList() throws RulesValidationException {
@@ -293,20 +380,10 @@ public class XPathRepositoryTest {
 
 
     private FLUXFAReportMessage loadTestData() throws IOException, MdrModelMarshallException {
-        String fluxFaMessageStr = readTestFile(testXmlPath);
+        String fluxFaMessageStr = IOUtils.toString(new FileInputStream(testXmlPath));
         return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
 
-
-    /**
-     * Read test data xml file and return it asa string.
-     *
-     * @return
-     * @throws IOException
-     */
-    private String readTestFile(String fileName) throws IOException {
-        return IOUtils.toString(new FileInputStream(fileName));
-    }
 
     public static String preetyPrint(Object obj) throws JsonProcessingException {
         return new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true).writeValueAsString(obj);
