@@ -15,6 +15,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,6 +66,13 @@ public class MDRCacheHolder {
         }
 
         return codeColumnValues;
+    }
+
+    public List<ObjectRepresentation> getObjectRepresntationList(MDRAcronymType type){
+        if(type ==null)
+            return Collections.emptyList();
+
+        return cache.get(type);
     }
 
 }
