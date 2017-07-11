@@ -11,10 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;

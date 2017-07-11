@@ -11,6 +11,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
@@ -21,10 +31,12 @@ import eu.europa.ec.fisheries.schema.exchange.service.v1.StatusType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionTypeType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
@@ -47,7 +59,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
@@ -66,19 +77,6 @@ import eu.europa.ec.fisheries.wsdl.user.types.EndPoint;
 import eu.europa.ec.fisheries.wsdl.user.types.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @Stateless
 public class ValidationServiceBean implements ValidationService {

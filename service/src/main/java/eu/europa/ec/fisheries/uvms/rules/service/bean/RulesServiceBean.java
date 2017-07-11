@@ -54,7 +54,6 @@ import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
@@ -104,56 +103,46 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigInteger;
 import java.nio.file.AccessDeniedException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 @Stateless
 public class RulesServiceBean implements RulesService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
-
     static final double VICINITY_RADIUS = 0.05;
-
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
+    private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
 
     @EJB
     RulesResponseConsumer consumer;
 
     @EJB
     RulesMessageProducer producer;
-
+    @EJB
+    RulesValidator rulesValidator;
+    @EJB
+    ValidationService validationService;
     @Inject
     @AlarmReportEvent
     private Event<NotificationMessage> alarmReportEvent;
-
     @Inject
     @TicketEvent
     private Event<NotificationMessage> ticketEvent;
-
     @Inject
     @TicketUpdateEvent
     private Event<NotificationMessage> ticketUpdateEvent;
-    
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
-
     @Inject
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
-
-    @EJB
-    RulesValidator rulesValidator;
-
-    @EJB
-    ValidationService validationService;
-
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
-
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
@@ -428,6 +417,7 @@ public class RulesServiceBean implements RulesService {
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), ticket.getComment(), ticket.getUpdatedBy());
             return updatedTicket;
+
 
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
