@@ -13,19 +13,29 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
-import ma.glasnost.orika.MapperFacade;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
+import eu.europa.ec.fisheries.schema.sales.FLUXResponseDocumentType;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
+import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
+import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesResponseMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationQualityAnalysisFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationResultDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import ma.glasnost.orika.MapperFacade;
 
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
@@ -60,8 +70,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         return classes;
     }
 
-    @Override
-    public List<AbstractFact> getAllFacts() {
+    @Override public List<AbstractFact> generateAllFacts() {
         facts = new ArrayList<>();
 
         List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
@@ -74,10 +83,13 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         return facts;
     }
 
-
     @Override
     public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {
         this.fluxResponseMessage = businessObject;
+    }
+
+    @Override public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
+
     }
 
     private List<Object> findObjectsToMapToFacts() {

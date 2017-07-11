@@ -1,14 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
-import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.apache.commons.lang3.StringUtils;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by MATBUL on 21/06/2017.
@@ -36,7 +36,7 @@ public class SalesFactHelper {
         return false;
     }
 
-    public static boolean isCountryIdValid(IdType idType){
+    public static boolean isCountryIdValid(IdType idType) {
         if (idType == null || StringUtils.isBlank(idType.getValue()) || idType.getValue().length() != 3) {
             return false;
         }
@@ -45,11 +45,11 @@ public class SalesFactHelper {
     }
 
     public static String[] getValidCategories() {
-        return (String[])validCategories.toArray();
+        return (String[]) validCategories.toArray();
     }
 
-    public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes){
-        for (AmountType amountType:amountTypes) {
+    public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {
+        for (AmountType amountType : amountTypes) {
             if (amountType == null || amountType.getValue() == null || amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
                 return false;
             }
@@ -58,8 +58,8 @@ public class SalesFactHelper {
         return true;
     }
 
-    public static boolean anyValueEqualToZero(List<AmountType> amountTypes){
-        for (AmountType amountType:amountTypes) {
+    public static boolean anyValueEqualToZero(List<AmountType> amountTypes) {
+        for (AmountType amountType : amountTypes) {
             if (amountType == null || amountType.getValue() == null || amountType.getValue().compareTo(BigDecimal.ZERO) == 0) {
                 return true;
             }

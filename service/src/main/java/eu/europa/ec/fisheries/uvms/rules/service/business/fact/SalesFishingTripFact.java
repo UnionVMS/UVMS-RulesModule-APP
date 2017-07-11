@@ -1,12 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
-
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 import java.util.List;
 import java.util.Objects;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 public class SalesFishingTripFact extends AbstractFact {
 

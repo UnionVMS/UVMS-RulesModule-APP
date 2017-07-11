@@ -1,9 +1,25 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.sales.CodeType;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
+import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.SalesQueryParameterType;
+import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesQueryMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryParameterFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
@@ -11,12 +27,6 @@ import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by MATBUL on 22/05/2017.
@@ -55,7 +65,7 @@ public class SalesQueryFactGeneratorTest {
         fluxSalesQueryMessage.setSalesQuery(query);
 
         salesQueryFactGenerator.setBusinessObjectMessage(fluxSalesQueryMessage);
-        List<AbstractFact> allFacts = salesQueryFactGenerator.getAllFacts();
+        List<AbstractFact> allFacts = salesQueryFactGenerator.generateAllFacts();
 
         List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesQueryMessageFact.class, SalesFLUXPartyFact.class,

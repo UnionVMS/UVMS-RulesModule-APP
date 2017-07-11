@@ -1,16 +1,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
-import eu.europa.ec.fisheries.schema.sales.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.SalesReportType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FactGeneratorHelperTest {

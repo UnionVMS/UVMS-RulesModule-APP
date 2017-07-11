@@ -1,11 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 import java.util.List;
 import java.util.Objects;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.ContactPersonType;
+import eu.europa.ec.fisheries.schema.sales.EmailCommunicationType;
+import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
+import eu.europa.ec.fisheries.schema.sales.TelecommunicationCommunicationType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
+import eu.europa.ec.fisheries.schema.sales.UniversalCommunicationType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
 public class SalesContactPartyFact extends AbstractFact {
 

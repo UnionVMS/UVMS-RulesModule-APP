@@ -16,15 +16,11 @@ package eu.europa.ec.fisheries.uvms.rules.service;
 import javax.ejb.Local;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import javax.ejb.Local;
-import java.util.List;
 
 /**
  * Created by padhyad on 5/9/2017.

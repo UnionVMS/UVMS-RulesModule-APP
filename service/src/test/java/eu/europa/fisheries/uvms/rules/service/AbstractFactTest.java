@@ -10,6 +10,19 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -29,14 +42,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -647,19 +652,19 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatWhenPassingAStringAndResultIsOK(){
+    public void testValidateFormatWhenPassingAStringAndResultIsOK() {
         boolean b = fact.validateFormat("aaa", "aaa");
         assertTrue(b);
     }
 
     @Test
-    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentIsNull(){
+    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentIsNull() {
         boolean b = fact.validateFormat(null, null);
         assertFalse(b);
     }
 
     @Test
-    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentDoesNotApplyToTheFormat(){
+    public void testValidateFormatWhenPassingAStringAndResultIsNOKBecauseArgumentDoesNotApplyToTheFormat() {
         boolean b = fact.validateFormat("aap", "paa");
         assertFalse(b);
     }
@@ -667,7 +672,7 @@ public class AbstractFactTest {
 
     @Test
     public void testValidateFormatWhenSalesSpecificIDAndResultIsOK() {
-        boolean b = fact.validateFormat("BEL-SN-2017-123456", AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
+        boolean b = fact.validateFormat("BEL-SN-2017-123456", ".*-.*-[A-Za-z0-9\\-]{1,20}");
         assertTrue(b);
     }
 
@@ -704,7 +709,7 @@ public class AbstractFactTest {
         salesPartyType2.withRoleCodes(codeType2);
 
 
-        assertTrue(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2),"SENDER"));
+        assertTrue(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2), "SENDER"));
     }
 
     @Test
@@ -722,7 +727,7 @@ public class AbstractFactTest {
         SalesPartyType salesPartyType3 = new SalesPartyType();
         salesPartyType3.withRoleCodes(codeType3);
 
-        assertFalse(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2, salesPartyType3),"SENDER"));
+        assertFalse(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2, salesPartyType3), "SENDER"));
     }
 
     @Test

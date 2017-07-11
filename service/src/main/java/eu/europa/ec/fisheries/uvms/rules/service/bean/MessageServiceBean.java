@@ -13,8 +13,25 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -37,11 +54,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomMapper;
-import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,18 +73,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -280,17 +284,17 @@ public class MessageServiceBean implements MessageService {
     }
 
     private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
-      if (validationResult != null) {
-          if (validationResult.isError()) {
-              return ExchangeLogStatusTypeType.FAILED;
-          } else if (validationResult.isWarning()) {
-              return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-          } else {
-              return ExchangeLogStatusTypeType.SUCCESSFUL;
-          }
-      } else {
-        return ExchangeLogStatusTypeType.UNKNOWN;
-      }
+        if (validationResult != null) {
+            if (validationResult.isError()) {
+                return ExchangeLogStatusTypeType.FAILED;
+            } else if (validationResult.isWarning()) {
+                return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
+            } else {
+                return ExchangeLogStatusTypeType.SUCCESSFUL;
+            }
+        } else {
+            return ExchangeLogStatusTypeType.UNKNOWN;
+        }
     }
 
     private void updateValidationResultWithExisting(ValidationResultDto faReportValidationResult, ValidationResultDto previousValidationResultDto) {

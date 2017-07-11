@@ -79,8 +79,9 @@ public class StructuredAddressFact extends AbstractFact {
     public void setCountryID(IdType countryID) {
         this.countryID = countryID;
     }
+
     // TODO test
-    public boolean isIdValid(){
+    public boolean isIdValid() {
         String[] validCountries = new String[248];
         validCountries[0] = "ABW";
         validCountries[1] = "AFG";

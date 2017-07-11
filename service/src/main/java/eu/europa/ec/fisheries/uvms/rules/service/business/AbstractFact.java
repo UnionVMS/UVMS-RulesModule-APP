@@ -279,8 +279,6 @@ public abstract class AbstractFact {
         return false;
     }
 
-    private boolean validateFormat(String value, String format) {
-
     public boolean validateFormat(String value, String format) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
             return false;
@@ -304,7 +302,7 @@ public abstract class AbstractFact {
 
     /**
      * Checks if valuesToMatch strings are ALL present in list of measureTypes
-     * @param measureTypes
+     * @param codeType
      * @param valuesToMatch
      * @return
      */
@@ -518,6 +516,7 @@ public abstract class AbstractFact {
         }
         return !isMatchFound;
     }
+
     public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -625,9 +624,8 @@ public abstract class AbstractFact {
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
-    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound)
-    {
-        return  value.compareTo(lowBound) > 0  && value.compareTo(upperBound) < 0;
+    public boolean isBigDecimalBetween(BigDecimal value, BigDecimal lowBound, BigDecimal upperBound) {
+        return value.compareTo(lowBound) > 0 && value.compareTo(upperBound) < 0;
     }
 
     public enum FORMATS {
@@ -641,8 +639,7 @@ public abstract class AbstractFact {
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
-        EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}");
-        GFCM("[a-zA-Z0-9]{1,13}"),
+        //EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}"),
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
