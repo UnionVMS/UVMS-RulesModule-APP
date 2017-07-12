@@ -10,6 +10,10 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.cache;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -17,10 +21,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kovian on 27/06/2017.
@@ -38,7 +38,7 @@ public class MdrCaheHolderTest {
     public void testCacheFillAndGet(){
 
         mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
-        mdrCacheHolder.addToCache(MDRAcronymType.FA_CATCH_TYPE,RuleTestHelper.getObjectRepresentationForFA_CATCH());
+        mdrCacheHolder.addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
 
         final List<String> gearTypeList = mdrCacheHolder.getList(MDRAcronymType.GEAR_TYPE);
         final List<String> faCatchType = mdrCacheHolder.getList(MDRAcronymType.FA_CATCH_TYPE);
@@ -50,7 +50,7 @@ public class MdrCaheHolderTest {
 
 
     @Test
-    public void testGetObjectRepresntationList(){
+    public void testGetObjectRepresntationList() {
 
         mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
 

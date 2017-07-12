@@ -13,6 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -39,15 +49,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 
 @Slf4j
 @ToString
@@ -519,6 +520,19 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return false;
+        }
+        Set<String> stringSet = new HashSet<>();
+
+        for(CodeType codeType : codeTypes){
+            stringSet.add(codeType.getValue());
+        }
+
+        return codeTypes.size() == stringSet.size();
+    }
+
     public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -766,38 +780,39 @@ public abstract class AbstractFact {
 
 
     /**
-     *  This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
-     * @param listName MDR list name to be matched with
+     * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
+     *
+     * @param listName  MDR list name to be matched with
      * @param codeValue value for CODE column to be matched with
      * @return DATATYPE column value for the matching record
      */
-    public String getDataTypeForMDRList(String listName, String codeValue){
+    public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum == null || codeValue ==null){
-            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+        if (anEnum == null || codeValue == null) {
+            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
             return "";
         }
 
 
-        List<ObjectRepresentation> representations=   MDRCacheHolder.getInstance().getObjectRepresntationList(anEnum);
+        List<ObjectRepresentation> representations = MDRCacheHolder.getInstance().getObjectRepresntationList(anEnum);
         boolean valueFound = false;
-        if(CollectionUtils.isNotEmpty(representations)){
-            for(ObjectRepresentation representation:representations){
+        if (CollectionUtils.isNotEmpty(representations)) {
+            for (ObjectRepresentation representation : representations) {
 
-                List<ColumnDataType> columnDataTypes= representation.getFields();
-                if(CollectionUtils.isEmpty(columnDataTypes)){
+                List<ColumnDataType> columnDataTypes = representation.getFields();
+                if (CollectionUtils.isEmpty(columnDataTypes)) {
                     continue;
                 }
-               for (ColumnDataType columnDataType : columnDataTypes) {
+                for (ColumnDataType columnDataType : columnDataTypes) {
                     if ("code".equals(columnDataType.getColumnName()) && columnDataType.getColumnValue().equals(codeValue)) {
                         valueFound = true;
-                       break;
+                        break;
                     }
                 }
-                if(valueFound){
+                if (valueFound) {
                     for (ColumnDataType columnDataType : columnDataTypes) {
-                        if ("dataType".equals(columnDataType.getColumnName()) ) {
-                          return columnDataType.getColumnValue();
+                        if ("dataType".equals(columnDataType.getColumnName())) {
+                            return columnDataType.getColumnValue();
                         }
                     }
                 }
