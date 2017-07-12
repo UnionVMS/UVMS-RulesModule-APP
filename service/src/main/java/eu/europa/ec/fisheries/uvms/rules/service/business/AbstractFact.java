@@ -424,6 +424,10 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
+    public boolean listIdContainsAny(CodeType codeType, String... values) {
+        return listIdContainsAny(Arrays.asList(codeType), values);
+    }
+
     /**
      * Checks if one of the String... array elements exists in the idTypes list.
      *

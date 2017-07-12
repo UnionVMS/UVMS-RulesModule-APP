@@ -372,7 +372,7 @@ public class ActivityFactMapperTest {
         fishingGear.setTypeCode(codeType);
         fishingGear.setApplicableGearCharacteristics(applicableGearCharacteristics);
 
-        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear);
+        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear, SPECIFIED_FISHING_GEAR);
 
         assertEquals(codeType.getValue(), fishingGearFact.getTypeCode().getValue());
         assertNotNull(fishingGearFact.getApplicableGearCharacteristics());

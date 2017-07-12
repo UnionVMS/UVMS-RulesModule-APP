@@ -42,6 +42,8 @@ public class ActivityFactMapper {
     private List<IdTypeWithFlagState> assetList;
 
     private static final String TYPE_CODE_PROP = "typeCode";
+    public static final String ROLE_CODES_PROP = "roleCodes";
+    public static final String APPLICABLE_GEAR_CHARACTERISTICS_PROP = "applicableGearCharacteristics";
     private static final String REASON_CODE_PROP = "reasonCode";
     private static final String FA_REPORT_DOCUMENT_TYPE_CODE_PROP = "faReportDocumentTypeCode";
     private static final String RELATED_FLUX_LOCATIONS_PROP = "relatedFLUXLocations";
@@ -104,7 +106,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_REPORT_ID).storeInRepo(faReportDocumentFact, "relatedReportIDs");
 
         faReportDocumentFact.setRelatedFLUXReportDocument(faReportDocument.getRelatedFLUXReportDocument());
-        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT).storeInRepo(faReportDocumentFact, "");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT).storeInRepo(faReportDocumentFact, "relatedFLUXReportDocument");
 
         faReportDocumentFact.setSpecifiedVesselTransportMeans(faReportDocument.getSpecifiedVesselTransportMeans());
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_TRANSPORT_MEANS).storeInRepo(faReportDocumentFact, "specifiedVesselTransportMeans");
@@ -228,6 +230,10 @@ public class ActivityFactMapper {
 
         fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, "relatedFluxLocationRFMOCodeList");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, "relatedFluxLocationRFMOCodeList");
+
+        fishingActivityFact.setIsSubActivity(isSubActivity);
+
         return fishingActivityFact;
     }
 
@@ -409,21 +415,28 @@ public class ActivityFactMapper {
     }
 
 
-    public FishingGearFact generateFactsForFishingGear(FishingGear fishingGear) {
+    public FishingGearFact generateFactsForFishingGear(FishingGear fishingGear, String gearType) {
         if (fishingGear == null) {
             xPathUtil.clear();
             return null;
         }
 
         FishingGearFact fishingGearFact = new FishingGearFact();
+        if (SPECIFIED_FISHING_GEAR.equals(gearType)) {
+            fishingGearFact.setFishingActivity(true);
+        }
+
         final String partialXpath = xPathUtil.getValue();
 
         fishingGearFact.setTypeCode(mapToCodeType(fishingGear.getTypeCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fishingGearFact, TYPE_CODE_PROP);
 
+        fishingGearFact.setRoleCodes(mapToCodeType(fishingGear.getRoleCodes()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(ROLE_CODE).storeInRepo(fishingGearFact, ROLE_CODES_PROP);
+
         if (fishingGear.getApplicableGearCharacteristics() != null) {
             fishingGearFact.setApplicableGearCharacteristics(new ArrayList<>(fishingGear.getApplicableGearCharacteristics()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_GEAR_CHARACTERISTIC).storeInRepo(fishingGearFact, "applicableGearCharacteristics");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_GEAR_CHARACTERISTIC).storeInRepo(fishingGearFact, APPLICABLE_GEAR_CHARACTERISTICS_PROP);
         }
 
         return fishingGearFact;
@@ -440,7 +453,7 @@ public class ActivityFactMapper {
         int index = 1;
         for (FishingGear fishingGear : fishingGears) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
-            list.add(generateFactsForFishingGear(fishingGear));
+            list.add(generateFactsForFishingGear(fishingGear, gearType));
             index++;
         }
 
