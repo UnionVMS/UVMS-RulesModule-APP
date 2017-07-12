@@ -43,6 +43,17 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Gregory Rinaldi
  */
@@ -53,10 +64,9 @@ public class AbstractFactTest {
     @Before
     public void before() {
 
-        String[] gearTypeCodes = new String[] { "PS1", "LA", "SB", "SDN", "PTB" };
-        String[] faCatchCodes = new String[] { "ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED" };
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
     }
 
 
@@ -611,7 +621,7 @@ public class AbstractFactTest {
     public void testListIdContainsAny() {
 
         CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdContainsAny(codeTypes, "CFR");
@@ -766,6 +776,13 @@ public class AbstractFactTest {
         codeType.setValue(value);
         return codeType;
     }
+    @Test
+    public void testGetDataTypeForMDRList() {
+
+        String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC","ME");
+        assertEquals("MEASURE",result);
+    }
+
 
     @Test
     public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
