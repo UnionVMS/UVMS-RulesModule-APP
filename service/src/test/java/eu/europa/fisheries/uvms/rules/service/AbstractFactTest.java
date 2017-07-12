@@ -15,15 +15,15 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.math.BigDecimal;
@@ -790,6 +790,7 @@ public class AbstractFactTest {
         assertNotNull(valueForListId);
         assertEquals("OHL", valueForListId);
     }
+
     @Test
     public void testRetrieveFishingGearTypeCode() {
         FishingGearFact fishingGearFact = new FishingGearFact();
