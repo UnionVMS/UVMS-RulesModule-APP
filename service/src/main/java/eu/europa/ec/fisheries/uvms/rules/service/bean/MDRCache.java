@@ -10,6 +10,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.TextMessage;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -24,22 +33,13 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.TextMessage;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
-
 /**
  * @author Gregory Rinaldi
  */
 @Singleton
 @Slf4j
 public class MDRCache {
-   
+
     private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
@@ -47,7 +47,6 @@ public class MDRCache {
 
     @EJB
     private RulesMessageProducer producer;
-
 
 
     public MDRCache() {
@@ -87,7 +86,7 @@ public class MDRCache {
             return response.getDataSets();
 
         }
-      return null;
+        return null;
     }
 
 

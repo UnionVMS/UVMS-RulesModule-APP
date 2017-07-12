@@ -43,17 +43,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author Gregory Rinaldi
  */
@@ -621,7 +610,7 @@ public class AbstractFactTest {
     public void testListIdContainsAny() {
 
         CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdContainsAny(codeTypes, "CFR");
@@ -776,11 +765,12 @@ public class AbstractFactTest {
         codeType.setValue(value);
         return codeType;
     }
+
     @Test
     public void testGetDataTypeForMDRList() {
 
-        String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC","ME");
-        assertEquals("MEASURE",result);
+        String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC", "ME");
+        assertEquals("MEASURE", result);
     }
 
 

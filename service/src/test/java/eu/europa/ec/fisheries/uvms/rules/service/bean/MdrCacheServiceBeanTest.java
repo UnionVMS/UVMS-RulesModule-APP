@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static junit.framework.Assert.assertNotNull;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.junit.Rule;
@@ -22,8 +24,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * Created by padhyad on 6/7/2017.
