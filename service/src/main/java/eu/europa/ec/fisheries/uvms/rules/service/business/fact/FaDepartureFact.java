@@ -18,9 +18,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 
 /**
@@ -41,9 +39,9 @@ public class FaDepartureFact extends AbstractFact {
 
     private List<CodeType> relatedFLUXLocationTypeCodes;
 
-    private List<FishingGear> specifiedFishingGears;
+    private List<CodeType> specifiedFishingGearRoleCodeTypes;
 
-    private List<FACatch> specifiedFACatches;
+    private List<CodeType> specifiedFACatchCodeTypes;
 
     private FishingTrip specifiedFishingTrip;
 
@@ -88,22 +86,6 @@ public class FaDepartureFact extends AbstractFact {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
 
-    public List<FishingGear> getSpecifiedFishingGears() {
-        return specifiedFishingGears;
-    }
-
-    public void setSpecifiedFishingGears(List<FishingGear> specifiedFishingGears) {
-        this.specifiedFishingGears = specifiedFishingGears;
-    }
-
-    public List<FACatch> getSpecifiedFACatches() {
-        return specifiedFACatches;
-    }
-
-    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
-        this.specifiedFACatches = specifiedFACatches;
-    }
-
     public FishingTrip getSpecifiedFishingTrip() {
         return specifiedFishingTrip;
     }
@@ -126,5 +108,21 @@ public class FaDepartureFact extends AbstractFact {
 
     public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
         this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
+    }
+
+    public List<CodeType> getSpecifiedFishingGearRoleCodeTypes() {
+        return specifiedFishingGearRoleCodeTypes;
+    }
+
+    public void setSpecifiedFishingGearRoleCodeTypes(List<CodeType> specifiedFishingGearRoleCodeTypes) {
+        this.specifiedFishingGearRoleCodeTypes = specifiedFishingGearRoleCodeTypes;
+    }
+
+    public List<CodeType> getSpecifiedFACatchCodeTypes() {
+        return specifiedFACatchCodeTypes;
+    }
+
+    public void setSpecifiedFACatchCodeTypes(List<CodeType> specifiedFACatchCodeTypes) {
+        this.specifiedFACatchCodeTypes = specifiedFACatchCodeTypes;
     }
 }
