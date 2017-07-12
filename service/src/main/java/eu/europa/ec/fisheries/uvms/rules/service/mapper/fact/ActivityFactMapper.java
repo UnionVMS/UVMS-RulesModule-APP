@@ -1118,13 +1118,29 @@ public class ActivityFactMapper {
         if (fishingActivity != null) {
             faNotificationOfArrivalFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faNotificationOfArrivalFact ,"fishingActivityTypeCode");
-            if (fishingActivity.getRelatedFLUXLocations() != null) {
-                faNotificationOfArrivalFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
+            List<FLUXLocation> relatedFLUXLocations = fishingActivity.getRelatedFLUXLocations();
+            if (relatedFLUXLocations != null) {
+                faNotificationOfArrivalFact.setRelatedFLUXLocations(new ArrayList<>(relatedFLUXLocations));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faNotificationOfArrivalFact , RELATED_FLUX_LOCATIONS_PROP);
+                List<CodeType> codeTypes = new ArrayList<>();
+                for(FLUXLocation location: relatedFLUXLocations){
+                    CodeType codeType = mapToCodeType(location.getTypeCode());
+                    if (codeType != null){
+                        codeTypes.add(codeType);
+                    }
+                }
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact , RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
             }
-            if (fishingActivity.getSpecifiedFACatches() != null) {
+            List<FACatch> specifiedFACatches = fishingActivity.getSpecifiedFACatches();
+            if (specifiedFACatches != null) {
                 faNotificationOfArrivalFact.setSpecifiedFACatches(new ArrayList<>(fishingActivity.getSpecifiedFACatches()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faNotificationOfArrivalFact ,"specifiedFACatches");
+                List<CodeType> codeTypeList = new ArrayList<>();
+                for (FACatch faCatch: specifiedFACatches){
+                    codeTypeList.add(mapToCodeType(faCatch.getTypeCode()));
+                }
+                faNotificationOfArrivalFact.setSpecifiedFACatchTypeCodes(codeTypeList);
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH,TYPE_CODE).storeInRepo(faNotificationOfArrivalFact ,"specifiedFACatchTypeCodes");
             }
             faNotificationOfArrivalFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faNotificationOfArrivalFact , REASON_CODE_PROP);
