@@ -68,4 +68,23 @@ public class SalesQueryParameterFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
     }
+
+    // TODO test
+    public boolean isValueNotValid(){
+        if (typeCode == null || valueCode == null){
+            return true;
+        }
+
+        switch (typeCode.getValue()){
+            case "ROLE":
+                return !isCodeTypeValidFormat("FLUX_SALES_QUERY_PARAM_ROLE", valueCode);
+            case "FLAG":
+                return !isCodeTypeValidFormat("LOCATION", valueCode);
+            case "PLACE":
+                // TODO validate with MDR data
+                return false;
+            default:
+                return false;
+        }
+    }
 }

@@ -116,4 +116,15 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty);
     }
+
+    // TODO test
+    public boolean anyValidationResultDocumentsWithEmptyValidationQualityAnalyses(){
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument == null || isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
