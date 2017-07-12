@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -515,6 +516,19 @@ public abstract class AbstractFact {
             }
         }
         return !isMatchFound;
+    }
+
+    public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return false;
+        }
+        Set<String> stringSet = new HashSet<>();
+
+        for(CodeType codeType : codeTypes){
+            stringSet.add(codeType.getValue());
+        }
+
+        return codeTypes.size() == stringSet.size();
     }
 
     public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {

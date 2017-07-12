@@ -767,4 +767,43 @@ public class AbstractFactTest {
         return codeType;
     }
 
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
+
+        CodeType codeType = new CodeType();
+        codeType.setValue("value1");
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("value2");
+
+        CodeType codeType3 = new CodeType();
+        codeType3.setValue("value2");
+
+        assertFalse(fact.codeTypeValuesUnique(Arrays.asList(codeType, codeType2, codeType3)));
+
+    }
+
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues(){
+
+        CodeType codeType = new CodeType();
+        codeType.setValue("value1");
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("value2");
+
+        CodeType codeType3 = new CodeType();
+        codeType3.setValue("value3");
+
+        assertTrue(fact.codeTypeValuesUnique(Arrays.asList(codeType, codeType2, codeType3)));
+
+    }
+
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull(){
+
+        assertFalse(fact.codeTypeValuesUnique(null));
+
+    }
+
 }

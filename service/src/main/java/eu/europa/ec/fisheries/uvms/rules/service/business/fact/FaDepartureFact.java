@@ -39,6 +39,8 @@ public class FaDepartureFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
+    private List<CodeType> relatedFLUXLocationTypeCodes;
+
     private List<FishingGear> specifiedFishingGears;
 
     private List<FACatch> specifiedFACatches;
@@ -116,5 +118,13 @@ public class FaDepartureFact extends AbstractFact {
 
     public void setOccurrenceDateTime(Date occurrenceDateTime) {
         this.occurrenceDateTime = occurrenceDateTime;
+    }
+
+    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
+        return relatedFLUXLocationTypeCodes;
+    }
+
+    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
+        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
     }
 }

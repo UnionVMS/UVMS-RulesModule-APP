@@ -867,8 +867,17 @@ public class ActivityFactMapper {
             faDepartureFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faDepartureFact, "fishingActivityTypeCode");
             if (fishingActivity.getRelatedFLUXLocations() != null) {
-                faDepartureFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
+                List<FLUXLocation> relatedFLUXLocations = fishingActivity.getRelatedFLUXLocations();
+                faDepartureFact.setRelatedFLUXLocations(relatedFLUXLocations);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faDepartureFact, RELATED_FLUX_LOCATIONS_PROP);
+
+                List<CodeType> codeTypes = new ArrayList<>();
+                for(FLUXLocation fluxLocation : relatedFLUXLocations){
+                    un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
+                    codeTypes.add(mapToCodeType(typeCode));
+                }
+                faDepartureFact.setRelatedFLUXLocationTypeCodes(codeTypes);
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,TYPE_CODE_PROP).storeInRepo(faDepartureFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
             }
             if (fishingActivity.getSpecifiedFishingGears() != null) {
                 faDepartureFact.setSpecifiedFishingGears(new ArrayList<>(fishingActivity.getSpecifiedFishingGears()));
