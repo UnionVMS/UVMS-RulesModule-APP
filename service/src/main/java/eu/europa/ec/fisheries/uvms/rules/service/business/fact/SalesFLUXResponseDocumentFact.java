@@ -127,4 +127,23 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
 
         return false;
     }
+
+    // todo test
+    public boolean anyValidationQualityAnalysisWithoutReferencedTextItems(){
+        if (isEmpty(relatedValidationResultDocuments)){
+            return false;
+        }
+
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument != null && !isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                for (ValidationQualityAnalysisType validationQualityAnalysis:validationResultDocument.getRelatedValidationQualityAnalysises()) {
+                    if(validationQualityAnalysis != null && isEmpty(validationQualityAnalysis.getReferencedItems())){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }
