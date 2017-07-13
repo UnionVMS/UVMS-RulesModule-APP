@@ -34,6 +34,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -109,6 +110,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
                 facts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
+                facts.addAll(addFactsForStructuredAddressVesselTransportMeans(Arrays.asList(faReportDocument.getSpecifiedVesselTransportMeans())));
+
                 index++;
             }
         }
@@ -136,7 +139,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(activity.getRelatedVesselTransportMeans()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                addFactsForVesselTransportMeans(facts, activity.getRelatedVesselTransportMeans());
+                facts.addAll(addFactsForStructuredAddressVesselTransportMeans(activity.getRelatedVesselTransportMeans()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactsForFaCatch(activity));
@@ -211,7 +214,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         xPathUtil.clear();
     }
 
-    private void addFactsForVesselTransportMeans(List<AbstractFact> facts, List<VesselTransportMeans> vesselTransportMeanses) {
+    private List addFactsForStructuredAddressVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeanses) {
+
+        List<AbstractFact> facts = new ArrayList<>();
         String partialXpath = xPathUtil.getValue();
         int index = 1;
         for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
@@ -226,6 +231,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             index++;
         }
         xPathUtil.clear();
+        return facts;
     }
 
     private void addFactsForFLUXLocation(List<AbstractFact> facts, List<FLUXLocation> fluxLocations, String fluxLocationType) {
