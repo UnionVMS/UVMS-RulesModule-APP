@@ -33,9 +33,13 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
+    private List<CodeType> relatedFLUXLocationTypeCodes;
+
     private Date occurrenceDateTime;
 
     private CodeType reasonCode;
+
+    private List<CodeType> specifiedFACatchTypeCodes;
 
     private List<FACatch> specifiedFACatches;
 
@@ -80,19 +84,35 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.reasonCode = reasonCode;
     }
 
-    public List<FACatch> getSpecifiedFACatches() {
-        return specifiedFACatches;
-    }
-
-    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
-        this.specifiedFACatches = specifiedFACatches;
-    }
-
     public Date getOccurrenceDateTime() {
         return occurrenceDateTime;
     }
 
     public void setOccurrenceDateTime(Date occurrenceDateTime) {
         this.occurrenceDateTime = occurrenceDateTime;
+    }
+
+    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
+        return relatedFLUXLocationTypeCodes;
+    }
+
+    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
+        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
+    }
+
+    public List<CodeType> getSpecifiedFACatchTypeCodes() {
+        return specifiedFACatchTypeCodes;
+    }
+
+    public void setSpecifiedFACatchTypeCodes(List<CodeType> specifiedFACatchTypeCodes) {
+        this.specifiedFACatchTypeCodes = specifiedFACatchTypeCodes;
+    }
+
+    public List<FACatch> getSpecifiedFACatches() {
+        return specifiedFACatches;
+    }
+
+    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
+        this.specifiedFACatches = specifiedFACatches;
     }
 }
