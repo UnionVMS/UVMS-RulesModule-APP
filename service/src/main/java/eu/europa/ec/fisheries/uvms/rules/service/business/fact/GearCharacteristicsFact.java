@@ -15,6 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IndicatorType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 /**
  * @autor padhyad
@@ -23,6 +25,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 public class GearCharacteristicsFact extends AbstractFact {
 
     private CodeType typeCode;
+    private TextType value;
+    private MeasureType valueMeasure;
+    private MeasureType valueQuantity;
+    private CodeType valueCode;
+    private IndicatorType valueIndicator;
 
     public GearCharacteristicsFact() {
         setFactType();
@@ -40,4 +47,46 @@ public class GearCharacteristicsFact extends AbstractFact {
     public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
     }
+
+    public TextType getValue() {
+        return value;
+    }
+
+    public void setValue(TextType value) {
+        this.value = value;
+    }
+
+    public MeasureType getValueMeasure() {
+        return valueMeasure;
+    }
+
+    public void setValueMeasure(MeasureType valueMeasure) {
+        this.valueMeasure = valueMeasure;
+    }
+
+    public MeasureType getValueQuantity() {
+        return valueQuantity;
+    }
+
+    public void setValueQuantity(MeasureType valueQuantity) {
+        this.valueQuantity = valueQuantity;
+    }
+
+    public CodeType getValueCode() {
+        return valueCode;
+    }
+
+    public void setValueCode(CodeType valueCode) {
+        this.valueCode = valueCode;
+    }
+
+    public IndicatorType getValueIndicator() {
+        return valueIndicator;
+    }
+
+    public void setValueIndicator(IndicatorType valueIndicator) {
+        this.valueIndicator = valueIndicator;
+    }
+
+
 }
