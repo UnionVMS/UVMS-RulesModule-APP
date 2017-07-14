@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -49,6 +50,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
@@ -88,11 +90,13 @@ public class MessageServiceBean implements MessageService {
     @EJB
     RulesPreProcessBean rulesPreProcessBean;
 
-    @Override
-    public void receiveSalesQueryRequest(String request) {
-        try {
-            ReceiveSalesQueryRequest receiveSalesQueryRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesQueryRequest.class);
+    @EJB
+    RulesConfigurationCache ruleModuleCache;
 
+    @Override
+    @Interceptors(RulesPreValidationInterceptor.class)
+    public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
+        try {
             //get sales query message
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
             FLUXSalesQueryMessage salesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
@@ -118,10 +122,9 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void receiveSalesReportRequest(String request) {
+    @Interceptors(RulesPreValidationInterceptor.class)
+    public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
         try {
-            ReceiveSalesReportRequest receiveSalesReportRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesReportRequest.class);
-
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
             Report salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
@@ -148,10 +151,9 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void receiveSalesResponseRequest(String request) {
+    @Interceptors(RulesPreValidationInterceptor.class)
+    public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
         try {
-            ReceiveSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, ReceiveSalesResponseRequest.class);
-
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
@@ -167,10 +169,9 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void sendSalesResponseRequest(String request) {
+    @Interceptors(RulesPreValidationInterceptor.class)
+    public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
         try {
-            SendSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, SendSalesResponseRequest.class);
-
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
@@ -194,10 +195,9 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void sendSalesReportRequest(String request) {
+    @Interceptors(RulesPreValidationInterceptor.class)
+    public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
         try {
-            SendSalesReportRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(request, SendSalesReportRequest.class);
-
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
             FLUXSalesResponseMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
@@ -219,11 +219,11 @@ public class MessageServiceBean implements MessageService {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
-    @EJB
-    RulesConfigurationCache ruleModuleCache;
+
 
 
     @Override
+    @Interceptors(RulesPreValidationInterceptor.class)
     public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesServiceException {
         log.debug("inside setFLUXFAReportMessageReceived", request.getRequest());
         try {
