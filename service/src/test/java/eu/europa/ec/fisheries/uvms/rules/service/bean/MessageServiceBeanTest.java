@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
@@ -137,7 +138,9 @@ public class MessageServiceBeanTest {
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(Collections.emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
-        messageServiceBean.sendResponseToExchange(fluxResponseMessage, "USER1");
+        RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
+        request.setUsername("USER1");
+        messageServiceBean.sendResponseToExchange(fluxResponseMessage, request);
     }
 
     private ValidationResultDto getValidationResult() {
