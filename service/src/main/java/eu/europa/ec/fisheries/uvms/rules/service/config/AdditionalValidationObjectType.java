@@ -14,7 +14,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.config;
  * Created by kovian on 04/07/2017.
  */
 public enum AdditionalValidationObjectType {
-
-    ASSET_LIST
-
+    ASSET_LIST,
+    ACTIVITY_NON_UNIQUE_IDS
 }

@@ -13,30 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
-import eu.europa.ec.fisheries.schema.sales.SalesQueryParameterType;
-import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesQueryMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryParameterFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
@@ -89,7 +80,8 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         this.fluxSalesQueryMessage = businessObject;
     }
 
-    @Override public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
+    @Override
+    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
 
     }
 

@@ -29,11 +29,7 @@ import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
@@ -50,6 +46,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+
 @Slf4j
 @ToString
 public abstract class AbstractFact {
@@ -60,7 +60,7 @@ public abstract class AbstractFact {
 
     protected List<RuleError> errors;
 
-    protected List<String> uniqueIds = new ArrayList<>();
+    protected List<String> uniqueIds;
 
     protected boolean ok = true;
 
@@ -278,6 +278,27 @@ public abstract class AbstractFact {
         } catch (IllegalArgumentException ex) {
             log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return false;
+        }
+        return false;
+    }
+
+    /**
+     * If controlList contains at leat one of the elements of the elementsToMatchList returns true;
+     *
+     * @param controlList
+     * @param elementsToMatchList
+     * @return
+     */
+    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList){
+        if(CollectionUtils.isEmpty(controlList)){
+            return false;
+        }
+        if(CollectionUtils.isNotEmpty(elementsToMatchList)){
+            for(IdType idToMatch : elementsToMatchList){
+                if(controlList.contains(idToMatch)){
+                    return true;
+                }
+            }
         }
         return false;
     }

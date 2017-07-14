@@ -18,6 +18,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.apache.commons.collections.MapUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,11 +29,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import javax.ejb.EJB;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -62,7 +65,7 @@ public class ActivityServiceBeanTest {
     public void isUniqueTest() throws MessageException {
         Mockito.doReturn("id").when(producer).sendDataSourceMessage(Mockito.any(String.class), Mockito.any(DataSourceQueue.class));
         Mockito.doReturn(msg).when(consumer).getMessage(Mockito.any(String.class), Mockito.any(Class.class));
-        Boolean isUnique = activityServiceBean.isUnique(ActivityTableType.FLUX_FA_REPORT_ENTITY, "Id1", "schemeId1");
-        assertFalse(isUnique);
+        Map<ActivityTableType, List<IdType>> isUnique = activityServiceBean.getNonUniqueIdsList(null);
+        assertTrue(MapUtils.isEmpty(isUnique));
     }
 }
