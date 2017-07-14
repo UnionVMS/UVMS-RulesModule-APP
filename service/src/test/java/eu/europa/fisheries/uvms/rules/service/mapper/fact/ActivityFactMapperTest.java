@@ -364,9 +364,7 @@ public class ActivityFactMapperTest {
         //assertEquals(date, faDepartureFact.getOccurrenceDateTime().getDate());
         assertEquals(fluxLocation, faDepartureFact.getRelatedFLUXLocations().get(0));
         assertEquals(fishingTrip, faDepartureFact.getSpecifiedFishingTrip());
-        assertEquals(faCatch, faDepartureFact.getSpecifiedFACatches().get(0));
-        assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFishingGears().get(0).getRoleCodes().get(0).getValue());
-        assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFishingGears().get(0).getTypeCode().getValue());
+        assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFACatchCodeTypes().get(0).getValue());
         assertEquals(codeType.getValue(), faDepartureFact.getFaReportDocumentTypeCode().getValue());
 
     }

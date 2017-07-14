@@ -13,6 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -28,6 +38,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -76,10 +88,10 @@ public abstract class AbstractFact {
 
     private List<String> getXpathsForProps(String propertyNames) {
         List<String> xpathsList = new ArrayList<>();
-        if (StringUtils.isNotEmpty(propertyNames)) {
+        if(StringUtils.isNotEmpty(propertyNames)){
             String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
             String[] propNames = propNamesTrimmed.split(",");
-            for (String propName : propNames) {
+            for(String propName : propNames) {
                 xpathsList.add(XPathRepository.INSTANCE.getMapForSequence(this.getSequence(), propName));
             }
         }
@@ -103,13 +115,13 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
-        if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
+    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor){
+        if(StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)){
             return false;
         }
         String flagStateToMatch = StringUtils.EMPTY;
-        for (IdType idType : idTypes) {
-            if (schemeIdToSearchFor.equals(idType.getSchemeId())) {
+        for(IdType idType : idTypes){
+            if(schemeIdToSearchFor.equals(idType.getSchemeId())){
                 flagStateToMatch = idType.getValue();
             }
         }
@@ -177,6 +189,7 @@ public abstract class AbstractFact {
     }
 
     /**
+     *
      * Checks if one of the String... array elements exists in the idTypes list.
      * Depending on checkEmptyness value it also checks (or not) if the values are empty.
      * Depending on isGivenName value it checks for GivenName or FamilyName.
@@ -190,11 +203,11 @@ public abstract class AbstractFact {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName = contPers.getGivenName();
-            TextType familyName = contPers.getFamilyName();
+            TextType givenName      = contPers.getGivenName();
+            TextType familyName     = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
-            TextType alias = contPers.getAlias();
-            if (checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)) {
+            TextType alias          = contPers.getAlias();
+            if(checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)){
                 return true;
             }
         }
@@ -211,19 +224,19 @@ public abstract class AbstractFact {
                 && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
-    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
+    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
         if (CollectionUtils.isEmpty(contactPersons)) {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName = contPers.getGivenName();
-            TextType familyName = contPers.getFamilyName();
-            TextType alias = contPers.getAlias();
-            if (givenName == null && familyName == null) {
-                if (alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))) {
+            TextType givenName      = contPers.getGivenName();
+            TextType familyName     = contPers.getFamilyName();
+            TextType alias          = contPers.getAlias();
+            if(givenName == null && familyName == null){
+                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
                     return true;
                 }
-            } else if (checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())) {
+            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
                 return true;
             }
         }
@@ -255,11 +268,11 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if (id == null) {
+        if(id == null){
             return true;
         }
         try {
-            if (!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
+            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -275,7 +288,6 @@ public abstract class AbstractFact {
         }
         return value.matches(format);
     }
-
 
     public boolean listIdContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
@@ -293,7 +305,6 @@ public abstract class AbstractFact {
 
     /**
      * Checks if valuesToMatch strings are ALL present in list of measureTypes
-     *
      * @param codeType
      * @param valuesToMatch
      * @return
@@ -399,27 +410,21 @@ public abstract class AbstractFact {
     public List<RuleWarning> getWarnings() {
         return warnings;
     }
-
     public List<RuleError> getErrors() {
         return errors;
     }
-
     public boolean isOk() {
         return ok;
     }
-
     public void setOk(boolean ok) {
         this.ok = ok;
     }
-
     public FactType getFactType() {
         return factType;
     }
-
     public List<String> getUniqueIds() {
         return uniqueIds;
     }
-
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
@@ -519,6 +524,19 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
+    public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return false;
+        }
+        Set<String> stringSet = new HashSet<>();
+
+        for(CodeType codeType : codeTypes){
+            stringSet.add(codeType.getValue());
+        }
+
+        return codeTypes.size() == stringSet.size();
+    }
+
     public boolean valueCodeTypeContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -557,8 +575,7 @@ public abstract class AbstractFact {
         ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
-        outer:
-        for (String val : valuesToMatch) {
+        outer : for (String val : valuesToMatch) {
             for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
@@ -586,10 +603,10 @@ public abstract class AbstractFact {
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
-     * @param faCatches
+     * @param  faCatches
      * @return false/true
      */
-    public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
+    public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
         for (FACatch faCatch : faCatches) {
             List<FLUXLocation> checkList = faCatch.getSpecifiedFLUXLocations();
@@ -600,7 +617,7 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
-    public boolean isEmpty(List<?> list) {
+    public boolean isEmpty(List<?> list){
         return CollectionUtils.isEmpty(list);
     }
 
@@ -613,7 +630,7 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean isEmpty(String str) {
+    public boolean isEmpty(String str){
         return StringUtils.isEmpty(str);
     }
 
@@ -665,47 +682,45 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Check if value passed is present in the MDR list speified
-     *
-     * @param listName  - MDR list name to be ckecked against
+     *  Check if value passed is present in the MDR list speified
+     * @param listName - MDR list name to be ckecked against
      * @param codeValue - This value will be checked in MDR list
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
-    public boolean isPresentInMDRList(String listName, String codeValue) {
+    public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if (anEnum == null) {
-            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if (CollectionUtils.isNotEmpty(values)) {
+        if(CollectionUtils.isNotEmpty(values)){
             return values.contains(codeValue);
         }
         return false;
     }
 
     /**
-     * This function checks that all the CodeType values passed to the function exist in MDR code list or not
-     *
-     * @param listName      - Values passed would be checked agaist this MDR list
+     *  This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if (anEnum == null) {
-            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
-            return false;
-        }
+         if(anEnum == null){
+             log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+             return false;
+         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
             return false;
         }
 
-        for (CodeType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+        for(CodeType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
@@ -714,45 +729,44 @@ public abstract class AbstractFact {
 
 
     /**
-     * This function checks that all the IdType values passed to the function exist in MDR code list or not
-     *
-     * @param listName      - Values passed would be checked agaist this MDR list
+     *  This function checks that all the IdType values passed to the function exist in MDR code list or not
+     * @param listName - Values passed would be checked agaist this MDR list
      * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if (anEnum == null) {
-            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+        if(anEnum == null){
+            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
             return false;
         }
 
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
+        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
             return false;
         }
 
-        for (IdType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+        for(IdType codeType: valuesToMatch){
+            if(!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
         return true;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {
-        if (CollectionUtils.isEmpty(additionalObjectList)) {
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList){
+        if(CollectionUtils.isEmpty(additionalObjectList)){
             return false;
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
-        for (IdType idType : vesselIds) {
+        for(IdType idType : vesselIds){
             listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
         }
 
-        for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
-            if (!additionalObjectList.contains(elemFromListToBeMatched)) {
+        for(IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched){
+            if(!additionalObjectList.contains(elemFromListToBeMatched)){
                 return false;
             }
         }
@@ -793,6 +807,49 @@ public abstract class AbstractFact {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+
+    /**
+     * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
+     *
+     * @param listName  MDR list name to be matched with
+     * @param codeValue value for CODE column to be matched with
+     * @return DATATYPE column value for the matching record
+     */
+    public String getDataTypeForMDRList(String listName, String codeValue) {
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (anEnum == null || codeValue == null) {
+            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            return "";
+        }
+
+
+        List<ObjectRepresentation> representations = MDRCacheHolder.getInstance().getObjectRepresntationList(anEnum);
+        boolean valueFound = false;
+        if (CollectionUtils.isNotEmpty(representations)) {
+            for (ObjectRepresentation representation : representations) {
+
+                List<ColumnDataType> columnDataTypes = representation.getFields();
+                if (CollectionUtils.isEmpty(columnDataTypes)) {
+                    continue;
+                }
+                for (ColumnDataType columnDataType : columnDataTypes) {
+                    if ("code".equals(columnDataType.getColumnName()) && columnDataType.getColumnValue().equals(codeValue)) {
+                        valueFound = true;
+                        break;
+                    }
+                }
+                if (valueFound) {
+                    for (ColumnDataType columnDataType : columnDataTypes) {
+                        if ("dataType".equals(columnDataType.getColumnName())) {
+                            return columnDataType.getColumnValue();
+                        }
+                    }
+                }
+            }
+        }
+        return "";
     }
 
 }

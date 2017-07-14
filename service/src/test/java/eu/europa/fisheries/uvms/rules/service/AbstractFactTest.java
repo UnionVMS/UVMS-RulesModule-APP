@@ -10,6 +10,19 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -40,10 +53,9 @@ public class AbstractFactTest {
 
     @Before
     public void before() {
-        String[] gearTypeCodes = new String[]{"PS1", "LA", "SB", "SDN", "PTB"};
-        String[] faCatchCodes = new String[]{"ONBOARD", "KEPT_IN_NET", "TAKEN_ONBOARD", "RELEASED", "DISCARDED", "DEMINIMIS", "UNLOADED"};
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, Arrays.asList(gearTypeCodes));
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, Arrays.asList(faCatchCodes));
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, Arrays.asList("OTR", "OSS", "NCC", "OHL"));
     }
 
@@ -316,7 +328,6 @@ public class AbstractFactTest {
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
     }
 
-
     @Test
     public void testIsPositiveShouldReturnTrueWithNegativeValue() {
         assertTrue(fact.isPositive(new BigDecimal("-10")));
@@ -345,7 +356,6 @@ public class AbstractFactTest {
         measureType.setUnitCode("K");
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
-
 
     @Test
     public void testListIdContainsAnySingle() {
@@ -408,7 +418,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_OK() {
+    public void testValidateFormatUUID_OK(){
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue(UUID.randomUUID().toString());
@@ -418,7 +428,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_NOT_OK() {
+    public void testValidateFormatUUID_NOT_OK(){
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue("ballshjshdhdfhsgfd");
@@ -470,19 +480,19 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInMDRList() {
-        boolean result = fact.isPresentInMDRList("GEAR_TYPE", "LA");
+    public void testIsPresentInMDRList(){
+        boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
         assertEquals(true, result);
     }
 
     @Test
-    public void testIsCodeTypePresentInMDRList() {
+    public void testIsCodeTypePresentInMDRList(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED"));
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
-        boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
     }
 
@@ -505,14 +515,14 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsIdTypePresentInMDRList() {
+    public void testIsIdTypePresentInMDRList(){
 
         List<IdType> codeTypes = new ArrayList<>();
         codeTypes.add(new IdType("RELEASED"));
         codeTypes.add(new IdType("DISCARDED"));
         codeTypes.add(new IdType("DEMINIMIS"));
-        boolean result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
-        assertEquals(true, result);
+        boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
+        assertEquals(true,result);
 
         result = fact.isIdTypePresentInMDRList(null, codeTypes);
         assertFalse(result);
@@ -528,9 +538,9 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAll() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
-        IdType idType3 = RuleTestHelper.getIdType("value13", "UUID");
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+        IdType idType3= RuleTestHelper.getIdType("value13","UUID");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
         boolean result = fact.valueContainsAll(idTypes, "value1");
@@ -540,9 +550,9 @@ public class AbstractFactTest {
     @Test
     public void testIsNumeric() {
 
-        NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-        NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-        NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType1= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+        NumericType numericType2= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+        NumericType numericType3= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
 
 
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
@@ -553,19 +563,19 @@ public class AbstractFactTest {
     @Test
     public void testIdListContainsValue() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.idListContainsValue(idTypes, "value1", "CFR");
+        boolean result = fact.idListContainsValue(idTypes, "value1","CFR");
         assertTrue(result);
     }
 
     @Test
     public void testSchemeIdContainsAny() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAny(idTypes, "CFR");
@@ -575,8 +585,8 @@ public class AbstractFactTest {
     @Test
     public void testSchemeIdContainsAllOrNone() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
+        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
@@ -610,7 +620,7 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAny() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
         CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
@@ -629,8 +639,8 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAny() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
@@ -643,8 +653,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -890,6 +900,53 @@ public class AbstractFactTest {
         fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
 
         assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
+    public void testGetDataTypeForMDRList() {
+
+        String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC", "ME");
+        assertEquals("MEASURE", result);
+    }
+
+
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
+
+        CodeType codeType = new CodeType();
+        codeType.setValue("value1");
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("value2");
+
+        CodeType codeType3 = new CodeType();
+        codeType3.setValue("value2");
+
+        assertFalse(fact.codeTypeValuesUnique(Arrays.asList(codeType, codeType2, codeType3)));
+
+    }
+
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues(){
+
+        CodeType codeType = new CodeType();
+        codeType.setValue("value1");
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue("value2");
+
+        CodeType codeType3 = new CodeType();
+        codeType3.setValue("value3");
+
+        assertTrue(fact.codeTypeValuesUnique(Arrays.asList(codeType, codeType2, codeType3)));
+
+    }
+
+    @Test
+    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull(){
+
+        assertFalse(fact.codeTypeValuesUnique(null));
+
     }
 
 }
