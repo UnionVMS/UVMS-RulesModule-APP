@@ -13,16 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -49,6 +39,16 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @ToString
@@ -819,6 +819,35 @@ public abstract class AbstractFact {
             }
         }
         return "";
+    }
+
+
+    public boolean isCodeTypeValueMatched(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return false;
+        }
+        ImmutableList<CodeType> codeTypeListWithoutNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
+        boolean isMatchFound;
+
+        // If code type value do not match with either of varargs value, then return false. All code values should match with either of the values specified in the valuesToMatch
+        for (CodeType CodeTypes : codeTypeListWithoutNull) {
+            isMatchFound =false;
+            String codeTypeVal = CodeTypes.getValue();
+            for (String val :valuesToMatch ) {
+               if(val.equals(codeTypeVal)){
+                   isMatchFound =true;
+                   break;
+               }
+            }
+
+            if(isMatchFound == false){
+                return false;
+            }
+        }
+
+        // We reached here means all CodeType values are valid. And match with either of the values specified in valuesToMatch.
+        return true;
+
     }
 
 }
