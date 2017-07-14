@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 /**
  * @author padhyad
  * @author Gregory Rinaldi
@@ -21,6 +23,14 @@ public class IdType {
 
     private String value;
     private String schemeId;
+
+    public IdType() {
+        super();
+    }
+
+    public IdType(String value) {
+        this.value = value;
+    }
 
     public String getValue() {
         return value;
@@ -36,5 +46,19 @@ public class IdType {
 
     public void setSchemeId(String schemeId) {
         this.schemeId = schemeId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IdType)) return false;
+        IdType idType = (IdType) o;
+        return Objects.equals(value, idType.value) &&
+                Objects.equals(schemeId, idType.schemeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, schemeId);
     }
 }

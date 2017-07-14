@@ -13,6 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static junit.framework.Assert.assertNotNull;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,10 +24,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Arrays;
-
-import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -40,10 +39,11 @@ public class MdrCacheServiceBeanTest {
     @Mock
     MDRCache cache;
 
+
     @Test
-    public void isPresentInList() {
-        Mockito.doReturn(Arrays.asList("abc", "def")).when(cache).getEntry(Mockito.any(MDRAcronymType.class));
-        boolean isPresent = mdrCacheServiceBean.isPresentInList("abc", "abc");
-        assertTrue(isPresent);
+    public void testLoadMDRCache() {
+        Mockito.doReturn(RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES()).when(cache).getEntry(Mockito.any(MDRAcronymType.class));
+        mdrCacheServiceBean.loadMDRCache();
+        assertNotNull(MDRCacheHolder.getInstance().getList(MDRAcronymType.GEAR_TYPE));
     }
 }

@@ -62,9 +62,7 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
-
         FLUXResponseMessage fluxResponseMessage;
-
         try {
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
@@ -79,19 +77,12 @@ public class RulesResource {
 
     }
 
-    @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/ispresentlist/{listname}/{codevalue}")
-    public Response checkCodeListValueExists(@PathParam("listname") String listName, @PathParam("codevalue") String codeValue) {
-        return Response.ok(mdrService.isPresentInList(listName, codeValue)).build();
-    }
-
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/reinitialize")
     public Response initializeRules() {
-            templateEngine.reInitialize();
+        templateEngine.reInitialize();
         return Response.ok("Initialization successfully finished. The Rules DRLs were reloaded.").build();
     }
 

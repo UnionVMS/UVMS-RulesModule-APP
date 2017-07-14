@@ -17,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by kovian on 19/06/2017.
@@ -25,7 +26,7 @@ public class XPathRepository {
 
     public static final XPathRepository INSTANCE = new XPathRepository();
 
-    private Map<Integer, Map<String, String>> xpathsMap = new HashMap<>();
+    private Map<Integer, Map<String, String>> xpathsMap = new ConcurrentHashMap<>();
 
     private Integer sequence = 10000;
 

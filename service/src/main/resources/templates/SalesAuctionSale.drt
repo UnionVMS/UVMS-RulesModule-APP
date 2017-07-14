@@ -1,0 +1,27 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAuctionSaleFact;
+
+template "@{tname}"
+
+rule "Sales Auction Sale @{tname} - @{brid}"
+
+when
+
+    $fact : SalesAuctionSaleFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+end
+
+end template

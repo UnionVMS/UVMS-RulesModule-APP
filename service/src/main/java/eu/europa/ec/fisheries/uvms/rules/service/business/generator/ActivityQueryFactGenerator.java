@@ -13,10 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.Collection;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
@@ -40,5 +41,9 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
             throw new RulesValidationException("Business object does not match required type");
         }
         this.faQuery = (FAQuery) businessObject;
+    }
+
+    @Override public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
+        // Set internal Validation Object if needed.
     }
 }

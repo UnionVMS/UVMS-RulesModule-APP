@@ -12,14 +12,49 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
@@ -38,15 +73,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import java.util.List;
 
 @Stateless
 public class EventServiceBean implements EventService {
@@ -258,6 +284,52 @@ public class EventServiceBean implements EventService {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         }
     }
+
+    @Override
+    public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message) {
+        try {
+            messageService.receiveSalesQueryRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesQueryRequest.", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message) {
+        try {
+            messageService.receiveSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesReportRequest.", e);
+        }
+    }
+
+    @Override
+    public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message) {
+        try {
+            messageService.receiveSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read ReceiveSalesResponseRequest.", e);
+        }
+    }
+
+    @Override
+    public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message) {
+        try {
+            messageService.sendSalesReportRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read SendSalesReportRequest.", e);
+        }
+    }
+
+    @Override
+    public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message) {
+        try {
+            messageService.sendSalesResponseRequest(message.getJmsMessage().getText());
+        } catch (JMSException e) {
+            throw new RulesServiceException("Couldn't read SendSalesResponseRequest.", e);
+        }
+    }
+
 
     @SuppressWarnings("unused")
 	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
