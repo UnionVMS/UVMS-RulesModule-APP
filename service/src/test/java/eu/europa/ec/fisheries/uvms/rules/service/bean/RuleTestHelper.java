@@ -1,9 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -13,15 +9,19 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by sanera on 10/05/2017.
  */
 public class RuleTestHelper {
 
-    public static RuleType createRuleType(String expression, String brId, String note, ErrorType type, String errorMessage){
+    public static RuleType createRuleType(String expression, String brId, String note, ErrorType type, String errorMessage) {
         RuleType ruleType = new RuleType();
         ruleType.setExpression(expression);
-        ruleType.setBrId(brId );
+        ruleType.setBrId(brId);
         ruleType.setNote(note);
         ruleType.setErrorType(type);
         ruleType.setMessage(errorMessage);
@@ -30,7 +30,7 @@ public class RuleTestHelper {
         return ruleType;
     }
 
-    public static CodeType getCodeType(String value, String listId){
+    public static CodeType getCodeType(String value, String listId) {
         CodeType codeType = new CodeType();
         codeType.setValue(value);
         codeType.setListId(listId);
@@ -38,21 +38,21 @@ public class RuleTestHelper {
         return codeType;
     }
 
-    public static MeasureType getMeasureType(BigDecimal value, String unitCode){
+    public static MeasureType getMeasureType(BigDecimal value, String unitCode) {
         MeasureType measureType = new MeasureType();
         measureType.setValue(value);
         measureType.setUnitCode(unitCode);
         return measureType;
     }
 
-    public static IdType getIdType(String value, String schemeId){
+    public static IdType getIdType(String value, String schemeId) {
         IdType idType = new IdType();
         idType.setValue(value);
         idType.setSchemeId(schemeId);
         return idType;
     }
 
-    public static NumericType getNumericType(BigDecimal value, String format){
+    public static NumericType getNumericType(BigDecimal value, String format) {
         NumericType numericType = new NumericType();
         numericType.setValue(value);
         numericType.setFormat(format);
@@ -122,5 +122,16 @@ public class RuleTestHelper {
 
     public static ColumnDataType getColumnDataType(String columnName, String columnValue, String columnDataType) {
         return new ColumnDataType(columnName, columnValue, columnDataType);
+    }
+
+    public static List<ObjectRepresentation> getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC() {
+        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
+
+        objectRepresentations.add(getObjectRepresentation("code", "OTR", "String"));
+        objectRepresentations.add(getObjectRepresentation("code", "OSS", "String"));
+        objectRepresentations.add(getObjectRepresentation("code", "NCC", "String"));
+        objectRepresentations.add(getObjectRepresentation("code", "OHL", "String"));
+
+        return objectRepresentations;
     }
 }

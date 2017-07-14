@@ -125,6 +125,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 List<GearProblem> gearProblems = activity.getSpecifiedGearProblems();
                 facts.addAll(activityFactMapper.generateFactsForGearProblems(gearProblems));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForGearProblems(facts, gearProblems);
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
