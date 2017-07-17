@@ -164,6 +164,10 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     private void addFactsForGearProblems(List<AbstractFact> facts, List<GearProblem> gearProblems) {
+        if (CollectionUtils.isEmpty(gearProblems)) {
+            xPathUtil.clear();
+            return;
+        }
         for (GearProblem gearProblem : gearProblems) {
             List<FishingGear> relatedfishingGears = gearProblem.getRelatedFishingGears();
             addFactsForFishingGearAndCharacteristics(facts, relatedfishingGears, RELATED_FISHING_GEAR);
