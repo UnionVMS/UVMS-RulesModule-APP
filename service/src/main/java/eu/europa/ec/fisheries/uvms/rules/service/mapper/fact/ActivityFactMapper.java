@@ -49,6 +49,9 @@ public class ActivityFactMapper {
     private static final String TYPE_CODE_PROP = "typeCode";
     public static final String ROLE_CODES_PROP = "roleCodes";
     public static final String APPLICABLE_GEAR_CHARACTERISTICS_PROP = "applicableGearCharacteristics";
+    public static final String AFFECTED_QUANTITY_PROP = "affectedQuantity";
+    public static final String SPECIFIED_FLUX_LOCATION_PROP = "specifiedFluxLocations";
+    public static final String RECOVERY_MEASURE_CODE_PROP = "recoveryMeasureCodes";
     private static final String REASON_CODE_PROP = "reasonCode";
     private static final String FA_REPORT_DOCUMENT_TYPE_CODE_PROP = "faReportDocumentTypeCode";
     private static final String RELATED_FLUX_LOCATIONS_PROP = "relatedFLUXLocations";
@@ -234,7 +237,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(fishingActivityFact, "vesselRelatedActivityCode");
 
         fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact,"relatedFluxLocationRFMOCodeList");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, "relatedFluxLocationRFMOCodeList");
 
         return fishingActivityFact;
     }
@@ -521,17 +524,19 @@ public class ActivityFactMapper {
         GearProblemFact gearProblemFact = new GearProblemFact();
 
         gearProblemFact.setTypeCode(mapToCodeType(gearProblem.getTypeCode()));
-        xPathUtil.append(TYPE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
 
-        gearProblemFact.setRecoveryMeasureCodes(mapToCodeType(gearProblem.getRecoveryMeasureCodes()));
-        xPathUtil.append(RECOVERY_MEASURE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
+        if (gearProblem.getRecoveryMeasureCodes() != null) {
+            gearProblemFact.setRecoveryMeasureCodes(mapToCodeType(gearProblem.getRecoveryMeasureCodes()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RECOVERY_MEASURE_CODE).storeInRepo(gearProblemFact, RECOVERY_MEASURE_CODE_PROP);
+        }
 
         gearProblemFact.setAffectedQuantity(gearProblem.getAffectedQuantity());
-        xPathUtil.append(RECOVERY_MEASURE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(AFFECTED_QUANTITY).storeInRepo(gearProblemFact, AFFECTED_QUANTITY_PROP);
 
         if (gearProblem.getSpecifiedFLUXLocations() != null) {
             gearProblemFact.setSpecifiedFluxLocations(gearProblem.getSpecifiedFLUXLocations());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(gearProblemFact, "specifiedFluxLocations");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(gearProblemFact, SPECIFIED_FLUX_LOCATION_PROP);
         }
 
         return gearProblemFact;

@@ -86,6 +86,7 @@ public class XPathConstants {
     public static final String FLUX_RESPONSE_DOCUMENT = "FLUXResponseDocument";
     public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
     public static final String RECOVERY_MEASURE_CODE = "RecoveryMeasureCode";
+    public static final String AFFECTED_QUANTITY = "AffectedQuantity";
 
     public static final String AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
     public static final String REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE = "RegionalFisheriesManagementOrganizationCode";
