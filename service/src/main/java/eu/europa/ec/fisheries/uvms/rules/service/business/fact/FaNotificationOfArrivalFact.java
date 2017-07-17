@@ -18,6 +18,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
@@ -37,11 +38,17 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private Date occurrenceDateTime;
 
+    private List<DelimitedPeriod> delimitedPeriods;
+
     private CodeType reasonCode;
 
     private List<CodeType> specifiedFACatchTypeCodes;
 
     private List<FACatch> specifiedFACatches;
+
+    private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
+
+    private List<Date> specifiedFLUXCharacteristicValueDateTimes;
 
     public FaNotificationOfArrivalFact() {
         setFactType();
@@ -114,5 +121,29 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
         this.specifiedFACatches = specifiedFACatches;
+    }
+
+    public List<DelimitedPeriod> getDelimitedPeriods() {
+        return delimitedPeriods;
+    }
+
+    public void setDelimitedPeriods(List<DelimitedPeriod> delimitedPeriods) {
+        this.delimitedPeriods = delimitedPeriods;
+    }
+
+    public List<CodeType> getSpecifiedFLUXCharacteristicsTypeCodes() {
+        return specifiedFLUXCharacteristicsTypeCodes;
+    }
+
+    public void setSpecifiedFLUXCharacteristicsTypeCodes(List<CodeType> specifiedFLUXCharacteristicsTypeCodes) {
+        this.specifiedFLUXCharacteristicsTypeCodes = specifiedFLUXCharacteristicsTypeCodes;
+    }
+
+    public List<Date> getSpecifiedFLUXCharacteristicValueDateTimes() {
+        return specifiedFLUXCharacteristicValueDateTimes;
+    }
+
+    public void setSpecifiedFLUXCharacteristicValueDateTimes(List<Date> specifiedFLUXCharacteristicValueDateTimes) {
+        this.specifiedFLUXCharacteristicValueDateTimes = specifiedFLUXCharacteristicValueDateTimes;
     }
 }
