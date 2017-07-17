@@ -13,16 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -301,6 +291,41 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if the list size is the expected one [listSize].
+     *
+     * @param list
+     * @param listSize
+     * @return
+     */
+    public boolean listSizeIs(List<?> list, int listSize){
+        if(isEmpty(list) || list.size() != listSize){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This method returns true if activityTypes list contains other elements then the ones contained in permitedElements.
+     *
+     * @param activityTypes
+     * @return
+     */
+    public boolean listContainsEitherThen(List<String> activityTypes, String... permitedElements){
+        if(permitedElements == null || permitedElements.length == 0){
+            return false;
+        }
+        List<String> permitedElementsList = Arrays.asList(permitedElements);
+        boolean containsEitherThen = false;
+        for(String type : activityTypes){
+            if(!permitedElementsList.contains(type)){
+                containsEitherThen = true;
+                break;
+            }
+        }
+        return containsEitherThen;
     }
 
     public boolean validateFormat(String value, String format) {

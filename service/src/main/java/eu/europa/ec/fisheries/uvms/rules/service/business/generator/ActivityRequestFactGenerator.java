@@ -62,7 +62,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     @Override
     public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
         if(additionalObject == null){
-            log.warn("additionalObject object is null!");
+            log.warn("additionalObject object is null! Nothing is going to be set!");
             return;
         }
         if(AdditionalValidationObjectType.ASSET_LIST.equals(validationType)){

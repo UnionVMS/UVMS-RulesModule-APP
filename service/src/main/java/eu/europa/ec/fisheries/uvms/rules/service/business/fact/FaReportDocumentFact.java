@@ -50,6 +50,8 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<FishingActivity> specifiedFishingActivities;
 
+    private List<String> specifiedFishingActivitiesTypes;
+
     private List<IdType> relatedFLUXReportDocumentIDs;
 
     private IdType relatedFLUXReportDocumentReferencedID;
@@ -76,6 +78,7 @@ public class FaReportDocumentFact extends AbstractFact {
     public FaReportDocumentFact() {
         setFactType();
     }
+
     public CodeType getTypeCode() {
         return typeCode;
     }
@@ -160,7 +163,12 @@ public class FaReportDocumentFact extends AbstractFact {
     public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
         this.nonUniqueIdsList = nonUniqueIdsList;
     }
-
+    public List<String> getSpecifiedFishingActivitiesTypes() {
+        return specifiedFishingActivitiesTypes;
+    }
+    public void setSpecifiedFishingActivitiesTypes(List<String> specifiedFishingActivitiesTypes) {
+        this.specifiedFishingActivitiesTypes = specifiedFishingActivitiesTypes;
+    }
 }
 
 

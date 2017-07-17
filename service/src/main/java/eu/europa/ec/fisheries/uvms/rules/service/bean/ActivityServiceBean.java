@@ -11,6 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityIDType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityUniquinessList;
@@ -22,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
@@ -33,7 +35,6 @@ import javax.ejb.Stateless;
 import javax.jms.TextMessage;
 import java.util.*;
 
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper.mapToGetNonUniqueIdRequest;
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse;
 
 @Stateless
@@ -59,7 +60,11 @@ public class ActivityServiceBean {
             return nonUniqueIdsMap;
         }
         try {
-            String strReq = mapToGetNonUniqueIdRequest(collectAllIdsFromMessage(fluxFaRepMessage));
+            String strReq = ActivityModuleRequestMapper.mapToGetNonUniqueIdRequest(collectAllIdsFromMessage(fluxFaRepMessage));
+            if(StringUtils.isEmpty(strReq)){
+                log.warn("No IDs were found to issue request for in method ActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
+                return nonUniqueIdsMap;
+            }
             String s = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(s, TextMessage.class);
             getNonUniqueIdsResponse = mapToGetUniqueIdResponseFromResponse(message, s);
@@ -91,6 +96,7 @@ public class ActivityServiceBean {
     }
 
     private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
+
         Map<ActivityTableType, List<IDType>> idsmap = new HashMap<>();
         if(request == null){
             return idsmap;
@@ -102,13 +108,17 @@ public class ActivityServiceBean {
             idsmap.put(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
         }
 
-        // FAReportDocument.RelatedFLUXReportDocument IDs
+        // FAReportDocument.RelatedFLUXReportDocument IDs and ReferencedID
         List<FAReportDocument> faReportDocuments = request.getFAReportDocuments();
         if(CollectionUtils.isNotEmpty(faReportDocuments)){
             for(FAReportDocument faRepDoc : faReportDocuments){
-                if(faRepDoc.getRelatedFLUXReportDocument() != null){
-                    faRepDoc.getRelatedFLUXReportDocument().getIDS();
-                    idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
+                FLUXReportDocument relatedFLUXReportDocument = faRepDoc.getRelatedFLUXReportDocument();
+                if(relatedFLUXReportDocument != null){
+                    List<IDType> idTypes = new ArrayList<>();
+                    idTypes.addAll(relatedFLUXReportDocument.getIDS());
+                    idTypes.add(relatedFLUXReportDocument.getReferencedID());
+                    idTypes.removeAll(Collections.singletonList(null));
+                    idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, idTypes);
                 }
             }
         }
