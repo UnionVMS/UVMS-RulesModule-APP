@@ -17,8 +17,10 @@ import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -42,27 +44,31 @@ public class RulesPreValidationInterceptor {
     @EJB
     RulesMessageProducer producer;
 
-    @EJB
-    RulesConfigurationCache ruleModuleCache;
-
     @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
 
     @AroundInvoke
-    public Object createResponse(final InvocationContext ic) throws Exception {
+    public Object validateRuleIsInitialized(final InvocationContext ic) throws Exception {
+        Object object = null;
         log.info("Validation rules is ready for validation");
         RuleStatusType ruleStatusType = rulesDomainModel.checkRuleStatus();
         if (ruleStatusType.equals(RuleStatusType.SUCCESSFUL)) {
-            return ic.proceed();
+            object = ic.proceed();
+        } else {
+            RulesBaseRequest request = getRulesBaseRequest(ic); // Get the input parameter
+            sendMessageToExchange(request);
         }
-        RulesBaseRequest request = getRulesBaseRequest(ic); // Get the input parameter
+        return object;
+    }
 
-        ExchangeLogStatusTypeType exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNPROCESSED;
-        String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(request.getLogGuid(), exchangeLogStatusTypeType);
-        log.error("Rules validation cannot proceed as rules failed to initialize. Updating status in Exchange");
-        log.info("Message to exchange to update status : {}", statusMsg);
-        producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
-        throw new RulesServiceException("Rules not initialized");
+    private void sendMessageToExchange(RulesBaseRequest request) throws ExchangeModelMarshallException, MessageException {
+        if (request != null) {
+            ExchangeLogStatusTypeType exchangeLogStatusTypeType = ExchangeLogStatusTypeType.UNPROCESSED;
+            String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(request.getLogGuid(), exchangeLogStatusTypeType);
+            log.error("Rules validation cannot proceed as rules failed to initialize. Updating status in Exchange");
+            log.info("Message to exchange to update status : {}", statusMsg);
+            producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
+        }
     }
 
     private RulesBaseRequest getRulesBaseRequest(InvocationContext ic) {
