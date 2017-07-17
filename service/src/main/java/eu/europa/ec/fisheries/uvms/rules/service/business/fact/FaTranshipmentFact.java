@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -144,5 +145,26 @@ public class FaTranshipmentFact extends AbstractFact {
 
     public void setFluxCharacteristicTypeCodes(List<CodeType> fluxCharacteristicTypeCodes) {
         this.fluxCharacteristicTypeCodes = fluxCharacteristicTypeCodes;
+    }
+
+    /**
+     * This method checks if there are FLUXLocations present for every FaCatch. If not, it will return false.
+     * @param specifiedFACatches
+     * @return
+     */
+    public boolean checkFLUXLocationForFaCatch(List<FACatch> specifiedFACatches){
+        if(CollectionUtils.isEmpty(specifiedFACatches)) {
+            return false;
+        }
+        boolean isPresent = true;
+
+
+        for(FACatch faCatch : specifiedFACatches){
+            if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
+                    return false;
+            }
+        }
+
+        return isPresent;
     }
 }
