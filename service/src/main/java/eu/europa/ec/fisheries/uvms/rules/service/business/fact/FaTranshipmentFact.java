@@ -13,13 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+
+import java.util.List;
 
 /**
  * @autor padhyad
@@ -36,6 +36,18 @@ public class FaTranshipmentFact extends AbstractFact {
     private List<VesselTransportMeans> relatedVesselTransportMeans;
 
     private List<FACatch> specifiedFACatches;
+
+    private List<CodeType> faCatchTypeCodes;
+
+    private List<CodeType> fluxLocationTypeCodes;
+
+    private List<CodeType> vesselTransportMeansRoleCodes;
+
+    private List<FLUXLocation> faCtchSpecifiedFLUXLocations;
+
+    private List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes;
+
+    private List<CodeType> fluxCharacteristicTypeCodes;
 
     public FaTranshipmentFact() {
         setFactType();
@@ -84,5 +96,53 @@ public class FaTranshipmentFact extends AbstractFact {
 
     public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
         this.specifiedFACatches = specifiedFACatches;
+    }
+
+    public List<CodeType> getFaCatchTypeCodes() {
+        return faCatchTypeCodes;
+    }
+
+    public void setFaCatchTypeCodes(List<CodeType> faCatchTypeCodes) {
+        this.faCatchTypeCodes = faCatchTypeCodes;
+    }
+
+    public List<CodeType> getFluxLocationTypeCodes() {
+        return fluxLocationTypeCodes;
+    }
+
+    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
+        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
+    }
+
+    public List<CodeType> getVesselTransportMeansRoleCodes() {
+        return vesselTransportMeansRoleCodes;
+    }
+
+    public void setVesselTransportMeansRoleCodes(List<CodeType> vesselTransportMeansRoleCodes) {
+        this.vesselTransportMeansRoleCodes = vesselTransportMeansRoleCodes;
+    }
+
+    public List<FLUXLocation> getFaCtchSpecifiedFLUXLocations() {
+        return faCtchSpecifiedFLUXLocations;
+    }
+
+    public void setFaCtchSpecifiedFLUXLocations(List<FLUXLocation> faCtchSpecifiedFLUXLocations) {
+        this.faCtchSpecifiedFLUXLocations = faCtchSpecifiedFLUXLocations;
+    }
+
+    public List<CodeType> getFaCtchSpecifiedFLUXLocationsTypeCodes() {
+        return faCtchSpecifiedFLUXLocationsTypeCodes;
+    }
+
+    public void setFaCtchSpecifiedFLUXLocationsTypeCodes(List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes) {
+        this.faCtchSpecifiedFLUXLocationsTypeCodes = faCtchSpecifiedFLUXLocationsTypeCodes;
+    }
+
+    public List<CodeType> getFluxCharacteristicTypeCodes() {
+        return fluxCharacteristicTypeCodes;
+    }
+
+    public void setFluxCharacteristicTypeCodes(List<CodeType> fluxCharacteristicTypeCodes) {
+        this.fluxCharacteristicTypeCodes = fluxCharacteristicTypeCodes;
     }
 }
