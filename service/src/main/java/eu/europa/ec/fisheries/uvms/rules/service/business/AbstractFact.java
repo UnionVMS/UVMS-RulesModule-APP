@@ -822,32 +822,5 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean isCodeTypeValueMatched(List<CodeType> codeTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
-            return false;
-        }
-        ImmutableList<CodeType> codeTypeListWithoutNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
-        boolean isMatchFound;
-
-        // If code type value do not match with either of varargs value, then return false. All code values should match with either of the values specified in the valuesToMatch
-        for (CodeType CodeTypes : codeTypeListWithoutNull) {
-            isMatchFound =false;
-            String codeTypeVal = CodeTypes.getValue();
-            for (String val :valuesToMatch ) {
-               if(val.equals(codeTypeVal)){
-                   isMatchFound =true;
-                   break;
-               }
-            }
-
-            if(isMatchFound == false){
-                return false;
-            }
-        }
-
-        // We reached here means all CodeType values are valid. And match with either of the values specified in valuesToMatch.
-        return true;
-
-    }
-
+  
 }
