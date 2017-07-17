@@ -960,6 +960,10 @@ public class ActivityFactMapper {
                 faFishingOperationFact.setOperationsQuantity(operatQuantity.toString());
             }
             faFishingOperationFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
+
+            if(CollectionUtils.isNotEmpty(fishingActivity.getRelatedFishingActivities())){
+                faFishingOperationFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
+            }
         }
         if (faReportDocument != null) {
             faFishingOperationFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
