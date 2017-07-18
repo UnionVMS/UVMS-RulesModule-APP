@@ -40,7 +40,7 @@ import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRe
 @Stateless
 @LocalBean
 @Slf4j
-public class ActivityServiceBean {
+public class RulesActivityServiceBean {
 
     @EJB
     private RulesResponseConsumer consumer;
@@ -62,14 +62,14 @@ public class ActivityServiceBean {
         try {
             String strReq = ActivityModuleRequestMapper.mapToGetNonUniqueIdRequest(collectAllIdsFromMessage(fluxFaRepMessage));
             if(StringUtils.isEmpty(strReq)){
-                log.warn("No IDs were found to issue request for in method ActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
+                log.warn("No IDs were found to issue request for in method RulesActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
                 return nonUniqueIdsMap;
             }
             String s = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(s, TextMessage.class);
             getNonUniqueIdsResponse = mapToGetUniqueIdResponseFromResponse(message, s);
         } catch (MessageException | ActivityModelMapperException e) {
-            log.error("ERROR when sending/consuming message from ACTIVITY module. Service : ActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
+            log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
         }
 
         if(getNonUniqueIdsResponse != null && CollectionUtils.isNotEmpty(getNonUniqueIdsResponse.getActivityUniquinessLists())){

@@ -47,7 +47,7 @@ public class RulesEngineBean {
 	private RuleAssetsBean ruleAssetsBean;
 
 	@EJB
-	private ActivityServiceBean activityService;
+	private RulesActivityServiceBean activityService;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();

@@ -66,7 +66,7 @@ public class RulesEngineBeanTest {
     RuleAssetsBean ruleAssetsBean;
 
     @Mock
-    ActivityServiceBean activityService;
+    RulesActivityServiceBean activityService;
 
     @Test
     public void testEvaluate() throws RulesValidationException {
