@@ -119,4 +119,34 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
     public int hashCode() {
         return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty);
     }
+
+    // TODO test
+    public boolean anyValidationResultDocumentsWithEmptyValidationQualityAnalyses(){
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument == null || isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // todo test
+    public boolean anyValidationQualityAnalysisWithoutReferencedTextItems(){
+        if (isEmpty(relatedValidationResultDocuments)){
+            return false;
+        }
+
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument != null && !isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                for (ValidationQualityAnalysisType validationQualityAnalysis:validationResultDocument.getRelatedValidationQualityAnalysises()) {
+                    if(validationQualityAnalysis != null && isEmpty(validationQualityAnalysis.getReferencedItems())){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }

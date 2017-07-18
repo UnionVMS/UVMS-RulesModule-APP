@@ -89,4 +89,21 @@ public class SalesQueryFact extends SalesAbstractFact {
     public int hashCode() {
         return Objects.hash(id, submittedDateTime, typeCode, specifiedDelimitedPeriod, submitterFLUXParty, simpleSalesQueryParameters);
     }
+
+    // TODO test
+    public boolean anyQueryParameterOfTypeRoleWithValue(){
+        if(isEmpty(simpleSalesQueryParameters)){
+            return false;
+        }
+
+        for (SalesQueryParameterType queryParameter :simpleSalesQueryParameters) {
+            if (queryParameter != null
+                    && queryParameter.getTypeCode() != null && queryParameter.getTypeCode().getValue() == "ROLE"
+                    && queryParameter.getValueCode() != null && !isEmpty(queryParameter.getValueCode().getValue())){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
