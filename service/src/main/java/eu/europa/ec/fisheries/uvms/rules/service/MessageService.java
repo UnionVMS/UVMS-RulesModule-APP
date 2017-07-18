@@ -15,8 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service;
 
 import javax.ejb.Local;
 
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -39,15 +38,15 @@ public interface MessageService {
 
     void mapAndSendFLUXMdrResponseToMdrModule(String request);
 
-    void receiveSalesQueryRequest(String request);
+    void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest);
 
-    void receiveSalesReportRequest(String request);
+    void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest);
 
-    void sendSalesReportRequest(String request);
+    void sendSalesReportRequest(SendSalesReportRequest rulesRequest);
 
-    void receiveSalesResponseRequest(String request);
+    void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest);
 
-    void sendSalesResponseRequest(String request);
+    void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
 
 }
