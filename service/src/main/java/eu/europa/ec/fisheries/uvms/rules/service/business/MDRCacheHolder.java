@@ -9,16 +9,16 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 /**
  * Created by sanera on 20/06/2017.
@@ -27,13 +27,13 @@ public class MDRCacheHolder {
 
     private static Map<MDRAcronymType, List<ObjectRepresentation>> cache = new ConcurrentHashMap<>();
 
-    private MDRCacheHolder(){
+    private MDRCacheHolder() {
         super();
     }
 
     private static class Holder {
 
-        private Holder(){
+        private Holder() {
             super();
         }
 
@@ -45,10 +45,10 @@ public class MDRCacheHolder {
     }
 
     public void addToCache(MDRAcronymType type, List<ObjectRepresentation> values) {
-             cache.put(type,values);
+        cache.put(type, values);
     }
 
-    public List<String> getList(MDRAcronymType type){
+    public List<String> getList(MDRAcronymType type) {
         List<String> codeColumnValues = new ArrayList<>();
 
         List<ObjectRepresentation> ObjectRepresentationList = cache.get(type);
