@@ -10,14 +10,14 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import static org.junit.Assert.assertNull;
-
-import java.util.Date;
-
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.util.Date;
+
+import static org.junit.Assert.assertNull;
 
 /**
  * TODO create test

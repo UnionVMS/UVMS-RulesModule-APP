@@ -65,6 +65,9 @@ public class RulesEngineBeanTest {
     @Mock
     RuleAssetsBean ruleAssetsBean;
 
+    @Mock
+    RulesActivityServiceBean activityService;
+
     @Test
     public void testEvaluate() throws RulesValidationException {
         Mockito.doAnswer(new Answer<Void>() {
