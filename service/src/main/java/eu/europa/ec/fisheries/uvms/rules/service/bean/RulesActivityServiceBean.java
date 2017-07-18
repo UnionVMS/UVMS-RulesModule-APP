@@ -37,6 +37,9 @@ import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse;
 
+/**
+ * Created by kovian on 17/07/2016.
+ */
 @Stateless
 @LocalBean
 @Slf4j

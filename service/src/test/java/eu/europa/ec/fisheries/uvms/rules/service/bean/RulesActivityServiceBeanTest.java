@@ -49,7 +49,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by padhyad on 6/7/2017.
+ * Created by padhyad, ankovi on 6/7/2017.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RulesActivityServiceBeanTest {
