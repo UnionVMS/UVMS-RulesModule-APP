@@ -35,6 +35,16 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static org.junit.Assert.*;
+
 /**
  * @author Gregory Rinaldi
  */
@@ -274,7 +284,9 @@ public class ActivityFactMapperTest {
         faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
 
         FishingActivity faActivity = new FishingActivity();
-        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>(){{add(faCatch);}});
+        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>() {{
+            add(faCatch);
+        }});
         faActivity.setRelatedFLUXLocations(null);
 
         FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity).get(0);
@@ -315,7 +327,7 @@ public class ActivityFactMapperTest {
         fishingGear.setTypeCode(codeType);
         fishingGear.setApplicableGearCharacteristics(applicableGearCharacteristics);
 
-        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear);
+        FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(fishingGear, SPECIFIED_FISHING_GEAR);
 
         assertEquals(codeType.getValue(), fishingGearFact.getTypeCode().getValue());
         assertNotNull(fishingGearFact.getApplicableGearCharacteristics());
@@ -358,7 +370,7 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faDepartureFact.getFishingActivityTypeCode().getValue());
 
         assertEquals(codeType.getValue(), faDepartureFact.getReasonCode().getValue());
-        //assertEquals(date, faDepartureFact.getOccurrenceDateTime().getDate());
+        //assertEquals(date, faDepartureFact.getOccurrenceDateTime().getStartDateTimes());
         assertEquals(fluxLocation, faDepartureFact.getRelatedFLUXLocations().get(0));
         assertEquals(fishingTrip, faDepartureFact.getSpecifiedFishingTrip());
         assertEquals(codeType.getValue(), faDepartureFact.getSpecifiedFACatchCodeTypes().get(0).getValue());
@@ -467,7 +479,7 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getFishingActivityTypeCode().getValue());
         assertEquals(fluxLocation, faNotificationOfArrivalFact.getRelatedFLUXLocations().get(0));
         assertEquals(codeType.getValue(), faNotificationOfArrivalFact.getReasonCode().getValue());
-        // assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime().getDate());
+        // assertEquals(date, faNotificationOfArrivalFact.getOccurrenceDateTime().getStartDateTimes());
         assertEquals(faCatch, faNotificationOfArrivalFact.getSpecifiedFACatches().get(0));
 
     }
@@ -484,7 +496,7 @@ public class ActivityFactMapperTest {
 
         assertEquals(codeType.getValue(), faQueryFact.getTypeCode().getValue());
         assertEquals(idType.getValue(), faQueryFact.getId().getValue());
-        // assertEquals(date, faQueryFact.getSubmittedDateTime().getDate());
+        // assertEquals(date, faQueryFact.getSubmittedDateTime().getStartDateTimes());
 
     }
 
@@ -619,7 +631,7 @@ public class ActivityFactMapperTest {
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
-        final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null);
+        final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
         final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null);
         final FaReportDocumentFact faReportDocumentFact = activityMapper.generateFactForFaReportDocument(null);
         final GearCharacteristicsFact gearCharacteristicsFact = activityMapper.generateFactsForGearCharacteristic(null);

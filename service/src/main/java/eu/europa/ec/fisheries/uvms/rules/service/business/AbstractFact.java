@@ -41,6 +41,17 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Slf4j
 @ToString
 public abstract class AbstractFact {
@@ -79,10 +90,10 @@ public abstract class AbstractFact {
 
     private List<String> getXpathsForProps(String propertyNames) {
         List<String> xpathsList = new ArrayList<>();
-        if(StringUtils.isNotEmpty(propertyNames)){
+        if (StringUtils.isNotEmpty(propertyNames)) {
             String propNamesTrimmed = StringUtils.deleteWhitespace(propertyNames);
             String[] propNames = propNamesTrimmed.split(",");
-            for(String propName : propNames) {
+            for (String propName : propNames) {
                 xpathsList.add(XPathRepository.INSTANCE.getMapForSequence(this.getSequence(), propName));
             }
         }
@@ -106,13 +117,13 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor){
-        if(StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)){
+    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
+        if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
             return false;
         }
         String flagStateToMatch = StringUtils.EMPTY;
-        for(IdType idType : idTypes){
-            if(schemeIdToSearchFor.equals(idType.getSchemeId())){
+        for (IdType idType : idTypes) {
+            if (schemeIdToSearchFor.equals(idType.getSchemeId())) {
                 flagStateToMatch = idType.getValue();
             }
         }
@@ -180,7 +191,6 @@ public abstract class AbstractFact {
     }
 
     /**
-     *
      * Checks if one of the String... array elements exists in the idTypes list.
      * Depending on checkEmptyness value it also checks (or not) if the values are empty.
      * Depending on isGivenName value it checks for GivenName or FamilyName.
@@ -194,11 +204,11 @@ public abstract class AbstractFact {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName      = contPers.getGivenName();
-            TextType familyName     = contPers.getFamilyName();
+            TextType givenName = contPers.getGivenName();
+            TextType familyName = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
-            TextType alias          = contPers.getAlias();
-            if(checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)){
+            TextType alias = contPers.getAlias();
+            if (checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)) {
                 return true;
             }
         }
@@ -215,19 +225,19 @@ public abstract class AbstractFact {
                 && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
-    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness){
+    public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
         if (CollectionUtils.isEmpty(contactPersons)) {
             return true;
         }
         for (ContactPerson contPers : contactPersons) {
-            TextType givenName      = contPers.getGivenName();
-            TextType familyName     = contPers.getFamilyName();
-            TextType alias          = contPers.getAlias();
-            if(givenName == null && familyName == null){
-                if(alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))){
+            TextType givenName = contPers.getGivenName();
+            TextType familyName = contPers.getFamilyName();
+            TextType alias = contPers.getAlias();
+            if (givenName == null && familyName == null) {
+                if (alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))) {
                     return true;
                 }
-            } else if(checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())){
+            } else if (checkAliasEmptyness && alias != null && StringUtils.isEmpty(alias.getValue())) {
                 return true;
             }
         }
@@ -352,6 +362,7 @@ public abstract class AbstractFact {
 
     /**
      * Checks if valuesToMatch strings are ALL present in list of measureTypes
+     *
      * @param codeType
      * @param valuesToMatch
      * @return
@@ -473,7 +484,6 @@ public abstract class AbstractFact {
     private boolean isSameDay(Date date1, Date date2){
         return DateUtils.isSameDay(date1, date2);
     }
-
     public List<RuleWarning> getWarnings() {
         return warnings;
     }
@@ -494,6 +504,10 @@ public abstract class AbstractFact {
     }
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
+    }
+
+    public boolean listIdContainsAny(CodeType codeType, String... values) {
+        return listIdContainsAny(Arrays.asList(codeType), values);
     }
 
     /**
@@ -745,8 +759,9 @@ public abstract class AbstractFact {
     }
 
     /**
-     *  Check if value passed is present in the MDR list speified
-     * @param listName - MDR list name to be ckecked against
+     * Check if value passed is present in the MDR list speified
+     *
+     * @param listName  - MDR list name to be ckecked against
      * @param codeValue - This value will be checked in MDR list
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
@@ -764,8 +779,9 @@ public abstract class AbstractFact {
     }
 
     /**
-     *  This function checks that all the CodeType values passed to the function exist in MDR code list or not
-     * @param listName - Values passed would be checked agaist this MDR list
+     * This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     *
+     * @param listName      - Values passed would be checked agaist this MDR list
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
@@ -792,8 +808,9 @@ public abstract class AbstractFact {
 
 
     /**
-     *  This function checks that all the IdType values passed to the function exist in MDR code list or not
-     * @param listName - Values passed would be checked agaist this MDR list
+     * This function checks that all the IdType values passed to the function exist in MDR code list or not
+     *
+     * @param listName      - Values passed would be checked agaist this MDR list
      * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
@@ -836,6 +853,33 @@ public abstract class AbstractFact {
 
         return true;
     }
+
+    public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
+        String typeCodeValue = getValueForListId(listName, typeCodes);
+
+        if (typeCodeValue == null) {
+            return false;
+        }
+
+        return isPresentInMDRList(listName, typeCodeValue);
+    }
+
+    public String getValueForListId(String listId, List<CodeType> typeCodes) {
+        if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
+            return null;
+        }
+
+        for (CodeType typeCode : typeCodes) {
+            String typeCodeListId = typeCode.getListId();
+
+            if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
+                return typeCode.getValue();
+            }
+        }
+
+        return null;
+    }
+
 
     public Integer getSequence() {
         return sequence;
