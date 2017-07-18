@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 import java.util.List;
@@ -30,6 +31,28 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
     private CodeType faReportDocumentTypeCode;
 
     private List<CodeType> faCatchTypeCode;
+
+    private List<FLUXLocation> relatedFLUXLocations;
+
+    private List<CodeType> fluxLocationTypeCodes;
+
+    private List<CodeType> vesselTransportMeansRoleCodes;
+
+    public List<CodeType> getFluxLocationTypeCodes() {
+        return fluxLocationTypeCodes;
+    }
+
+    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
+        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
+    }
+
+    public List<FLUXLocation> getRelatedFLUXLocations() {
+        return relatedFLUXLocations;
+    }
+
+    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
+        this.relatedFLUXLocations = relatedFLUXLocations;
+    }
 
     private List<CodeType> fluxLocationTypeCode;
 
@@ -89,6 +112,14 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     public List<MeasureType> getFluxCharacteristicValueQuantity() {
         return fluxCharacteristicValueQuantity;
+    }
+
+    public List<CodeType> getVesselTransportMeansRoleCodes() {
+        return vesselTransportMeansRoleCodes;
+    }
+
+    public void setVesselTransportMeansRoleCodes(List<CodeType> vesselTransportMeansRoleCodes) {
+        this.vesselTransportMeansRoleCodes = vesselTransportMeansRoleCodes;
     }
 
     public void setFluxCharacteristicValueQuantity(List<MeasureType> fluxCharacteristicValueQuantity) {
