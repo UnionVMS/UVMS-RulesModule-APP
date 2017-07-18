@@ -1074,6 +1074,8 @@ public class ActivityFactMapper {
                         codeTypes.add(codeType);
                     }
                 }
+
+                faNotificationOfArrivalFact.setRelatedFLUXLocationTypeCodes(codeTypes);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact , RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
             }
             List<FACatch> specifiedFACatches = fishingActivity.getSpecifiedFACatches();
@@ -1092,6 +1094,40 @@ public class ActivityFactMapper {
 
             faNotificationOfArrivalFact.setOccurrenceDateTime(getDate(fishingActivity.getOccurrenceDateTime()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(OCCURRENCE_DATE_TIME).storeInRepo(faNotificationOfArrivalFact , OCCURRENCE_DATE_TIME_PROP);
+
+            FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
+            if (specifiedFishingTrip != null) {
+                List<DelimitedPeriod> specifiedDelimitedPeriods = specifiedFishingTrip.getSpecifiedDelimitedPeriods();
+                faNotificationOfArrivalFact.setDelimitedPeriods(specifiedDelimitedPeriods);
+
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP, SPECIFIED_DELIMITED_PERIOD).storeInRepo(faNotificationOfArrivalFact, "delimitedPeriods");
+            }
+
+            List<FLUXCharacteristic> specifiedFLUXCharacteristics = fishingActivity.getSpecifiedFLUXCharacteristics();
+            if (CollectionUtils.isNotEmpty(specifiedFLUXCharacteristics)) {
+
+                List<CodeType> codeTypes = new ArrayList<>();
+                List<Date> dates = new ArrayList<>();
+
+                for (FLUXCharacteristic characteristic : specifiedFLUXCharacteristics) {
+                    if (characteristic != null) {
+                        codeTypes.add(mapToCodeType(characteristic.getTypeCode()));
+                        Date date = getDate(characteristic.getValueDateTime());
+                        if (date != null) {
+                            dates.add(date);
+                        }
+
+                    }
+                }
+
+                faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicValueDateTimes(dates);
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
+
+                faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicsTypeCodes(codeTypes);
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicsTypeCodes");
+
+            }
+
         }
         if (faReportDocument != null) {
             faNotificationOfArrivalFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));

@@ -155,16 +155,8 @@ public class FactRuleEvaluator {
         listener.finishSheet();
         String drl = listener.renderDRL();
         log.debug(drl);
-        drlsAndBrId.put(drl, rulesIds(rules));
+        drlsAndBrId.put(drl, templateName);
         return drlsAndBrId;
-    }
-
-    private String rulesIds(List<RuleType> rules) {
-        List<String> rulesIds = new ArrayList<>();
-        for (RuleType rule : rules) {
-            rulesIds.add(rule.getBrId());
-        }
-        return Joiner.on(",").join(rulesIds);
     }
 
     private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
@@ -185,17 +177,17 @@ public class FactRuleEvaluator {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
-            String brId = ruleEntrySet.getValue();
+            String templateName = ruleEntrySet.getValue();
             StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
-            String systemPackage = ruleName.append(brId).append(".drl").toString();
+            String systemPackage = ruleName.append(templateName).append(".drl").toString();
             systemPackagesPaths.add(systemPackage);
             kieFileSystem.write(systemPackage, rule);
             KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
 
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
-                log.error("Rule failed to build {} ", brId);
+                log.error("Rule failed to build {} ", templateName);
                 kieFileSystem.delete(ruleName.toString(), rule);
-                failedRules.add(brId);
+                failedRules.add(templateName);
                 continue;
             }
             kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
