@@ -13,14 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import javax.ejb.Local;
+
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import javax.ejb.Local;
 
 /**
  * Created by padhyad on 5/9/2017.

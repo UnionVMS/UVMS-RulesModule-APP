@@ -83,8 +83,44 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -118,12 +154,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 /**
  * Created by kovian on 14/06/2017.
@@ -161,11 +191,11 @@ public class ActivityFactMapper {
     private static final String RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP = "relatedFluxLocationTypeCodes";
     private static final String RELATED_FLUX_LOCATIONS_ID_PROP = "relatedFluxLocationIDs";
 
-    private ActivityFactMapper(){
+    private ActivityFactMapper() {
         super();
     }
 
-    public ActivityFactMapper(XPathStringWrapper strUtil_){
+    public ActivityFactMapper(XPathStringWrapper strUtil_) {
         setxPathUtil(strUtil_);
     }
 
@@ -238,13 +268,14 @@ public class ActivityFactMapper {
 
 
     private List<Date> mapOccurrenceDateTimesFromFishingActivities(List<FishingActivity> fishingActivities) {
-        if(CollectionUtils.isEmpty(fishingActivities)){
+        if (CollectionUtils.isEmpty(fishingActivities)) {
             return Collections.emptyList();
         }
         List<Date> dates = new ArrayList<>();
-        for(FishingActivity activity : fishingActivities){;
+        for (FishingActivity activity : fishingActivities) {
+            ;
             dates.add(getDate(activity.getOccurrenceDateTime()));
-            if(CollectionUtils.isNotEmpty(activity.getRelatedFishingActivities())){
+            if (CollectionUtils.isNotEmpty(activity.getRelatedFishingActivities())) {
                 dates.addAll(mapOccurrenceDateTimesFromFishingActivities(activity.getRelatedFishingActivities()));
             }
         }
@@ -254,21 +285,21 @@ public class ActivityFactMapper {
 
     private List<String> mapFishingActivityTypes(List<FishingActivity> specifiedFishingActivities) {
         List<String> actTypesList = new ArrayList<>();
-        if(CollectionUtils.isEmpty(specifiedFishingActivities)){
+        if (CollectionUtils.isEmpty(specifiedFishingActivities)) {
             return actTypesList;
         }
-        for(FishingActivity fishAct : specifiedFishingActivities){
+        for (FishingActivity fishAct : specifiedFishingActivities) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fishAct.getTypeCode();
-            if(typeCode != null){
+            if (typeCode != null) {
                 actTypesList.add(typeCode.getValue());
             }
         }
         return actTypesList;
     }
 
-    private IdType referencedIdFromRelatedFLUXReportDocument(FAReportDocument faReportDocument){
+    private IdType referencedIdFromRelatedFLUXReportDocument(FAReportDocument faReportDocument) {
         FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
-        if(relatedFLUXReportDocument != null && relatedFLUXReportDocument.getReferencedID() != null){
+        if (relatedFLUXReportDocument != null && relatedFLUXReportDocument.getReferencedID() != null) {
             return mapToSingleIdType(relatedFLUXReportDocument.getReferencedID());
         }
         return null;
@@ -514,8 +545,8 @@ public class ActivityFactMapper {
 
     private List<StructuredAddress> mapSpecifiedStructuredAddresses(List<ContactParty> specifiedContactParties) {
         List<StructuredAddress> structAdrList = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(specifiedContactParties)){
-            for(ContactParty contParty : specifiedContactParties){
+        if (CollectionUtils.isNotEmpty(specifiedContactParties)) {
+            for (ContactParty contParty : specifiedContactParties) {
                 structAdrList.addAll(contParty.getSpecifiedStructuredAddresses());
             }
         }
@@ -1077,7 +1108,7 @@ public class ActivityFactMapper {
             faFishingOperationFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, "vesselRelatedActivityCode");
 
-            if(CollectionUtils.isNotEmpty(fishingActivity.getRelatedFishingActivities())){
+            if (CollectionUtils.isNotEmpty(fishingActivity.getRelatedFishingActivities())) {
                 faFishingOperationFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
                 xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, "vesselRelatedActivityCode");
             }
@@ -1380,7 +1411,7 @@ public class ActivityFactMapper {
 
         faQueryParameterFact.setTypeCode(mapToCodeType(faQueryParameter.getTypeCode()));
         faQueryParameterFact.setFaQueryTypeCode(mapToCodeType(faQuery.getTypeCode()));
-        faQueryParameterFact.setValueID(mapToCodeType(faQueryParameter.getValueID()));
+        faQueryParameterFact.setValueID(mapToSingleIdType(faQueryParameter.getValueID()));
         faQueryParameterFact.setValueCode(mapToCodeType(faQueryParameter.getValueCode()));
 
         return faQueryParameterFact;
@@ -2393,6 +2424,7 @@ public class ActivityFactMapper {
     public void setAssetList(List<IdTypeWithFlagState> assetList) {
         this.assetList = assetList;
     }
+
     public void setNonUniqueIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap) {
         this.nonUniqueIdsMap = nonUniqueIdsMap;
     }

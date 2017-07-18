@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-
-import java.util.List;
 
 /**
  * @author padhyad

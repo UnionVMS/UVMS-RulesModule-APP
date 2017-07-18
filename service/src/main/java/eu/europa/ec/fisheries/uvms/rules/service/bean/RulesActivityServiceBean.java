@@ -10,6 +10,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityIDType;
@@ -28,14 +40,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.TextMessage;
-import java.util.*;
-
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse;
 
 /**
  * Created by kovian on 17/07/2016.
@@ -56,7 +60,7 @@ public class RulesActivityServiceBean {
         Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new HashMap<>();
         GetNonUniqueIdsResponse getNonUniqueIdsResponse = null;
         FLUXFAReportMessage fluxFaRepMessage;
-        if(requestMessage != null && requestMessage instanceof FLUXFAReportMessage){
+        if (requestMessage != null && requestMessage instanceof FLUXFAReportMessage) {
             fluxFaRepMessage = (FLUXFAReportMessage) requestMessage;
         } else {
             log.error("Either FLUXFAReportMessage is null or is not of the right type!");
@@ -64,7 +68,7 @@ public class RulesActivityServiceBean {
         }
         try {
             String strReq = ActivityModuleRequestMapper.mapToGetNonUniqueIdRequest(collectAllIdsFromMessage(fluxFaRepMessage));
-            if(StringUtils.isEmpty(strReq)){
+            if (StringUtils.isEmpty(strReq)) {
                 log.warn("No IDs were found to issue request for in method RulesActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
                 return nonUniqueIdsMap;
             }
@@ -75,7 +79,7 @@ public class RulesActivityServiceBean {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
         }
 
-        if(getNonUniqueIdsResponse != null && CollectionUtils.isNotEmpty(getNonUniqueIdsResponse.getActivityUniquinessLists())){
+        if (getNonUniqueIdsResponse != null && CollectionUtils.isNotEmpty(getNonUniqueIdsResponse.getActivityUniquinessLists())) {
             mapGetUniqueIdResponseToIdsMap(nonUniqueIdsMap, getNonUniqueIdsResponse.getActivityUniquinessLists());
         }
 
@@ -83,17 +87,17 @@ public class RulesActivityServiceBean {
     }
 
     private void mapGetUniqueIdResponseToIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap, List<ActivityUniquinessList> activityUniquinessLists) {
-        for(ActivityUniquinessList uniquenessListType : activityUniquinessLists){
+        for (ActivityUniquinessList uniquenessListType : activityUniquinessLists) {
             List<IdType> idTypeList = new ArrayList<>();
             nonUniqueIdsMap.put(uniquenessListType.getActivityTableType(), idTypeList);
-            if(CollectionUtils.isNotEmpty(uniquenessListType.getIds())){
+            if (CollectionUtils.isNotEmpty(uniquenessListType.getIds())) {
                 mapActivityIdTypesToIdType(idTypeList, uniquenessListType.getIds());
             }
         }
     }
 
     private void mapActivityIdTypesToIdType(List<IdType> idTypeList, List<ActivityIDType> activityIdTypes) {
-        for(ActivityIDType activityIdType : activityIdTypes){
+        for (ActivityIDType activityIdType : activityIdTypes) {
             idTypeList.add(new IdType(activityIdType.getValue(), activityIdType.getIdentifierSchemeId()));
         }
     }
@@ -101,22 +105,22 @@ public class RulesActivityServiceBean {
     private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
 
         Map<ActivityTableType, List<IDType>> idsmap = new HashMap<>();
-        if(request == null){
+        if (request == null) {
             return idsmap;
         }
 
         // FLUXReportDocument IDs
         FLUXReportDocument fluxReportDocument = request.getFLUXReportDocument();
-        if(fluxReportDocument != null && CollectionUtils.isNotEmpty(fluxReportDocument.getIDS())){
+        if (fluxReportDocument != null && CollectionUtils.isNotEmpty(fluxReportDocument.getIDS())) {
             idsmap.put(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
         }
 
         // FAReportDocument.RelatedFLUXReportDocument IDs and ReferencedID
         List<FAReportDocument> faReportDocuments = request.getFAReportDocuments();
-        if(CollectionUtils.isNotEmpty(faReportDocuments)){
-            for(FAReportDocument faRepDoc : faReportDocuments){
+        if (CollectionUtils.isNotEmpty(faReportDocuments)) {
+            for (FAReportDocument faRepDoc : faReportDocuments) {
                 FLUXReportDocument relatedFLUXReportDocument = faRepDoc.getRelatedFLUXReportDocument();
-                if(relatedFLUXReportDocument != null){
+                if (relatedFLUXReportDocument != null) {
                     List<IDType> idTypes = new ArrayList<>();
                     idTypes.addAll(relatedFLUXReportDocument.getIDS());
                     idTypes.add(relatedFLUXReportDocument.getReferencedID());
