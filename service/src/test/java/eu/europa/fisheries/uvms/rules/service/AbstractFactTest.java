@@ -10,38 +10,26 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -52,10 +40,10 @@ public class AbstractFactTest {
 
     @Before
     public void before() {
-
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
+        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, RuleTestHelper.getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC());
     }
 
 
@@ -327,8 +315,6 @@ public class AbstractFactTest {
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
     }
 
-
-
     @Test
     public void testIsPositiveShouldReturnTrueWithNegativeValue() {
         assertTrue(fact.isPositive(new BigDecimal("-10")));
@@ -358,6 +344,18 @@ public class AbstractFactTest {
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
     }
 
+    @Test
+    public void testListIdContainsAnySingle() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", "GEAR_TYPE");
+        assertFalse(fact.listIdContainsAny(typeCode, "GEAR_TYPE"));
+    }
+
+    @Test
+    public void testListIdContainsAnyMultiple() {
+        List<CodeType> typeCodes = Arrays.asList(RuleTestHelper.getCodeType("PS", "GEAR_TYPE"), RuleTestHelper.getCodeType("LT", "VESSEL_ACTIVITY"));
+
+        assertFalse(fact.listIdContainsAny(typeCodes, "GEAR_TYPE"));
+    }
 
     @Test
     public void testValidateIDTypeHappy() {
@@ -407,7 +405,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_OK(){
+    public void testValidateFormatUUID_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue(UUID.randomUUID().toString());
@@ -417,7 +415,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateFormatUUID_NOT_OK(){
+    public void testValidateFormatUUID_NOT_OK() {
         IdType uuidIdType = new IdType();
         uuidIdType.setSchemeId("UUID");
         uuidIdType.setValue("ballshjshdhdfhsgfd");
@@ -469,19 +467,19 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsPresentInMDRList(){
-        boolean result=fact.isPresentInMDRList("GEAR_TYPE","LA");
+    public void testIsPresentInMDRList() {
+        boolean result = fact.isPresentInMDRList("GEAR_TYPE", "LA");
         assertEquals(true, result);
     }
 
     @Test
-    public void testIsCodeTypePresentInMDRList(){
+    public void testIsCodeTypePresentInMDRList() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED"));
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
-        boolean result=fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
     }
 
@@ -504,14 +502,14 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsIdTypePresentInMDRList(){
+    public void testIsIdTypePresentInMDRList() {
 
         List<IdType> codeTypes = new ArrayList<>();
         codeTypes.add(new IdType("RELEASED"));
         codeTypes.add(new IdType("DISCARDED"));
         codeTypes.add(new IdType("DEMINIMIS"));
-        boolean result=fact.isIdTypePresentInMDRList("FA_CATCH_TYPE",codeTypes);
-        assertEquals(true,result);
+        boolean result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(true, result);
 
         result = fact.isIdTypePresentInMDRList(null, codeTypes);
         assertFalse(result);
@@ -527,9 +525,9 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAll() {
 
-        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
-        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
-        IdType idType3= RuleTestHelper.getIdType("value13","UUID");
+        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType3 = RuleTestHelper.getIdType("value13", "UUID");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
         boolean result = fact.valueContainsAll(idTypes, "value1");
@@ -539,9 +537,9 @@ public class AbstractFactTest {
     @Test
     public void testIsNumeric() {
 
-        NumericType numericType1= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
-        NumericType numericType2= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
-        NumericType numericType3= RuleTestHelper.getNumericType(new BigDecimal(12),"XXX");
+        NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
 
 
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
@@ -552,19 +550,19 @@ public class AbstractFactTest {
     @Test
     public void testIdListContainsValue() {
 
-        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
-        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.idListContainsValue(idTypes, "value1","CFR");
+        boolean result = fact.idListContainsValue(idTypes, "value1", "CFR");
         assertTrue(result);
     }
 
     @Test
     public void testSchemeIdContainsAny() {
 
-        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
-        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAny(idTypes, "CFR");
@@ -574,8 +572,8 @@ public class AbstractFactTest {
     @Test
     public void testSchemeIdContainsAllOrNone() {
 
-        IdType idType1= RuleTestHelper.getIdType("value1","CFR");
-        IdType idType2= RuleTestHelper.getIdType("value12","IRCS");
+        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
@@ -609,7 +607,7 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAny() {
 
-        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
         CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
@@ -628,8 +626,8 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAny() {
 
-        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
+        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
@@ -642,8 +640,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
+        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -767,6 +765,131 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testIsTypeCodeValuePresentInList() {
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("FAKE_LIST_ID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean typeCodeValuePresentInList = fact.isCodeTypePresentInMDRList("VESSEL_STORAGE_TYPE", typeCodes);
+        assertEquals(true, typeCodeValuePresentInList);
+    }
+
+    @Test
+    public void testGetValueForListId() {
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OHL");
+        List<CodeType> typeCodes = Arrays.asList(typeCode);
+        String valueForListId = fact.getValueForListId("VESSEL_STORAGE_TYPE", typeCodes);
+        assertNotNull(valueForListId);
+        assertEquals("OHL", valueForListId);
+    }
+
+    @Test
+    public void testRetrieveFishingGearTypeCode() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("GEAR_TYPE");
+        typeCode.setValue("PS");
+
+        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
+        assertEquals(FishingGearTypeCode.PS, fishingGearTypeCode);
+    }
+
+    @Test
+    public void testRetrieveFishingGearTypeCodeIsNull() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("GEAR_TYPE");
+        typeCode.setValue(StringUtils.EMPTY);
+
+        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
+        assertNull(fishingGearTypeCode);
+    }
+
+    @Test
+    public void testGearCharacteristicCode() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("PS");
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("ME");
+        gearCharacteristic.setTypeCode(codeType);
+
+        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
+        assertEquals(FishingGearCharacteristicCode.ME, fishingGearCharacteristicCode);
+    }
+
+    @Test
+    public void testGearCharacteristicCodeIsNull() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue(StringUtils.EMPTY);
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue(StringUtils.EMPTY);
+
+        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
+        assertNull(fishingGearCharacteristicCode);
+    }
+
+    @Test
+    public void testIsRequiredGearCharacteristicsPresent() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("ME");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GM");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GN");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("TBB");
+
+        fishingGearFact.setTypeCode(typeCode);
+        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+
+        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
+    public void testIsRequiredGearCharacteristicsPresentNoRequired() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
+        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
+
+        CodeType typeCode = new CodeType();
+        typeCode.setListId(FactConstants.GEAR_TYPE);
+        typeCode.setValue("RG");
+
+        fishingGearFact.setTypeCode(typeCode);
+        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+
+        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
     public void testGetDataTypeForMDRList() {
 
         String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC", "ME");
@@ -775,7 +898,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
+    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -791,7 +914,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues(){
+    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues() {
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -807,7 +930,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull(){
+    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull() {
 
         assertFalse(fact.codeTypeValuesUnique(null));
 
