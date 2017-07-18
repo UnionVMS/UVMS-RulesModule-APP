@@ -633,6 +633,7 @@ public class ActivityFactMapper {
 
     public VesselStorageCharacteristicsFact generateFactsForVesselStorageCharacteristic(VesselStorageCharacteristic vesselStorageCharacteristic) {
         if (vesselStorageCharacteristic == null) {
+            xPathUtil.clear();
             return null;
         }
 
@@ -647,6 +648,7 @@ public class ActivityFactMapper {
 
     public List<VesselStorageCharacteristicsFact> generateFactsForVesselStorageCharacteristics(List<VesselStorageCharacteristic> vesselStorageCharacteristics) {
         if (vesselStorageCharacteristics == null) {
+            xPathUtil.clear();
             return Collections.emptyList();
         }
 
