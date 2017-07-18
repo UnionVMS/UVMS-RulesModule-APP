@@ -18,10 +18,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -243,19 +243,19 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyType> salesPartyTypes, String... valuesToMatch) {
-        List<eu.europa.ec.fisheries.schema.sales.CodeType> codeTypes = new ArrayList<>();
+    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
+        List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
 
-        for (SalesPartyType salesPartyType : salesPartyTypes) {
-            codeTypes.addAll(salesPartyType.getRoleCodes());
+        for (SalesPartyFact salesPartyFact : salesPartyTypes) {
+            codeTypes.addAll(salesPartyFact.getRoleCodes());
         }
 
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
 
-        for (eu.europa.ec.fisheries.schema.sales.CodeType codeType : codeTypes) {
+        for (CodeType codeType : codeTypes) {
             String value = codeType.getValue();
 
             if (valuesToBeFound.contains(value)) {
@@ -275,10 +275,31 @@ public abstract class AbstractFact {
         }
 
         for (CodeType codeType : codeTypes) {
-            String listId = codeType.getListId();
+            if (codeType != null) {
+                String listId = codeType.getListId();
 
-            if (valuesToBeFound.contains(listId)) {
-                valuesFoundInListOfCodeTypes.add(listId);
+                if (valuesToBeFound.contains(listId)) {
+                    valuesFoundInListOfCodeTypes.add(listId);
+                }
+            }
+        }
+
+        return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
+    }
+    
+    public boolean valueDoesNotContainAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        HashSet<String> valuesFoundInListOfCodeTypes = new HashSet<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            String value = codeType.getValue();
+
+            if (valuesToBeFound.contains(value)) {
+                valuesFoundInListOfCodeTypes.add(value);
             }
         }
 

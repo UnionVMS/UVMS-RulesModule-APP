@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.schema.sales.Report;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
@@ -55,7 +56,7 @@ public class SalesReportFactGeneratorTest {
         salesReportFactGenerator.setBusinessObjectMessage(report);
         List<AbstractFact> allFacts = salesReportFactGenerator.getAllFacts();
 
-        List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated = createListOfClassesThatShouldBeCreated();
+        List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated = createListOfClassesThatShouldBeCreated();
         List<Class> listOfClassesThatWereCreated = newArrayList();
 
         for (Class clazz : listOfClassesThatShouldBeCreated) {
@@ -69,7 +70,7 @@ public class SalesReportFactGeneratorTest {
         assertEquals(listOfClassesThatShouldBeCreated.size(), listOfClassesThatWereCreated.size());
     }
 
-    private List<Class<? extends AbstractFact>> createListOfClassesThatShouldBeCreated() {
+    private List<Class<? extends SalesAbstractFact>> createListOfClassesThatShouldBeCreated() {
         return Arrays.asList(SalesReportWrapperFact.class,
                 SalesAuctionSaleFact.class,
                 SalesFLUXSalesReportMessageFact.class,

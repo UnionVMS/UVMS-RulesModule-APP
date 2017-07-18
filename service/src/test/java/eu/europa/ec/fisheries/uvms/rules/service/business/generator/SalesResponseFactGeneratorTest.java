@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
@@ -49,7 +50,7 @@ public class SalesResponseFactGeneratorTest {
         salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
         List<AbstractFact> allFacts = salesResponseFactGenerator.getAllFacts();
 
-        List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
+        List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesResponseMessageFact.class, SalesFLUXResponseDocumentFact.class,
                         SalesFLUXPartyFact.class, SalesValidationResultDocumentFact.class, SalesValidationQualityAnalysisFact.class);
         List<Class> listOfClassesThatWereCreated = newArrayList();

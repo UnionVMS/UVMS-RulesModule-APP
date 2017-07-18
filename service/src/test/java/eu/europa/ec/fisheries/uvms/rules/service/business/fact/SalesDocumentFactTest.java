@@ -48,18 +48,18 @@ public class SalesDocumentFactTest {
     }
 
     @Test
-    public void isLandingDateBeforeAnySalesDateWhenLandingDatesAreValid() throws Exception {
+    public void issAnySalesDateBeforeLandingDateWhenLandingDatesAreValid() throws Exception {
         fact.setSpecifiedFishingActivities(Arrays.asList(
                 new FishingActivityType().withSpecifiedDelimitedPeriods(
                         new DelimitedPeriodType().withStartDateTime(
                                 new DateTimeType().withDateTime(DateTime.parse("1995-11-24"))))));
         fact.setSpecifiedSalesEvents(Collections.singletonList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(DateTime.now()))));
 
-        assertTrue(fact.isLandingDateBeforeAnySalesDate());
+        assertFalse(fact.isAnySalesDateBeforeLandingDate());
     }
 
     @Test
-    public void isLandingDateBeforeAnySalesDateWhenLandingDatesAreInvalid() throws Exception {
+    public void isAnySalesDateBeforeLandingDateWhenLandingDatesAreInvalid() throws Exception {
         fact.setSpecifiedFishingActivities(Arrays.asList(
                 new FishingActivityType().withSpecifiedDelimitedPeriods(
                         new DelimitedPeriodType().withStartDateTime(
@@ -67,7 +67,7 @@ public class SalesDocumentFactTest {
 
         fact.setSpecifiedSalesEvents(Collections.singletonList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(DateTime.now()))));
 
-        assertFalse(fact.isLandingDateBeforeAnySalesDate());
+        assertTrue(fact.isAnySalesDateBeforeLandingDate());
     }
 
     @Test

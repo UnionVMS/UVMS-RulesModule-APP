@@ -2,11 +2,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
 
-public class SalesFLUXSalesQueryMessageFact extends AbstractFact {
+public class SalesFLUXSalesQueryMessageFact extends SalesAbstractFact {
 
     protected SalesQueryType salesQuery;
 

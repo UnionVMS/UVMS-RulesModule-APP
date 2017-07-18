@@ -3,12 +3,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SalesAAPProductFact extends AbstractFact {
+public class SalesAAPProductFact extends SalesAbstractFact {
 
     private CodeType speciesCode;
     private QuantityType unitQuantity;

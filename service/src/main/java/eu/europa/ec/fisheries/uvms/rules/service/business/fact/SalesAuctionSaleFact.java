@@ -2,11 +2,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
 
-public class SalesAuctionSaleFact extends AbstractFact {
+public class SalesAuctionSaleFact extends SalesAbstractFact {
 
     protected String countryCode;
     protected SalesCategoryType salesCategory;

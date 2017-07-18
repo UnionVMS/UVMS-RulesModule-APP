@@ -4,12 +4,12 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SalesEventFact extends AbstractFact {
+public class SalesEventFact extends SalesAbstractFact {
 
     private DateTimeType occurrenceDateTime;
     private TextType sellerName;

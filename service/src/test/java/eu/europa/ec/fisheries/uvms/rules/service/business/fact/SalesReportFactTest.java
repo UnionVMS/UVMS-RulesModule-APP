@@ -23,7 +23,9 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleNotSpecifiedForSalesNoteWhenSellerNotSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOTSELLER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOSELLERHERE", "BUYER", "SENDER");
+
+        //TODO: volgorde van roles beinvloed het resultaat
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
@@ -34,7 +36,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleNotSpecifiedForSalesNoteWhenSellerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SELLER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER", "SENDER", "SELLER");
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
@@ -44,7 +46,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenSellerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SELLER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SELLER", "BUYER", "SELLER");
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
@@ -54,7 +56,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenBuyerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER", "BUYER", "SELLER");
         setSalesBatchWithATotalPrice(salesDocumentFact);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
@@ -65,7 +67,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenBuyerOrSellerIsNotSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOTBUYERNORSELLER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOTBUYERNORSELLER", "SENDER", "RECEIVER");
         salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
         setSalesBatchWithATotalPrice(salesDocumentFact);
 
@@ -77,7 +79,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenTotalIsZero() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOTBUYERNORSELLER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("NOTBUYERNORSELLER", "BUYER", "SELLER");
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
@@ -87,7 +89,14 @@ public class SalesReportFactTest {
 
     @Test
     public void isRecipientRoleNotSpecifiedForTakeOverDocumentWhenRecipientIsPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("RECIPIENT");
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        CodeType codeType = new CodeType();
+        codeType.setListId("RECIPIENT");
+
+        SalesPartyFact salesPartyFact = new SalesPartyFact();
+        salesPartyFact.setRoleCodes(Arrays.asList(codeType));
+        salesPartyFact.setSpecifiedFLUXOrganization(new FLUXOrganizationType());
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact));
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
@@ -97,7 +106,14 @@ public class SalesReportFactTest {
 
     @Test
     public void isRecipientRoleNotSpecifiedForTakeOverDocumentWhenRecipientIsNotPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("RECIPIENTNOTPRESENT");
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        CodeType codeType = new CodeType();
+        codeType.setListId("RECIPIENTNOTPRESENT");
+
+        SalesPartyFact salesPartyFact = new SalesPartyFact();
+        salesPartyFact.setRoleCodes(Arrays.asList(codeType));
+        salesPartyFact.setSpecifiedFLUXOrganization(new FLUXOrganizationType());
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact));
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
@@ -107,7 +123,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocumentWhenFluxOrganizationIsPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
@@ -117,7 +133,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocumentWhenFluxOrganizationIsNotPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
         salesDocumentFact.getSpecifiedSalesParties().get(0).setSpecifiedFLUXOrganization(null);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
@@ -128,7 +144,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProductsWhenStoredProductsArePresentAndIDSArePresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
         salesDocumentFact.getSpecifiedSalesParties().get(0).setSpecifiedFLUXOrganization(null);
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(new SalesBatchType().withSpecifiedAAPProducts(
                 new AAPProductType().withUsageCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("STO")))));
@@ -144,7 +160,7 @@ public class SalesReportFactTest {
 
     @Test
     public void isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProductsWhenStoredProductsArePresentAndIDSAreNotPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER");
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
         salesDocumentFact.getSpecifiedSalesParties().get(0).setSpecifiedFLUXOrganization(null);
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(new SalesBatchType().withSpecifiedAAPProducts(
                 new AAPProductType().withUsageCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("STO")))));
@@ -181,13 +197,19 @@ public class SalesReportFactTest {
                 .verify();
     }
 
-    private SalesDocumentFact createSalesDocumentFactWithRole(String role) {
+    private SalesDocumentFact createSalesDocumentFactWithRole(String role, String buyer, String seller) {
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         CodeType codeType = new CodeType();
-        codeType.setListId(role);
+        codeType.setValue(role);
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setValue(buyer);
+
+        CodeType codeType3 = new CodeType();
+        codeType3.setValue(seller);
 
         SalesPartyFact salesPartyFact = new SalesPartyFact();
-        salesPartyFact.setRoleCodes(Arrays.asList(codeType));
+        salesPartyFact.setRoleCodes(Arrays.asList(codeType, codeType2, codeType3));
         salesPartyFact.setSpecifiedFLUXOrganization(new FLUXOrganizationType());
         salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact));
         return salesDocumentFact;

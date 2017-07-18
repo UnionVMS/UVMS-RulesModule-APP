@@ -16,6 +16,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -68,7 +70,9 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
 
         for (Object objectToMapToFact : objectsToMapToFacts) {
-            AbstractFact fact = mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            fact.setSource(Source.QUERY);
+
             facts.add(fact);
         }
 
@@ -84,8 +88,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(fluxSalesQueryMessage, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace(); // TODO
-            throw new RuntimeException();
+            throw new RuntimeException("Something went wrong during mapping of Sales objects to facts", e);
         }
     }
 

@@ -2,7 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SalesDocumentFact extends AbstractFact {
+public class SalesDocumentFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private CodeType currencyCode;
@@ -209,21 +209,21 @@ public class SalesDocumentFact extends AbstractFact {
         return false;
     }
 
-    public boolean isLandingDateBeforeAnySalesDate() {
+    public boolean isAnySalesDateBeforeLandingDate() {
         if (isEmpty(specifiedFishingActivities) || isEmpty(specifiedSalesEvents)) {
             return false;
         }
 
         // Due to the setup of the domain design (and related rules) there can be only a single FishingActivity with one delimited period
         List<DelimitedPeriodType> delimitedPeriods = getSpecifiedFishingActivities().get(0).getSpecifiedDelimitedPeriods();
-        if (delimitedPeriods == null || delimitedPeriods.size() == 0 || delimitedPeriods.get(0).getStartDateTime() == null) {
+        if (delimitedPeriods == null || delimitedPeriods.size() == 0 || delimitedPeriods.get(0).getStartDateTime() == null || delimitedPeriods.get(0).getStartDateTime().getDateTime() == null) {
             return false;
         }
 
         long startTimeInMillis = delimitedPeriods.get(0).getStartDateTime().getDateTime().getMillis();
         for (SalesEventType salesEvent:getSpecifiedSalesEvents()){
-            if(salesEvent!= null && salesEvent.getOccurrenceDateTime() != null
-                    && startTimeInMillis < salesEvent.getOccurrenceDateTime().getDateTime().getMillis()){
+            if(salesEvent!= null && salesEvent.getOccurrenceDateTime() != null && salesEvent.getOccurrenceDateTime().getDateTime() != null
+                    && startTimeInMillis > salesEvent.getOccurrenceDateTime().getDateTime().getMillis()){
                 return true;
             }
         }

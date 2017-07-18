@@ -4,14 +4,14 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.FACatchType;
 import eu.europa.ec.fisheries.schema.sales.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
 @ToString
-public class SalesAAPProcessFact extends AbstractFact {
+public class SalesAAPProcessFact extends SalesAbstractFact {
 
     private List<CodeType> typeCodes;
     private NumericType conversionFactorNumeric;
@@ -63,12 +63,13 @@ public class SalesAAPProcessFact extends AbstractFact {
         return Objects.equals(typeCodes, that.typeCodes) &&
                 Objects.equals(conversionFactorNumeric, that.conversionFactorNumeric) &&
                 Objects.equals(usedFACatches, that.usedFACatches) &&
-                Objects.equals(resultAAPProducts, that.resultAAPProducts);
+                Objects.equals(resultAAPProducts, that.resultAAPProducts) &&
+                Objects.equals(source, that.source);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts);
+        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts, source);
     }
 
 }

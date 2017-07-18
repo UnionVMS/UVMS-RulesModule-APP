@@ -1,14 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.schema.sales.AAPProductType;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
+import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-public class SalesReportFact extends AbstractFact {
+public class SalesReportFact extends SalesAbstractFact {
 
     private IdType id;
     private CodeType itemTypeCode;
@@ -77,8 +80,9 @@ public class SalesReportFact extends AbstractFact {
                 }
 
                 boolean sellerAvailable = false;
+
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
+                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
                         sellerAvailable = true;
                     }
                 }
@@ -92,7 +96,7 @@ public class SalesReportFact extends AbstractFact {
         return false;
     }
 
-        public boolean isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase(){
+    public boolean isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase(){
         if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "SN") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
@@ -109,10 +113,10 @@ public class SalesReportFact extends AbstractFact {
                 boolean sellerAvailable = false;
                 boolean buyerAvailable = false;
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
+                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
                         sellerAvailable = true;
                     }
-                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "BUYER")) {
+                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "BUYER")) {
                         buyerAvailable = true;
                     }
                 }

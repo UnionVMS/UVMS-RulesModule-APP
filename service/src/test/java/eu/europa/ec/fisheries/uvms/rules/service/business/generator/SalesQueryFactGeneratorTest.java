@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
@@ -57,7 +58,7 @@ public class SalesQueryFactGeneratorTest {
         salesQueryFactGenerator.setBusinessObjectMessage(fluxSalesQueryMessage);
         List<AbstractFact> allFacts = salesQueryFactGenerator.getAllFacts();
 
-        List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
+        List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesQueryMessageFact.class, SalesFLUXPartyFact.class,
                         SalesDelimitedPeriodFact.class, SalesQueryFact.class, SalesQueryParameterFact.class);
         List<Class> listOfClassesThatWereCreated = newArrayList();

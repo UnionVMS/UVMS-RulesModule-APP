@@ -3,12 +3,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SalesVesselTransportMeansFact extends AbstractFact {
+public class SalesVesselTransportMeansFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private List<TextType> names;

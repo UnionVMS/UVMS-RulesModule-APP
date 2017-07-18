@@ -3,12 +3,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
 import eu.europa.ec.fisheries.schema.sales.SalesReportType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SalesFLUXSalesReportMessageFact extends AbstractFact {
+public class SalesFLUXSalesReportMessageFact extends SalesAbstractFact {
 
     private FLUXReportDocumentType fluxReportDocument;
     private List<SalesReportType> salesReports;

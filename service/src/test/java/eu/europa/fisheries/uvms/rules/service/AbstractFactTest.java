@@ -10,12 +10,12 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -151,6 +151,15 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testListIdDoesNotContainAllWhenListIdDoesNotContainAllValuesAndValueIsNull() {
+        CodeType codeType = getCodeTypeWithListID("alb");
+
+        List<CodeType> codeTypeList = Arrays.asList(null, codeType, null);
+
+        assertTrue(fact.listIdDoesNotContainAll(codeTypeList, "bla", "notbla"));
+    }
+
+    @Test
     public void testListIdDoesNotContainAllWhenListIdDoesContainAllValues() {
         CodeType codeType1 = getCodeTypeWithListID("bla");
         CodeType codeType2 = getCodeTypeWithListID("alb");
@@ -163,14 +172,14 @@ public class AbstractFactTest {
 
     @Test
     public void testAnyValueDoesNotContainAllWhenValueDoesNotContainAnyValue() {
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType1 = getCodeTypeWithValue("BUYER");
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType2 = getCodeTypeWithValue("SELLER");
+        CodeType codeType1 = getCodeTypeWithValue("BUYER");
+        CodeType codeType2 = getCodeTypeWithValue("SELLER");
 
-        SalesPartyType salesPartyType1 = new SalesPartyType();
-        salesPartyType1.withRoleCodes(codeType1);
+        SalesPartyFact salesPartyType1 = new SalesPartyFact();
+        salesPartyType1.setRoleCodes(Arrays.asList(codeType1));
 
-        SalesPartyType salesPartyType2 = new SalesPartyType();
-        salesPartyType2.withRoleCodes(codeType2);
+        SalesPartyFact salesPartyType2 = new SalesPartyFact();
+        salesPartyType2.setRoleCodes(Arrays.asList(codeType2));
 
 
         assertTrue(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2),"SENDER"));
@@ -178,18 +187,18 @@ public class AbstractFactTest {
 
     @Test
     public void testAnyValueDoesNotContainAllWhenValueContainsAnyValue() {
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType1 = getCodeTypeWithValue("BUYER");
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType2 = getCodeTypeWithValue("SELLER");
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType3 = getCodeTypeWithValue("SENDER");
+        CodeType codeType1 = getCodeTypeWithValue("BUYER");
+        CodeType codeType2 = getCodeTypeWithValue("SELLER");
+        CodeType codeType3 = getCodeTypeWithValue("SENDER");
 
-        SalesPartyType salesPartyType1 = new SalesPartyType();
-        salesPartyType1.withRoleCodes(codeType1);
+        SalesPartyFact salesPartyType1 = new SalesPartyFact();
+        salesPartyType1.setRoleCodes(Arrays.asList(codeType1));
 
-        SalesPartyType salesPartyType2 = new SalesPartyType();
-        salesPartyType2.withRoleCodes(codeType2);
+        SalesPartyFact salesPartyType2 = new SalesPartyFact();
+        salesPartyType2.setRoleCodes(Arrays.asList(codeType2));
 
-        SalesPartyType salesPartyType3 = new SalesPartyType();
-        salesPartyType3.withRoleCodes(codeType3);
+        SalesPartyFact salesPartyType3 = new SalesPartyFact();
+        salesPartyType3.setRoleCodes(Arrays.asList(codeType3));
 
         assertFalse(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2, salesPartyType3),"SENDER"));
     }
@@ -333,8 +342,8 @@ public class AbstractFactTest {
         return codeType;
     }
 
-    private eu.europa.ec.fisheries.schema.sales.CodeType getCodeTypeWithValue(String value) {
-        eu.europa.ec.fisheries.schema.sales.CodeType codeType = new eu.europa.ec.fisheries.schema.sales.CodeType();
+    private CodeType getCodeTypeWithValue(String value) {
+        CodeType codeType = new CodeType();
         codeType.setValue(value);
         return codeType;
     }

@@ -129,9 +129,9 @@ public class TemplateFactory {
             case SALES_FLUX_RESPONSE_DOCUMENT:
                 return "/templates/SalesFLUXResponseDocument.drt";
             case SALES_VALIDATION_RESULT_DOCUMENT:
-                return "/templates/SalesValidationDocument.drt";
+                return "/templates/SalesValidationResultDocument.drt";
             case SALES_VALIDATION_QUALITY_ANALYSIS:
-                return "/templates/SalesQualityAnalysis.drt";
+                return "/templates/SalesValidationQualityAnalysis.drt";
             case SALES_REPORT_WRAPPER:
                 return "/templates/SalesReportWrapper.drt";
             case SALES_AUCTION_SALE:

@@ -1,12 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
 
-public class SalesQueryParameterFact extends AbstractFact {
+public class SalesQueryParameterFact extends SalesAbstractFact {
 
     protected CodeType typeCode;
 

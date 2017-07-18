@@ -2,13 +2,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SalesFLUXLocationFact extends AbstractFact {
+public class SalesFLUXLocationFact extends SalesAbstractFact {
 
     private CodeType typeCode;
     private IdType countryID;
