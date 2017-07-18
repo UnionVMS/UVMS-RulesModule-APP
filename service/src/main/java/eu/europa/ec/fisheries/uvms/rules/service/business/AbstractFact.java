@@ -315,7 +315,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listContainsEitherThen(List<String> activityTypes, String... permitedElements){
-        if(permitedElements == null || permitedElements.length == 0){
+        if(CollectionUtils.isEmpty(activityTypes) || permitedElements == null || permitedElements.length == 0){
             return false;
         }
         List<String> permitedElementsList = Arrays.asList(permitedElements);

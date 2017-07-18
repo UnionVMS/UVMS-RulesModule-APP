@@ -799,6 +799,25 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testListContainsEitherThen(){
+        List<String> activityTypes = new ArrayList<String>(){{add("YEAH"); add("NO"); add("BLAH");}};
+
+        final boolean contains = fact.listContainsEitherThen(activityTypes, "YEAH", "BLAH");
+        assertTrue(contains);
+
+        final boolean contains2 = fact.listContainsEitherThen(activityTypes, "NO", "BLAH", "YEAH");
+        assertFalse(contains2);
+
+        final boolean contains3 = fact.listContainsEitherThen(null, "NO", "BLAH", "YEAH");
+        assertFalse(contains3);
+
+        final boolean contains4 = fact.listContainsEitherThen(activityTypes);
+        assertFalse(contains4);
+
+
+    }
+
+    @Test
     public void testDateComparison(){
         Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
         Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
