@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -44,7 +45,7 @@ public class TemplateEngine {
     public void initialize() {
         log.info("Initializing templates and rules [START]");
         ruleEvaluator.initializeRules(getAllTemplates());
-        updateFailedRules(ruleEvaluator.getFailedRules());
+        updateRulesStatus(ruleEvaluator.getFailedRules());
     }
 
     public void reInitialize() {
@@ -71,9 +72,10 @@ public class TemplateEngine {
         }
     }
 
-    private void updateFailedRules(List<String> failedBrIds) {
+    private void updateRulesStatus(List<String> failedBrIds) {
         try {
             rulesDb.updateFailedRules(failedBrIds);
+            rulesDb.updateRuleStatus(failedBrIds.isEmpty() ? RuleStatusType.SUCCESSFUL : RuleStatusType.FAILED);
         } catch (RulesModelException e) {
             throw new IllegalStateException(e);
         }
