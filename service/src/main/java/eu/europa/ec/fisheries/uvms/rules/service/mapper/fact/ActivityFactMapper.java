@@ -124,16 +124,34 @@ public class ActivityFactMapper {
         if (CollectionUtils.isNotEmpty(specifiedFishingActivities)) {
             faReportDocumentFact.setSpecifiedFishingActivities(new ArrayList<>(specifiedFishingActivities));
             faReportDocumentFact.setSpecifiedFishingActivitiesTypes(mapFishingActivityTypes(specifiedFishingActivities));
+            faReportDocumentFact.setSpecifiedAndRealtedFishActOccurrenceDateTimes(mapOccurrenceDateTimesFromFishingActivities(specifiedFishingActivities));
         }
-        // Even if specifiedFishingActivities is empty we still need to map the xpath cause those properties have rules being applied to them,
-        // and if the rule fails then we still need the xpath to what failed.
+        // Even if specifiedFishingActivities is empty we still need to map the xpath, cause those properties have rules being applied to them,
+        // and if the rule fails (ex. cause of the property being empty or null) then we still need to return the xpath to what failed.
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY).storeInRepo(faReportDocumentFact, "specifiedFishingActivities");
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, TYPE_CODE).storeInRepo(faReportDocumentFact, "specifiedFishingActivitiesTypes");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, OCCURRENCE_DATE_TIME).storeInRepo(faReportDocumentFact, "specifiedAndRealtedFishActOccurrenceDateTimes");
 
         faReportDocumentFact.setNonUniqueIdsList(nonUniqueIdsMap.get(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
 
         return faReportDocumentFact;
+    }
+
+
+    private List<Date> mapOccurrenceDateTimesFromFishingActivities(List<FishingActivity> fishingActivities) {
+        if(CollectionUtils.isEmpty(fishingActivities)){
+            return Collections.emptyList();
+        }
+        List<Date> dates = new ArrayList<>();
+        for(FishingActivity activity : fishingActivities){;
+            dates.add(getDate(activity.getOccurrenceDateTime()));
+            if(CollectionUtils.isNotEmpty(activity.getRelatedFishingActivities())){
+                dates.addAll(mapOccurrenceDateTimesFromFishingActivities(activity.getRelatedFishingActivities()));
+            }
+        }
+        dates.removeAll(Collections.singleton(null));
+        return dates;
     }
 
     private List<String> mapFishingActivityTypes(List<FishingActivity> specifiedFishingActivities) {

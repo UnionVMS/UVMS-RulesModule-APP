@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -451,6 +452,26 @@ public abstract class AbstractFact {
             now.minusHours(hours);
         }
         return now.toDate();
+    }
+
+    public boolean containsSameDayMoreTheOnce(List<Date> dateList){
+        if(CollectionUtils.isEmpty(dateList)){
+            return true;
+        }
+        int listSize = dateList.size();
+        for(int i = 0; i < listSize; i++){
+            Date comparisonDate = dateList.get(i);
+            for(int j = i+1; j < listSize; j++){
+                if(isSameDay(comparisonDate, dateList.get(j))){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameDay(Date date1, Date date2){
+        return DateUtils.isSameDay(date1, date2);
     }
 
     public List<RuleWarning> getWarnings() {

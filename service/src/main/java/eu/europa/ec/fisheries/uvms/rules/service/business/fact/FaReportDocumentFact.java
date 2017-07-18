@@ -50,6 +50,8 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<FishingActivity> specifiedFishingActivities;
 
+    private List<Date> specifiedAndRealtedFishActOccurrenceDateTimes;
+
     private List<String> specifiedFishingActivitiesTypes;
 
     private List<IdType> relatedFLUXReportDocumentIDs;
@@ -58,6 +60,10 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<IdType> nonUniqueIdsList;
 
+
+    public FaReportDocumentFact() {
+        setFactType();
+    }
 
     @Override
     public List<String> getUniqueIds() {
@@ -72,11 +78,6 @@ public class FaReportDocumentFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_REPORT_DOCUMENT;
-    }
-
-
-    public FaReportDocumentFact() {
-        setFactType();
     }
 
     public CodeType getTypeCode() {
@@ -162,6 +163,12 @@ public class FaReportDocumentFact extends AbstractFact {
     }
     public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
         this.nonUniqueIdsList = nonUniqueIdsList;
+    }
+    public List<Date> getSpecifiedAndRealtedFishActOccurrenceDateTimes() {
+        return specifiedAndRealtedFishActOccurrenceDateTimes;
+    }
+    public void setSpecifiedAndRealtedFishActOccurrenceDateTimes(List<Date> specifiedAndRealtedFishActOccurrenceDateTimes) {
+        this.specifiedAndRealtedFishActOccurrenceDateTimes = specifiedAndRealtedFishActOccurrenceDateTimes;
     }
     public List<String> getSpecifiedFishingActivitiesTypes() {
         return specifiedFishingActivitiesTypes;
