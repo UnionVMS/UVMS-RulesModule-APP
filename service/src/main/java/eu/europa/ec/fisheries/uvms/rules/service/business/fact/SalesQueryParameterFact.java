@@ -70,7 +70,6 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
         return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
     }
 
-    // TODO test
     public boolean isValueNotValid(){
         if (typeCode == null || valueCode == null){
             return true;
@@ -85,7 +84,7 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
                 // TODO validate with MDR data
                 return false;
             default:
-                return false;
+                return true;
         }
     }
 }

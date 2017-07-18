@@ -90,7 +90,6 @@ public class SalesQueryFact extends SalesAbstractFact {
         return Objects.hash(id, submittedDateTime, typeCode, specifiedDelimitedPeriod, submitterFLUXParty, simpleSalesQueryParameters);
     }
 
-    // TODO test
     public boolean anyQueryParameterOfTypeRoleWithValue(){
         if(isEmpty(simpleSalesQueryParameters)){
             return false;

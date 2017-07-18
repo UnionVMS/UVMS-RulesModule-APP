@@ -334,6 +334,50 @@ public class AbstractFactTest {
         assertFalse(listEmptyOrValuesMatchPassedArguments);
     }
 
+    @Test
+    public void isIdTypeValidFormatWhenInvalidSchemeID() {
+        IdType idType = new IdType();
+        idType.setValue("bla");
+        idType.setSchemeId("bla");
+
+        assertFalse(fact.isIdTypeValidFormat("bla", idType));
+    }
+
+    @Test
+    public void isIdTypeValidFormatWhenValidSchemeID() {
+        IdType idType = new IdType();
+        idType.setValue("aaa123456789");
+        idType.setSchemeId("CFR");
+
+        assertTrue(fact.isIdTypeValidFormat("CFR", idType));
+    }
+
+    @Test
+    public void isIdTypeValidFormatWhenValidSchemeIDAndInvalidValue() {
+        IdType idType = new IdType();
+        idType.setValue("bla");
+        idType.setSchemeId("CFR");
+
+        assertFalse(fact.isIdTypeValidFormat("CFR", idType));
+    }
+
+    @Test
+    public void isCodeTypeValidFormatWhenListIDIsInvalid() {
+        CodeType codeType = new CodeType();
+        codeType.setListId("notvalid");
+        codeType.setValue("notvalid");
+
+        assertFalse(fact.isCodeTypeValidFormat("invalid", codeType));
+    }
+
+    @Test
+    public void isCodeTypeValidFormatWhenListIDIsValid() {
+        CodeType codeType = new CodeType();
+        codeType.setListId("CFR");
+        codeType.setValue("aaa123456789");
+
+        assertTrue(fact.isCodeTypeValidFormat("CFR", codeType));
+    }
 
 
     private CodeType getCodeTypeWithListID(String listId) {

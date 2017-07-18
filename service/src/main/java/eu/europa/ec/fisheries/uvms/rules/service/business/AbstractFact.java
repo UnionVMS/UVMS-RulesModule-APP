@@ -223,7 +223,6 @@ public abstract class AbstractFact {
         return value.matches(format);
     }
 
-    //TODO test
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
         if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || idType.getSchemeId() != requiredSchemeId) {
             return false;
@@ -236,7 +235,6 @@ public abstract class AbstractFact {
         }
     }
 
-    //TODO test
     public boolean isCodeTypeValidFormat(String requiredListId, CodeType codeType) {
         if (codeType == null || isEmpty(requiredListId) || isEmpty(codeType.getListId()) || isEmpty(codeType.getValue()) || codeType.getListId() != requiredListId) {
             return false;

@@ -1,10 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.List;
@@ -120,8 +117,11 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
         return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty);
     }
 
-    // TODO test
     public boolean anyValidationResultDocumentsWithEmptyValidationQualityAnalyses(){
+        if (relatedValidationResultDocuments.isEmpty()) {
+            return true;
+        }
+
         for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
             if (validationResultDocument == null || isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
                 return true;
@@ -131,7 +131,6 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
         return false;
     }
 
-    // todo test
     public boolean anyValidationQualityAnalysisWithoutReferencedTextItems(){
         if (isEmpty(relatedValidationResultDocuments)){
             return false;
