@@ -27,10 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
@@ -83,6 +80,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
                 facts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
+                xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS, SPECIFIED_STRUCTURED_ADDRESS);
+                addFactsForVesselTransportMeansStructuresAddress(facts, Arrays.asList(faReportDocument.getSpecifiedVesselTransportMeans()));
+
                 index++;
             }
         }
@@ -110,7 +110,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(activity.getRelatedVesselTransportMeans()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                addFactsForVesselTransportMeans(facts, activity.getRelatedVesselTransportMeans());
+                addFactsForVesselTransportMeansStructuresAddress(facts, activity.getRelatedVesselTransportMeans());
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactsForFaCatch(activity));
@@ -197,11 +197,11 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         xPathUtil.clear();
     }
 
-    private void addFactsForVesselTransportMeans(List<AbstractFact> facts, List<VesselTransportMeans> vesselTransportMeanses) {
+    public void addFactsForVesselTransportMeansStructuresAddress(List<AbstractFact> facts, List<VesselTransportMeans> vesselTransportMeanses) {
         String partialXpath = xPathUtil.getValue();
         int index = 1;
         for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
-            if (CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
+            if (vesselTransportMeans != null && CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
                 String partialXpath2 = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).getValue();
                 for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                     List<StructuredAddress> structuredAddresses = contactParty.getSpecifiedStructuredAddresses();
