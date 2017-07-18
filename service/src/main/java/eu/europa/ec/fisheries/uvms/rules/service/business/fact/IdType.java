@@ -28,6 +28,11 @@ public class IdType {
         super();
     }
 
+    public IdType(String value, String schemeId) {
+        this.value = value;
+        this.schemeId = schemeId;
+    }
+
     public IdType(String value) {
         this.value = value;
     }
