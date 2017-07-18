@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
@@ -93,5 +94,20 @@ public class FaFishingOperationFact extends AbstractFact {
 
     public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
         this.relatedFishingActivities = relatedFishingActivities;
+    }
+
+    public boolean isFLUXLocationPresentForFishingActivity(List<FishingActivity> relatedFishingActivities){
+        if(CollectionUtils.isEmpty(relatedFishingActivities)){
+            return false;
+        }
+
+
+        for(FishingActivity fishingActivity : relatedFishingActivities){
+            if(CollectionUtils.isEmpty(fishingActivity.getRelatedFLUXLocations())){
+                return false;
+            }
+        }
+
+        return true;
     }
 }
