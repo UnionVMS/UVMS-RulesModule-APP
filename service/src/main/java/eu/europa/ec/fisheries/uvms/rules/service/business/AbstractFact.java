@@ -52,6 +52,9 @@ import java.util.Set;
 @ToString
 public abstract class AbstractFact {
 
+    private static final String THE_LIST = "The list [";
+    private static final String DOESN_T_EXIST_IN_MDR_MODULE = "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!";
+
     protected FactType factType;
 
     protected List<RuleWarning> warnings;
@@ -308,10 +311,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listSizeIs(List<?> list, int listSize){
-        if(isEmpty(list) || list.size() != listSize){
-            return false;
-        }
-        return true;
+        return !(isEmpty(list) || list.size() != listSize);
     }
 
     /**
@@ -764,7 +764,7 @@ public abstract class AbstractFact {
     public boolean isPresentInMDRList(String listName, String codeValue){
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if(anEnum == null){
-            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
@@ -785,7 +785,7 @@ public abstract class AbstractFact {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
          if(anEnum == null){
-             log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+             log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
              return false;
          }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
@@ -814,7 +814,7 @@ public abstract class AbstractFact {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if(anEnum == null){
-            log.error("The list ["+listName+"] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
 
@@ -910,7 +910,7 @@ public abstract class AbstractFact {
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
-            log.error("The list [" + listName + "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!");
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return "";
         }
 
