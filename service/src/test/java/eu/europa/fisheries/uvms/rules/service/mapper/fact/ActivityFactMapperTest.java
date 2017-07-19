@@ -10,30 +10,28 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.*;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import lombok.SneakyThrows;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
+import lombok.*;
+import org.apache.commons.collections.*;
+import org.apache.commons.io.*;
+import org.junit.*;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import javax.xml.datatype.*;
+import java.io.*;
+import java.math.*;
+import java.text.*;
 import java.util.*;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static org.junit.Assert.*;
 
 /**
@@ -583,14 +581,12 @@ public class ActivityFactMapperTest {
 
     @Test
     public void testGenerateFactsForGearProblem() {
-
         GearProblem gearProblem = new GearProblem();
         gearProblem.setTypeCode(codeType);
 
         GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(gearProblem);
 
-        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode());
-
+        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode().getValue());
     }
 
     @Test
