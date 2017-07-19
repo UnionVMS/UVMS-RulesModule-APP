@@ -615,7 +615,7 @@ public class ActivityFactMapperTest {
 
 
         final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
-        final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxReportMessage(null);
+        final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);

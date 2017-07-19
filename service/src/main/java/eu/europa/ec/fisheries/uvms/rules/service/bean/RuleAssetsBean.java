@@ -57,7 +57,6 @@ public class RuleAssetsBean {
     private List<String> supportedIds = Arrays.asList("IRCS","CFR","EXT_MARK","NAME");
 
 
-
     public List<IdTypeWithFlagState> getAssetList(Object message){
         FLUXFAReportMessage fluxFaRepMessage;
         if(message instanceof FLUXFAReportMessage){

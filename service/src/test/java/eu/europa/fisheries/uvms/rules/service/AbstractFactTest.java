@@ -313,6 +313,8 @@ public class AbstractFactTest {
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
     }
 
+
+
     @Test
     public void testIsPositiveShouldReturnTrueWithNegativeValue() {
         assertTrue(fact.isPositive(new BigDecimal("-10")));
@@ -638,8 +640,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
+        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -896,7 +898,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
+    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -912,7 +914,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues() {
+    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues(){
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -928,9 +930,46 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull() {
-
+    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull(){
         assertFalse(fact.codeTypeValuesUnique(null));
+    }
+
+    @Test
+    public void testListContainsEitherThen(){
+        List<String> activityTypes = new ArrayList<String>(){{add("YEAH"); add("NO"); add("BLAH");}};
+
+        final boolean contains = fact.listContainsEitherThen(activityTypes, "YEAH", "BLAH");
+        assertTrue(contains);
+
+        final boolean contains2 = fact.listContainsEitherThen(activityTypes, "NO", "BLAH", "YEAH");
+        assertFalse(contains2);
+
+        final boolean contains3 = fact.listContainsEitherThen(null, "NO", "BLAH", "YEAH");
+        assertFalse(contains3);
+
+        final boolean contains4 = fact.listContainsEitherThen(activityTypes);
+        assertFalse(contains4);
+
+
+    }
+
+    @Test
+    public void testDateComparison(){
+        Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
+        Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
+        final boolean contains1 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        System.out.println("List contains sameDate [true]: "+contains1);
+        assertTrue(contains1);
+
+        date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
+        date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 12).getTime();
+        date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
+        final boolean contains2 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        System.out.println("List contains sameDate [false]: "+contains2);
+        assertFalse(contains2);
 
     }
 
