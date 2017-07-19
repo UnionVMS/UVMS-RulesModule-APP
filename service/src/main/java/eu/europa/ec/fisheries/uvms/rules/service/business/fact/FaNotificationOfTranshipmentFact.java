@@ -39,15 +39,11 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
-    private List<CodeType> fluxLocationTypeCodes;
+    private List<CodeType> fluxLocationTypeCode;
 
     private List<CodeType> vesselTransportMeansRoleCodes;
 
-    private List<CodeType> fluxLocationTypeCode;
-
     private List<VesselTransportMeans> relatedVesselTransportMeans;
-
-    private List<CodeType> vesselTransportMeansRoleCode;
 
     private List<MeasureType> fluxCharacteristicValueQuantity;
 
@@ -65,13 +61,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
     }
 
-    public List<CodeType> getFluxLocationTypeCodes() {
-        return fluxLocationTypeCodes;
-    }
-
-    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
-        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
-    }
 
     public List<FLUXLocation> getRelatedFLUXLocations() {
         return relatedFLUXLocations;
@@ -122,14 +111,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         this.relatedVesselTransportMeans = relatedVesselTransportMeans;
     }
 
-    public List<CodeType> getVesselTransportMeansRoleCode() {
-        return vesselTransportMeansRoleCode;
-    }
-
-    public void setVesselTransportMeansRoleCode(List<CodeType> vesselTransportMeansRoleCode) {
-        this.vesselTransportMeansRoleCode = vesselTransportMeansRoleCode;
-    }
-
     public List<MeasureType> getFluxCharacteristicValueQuantity() {
         return fluxCharacteristicValueQuantity;
     }
@@ -166,28 +147,45 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         this.flapDocumentIdTypes = flapDocumentIdTypes;
     }
 
+    public List<FACatch> getSpecifiedFACatches() {
+        return specifiedFACatches;
+    }
+
+    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
+        this.specifiedFACatches = specifiedFACatches;
+    }
+
+    /**
+     * This method checks if Every FACatch with typeCode LOADED has atleast one AREA FluxLocation
+     * IF yes, it returns true, else false.
+     * @param specifiedFACatches
+     * @return
+     */
     public boolean ifFLUXLocationForFACatchIsAREA(List<FACatch> specifiedFACatches){
 
         if(CollectionUtils.isEmpty(specifiedFACatches)){
             return false;
         }
 
+        boolean isPresent = true;
         for(FACatch faCatch : specifiedFACatches){
 
             if(faCatch.getTypeCode().equals("LOADED") )  {
+                isPresent = false;
                  if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
                      return false;
                  }
                  for(FLUXLocation fluxLocation : faCatch.getSpecifiedFLUXLocations()){
-                     if(!fluxLocation.getTypeCode().equals("AREA")){
-                         return false;
+                     if(fluxLocation.getTypeCode().equals("AREA")){
+                         isPresent = true;
+                         break;
                      }
                  }
             }
 
         }
 
-        return true;
+        return isPresent;
 
     }
 

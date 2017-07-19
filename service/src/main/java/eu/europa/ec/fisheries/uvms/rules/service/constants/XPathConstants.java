@@ -93,4 +93,5 @@ public class XPathConstants {
     public static final String VALUE_INDICATOR = "ValueIndicator";
     public static final String VALUE_MEASURE = "ValueMeasure";
     public static final String VALUE_CODE = "ValueCode";
+    public static final String SPECIFIED_FLAP_DOCUMENT = "SpecifiedFLAPDocument";
 }
