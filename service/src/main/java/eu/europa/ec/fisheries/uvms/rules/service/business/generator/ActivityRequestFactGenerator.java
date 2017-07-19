@@ -13,20 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.config.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
+import lombok.extern.slf4j.*;
+import org.apache.commons.collections.*;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
 import java.util.*;
@@ -61,13 +58,13 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
-        if(additionalObject == null){
+        if (additionalObject == null) {
             log.warn("additionalObject object is null! Nothing is going to be set!");
             return;
         }
-        if(AdditionalValidationObjectType.ASSET_LIST.equals(validationType)){
+        if (AdditionalValidationObjectType.ASSET_LIST.equals(validationType)) {
             activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-        } else if(AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS.equals(validationType)){
+        } else if (AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS.equals(validationType)) {
             activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
         }
     }
