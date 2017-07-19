@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class XPathStringWrapper {
 
-    private StringBuffer strBuff;
+    private StringBuilder strBuff;
 
     private static final String LOCAL_NODE_START = "//*[local-name()='";
     private static final String LOCAL_NODE_END = "']";
@@ -33,7 +33,7 @@ public class XPathStringWrapper {
      * Singleton. Single instance.
      */
     public XPathStringWrapper(){
-        strBuff = new StringBuffer();
+        strBuff = new StringBuilder();
     }
 
     /**

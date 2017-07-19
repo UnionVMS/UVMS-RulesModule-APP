@@ -10,23 +10,21 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
+import org.apache.commons.lang3.*;
+import org.joda.time.*;
+import org.junit.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
-import java.math.BigDecimal;
+import java.math.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -973,6 +971,39 @@ public class AbstractFactTest {
         System.out.println("List contains sameDate [false]: "+contains2);
         assertFalse(contains2);
 
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithEmptyList() {
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullList() {
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(null, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
     }
 
 }

@@ -53,7 +53,7 @@ public class RulesActivityServiceBean {
 
 
     public Map<ActivityTableType, List<IdType>> getNonUniqueIdsList(Object requestMessage) {
-        Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new HashMap<>();
+        Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
         GetNonUniqueIdsResponse getNonUniqueIdsResponse = null;
         FLUXFAReportMessage fluxFaRepMessage;
         if(requestMessage != null && requestMessage instanceof FLUXFAReportMessage){
@@ -100,7 +100,7 @@ public class RulesActivityServiceBean {
 
     private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
 
-        Map<ActivityTableType, List<IDType>> idsmap = new HashMap<>();
+        Map<ActivityTableType, List<IDType>> idsmap = new EnumMap<>(ActivityTableType.class);
         if(request == null){
             return idsmap;
         }
