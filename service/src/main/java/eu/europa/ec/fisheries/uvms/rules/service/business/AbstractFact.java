@@ -39,7 +39,14 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @ToString
@@ -869,6 +876,21 @@ public abstract class AbstractFact {
         return null;
     }
 
+    public boolean anyFluxLocationTypeCodeContainsValue(List<FLUXLocation> fluxLocations, String value) {
+        if (CollectionUtils.isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
+            return false;
+        }
+
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
+
+            if (typeCode != null && value.equals(typeCode.getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public Integer getSequence() {
         return sequence;
@@ -877,7 +899,6 @@ public abstract class AbstractFact {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
-
 
     /**
      * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
@@ -920,5 +941,6 @@ public abstract class AbstractFact {
         }
         return "";
     }
+
 
 }
