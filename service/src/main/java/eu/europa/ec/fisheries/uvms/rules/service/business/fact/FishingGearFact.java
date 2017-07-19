@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FishingApplicableGearHolder;
@@ -21,8 +23,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteri
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-
-import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -84,8 +84,7 @@ public class FishingGearFact extends AbstractFact {
         }
 
         try {
-            FishingGearTypeCode gearTypeCode = FishingGearTypeCode.valueOf(fishingGearTypeCode.getValue());
-            return gearTypeCode;
+            return FishingGearTypeCode.valueOf(fishingGearTypeCode.getValue());
         } catch (IllegalArgumentException | NullPointerException exc) {
             return null;
         }
@@ -97,8 +96,7 @@ public class FishingGearFact extends AbstractFact {
         }
 
         try {
-            FishingGearCharacteristicCode fishingGearCharacteristicCode = FishingGearCharacteristicCode.valueOf(gearCharacteristic.getTypeCode().getValue());
-            return fishingGearCharacteristicCode;
+            return FishingGearCharacteristicCode.valueOf(gearCharacteristic.getTypeCode().getValue());
         } catch (IllegalArgumentException | NullPointerException exc) {
             return null;
         }
@@ -113,7 +111,7 @@ public class FishingGearFact extends AbstractFact {
 
         List<FishingGearCharacteristicCode> requiredFishingGearCharacteristicCodes = FishingApplicableGearHolder.getInstance().getFishingGearCharacteristicCodes(gearTypeCode);
 
-        if (requiredFishingGearCharacteristicCodes.size() == 0) {
+        if (requiredFishingGearCharacteristicCodes.isEmpty()) {
             return true;
         } else if (requiredFishingGearCharacteristicCodes.size() > applicableGearCharacteristics.size()) {
             return false;
