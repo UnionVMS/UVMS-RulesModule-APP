@@ -26,9 +26,6 @@ public class TemplateFactoryTest {
     @Test
     public void testAllValuesAreInTemplate(){
         for(FactType factType : FactType.values()){
-            if(factType.name().contains("SALES")){
-                continue;
-            }
             String templateFileName = TemplateFactory.getTemplateFileName(factType);
             System.out.println("FactType : ["+factType+"]  Template : [[" + templateFileName + "]]");
             assertFalse(StringUtils.isEmpty(templateFileName));
