@@ -15,6 +15,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
@@ -32,11 +35,35 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     private List<CodeType> faCatchTypeCode;
 
+    private List<CodeType> faCatchSpeciesCodes;
+
     private List<FLUXLocation> relatedFLUXLocations;
 
     private List<CodeType> fluxLocationTypeCodes;
 
     private List<CodeType> vesselTransportMeansRoleCodes;
+
+    private List<CodeType> fluxLocationTypeCode;
+
+    private List<VesselTransportMeans> relatedVesselTransportMeans;
+
+    private List<CodeType> vesselTransportMeansRoleCode;
+
+    private List<MeasureType> fluxCharacteristicValueQuantity;
+
+    private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
+
+    private List<IdType> flapDocumentIdTypes;
+
+    private List<FACatch> specifiedFACatches;
+
+    public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
+        return specifiedFLUXCharacteristics;
+    }
+
+    public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
+        this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
+    }
 
     public List<CodeType> getFluxLocationTypeCodes() {
         return fluxLocationTypeCodes;
@@ -54,13 +81,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
 
-    private List<CodeType> fluxLocationTypeCode;
-
-    private List<VesselTransportMeans> relatedVesselTransportMeans;
-
-    private List<CodeType> vesselTransportMeansRoleCode;
-
-    private List<MeasureType> fluxCharacteristicValueQuantity;
 
     public CodeType getFishingActivityTypeCode() {
         return fishingActivityTypeCode;
@@ -128,6 +148,47 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     public FaNotificationOfTranshipmentFact() {
         setFactType();
+    }
+
+    public List<CodeType> getFaCatchSpeciesCodes() {
+        return faCatchSpeciesCodes;
+    }
+
+    public void setFaCatchSpeciesCodes(List<CodeType> faCatchSpeciesCodes) {
+        this.faCatchSpeciesCodes = faCatchSpeciesCodes;
+    }
+
+    public List<IdType> getFlapDocumentIdTypes() {
+        return flapDocumentIdTypes;
+    }
+
+    public void setFlapDocumentIdTypes(List<IdType> flapDocumentIdTypes) {
+        this.flapDocumentIdTypes = flapDocumentIdTypes;
+    }
+
+    public boolean ifFLUXLocationForFACatchIsAREA(List<FACatch> specifiedFACatches){
+
+        if(CollectionUtils.isEmpty(specifiedFACatches)){
+            return false;
+        }
+
+        for(FACatch faCatch : specifiedFACatches){
+
+            if(faCatch.getTypeCode().equals("LOADED") )  {
+                 if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
+                     return false;
+                 }
+                 for(FLUXLocation fluxLocation : faCatch.getSpecifiedFLUXLocations()){
+                     if(!fluxLocation.getTypeCode().equals("AREA")){
+                         return false;
+                     }
+                 }
+            }
+
+        }
+
+        return true;
+
     }
 
     @Override
