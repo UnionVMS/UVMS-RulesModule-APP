@@ -13,24 +13,36 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.schema.rules.template.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+
+import java.util.*;
 
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class FluxCharacteristicsFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    public String getTypeCode() {
+    private List<TextType> values;
+
+    public CodeType getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
     }
 
+    public List<TextType> getValues() {
+        return values;
+    }
+
+    public void setValues(List<TextType> values) {
+        this.values = values;
+    }
 
     public FluxCharacteristicsFact() {
         setFactType();
