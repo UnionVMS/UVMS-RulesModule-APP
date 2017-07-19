@@ -30,6 +30,7 @@ import java.util.List;
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 @Stateless
 @Slf4j
@@ -45,12 +46,16 @@ public class RulesEngineBean {
 	@EJB
 	private RuleAssetsBean ruleAssetsBean;
 
+	@EJB
+	private RulesActivityServiceBean activityService;
+
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
 		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
 			generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
+			generator.setAdditionalValidationObject(activityService.getNonUniqueIdsList(businessObject), AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS);
 		}
 		mdrCacheServiceBean.loadMDRCache();
 		facts.addAll(generator.generateAllFacts());
