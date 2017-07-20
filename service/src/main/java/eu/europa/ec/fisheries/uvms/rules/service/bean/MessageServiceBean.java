@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.Collections.singletonList;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -20,14 +22,19 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -60,8 +67,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
@@ -224,7 +233,7 @@ public class MessageServiceBean implements MessageService {
 
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
-    public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesServiceException {
+    public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) {
         log.debug("inside setFLUXFAReportMessageReceived", request.getRequest());
         try {
             FLUXFAReportMessage fluxfaReportMessage = JAXBMarshaller.unMarshallMessage(request.getRequest(), FLUXFAReportMessage.class);
@@ -265,7 +274,7 @@ public class MessageServiceBean implements MessageService {
         }
     }
 
-    private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) throws RulesServiceException {
+    private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) {
         try {
             ExchangeLogStatusTypeType exchangeLogStatusTypeType;
             exchangeLogStatusTypeType = calculateMessageValidationStatus(validationResult);
@@ -347,56 +356,101 @@ public class MessageServiceBean implements MessageService {
             validationQuality.add(analysis);
         }
         validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
-        return Arrays.asList(validationResultDocument);
+        return singletonList(validationResultDocument);
     }
 
     @Override
     public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
-            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
 
-            IDType responseId = new IDType();
-            responseId.setValue(UUID.randomUUID().toString());
-            responseId.setSchemeID("UUID");
-            fluxResponseDocument.setIDS(Arrays.asList(responseId)); // Set random ID
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
             if (fluxfaReportMessage.getFLUXReportDocument() != null) {
                 List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
                 fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
             }
-            GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
-            XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
-            DateTimeType dateTime = new DateTimeType();
-            dateTime.setDateTime(calender);
-            fluxResponseDocument.setCreationDateTime(dateTime); // Set creation date time
-
-            CodeType responseCode = new CodeType();
-            if (faReportValidationResult.isError()) {
-                responseCode.setValue("NOK");
-            } else if (faReportValidationResult.isWarning()) {
-                responseCode.setValue("WOK");
-            } else {
-                responseCode.setValue("OK");
-            }
-            responseCode.setListID("FLUX_GP_RESPONSE");
-            fluxResponseDocument.setResponseCode(responseCode); // Set response Code
-
-            if (faReportValidationResult.isError() || faReportValidationResult.isWarning()) {
-                TextType rejectionReason = new TextType();
-                rejectionReason.setValue("VALIDATION");
-                fluxResponseDocument.setRejectionReason(rejectionReason); // Set rejection reason
-            }
-
-            fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
-
-            fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
-
+            setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+            return responseMessage;
+
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage(), e);
         }
         return responseMessage;
     }
+
+    @Override
+    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+            FAQuery faQuery = fluxfaQueryMessage.getFAQuery();
+            if (faQuery != null) {
+                fluxResponseDocument.setReferencedID(faQuery.getID()); // Set Request Id
+            }
+            setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
+    private void setFluxResponseDocumentIDs(FLUXResponseDocument fluxResponseDocument) {
+        IDType responseId = new IDType();
+        responseId.setValue(UUID.randomUUID().toString());
+        responseId.setSchemeID("UUID");
+        fluxResponseDocument.setIDS(singletonList(responseId)); // Set random ID
+    }
+
+    private void setFluxResponseDocument(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+        setFluxResponseDocumentIDs(fluxResponseDocument);
+        setFluxResponseCreationDate(fluxResponseDocument);
+        setFluxResponseDocumentResponseCode(faReportValidationResult, fluxResponseDocument);
+        setFluxResponseDocumentRejectionReason(faReportValidationResult, fluxResponseDocument);
+        setFluxResponseDocumentRelatedValidationResultDocuments(faReportValidationResult, fluxResponseDocument);
+        setFluxReportDocumentRespondentFluxParty(fluxResponseDocument);
+    }
+
+    private void setFluxReportDocumentRespondentFluxParty(FLUXResponseDocument fluxResponseDocument) {
+        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
+    }
+
+    private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+        fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
+    }
+
+    private void setFluxResponseDocumentRejectionReason(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
+        if (faReportValidationResult.isError() || faReportValidationResult.isWarning()) {
+            TextType rejectionReason = new TextType();
+            rejectionReason.setValue("VALIDATION");
+            fluxResponseDocument.setRejectionReason(rejectionReason); // Set rejection reason
+        }
+    }
+
+    private void setFluxResponseDocumentResponseCode(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
+        CodeType responseCode = new CodeType();
+        if (faReportValidationResult.isError()) {
+            responseCode.setValue("NOK");
+        } else if (faReportValidationResult.isWarning()) {
+            responseCode.setValue("WOK");
+        } else {
+            responseCode.setValue("OK");
+        }
+        responseCode.setListID("FLUX_GP_RESPONSE");
+        fluxResponseDocument.setResponseCode(responseCode); // Set response Code
+    }
+
+    private void setFluxResponseCreationDate(FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+        GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
+        XMLGregorianCalendar calender = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+        DateTimeType dateTime = new DateTimeType();
+        dateTime.setDateTime(calender);
+        fluxResponseDocument.setCreationDateTime(dateTime); // Set creation date time
+    }
+
     private FLUXParty getRespondedFluxParty() {
         IDType idType = new IDType();
         String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
@@ -404,11 +458,11 @@ public class MessageServiceBean implements MessageService {
         idType.setValue(nationCode);
         idType.setSchemeID("FLUX_GP_PARTY");
         FLUXParty fluxParty = new FLUXParty();
-        fluxParty.setIDS(Arrays.asList(idType));
+        fluxParty.setIDS(singletonList(idType));
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String fluxFAReportMessage, String username, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType) throws RulesServiceException {
+    public void sendRequestToActivity(String fluxFAReportMessage, String username, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType) {
         try {
             String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
@@ -426,7 +480,7 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request) throws RulesServiceException {
+    public void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request) {
         try {
             //Validate response message
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
