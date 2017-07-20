@@ -583,7 +583,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : values) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) == 1) {
                 return false;
             }
         }
