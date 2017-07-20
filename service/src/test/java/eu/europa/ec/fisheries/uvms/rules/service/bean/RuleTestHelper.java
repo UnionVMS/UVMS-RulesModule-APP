@@ -1,17 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import un.unece.uncefact.data.standard.mdr.communication.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.*;
+import java.util.*;
 
 /**
  * Created by sanera on 10/05/2017.
@@ -133,5 +128,27 @@ public class RuleTestHelper {
         objectRepresentations.add(getObjectRepresentation("code", "OHL", "String"));
 
         return objectRepresentations;
+    }
+
+    public static List<FLUXLocation> createFluxLocationsWithPositionValue() {
+        List<FLUXLocation> fluxLocations = new ArrayList<>(2);
+        FLUXLocation fluxLocation = createFluxLocationWithTypeCodeValue("POSITION");
+        fluxLocations.add(fluxLocation);
+        fluxLocation = createFluxLocationWithTypeCodeValue("AREA");
+        fluxLocations.add(fluxLocation);
+        fluxLocation = createFluxLocationWithTypeCodeValue("TEST");
+        fluxLocations.add(fluxLocation);
+
+        return fluxLocations;
+    }
+
+    public static FLUXLocation createFluxLocationWithTypeCodeValue(String typeCodeValue) {
+        FLUXLocation fluxLocation = new FLUXLocation();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FLUX_LOCATION_TYPE");
+        codeType.setValue(typeCodeValue);
+        fluxLocation.setTypeCode(codeType);
+
+        return fluxLocation;
     }
 }

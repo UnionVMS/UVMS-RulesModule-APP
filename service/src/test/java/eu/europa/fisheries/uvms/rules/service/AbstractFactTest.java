@@ -999,4 +999,37 @@ public class AbstractFactTest {
 
     }
 
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithEmptyList() {
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullList() {
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(null, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
+    }
+
 }

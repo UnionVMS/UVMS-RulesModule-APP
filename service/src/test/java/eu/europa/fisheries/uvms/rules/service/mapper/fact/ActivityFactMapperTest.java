@@ -659,14 +659,12 @@ public class ActivityFactMapperTest {
 
     @Test
     public void testGenerateFactsForGearProblem() {
-
         GearProblem gearProblem = new GearProblem();
         gearProblem.setTypeCode(codeType);
 
         GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(gearProblem);
 
-        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode());
-
+        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode().getValue());
     }
 
     @Test
