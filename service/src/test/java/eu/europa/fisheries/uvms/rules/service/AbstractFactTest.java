@@ -379,6 +379,14 @@ public class AbstractFactTest {
         assertTrue(fact.isCodeTypeValidFormat("CFR", codeType));
     }
 
+    @Test
+    public void validateFormatForFLUXSalesType() {
+        CodeType codeType = new CodeType("THIS_IS_SPARTA");
+        codeType.setListId("FLUX_SALES_TYPE");
+
+        assertTrue(codeType != null && !fact.isCodeTypeValidFormat("FLUX_SALES_TYPE", codeType));
+    }
+
 
     private CodeType getCodeTypeWithListID(String listId) {
         CodeType codeType = new CodeType();

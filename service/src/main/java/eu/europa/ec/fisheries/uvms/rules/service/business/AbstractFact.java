@@ -655,7 +655,7 @@ public abstract class AbstractFact {
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}"),
         EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}"),
-        FLUX_SALES_TYPE("(SN|TOD|TRD|SN+TOD)"),
+        FLUX_SALES_TYPE("(SN\\+TOD|SN|TOD|TRD)"),
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_SALES_QUERY_PARAM_ROLE("(FLAG|LAND|INT)"),
         FLUX_GP_VALIDATION_LEVEL("(L00|L01|L02|L03)"),
