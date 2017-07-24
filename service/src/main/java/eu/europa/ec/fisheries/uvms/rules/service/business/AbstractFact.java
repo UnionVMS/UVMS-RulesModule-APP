@@ -580,6 +580,26 @@ public abstract class AbstractFact {
         return false;
     }
 
+    /**
+     * This method will check if all values passed  to this method are greater than zero.
+     *
+     * @param   values
+     * @return  TRUE : If all values are greater than zero
+     *          FALSE: If any one value is null OR less than OR equal to zero
+     */
+    public boolean isGreaterThanZero(List<MeasureType> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return false;
+        }
+        for (MeasureType type : values) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
@@ -835,8 +855,9 @@ public abstract class AbstractFact {
             return false;
         }
 
-        for (IdType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+
+        for(IdType idType: valuesToMatch){
+            if(!codeListValues.contains(idType.getValue()))
                 return false;
         }
 
