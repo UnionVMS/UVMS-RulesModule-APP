@@ -11,6 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package rest.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+
+import javax.jms.JMSException;
+import javax.servlet.ServletContext;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -21,34 +29,27 @@ import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import javax.jms.JMSException;
-import javax.servlet.ServletContext;
-import java.nio.file.AccessDeniedException;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 
 public class RestResourceTest {
 
     private static final Long ID = 1L;
     private static final String GUID = "1";
     private static final Integer CUSTOM_RULE_LIST_SIZE = 3;
-
-    List<CustomRuleType> DTO_LIST = MockData.getDtoList(CUSTOM_RULE_LIST_SIZE);
-    CustomRuleType DTO = MockData.getDto(ID);
-
     private final ResponseDto ERROR_RESULT;
     private final ResponseDto SUCCESS_RESULT;
     private final ResponseDto SUCCESS_RESULT_LIST;
     private final ResponseDto SUCCESS_RESULT_DTO;
-
+    List<CustomRuleType> DTO_LIST = MockData.getDtoList(CUSTOM_RULE_LIST_SIZE);
+    CustomRuleType DTO = MockData.getDto(ID);
     CustomRulesRestResource SERVICE_NULL = new CustomRulesRestResource();
 
     @Mock
@@ -56,15 +57,12 @@ public class RestResourceTest {
 
     @Mock
     ValidationService validationService;
-
-    @Mock
-    private ServletContext servletContext;
-
-    @Mock
-    private CustomRulesRestResource customRulesRestResourceMock;
-
     @InjectMocks
     CustomRulesRestResource customRulesRestResource;
+    @Mock
+    private ServletContext servletContext;
+    @Mock
+    private CustomRulesRestResource customRulesRestResourceMock;
 
     public RestResourceTest() {
         ERROR_RESULT = new ResponseDto(null, ResponseCode.UNDEFINED_ERROR);

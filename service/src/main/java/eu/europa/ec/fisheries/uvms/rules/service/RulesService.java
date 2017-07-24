@@ -11,14 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import javax.ejb.Local;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-
-import javax.ejb.Local;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
@@ -29,7 +29,6 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsRes
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
@@ -170,6 +169,4 @@ public interface RulesService {
     long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException;
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
-
-
 }

@@ -1,15 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>2.1.3-SNAPSHOT</version>
+    <version>3.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
+        <!-- sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.branch.name>release-2.1.2-legolas</release.branch.name>
+        <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
@@ -21,26 +28,49 @@
         <logback.core.version>1.1.2</logback.core.version>
         <drools.version>6.2.0.Final</drools.version>
         <maven.plugins.version>3.4</maven.plugins.version>
+        <orika.version>1.5.1</orika.version>
+        <equalsverifier.version>2.3</equalsverifier.version>
 
-        <usm4uvms.version>2.1.0</usm4uvms.version>
-        <uvms.config.version>2.1.2-SNAPSHOT</uvms.config.version>
-        <uvms.common.version>2.0.13-SNAPSHOT</uvms.common.version>
-        <movement.model.version>2.1.1</movement.model.version>
-        <exchange.model.version>2.1.1</exchange.model.version>
-        <mobileterminal.model.version>2.1.1</mobileterminal.model.version>
+        <usm4uvms.version>3.0.4</usm4uvms.version>
+        <uvms.config.version>3.0.4</uvms.config.version>
+        <uvms.common.version>2.0.22-SNAPSHOT</uvms.common.version>
+        <movement.model.version>3.0.4</movement.model.version>
+        <exchange.model.version>3.0.6-SNAPSHOT</exchange.model.version>
+        <mobileterminal.model.version>3.0.4</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
-        <asset.model.version>2.1.1</asset.model.version>
-        <audit.model.version>2.1.1</audit.model.version>
-        <rules.model.version>2.1.1</rules.model.version>
+
+        <activity.model.version>0.5.13-SNAPSHOT</activity.model.version>
+        <mdr.model.version>0.5.1-SNAPSHOT</mdr.model.version>
+
+        <asset.model.version>3.0.4</asset.model.version>
+        <audit.model.version>3.0.4</audit.model.version>
+        <rules.model.version>3.0.6-SNAPSHOT</rules.model.version>
+        <sales.model.version>1.0.0</sales.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
-		<activity.model.version>0.5.1-SNAPSHOT</activity.model.version>
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
+
+        <!-- Packages that need to be exluded from sonar coverage -->
+        <sonar.exclusions>
+            *src/main/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/*
+        </sonar.exclusions>
+
+        <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>${orika.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
+            <artifactId>sales-model</artifactId>
+            <version>${sales.model.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -85,11 +115,28 @@
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.ximpleware/vtd-xml -->
+        <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+            <version>2.13</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
+            <version>${equalsverifier.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -119,12 +166,67 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</connection>
+        <connection>${scm.connection}</connection>
       <tag>HEAD</tag>
   </scm>
 
+    <profiles>
+        <profile>
+            <id>belgium-local</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>lv-snapshots</id>
+                    <url>https://apjenp01.dg3.be/nexus/repository/maven-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+        <profile>
+			<id>dg-mare</id>
+            <distributionManagement>
+                <repository>
+                    <id>digit-releases</id>
+                    <name>DG DIGIT Repository</name>
+                    <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>digit-snapshots</id>
+                    <name>DG DIGIT Snapshot Repository</name>
+                    <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+			<properties>
+				<scm.connection>scm:git:https://emserveje@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-RulesModule-APP.git</scm.connection>
+			<release.branch.name>uvms-3.0.5-C3PO</release.branch.name></properties>
+		</profile>
+    </profiles>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>

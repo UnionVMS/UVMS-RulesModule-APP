@@ -11,10 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.longpolling.service;
 
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 public class TestLongPollingHttpServlet {
 

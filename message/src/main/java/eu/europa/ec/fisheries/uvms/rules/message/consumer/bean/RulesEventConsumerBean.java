@@ -11,8 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import java.util.UUID;
-
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
@@ -22,19 +20,24 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -42,6 +45,9 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 @MessageDriven(mappedName = MessageConstants.RULES_MESSAGE_IN_QUEUE, activationConfig = {
         @ActivationConfigProperty(propertyName = "messagingType", propertyValue = MessageConstants.CONNECTION_TYPE),
@@ -83,6 +89,38 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> pingReceivedEvent;
 
     @Inject
+    @SetFLUXFAReportMessageReceivedEvent
+    Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
+
+    @Inject
+    @SetFLUXMDRSyncMessageReceivedEvent
+    Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
+
+    @Inject
+    @GetFLUXMDRSyncMessageResponseEvent
+    Event<EventMessage> getFluxMdrSynchMessageResponse;
+
+    @Inject
+    @ReceiveSalesQueryEvent
+    Event<EventMessage> receiveSalesQueryEvent;
+
+    @Inject
+    @ReceiveSalesReportEvent
+    Event<EventMessage> receiveSalesReportEvent;
+
+    @Inject
+    @ReceiveSalesResponseEvent
+    Event<EventMessage> receiveSalesResponseEvent;
+
+    @Inject
+    @SendSalesReportEvent
+    Event<EventMessage> sendSalesReportEvent;
+
+    @Inject
+    @SendSalesResponseEvent
+    Event<EventMessage> sendSalesResponseEvent;
+
+    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -117,6 +155,30 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
                     getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SET_FLUX_FA_REPORT :
+                    setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SET_FLUX_MDR_SYNC_REQUEST :
+                    setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case GET_FLUX_MDR_SYNC_RESPONSE :
+                    getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_QUERY:
+                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_RESPONSE:
+                    receiveSalesResponseEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RECEIVE_SALES_REPORT:
+                    receiveSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_REPORT:
+                    sendSalesReportEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_SALES_RESPONSE:
+                    sendSalesResponseEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());

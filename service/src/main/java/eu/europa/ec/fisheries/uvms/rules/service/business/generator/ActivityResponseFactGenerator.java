@@ -1,0 +1,67 @@
+/*
+ *
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
+ *
+ * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+
+/**
+ * @author padhyad
+ * @author Gregory Rinaldi
+ */
+public class ActivityResponseFactGenerator extends AbstractGenerator {
+
+    private FLUXResponseMessage fluxResponseMessage;
+
+    private XPathStringWrapper xPathUtil;
+
+    private ActivityFactMapper activityFactMapper;
+
+    public ActivityResponseFactGenerator(){
+        xPathUtil = new XPathStringWrapper();
+        activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
+
+
+    @Override
+    public List<AbstractFact> generateAllFacts() {
+        AbstractFact fact = activityFactMapper.generateFactsForFaResponse(fluxResponseMessage);
+        if (fact != null) {
+            return Arrays.asList(fact);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
+        if (!(businessObject instanceof FLUXResponseMessage)) {
+            throw new RulesValidationException("Business object does not match required type");
+        }
+        this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
+    }
+
+    @Override
+    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
+        // Set internal Validation Object if needed.
+    }
+
+}

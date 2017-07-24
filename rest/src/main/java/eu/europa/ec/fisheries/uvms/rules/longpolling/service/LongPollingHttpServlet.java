@@ -11,11 +11,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.longpolling.service;
 
-import java.io.IOException;
-
 import javax.ejb.EJB;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -27,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.longpolling.constants.LongPollingConstants;
