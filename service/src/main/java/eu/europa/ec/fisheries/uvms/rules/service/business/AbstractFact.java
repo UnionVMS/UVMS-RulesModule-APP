@@ -13,16 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -50,6 +40,16 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @ToString
@@ -573,6 +573,26 @@ public abstract class AbstractFact {
         return false;
     }
 
+    /**
+     * This method will check if all values passed  to this method are greater than zero.
+     *
+     * @param   values
+     * @return  TRUE : If all values are greater than zero
+     *          FALSE: If any one value is null OR less than OR equal to zero
+     */
+    public boolean isGreaterThanZero(List<MeasureType> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return false;
+        }
+        for (MeasureType type : values) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) == 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
@@ -828,8 +848,9 @@ public abstract class AbstractFact {
             return false;
         }
 
-        for (IdType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+
+        for(IdType idType: valuesToMatch){
+            if(!codeListValues.contains(idType.getValue()))
                 return false;
         }
 
