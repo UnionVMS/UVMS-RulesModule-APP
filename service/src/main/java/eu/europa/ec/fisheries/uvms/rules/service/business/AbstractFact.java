@@ -13,6 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -40,16 +50,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @ToString
@@ -505,18 +505,11 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    public boolean listIdContainsAny(CodeType codeType, String... values) {
-        return listIdContainsAny(Arrays.asList(codeType), values);
+    public boolean listIdNotContains(CodeType codeType, String... values) {
+        return listIdNotContains(Arrays.asList(codeType), values);
     }
 
-    /**
-     * Checks if one of the String... array elements exists in the idTypes list.
-     *
-     * @param codeTypes
-     * @param values
-     * @return false/true
-     */
-    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+    public boolean listIdNotContains(List<CodeType> codeTypes, String... values) {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
@@ -528,6 +521,20 @@ public abstract class AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean listIdNotContains(List<CodeType> codeTypes, String value, int hits) {
+        if (value == null || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int found = 0;
+        for (CodeType codeType : codeTypes) {
+            if (value.equals(codeType.getListId())) {
+                found ++;
+            }
+        }
+
+        return hits != found;
     }
 
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
@@ -586,7 +593,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : values) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) == 1) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
                 return false;
             }
         }

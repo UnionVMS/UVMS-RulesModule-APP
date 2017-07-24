@@ -369,14 +369,14 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAnySingle() {
         CodeType typeCode = RuleTestHelper.getCodeType("PS", "GEAR_TYPE");
-        assertFalse(fact.listIdContainsAny(typeCode, "GEAR_TYPE"));
+        assertFalse(fact.listIdNotContains(typeCode, "GEAR_TYPE"));
     }
 
     @Test
     public void testListIdContainsAnyMultiple() {
         List<CodeType> typeCodes = Arrays.asList(RuleTestHelper.getCodeType("PS", "GEAR_TYPE"), RuleTestHelper.getCodeType("LT", "VESSEL_ACTIVITY"));
 
-        assertFalse(fact.listIdContainsAny(typeCodes, "GEAR_TYPE"));
+        assertFalse(fact.listIdNotContains(typeCodes, "GEAR_TYPE"));
     }
 
     @Test
@@ -633,14 +633,14 @@ public class AbstractFactTest {
         CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
-        boolean result = fact.listIdContainsAny(codeTypes, "CFR");
+        boolean result = fact.listIdNotContains(codeTypes, "CFR");
         assertFalse(result);
 
-        result = fact.listIdContainsAny(codeTypes, null);
+        result = fact.listIdNotContains(codeTypes, null);
         assertTrue(result);
 
         CodeType newCodeType = RuleTestHelper.getCodeType("value1", "CFR");
-        result = fact.listIdContainsAny(codeTypes, "ABC");
+        result = fact.listIdNotContains(codeTypes, "ABC");
         assertTrue(result);
     }
 
@@ -1032,6 +1032,49 @@ public class AbstractFactTest {
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
     }
 
+    @Test
+    public void testListIdNotContainsEmptyList(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
+    }
+
+    @Test
+    public void testListIdNotContainsHappy(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 1));
+    }
+
+    @Test
+    public void testListIdNotContainsHappyWithMoreHits(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setListId("TYPECODE");
+        codeTypes.add(codeType2);
+
+        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+    }
+
+    @Test
+    public void testListIdNotContainsHappyWithMoreHits2(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        assertTrue(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+    }
 
     @Test
     public void testIsGreaterThanZero(){

@@ -1,5 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -12,10 +16,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by sanera on 10/05/2017.
