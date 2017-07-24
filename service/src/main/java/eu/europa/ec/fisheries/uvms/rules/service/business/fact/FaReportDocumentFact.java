@@ -14,14 +14,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by padhyad on 4/7/2017.
@@ -158,21 +158,27 @@ public class FaReportDocumentFact extends AbstractFact {
     public void setRelatedFLUXReportDocumentReferencedID(IdType relatedFLUXReportDocumentReferencedID) {
         this.relatedFLUXReportDocumentReferencedID = relatedFLUXReportDocumentReferencedID;
     }
+
     public List<IdType> getNonUniqueIdsList() {
         return nonUniqueIdsList;
     }
+
     public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
         this.nonUniqueIdsList = nonUniqueIdsList;
     }
+
     public List<Date> getSpecifiedAndRealtedFishActOccurrenceDateTimes() {
         return specifiedAndRealtedFishActOccurrenceDateTimes;
     }
+
     public void setSpecifiedAndRealtedFishActOccurrenceDateTimes(List<Date> specifiedAndRealtedFishActOccurrenceDateTimes) {
         this.specifiedAndRealtedFishActOccurrenceDateTimes = specifiedAndRealtedFishActOccurrenceDateTimes;
     }
+
     public List<String> getSpecifiedFishingActivitiesTypes() {
         return specifiedFishingActivitiesTypes;
     }
+
     public void setSpecifiedFishingActivitiesTypes(List<String> specifiedFishingActivitiesTypes) {
         this.specifiedFishingActivitiesTypes = specifiedFishingActivitiesTypes;
     }

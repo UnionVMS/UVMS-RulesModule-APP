@@ -1,12 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import un.unece.uncefact.data.standard.mdr.communication.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.math.*;
-import java.util.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 /**
  * Created by sanera on 10/05/2017.

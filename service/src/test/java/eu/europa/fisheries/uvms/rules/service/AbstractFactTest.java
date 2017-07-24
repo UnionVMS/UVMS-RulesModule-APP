@@ -10,24 +10,47 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.UUID;
+
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
-import org.apache.commons.lang3.*;
-import org.joda.time.*;
-import org.junit.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import java.math.*;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -312,7 +335,6 @@ public class AbstractFactTest {
 
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
     }
-
 
 
     @Test
@@ -640,8 +662,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1= RuleTestHelper.getCodeType("value1","CFR");
-        CodeType codeType2= RuleTestHelper.getCodeType("value12","IRCS");
+        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
+        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -898,7 +920,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues(){
+    public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -914,7 +936,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues(){
+    public void testCodeTypeValuesUniqueShouldReturnTrueWithUniqueValues() {
 
         CodeType codeType = new CodeType();
         codeType.setValue("value1");
@@ -930,13 +952,17 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull(){
+    public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull() {
         assertFalse(fact.codeTypeValuesUnique(null));
     }
 
     @Test
-    public void testListContainsEitherThen(){
-        List<String> activityTypes = new ArrayList<String>(){{add("YEAH"); add("NO"); add("BLAH");}};
+    public void testListContainsEitherThen() {
+        List<String> activityTypes = new ArrayList<String>() {{
+            add("YEAH");
+            add("NO");
+            add("BLAH");
+        }};
 
         final boolean contains = fact.listContainsEitherThen(activityTypes, "YEAH", "BLAH");
         assertTrue(contains);
@@ -954,13 +980,13 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testDateComparison(){
+    public void testDateComparison() {
         Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
         Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
         final boolean contains1 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
-        System.out.println("List contains sameDate [true]: "+contains1);
+        System.out.println("List contains sameDate [true]: " + contains1);
         assertTrue(contains1);
 
         date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
@@ -968,7 +994,7 @@ public class AbstractFactTest {
         date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
         final boolean contains2 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
-        System.out.println("List contains sameDate [false]: "+contains2);
+        System.out.println("List contains sameDate [false]: " + contains2);
         assertFalse(contains2);
 
     }

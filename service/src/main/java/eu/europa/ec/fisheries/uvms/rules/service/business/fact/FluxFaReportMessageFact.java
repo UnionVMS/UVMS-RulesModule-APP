@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -67,9 +67,11 @@ public class FluxFaReportMessageFact extends AbstractFact {
     public void setFaReportDocuments(List<FAReportDocument> faReportDocuments) {
         this.faReportDocuments = faReportDocuments;
     }
+
     public List<IdType> getNonUniqueIdsList() {
         return nonUniqueIdsList;
     }
+
     public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
         this.nonUniqueIdsList = nonUniqueIdsList;
     }
