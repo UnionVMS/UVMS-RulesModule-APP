@@ -71,10 +71,13 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.STREET_NAME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SUBMITTED_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SUBMITTER_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.UNIT_QUANTITY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_INDICATOR;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_MEASURE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_QUANTITY;
@@ -125,7 +128,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -189,6 +191,8 @@ public class ActivityFactMapper {
     private static final String VALUE_ID_PROP = "valueID";
     private static final String ID_PROP = "id";
     private static final String SUBMITTED_DATE_TIME_PROP = "submittedDateTime";
+    private static final String SUBMITTED_FLUX_PARTY_IDS_PROP = "submittedFLUXPartyIds";
+    private static final String SPECIFIED_DELIMITED_PERIOD_PROP = "specifiedDelimitedPeriod";
     private XPathStringWrapper xPathUtil;
 
     /**
@@ -1411,7 +1415,16 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faQueryFact, TYPE_CODE_PROP);
 
         faQueryFact.setSubmittedDateTime(getDate(faQuery.getSubmittedDateTime()));
-        xPathUtil.appendWithoutWrapping(partialXpath).append("SubmittedDateTime").storeInRepo(faQueryFact, SUBMITTED_DATE_TIME_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SUBMITTED_DATE_TIME).storeInRepo(faQueryFact, SUBMITTED_DATE_TIME_PROP);
+
+        faQueryFact.setSpecifiedDelimitedPeriod(faQuery.getSpecifiedDelimitedPeriod());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD).storeInRepo(faQueryFact, SPECIFIED_DELIMITED_PERIOD_PROP);
+
+        FLUXParty submitterFLUXParty = faQuery.getSubmitterFLUXParty();
+        if (submitterFLUXParty != null){
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SUBMITTER_FLUX_PARTY, ID).storeInRepo(faQueryFact, SUBMITTED_FLUX_PARTY_IDS_PROP);
+            faQueryFact.setSubmittedFLUXPartyIds(mapToIdType(submitterFLUXParty.getIDS()));
+        }
 
         return faQueryFact;
     }
@@ -1434,7 +1447,7 @@ public class ActivityFactMapper {
                 xPathUtil.appendWithoutWrapping(partialWithParameter).append(TYPE_CODE).storeInRepo(fact, FA_QUERY_TYPE_CODE_PROP);
 
                 fact.setValueID(mapToSingleIdType(faQueryParameter.getValueID()));
-                xPathUtil.appendWithoutWrapping(partialWithParameter).append(XPathConstants.VALUE_ID).storeInRepo(fact, VALUE_ID_PROP);
+                xPathUtil.appendWithoutWrapping(partialWithParameter).append(VALUE_ID).storeInRepo(fact, VALUE_ID_PROP);
 
                 fact.setValueCode(mapToCodeType(faQueryParameter.getValueCode()));
                 xPathUtil.appendWithoutWrapping(partialWithParameter).append(VALUE_CODE).storeInRepo(fact, VALUE_CODE_PROP);
@@ -1558,15 +1571,16 @@ public class ActivityFactMapper {
     }
 
     public List<IdType> mapToIdType(List<IDType> idTypes) {
-        if (CollectionUtils.isEmpty(idTypes)) {
-            return Collections.emptyList();
-        }
 
         List<IdType> idTypeList = new ArrayList<>();
-        for (IDType iDType : idTypes) {
-            idTypeList.add(mapToSingleIdType(iDType));
+        if (CollectionUtils.isNotEmpty(idTypes)) {
+            for (IDType iDType : idTypes) {
+                IdType idType = mapToSingleIdType(iDType);
+                if(idType != null){
+                    idTypeList.add(mapToSingleIdType(iDType));
+                }
+            }
         }
-
         return idTypeList;
     }
 
