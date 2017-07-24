@@ -10,28 +10,9 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
@@ -56,6 +37,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessa
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
@@ -74,6 +56,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
@@ -93,6 +76,26 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -122,6 +125,7 @@ public class ActivityFactMapperTest {
     private List<FACatch> specifiedFACatch;
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
+    private List<FLAPDocument> flapDocumentList;
 
     ActivityFactMapper activityMapper = new ActivityFactMapper(new XPathStringWrapper());
 
@@ -229,6 +233,9 @@ public class ActivityFactMapperTest {
         faQuery.setSpecifiedDelimitedPeriod(delimitedPeriod);
         faQuery.setSubmittedDateTime(dateTimeType);
         faQuery.setTypeCode(codeType);
+
+        flapDocumentList = new ArrayList<>();
+        flapDocumentList.add(RuleTestHelper.getFLAPDocument());
 
     }
 
@@ -826,6 +833,17 @@ public class ActivityFactMapperTest {
         assertEquals(idType.getSchemeID(), fact.getValueID().getSchemeId());
         assertEquals(idType.getValue(), fact.getValueID().getValue());
 
+    }
+
+    @Test
+    public void testGetFLAPDocumentIds(){
+        List<IdType> idTypes=  activityMapper.getFLAPDocumentIds(flapDocumentList);
+
+        List<IdType> expectedResult = new ArrayList<>();
+        expectedResult.add(RuleTestHelper.getIdType("value","FLAP_DOCUMENT_ID"));
+
+        assertEquals(expectedResult.size(), idTypes.size());
+        assertEquals(expectedResult.iterator().next().getValue(), idTypes.iterator().next().getValue());
     }
 
 }
