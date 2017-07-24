@@ -10,10 +10,6 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.cache;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -21,6 +17,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
+import java.util.List;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kovian on 27/06/2017.
@@ -59,5 +60,12 @@ public class MdrCaheHolderTest {
 
     }
 
+    @Test
+    public void testGetObjectRepresntationListCheckNull() {
+
+        List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresntationList(null);
+        assertNull(gearTypeList);
+
+    }
 
 }

@@ -1038,4 +1038,11 @@ public class AbstractFactTest {
         List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1),"km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
+
+
+    @Test
+    public void testGetDataTypeForMDRListNullCheck(){
+       String result= fact.getDataTypeForMDRList("TEST",null);
+        assertEquals("",result);
+    }
 }
