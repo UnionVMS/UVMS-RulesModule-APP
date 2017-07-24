@@ -18,9 +18,10 @@ import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -64,7 +65,7 @@ public class MdrCaheHolderTest {
     public void testGetObjectRepresntationListCheckNull() {
 
         List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresntationList(null);
-        assertNull(gearTypeList);
+        assertEquals(Collections.emptyList(),gearTypeList);
 
     }
 
