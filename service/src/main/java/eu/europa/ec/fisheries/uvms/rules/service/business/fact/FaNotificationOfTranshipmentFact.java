@@ -170,13 +170,13 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         boolean isPresent = true;
         for(FACatch faCatch : specifiedFACatches){
 
-            if(faCatch.getTypeCode().equals("LOADED") )  {
+            if(faCatch.getTypeCode()!=null && faCatch.getTypeCode().getValue().equals("LOADED") )  {
                 isPresent = false;
                  if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
                      return false;
                  }
                  for(FLUXLocation fluxLocation : faCatch.getSpecifiedFLUXLocations()){
-                     if(fluxLocation.getTypeCode().equals("AREA")){
+                     if(fluxLocation.getTypeCode()!=null && fluxLocation.getTypeCode().getValue().equals("AREA")){
                          isPresent = true;
                          break;
                      }
