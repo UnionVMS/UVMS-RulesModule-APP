@@ -34,9 +34,9 @@ import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
  * Created by kovian on 28/06/2017.
@@ -53,7 +53,6 @@ public class BusinessObjectFactoryTest {
             assertNotNull(businessObjFactGenerator);
             System.out.println("For BusinessObjectType ["+objType+"] found Generator ["+businessObjFactGenerator.getClass()+"]");
         }
-
     }
 
     @Test
@@ -113,7 +112,7 @@ public class BusinessObjectFactoryTest {
     public void testSetBusinessObjectMessageNull_ActivityQueryFactGenerator() {
         try {
             ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
-            activityQueryFactGenerator.setBusinessObjectMessage(new FAQuery());
+            activityQueryFactGenerator.setBusinessObjectMessage(new FLUXFAQueryMessage());
         } catch (RulesValidationException e) {
             assertNull(e);
         }
@@ -140,7 +139,7 @@ public class BusinessObjectFactoryTest {
     public void testGenerateAllFacts_ActivityQueryFactGenerator() {
         ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
         List<AbstractFact> facts = activityQueryFactGenerator.generateAllFacts();
-        assertNull(facts);
+        assertNotNull(facts);
     }
 
 

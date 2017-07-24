@@ -21,15 +21,13 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class FaQueryParameterFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    public String getTypeCode() {
-        return typeCode;
-    }
+    private CodeType faQueryTypeCode;
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private CodeType valueCode;
+
+    private IdType valueID;
 
     public FaQueryParameterFact() {
         setFactType();
@@ -38,5 +36,37 @@ public class FaQueryParameterFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_QUERY_PARAMETER;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public CodeType getFaQueryTypeCode() {
+        return faQueryTypeCode;
+    }
+
+    public void setFaQueryTypeCode(CodeType faQueryTypeCode) {
+        this.faQueryTypeCode = faQueryTypeCode;
+    }
+
+    public IdType getValueID() {
+        return valueID;
+    }
+
+    public void setValueID(IdType valueID) {
+        this.valueID = valueID;
+    }
+
+    public CodeType getValueCode() {
+        return valueCode;
+    }
+
+    public void setValueCode(CodeType valueCode) {
+        this.valueCode = valueCode;
     }
 }
