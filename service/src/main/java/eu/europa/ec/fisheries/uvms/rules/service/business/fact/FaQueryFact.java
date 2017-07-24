@@ -36,6 +36,8 @@ public class FaQueryFact extends AbstractFact {
 
     private DelimitedPeriod specifiedDelimitedPeriod;
 
+    private List<CodeType> simpleFAQueryParameterTypeCodes;
+
     public FaQueryFact() {
         setFactType();
     }
@@ -83,5 +85,13 @@ public class FaQueryFact extends AbstractFact {
 
     public void setSpecifiedDelimitedPeriod(DelimitedPeriod specifiedDelimitedPeriod) {
         this.specifiedDelimitedPeriod = specifiedDelimitedPeriod;
+    }
+
+    public List<CodeType> getSimpleFAQueryParameterTypeCodes() {
+        return simpleFAQueryParameterTypeCodes;
+    }
+
+    public void setSimpleFAQueryParameterTypeCodes(List<CodeType> simpleFAQueryParameterTypeCodes) {
+        this.simpleFAQueryParameterTypeCodes = simpleFAQueryParameterTypeCodes;
     }
 }

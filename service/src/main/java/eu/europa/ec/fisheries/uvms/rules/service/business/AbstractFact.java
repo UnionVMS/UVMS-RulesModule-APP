@@ -505,18 +505,11 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    public boolean listIdContainsAny(CodeType codeType, String... values) {
-        return listIdContainsAny(Arrays.asList(codeType), values);
+    public boolean listIdNotContains(CodeType codeType, String... values) {
+        return listIdNotContains(Arrays.asList(codeType), values);
     }
 
-    /**
-     * Checks if one of the String... array elements exists in the idTypes list.
-     *
-     * @param codeTypes
-     * @param values
-     * @return false/true
-     */
-    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+    public boolean listIdNotContains(List<CodeType> codeTypes, String... values) {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
@@ -528,6 +521,20 @@ public abstract class AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean listIdNotContains(List<CodeType> codeTypes, String value, int hits) {
+        if (value == null || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int found = 0;
+        for (CodeType codeType : codeTypes) {
+            if (value.equals(codeType.getListId())) {
+                found ++;
+            }
+        }
+
+        return hits != found;
     }
 
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {

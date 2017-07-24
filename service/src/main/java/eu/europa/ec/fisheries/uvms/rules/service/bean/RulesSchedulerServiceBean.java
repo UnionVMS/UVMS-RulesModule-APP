@@ -10,13 +10,19 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
-import lombok.extern.slf4j.Slf4j;
-
 import javax.annotation.Resource;
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
 import javax.transaction.Transactional;
 import java.util.Collection;
+
+import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Created by kovian, gregrinaldi on 30/05/2017
@@ -73,7 +79,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
      * @param schedulerExpressionStr
      */
     @Override
-    public void setUpScheduler(String schedulerExpressionStr) throws IllegalArgumentException {
+    public void setUpScheduler(String schedulerExpressionStr) {
         try {
             ScheduleExpression expression = parseExpression(schedulerExpressionStr);
             cancelPreviousTimer();

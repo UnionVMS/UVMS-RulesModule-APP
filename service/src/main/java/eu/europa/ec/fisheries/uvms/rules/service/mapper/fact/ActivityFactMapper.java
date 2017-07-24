@@ -193,6 +193,7 @@ public class ActivityFactMapper {
     private static final String SUBMITTED_DATE_TIME_PROP = "submittedDateTime";
     private static final String SUBMITTED_FLUX_PARTY_IDS_PROP = "submittedFLUXPartyIds";
     private static final String SPECIFIED_DELIMITED_PERIOD_PROP = "specifiedDelimitedPeriod";
+    private static final String SIMPLE_FA_QUERY_PARAMETER_TYPE_CODES_PROP = "simpleFAQueryParameterTypeCodes";
     private XPathStringWrapper xPathUtil;
 
     /**
@@ -1426,6 +1427,20 @@ public class ActivityFactMapper {
             faQueryFact.setSubmittedFLUXPartyIds(mapToIdType(submitterFLUXParty.getIDS()));
         }
 
+        List<FAQueryParameter> simpleFAQueryParameters = faQuery.getSimpleFAQueryParameters();
+        if(CollectionUtils.isNotEmpty(simpleFAQueryParameters)){
+            List<CodeType> codeTypes = new ArrayList<>();
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SIMPLE_FA_QUERY_PARAMETER, TYPE_CODE).storeInRepo(faQueryFact, SIMPLE_FA_QUERY_PARAMETER_TYPE_CODES_PROP);
+
+            for(FAQueryParameter faQueryParameter : simpleFAQueryParameters){
+                CodeType codeType = mapToCodeType(faQueryParameter.getTypeCode());
+                if(codeType != null){
+                    codeTypes.add(codeType);
+                }
+            }
+            faQueryFact.setSimpleFAQueryParameterTypeCodes(codeTypes);
+        }
+
         return faQueryFact;
     }
 
@@ -1931,22 +1946,6 @@ public class ActivityFactMapper {
             return null;
         }
         String value = plotIdentification.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
-    private String gearProblemTypeCodeValue(GearProblem gearProblem) {
-
-        if (gearProblem == null) {
-            return null;
-        }
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = gearProblem.getTypeCode();
-        if (typeCode == null) {
-            return null;
-        }
-        String value = typeCode.getValue();
         if (value == null) {
             return null;
         }
