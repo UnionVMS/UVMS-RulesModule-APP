@@ -14,9 +14,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.util.Date;
+import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 
 /**
  * @author padhyad
@@ -29,6 +31,12 @@ public class FaQueryFact extends AbstractFact {
     private IdType id;
 
     private Date submittedDateTime;
+
+    private List<IdType> submittedFLUXPartyIds;
+
+    private DelimitedPeriod specifiedDelimitedPeriod;
+
+    private List<CodeType> simpleFAQueryParameterTypeCodes;
 
     public FaQueryFact() {
         setFactType();
@@ -61,5 +69,29 @@ public class FaQueryFact extends AbstractFact {
 
     public void setSubmittedDateTime(Date submittedDateTime) {
         this.submittedDateTime = submittedDateTime;
+    }
+
+    public List<IdType> getSubmittedFLUXPartyIds() {
+        return submittedFLUXPartyIds;
+    }
+
+    public void setSubmittedFLUXPartyIds(List<IdType> submittedFLUXPartyIds) {
+        this.submittedFLUXPartyIds = submittedFLUXPartyIds;
+    }
+
+    public DelimitedPeriod getSpecifiedDelimitedPeriod() {
+        return specifiedDelimitedPeriod;
+    }
+
+    public void setSpecifiedDelimitedPeriod(DelimitedPeriod specifiedDelimitedPeriod) {
+        this.specifiedDelimitedPeriod = specifiedDelimitedPeriod;
+    }
+
+    public List<CodeType> getSimpleFAQueryParameterTypeCodes() {
+        return simpleFAQueryParameterTypeCodes;
+    }
+
+    public void setSimpleFAQueryParameterTypeCodes(List<CodeType> simpleFAQueryParameterTypeCodes) {
+        this.simpleFAQueryParameterTypeCodes = simpleFAQueryParameterTypeCodes;
     }
 }

@@ -1,12 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import un.unece.uncefact.data.standard.mdr.communication.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.math.*;
-import java.util.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * Created by sanera on 10/05/2017.
@@ -151,4 +160,42 @@ public class RuleTestHelper {
 
         return fluxLocation;
     }
+
+    public static List<FACatch> getFACatchList() {
+        List<FACatch> faCatches = new ArrayList<>(2);
+        FACatch faCatch =new FACatch();
+
+        faCatch.setTypeCode(getCodeTypeUNCEFACT("LOADED",""));
+
+        List<FLUXLocation>  fluxLocations = new ArrayList<>();
+        fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
+
+        faCatch.setSpecifiedFLUXLocations(fluxLocations);
+
+        faCatches.add(faCatch);
+        return faCatches;
+    }
+
+
+    public static un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType getCodeTypeUNCEFACT(String value, String listId) {
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(listId);
+        codeType.setValue(value);
+
+        return codeType;
+    }
+
+    public static IDType getIdTypeUNCEFACT(String value, String schemeId) {
+        IDType idType = new IDType();
+        idType.setValue(value);
+        idType.setSchemeID(schemeId);
+        return idType;
+    }
+
+    public static FLAPDocument getFLAPDocument(){
+        FLAPDocument flapDocument = new FLAPDocument();
+        flapDocument.setID(getIdTypeUNCEFACT("value","FLAP_DOCUMENT_ID"));
+        return flapDocument;
+    }
+
 }

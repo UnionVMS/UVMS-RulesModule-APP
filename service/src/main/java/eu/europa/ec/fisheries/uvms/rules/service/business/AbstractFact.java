@@ -13,34 +13,49 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.schema.sales.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang3.*;
-import org.apache.commons.lang3.time.*;
-import org.joda.time.*;
-import un.unece.uncefact.data.standard.mdr.communication.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.*;
-import java.util.*;
 
 @Slf4j
 @ToString
 public abstract class AbstractFact {
 
+    private static final String DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN = "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!";
     private static final String THE_LIST = "The list [";
     private static final String DOESN_T_EXIST_IN_MDR_MODULE = "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!";
 
@@ -300,7 +315,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listSizeIs(List<?> list, int listSize) {
-        return !(isEmpty(list) || list.size() != listSize);
+        return !isEmpty(list) && list.size() == listSize;
     }
 
     /**
@@ -498,29 +513,36 @@ public abstract class AbstractFact {
         this.uniqueIds = uniqueIds;
     }
 
-    public boolean listIdContainsAny(CodeType codeType, String... values) {
-        return listIdContainsAny(Arrays.asList(codeType), values);
+    public boolean listIdNotContains(CodeType codeType, String... values) {
+        return listIdNotContains(Arrays.asList(codeType), values);
     }
 
-    /**
-     * Checks if one of the String... array elements exists in the idTypes list.
-     *
-     * @param codeTypes
-     * @param values
-     * @return false/true
-     */
-    public boolean listIdContainsAny(List<CodeType> codeTypes, String... values) {
+    public boolean listIdNotContains(List<CodeType> codeTypes, String... values) {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
         for (String val : values) {
-            for (CodeType CodeTypes : codeTypes) {
-                if (val.equals(CodeTypes.getListId())) {
+            for (CodeType codeType : codeTypes) {
+                if (val.equals(codeType.getListId())) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public boolean listIdNotContains(List<CodeType> codeTypes, String value, int hits) {
+        if (value == null || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        int found = 0;
+        for (CodeType codeType : codeTypes) {
+            if (value.equals(codeType.getListId())) {
+                found ++;
+            }
+        }
+
+        return hits != found;
     }
 
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
@@ -564,6 +586,26 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    /**
+     * This method will check if all values passed  to this method are greater than zero.
+     *
+     * @param   values
+     * @return  TRUE : If all values are greater than zero
+     *          FALSE: If any one value is null OR less than OR equal to zero
+     */
+    public boolean isGreaterThanZero(List<MeasureType> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return false;
+        }
+        for (MeasureType type : values) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
@@ -673,7 +715,7 @@ public abstract class AbstractFact {
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
-     * @param faCatches
+     * @param  faCatches
      * @return false/true
      */
     public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
@@ -710,7 +752,7 @@ public abstract class AbstractFact {
 
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
         String string = bigDecimal.stripTrailingZeros().toPlainString();
-        int index = string.indexOf(".");
+        int index = string.indexOf('.');
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
@@ -761,7 +803,7 @@ public abstract class AbstractFact {
     public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
@@ -778,11 +820,11 @@ public abstract class AbstractFact {
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
             return false;
         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
@@ -811,7 +853,7 @@ public abstract class AbstractFact {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
             return false;
         }
 
@@ -911,7 +953,7 @@ public abstract class AbstractFact {
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
             return "";
         }
 
