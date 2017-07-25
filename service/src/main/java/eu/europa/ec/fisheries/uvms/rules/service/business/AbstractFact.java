@@ -940,7 +940,7 @@ public abstract class AbstractFact {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
-            return "";
+            return StringUtils.EMPTY;
         }
 
 
