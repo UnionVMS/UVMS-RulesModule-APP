@@ -13,15 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author padhyad
@@ -117,21 +117,27 @@ public class FaDepartureFact extends AbstractFact {
     public void setSpecifiedFACatchCodeTypes(List<CodeType> specifiedFACatchCodeTypes) {
         this.specifiedFACatchCodeTypes = specifiedFACatchCodeTypes;
     }
+
     public void setPurposeCode(String purposeCode) {
         this.purposeCode = purposeCode;
     }
+
     public String getPurposeCode() {
         return purposeCode;
     }
+
     public List<IdType> getSpecifiedFishingTripIds() {
         return specifiedFishingTripIds;
     }
+
     public void setSpecifiedFishingTripIds(List<IdType> specifiedFishingTripIds) {
         this.specifiedFishingTripIds = specifiedFishingTripIds;
     }
+
     public Map<String, List<FishingActivityWithIdentifiers>> getFaTypesPerTrip() {
         return faTypesPerTrip;
     }
+
     public void setFaTypesPerTrip(Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
         this.faTypesPerTrip = faTypesPerTrip;
     }
