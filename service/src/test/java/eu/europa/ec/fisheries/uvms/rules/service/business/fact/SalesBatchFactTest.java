@@ -15,7 +15,7 @@ public class SalesBatchFactTest {
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withPrefabValues(AAPProductType.class, new AAPProductType().withSpeciesCode(new CodeType().withValue("a")), new AAPProductType().withSpeciesCode(new CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source")
                 .verify();
     }
 

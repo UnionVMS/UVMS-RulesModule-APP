@@ -33,6 +33,7 @@ public class SalesQueryParameterFactTest {
     public void isValueNotValidWhenValid() throws Exception {
         CodeType valueCode = new CodeType();
         valueCode.setValue("BEL");
+        valueCode.setListId("LOCATION");
 
         CodeType typeCode = new CodeType();
         typeCode.setValue("FLAG");
@@ -61,7 +62,7 @@ public class SalesQueryParameterFactTest {
                 .suppress(Warning.STRICT_INHERITANCE)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source")
                 .verify();
     }
 

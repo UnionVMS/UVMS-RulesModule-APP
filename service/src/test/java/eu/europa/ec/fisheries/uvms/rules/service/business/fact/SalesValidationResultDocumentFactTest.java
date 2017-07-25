@@ -12,7 +12,7 @@ public class SalesValidationResultDocumentFactTest {
                 .suppress(Warning.STRICT_INHERITANCE)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source")
                 .verify();
     }
 
