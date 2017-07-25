@@ -197,6 +197,7 @@ public class ActivityFactMapper {
     private static final String SPECIFIED_DELIMITED_PERIOD_PROP = "specifiedDelimitedPeriod";
     private static final String SIMPLE_FA_QUERY_PARAMETER_TYPE_CODES_PROP = "simpleFAQueryParameterTypeCodes";
     private static final String SPECIFIED_FA_CATCHES = "specifiedFACatches";
+    private static final String FISHING_GEAR_ROLE_CODES_PROP = "fishingGearRoleCodes";
     private XPathStringWrapper xPathUtil;
 
     /**
@@ -1133,11 +1134,18 @@ public class ActivityFactMapper {
             faFishingOperationFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, VESSEL_RELATED_ACTIVITY_CODE_PROP);
 
-            if (CollectionUtils.isNotEmpty(fishingActivity.getRelatedFishingActivities())) {
-                faFishingOperationFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
+            List<FishingActivity> relatedFishingActivities = fishingActivity.getRelatedFishingActivities();
+            if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+                faFishingOperationFact.setRelatedFishingActivities(relatedFishingActivities);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, VESSEL_RELATED_ACTIVITY_CODE_PROP);
+                int activityIndex = 1;
+                for (FishingActivity activity : relatedFishingActivities){
+                    faFishingOperationFact.setFishingGearRoleCodes(getFishingGearRoleCodes(activity.getSpecifiedFishingGears()));
+                    xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).appendWithIndex(VESSEL_RELATED_ACTIVITY_CODE, activityIndex).storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
+                }
             }
         }
+
         if (faReportDocument != null) {
             faFishingOperationFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faFishingOperationFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
@@ -1383,7 +1391,7 @@ public class ActivityFactMapper {
             }
 
             faArrivalFact.setFishingGearRoleCodes(getFishingGearRoleCodes(fishingActivity.getSpecifiedFishingGears()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faArrivalFact, "fishingGearRoleCodes");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faArrivalFact, FISHING_GEAR_ROLE_CODES_PROP);
 
             faArrivalFact.setFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faArrivalFact, "fluxLocationTypeCodes");
