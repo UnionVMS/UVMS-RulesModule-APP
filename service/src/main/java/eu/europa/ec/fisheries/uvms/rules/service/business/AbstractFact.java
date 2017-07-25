@@ -13,40 +13,29 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.*;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.joda.time.DateTime;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.time.*;
+import org.joda.time.*;
+import un.unece.uncefact.data.standard.mdr.communication.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.*;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -268,11 +257,11 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if(id == null){
+        if (id == null) {
             return true;
         }
         try {
-            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
+            if (!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -289,13 +278,13 @@ public abstract class AbstractFact {
      * @param elementsToMatchList
      * @return
      */
-    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList){
-        if(CollectionUtils.isEmpty(controlList)){
+    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList) {
+        if (CollectionUtils.isEmpty(controlList)) {
             return false;
         }
-        if(CollectionUtils.isNotEmpty(elementsToMatchList)){
-            for(IdType idToMatch : elementsToMatchList){
-                if(controlList.contains(idToMatch)){
+        if (CollectionUtils.isNotEmpty(elementsToMatchList)) {
+            for (IdType idToMatch : elementsToMatchList) {
+                if (controlList.contains(idToMatch)) {
                     return true;
                 }
             }
@@ -310,7 +299,7 @@ public abstract class AbstractFact {
      * @param listSize
      * @return
      */
-    public boolean listSizeIs(List<?> list, int listSize){
+    public boolean listSizeIs(List<?> list, int listSize) {
         return !(isEmpty(list) || list.size() != listSize);
     }
 
@@ -320,14 +309,14 @@ public abstract class AbstractFact {
      * @param activityTypes
      * @return
      */
-    public boolean listContainsEitherThen(List<String> activityTypes, String... permitedElements){
-        if(CollectionUtils.isEmpty(activityTypes) || permitedElements == null || permitedElements.length == 0){
+    public boolean listContainsEitherThen(List<String> activityTypes, String... permitedElements) {
+        if (CollectionUtils.isEmpty(activityTypes) || permitedElements == null || permitedElements.length == 0) {
             return false;
         }
         List<String> permitedElementsList = Arrays.asList(permitedElements);
         boolean containsEitherThen = false;
-        for(String type : activityTypes){
-            if(!permitedElementsList.contains(type)){
+        for (String type : activityTypes) {
+            if (!permitedElementsList.contains(type)) {
                 containsEitherThen = true;
                 break;
             }
@@ -461,15 +450,15 @@ public abstract class AbstractFact {
         return now.toDate();
     }
 
-    public boolean containsSameDayMoreTheOnce(List<Date> dateList){
-        if(CollectionUtils.isEmpty(dateList)){
+    public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
+        if (CollectionUtils.isEmpty(dateList)) {
             return true;
         }
         int listSize = dateList.size();
-        for(int i = 0; i < listSize; i++){
+        for (int i = 0; i < listSize; i++) {
             Date comparisonDate = dateList.get(i);
-            for(int j = i+1; j < listSize; j++){
-                if(isSameDay(comparisonDate, dateList.get(j))){
+            for (int j = i + 1; j < listSize; j++) {
+                if (isSameDay(comparisonDate, dateList.get(j))) {
                     return true;
                 }
             }
@@ -477,27 +466,34 @@ public abstract class AbstractFact {
         return false;
     }
 
-    private boolean isSameDay(Date date1, Date date2){
+    private boolean isSameDay(Date date1, Date date2) {
         return DateUtils.isSameDay(date1, date2);
     }
+
     public List<RuleWarning> getWarnings() {
         return warnings;
     }
+
     public List<RuleError> getErrors() {
         return errors;
     }
+
     public boolean isOk() {
         return ok;
     }
+
     public void setOk(boolean ok) {
         this.ok = ok;
     }
+
     public FactType getFactType() {
         return factType;
     }
+
     public List<String> getUniqueIds() {
         return uniqueIds;
     }
+
     public void setUniqueIds(List<String> uniqueIds) {
         this.uniqueIds = uniqueIds;
     }
@@ -603,7 +599,7 @@ public abstract class AbstractFact {
         }
         Set<String> stringSet = new HashSet<>();
 
-        for(CodeType codeType : codeTypes){
+        for (CodeType codeType : codeTypes) {
             stringSet.add(codeType.getValue());
         }
 
@@ -648,7 +644,8 @@ public abstract class AbstractFact {
         ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         boolean isMatchFound = false;
 
-        outer : for (String val : valuesToMatch) {
+        outer:
+        for (String val : valuesToMatch) {
             for (CodeType IdType : removeNull) {
                 if (val.equals(IdType.getValue())) {
                     isMatchFound = true;
@@ -676,10 +673,10 @@ public abstract class AbstractFact {
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
-     * @param  faCatches
+     * @param faCatches
      * @return false/true
      */
-    public  boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
+    public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
         for (FACatch faCatch : faCatches) {
             List<FLUXLocation> checkList = faCatch.getSpecifiedFLUXLocations();
@@ -690,7 +687,7 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
-    public boolean isEmpty(List<?> list){
+    public boolean isEmpty(List<?> list) {
         return CollectionUtils.isEmpty(list);
     }
 
@@ -703,7 +700,7 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean isEmpty(String str){
+    public boolean isEmpty(String str) {
         return StringUtils.isEmpty(str);
     }
 
@@ -761,14 +758,14 @@ public abstract class AbstractFact {
      * @param codeValue - This value will be checked in MDR list
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
-    public boolean isPresentInMDRList(String listName, String codeValue){
+    public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum == null){
-            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if(CollectionUtils.isNotEmpty(values)){
+        if (CollectionUtils.isNotEmpty(values)) {
             return values.contains(codeValue);
         }
         return false;
@@ -781,21 +778,21 @@ public abstract class AbstractFact {
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
+    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-         if(anEnum == null){
-             log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
-             return false;
-         }
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
 
-        for(CodeType codeType: valuesToMatch){
-            if(!codeListValues.contains(codeType.getValue()))
+        for (CodeType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
@@ -810,44 +807,48 @@ public abstract class AbstractFact {
      * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch){
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum == null){
-            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
 
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
-        if(CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)){
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
 
-        for(IdType codeType: valuesToMatch){
-            if(!codeListValues.contains(codeType.getValue()))
+        for (IdType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
         return true;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList){
-        if(CollectionUtils.isEmpty(additionalObjectList)){
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {
+        if (CollectionUtils.isEmpty(additionalObjectList)) {
             return false;
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
-        for(IdType idType : vesselIds){
+        for (IdType idType : vesselIds) {
             listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
         }
 
-        for(IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched){
-            if(!additionalObjectList.contains(elemFromListToBeMatched)){
+        for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
+            if (!additionalObjectList.contains(elemFromListToBeMatched)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
+        return isTypeCodeValuePresentInList(listName, Arrays.asList(typeCode));
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
@@ -939,8 +940,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
-
 
 }

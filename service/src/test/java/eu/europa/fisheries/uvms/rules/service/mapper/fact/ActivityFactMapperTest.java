@@ -563,9 +563,9 @@ public class ActivityFactMapperTest {
         FLUXCharacteristic characteristic = new FLUXCharacteristic();
         characteristic.setTypeCode(codeType);
 
-        List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(Arrays.asList(characteristic));
+        List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(Arrays.asList(characteristic), SPECIFIED_FLUX_CHARACTERISTIC);
 
-        assertEquals(codeType.getValue(), fluxCharacteristicsFacts.get(0).getTypeCode());
+        assertEquals(codeType.getValue(), fluxCharacteristicsFacts.get(0).getTypeCode().getValue());
     }
 
     @Test
@@ -593,7 +593,7 @@ public class ActivityFactMapperTest {
     public void testNullParameters() {
 
         final List<VesselStorageCharacteristicsFact> vesselStorageCharacteristicsFacts = activityMapper.generateFactsForVesselStorageCharacteristics(null);
-        final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null);
+        final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null, null);
         final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null);
         final FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(null);
         final VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = activityMapper.generateFactsForVesselStorageCharacteristic(null);
@@ -630,7 +630,7 @@ public class ActivityFactMapperTest {
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
         final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null);
-        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristics(null);
+        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null);
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
         final FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = activityMapper.generateFactsForNotificationOfTranshipment(null, null);

@@ -135,6 +135,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForGearProblems(facts, gearProblems);
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.addAll(activityFactMapper.generateFactsForFluxCharacteristics(activity.getSpecifiedFLUXCharacteristics(), SPECIFIED_FLUX_CHARACTERISTIC));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactsForFluxLocations(activity.getRelatedFLUXLocations()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);

@@ -40,6 +40,7 @@ public class ActivityFactMapper {
     public static final String VALUE_MEASURE_PROP = "valueMeasure";
     public static final String VALUE_CODE_PROP = "valueCode";
     public static final String VALUE_QUANTITY_PROP = "valueQuantity";
+    public static final String VALUE_DATE_TIME_PROP = "valueDateTime";
     private XPathStringWrapper xPathUtil;
 
     /**
@@ -820,27 +821,54 @@ public class ActivityFactMapper {
     }
 
 
-    public FluxCharacteristicsFact generateFactForFluxCharacteristics(FLUXCharacteristic fluxCharacteristic) {
+    public FluxCharacteristicsFact generateFactForFluxCharacteristic(FLUXCharacteristic fluxCharacteristic) {
         if (fluxCharacteristic == null) {
+            xPathUtil.clear();
             return null;
         }
 
+        final String partialXpath = xPathUtil.getValue();
         FluxCharacteristicsFact fluxCharacteristicsFact = new FluxCharacteristicsFact();
 
         fluxCharacteristicsFact.setTypeCode(mapToCodeType(fluxCharacteristic.getTypeCode()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fluxCharacteristicsFact, TYPE_CODE_PROP);
+
+        fluxCharacteristicsFact.setValueMeasure(mapToMeasureType(fluxCharacteristic.getValueMeasure()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_MEASURE).storeInRepo(fluxCharacteristicsFact, VALUE_MEASURE_PROP);
+
+        fluxCharacteristicsFact.setValueDateTime(getDate(fluxCharacteristic.getValueDateTime()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_DATE_TIME).storeInRepo(fluxCharacteristicsFact, VALUE_DATE_TIME_PROP);
+
+        fluxCharacteristicsFact.setValueIndicator(fluxCharacteristic.getValueIndicator());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_INDICATOR).storeInRepo(fluxCharacteristicsFact, VALUE_INDICATOR_PROP);
+
+        fluxCharacteristicsFact.setValueCode(mapToCodeType(fluxCharacteristic.getValueCode()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_CODE).storeInRepo(fluxCharacteristicsFact, VALUE_CODE_PROP);
+
+        if (fluxCharacteristic.getValues() != null) {
+            fluxCharacteristicsFact.setValues(fluxCharacteristic.getValues());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE).storeInRepo(fluxCharacteristicsFact, "values");
+        }
+
+        fluxCharacteristicsFact.setValueQuantity(fluxCharacteristic.getValueQuantity());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_QUANTITY).storeInRepo(fluxCharacteristicsFact, VALUE_QUANTITY_PROP);
 
         return fluxCharacteristicsFact;
     }
 
 
-    public List<FluxCharacteristicsFact> generateFactsForFluxCharacteristics(List<FLUXCharacteristic> fluxCharacteristic) {
+    public List<FluxCharacteristicsFact> generateFactsForFluxCharacteristics(List<FLUXCharacteristic> fluxCharacteristic, String fluxCharacteristicType) {
         if (fluxCharacteristic == null) {
             return Collections.emptyList();
         }
 
+        String partialXpath = xPathUtil.getValue();
+
         List<FluxCharacteristicsFact> list = new ArrayList<>();
+        int index = 1;
         for (FLUXCharacteristic fLUXCharacteristic : fluxCharacteristic) {
-            list.add(generateFactForFluxCharacteristics(fLUXCharacteristic));
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxCharacteristicType, index);
+            list.add(generateFactForFluxCharacteristic(fLUXCharacteristic));
         }
 
         return list;
