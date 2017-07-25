@@ -102,23 +102,18 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             log.warn("additionalObject object is null! Nothing is going to be set!");
             return;
         }
-        if (AdditionalValidationObjectType.ASSET_LIST.equals(validationType)) {
-            activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-        } else if (AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS.equals(validationType)) {
-            activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
-            switch (validationType) {
-                case ASSET_LIST:
-                    activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-                    break;
-                case ACTIVITY_NON_UNIQUE_IDS:
-                    activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
-                    break;
-                case ACTIVITY_WITH_TRIP_IDS:
-                    activityFactMapper.setFishingActivitiesWithTripIds((Map<String, List<FishingActivityWithIdentifiers>>) additionalObject);
-                    break;
-                default:
-                    log.error("Non supported additiotan object!");
-            }
+        switch (validationType) {
+            case ASSET_LIST:
+                activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
+                break;
+            case ACTIVITY_NON_UNIQUE_IDS:
+                activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
+                break;
+            case ACTIVITY_WITH_TRIP_IDS:
+                activityFactMapper.setFishingActivitiesWithTripIds((Map<String, List<FishingActivityWithIdentifiers>>) additionalObject);
+                break;
+            default:
+                log.error("Non supported additiotan object!");
         }
     }
 
