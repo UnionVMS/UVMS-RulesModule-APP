@@ -11,8 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Created by kovian on 20/06/2017.

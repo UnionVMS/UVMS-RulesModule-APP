@@ -13,43 +13,29 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.*;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.joda.time.DateTime;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.time.*;
+import org.joda.time.*;
+import un.unece.uncefact.data.standard.mdr.communication.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.*;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -538,7 +524,7 @@ public abstract class AbstractFact {
         int found = 0;
         for (CodeType codeType : codeTypes) {
             if (value.equals(codeType.getListId())) {
-                found ++;
+                found++;
             }
         }
 
@@ -591,9 +577,9 @@ public abstract class AbstractFact {
     /**
      * This method will check if all values passed  to this method are greater than zero.
      *
-     * @param   values
-     * @return  TRUE : If all values are greater than zero
-     *          FALSE: If any one value is null OR less than OR equal to zero
+     * @param values
+     * @return TRUE : If all values are greater than zero
+     * FALSE: If any one value is null OR less than OR equal to zero
      */
     public boolean isGreaterThanZero(List<MeasureType> values) {
         if (CollectionUtils.isEmpty(values)) {
@@ -715,7 +701,7 @@ public abstract class AbstractFact {
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
-     * @param  faCatches
+     * @param faCatches
      * @return false/true
      */
     public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
@@ -820,7 +806,7 @@ public abstract class AbstractFact {
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch){
+    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
