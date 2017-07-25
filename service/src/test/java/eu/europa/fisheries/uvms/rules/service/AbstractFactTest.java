@@ -11,6 +11,7 @@
 package eu.europa.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
@@ -43,7 +44,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -1087,5 +1090,77 @@ public class AbstractFactTest {
     public void testGetDataTypeForMDRListNullCheck(){
        String result= fact.getDataTypeForMDRList("TEST",null);
         assertEquals("",result);
+    }
+
+    @Test
+    public void testContainsMoreThenOneDeclarationPerTrip(){
+        List<IdType> specifiedFishingTripIds = new ArrayList<>();
+        Map<String, List< FishingActivityWithIdentifiers >> faTypesPerTrip = new HashMap<>();
+        boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result1);
+
+        specifiedFishingTripIds.add(new IdType("id123","someScheme"));
+
+        boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result2);
+
+        faTypesPerTrip.put("",null);
+
+        boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result3);
+
+        List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
+        fishingActivityWithIdentifiers.add(new FishingActivityWithIdentifiers("","",""));
+        faTypesPerTrip.clear();
+        faTypesPerTrip.put("id123",fishingActivityWithIdentifiers);
+
+        boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result4);
+
+        List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
+
+        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
+
+        boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertTrue(result5);
+    }
+
+    @Test
+    public void testValueCodeTypeContainsAny(){
+        List<CodeType> codeTypes = new ArrayList<>();
+        String[] valuesToMatch = new String[1];
+        boolean result = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result);
+
+        codeTypes.add(new CodeType("one"));
+        valuesToMatch[0] = "two";
+        boolean result2 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result2);
+
+        valuesToMatch[0] = "one";
+        boolean result3 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertFalse(result3);
+    }
+
+    @Test
+    public void testListContainsAtLeastOneFromTheOtherList(){
+        List<IdType> controlList = new ArrayList<>();
+        List<IdType> elementsToMatchList = new ArrayList<>();
+        boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result);
+
+        controlList.add(new IdType("123"));
+        boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result2);
+
+        elementsToMatchList.add(new IdType("234"));
+        boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result3);
+
+        elementsToMatchList.add(new IdType("123"));
+        boolean result4 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertTrue(result4);
     }
 }

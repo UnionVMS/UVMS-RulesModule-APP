@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -67,8 +66,4 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
         this.fluxfaQueryMessage = (FLUXFAQueryMessage) businessObject;
     }
 
-    @Override
-    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
-        // Set internal Validation Object(s) if needed.
-    }
 }
