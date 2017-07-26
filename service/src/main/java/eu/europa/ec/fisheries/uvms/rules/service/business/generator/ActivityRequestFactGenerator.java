@@ -30,6 +30,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -70,6 +72,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 @Slf4j
 public class ActivityRequestFactGenerator extends AbstractGenerator {
@@ -99,15 +102,23 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             log.warn("additionalObject object is null! Nothing is going to be set!");
             return;
         }
-        if (AdditionalValidationObjectType.ASSET_LIST.equals(validationType)) {
-            activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-        } else if (AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS.equals(validationType)) {
-            activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
+        switch (validationType) {
+            case ASSET_LIST:
+                activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
+                break;
+            case ACTIVITY_NON_UNIQUE_IDS:
+                activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
+                break;
+            case ACTIVITY_WITH_TRIP_IDS:
+                activityFactMapper.setFishingActivitiesWithTripIds((Map<String, List<FishingActivityWithIdentifiers>>) additionalObject);
+                break;
+            default:
+                log.error("Non supported additiotan object!");
         }
     }
 
     @Override
-    public List<AbstractFact> generateAllFacts() {
+    public List<AbstractFact> generateAllFacts(){
         List<AbstractFact> facts = new ArrayList<>();
         facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
@@ -170,6 +181,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForGearProblems(facts, gearProblems);
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.addAll(activityFactMapper.generateFactsForFluxCharacteristics(activity.getSpecifiedFLUXCharacteristics(), SPECIFIED_FLUX_CHARACTERISTIC));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactsForFluxLocations(activity.getRelatedFLUXLocations()));

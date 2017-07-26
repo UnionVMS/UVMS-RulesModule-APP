@@ -11,8 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Created by kovian on 20/06/2017.
@@ -96,6 +95,7 @@ public class XPathConstants {
     public static final String VALUE_INDICATOR = "ValueIndicator";
     public static final String VALUE_MEASURE = "ValueMeasure";
     public static final String VALUE_CODE = "ValueCode";
+    public static final String VALUE_DATE_TIME = "ValueDateTime";
     public static final String SPECIFIED_FLAP_DOCUMENT = "SpecifiedFLAPDocument";
     public static final String VALUE_ID = "ValueID";
     public static final String FA_QUERY = "FAQuery";

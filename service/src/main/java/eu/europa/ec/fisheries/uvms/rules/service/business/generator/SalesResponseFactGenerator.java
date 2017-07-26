@@ -31,7 +31,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesRes
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationQualityAnalysisFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationResultDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -85,11 +84,6 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
     @Override
     public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {
         this.fluxResponseMessage = businessObject;
-    }
-
-    @Override
-    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
-
     }
 
     private List<Object> findObjectsToMapToFacts() {
