@@ -587,7 +587,7 @@ public class ActivityFactMapperTest {
 
         FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity,faReportDocument);
 
-        assertEquals(codeType.getValue(), faDiscardFact.getFaReportDocumentTypeCode());
+        assertEquals(codeType.getValue(), faDiscardFact.getFaReportDocumentTypeCode().getValue());
     }
 
     @Test
