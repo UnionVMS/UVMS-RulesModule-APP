@@ -446,11 +446,19 @@ public class ActivityFactMapperTest {
         fishingActivity.setTypeCode(codeType);
         fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
 
+        List<FishingActivity> relatedFishingActivities = new ArrayList<>();
+        FishingActivity relatedFishingActivity = new FishingActivity();
+        relatedFishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+        relatedFishingActivities.add(relatedFishingActivity);
+        fishingActivity.setRelatedFishingActivities(relatedFishingActivities);
+
         FaJointFishingOperationFact faJointFishingOperationFact = activityMapper.generateFactsForJointFishingOperation(fishingActivity, faReportDocument);
 
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFaReportDocumentTypeCode().getValue());
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFishingActivityTypeCode().getValue());
         assertEquals(fluxLocation, faJointFishingOperationFact.getRelatedFLUXLocations().get(0));
+        assertEquals(relatedFishingActivities.size(), faJointFishingOperationFact.getRelatedFishingActivities().size());
+        assertEquals(1, faJointFishingOperationFact.getRelatedFishingActivityFaCatch().size());
 
     }
 
@@ -783,5 +791,8 @@ public class ActivityFactMapperTest {
         assertEquals(expectedResult.size(), idTypes.size());
         assertEquals(expectedResult.iterator().next().getValue(), idTypes.iterator().next().getValue());
     }
+
+
+
 
 }
