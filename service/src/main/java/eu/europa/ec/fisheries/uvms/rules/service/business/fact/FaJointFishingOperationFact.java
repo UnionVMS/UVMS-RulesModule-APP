@@ -212,6 +212,12 @@ public class FaJointFishingOperationFact extends AbstractFact {
     }
 
 
+    /**
+     * Based on validationCondition value, specific attribute would be validated for FLUXDestination. This method do validation for FACatches with BFT species
+     * @param faCatchList
+     * @param validationCondition
+     * @return
+     */
     public boolean vallidationForDestinationFLUXLocation(List<FACatch> faCatchList, String validationCondition) {
         if (CollectionUtils.isEmpty(faCatchList)) {
             return false;
