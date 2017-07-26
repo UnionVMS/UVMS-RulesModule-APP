@@ -38,7 +38,8 @@ public class FaFishingOperationFact extends AbstractFact {
     private List<FLUXLocation> relatedFLUXLocations;
 
     private List<FishingActivity> relatedFishingActivities;
-    ;
+
+    private List<CodeType> fishingGearRoleCodes;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -110,5 +111,13 @@ public class FaFishingOperationFact extends AbstractFact {
         }
 
         return true;
+    }
+
+    public List<CodeType> getFishingGearRoleCodes() {
+        return fishingGearRoleCodes;
+    }
+
+    public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
+        this.fishingGearRoleCodes = fishingGearRoleCodes;
     }
 }
