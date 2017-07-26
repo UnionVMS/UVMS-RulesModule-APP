@@ -12,6 +12,7 @@ propertyNames
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
+import java.util.Arrays;
 
 template "@{tname}"
 
