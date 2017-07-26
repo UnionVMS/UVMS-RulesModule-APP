@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
@@ -15,7 +14,7 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
 
     protected DateTimeType valueDateTime;
 
-    protected IDType valueID;
+    protected IdType valueID;
 
     @Override
     public void setFactType() {
@@ -46,11 +45,11 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
         this.valueDateTime = valueDateTime;
     }
 
-    public IDType getValueID() {
+    public IdType getValueID() {
         return valueID;
     }
 
-    public void setValueID(IDType valueID) {
+    public void setValueID(IdType valueID) {
         this.valueID = valueID;
     }
 
