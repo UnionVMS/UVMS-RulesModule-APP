@@ -275,11 +275,11 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if(id == null){
+        if (id == null) {
             return true;
         }
         try {
-            if(!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())){
+            if (!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -296,13 +296,13 @@ public abstract class AbstractFact {
      * @param elementsToMatchList
      * @return
      */
-    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList){
-        if(CollectionUtils.isEmpty(controlList)){
+    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList) {
+        if (CollectionUtils.isEmpty(controlList)) {
             return false;
         }
-        if(CollectionUtils.isNotEmpty(elementsToMatchList)){
-            for(IdType idToMatch : elementsToMatchList){
-                if(controlList.contains(idToMatch)){
+        if (CollectionUtils.isNotEmpty(elementsToMatchList)) {
+            for (IdType idToMatch : elementsToMatchList) {
+                if (controlList.contains(idToMatch)) {
                     return true;
                 }
             }
@@ -317,7 +317,7 @@ public abstract class AbstractFact {
      * @param listSize
      * @return
      */
-    public boolean listSizeIs(List<?> list, int listSize){
+    public boolean listSizeIs(List<?> list, int listSize) {
         return !(isEmpty(list) || list.size() != listSize);
     }
 
@@ -541,7 +541,7 @@ public abstract class AbstractFact {
         int found = 0;
         for (CodeType codeType : codeTypes) {
             if (value.equals(codeType.getListId())) {
-                found ++;
+                found++;
             }
         }
 
@@ -803,14 +803,14 @@ public abstract class AbstractFact {
      * @param codeValue - This value will be checked in MDR list
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
-    public boolean isPresentInMDRList(String listName, String codeValue){
+    public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum == null){
-            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if(CollectionUtils.isNotEmpty(values)){
+        if (CollectionUtils.isNotEmpty(values)) {
             return values.contains(codeValue);
         }
         return false;
@@ -826,10 +826,10 @@ public abstract class AbstractFact {
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-         if(anEnum == null){
-             log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
-             return false;
-         }
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
 
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
@@ -855,8 +855,8 @@ public abstract class AbstractFact {
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if(anEnum == null){
-            log.error(THE_LIST +listName+ DOESN_T_EXIST_IN_MDR_MODULE);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
 
@@ -867,8 +867,8 @@ public abstract class AbstractFact {
         }
 
 
-        for(IdType codeType: valuesToMatch){
-            if(!codeListValues.contains(codeType.getValue()))
+        for (IdType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
 
@@ -989,23 +989,23 @@ public abstract class AbstractFact {
         return StringUtils.EMPTY;
     }
 
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip){
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
         boolean isMoreTheOneDeclaration = false;
-        if(MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds)){
+        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds)) {
             return isMoreTheOneDeclaration;
         }
-        for(IdType idType : specifiedFishingTripIds){
+        for (IdType idType : specifiedFishingTripIds) {
             List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
-            if(CollectionUtils.isEmpty(fishingActivityWithIdentifiers)){
+            if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
                 continue;
             }
             int declarationCounter = 0;
-            for(FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers){
-                if(FishingActivityType.DEPARTURE.name().equals(fishTrpWIdent.getFaType())){
+            for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
+                if (FishingActivityType.DEPARTURE.name().equals(fishTrpWIdent.getFaType())) {
                     declarationCounter++;
                 }
             }
-            if(declarationCounter > 1){
+            if (declarationCounter > 1) {
                 isMoreTheOneDeclaration = true;
                 break;
             }

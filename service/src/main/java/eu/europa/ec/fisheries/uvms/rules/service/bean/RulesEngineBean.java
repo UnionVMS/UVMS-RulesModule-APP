@@ -13,6 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
@@ -20,12 +26,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObje
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author padhyad
@@ -54,10 +54,10 @@ public class RulesEngineBean {
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
         mdrCacheServiceBean.loadMDRCache();
-		setAdditionalObjects(businessObjectType, businessObject, generator);
-		mdrCacheServiceBean.loadMDRCache();
-		facts.addAll(generator.generateAllFacts());
-		templateEngine.evaluateFacts(facts);
+        setAdditionalObjects(businessObjectType, businessObject, generator);
+        mdrCacheServiceBean.loadMDRCache();
+        facts.addAll(generator.generateAllFacts());
+        templateEngine.evaluateFacts(facts);
 		return facts;
     }
 
