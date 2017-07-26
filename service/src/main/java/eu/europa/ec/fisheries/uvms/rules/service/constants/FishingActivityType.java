@@ -22,6 +22,7 @@ public enum FishingActivityType {
     JOINT_FISHING_OPERATION,
     LANDING,
     TRANSHIPMENT,
+    DISCARD,
     RELOCATION,
     GEAR_SHOT,
     GEAR_RETRIEVAL,
