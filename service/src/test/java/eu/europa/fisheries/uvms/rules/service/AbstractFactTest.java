@@ -10,6 +10,24 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
@@ -36,24 +54,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -1093,42 +1093,42 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testContainsMoreThenOneDeclarationPerTrip(){
+    public void testContainsMoreThenOneDeclarationPerTrip() {
         List<IdType> specifiedFishingTripIds = new ArrayList<>();
-        Map<String, List< FishingActivityWithIdentifiers >> faTypesPerTrip = new HashMap<>();
+        Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip = new HashMap<>();
         boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
         assertFalse(result1);
 
-        specifiedFishingTripIds.add(new IdType("id123","someScheme"));
+        specifiedFishingTripIds.add(new IdType("id123", "someScheme"));
 
         boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
         assertFalse(result2);
 
-        faTypesPerTrip.put("",null);
+        faTypesPerTrip.put("", null);
 
         boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
         assertFalse(result3);
 
         List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
-        fishingActivityWithIdentifiers.add(new FishingActivityWithIdentifiers("","",""));
+        fishingActivityWithIdentifiers.add(new FishingActivityWithIdentifiers("", "", ""));
         faTypesPerTrip.clear();
-        faTypesPerTrip.put("id123",fishingActivityWithIdentifiers);
+        faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
 
         boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
         assertFalse(result4);
 
         List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
 
-        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
-        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
-        id123.add(new FishingActivityWithIdentifiers("","","DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
 
         boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
         assertTrue(result5);
     }
 
     @Test
-    public void testValueCodeTypeContainsAny(){
+    public void testValueCodeTypeContainsAny() {
         List<CodeType> codeTypes = new ArrayList<>();
         String[] valuesToMatch = new String[1];
         boolean result = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
@@ -1145,7 +1145,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListContainsAtLeastOneFromTheOtherList(){
+    public void testListContainsAtLeastOneFromTheOtherList() {
         List<IdType> controlList = new ArrayList<>();
         List<IdType> elementsToMatchList = new ArrayList<>();
         boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);

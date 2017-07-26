@@ -118,7 +118,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     @Override
-    public List<AbstractFact> generateAllFacts(){
+    public List<AbstractFact> generateAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
         facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
