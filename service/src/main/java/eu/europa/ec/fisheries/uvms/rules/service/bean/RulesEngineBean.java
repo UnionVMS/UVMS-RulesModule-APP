@@ -61,12 +61,13 @@ public class RulesEngineBean {
 		return facts;
     }
 
-    private void setAdditionalObjects(BusinessObjectType businessObjectType, Object businessObject, AbstractGenerator generator) {
-        if (BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)) {
-            generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
-            generator.setAdditionalValidationObject(activityService.getNonUniqueIdsList(businessObject), AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS);
-            generator.setAdditionalValidationObject(activityService.getFishingActivitiesForTrips(businessObject), AdditionalValidationObjectType.ACTIVITY_WITH_TRIP_IDS);
-        }
-    }
+	private void setAdditionalObjects(BusinessObjectType businessObjectType, Object businessObject, AbstractGenerator generator) {
+		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
+			//TODO : Uncomment when assets work correctly (Now assets has JMS issues - namely not closing connection)!!
+			// generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
+			generator.setAdditionalValidationObject(activityService.getNonUniqueIdsList(businessObject), AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS);
+			generator.setAdditionalValidationObject(activityService.getFishingActivitiesForTrips(businessObject), AdditionalValidationObjectType.ACTIVITY_WITH_TRIP_IDS);
+		}
+	}
 
 }

@@ -16,19 +16,19 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.io.FileInputStream;
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
@@ -81,6 +81,26 @@ public class RulesActivityServiceBeanTest {
     }
 
     @Test
+    public void testGetFishingActivitiesForTripsNull() throws MessageException {
+        Whitebox.setInternalState(responseMsg, "text", new SimpleString(getResponseStr2()));
+        Mockito.doReturn("id").when(producer).sendDataSourceMessage(Mockito.any(String.class), Mockito.any(DataSourceQueue.class));
+        Mockito.doReturn(responseMsg).when(consumer).getMessage(Mockito.any(String.class), Mockito.any(Class.class));
+
+        Map<String, List<FishingActivityWithIdentifiers>> isUnique = activityServiceBean.getFishingActivitiesForTrips(null);
+    }
+
+    @Test
+    public void testGetFishingActivitiesForTrips() throws MessageException {
+        Whitebox.setInternalState(responseMsg, "text", new SimpleString(getResponseStr2()));
+        Mockito.doReturn("SomeCorrId").when(producer).sendDataSourceMessage(Mockito.any(String.class), Mockito.any(DataSourceQueue.class));
+        Mockito.doReturn(responseMsg).when(consumer).getMessage(Mockito.any(String.class), Mockito.any(Class.class));
+
+        Map<String, List<FishingActivityWithIdentifiers>> respList = activityServiceBean.getFishingActivitiesForTrips(getMockedMessage());
+
+        assertNotNull(respList);
+    }
+
+    @Test
     public void testIsGetNonUniqueIdsListNull() throws MessageException {
         Mockito.doReturn("id").when(producer).sendDataSourceMessage(Mockito.any(String.class), Mockito.any(DataSourceQueue.class));
         Mockito.doReturn(responseMsg).when(consumer).getMessage(Mockito.any(String.class), Mockito.any(Class.class));
@@ -128,5 +148,10 @@ public class RulesActivityServiceBeanTest {
                 "        <ids/>\n" +
                 "    </activityUniquinessList>\n" +
                 "</ns2:GetNonUniqueIdsResponse>";
+    }
+
+    public String getResponseStr2() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<ns2:GetFishingActivitiesForTripResponse xmlns:ns2=\"http://europa.eu/ec/fisheries/uvms/activity/model/schemas\"/>\n";
     }
 }
