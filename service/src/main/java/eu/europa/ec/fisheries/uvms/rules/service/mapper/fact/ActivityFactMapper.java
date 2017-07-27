@@ -85,6 +85,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
@@ -1237,14 +1238,37 @@ public class ActivityFactMapper {
         return faRelocationFact;
     }
 
-    public FaDiscardFact generateFactsForDiscard(FishingActivity fishingActivity) {
+    public FaDiscardFact generateFactsForDiscard(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
         if (fishingActivity == null) {
             return null;
         }
 
         FaDiscardFact faDiscardFact = new FaDiscardFact();
+        String partialXpath = xPathUtil.getValue();
 
-        faDiscardFact.setTypeCode(mapFishingActivityTypeCodeValueToString(fishingActivity));
+
+        if (fishingActivity != null) {
+
+            if (fishingActivity.getRelatedFLUXLocations() != null) {
+                faDiscardFact.setRelatedFLUXLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faDiscardFact, "relatedFLUXLocations");
+
+                faDiscardFact.setFluxLocationTypeCode(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,TYPE_CODE).storeInRepo(faDiscardFact, "fluxLocationTypeCode");
+            }
+
+            if(CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())){
+                faDiscardFact.setSpecifiedFACatchTypeCode(getFishingActivityFaCatchTypeCodes(Arrays.asList(fishingActivity)));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH,TYPE_CODE).storeInRepo(faDiscardFact, "specifiedFACatchTypeCode");
+            }
+
+        }
+
+        if (faReportDocument != null) {
+            faDiscardFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faDiscardFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+        }
+
 
         return faDiscardFact;
     }
