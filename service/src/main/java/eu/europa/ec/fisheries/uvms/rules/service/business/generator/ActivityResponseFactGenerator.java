@@ -86,7 +86,6 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.add(activityFactMapper.generateFactsForValidationQualityAnalysis(validationQualityAnalysis));
 
-
                 index++;
             }
         }
@@ -102,7 +101,8 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
         this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
     }
 
-    @Override public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
+    @Override
+    public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
         // Set internal Validation Object if needed.
     }
 

@@ -101,6 +101,7 @@ public class ActivityFactMapper {
     public static final String VALUE_MEASURE_PROP = "valueMeasure";
     public static final String VALUE_CODE_PROP = "valueCode";
     public static final String VALUE_QUANTITY_PROP = "valueQuantity";
+
     private XPathStringWrapper xPathUtil;
 
     private List<IdTypeWithFlagState> assetList;
@@ -154,7 +155,7 @@ public class ActivityFactMapper {
         faReportDocumentFact.setUniqueIds(getIds(faReportDocument.getRelatedFLUXReportDocument()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "uniqueIds");
 
-        faReportDocumentFact.setRelatedFLUXReportDocumentReferencedID(mapToCodeType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
+        faReportDocumentFact.setRelatedFLUXReportDocumentReferencedID(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact, "relatedFLUXReportDocumentReferencedID");
 
         faReportDocumentFact.setRelatedFLUXReportDocumentIDs(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentIDS_(faReportDocument)));
@@ -333,7 +334,7 @@ public class ActivityFactMapper {
         fluxFaReportMessageFact.setIds(mapToIdType(fluxfaReportMessageFLUXReportDocumentIDS(fluxfaReportMessage)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, ID).storeInRepo(fluxFaReportMessageFact, "ids");
 
-        fluxFaReportMessageFact.setReferencedID(mapToCodeType(fluxfaReportMessageFLUXReportDocumentReferencedID(fluxfaReportMessage)));
+        fluxFaReportMessageFact.setReferencedID(mapToIdType(fluxfaReportMessageFLUXReportDocumentReferencedID(fluxfaReportMessage)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(fluxFaReportMessageFact, "referencedID");
 
         fluxFaReportMessageFact.setOwnerFluxPartyIds(mapToIdType(fluxfaReportMessageFLUXReportDocumentOwnerFLUXPartyIDS(fluxfaReportMessage)));
@@ -390,7 +391,7 @@ public class ActivityFactMapper {
 
         List<ContactParty> specifiedContactParties = vesselTransportMean.getSpecifiedContactParties();
 
-        vesselTransportMeansFact.setRegistrationVesselCountryId(mapToCodeType(vesselTransportMeanRegistrationVesselCountryID(vesselTransportMean)));
+        vesselTransportMeansFact.setRegistrationVesselCountryId(mapToIdType(vesselTransportMeanRegistrationVesselCountryID(vesselTransportMean)));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(REGISTRATION_VESSEL_COUNTRY, ID).storeInRepo(vesselTransportMeansFact, "registrationVesselCountryId");
 
         vesselTransportMeansFact.setSpecifiedContactPersons(mapToContactPersonList(specifiedContactParties));
@@ -765,13 +766,13 @@ public class ActivityFactMapper {
 
         FluxLocationFact fluxLocationFact = new FluxLocationFact();
 
-        fluxLocationFact.setId(mapToCodeType(fluxLocation.getID()));
+        fluxLocationFact.setId(mapToIdType(fluxLocation.getID()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(fluxLocationFact, "id");
 
         fluxLocationFact.setApplicableFLUXCharacteristicTypeCode(getApplicableFLUXCharacteristicsTypeCode(fluxLocation.getApplicableFLUXCharacteristics()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(fluxLocationFact, "applicableFLUXCharacteristicTypeCode");
 
-        fluxLocationFact.setCountryID(mapToCodeType(fluxLocation.getCountryID()));
+        fluxLocationFact.setCountryID(mapToIdType(fluxLocation.getCountryID()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(COUNTRY_ID).storeInRepo(fluxLocationFact, "countryID");
 
         fluxLocationFact.setTypeCode(mapToCodeType(fluxLocation.getTypeCode()));
@@ -1271,7 +1272,7 @@ public class ActivityFactMapper {
 
         FaQueryFact faQueryFact = new FaQueryFact();
 
-        faQueryFact.setId(mapToCodeType(faQuery.getID()));
+        faQueryFact.setId(mapToIdType(faQuery.getID()));
         faQueryFact.setTypeCode(mapToCodeType(faQuery.getTypeCode()));
         faQueryFact.setSubmittedDateTime(getDate(faQuery.getSubmittedDateTime()));
 
@@ -1372,8 +1373,28 @@ public class ActivityFactMapper {
 
         FaResponseFact faResponseFact = new FaResponseFact();
 
-        faResponseFact.setReferencedID(fluxResponseMessageFLUXResponseDocumentReferencedIDValue(fluxResponseMessage));
-        xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
+        if(fluxResponseMessage !=null && fluxResponseMessage.getFLUXResponseDocument()!=null){
+            FLUXResponseDocument fluxResponseDocument=fluxResponseMessage.getFLUXResponseDocument();
+
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
+            faResponseFact.setReferencedID(mapToIdType(fluxResponseDocument.getReferencedID()));
+
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, ID).storeInRepo(faResponseFact, "ids");
+            faResponseFact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
+
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
+            faResponseFact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
+
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
+            faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
+
+            if(fluxResponseDocument.getRespondentFLUXParty()!=null){
+                xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
+                faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
+            }
+
+        }
+
 
         return faResponseFact;
     }
@@ -1384,6 +1405,12 @@ public class ActivityFactMapper {
         }
 
         ValidationResultDocumentFact validationResultDocumentFact = new ValidationResultDocumentFact();
+        String partialXpath = xPathUtil.getValue();
+
+        if(validationResultDocument!=null) {
+            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(validationResultDocumentFact, "validatorID");
+            validationResultDocumentFact.setValidatorID(mapToIdType(validationResultDocument.getValidatorID()));
+        }
 
         return validationResultDocumentFact;
     }
@@ -1394,6 +1421,24 @@ public class ActivityFactMapper {
         }
 
         ValidationQualityAnalysisFact qualityAnalysisFact = new ValidationQualityAnalysisFact();
+        String partialXpath = xPathUtil.getValue();
+        if(validationQualityAnalysis!=null){
+
+            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(qualityAnalysisFact, "id");
+            qualityAnalysisFact.setId(mapToIdType(validationQualityAnalysis.getID()));
+
+            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(qualityAnalysisFact, "typeCode");
+            qualityAnalysisFact.setTypeCode(mapToCodeType(validationQualityAnalysis.getTypeCode()));
+
+            xPathUtil.appendWithoutWrapping(partialXpath).append(LEVEL_CODE).storeInRepo(qualityAnalysisFact, "levelCode");
+            qualityAnalysisFact.setLevelCode(mapToCodeType(validationQualityAnalysis.getLevelCode()));
+
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESULT).storeInRepo(qualityAnalysisFact, "results");
+            qualityAnalysisFact.setResults(validationQualityAnalysis.getResults());
+
+            xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ITEM).storeInRepo(qualityAnalysisFact, "referencedItems");
+            qualityAnalysisFact.setReferencedItems(validationQualityAnalysis.getReferencedItems());
+        }
 
         return qualityAnalysisFact;
     }
@@ -1413,7 +1458,7 @@ public class ActivityFactMapper {
     }
 
 
-    public IdType mapToCodeType(IDType idType) {
+    public IdType mapToIdType(IDType idType) {
         if (idType == null) {
             return null;
         }
@@ -1434,7 +1479,7 @@ public class ActivityFactMapper {
 
         List<IdType> list_ = new ArrayList<>();
         for (IDType iDType : idTypes) {
-            list_.add(mapToCodeType(iDType));
+            list_.add(mapToIdType(iDType));
         }
 
         return list_;

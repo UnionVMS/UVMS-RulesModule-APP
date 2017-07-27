@@ -14,11 +14,61 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.util.List;
 
 /**
  * Created by sanera on 27/07/2017.
  */
 public class ValidationQualityAnalysisFact extends AbstractFact {
+
+    private IdType id;
+    private CodeType levelCode;
+    private CodeType typeCode;
+    private List<TextType> results;
+    private List<TextType> referencedItems;
+
+    public IdType getId() {
+        return id;
+    }
+
+    public void setId(IdType id) {
+        this.id = id;
+    }
+
+    public CodeType getLevelCode() {
+        return levelCode;
+    }
+
+    public void setLevelCode(CodeType levelCode) {
+        this.levelCode = levelCode;
+    }
+
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public List<TextType> getResults() {
+        return results;
+    }
+
+    public void setResults(List<TextType> results) {
+        this.results = results;
+    }
+
+    public List<TextType> getReferencedItems() {
+        return referencedItems;
+    }
+
+    public void setReferencedItems(List<TextType> referencedItems) {
+        this.referencedItems = referencedItems;
+    }
+
     @Override
     public void setFactType() {
         this.factType = FactType.FA_VALIDATION_QUALITY_ANALYSIS;

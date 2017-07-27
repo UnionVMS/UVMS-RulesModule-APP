@@ -25,20 +25,54 @@ import java.util.List;
 public class FaResponseFact extends AbstractFact {
 
     private List<IdType> ids;
-    private String referencedID;
+    private IdType referencedID;
     private CodeType responseCode;
     private Date creationDateTime;
+    private List<IdType> fluxPartyIds;
 
-    public String getReferencedID() {
+
+    public IdType getReferencedID() {
         return referencedID;
     }
 
-    public void setReferencedID(String referencedID) {
+    public void setReferencedID(IdType referencedID) {
         this.referencedID = referencedID;
     }
 
     public FaResponseFact() {
         setFactType();
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public CodeType getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(CodeType responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public List<IdType> getFluxPartyIds() {
+        return fluxPartyIds;
+    }
+
+    public void setFluxPartyIds(List<IdType> fluxPartyIds) {
+        this.fluxPartyIds = fluxPartyIds;
     }
 
     @Override

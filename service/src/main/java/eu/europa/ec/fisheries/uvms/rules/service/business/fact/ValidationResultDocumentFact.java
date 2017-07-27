@@ -20,6 +20,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
  */
 public class ValidationResultDocumentFact  extends AbstractFact {
 
+    private IdType validatorID;
+
+    public IdType getValidatorID() {
+        return validatorID;
+    }
+
+    public void setValidatorID(IdType validatorID) {
+        this.validatorID = validatorID;
+    }
+
     @Override
     public void setFactType() {
         this.factType = FactType.FA_VALIDATION_RESULT_DOCUMENT;

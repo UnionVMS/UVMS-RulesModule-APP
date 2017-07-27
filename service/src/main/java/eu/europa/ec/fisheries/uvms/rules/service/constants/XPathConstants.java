@@ -95,4 +95,10 @@ public class XPathConstants {
     public static final String VALUE_CODE = "ValueCode";
     public static final String RELATED_VALIDATION_RESULT_DOCUMENT ="RelatedValidationResultDocument";
     public static final String RELATED_VALIDATION_QUALITY_ANALYSIS ="RelatedValidationQualityAnalysis";
+    public static final String VALIDATOR_ID = "ValidatorID";
+    public static final String LEVEL_CODE = "LevelCode";
+    public static final String RESULT = "Result";
+    public static final String REFERENCED_ITEM = "ReferencedItem";
+    public static final String RESPONSE_CODE = "ResponseCode";
+    public static final String RESPONDENT_FLUX_PARTY = "RespondentFLUXParty";
 }
