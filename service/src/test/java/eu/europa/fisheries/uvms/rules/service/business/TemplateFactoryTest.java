@@ -10,13 +10,13 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.fisheries.uvms.rules.service.business;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import org.drools.core.util.StringUtils;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kovian on 27/06/2017.
@@ -26,9 +26,6 @@ public class TemplateFactoryTest {
     @Test
     public void testAllValuesAreInTemplate(){
         for(FactType factType : FactType.values()){
-            if(factType.name().contains("SALES")){
-                continue;
-            }
             String templateFileName = TemplateFactory.getTemplateFileName(factType);
             System.out.println("FactType : ["+factType+"]  Template : [[" + templateFileName + "]]");
             assertFalse(StringUtils.isEmpty(templateFileName));

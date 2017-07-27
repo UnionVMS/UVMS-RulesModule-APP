@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -25,7 +24,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
@@ -101,9 +99,6 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
         this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
     }
 
-    @Override
-    public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
-        // Set internal Validation Object if needed.
-    }
+
 
 }

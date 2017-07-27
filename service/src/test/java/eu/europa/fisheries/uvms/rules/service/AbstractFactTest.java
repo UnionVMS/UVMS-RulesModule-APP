@@ -10,11 +10,36 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
@@ -23,13 +48,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -315,6 +339,7 @@ public class AbstractFactTest {
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
     }
 
+
     @Test
     public void testIsPositiveShouldReturnTrueWithNegativeValue() {
         assertTrue(fact.isPositive(new BigDecimal("-10")));
@@ -347,14 +372,14 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAnySingle() {
         CodeType typeCode = RuleTestHelper.getCodeType("PS", "GEAR_TYPE");
-        assertFalse(fact.listIdContainsAny(typeCode, "GEAR_TYPE"));
+        assertFalse(fact.listIdNotContains(typeCode, "GEAR_TYPE"));
     }
 
     @Test
     public void testListIdContainsAnyMultiple() {
         List<CodeType> typeCodes = Arrays.asList(RuleTestHelper.getCodeType("PS", "GEAR_TYPE"), RuleTestHelper.getCodeType("LT", "VESSEL_ACTIVITY"));
 
-        assertFalse(fact.listIdContainsAny(typeCodes, "GEAR_TYPE"));
+        assertFalse(fact.listIdNotContains(typeCodes, "GEAR_TYPE"));
     }
 
     @Test
@@ -611,14 +636,14 @@ public class AbstractFactTest {
         CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
-        boolean result = fact.listIdContainsAny(codeTypes, "CFR");
+        boolean result = fact.listIdNotContains(codeTypes, "CFR");
         assertFalse(result);
 
-        result = fact.listIdContainsAny(codeTypes, null);
+        result = fact.listIdNotContains(codeTypes, null);
         assertTrue(result);
 
         CodeType newCodeType = RuleTestHelper.getCodeType("value1", "CFR");
-        result = fact.listIdContainsAny(codeTypes, "ABC");
+        result = fact.listIdNotContains(codeTypes, "ABC");
         assertTrue(result);
     }
 
@@ -931,9 +956,211 @@ public class AbstractFactTest {
 
     @Test
     public void testCodeTypeValuesUniqueShouldReturnShouldReturnFalseWithNull() {
-
         assertFalse(fact.codeTypeValuesUnique(null));
+    }
+
+    @Test
+    public void testListContainsEitherThen() {
+        List<String> activityTypes = new ArrayList<String>() {{
+            add("YEAH");
+            add("NO");
+            add("BLAH");
+        }};
+
+        final boolean contains = fact.listContainsEitherThen(activityTypes, "YEAH", "BLAH");
+        assertTrue(contains);
+
+        final boolean contains2 = fact.listContainsEitherThen(activityTypes, "NO", "BLAH", "YEAH");
+        assertFalse(contains2);
+
+        final boolean contains3 = fact.listContainsEitherThen(null, "NO", "BLAH", "YEAH");
+        assertFalse(contains3);
+
+        final boolean contains4 = fact.listContainsEitherThen(activityTypes);
+        assertFalse(contains4);
+
 
     }
 
+    @Test
+    public void testDateComparison() {
+        Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
+        Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
+        final boolean contains1 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        System.out.println("List contains sameDate [true]: " + contains1);
+        assertTrue(contains1);
+
+        date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
+        date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 12).getTime();
+        date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
+        date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
+        final boolean contains2 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        System.out.println("List contains sameDate [false]: " + contains2);
+        assertFalse(contains2);
+
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithEmptyList() {
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullList() {
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(null, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
+        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+
+        assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
+    }
+
+    @Test
+    public void testListIdNotContainsEmptyList(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
+    }
+
+    @Test
+    public void testListIdNotContainsHappy(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 1));
+    }
+
+    @Test
+    public void testListIdNotContainsHappyWithMoreHits(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        CodeType codeType2 = new CodeType();
+        codeType2.setListId("TYPECODE");
+        codeTypes.add(codeType2);
+
+        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+    }
+
+    @Test
+    public void testListIdNotContainsHappyWithMoreHits2(){
+
+        List<CodeType> codeTypes = new ArrayList<>();
+        CodeType codeType = new CodeType();
+        codeType.setListId("TYPECODE");
+        codeTypes.add(codeType);
+
+        assertTrue(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+    }
+
+    @Test
+    public void testIsGreaterThanZero(){
+        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1),"km"));
+        assertTrue(fact.isGreaterThanZero(measureTypeList));
+    }
+
+
+    @Test
+    public void testGetDataTypeForMDRListNullCheck(){
+       String result= fact.getDataTypeForMDRList("TEST",null);
+        assertEquals("",result);
+    }
+
+    @Test
+    public void testContainsMoreThenOneDeclarationPerTrip() {
+        List<IdType> specifiedFishingTripIds = new ArrayList<>();
+        Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip = new HashMap<>();
+        boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result1);
+
+        specifiedFishingTripIds.add(new IdType("id123", "someScheme"));
+
+        boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result2);
+
+        faTypesPerTrip.put("", null);
+
+        boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result3);
+
+        List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
+        fishingActivityWithIdentifiers.add(new FishingActivityWithIdentifiers("", "", ""));
+        faTypesPerTrip.clear();
+        faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
+
+        boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result4);
+
+        List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
+
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+
+        boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertTrue(result5);
+    }
+
+    @Test
+    public void testValueCodeTypeContainsAny() {
+        List<CodeType> codeTypes = new ArrayList<>();
+        String[] valuesToMatch = new String[1];
+        boolean result = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result);
+
+        codeTypes.add(new CodeType("one"));
+        valuesToMatch[0] = "two";
+        boolean result2 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result2);
+
+        valuesToMatch[0] = "one";
+        boolean result3 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertFalse(result3);
+    }
+
+    @Test
+    public void testListContainsAtLeastOneFromTheOtherList() {
+        List<IdType> controlList = new ArrayList<>();
+        List<IdType> elementsToMatchList = new ArrayList<>();
+        boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result);
+
+        controlList.add(new IdType("123"));
+        boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result2);
+
+        elementsToMatchList.add(new IdType("234"));
+        boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result3);
+
+        elementsToMatchList.add(new IdType("123"));
+        boolean result4 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertTrue(result4);
+    }
 }

@@ -10,30 +10,29 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.*;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import lombok.SneakyThrows;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
+import lombok.*;
+import org.apache.commons.io.*;
+import org.junit.*;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import javax.xml.datatype.*;
+import java.io.*;
+import java.math.*;
+import java.text.*;
 import java.util.*;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
+import static org.apache.commons.collections.CollectionUtils.*;
 import static org.junit.Assert.*;
 
 /**
@@ -62,6 +61,9 @@ public class ActivityFactMapperTest {
     private FLUXGeographicalCoordinate fluxGeographicalCoordinate;
     private List<FLUXLocation> specifiedFluxLocation;
     private List<FACatch> specifiedFACatch;
+    private FAQuery faQuery;
+    private List<FAQueryParameter> faQueryParameterList;
+    private List<FLAPDocument> flapDocumentList;
 
     ActivityFactMapper activityMapper = new ActivityFactMapper(new XPathStringWrapper());
 
@@ -153,6 +155,25 @@ public class ActivityFactMapperTest {
         specifiedFACatch.add(faCatch);
 
         fluxFaTestMessage = loadTestData();
+
+        faQueryParameterList = new ArrayList<>();
+        FAQueryParameter faQueryParameter = new FAQueryParameter();
+        faQueryParameter.setTypeCode(codeType);
+        faQueryParameter.setValueCode(codeType);
+        faQueryParameter.setValueDateTime(dateTimeType);
+        faQueryParameter.setValueID(idType);
+        faQueryParameterList.add(faQueryParameter);
+
+
+        faQuery = new FAQuery();
+        faQuery.setID(idType);
+        faQuery.setSimpleFAQueryParameters(faQueryParameterList);
+        faQuery.setSpecifiedDelimitedPeriod(delimitedPeriod);
+        faQuery.setSubmittedDateTime(dateTimeType);
+        faQuery.setTypeCode(codeType);
+
+        flapDocumentList = new ArrayList<>();
+        flapDocumentList.add(RuleTestHelper.getFLAPDocument());
 
     }
 
@@ -425,11 +446,19 @@ public class ActivityFactMapperTest {
         fishingActivity.setTypeCode(codeType);
         fishingActivity.setRelatedFLUXLocations(Collections.singletonList(fluxLocation));
 
+        List<FishingActivity> relatedFishingActivities = new ArrayList<>();
+        FishingActivity relatedFishingActivity = new FishingActivity();
+        relatedFishingActivity.setSpecifiedFACatches(Collections.singletonList(faCatch));
+        relatedFishingActivities.add(relatedFishingActivity);
+        fishingActivity.setRelatedFishingActivities(relatedFishingActivities);
+
         FaJointFishingOperationFact faJointFishingOperationFact = activityMapper.generateFactsForJointFishingOperation(fishingActivity, faReportDocument);
 
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFaReportDocumentTypeCode().getValue());
         assertEquals(codeType.getValue(), faJointFishingOperationFact.getFishingActivityTypeCode().getValue());
         assertEquals(fluxLocation, faJointFishingOperationFact.getRelatedFLUXLocations().get(0));
+        assertEquals(relatedFishingActivities.size(), faJointFishingOperationFact.getRelatedFishingActivities().size());
+        assertEquals(1, faJointFishingOperationFact.getRelatedFishingActivityFaCatch().size());
 
     }
 
@@ -487,7 +516,7 @@ public class ActivityFactMapperTest {
 
         assertEquals(codeType.getValue(), faQueryFact.getTypeCode().getValue());
         assertEquals(idType.getValue(), faQueryFact.getId().getValue());
-        // assertEquals(date, faQueryFact.getSubmittedDateTime().getStartDateTimes());
+        assertEquals(date, faQueryFact.getSubmittedDateTime());
 
     }
 
@@ -551,12 +580,14 @@ public class ActivityFactMapperTest {
     public void testGenerateFactsForDiscard() {
 
         FishingActivity fishingActivity = new FishingActivity();
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setTypeCode(codeType);
 
         fishingActivity.setTypeCode(codeType);
 
-        FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity);
+        FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity,faReportDocument);
 
-        assertEquals(codeType.getValue(), faDiscardFact.getTypeCode());
+        assertEquals(codeType.getValue(), faDiscardFact.getFaReportDocumentTypeCode().getValue());
     }
 
     @Test
@@ -565,9 +596,9 @@ public class ActivityFactMapperTest {
         FLUXCharacteristic characteristic = new FLUXCharacteristic();
         characteristic.setTypeCode(codeType);
 
-        List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(Arrays.asList(characteristic));
+        List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(Arrays.asList(characteristic), SPECIFIED_FLUX_CHARACTERISTIC);
 
-        assertEquals(codeType.getValue(), fluxCharacteristicsFacts.get(0).getTypeCode());
+        assertEquals(codeType.getValue(), fluxCharacteristicsFacts.get(0).getTypeCode().getValue());
     }
 
     @Test
@@ -583,22 +614,20 @@ public class ActivityFactMapperTest {
 
     @Test
     public void testGenerateFactsForGearProblem() {
-
         GearProblem gearProblem = new GearProblem();
         gearProblem.setTypeCode(codeType);
 
         GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(gearProblem);
 
-        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode());
-
+        assertEquals(codeType.getValue(), gearProblemFact.getTypeCode().getValue());
     }
 
     @Test
     public void testNullParameters() {
 
         final List<VesselStorageCharacteristicsFact> vesselStorageCharacteristicsFacts = activityMapper.generateFactsForVesselStorageCharacteristics(null);
-        final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null);
-        final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null);
+        final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null, null);
+        final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null,null);
         final FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(null);
         final VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = activityMapper.generateFactsForVesselStorageCharacteristic(null);
         final FaArrivalFact faArrivalFact = activityMapper.generateFactsForDeclarationOfArrival(null, null);
@@ -619,7 +648,7 @@ public class ActivityFactMapperTest {
 
 
         final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
-        final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxReportMessage(null);
+        final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
@@ -634,24 +663,24 @@ public class ActivityFactMapperTest {
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
         final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null);
-        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristics(null);
+        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null);
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
         final FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = activityMapper.generateFactsForNotificationOfTranshipment(null, null);
 
-        assertTrue(CollectionUtils.isEmpty(vesselStorageCharacteristicsFacts));
-        assertTrue(CollectionUtils.isEmpty(fluxCharacteristicsFacts));
-        assertTrue(CollectionUtils.isEmpty(faCatchFacts));
-        assertTrue(CollectionUtils.isEmpty(gearList));
-        assertTrue(CollectionUtils.isEmpty(fishingTripFacts));
-        assertTrue(CollectionUtils.isEmpty(gearCharacteristicsFacts));
-        assertTrue(CollectionUtils.isEmpty(fishingActivityFacts));
-        assertTrue(CollectionUtils.isEmpty(vesselTransportMeansFacts));
-        assertTrue(CollectionUtils.isEmpty(structuredAddressFacts));
-        assertTrue(CollectionUtils.isEmpty(fishingGearFacts));
-        assertTrue(CollectionUtils.isEmpty(faReportDocumentFacts));
-        assertTrue(CollectionUtils.isEmpty(gearProblemFacts));
-        assertTrue(CollectionUtils.isEmpty(fluxLocationFacts));
+        assertTrue(isEmpty(vesselStorageCharacteristicsFacts));
+        assertTrue(isEmpty(fluxCharacteristicsFacts));
+        assertTrue(isEmpty(faCatchFacts));
+        assertTrue(isEmpty(gearList));
+        assertTrue(isEmpty(fishingTripFacts));
+        assertTrue(isEmpty(gearCharacteristicsFacts));
+        assertTrue(isEmpty(fishingActivityFacts));
+        assertTrue(isEmpty(vesselTransportMeansFacts));
+        assertTrue(isEmpty(structuredAddressFacts));
+        assertTrue(isEmpty(fishingGearFacts));
+        assertTrue(isEmpty(faReportDocumentFacts));
+        assertTrue(isEmpty(gearProblemFacts));
+        assertTrue(isEmpty(fluxLocationFacts));
 
         assertNull(faDiscardFact);
         assertNull(faRelocationFact);
@@ -693,16 +722,6 @@ public class ActivityFactMapperTest {
     }
 
     @Test
-    public void tesFaQueryParameterTypeCodeValue() {
-
-        FAQueryParameter faQueryParameter = new FAQueryParameter();
-        faQueryParameter.setTypeCode(codeType);
-        String s = activityMapper.faQueryParameterTypeCodeValue(faQueryParameter);
-
-        assertEquals(codeType.getValue(), s);
-    }
-
-    @Test
     public void testMapToMeasureType() {
 
         List<MeasureType> measureTypeList = new ArrayList<>();
@@ -726,6 +745,7 @@ public class ActivityFactMapperTest {
         assertEquals(idType.getValue(), idType.getValue());
     }
 
+    @Test //FIXME
     public void testNullInsideObjects() {
         FishingActivity faAct = new FishingActivity();
         final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct);
@@ -735,5 +755,46 @@ public class ActivityFactMapperTest {
         }};
         activityMapper.generateFactsForGearProblems(gearList);
     }
+
+    @Test
+    public void testGenerateFactsForFaQueryParametersWithNull() {
+        List<FaQueryParameterFact> faQueryParameterFacts =
+                activityMapper.generateFactsForFaQueryParameters(null, null);
+
+        assertTrue(isEmpty(faQueryParameterFacts));
+    }
+
+    @Test
+    public void testGenerateFactsForFaQueryParametersHappy() {
+
+        List<FaQueryParameterFact> faQueryParameterFacts =
+                activityMapper.generateFactsForFaQueryParameters(faQueryParameterList, faQuery);
+
+        FaQueryParameterFact fact = faQueryParameterFacts.get(0);
+
+        assertEquals(codeType.getValue(), fact.getFaQueryTypeCode().getValue());
+        assertEquals(codeType.getListID(), fact.getFaQueryTypeCode().getListId());
+        assertEquals(codeType.getValue(), fact.getTypeCode().getValue());
+        assertEquals(codeType.getListID(), fact.getTypeCode().getListId());
+        assertEquals(codeType.getListID(), fact.getValueCode().getListId());
+        assertEquals(codeType.getValue(), fact.getValueCode().getValue());
+        assertEquals(idType.getSchemeID(), fact.getValueID().getSchemeId());
+        assertEquals(idType.getValue(), fact.getValueID().getValue());
+
+    }
+
+    @Test
+    public void testGetFLAPDocumentIds() {
+        List<IdType> idTypes = activityMapper.getFLAPDocumentIds(flapDocumentList);
+
+        List<IdType> expectedResult = new ArrayList<>();
+        expectedResult.add(RuleTestHelper.getIdType("value", "FLAP_DOCUMENT_ID"));
+
+        assertEquals(expectedResult.size(), idTypes.size());
+        assertEquals(expectedResult.iterator().next().getValue(), idTypes.iterator().next().getValue());
+    }
+
+
+
 
 }

@@ -8,10 +8,10 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.ec.fisheries.uvms.rules.service.constants;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Created by kovian on 20/06/2017.
@@ -85,6 +85,8 @@ public class XPathConstants {
     public static final String USED_FISHING_GEAR = "UsedFishingGear";
     public static final String FLUX_RESPONSE_DOCUMENT = "FLUXResponseDocument";
     public static final String FLUX_RESPONSE_MESSAGE = "FLUXResponseMessage";
+    public static final String RECOVERY_MEASURE_CODE = "RecoveryMeasureCode";
+    public static final String AFFECTED_QUANTITY = "AffectedQuantity";
     public static final String AVERAGE_WEIGHT_MEASURE = "AverageWeightMeasure";
     public static final String REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE = "RegionalFisheriesManagementOrganizationCode";
     public static final String SOURCE_VESSEL_STORAGE_CHARACTERISTIC = "SourceVesselStorageCharacteristic";
@@ -93,6 +95,13 @@ public class XPathConstants {
     public static final String VALUE_INDICATOR = "ValueIndicator";
     public static final String VALUE_MEASURE = "ValueMeasure";
     public static final String VALUE_CODE = "ValueCode";
+    public static final String VALUE_DATE_TIME = "ValueDateTime";
+    public static final String SPECIFIED_FLAP_DOCUMENT = "SpecifiedFLAPDocument";
+    public static final String VALUE_ID = "ValueID";
+    public static final String FA_QUERY = "FAQuery";
+    public static final String SUBMITTED_DATE_TIME = "SubmittedDateTime";
+    public static final String SUBMITTER_FLUX_PARTY = "SubmitterFLUXParty";
+    public static final String SIMPLE_FA_QUERY_PARAMETER = "SimpleFAQueryParameter";
     public static final String RELATED_VALIDATION_RESULT_DOCUMENT ="RelatedValidationResultDocument";
     public static final String RELATED_VALIDATION_QUALITY_ANALYSIS ="RelatedValidationQualityAnalysis";
     public static final String VALIDATOR_ID = "ValidatorID";

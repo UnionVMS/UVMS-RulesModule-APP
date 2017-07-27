@@ -13,24 +13,86 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.schema.rules.template.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+
+import java.util.*;
 
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class FluxCharacteristicsFact extends AbstractFact {
 
-    private String typeCode;
+    private CodeType typeCode;
 
-    public String getTypeCode() {
+    private MeasureType valueMeasure;
+
+    private Date valueDateTime;
+
+    private IndicatorType valueIndicator;
+
+    private CodeType valueCode;
+
+    private List<TextType> values;
+
+    private QuantityType valueQuantity;
+
+    public CodeType getTypeCode() {
         return typeCode;
     }
 
-    public void setTypeCode(String typeCode) {
+    public void setTypeCode(CodeType typeCode) {
         this.typeCode = typeCode;
     }
 
+    public MeasureType getValueMeasure() {
+        return valueMeasure;
+    }
+
+    public void setValueMeasure(MeasureType valueMeasure) {
+        this.valueMeasure = valueMeasure;
+    }
+
+    public Date getValueDateTime() {
+        return valueDateTime;
+    }
+
+    public void setValueDateTime(Date valueDateTime) {
+        this.valueDateTime = valueDateTime;
+    }
+
+    public IndicatorType getValueIndicator() {
+        return valueIndicator;
+    }
+
+    public void setValueIndicator(IndicatorType valueIndicator) {
+        this.valueIndicator = valueIndicator;
+    }
+
+    public CodeType getValueCode() {
+        return valueCode;
+    }
+
+    public void setValueCode(CodeType valueCode) {
+        this.valueCode = valueCode;
+    }
+
+    public List<TextType> getValues() {
+        return values;
+    }
+
+    public void setValues(List<TextType> values) {
+        this.values = values;
+    }
+
+    public QuantityType getValueQuantity() {
+        return valueQuantity;
+    }
+
+    public void setValueQuantity(QuantityType valueQuantity) {
+        this.valueQuantity = valueQuantity;
+    }
 
     public FluxCharacteristicsFact() {
         setFactType();

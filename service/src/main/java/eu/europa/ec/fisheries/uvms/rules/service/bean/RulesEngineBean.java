@@ -13,6 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
@@ -21,15 +27,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 @Stateless
 @Slf4j
@@ -45,17 +46,28 @@ public class RulesEngineBean {
 	@EJB
 	private RuleAssetsBean ruleAssetsBean;
 
+    @EJB
+    private RulesActivityServiceBean activityService;
+
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
-		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
-			generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
-		}
-		mdrCacheServiceBean.loadMDRCache();
-		facts.addAll(generator.generateAllFacts());
-		templateEngine.evaluateFacts(facts);
+        mdrCacheServiceBean.loadMDRCache();
+        setAdditionalObjects(businessObjectType, businessObject, generator);
+        mdrCacheServiceBean.loadMDRCache();
+        facts.addAll(generator.generateAllFacts());
+        templateEngine.evaluateFacts(facts);
 		return facts;
     }
+
+	private void setAdditionalObjects(BusinessObjectType businessObjectType, Object businessObject, AbstractGenerator generator) {
+		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
+			//TODO : Uncomment when assets work correctly (Now assets has JMS issues - namely not closing connection)!!
+			// generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
+			generator.setAdditionalValidationObject(activityService.getNonUniqueIdsList(businessObject), AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS);
+			generator.setAdditionalValidationObject(activityService.getFishingActivitiesForTrips(businessObject), AdditionalValidationObjectType.ACTIVITY_WITH_TRIP_IDS);
+		}
+	}
 
 }

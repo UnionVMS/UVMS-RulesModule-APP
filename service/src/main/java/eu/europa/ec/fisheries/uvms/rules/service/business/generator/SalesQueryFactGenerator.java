@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesQue
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryParameterFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -87,10 +85,6 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
     @Override
     public void setBusinessObjectMessage(FLUXSalesQueryMessage businessObject) throws RulesValidationException {
         this.fluxSalesQueryMessage = businessObject;
-    }
-
-    @Override public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
-
     }
 
     private List<Object> findObjectsToMapToFacts() {

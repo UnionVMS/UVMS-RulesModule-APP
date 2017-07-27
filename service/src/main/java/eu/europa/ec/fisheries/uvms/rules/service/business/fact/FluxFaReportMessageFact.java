@@ -37,40 +37,43 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private List<FAReportDocument> faReportDocuments;
 
+    private List<IdType> nonUniqueIdsList;
+
+
     public FluxFaReportMessageFact() {
         setFactType();
     }
-
     public List<IdType> getIds() {
         return ids;
     }
-
     public void setIds(List<IdType> ids) {
         this.ids = ids;
     }
-
     public CodeType getPurposeCode() {
         return purposeCode;
     }
-
     public void setPurposeCode(CodeType purposeCode) {
         this.purposeCode = purposeCode;
     }
-
     public List<IdType> getOwnerFluxPartyIds() {
         return ownerFluxPartyIds;
     }
-
     public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
         this.ownerFluxPartyIds = ownerFluxPartyIds;
     }
-
     public List<FAReportDocument> getFaReportDocuments() {
         return faReportDocuments;
     }
-
     public void setFaReportDocuments(List<FAReportDocument> faReportDocuments) {
         this.faReportDocuments = faReportDocuments;
+    }
+
+    public List<IdType> getNonUniqueIdsList() {
+        return nonUniqueIdsList;
+    }
+
+    public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
+        this.nonUniqueIdsList = nonUniqueIdsList;
     }
 
     @Override
