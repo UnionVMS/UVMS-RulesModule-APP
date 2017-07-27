@@ -10,39 +10,17 @@
  *
  *
  */
-
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
-import java.util.Date;
-import java.util.List;
-
 /**
- * Created by padhyad on 4/21/2017.
+ * Created by sanera on 27/07/2017.
  */
-public class FaResponseFact extends AbstractFact {
-
-    private List<IdType> ids;
-    private String referencedID;
-    private CodeType responseCode;
-    private Date creationDateTime;
-
-    public String getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(String referencedID) {
-        this.referencedID = referencedID;
-    }
-
-    public FaResponseFact() {
-        setFactType();
-    }
-
+public class ValidationQualityAnalysisFact extends AbstractFact {
     @Override
     public void setFactType() {
-        this.factType = FactType.FA_RESPONSE;
+        this.factType = FactType.FA_VALIDATION_QUALITY_ANALYSIS;
     }
 }

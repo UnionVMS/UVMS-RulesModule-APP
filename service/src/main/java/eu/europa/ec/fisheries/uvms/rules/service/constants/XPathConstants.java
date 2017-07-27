@@ -93,4 +93,6 @@ public class XPathConstants {
     public static final String VALUE_INDICATOR = "ValueIndicator";
     public static final String VALUE_MEASURE = "ValueMeasure";
     public static final String VALUE_CODE = "ValueCode";
+    public static final String RELATED_VALIDATION_RESULT_DOCUMENT ="RelatedValidationResultDocument";
+    public static final String RELATED_VALIDATION_QUALITY_ANALYSIS ="RelatedValidationQualityAnalysis";
 }
