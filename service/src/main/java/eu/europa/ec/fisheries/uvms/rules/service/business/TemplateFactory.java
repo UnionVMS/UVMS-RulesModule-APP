@@ -114,6 +114,10 @@ public class TemplateFactory {
                 break;
             case VESSEL_TRANSPORT_MEANS:
                 return "/templates/VesselTransportMeans.drt";
+            case FA_VALIDATION_RESULT_DOCUMENT:
+                return "/templates/FaValidationResultDocument.drt";
+            case FA_VALIDATION_QUALITY_ANALYSIS:
+                return "/templates/FaValidationQualityAnalysis.drt";
             case SALES_FLUX_SALES_REPORT_MESSAGE:
                 return "/templates/SalesFLUXSalesReportMessage.drt";
             case SALES_FLUX_REPORT_DOCUMENT:
