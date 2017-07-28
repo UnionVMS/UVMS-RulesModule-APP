@@ -52,6 +52,10 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     private List<FACatch> specifiedFACatches;
 
+    private List<CodeType> faCatchSpecifiedFLUXLocationsTypeCodes;
+
+    private List<CodeType> fluxCharacteristicTypeCodes;
+
     public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
         return specifiedFLUXCharacteristics;
     }
@@ -189,5 +193,21 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_NOTIFICATION_OF_TRANSHIPMENT;
+    }
+
+    public List<CodeType> getFluxCharacteristicTypeCodes() {
+        return fluxCharacteristicTypeCodes;
+    }
+
+    public void setFluxCharacteristicTypeCodes(List<CodeType> fluxCharacteristicTypeCodes) {
+        this.fluxCharacteristicTypeCodes = fluxCharacteristicTypeCodes;
+    }
+
+    public List<CodeType> getFaCatchSpecifiedFLUXLocationsTypeCodes() {
+        return faCatchSpecifiedFLUXLocationsTypeCodes;
+    }
+
+    public void setFaCatchSpecifiedFLUXLocationsTypeCodes(List<CodeType> faCatchSpecifiedFLUXLocationsTypeCodes) {
+        this.faCatchSpecifiedFLUXLocationsTypeCodes = faCatchSpecifiedFLUXLocationsTypeCodes;
     }
 }

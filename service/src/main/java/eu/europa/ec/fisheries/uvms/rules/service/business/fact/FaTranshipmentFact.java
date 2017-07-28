@@ -170,11 +170,11 @@ public class FaTranshipmentFact extends AbstractFact {
         return isPresent;
     }
 
-    public List<CodeType> getFacatchSpeciesCodes() {
+    public List<CodeType> getFaCatchSpeciesCodes() {
         return facatchSpeciesCode;
     }
 
-    public void setFacatchSpeciesCodes(List<CodeType> facatchSpeciesCode) {
+    public void setFaCatchSpeciesCodes(List<CodeType> facatchSpeciesCode) {
         this.facatchSpeciesCode = facatchSpeciesCode;
     }
 }
