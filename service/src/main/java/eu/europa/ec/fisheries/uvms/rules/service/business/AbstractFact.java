@@ -268,6 +268,25 @@ public abstract class AbstractFact {
         return false;
     }
 
+
+    /**
+     * Validate the format of the value depending on the schemeId for List<CodeType>
+     *
+     * @param codeTypes
+     * @return boolean
+     */
+    public boolean validateFormatCodeTypes(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (CodeType id : codeTypes) {
+            if (validateFormat(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Validate the format of the value depending on the schemeId for single IdType
      *
@@ -284,6 +303,27 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Validate the format of the value depending on the codeType for single CodeType
+     *
+     * @param codeType CodeType
+     * @return
+     */
+    public boolean validateFormat(CodeType codeType) {
+        if (codeType == null) {
+            return true;
+        }
+        try {
+            if (!validateFormat(codeType.getValue(), FORMATS.valueOf(codeType.getListId()).getFormatStr())) {
+                return true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
             return false;
         }
         return false;
