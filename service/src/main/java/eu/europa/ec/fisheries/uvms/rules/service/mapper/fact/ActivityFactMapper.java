@@ -1678,10 +1678,27 @@ public class ActivityFactMapper {
                 faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
             }
 
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
+            faResponseFact.setValidatorIDs(extractValidatorIdFromValidationResultDocument(fluxResponseDocument));
+
         }
 
 
         return faResponseFact;
+    }
+
+    private List<IdType> extractValidatorIdFromValidationResultDocument(FLUXResponseDocument fluxResponseDocument) {
+        List<IdType> idTypes = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(fluxResponseDocument.getRelatedValidationResultDocuments())){
+            List<ValidationResultDocument> validationResultDocuments=  fluxResponseDocument.getRelatedValidationResultDocuments();
+            for(ValidationResultDocument validationResultDocument : validationResultDocuments){
+                if(validationResultDocument.getValidatorID() !=null){
+                    idTypes.add(mapToSingleIdType(validationResultDocument.getValidatorID()));
+                }
+            }
+        }
+
+        return idTypes;
     }
 
 

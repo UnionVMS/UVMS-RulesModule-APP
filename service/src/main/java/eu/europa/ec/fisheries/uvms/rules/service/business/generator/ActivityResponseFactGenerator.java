@@ -67,7 +67,6 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
 
                 index++;
             }
-
         }
 
         return facts;

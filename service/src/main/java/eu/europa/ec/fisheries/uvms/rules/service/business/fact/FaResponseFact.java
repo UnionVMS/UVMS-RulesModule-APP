@@ -15,6 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,8 @@ public class FaResponseFact extends AbstractFact {
     private CodeType responseCode;
     private Date creationDateTime;
     private List<IdType> fluxPartyIds;
-
+    List<ValidationResultDocument> relatedValidationResultDocuments;
+    private List<IdType> validatorIDs;
 
     public IdType getReferencedID() {
         return referencedID;
@@ -73,6 +76,36 @@ public class FaResponseFact extends AbstractFact {
 
     public void setFluxPartyIds(List<IdType> fluxPartyIds) {
         this.fluxPartyIds = fluxPartyIds;
+    }
+
+    public List<ValidationResultDocument> getRelatedValidationResultDocuments() {
+        return relatedValidationResultDocuments;
+    }
+
+    public void setRelatedValidationResultDocuments(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        this.relatedValidationResultDocuments = relatedValidationResultDocuments;
+    }
+
+    public List<IdType> getValidatorIDs() {
+        return validatorIDs;
+    }
+
+    public void setValidatorIDs(List<IdType> validatorIDs) {
+        this.validatorIDs = validatorIDs;
+    }
+
+    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
+        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+            return false;
+        }
+
+        for(ValidationResultDocument validationResultDocument : relatedValidationResultDocuments){
+            if(validationResultDocument.getValidatorID() ==null){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
