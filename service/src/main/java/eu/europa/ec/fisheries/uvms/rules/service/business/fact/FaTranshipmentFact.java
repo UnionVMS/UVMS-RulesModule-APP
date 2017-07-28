@@ -13,14 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-
-import java.util.List;
 
 /**
  * @autor padhyad
@@ -49,6 +49,8 @@ public class FaTranshipmentFact extends AbstractFact {
     private List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes;
 
     private List<CodeType> fluxCharacteristicTypeCodes;
+
+    private List<CodeType> facatchSpeciesCode;
 
     public FaTranshipmentFact() {
         setFactType();
@@ -166,5 +168,13 @@ public class FaTranshipmentFact extends AbstractFact {
         }
 
         return isPresent;
+    }
+
+    public List<CodeType> getFacatchSpeciesCodes() {
+        return facatchSpeciesCode;
+    }
+
+    public void setFacatchSpeciesCodes(List<CodeType> facatchSpeciesCode) {
+        this.facatchSpeciesCode = facatchSpeciesCode;
     }
 }

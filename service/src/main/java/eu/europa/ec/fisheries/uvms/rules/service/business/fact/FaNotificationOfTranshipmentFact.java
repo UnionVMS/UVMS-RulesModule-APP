@@ -60,7 +60,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
         this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
     }
 
-
     public List<FLUXLocation> getRelatedFLUXLocations() {
         return relatedFLUXLocations;
     }
@@ -68,7 +67,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
     public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
-
 
     public CodeType getFishingActivityTypeCode() {
         return fishingActivityTypeCode;
