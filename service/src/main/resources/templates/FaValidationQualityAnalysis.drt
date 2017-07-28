@@ -15,7 +15,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQuality
 
 template "@{tname}"
 
-rule "Vessel Transport means @{tname} - @{brid}"
+rule "Validation Quality Analysis @{tname} - @{brid}"
 
 when
 
