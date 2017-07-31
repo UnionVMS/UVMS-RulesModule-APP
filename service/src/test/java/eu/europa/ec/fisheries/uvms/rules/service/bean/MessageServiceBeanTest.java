@@ -49,6 +49,9 @@ import org.junit.Ignore;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -72,6 +75,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
 /**

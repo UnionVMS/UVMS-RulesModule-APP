@@ -13,13 +13,30 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
@@ -256,6 +273,25 @@ public abstract class AbstractFact {
         return false;
     }
 
+
+    /**
+     * Validate the format of the value depending on the schemeId for List<CodeType>
+     *
+     * @param codeTypes
+     * @return boolean
+     */
+    public boolean validateFormatCodeTypes(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (CodeType id : codeTypes) {
+            if (validateFormat(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Validate the format of the value depending on the schemeId for single IdType
      *
@@ -272,6 +308,27 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Validate the format of the value depending on the codeType for single CodeType
+     *
+     * @param codeType CodeType
+     * @return
+     */
+    public boolean validateFormat(CodeType codeType) {
+        if (codeType == null) {
+            return true;
+        }
+        try {
+            if (!validateFormat(codeType.getValue(), FORMATS.valueOf(codeType.getListId()).getFormatStr())) {
+                return true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
             return false;
         }
         return false;
@@ -885,7 +942,7 @@ public abstract class AbstractFact {
             setFormatStr(someFormat);
         }
 
-        public String getFormatStr() {
+        String getFormatStr() {
             return formatStr;
         }
 
