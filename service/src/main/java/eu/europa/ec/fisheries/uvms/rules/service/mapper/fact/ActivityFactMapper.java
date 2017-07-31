@@ -45,7 +45,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationResultDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -1681,6 +1680,9 @@ public class ActivityFactMapper {
             xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
             faResponseFact.setValidatorIDs(extractValidatorIdFromValidationResultDocument(fluxResponseDocument));
 
+            xPathUtil.append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
+            faResponseFact.setRelatedValidationResultDocuments(fluxResponseDocument.getRelatedValidationResultDocuments());
+
         }
 
 
@@ -1702,21 +1704,6 @@ public class ActivityFactMapper {
     }
 
 
-    public ValidationResultDocumentFact generateFactsForValidationResultDocument(ValidationResultDocument validationResultDocument) {
-        if (validationResultDocument == null) {
-            return null;
-        }
-
-        ValidationResultDocumentFact validationResultDocumentFact = new ValidationResultDocumentFact();
-        String partialXpath = xPathUtil.getValue();
-
-        if(validationResultDocument!=null) {
-            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(validationResultDocumentFact, "validatorID");
-            validationResultDocumentFact.setValidatorID(mapToSingleIdType(validationResultDocument.getValidatorID()));
-        }
-
-        return validationResultDocumentFact;
-    }
 
     public ValidationQualityAnalysisFact generateFactsForValidationQualityAnalysis(ValidationQualityAnalysis validationQualityAnalysis) {
         if (validationQualityAnalysis == null) {

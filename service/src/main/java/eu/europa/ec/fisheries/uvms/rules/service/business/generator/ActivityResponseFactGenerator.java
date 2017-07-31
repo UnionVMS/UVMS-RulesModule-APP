@@ -29,7 +29,6 @@ import java.util.List;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_QUALITY_ANALYSIS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_RESULT_DOCUMENT;
 
 /**
  * @author padhyad
@@ -59,10 +58,7 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
             int index = 1;
             for(ValidationResultDocument validationResultDocument : validationResultDocuments){
 
-                xPathUtil.append(FLUX_RESPONSE_MESSAGE,FLUX_RESPONSE_DOCUMENT).appendWithIndex(RELATED_VALIDATION_RESULT_DOCUMENT, index);
-                facts.add(activityFactMapper.generateFactsForValidationResultDocument(validationResultDocument));
-
-                xPathUtil.append(FLUX_RESPONSE_MESSAGE,FLUX_RESPONSE_DOCUMENT).appendWithIndex(RELATED_VALIDATION_RESULT_DOCUMENT, index);
+                xPathUtil.append(FLUX_RESPONSE_MESSAGE,FLUX_RESPONSE_DOCUMENT).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index);
                 facts.addAll(addFactsForValidationQualityAnalysis(validationResultDocument.getRelatedValidationQualityAnalysises()));
 
                 index++;

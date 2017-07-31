@@ -831,11 +831,6 @@ public class ActivityFactMapperTest {
         assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
     }
 
-    @Test
-    public void testGenerateFactsForValidationResultDocument(){
-        ValidationResultDocumentFact validationResultDocumentFact=  activityMapper.generateFactsForValidationResultDocument(validationResultDocument);
-        assertEquals(idType.getValue(), validationResultDocumentFact.getValidatorID().getValue());
-    }
 
 
     @Test

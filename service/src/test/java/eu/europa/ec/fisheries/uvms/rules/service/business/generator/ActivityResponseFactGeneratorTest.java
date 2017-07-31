@@ -12,7 +12,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationResultDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
 import org.junit.Before;
@@ -118,10 +117,10 @@ public class ActivityResponseFactGeneratorTest {
 
         List<AbstractFact> abstractFacts = generator.generateAllFacts();
         FaResponseFact faResponseFact = (FaResponseFact) abstractFacts.get(0);
-        ValidationResultDocumentFact validationResultDocumentFact = (ValidationResultDocumentFact) abstractFacts.get(1);
+
 
         assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
-        assertEquals(idType.getSchemeID(),validationResultDocumentFact.getValidatorID().getSchemeId());
+
 
 
     }
