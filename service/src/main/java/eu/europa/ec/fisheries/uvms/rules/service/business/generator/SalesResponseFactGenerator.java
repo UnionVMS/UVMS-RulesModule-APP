@@ -62,8 +62,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         return classes;
     }
 
-    @Override
-    public List<AbstractFact> getAllFacts() {
+    @Override public List<AbstractFact> generateAllFacts() {
         facts = new ArrayList<>();
 
         List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
@@ -76,7 +75,6 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
 
         return facts;
     }
-
 
     @Override
     public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {

@@ -63,8 +63,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         return classes;
     }
 
-    @Override
-    public List<AbstractFact> getAllFacts() {
+    @Override public List<AbstractFact> generateAllFacts() {
         facts = new ArrayList<>();
 
         List<Object> objectsToMapToFacts = findObjectsToMapToFacts();

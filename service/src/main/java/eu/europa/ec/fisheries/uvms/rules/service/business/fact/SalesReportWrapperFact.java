@@ -1,5 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;

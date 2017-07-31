@@ -1,10 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
-
-import java.util.Objects;
 
 public class SalesVesselCountryFact extends SalesAbstractFact {
 
@@ -36,7 +36,7 @@ public class SalesVesselCountryFact extends SalesAbstractFact {
         return Objects.hash(id);
     }
 
-    public boolean isIdValid(){
+    public boolean isIdValid() {
         return SalesFactHelper.isCountryIdValid(getID());
     }
 }

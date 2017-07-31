@@ -18,6 +18,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
@@ -33,11 +34,21 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private List<FLUXLocation> relatedFLUXLocations;
 
+    private List<CodeType> relatedFLUXLocationTypeCodes;
+
     private Date occurrenceDateTime;
+
+    private List<DelimitedPeriod> delimitedPeriods;
 
     private CodeType reasonCode;
 
+    private List<CodeType> specifiedFACatchTypeCodes;
+
     private List<FACatch> specifiedFACatches;
+
+    private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
+
+    private List<Date> specifiedFLUXCharacteristicValueDateTimes;
 
     public FaNotificationOfArrivalFact() {
         setFactType();
@@ -80,6 +91,30 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.reasonCode = reasonCode;
     }
 
+    public Date getOccurrenceDateTime() {
+        return occurrenceDateTime;
+    }
+
+    public void setOccurrenceDateTime(Date occurrenceDateTime) {
+        this.occurrenceDateTime = occurrenceDateTime;
+    }
+
+    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
+        return relatedFLUXLocationTypeCodes;
+    }
+
+    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
+        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
+    }
+
+    public List<CodeType> getSpecifiedFACatchTypeCodes() {
+        return specifiedFACatchTypeCodes;
+    }
+
+    public void setSpecifiedFACatchTypeCodes(List<CodeType> specifiedFACatchTypeCodes) {
+        this.specifiedFACatchTypeCodes = specifiedFACatchTypeCodes;
+    }
+
     public List<FACatch> getSpecifiedFACatches() {
         return specifiedFACatches;
     }
@@ -88,11 +123,27 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.specifiedFACatches = specifiedFACatches;
     }
 
-    public Date getOccurrenceDateTime() {
-        return occurrenceDateTime;
+    public List<DelimitedPeriod> getDelimitedPeriods() {
+        return delimitedPeriods;
     }
 
-    public void setOccurrenceDateTime(Date occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
+    public void setDelimitedPeriods(List<DelimitedPeriod> delimitedPeriods) {
+        this.delimitedPeriods = delimitedPeriods;
+    }
+
+    public List<CodeType> getSpecifiedFLUXCharacteristicsTypeCodes() {
+        return specifiedFLUXCharacteristicsTypeCodes;
+    }
+
+    public void setSpecifiedFLUXCharacteristicsTypeCodes(List<CodeType> specifiedFLUXCharacteristicsTypeCodes) {
+        this.specifiedFLUXCharacteristicsTypeCodes = specifiedFLUXCharacteristicsTypeCodes;
+    }
+
+    public List<Date> getSpecifiedFLUXCharacteristicValueDateTimes() {
+        return specifiedFLUXCharacteristicValueDateTimes;
+    }
+
+    public void setSpecifiedFLUXCharacteristicValueDateTimes(List<Date> specifiedFLUXCharacteristicValueDateTimes) {
+        this.specifiedFLUXCharacteristicValueDateTimes = specifiedFLUXCharacteristicValueDateTimes;
     }
 }

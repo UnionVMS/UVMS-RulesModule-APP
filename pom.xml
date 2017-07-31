@@ -1,14 +1,20 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.2-SNAPSHOT</version>
+    <version>3.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
+        <!-- sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPath>
+        <sonar.language>java</sonar.language>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
@@ -27,13 +33,13 @@
 
         <usm4uvms.version>3.0.4</usm4uvms.version>
         <uvms.config.version>3.0.4</uvms.config.version>
-        <uvms.common.version>2.0.18-SNAPSHOT</uvms.common.version>
+        <uvms.common.version>2.0.22-SNAPSHOT</uvms.common.version>
         <movement.model.version>3.0.4</movement.model.version>
-        <exchange.model.version>3.0.5-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>3.0.6-SNAPSHOT</exchange.model.version>
         <mobileterminal.model.version>3.0.4</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
 
-        <activity.model.version>0.5.12-SNAPSHOT</activity.model.version>
+        <activity.model.version>0.5.13-SNAPSHOT</activity.model.version>
         <mdr.model.version>0.5.1-SNAPSHOT</mdr.model.version>
 
         <asset.model.version>3.0.4</asset.model.version>
@@ -45,6 +51,11 @@
         <javax.json.version>1.0.4</javax.json.version>
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
+
+        <!-- Packages that need to be exluded from sonar coverage -->
+        <sonar.exclusions>
+            *src/main/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/*
+        </sonar.exclusions>
 
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
     </properties>
@@ -114,7 +125,17 @@
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.ximpleware/vtd-xml -->
+        <dependency>
+            <groupId>com.ximpleware</groupId>
+            <artifactId>vtd-xml</artifactId>
+            <version>2.13</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
@@ -192,6 +213,30 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <configuration>
+                    <destFile>${sonar.jacoco.reportPath}</destFile>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>

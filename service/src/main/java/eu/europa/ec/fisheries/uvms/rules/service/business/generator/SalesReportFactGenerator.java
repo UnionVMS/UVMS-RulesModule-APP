@@ -16,8 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -63,20 +61,6 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         return classes;
     }
 
-    @Override
-    public List<AbstractFact> getAllFacts() {
-        facts = new ArrayList<>();
-
-        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
-
-        for (Object objectToMapToFact : objectsToMapToFacts) {
-            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
-            fact.setSource(Source.REPORT);
-            facts.add(fact);
-        }
-
-        return facts;
-    }
 
     private List<Object> findObjectsToMapToFacts() {
         try {
@@ -84,6 +68,19 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         } catch (IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException("Something went wrong during mapping of Sales objects to facts", e);
         }
+    }
+
+    @Override public List<AbstractFact> generateAllFacts() {
+        facts = new ArrayList<>();
+
+        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
+
+        for (Object objectToMapToFact : objectsToMapToFacts) {
+            AbstractFact fact = mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+            facts.add(fact);
+        }
+
+        return facts;
     }
 
     @Override

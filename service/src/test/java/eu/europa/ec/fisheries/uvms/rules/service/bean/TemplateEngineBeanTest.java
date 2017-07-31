@@ -13,7 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -30,15 +42,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -71,7 +74,7 @@ public class TemplateEngineBeanTest {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
                 for (AbstractFact obj : (ArrayList<AbstractFact>) facts) {
-                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01");
+                    obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
                 System.out.println("called with arguments: " + Arrays.toString(args));
@@ -82,13 +85,48 @@ public class TemplateEngineBeanTest {
         List<AbstractFact> facts = new ArrayList<>();
         ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
         generator.setBusinessObjectMessage(getFluxFaReportMessage());
-        facts.addAll(generator.getAllFacts());
+        facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
 
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);
         assertFalse(fact.isOk());
         assertEquals(false, fact.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testGenaratorThrows(){
+        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        boolean threw = false;
+        try {
+            generator.setBusinessObjectMessage(new String());
+        } catch (RulesValidationException e) {
+            threw = true;
+        }
+        assertTrue(threw);
+    }
+
+    @Test
+    public void testInitialize() {
+        try {
+            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
+            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
+            templateEngine.initialize();
+        } catch (Exception e) {
+            assertNull(e);
+        }
+    }
+
+    @Test
+    public void testReInitialize() {
+        try {
+            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
+            Mockito.doNothing().when(ruleEvaluator).reInitializeKieSystem();
+            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
+            templateEngine.reInitialize();
+        } catch (Exception e) {
+            assertNull(e);
+        }
     }
 
     private FLUXFAReportMessage getFluxFaReportMessage() {

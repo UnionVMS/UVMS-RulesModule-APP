@@ -13,16 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -65,6 +64,12 @@ public class FishingActivityFact extends AbstractFact {
     private List<FLUXLocation> relatedActivityFluxLocations;
 
     private CodeType vesselRelatedActivityCode;
+
+    private CodeType faReportDocumentTypeCode;
+
+    private List<CodeType> relatedFishingActivityCodeTypes;
+
+    private List<CodeType> relatedFluxLocationRFMOCodeList;
 
     public FishingActivityFact() {
         setFactType();
@@ -222,5 +227,29 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setDurationMeasure(List<MeasureType> durationMeasure) {
         this.durationMeasure = durationMeasure;
+    }
+
+    public CodeType getFaReportDocumentTypeCode() {
+        return faReportDocumentTypeCode;
+    }
+
+    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
+        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
+    }
+
+    public List<CodeType> getRelatedFishingActivityCodeTypes() {
+        return relatedFishingActivityCodeTypes;
+    }
+
+    public void setRelatedFishingActivityCodeTypes(List<CodeType> relatedFishingActivityCodeTypes) {
+        this.relatedFishingActivityCodeTypes = relatedFishingActivityCodeTypes;
+    }
+
+    public List<CodeType> getRelatedFluxLocationRFMOCodeList() {
+        return relatedFluxLocationRFMOCodeList;
+    }
+
+    public void setRelatedFluxLocationRFMOCodeList(List<CodeType> relatedFluxLocationRFMOCodeList) {
+        this.relatedFluxLocationRFMOCodeList = relatedFluxLocationRFMOCodeList;
     }
 }

@@ -6,10 +6,12 @@ brid
 rulemsg
 type
 level
+propertyNames
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import java.util.Arrays;
 
 template "@{tname}"
 
@@ -17,11 +19,12 @@ rule "Vessel Transport means @{tname} - @{brid}"
 
 when
 
-    $fact : VesselTransportMeansFact(@{expression})
+    $fact : VesselTransportMeansFact(@{expression});
 
 then
+
     $fact.setOk(false);
-    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 

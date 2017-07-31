@@ -159,7 +159,7 @@ public class SalesAAPProductFact extends SalesAbstractFact {
     }
 
 
-    public boolean isInvalidUsageCode(){
+    public boolean isInvalidUsageCode() {
         String[] validUsages = new String[10];
         validUsages[0] = "HCN";
         validUsages[1] = "HCN-INDIRECT";

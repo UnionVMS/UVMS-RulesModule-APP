@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 
 import java.util.List;
@@ -21,10 +22,25 @@ import java.util.List;
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 public abstract class AbstractGenerator<T> {
 
-    public abstract List<AbstractFact> getAllFacts();
+    public abstract List<AbstractFact> generateAllFacts();
 
     public abstract void setBusinessObjectMessage(T businessObject) throws RulesValidationException;
+
+    /**
+     * Set internal Validation Object(s) if needed.
+     * These objects will be at your disposal to use in the generator or can be transported
+     * even in the mapper level if needed, so that you can set them in fact object and use them in drt(s)/drls(s).
+     * <p>
+     * This way we avoid having to set global EJB objects that sometimes need to be invoked in the drts.
+     *
+     * @param additionalObject
+     * @param validationType
+     */
+    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
+        return;
+    }
 }

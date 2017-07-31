@@ -27,7 +27,7 @@ public class StructuredAddressFact extends AbstractFact {
 
     private String cityName;
 
-    private String countryID;
+    private IdType countryID;
 
     private String plotIdentification;
 
@@ -64,14 +64,6 @@ public class StructuredAddressFact extends AbstractFact {
         this.cityName = cityName;
     }
 
-    public String getCountryID() {
-        return countryID;
-    }
-
-    public void setCountryID(String countryID) {
-        this.countryID = countryID;
-    }
-
     public String getPlotIdentification() {
         return plotIdentification;
     }
@@ -80,8 +72,16 @@ public class StructuredAddressFact extends AbstractFact {
         this.plotIdentification = plotIdentification;
     }
 
+    public IdType getCountryID() {
+        return countryID;
+    }
+
+    public void setCountryID(IdType countryID) {
+        this.countryID = countryID;
+    }
+
     // TODO test
-    public boolean isIdValid(){
+    public boolean isIdValid() {
         String[] validCountries = new String[248];
         validCountries[0] = "ABW";
         validCountries[1] = "AFG";

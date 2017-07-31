@@ -1,11 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-
-import java.util.List;
-import java.util.Objects;
 
 public class SalesFLUXPartyFact extends SalesAbstractFact {
 
@@ -34,7 +34,7 @@ public class SalesFLUXPartyFact extends SalesAbstractFact {
     }
 
 
-    public boolean anyInvalidPartyId(){
+    public boolean anyInvalidPartyId() {
         String[] validParties = new String[248];
         validParties[0] = "ABW";
         validParties[1] = "AFG";

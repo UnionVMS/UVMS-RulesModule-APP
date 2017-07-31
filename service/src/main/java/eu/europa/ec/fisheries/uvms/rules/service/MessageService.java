@@ -15,16 +15,18 @@ package eu.europa.ec.fisheries.uvms.rules.service;
 
 import javax.ejb.Local;
 
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import javax.ejb.Local;
-import java.util.List;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -32,25 +34,27 @@ import java.util.List;
 @Local
 public interface MessageService {
 
-    void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesServiceException, RulesModelMarshallException;
+    void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
-    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, String username) throws RulesServiceException;
+    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage);
+
+    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request);
 
     void mapAndSendFLUXMdrRequestToExchange(String request);
 
     void mapAndSendFLUXMdrResponseToMdrModule(String request);
 
-    void receiveSalesQueryRequest(String request);
+    void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest);
 
-    void receiveSalesReportRequest(String request);
+    void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest);
 
-    void sendSalesReportRequest(String request);
+    void sendSalesReportRequest(SendSalesReportRequest rulesRequest);
 
-    void receiveSalesResponseRequest(String request);
+    void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest);
 
-    void sendSalesResponseRequest(String request);
+    void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
 
 }

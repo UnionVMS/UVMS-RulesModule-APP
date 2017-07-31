@@ -24,6 +24,19 @@ public class IdType {
     private String value;
     private String schemeId;
 
+    public IdType() {
+        super();
+    }
+
+    public IdType(String value, String schemeId) {
+        this.value = value;
+        this.schemeId = schemeId;
+    }
+
+    public IdType(String value) {
+        this.value = value;
+    }
+
     public String getValue() {
         return value;
     }

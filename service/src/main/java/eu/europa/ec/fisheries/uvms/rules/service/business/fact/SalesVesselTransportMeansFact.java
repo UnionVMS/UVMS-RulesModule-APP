@@ -1,12 +1,28 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-
 import java.util.List;
 import java.util.Objects;
+
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.ConstructionEventType;
+import eu.europa.ec.fisheries.schema.sales.ContactPartyType;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.FLAPDocumentType;
+import eu.europa.ec.fisheries.schema.sales.FLUXPictureType;
+import eu.europa.ec.fisheries.schema.sales.FishingGearType;
+import eu.europa.ec.fisheries.schema.sales.MeasureType;
+import eu.europa.ec.fisheries.schema.sales.RegistrationEventType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
+import eu.europa.ec.fisheries.schema.sales.VesselAdministrativeCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.VesselCountryType;
+import eu.europa.ec.fisheries.schema.sales.VesselCrewType;
+import eu.europa.ec.fisheries.schema.sales.VesselDimensionType;
+import eu.europa.ec.fisheries.schema.sales.VesselEngineType;
+import eu.europa.ec.fisheries.schema.sales.VesselEquipmentCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.VesselPositionEventType;
+import eu.europa.ec.fisheries.schema.sales.VesselStorageCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.VesselTechnicalCharacteristicType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 public class SalesVesselTransportMeansFact extends SalesAbstractFact {
 

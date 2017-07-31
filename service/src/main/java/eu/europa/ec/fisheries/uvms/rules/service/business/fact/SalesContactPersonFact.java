@@ -4,6 +4,8 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +36,9 @@ public class SalesContactPersonFact extends SalesAbstractFact {
         return this.title;
     }
 
-    public TextType getGivenName() { return this.givenName; }
+    public TextType getGivenName() {
+        return this.givenName;
+    }
 
     public TextType getMiddleName() {
         return this.middleName;

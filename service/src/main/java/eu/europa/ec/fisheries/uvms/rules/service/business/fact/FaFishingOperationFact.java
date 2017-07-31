@@ -17,7 +17,9 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 /**
  * @author padhyad
@@ -34,6 +36,10 @@ public class FaFishingOperationFact extends AbstractFact {
     private String operationsQuantity;
 
     private List<FLUXLocation> relatedFLUXLocations;
+
+    private List<FishingActivity> relatedFishingActivities;
+
+    private List<CodeType> fishingGearRoleCodes;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -82,5 +88,36 @@ public class FaFishingOperationFact extends AbstractFact {
 
     public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
         this.relatedFLUXLocations = relatedFLUXLocations;
+    }
+
+    public List<FishingActivity> getRelatedFishingActivities() {
+        return relatedFishingActivities;
+    }
+
+    public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
+        this.relatedFishingActivities = relatedFishingActivities;
+    }
+
+    public boolean isFLUXLocationPresentForFishingActivity(List<FishingActivity> relatedFishingActivities) {
+        if (CollectionUtils.isEmpty(relatedFishingActivities)) {
+            return false;
+        }
+
+
+        for (FishingActivity fishingActivity : relatedFishingActivities) {
+            if (CollectionUtils.isEmpty(fishingActivity.getRelatedFLUXLocations())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<CodeType> getFishingGearRoleCodes() {
+        return fishingGearRoleCodes;
+    }
+
+    public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
+        this.fishingGearRoleCodes = fishingGearRoleCodes;
     }
 }

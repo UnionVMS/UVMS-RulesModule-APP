@@ -13,11 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
@@ -37,6 +38,12 @@ public class FaCatchFact extends AbstractFact {
     private List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure;
     private List<MeasureType> resultAAPProductPackagingUnitQuantity;
     private List<String> testStringList;
+    private List<IdType> fluxLocationId;
+    private CodeType weighingMeansCode;
+    private CodeType categoryCode;
+    private List<NumericType> appliedAAPProcessConversionFactorNumber;
+    private List<FLUXLocation> specifiedFLUXLocations;
+    private List<CodeType> specifiedFluxLocationRFMOCodeList;
 
     public FaCatchFact() {
         setFactType();
@@ -150,5 +157,53 @@ public class FaCatchFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_CATCH;
+    }
+
+    public List<IdType> getFluxLocationId() {
+        return fluxLocationId;
+    }
+
+    public void setFluxLocationId(List<IdType> fluxLocationId) {
+        this.fluxLocationId = fluxLocationId;
+    }
+
+    public CodeType getWeighingMeansCode() {
+        return weighingMeansCode;
+    }
+
+    public void setWeighingMeansCode(CodeType weighingMeansCode) {
+        this.weighingMeansCode = weighingMeansCode;
+    }
+
+    public CodeType getCategoryCode() {
+        return categoryCode;
+    }
+
+    public void setCategoryCode(CodeType categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public List<NumericType> getAppliedAAPProcessConversionFactorNumber() {
+        return appliedAAPProcessConversionFactorNumber;
+    }
+
+    public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
+        this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
+    }
+
+    public List<CodeType> getSpecifiedFluxLocationRFMOCodeList() {
+        return specifiedFluxLocationRFMOCodeList;
+    }
+
+    public void setSpecifiedFluxLocationRFMOCodeList(List<CodeType> specifiedFluxLocationRFMOCodeList) {
+        this.specifiedFluxLocationRFMOCodeList = specifiedFluxLocationRFMOCodeList;
+    }
+
+    public List<FLUXLocation> getSpecifiedFLUXLocations() {
+        return specifiedFLUXLocations;
+    }
+
+    public void setSpecifiedFLUXLocations(List<FLUXLocation> specifiedFLUXLocations) {
+        this.specifiedFLUXLocations = specifiedFLUXLocations;
     }
 }

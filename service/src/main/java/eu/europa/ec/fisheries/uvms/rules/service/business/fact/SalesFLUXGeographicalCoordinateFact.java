@@ -1,10 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-
-import java.util.Objects;
 
 public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
 
@@ -34,7 +34,9 @@ public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
         return this.systemID;
     }
 
-    public void setLongitudeMeasure(MeasureType longitudeMeasure) { this.longitudeMeasure = longitudeMeasure; }
+    public void setLongitudeMeasure(MeasureType longitudeMeasure) {
+        this.longitudeMeasure = longitudeMeasure;
+    }
 
     public void setLatitudeMeasure(MeasureType latitudeMeasure) {
         this.latitudeMeasure = latitudeMeasure;

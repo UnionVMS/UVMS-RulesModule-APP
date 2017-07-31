@@ -6,10 +6,12 @@ brid
 rulemsg
 type
 level
+propertyNames
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
+import java.util.Arrays;
 
 template "@{tname}"
 
@@ -21,7 +23,7 @@ when
 
 then
     $fact.setOk(false);
-    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}");
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 

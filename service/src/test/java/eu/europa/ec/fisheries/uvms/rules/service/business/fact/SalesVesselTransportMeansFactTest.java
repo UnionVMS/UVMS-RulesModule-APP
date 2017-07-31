@@ -1,6 +1,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.FLUXCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
+import eu.europa.ec.fisheries.schema.sales.FishingGearType;
+import eu.europa.ec.fisheries.schema.sales.GearCharacteristicType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
@@ -17,7 +20,7 @@ public class SalesVesselTransportMeansFactTest {
                 .withPrefabValues(GearCharacteristicType.class, new GearCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new GearCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FLUXCharacteristicType.class, new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
                 .verify();
     }
 

@@ -48,7 +48,7 @@ public class SalesSizeDistributionFact extends SalesAbstractFact {
     }
 
 
-    public boolean isInvalidCategoryCode(){
+    public boolean isInvalidCategoryCode() {
         String[] validCategories = SalesFactHelper.getValidCategories();
 
         return valueContainsAny(categoryCode, validCategories);

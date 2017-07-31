@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 public class SalesAuctionSaleFact extends SalesAbstractFact {
 

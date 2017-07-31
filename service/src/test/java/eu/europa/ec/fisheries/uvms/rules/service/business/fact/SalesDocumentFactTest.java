@@ -122,8 +122,22 @@ public class SalesDocumentFactTest {
                 .withPrefabValues(FishingActivityType.class, new FishingActivityType().withIDS(new IDType().withValue("BE")), new FishingActivityType().withIDS(new IDType().withValue("SWE")))
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withID(new IDType().withValue("a")), new FLUXLocationType().withID(new IDType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
                 .verify();
     }
 
+
+    @Test
+    public void isInvalidSalesNoteIDWhenTrue() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSalesNoteIDs(Arrays.asList(new IdType("abcd", "UUID")));
+        assertTrue(salesDocumentFact.isInvalidSalesNoteID());
+    }
+
+    @Test
+    public void isInvalidSalesNoteIDWhenFalse() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSalesNoteIDs(Arrays.asList(new IdType("ABC-SN-zfgjdHdjqH", "UUID")));
+        assertFalse(salesDocumentFact.isInvalidSalesNoteID());
+    }
 }

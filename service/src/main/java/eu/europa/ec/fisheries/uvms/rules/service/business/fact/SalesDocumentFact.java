@@ -159,6 +159,10 @@ public class SalesDocumentFact extends SalesAbstractFact {
         return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
     }
 
+    public boolean isInvalidSalesNoteID() {
+        return !validateFormat(salesNoteIDs.get(0).getValue(), FORMATS.EU_SALES_SALES_NOTE_ID.getFormatStr());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
