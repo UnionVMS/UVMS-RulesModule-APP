@@ -1,13 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.Objects;
 
 public class SalesQueryParameterFact extends SalesAbstractFact {
 
@@ -88,5 +86,13 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
             default:
                 return true;
         }
+    }
+
+    public boolean hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat() {
+        return valueID != null && !validateFormat(valueID.getValue(), AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
+    }
+
+    public boolean hasTheCommonPartOfTheValueIDAnIncorrectFormat() {
+        return valueID != null && !validateFormat(valueID.getValue(), AbstractFact.FORMATS.EU_SALES_ID_COMMON.getFormatStr());
     }
 }

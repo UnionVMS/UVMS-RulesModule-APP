@@ -7,13 +7,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
 
     private List<IdType> ids;
@@ -154,5 +147,13 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
         }
 
         return false;
+    }
+
+    public boolean hasIDInvalidFormat() {
+        return ids != null && !ids.isEmpty() && !validateFormat(ids.get(0).getValue(), FORMATS.UUID.getFormatStr());
+    }
+
+    public boolean hasReferencedIDInvalidFormat() {
+        return referencedID != null && !validateFormat(referencedID.getValue(), FORMATS.UUID.getFormatStr());
     }
 }

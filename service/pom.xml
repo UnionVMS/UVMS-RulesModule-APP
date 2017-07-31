@@ -35,10 +35,6 @@
   
     <dependencies>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
-            <artifactId>sales-model</artifactId>
-        </dependency>
-        <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
             <version>${rules.model.version}</version>

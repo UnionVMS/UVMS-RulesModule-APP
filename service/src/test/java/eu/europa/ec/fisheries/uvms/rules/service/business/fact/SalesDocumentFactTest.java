@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -8,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -48,7 +50,7 @@ public class SalesDocumentFactTest {
     }
 
     @Test
-    public void issAnySalesDateBeforeLandingDateWhenLandingDatesAreValid() throws Exception {
+    public void isAnySalesDateBeforeLandingDateWhenLandingDatesAreValid() throws Exception {
         fact.setSpecifiedFishingActivities(Arrays.asList(
                 new FishingActivityType().withSpecifiedDelimitedPeriods(
                         new DelimitedPeriodType().withStartDateTime(
@@ -94,18 +96,16 @@ public class SalesDocumentFactTest {
 
     @Test
     public void isInvalidCurrencyCodeWhenValid() throws Exception {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setCurrencyCode(new CodeType("EUR"));
-        boolean validCurrencyCode = salesDocumentFact.isInvalidCurrencyCode();
+        fact.setCurrencyCode(new CodeType("EUR"));
+        boolean validCurrencyCode = fact.isInvalidCurrencyCode();
 
         assertFalse(validCurrencyCode);
     }
 
     @Test
     public void isInvalidCurrencyCodeWhenInvalid() throws Exception {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setCurrencyCode(new CodeType("Gimme gimme gimme"));
-        boolean validCurrencyCode = salesDocumentFact.isInvalidCurrencyCode();
+        fact.setCurrencyCode(new CodeType("Gimme gimme gimme"));
+        boolean validCurrencyCode = fact.isInvalidCurrencyCode();
 
         assertTrue(validCurrencyCode);
     }
@@ -129,15 +129,87 @@ public class SalesDocumentFactTest {
 
     @Test
     public void isInvalidSalesNoteIDWhenTrue() {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSalesNoteIDs(Arrays.asList(new IdType("abcd", "UUID")));
-        assertTrue(salesDocumentFact.isInvalidSalesNoteID());
+        fact.setSalesNoteIDs(Arrays.asList(new IdType("abcd", "UUID")));
+        assertTrue(fact.isInvalidSalesNoteID());
     }
 
     @Test
     public void isInvalidSalesNoteIDWhenFalse() {
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSalesNoteIDs(Arrays.asList(new IdType("ABC-SN-zfgjdHdjqH", "UUID")));
-        assertFalse(salesDocumentFact.isInvalidSalesNoteID());
+        fact.setSalesNoteIDs(Arrays.asList(new IdType("ABC-SN-zfgjdHdjqH", "UUID")));
+        assertFalse(fact.isInvalidSalesNoteID());
     }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheIDAnIncorrectFormatWhenTrue() {
+        fact.setIDS(Lists.newArrayList(new IdType("xyz")));
+        assertTrue(fact.hasTheNationalNumberPartOfTheIDAnIncorrectFormat());
+
+    }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheIDAnIncorrectFormatWhenFalseBecauseIDsIsNull() {
+        fact.setIDS(null);
+        assertFalse(fact.hasTheNationalNumberPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheIDAnIncorrectFormatWhenFalseBecauseIDsIsEmpty() {
+        fact.setIDS(new ArrayList<IdType>());
+        assertFalse(fact.hasTheNationalNumberPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheIDAnIncorrectFormatWhenFalseBecauseOfTheFormat() {
+        fact.setIDS(Lists.newArrayList(new IdType("DEF-SN-ABCD123456")));
+        assertFalse(fact.hasTheNationalNumberPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheCommonPartOfTheIDAnIncorrectFormatWhenTrue() {
+        fact.setIDS(Lists.newArrayList(new IdType("xyz")));
+        assertTrue(fact.hasTheCommonPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheCommonPartOfTheIDAnIncorrectFormatWhenFalseBecauseIDsIsNull() {
+        fact.setIDS(null);
+        assertFalse(fact.hasTheCommonPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheCommonPartOfTheIDAnIncorrectFormatWhenFalseBecauseIDsIsEmpty() {
+        fact.setIDS(new ArrayList<IdType>());
+        assertFalse(fact.hasTheCommonPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheCommonPartOfTheIDAnIncorrectFormatWhenFalseBecauseOfTheFormat() {
+        fact.setIDS(Lists.newArrayList(new IdType("DEF-SN-465468")));
+        assertFalse(fact.hasTheCommonPartOfTheIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheTakeOverDocumentIdAnIncorrectFormatWhenTrue() {
+        fact.setTakeoverDocumentIDs(Lists.newArrayList(new IdType("xyz")));
+        assertTrue(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheTakeOverDocumentIdAnIncorrectFormatWhenFalseBecauseIDsIsNull() {
+        fact.setTakeoverDocumentIDs(null);
+        assertFalse(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheTakeOverDocumentIdAnIncorrectFormatWhenFalseBecauseIDsIsEmpty() {
+        fact.setTakeoverDocumentIDs(new ArrayList<IdType>());
+        assertFalse(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheTakeOverDocumentIdAnIncorrectFormatWhenFalseBecauseOfTheFormat() {
+        fact.setTakeoverDocumentIDs(Lists.newArrayList(new IdType("DEF-TOD-465468")));
+        assertFalse(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
+    }
+
 }

@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
@@ -9,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mapstruct.ap.internal.util.Collections;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
@@ -71,6 +73,48 @@ public class SalesFLUXResponseDocumentFactTest {
                 .withRedefinedSuperclass()
                 .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
                 .verify();
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenTrue() {
+        fact.setIDS(Lists.newArrayList(new IdType("abc")));
+        assertTrue(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenFalseBecauseIDIsNull() {
+        fact.setIDS(null);
+        assertFalse(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenFalseBecauseIDsIsEmpty() {
+        fact.setIDS(new ArrayList<IdType>());
+        assertFalse(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenFalseBecauseOfAnInvalidFormat() {
+        fact.setIDS(Lists.newArrayList(new IdType("c2731113-9e77-4e42-9c10-821575b72115")));
+        assertFalse(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasReferencedIDInvalidFormatWhenTrue() {
+        fact.setReferencedID(new IdType("abc"));
+        assertTrue(fact.hasReferencedIDInvalidFormat());
+    }
+
+    @Test
+    public void hasReferencedIDInvalidFormatWhenFalseBecauseReferencedIDIsNull() {
+        fact.setReferencedID(null);
+        assertFalse(fact.hasReferencedIDInvalidFormat());
+    }
+
+    @Test
+    public void hasReferencedIDInvalidFormatWhenFalseBecauseOfAnInvalidFormat() {
+        fact.setReferencedID(new IdType("c2731113-9e77-4e42-9c10-821575b72115"));
+        assertFalse(fact.hasReferencedIDInvalidFormat());
     }
 
 }

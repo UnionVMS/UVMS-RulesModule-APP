@@ -50,4 +50,22 @@ public class SalesQueryFactTest {
                 .verify();
     }
 
+    @Test
+    public void hasIDInvalidFormatWhenTrue() {
+        fact.setID(new IdType("abc"));
+        assertTrue(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenFalseBecauseIDIsNull() {
+        fact.setID(null);
+        assertFalse(fact.hasIDInvalidFormat());
+    }
+
+    @Test
+    public void hasIDInvalidFormatWhenFalseBecauseOfAnInvalidFormat() {
+        fact.setID(new IdType("c2731113-9e77-4e42-9c10-821575b72115"));
+        assertFalse(fact.hasIDInvalidFormat());
+    }
+
 }

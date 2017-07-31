@@ -105,4 +105,8 @@ public class SalesQueryFact extends SalesAbstractFact {
 
         return false;
     }
+
+    public boolean hasIDInvalidFormat() {
+        return id != null && !validateFormat(id.getValue(), FORMATS.UUID.getFormatStr());
+    }
 }

@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
@@ -242,6 +243,18 @@ public class SalesDocumentFact extends SalesAbstractFact {
         }
 
         return getTotalOfAllProducts().compareTo(getSum(totalSalesPrice.getChargeAmounts())) != 0;
+    }
+
+    public boolean hasTheNationalNumberPartOfTheIDAnIncorrectFormat() {
+        return ids != null && !ids.isEmpty() && !validateFormat(ids.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
+    }
+
+    public boolean hasTheCommonPartOfTheIDAnIncorrectFormat() {
+        return ids != null && !ids.isEmpty() && !validateFormat(ids.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_ID_COMMON.getFormatStr());
+    }
+
+    public boolean hasTheTakeOverDocumentIdAnIncorrectFormat() {
+        return takeoverDocumentIDs != null && !takeoverDocumentIDs.isEmpty() && !validateFormat(takeoverDocumentIDs.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_TAKE_OVER_DOCUMENT_ID.getFormatStr());
     }
 
     private BigDecimal getTotalOfAllProducts(){

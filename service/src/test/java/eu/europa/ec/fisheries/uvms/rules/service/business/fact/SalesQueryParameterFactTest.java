@@ -66,4 +66,36 @@ public class SalesQueryParameterFactTest {
                 .verify();
     }
 
+    @Test
+    public void hasTheNationalNumberPartOfTheValueIDAnIncorrectFormatWhenTrue() {
+        fact.setValueID(new IdType("xyz"));
+        assertTrue(fact.hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat());
+
+    }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheValueIDAnIncorrectFormatWhenFalseBecauseIDsIsNull() {
+        fact.setValueID(null);
+        assertFalse(fact.hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheNationalNumberPartOfTheValueIDAnIncorrectFormatWhenFalseBecauseOfTheFormat() {
+        fact.setValueID((new IdType("DEF-SN-ABCD123456")));
+        assertFalse(fact.hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat());
+    }
+
+
+    @Test
+    public void hasTheCommonPartOfTheValueIDAnIncorrectFormatWhenFalseBecauseIDsIsNull() {
+        fact.setValueID(null);
+        assertFalse(fact.hasTheCommonPartOfTheValueIDAnIncorrectFormat());
+    }
+
+    @Test
+    public void hasTheCommonPartOfTheValueIDAnIncorrectFormatWhenFalseBecauseOfTheFormat() {
+        fact.setValueID(new IdType("DEF-SN-465468"));
+        assertFalse(fact.hasTheCommonPartOfTheValueIDAnIncorrectFormat());
+    }
+
 }
