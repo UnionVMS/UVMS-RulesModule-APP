@@ -35,6 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -118,7 +119,9 @@ public class RulesResource {
 
         FLUXResponseMessage fluxResponseMessage;
         try {
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
+
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request,extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
