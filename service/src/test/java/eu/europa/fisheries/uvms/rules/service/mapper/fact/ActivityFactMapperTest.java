@@ -675,7 +675,7 @@ public class ActivityFactMapperTest {
         final FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(null, true);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
         final FaResponseFact faResponseFact= activityMapper.generateFactsForFaResponse(null);
-
+        final ValidationQualityAnalysisFact qualityAnalysisFact=activityMapper.generateFactsForValidationQualityAnalysis(null);
 
         final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
@@ -739,6 +739,7 @@ public class ActivityFactMapperTest {
         assertNull(faTranshipmentFact);
         assertNull(faNotificationOfTranshipmentFact);
         assertNull(faResponseFact);
+        assertNull(qualityAnalysisFact);
 
     }
 
@@ -827,8 +828,17 @@ public class ActivityFactMapperTest {
 
     @Test
     public void testGenerateFactsForFaResponse(){
+        fluxResponseMessage.getFLUXResponseDocument().setRespondentFLUXParty(null);
         FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
         assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
+        assertEquals(null, faResponseFact.getFluxPartyIds());
+    }
+
+    @Test
+    public void testGenerateFactsForFaResponse_nullDocument(){
+        fluxResponseMessage.setFLUXResponseDocument(null);
+        FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
+        assertEquals(null, faResponseFact.getResponseCode());
     }
 
 
