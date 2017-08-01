@@ -20,6 +20,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 
+import java.util.List;
+
 /**
  * @author padhyad
  * @author Gregory Rinaldi

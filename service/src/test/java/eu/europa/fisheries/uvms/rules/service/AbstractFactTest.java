@@ -10,24 +10,6 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
@@ -54,6 +36,24 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -790,7 +790,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsTypeCodeValuePresentInList() {
+    public void testIsTypeCodeValuePresentInMDRList() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1163,6 +1163,47 @@ public class AbstractFactTest {
         boolean result4 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertTrue(result4);
     }
+
+
+    @Test
+    public void testIsTypeCodeValuePresentInList(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("FAKE_LIST_ID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCodes);
+        assertEquals(true, typeCodeValuePresentInList);
+
+    }
+
+    @Test
+    public void testIsTypeCodeValuePresentInList_single(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+
+        boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCode);
+        assertEquals(true, typeCodeValuePresentInList);
+
+    }
+
+
+    @Test
+    public void testValidateFormatCodeTypes(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("UUID");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("UUID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean result =fact.validateFormatCodeTypes(typeCodes);
+        assertTrue(result);
+    }
+
 
     @Test
     public void testMatchWithFluxTL(){
