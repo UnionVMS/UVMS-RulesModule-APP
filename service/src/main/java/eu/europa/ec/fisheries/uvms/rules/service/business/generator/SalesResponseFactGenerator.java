@@ -13,27 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import ma.glasnost.orika.MapperFacade;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.FLUXResponseDocumentType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesResponseMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationQualityAnalysisFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationResultDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
-import ma.glasnost.orika.MapperFacade;
 
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
@@ -90,8 +83,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(fluxResponseMessage, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace(); // TODO
-            throw new RuntimeException();
+            throw new RulesServiceException("Something went wrong when generating facts for a sales response", e);
         }
     }
 

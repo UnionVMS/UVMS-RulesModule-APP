@@ -13,68 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
-import eu.europa.ec.fisheries.schema.sales.ContactPartyType;
-import eu.europa.ec.fisheries.schema.sales.ContactPersonType;
-import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
-import eu.europa.ec.fisheries.schema.sales.FLUXGeographicalCoordinateType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.FishingTripType;
-import eu.europa.ec.fisheries.schema.sales.Report;
-import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
-import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
-import eu.europa.ec.fisheries.schema.sales.SalesEventType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
-import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
-import eu.europa.ec.fisheries.schema.sales.SalesReportType;
-import eu.europa.ec.fisheries.schema.sales.SizeDistributionType;
-import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
-import eu.europa.ec.fisheries.schema.sales.VesselCountryType;
-import eu.europa.ec.fisheries.schema.sales.VesselTransportMeansType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProcessFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProductFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAuctionSaleFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesBatchFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesContactPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesContactPersonFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesEventFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeographicalCoordinateFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXLocationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXOrganizationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingTripFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPriceFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesReportFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesReportWrapperFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesSizeDistributionFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesStructuredAddressFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselCountryFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
@@ -113,8 +66,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(report, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace(); // TODO
-            throw new RuntimeException();
+            throw new RulesServiceException("Something went wrong when generating facts for a sales report", e);
         }
     }
 
