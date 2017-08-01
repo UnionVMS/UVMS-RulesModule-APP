@@ -10,25 +10,39 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import eu.europa.ec.fisheries.uvms.activity.model.exception.*;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.*;
-import eu.europa.ec.fisheries.uvms.exception.*;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.*;
-import eu.europa.ec.fisheries.uvms.rules.service.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.config.*;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
-import lombok.extern.slf4j.*;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.*;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
 
-import javax.ejb.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.*;
+import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
+
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import lombok.extern.slf4j.Slf4j;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 /**
  * @author Gregory Rinaldi
@@ -62,7 +76,8 @@ public class RulesResource {
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
         FLUXResponseMessage fluxResponseMessage;
         try {
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
@@ -82,7 +97,8 @@ public class RulesResource {
 
         FLUXResponseMessage fluxResponseMessage;
         try {
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_QUERY_MSG, request);
+            Map<ExtraValueType, Object> extraValueMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, request, extraValueMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);

@@ -39,7 +39,6 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private List<IdType> nonUniqueIdsList;
 
-
     public FluxFaReportMessageFact() {
         setFactType();
     }
