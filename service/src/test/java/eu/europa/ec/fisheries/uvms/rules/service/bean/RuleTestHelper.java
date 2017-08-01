@@ -12,6 +12,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
@@ -229,6 +230,14 @@ public class RuleTestHelper {
     }
 
 
+    public static ValidationResultDocument getValidationResultDocument(){
+        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
+        validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value","SchemeId"));
+
+        return validationResultDocument;
+
+
+    }
 
 
 }

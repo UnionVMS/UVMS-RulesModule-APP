@@ -20,6 +20,7 @@ import lombok.*;
 import org.apache.commons.io.*;
 import org.junit.*;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
@@ -64,6 +65,9 @@ public class ActivityFactMapperTest {
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
     private List<FLAPDocument> flapDocumentList;
+    private FLUXResponseMessage fluxResponseMessage;
+    private ValidationResultDocument validationResultDocument;
+    private ValidationQualityAnalysis validationQualityAnalysis;
 
     ActivityFactMapper activityMapper = new ActivityFactMapper(new XPathStringWrapper());
 
@@ -174,6 +178,31 @@ public class ActivityFactMapperTest {
 
         flapDocumentList = new ArrayList<>();
         flapDocumentList.add(RuleTestHelper.getFLAPDocument());
+
+        fluxResponseMessage = new FLUXResponseMessage();
+        FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+        fluxResponseDocument.setResponseCode(codeType);
+        fluxResponseDocument.setIDS(Arrays.asList(idType));
+
+        List<ValidationResultDocument> validationResultDocuments = new ArrayList<>();
+        validationResultDocument = new ValidationResultDocument();
+        validationResultDocument.setCreationDateTime(dateTimeType);
+        validationResultDocument.setValidatorID(idType);
+
+        List<ValidationQualityAnalysis> validationQualityAnalysisList = new ArrayList<>();
+        validationQualityAnalysis = new ValidationQualityAnalysis();
+        validationQualityAnalysis.setTypeCode(codeType);
+        validationQualityAnalysis.setLevelCode(codeType);
+        validationQualityAnalysis.setID(idType);
+
+        validationQualityAnalysisList.add(validationQualityAnalysis);
+        validationResultDocument.setRelatedValidationQualityAnalysises(validationQualityAnalysisList);
+        validationResultDocuments.add(validationResultDocument);
+
+        fluxResponseDocument.setRelatedValidationResultDocuments(validationResultDocuments);
+
+
+        fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
 
     }
 
@@ -645,7 +674,8 @@ public class ActivityFactMapperTest {
         final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null);
         final FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(null, true);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
-
+        final FaResponseFact faResponseFact= activityMapper.generateFactsForFaResponse(null);
+        final ValidationQualityAnalysisFact qualityAnalysisFact=activityMapper.generateFactsForValidationQualityAnalysis(null);
 
         final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
@@ -708,6 +738,8 @@ public class ActivityFactMapperTest {
         assertNull(faExitFromSeaFact);
         assertNull(faTranshipmentFact);
         assertNull(faNotificationOfTranshipmentFact);
+        assertNull(faResponseFact);
+        assertNull(qualityAnalysisFact);
 
     }
 
@@ -794,6 +826,28 @@ public class ActivityFactMapperTest {
         assertEquals(expectedResult.iterator().next().getValue(), idTypes.iterator().next().getValue());
     }
 
+    @Test
+    public void testGenerateFactsForFaResponse(){
+        fluxResponseMessage.getFLUXResponseDocument().setRespondentFLUXParty(null);
+        FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
+        assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
+        assertEquals(null, faResponseFact.getFluxPartyIds());
+    }
+
+    @Test
+    public void testGenerateFactsForFaResponse_nullDocument(){
+        fluxResponseMessage.setFLUXResponseDocument(null);
+        FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
+        assertEquals(null, faResponseFact.getResponseCode());
+    }
+
+
+
+    @Test
+    public void testGenerateFactsForValidationQualityAnalysis(){
+        ValidationQualityAnalysisFact qualityAnalysisFact=  activityMapper.generateFactsForValidationQualityAnalysis(validationQualityAnalysis);
+        assertEquals(codeType.getValue(), qualityAnalysisFact.getLevelCode().getValue());
+    }
 
 
 

@@ -15,24 +15,97 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
  */
 public class FaResponseFact extends AbstractFact {
 
-    private String referencedID;
+    private List<IdType> ids;
+    private IdType referencedID;
+    private CodeType responseCode;
+    private Date creationDateTime;
+    private List<IdType> fluxPartyIds;
+    List<ValidationResultDocument> relatedValidationResultDocuments;
+    private List<IdType> validatorIDs;
 
-    public String getReferencedID() {
+    public IdType getReferencedID() {
         return referencedID;
     }
 
-    public void setReferencedID(String referencedID) {
+    public void setReferencedID(IdType referencedID) {
         this.referencedID = referencedID;
     }
 
     public FaResponseFact() {
         setFactType();
+    }
+
+    public List<IdType> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+
+    public CodeType getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(CodeType responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public List<IdType> getFluxPartyIds() {
+        return fluxPartyIds;
+    }
+
+    public void setFluxPartyIds(List<IdType> fluxPartyIds) {
+        this.fluxPartyIds = fluxPartyIds;
+    }
+
+    public List<ValidationResultDocument> getRelatedValidationResultDocuments() {
+        return relatedValidationResultDocuments;
+    }
+
+    public void setRelatedValidationResultDocuments(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        this.relatedValidationResultDocuments = relatedValidationResultDocuments;
+    }
+
+    public List<IdType> getValidatorIDs() {
+        return validatorIDs;
+    }
+
+    public void setValidatorIDs(List<IdType> validatorIDs) {
+        this.validatorIDs = validatorIDs;
+    }
+
+    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
+        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+            return false;
+        }
+
+        for(ValidationResultDocument validationResultDocument : relatedValidationResultDocuments){
+            if(validationResultDocument.getValidatorID() ==null){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
