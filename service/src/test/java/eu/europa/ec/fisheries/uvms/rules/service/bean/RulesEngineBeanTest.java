@@ -83,7 +83,7 @@ public class RulesEngineBeanTest {
             }
         }).when(templateEngine).evaluateFacts(Mockito.anyList());
 
-        List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
+        List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage(), null);
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);
         assertFalse(fact.isOk());

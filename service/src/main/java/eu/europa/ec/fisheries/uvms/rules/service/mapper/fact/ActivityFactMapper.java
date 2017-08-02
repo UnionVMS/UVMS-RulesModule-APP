@@ -115,7 +115,7 @@ public class ActivityFactMapper {
     private XPathStringWrapper xPathUtil;
 
     private Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
-
+    private String senderReceiver = null;
     private Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds = new HashMap<>();
 
     private static final String VALUE_PROP = "value";
@@ -2645,5 +2645,13 @@ public class ActivityFactMapper {
 
     public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesWithTripIds() {
         return fishingActivitiesWithTripIds;
+    }
+
+    public void setSenderReceiver(String senderReceiver) {
+        this.senderReceiver = senderReceiver;
+    }
+
+    public String getSenderReceiver() {
+        return senderReceiver;
     }
 }
