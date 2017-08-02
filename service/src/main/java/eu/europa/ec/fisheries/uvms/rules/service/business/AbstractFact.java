@@ -13,35 +13,52 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.schema.sales.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang3.*;
-import org.apache.commons.lang3.time.*;
-import org.joda.time.*;
-import un.unece.uncefact.data.standard.mdr.communication.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.*;
-import java.util.*;
 
 @Slf4j
 @ToString
 public abstract class AbstractFact {
 
-    private static final String DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN = "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!";
     private static final String THE_LIST = "The list [";
     private static final String DOESN_T_EXIST_IN_MDR_MODULE = "] doesn't exist in MDR module or in MDRAcronymType class! Check it and try again!";
 
@@ -251,6 +268,25 @@ public abstract class AbstractFact {
         return false;
     }
 
+
+    /**
+     * Validate the format of the value depending on the schemeId for List<CodeType>
+     *
+     * @param codeTypes
+     * @return boolean
+     */
+    public boolean validateFormatCodeTypes(List<CodeType> codeTypes) {
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+        for (CodeType id : codeTypes) {
+            if (validateFormat(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Validate the format of the value depending on the schemeId for single IdType
      *
@@ -267,6 +303,27 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Validate the format of the value depending on the codeType for single CodeType
+     *
+     * @param codeType CodeType
+     * @return
+     */
+    public boolean validateFormat(CodeType codeType) {
+        if (codeType == null) {
+            return true;
+        }
+        try {
+            if (!validateFormat(codeType.getValue(), FORMATS.valueOf(codeType.getListId()).getFormatStr())) {
+                return true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
             return false;
         }
         return false;
@@ -301,7 +358,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listSizeIs(List<?> list, int listSize) {
-        return !isEmpty(list) && list.size() == listSize;
+        return !(isEmpty(list) || list.size() != listSize);
     }
 
     /**
@@ -789,7 +846,7 @@ public abstract class AbstractFact {
     public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
@@ -810,7 +867,7 @@ public abstract class AbstractFact {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
@@ -839,7 +896,7 @@ public abstract class AbstractFact {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
 
@@ -848,6 +905,7 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
+
 
         for (IdType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue()))
@@ -972,7 +1030,7 @@ public abstract class AbstractFact {
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE_OR_IN_MDRACRONYM_TYPE_CLASS_CHECK_IT_AND_TRY_AGAIN);
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return StringUtils.EMPTY;
         }
 
@@ -1003,5 +1061,30 @@ public abstract class AbstractFact {
         }
         return StringUtils.EMPTY;
     }
+
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
+        boolean isMoreTheOneDeclaration = false;
+        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds)) {
+            return isMoreTheOneDeclaration;
+        }
+        for (IdType idType : specifiedFishingTripIds) {
+            List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
+            if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
+                continue;
+            }
+            int declarationCounter = 0;
+            for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
+                if (FishingActivityType.DEPARTURE.name().equals(fishTrpWIdent.getFaType())) {
+                    declarationCounter++;
+                }
+            }
+            if (declarationCounter > 1) {
+                isMoreTheOneDeclaration = true;
+                break;
+            }
+        }
+        return isMoreTheOneDeclaration;
+    }
+
 
 }

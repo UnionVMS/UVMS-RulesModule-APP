@@ -15,11 +15,14 @@ package eu.europa.ec.fisheries.uvms.rules.service.constants;
  * Created by sanera on 05/05/2017.
  */
 public enum FishingActivityType {
-    DEPARTURE, ARRIVAL,
+    DEPARTURE,
+    ARRIVAL,
     AREA_ENTRY,
     AREA_EXIT,
     JOINT_FISHING_OPERATION,
-    LANDING, TRANSHIPMENT,
+    LANDING,
+    TRANSHIPMENT,
+    DISCARD,
     RELOCATION,
     GEAR_SHOT,
     GEAR_RETRIEVAL,

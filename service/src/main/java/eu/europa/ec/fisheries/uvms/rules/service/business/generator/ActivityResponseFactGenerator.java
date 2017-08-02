@@ -13,16 +13,22 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_QUALITY_ANALYSIS;
 
 /**
  * @author padhyad
@@ -44,11 +50,40 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
 
     @Override
     public List<AbstractFact> generateAllFacts() {
-        AbstractFact fact = activityFactMapper.generateFactsForFaResponse(fluxResponseMessage);
-        if (fact != null) {
-            return Arrays.asList(fact);
+        List<AbstractFact> facts = new ArrayList<>();
+        facts.add(activityFactMapper.generateFactsForFaResponse(fluxResponseMessage));
+        FLUXResponseDocument fluxResponseDocument=fluxResponseMessage.getFLUXResponseDocument();
+        if(fluxResponseDocument!=null){
+            List<ValidationResultDocument> validationResultDocuments= fluxResponseDocument.getRelatedValidationResultDocuments();
+            int index = 1;
+            for(ValidationResultDocument validationResultDocument : validationResultDocuments){
+
+                xPathUtil.append(FLUX_RESPONSE_MESSAGE,FLUX_RESPONSE_DOCUMENT).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index);
+                facts.addAll(addFactsForValidationQualityAnalysis(validationResultDocument.getRelatedValidationQualityAnalysises()));
+
+                index++;
+            }
         }
-        return Collections.emptyList();
+
+        return facts;
+    }
+
+    private List<AbstractFact> addFactsForValidationQualityAnalysis(List<ValidationQualityAnalysis> validationResultDocuments) {
+        List<AbstractFact> facts = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(validationResultDocuments)){
+            int index = 1;
+            String partialXpath = xPathUtil.getValue();
+            for(ValidationQualityAnalysis validationQualityAnalysis : validationResultDocuments){
+                String partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index).getValue();
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.add(activityFactMapper.generateFactsForValidationQualityAnalysis(validationQualityAnalysis));
+
+                index++;
+            }
+        }
+
+        return facts;
     }
 
     @Override
@@ -59,9 +94,6 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
         this.fluxResponseMessage = (FLUXResponseMessage)businessObject;
     }
 
-    @Override
-    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
-        // Set internal Validation Object if needed.
-    }
+
 
 }

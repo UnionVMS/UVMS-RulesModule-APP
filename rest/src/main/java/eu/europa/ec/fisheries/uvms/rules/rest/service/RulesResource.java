@@ -94,6 +94,26 @@ public class RulesResource {
         return Response.ok(fluxResponseMessage).build();
     }
 
+    @POST
+    @Consumes(value = {MediaType.APPLICATION_XML})
+    @Produces(value = {MediaType.APPLICATION_XML})
+    @Path("/evaluate/fluxfaResponsemessage")
+    public Response evaluate(FLUXResponseMessage request) throws ServiceException {
+
+        FLUXResponseMessage fluxResponseMessage;
+        try {
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
+            String s = JAXBMarshaller.marshallJaxBObjectToString(request);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
+            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            XPathRepository.INSTANCE.clear(facts);
+        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+            log.error(e.getMessage(), e);
+            return Response.ok(e.getMessage()).build();
+        }
+        return Response.ok(fluxResponseMessage).build();
+    }
+
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/reinitialize")

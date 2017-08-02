@@ -10,9 +10,11 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -24,10 +26,23 @@ import org.junit.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
-import java.math.*;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -764,7 +779,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsTypeCodeValuePresentInList() {
+    public void testIsTypeCodeValuePresentInMDRList() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1010,14 +1025,14 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsEmptyList() {
+    public void testListIdNotContainsEmptyList(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappy() {
+    public void testListIdNotContainsHappy(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1028,7 +1043,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits() {
+    public void testListIdNotContainsHappyWithMoreHits(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1043,7 +1058,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits2() {
+    public void testListIdNotContainsHappyWithMoreHits2(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1054,15 +1069,128 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsGreaterThanZero() {
-        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1), "km"));
+    public void testIsGreaterThanZero(){
+        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1),"km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
 
     @Test
-    public void testGetDataTypeForMDRListNullCheck() {
-        String result = fact.getDataTypeForMDRList("TEST", null);
-        assertEquals("", result);
+    public void testGetDataTypeForMDRListNullCheck(){
+       String result= fact.getDataTypeForMDRList("TEST",null);
+        assertEquals("",result);
     }
+
+    @Test
+    public void testContainsMoreThenOneDeclarationPerTrip() {
+        List<IdType> specifiedFishingTripIds = new ArrayList<>();
+        Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip = new HashMap<>();
+        boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result1);
+
+        specifiedFishingTripIds.add(new IdType("id123", "someScheme"));
+
+        boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result2);
+
+        faTypesPerTrip.put("", null);
+
+        boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result3);
+
+        List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
+        fishingActivityWithIdentifiers.add(new FishingActivityWithIdentifiers("", "", ""));
+        faTypesPerTrip.clear();
+        faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
+
+        boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertFalse(result4);
+
+        List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
+
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+        id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
+
+        boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip);
+        assertTrue(result5);
+    }
+
+    @Test
+    public void testValueCodeTypeContainsAny() {
+        List<CodeType> codeTypes = new ArrayList<>();
+        String[] valuesToMatch = new String[1];
+        boolean result = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result);
+
+        codeTypes.add(new CodeType("one"));
+        valuesToMatch[0] = "two";
+        boolean result2 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertTrue(result2);
+
+        valuesToMatch[0] = "one";
+        boolean result3 = fact.valueCodeTypeContainsAny(codeTypes, valuesToMatch);
+        assertFalse(result3);
+    }
+
+    @Test
+    public void testListContainsAtLeastOneFromTheOtherList() {
+        List<IdType> controlList = new ArrayList<>();
+        List<IdType> elementsToMatchList = new ArrayList<>();
+        boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result);
+
+        controlList.add(new IdType("123"));
+        boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result2);
+
+        elementsToMatchList.add(new IdType("234"));
+        boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertFalse(result3);
+
+        elementsToMatchList.add(new IdType("123"));
+        boolean result4 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        assertTrue(result4);
+    }
+
+
+    @Test
+    public void testIsTypeCodeValuePresentInList(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("FAKE_LIST_ID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCodes);
+        assertEquals(true, typeCodeValuePresentInList);
+
+    }
+
+    @Test
+    public void testIsTypeCodeValuePresentInList_single(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("VESSEL_STORAGE_TYPE");
+        typeCode.setValue("OTR");
+
+        boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCode);
+        assertEquals(true, typeCodeValuePresentInList);
+
+    }
+
+
+    @Test
+    public void testValidateFormatCodeTypes(){
+        CodeType typeCode = new CodeType();
+        typeCode.setListId("UUID");
+        typeCode.setValue("OTR");
+        CodeType typeCode2 = new CodeType();
+        typeCode2.setListId("UUID");
+        typeCode2.setValue("NCC");
+        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
+        boolean result =fact.validateFormatCodeTypes(typeCodes);
+        assertTrue(result);
+    }
+
 }

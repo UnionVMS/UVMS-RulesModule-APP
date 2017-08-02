@@ -11,16 +11,15 @@ propertyNames
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
-import java.util.Arrays;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 
 template "@{tname}"
 
-rule "Vessel Transport means @{tname} - @{brid}"
+rule "Validation Quality Analysis @{tname} - @{brid}"
 
 when
 
-    $fact : FaExitFromSeaFact(@{expression})
+    $fact : ValidationQualityAnalysisFact(@{expression})
 
 then
     $fact.setOk(false);
