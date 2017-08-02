@@ -296,7 +296,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if (id == null) {
+        if (id == null || id.getSchemeId() == null) {
             return true;
         }
         try {
