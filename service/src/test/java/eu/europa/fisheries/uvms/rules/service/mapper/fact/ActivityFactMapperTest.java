@@ -20,7 +20,7 @@ import lombok.*;
 import org.apache.commons.io.*;
 import org.junit.*;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
@@ -614,7 +614,7 @@ public class ActivityFactMapperTest {
 
         fishingActivity.setTypeCode(codeType);
 
-        FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity,faReportDocument);
+        FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(fishingActivity, faReportDocument);
 
         assertEquals(codeType.getValue(), faDiscardFact.getFaReportDocumentTypeCode().getValue());
     }
@@ -656,7 +656,7 @@ public class ActivityFactMapperTest {
 
         final List<VesselStorageCharacteristicsFact> vesselStorageCharacteristicsFacts = activityMapper.generateFactsForVesselStorageCharacteristics(null);
         final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null, null);
-        final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null,null);
+        final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null, null);
         final FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(null, null);
         final VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = activityMapper.generateFactsForVesselStorageCharacteristic(null);
         final FaArrivalFact faArrivalFact = activityMapper.generateFactsForDeclarationOfArrival(null, null);
@@ -674,8 +674,8 @@ public class ActivityFactMapperTest {
         final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null);
         final FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(null, true);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
-        final FaResponseFact faResponseFact= activityMapper.generateFactsForFaResponse(null);
-        final ValidationQualityAnalysisFact qualityAnalysisFact=activityMapper.generateFactsForValidationQualityAnalysis(null);
+        final FaResponseFact faResponseFact = activityMapper.generateFactsForFaResponse(null);
+        final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
         final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
@@ -827,28 +827,26 @@ public class ActivityFactMapperTest {
     }
 
     @Test
-    public void testGenerateFactsForFaResponse(){
+    public void testGenerateFactsForFaResponse() {
         fluxResponseMessage.getFLUXResponseDocument().setRespondentFLUXParty(null);
-        FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
+        FaResponseFact faResponseFact = activityMapper.generateFactsForFaResponse(fluxResponseMessage);
         assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
         assertEquals(null, faResponseFact.getFluxPartyIds());
     }
 
     @Test
-    public void testGenerateFactsForFaResponse_nullDocument(){
+    public void testGenerateFactsForFaResponse_nullDocument() {
         fluxResponseMessage.setFLUXResponseDocument(null);
-        FaResponseFact faResponseFact=  activityMapper.generateFactsForFaResponse(fluxResponseMessage);
+        FaResponseFact faResponseFact = activityMapper.generateFactsForFaResponse(fluxResponseMessage);
         assertEquals(null, faResponseFact.getResponseCode());
     }
 
 
-
     @Test
-    public void testGenerateFactsForValidationQualityAnalysis(){
-        ValidationQualityAnalysisFact qualityAnalysisFact=  activityMapper.generateFactsForValidationQualityAnalysis(validationQualityAnalysis);
+    public void testGenerateFactsForValidationQualityAnalysis() {
+        ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(validationQualityAnalysis);
         assertEquals(codeType.getValue(), qualityAnalysisFact.getLevelCode().getValue());
     }
-
 
 
 }
