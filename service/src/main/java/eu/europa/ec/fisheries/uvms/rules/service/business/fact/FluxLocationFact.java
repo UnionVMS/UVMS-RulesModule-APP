@@ -42,7 +42,12 @@ public class FluxLocationFact extends AbstractFact {
     }
 
     public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
+        if(typeCode == null){
+            this.typeCode = new CodeType();
+        }
+        else {
+            this.typeCode = typeCode;
+        }
     }
 
     public IdType getCountryID() {
