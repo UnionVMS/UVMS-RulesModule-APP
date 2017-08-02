@@ -906,7 +906,7 @@ public abstract class AbstractFact {
     }
 
     public boolean anyFluxLocationTypeCodeContainsValue(List<FLUXLocation> fluxLocations, String value) {
-        if (CollectionUtils.isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
+        if (isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
             return false;
         }
 
@@ -919,6 +919,39 @@ public abstract class AbstractFact {
         }
 
         return false;
+    }
+
+    public boolean anyFluxLocationSchemeIdContains(List<FLUXLocation> fluxLocations, String... schemeIds) {
+        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(fluxLocations)) {
+            return false;
+        }
+
+        for (String schemeId : schemeIds) {
+            for (FLUXLocation fluxLocation : fluxLocations) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
+                if (id != null && schemeId.equals(id.getSchemeID())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public String getFluxLocationIdsSchemeIdValue(List<FLUXLocation> fluxLocations, String schemeId) {
+        if (StringUtils.isEmpty(schemeId) || isEmpty(fluxLocations)) {
+            return null;
+        }
+
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
+            if (id != null && schemeId.equals(id.getSchemeID())) {
+                return id.getValue();
+            }
+
+        }
+
+        return null;
     }
 
     public Integer getSequence() {

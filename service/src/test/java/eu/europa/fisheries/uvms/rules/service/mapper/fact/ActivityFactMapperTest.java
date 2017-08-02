@@ -562,9 +562,9 @@ public class ActivityFactMapperTest {
 
         fishingActivity.setTypeCode(codeType);
 
-        FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(fishingActivity);
+        FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(fishingActivity, new FAReportDocument());
 
-        assertEquals(codeType.getValue(), faRelocationFact.getTypeCode());
+        assertEquals(codeType.getValue(), faRelocationFact.getFishingActivityTypeCode());
     }
 
 
@@ -618,7 +618,7 @@ public class ActivityFactMapperTest {
         final List<VesselStorageCharacteristicsFact> vesselStorageCharacteristicsFacts = activityMapper.generateFactsForVesselStorageCharacteristics(null);
         final List<FluxCharacteristicsFact> fluxCharacteristicsFacts = activityMapper.generateFactsForFluxCharacteristics(null, null);
         final FaDiscardFact faDiscardFact = activityMapper.generateFactsForDiscard(null);
-        final FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(null);
+        final FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(null, null);
         final VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = activityMapper.generateFactsForVesselStorageCharacteristic(null);
         final FaArrivalFact faArrivalFact = activityMapper.generateFactsForDeclarationOfArrival(null, null);
         final FaQueryFact faQueryFact = activityMapper.generateFactsForFaQuery(null);

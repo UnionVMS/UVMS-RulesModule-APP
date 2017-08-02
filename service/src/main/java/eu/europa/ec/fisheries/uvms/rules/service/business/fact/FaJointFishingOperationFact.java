@@ -13,11 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
+import eu.europa.ec.fisheries.schema.rules.template.v1.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import java.util.*;
 
 /**
  * @author padhyad
@@ -33,11 +33,6 @@ public class FaJointFishingOperationFact extends AbstractFact {
 
     public FaJointFishingOperationFact() {
         setFactType();
-    }
-
-    @Override
-    public void setFactType() {
-        this.factType = FactType.FA_JOINT_FISHING_OPERATION;
     }
 
     public CodeType getFishingActivityTypeCode() {
@@ -63,5 +58,9 @@ public class FaJointFishingOperationFact extends AbstractFact {
     public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
         this.relatedFLUXLocations = relatedFLUXLocations;
     }
-    
+
+    @Override
+    public void setFactType() {
+        this.factType = FactType.FA_JOINT_FISHING_OPERATION;
+    }
 }

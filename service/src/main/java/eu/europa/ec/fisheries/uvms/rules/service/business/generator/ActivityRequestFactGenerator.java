@@ -158,6 +158,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
                 facts.add(activityFactMapper.generateFactsForVesselStorageCharacteristic(activity.getDestinationVesselStorageCharacteristic()));
 
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument));
+
                 index++;
             }
         }
