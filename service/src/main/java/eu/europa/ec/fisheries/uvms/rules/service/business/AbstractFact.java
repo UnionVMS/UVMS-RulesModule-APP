@@ -64,6 +64,8 @@ public abstract class AbstractFact {
 
     protected FactType factType;
 
+    public String senderOrReceiver;
+
     protected List<RuleWarning> warnings;
 
     protected List<RuleError> errors;
@@ -294,7 +296,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
-        if (id == null) {
+        if (id == null || id.getSchemeId() == null) {
             return true;
         }
         try {
@@ -915,6 +917,25 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean matchWithFluxTL(List<IdType> idTypes){
+        boolean match = false;
+        for (IdType idType : idTypes){
+            match = matchWithFluxTL(idType);
+            if (match){
+                break;
+            }
+        }
+        return match;
+    }
+
+    public boolean matchWithFluxTL(IdType idType){
+        boolean match = false;
+        if (idType != null){
+            match = StringUtils.equals(idType.getValue(), senderOrReceiver);
+        }
+        return match;
+    }
+
     public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {
         if (CollectionUtils.isEmpty(additionalObjectList)) {
             return false;
@@ -1053,5 +1074,12 @@ public abstract class AbstractFact {
         return isMoreTheOneDeclaration;
     }
 
+    public String getSenderOrReceiver() {
+        return senderOrReceiver;
+    }
+
+    public void setSenderOrReceiver(String senderOrReceiver) {
+        this.senderOrReceiver = senderOrReceiver;
+    }
 
 }
