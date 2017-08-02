@@ -1179,4 +1179,23 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
+
+    @Test
+    public void testMatchWithFluxTL(){
+        IdType idType = new IdType();
+        idType.setValue("TEST");
+        fact.setSenderOrReceiver("TEST");
+        assertTrue(fact.matchWithFluxTL(Arrays.asList(idType)));
+    }
+
+    @Test
+    public void testMatchWithFluxTLWithEmptyList(){
+        assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
+    }
+
+    @Test
+    public void testMatchWithFluxTLWithSenderReceiverNull(){
+        fact.setSenderOrReceiver(null);
+        assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
+    }
 }

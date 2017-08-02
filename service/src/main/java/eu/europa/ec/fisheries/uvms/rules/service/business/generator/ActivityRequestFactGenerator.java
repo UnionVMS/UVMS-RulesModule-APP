@@ -13,6 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
@@ -49,7 +53,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -97,24 +100,19 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     @Override
-    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
-        if (additionalObject == null) {
-            log.warn("additionalObject object is null! Nothing is going to be set!");
-            return;
-        }
-        switch (validationType) {
-            case ASSET_LIST:
-                activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-                break;
-            case ACTIVITY_NON_UNIQUE_IDS:
-                activityFactMapper.setNonUniqueIdsMap((Map<ActivityTableType, List<IdType>>) additionalObject);
-                break;
-            case ACTIVITY_WITH_TRIP_IDS:
-                activityFactMapper.setFishingActivitiesWithTripIds((Map<String, List<FishingActivityWithIdentifiers>>) additionalObject);
-                break;
-            default:
-                log.error("Non supported additiotan object!");
-        }
+    public void setAdditionalValidationObject() {
+        List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_LIST);
+        activityFactMapper.setAssetList(idTypeWithFlagStates);
+
+        Map<ActivityTableType, List<IdType>> activityTableTypeListMap = (Map<ActivityTableType, List<IdType>>) extraValueMap.get(ACTIVITY_NON_UNIQUE_IDS);
+        activityFactMapper.setNonUniqueIdsMap(activityTableTypeListMap);
+
+        Map<String, List<FishingActivityWithIdentifiers>> stringListMap = (Map<String, List<FishingActivityWithIdentifiers>>) extraValueMap.get(ACTIVITY_WITH_TRIP_IDS);
+        activityFactMapper.setFishingActivitiesWithTripIds(stringListMap);
+
+        String senderReceiver = (String)extraValueMap.get(SENDER_RECEIVER);
+        activityFactMapper.setSenderReceiver(senderReceiver);
+
     }
 
     @Override

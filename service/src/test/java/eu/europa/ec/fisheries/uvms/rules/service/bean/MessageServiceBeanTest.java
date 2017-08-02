@@ -224,7 +224,7 @@ public class MessageServiceBeanTest {
     public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
-        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage);
+        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
