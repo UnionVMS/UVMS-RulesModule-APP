@@ -8,6 +8,7 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.fisheries.uvms.rules.service.business;
 
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -27,12 +27,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
@@ -129,10 +127,10 @@ public class BusinessObjectFactoryTest {
     @Test
     public void testSetAdditionalValidation_ActivityQueryFactGenerator() {
         ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
-        activityQueryFactGenerator.setAdditionalValidationObject(Collections.emptyList(), AdditionalValidationObjectType.ASSET_LIST);
-        activityQueryFactGenerator.setAdditionalValidationObject(MapUtils.EMPTY_MAP, AdditionalValidationObjectType.ACTIVITY_NON_UNIQUE_IDS);
-        activityQueryFactGenerator.setAdditionalValidationObject(MapUtils.EMPTY_MAP, AdditionalValidationObjectType.ACTIVITY_WITH_TRIP_IDS);
-        activityQueryFactGenerator.setAdditionalValidationObject(MapUtils.EMPTY_MAP, null);
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
     }
 
     @Test
