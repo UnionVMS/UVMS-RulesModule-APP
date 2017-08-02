@@ -52,7 +52,7 @@
         <maven-release-plugin>2.5.3</maven-release-plugin>
         <project.scm.id>github</project.scm.id>
 
-        <!-- Packages that need to be exluded from sonar coverage -->
+        <!-- Packages that need to be excluded from sonar coverage -->
         <sonar.exclusions>
             *src/main/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/*
         </sonar.exclusions>
