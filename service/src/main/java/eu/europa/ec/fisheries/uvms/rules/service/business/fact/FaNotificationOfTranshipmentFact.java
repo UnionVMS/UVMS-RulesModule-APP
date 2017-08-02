@@ -13,8 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
@@ -22,6 +20,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
@@ -188,6 +188,30 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
         return isPresent;
 
+    }
+
+
+    /**
+     * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
+     * @param specifiedFACatches FACatches from this list would be matched against
+     * @param speciesCode FACatch speciesCode value to be matched
+     * @param typeCode FACatch typeCode value to be matched
+     * @return  TRUE : Atleast one FACatch with matching criteria found
+ *              FALSE :  No FACatch with matching criteria found
+     */
+    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches,String speciesCode, String typeCode){
+        if(CollectionUtils.isEmpty(specifiedFACatches) || speciesCode ==null || typeCode ==null){
+            return false;
+        }
+
+
+        for(FACatch faCatch : specifiedFACatches){
+            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode()) && typeCode.equals(faCatch.getTypeCode())){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
