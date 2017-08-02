@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -48,13 +49,15 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
 
-    private List<IdType> flapDocumentIdTypes;
-
     private List<FACatch> specifiedFACatches;
 
     private List<CodeType> faCatchSpecifiedFLUXLocationsTypeCodes;
 
     private List<CodeType> fluxCharacteristicTypeCodes;
+
+    private List<FLAPDocument> specifiedFLAPDocuments;
+
+    private List<IdType> flapDocumentIdTypes;
 
     public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
         return specifiedFLUXCharacteristics;
@@ -154,6 +157,14 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
     public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
         this.specifiedFACatches = specifiedFACatches;
+    }
+
+    public List<FLAPDocument> getSpecifiedFLAPDocuments() {
+        return specifiedFLAPDocuments;
+    }
+
+    public void setSpecifiedFLAPDocuments(List<FLAPDocument> specifiedFLAPDocuments) {
+        this.specifiedFLAPDocuments = specifiedFLAPDocuments;
     }
 
     /**
