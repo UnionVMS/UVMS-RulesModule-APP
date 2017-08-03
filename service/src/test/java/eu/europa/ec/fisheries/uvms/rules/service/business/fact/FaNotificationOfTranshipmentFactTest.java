@@ -26,4 +26,11 @@ public class FaNotificationOfTranshipmentFactTest {
        boolean result= faNotificationOfTranshipmentFact.ifFLUXLocationForFACatchIsAREA( RuleTestHelper.getFACatchList());
         assertTrue(result);
     }
+
+    @Test
+    public void testContainsAnyFaCatch(){
+
+        boolean result= faNotificationOfTranshipmentFact.containsAnyFaCatch( RuleTestHelper.getFACatchList(),"BFT","LOADED");
+        assertTrue(result);
+    }
 }

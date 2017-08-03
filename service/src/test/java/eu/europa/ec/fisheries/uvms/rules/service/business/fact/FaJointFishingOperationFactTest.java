@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,6 +59,6 @@ public class FaJointFishingOperationFactTest {
     @Test
     public void testVallidationForDestinationFLUXLocation_ID(){
         boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"ID");
-        assertTrue(result);
+        assertFalse(result);
     }
 }
