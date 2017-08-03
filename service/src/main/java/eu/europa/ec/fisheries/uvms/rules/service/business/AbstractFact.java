@@ -575,7 +575,7 @@ public abstract class AbstractFact {
     }
 
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
-        return valueContainsAny(Arrays.asList(codeType), valuesToMatch);
+        return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
     public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
