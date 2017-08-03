@@ -11,27 +11,18 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Session;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
-import eu.europa.ec.fisheries.uvms.message.JMSUtils;
+import eu.europa.ec.fisheries.uvms.config.exception.*;
+import eu.europa.ec.fisheries.uvms.config.message.*;
+import eu.europa.ec.fisheries.uvms.message.*;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.*;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
+
+import javax.annotation.*;
+import javax.ejb.*;
+import javax.jms.*;
+import javax.naming.*;
 
 @Stateless
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
@@ -54,7 +45,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
         try {
             ctx = new InitialContext();
         } catch (Exception e) {
-            LOG.error("Failed to get InitialContext",e);
+            LOG.error("Failed to get InitialContext", e);
             throw new RuntimeException(e);
         }
         try {
@@ -64,10 +55,10 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             LOG.debug("Connection Factory lookup failed for " + MessageConstants.CONNECTION_FACTORY);
             String wfName = "java:/" + MessageConstants.CONNECTION_FACTORY;
             try {
-                LOG.debug("trying "+wfName);
+                LOG.debug("trying " + wfName);
                 connectionFactory = (QueueConnectionFactory) ctx.lookup(wfName);
             } catch (Exception e) {
-                LOG.error("Connection Factory lookup failed for both "+MessageConstants.CONNECTION_FACTORY + " and " + wfName);
+                LOG.error("Connection Factory lookup failed for both " + MessageConstants.CONNECTION_FACTORY + " and " + wfName);
                 throw new RuntimeException(e);
             }
         }
@@ -89,7 +80,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
             return response;
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("[ Error when getting message ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
         } finally {
@@ -102,13 +93,12 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
     public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
         try {
             return getMessage(correlationId, type);
-        }
-        catch (MessageException e) {
+        } catch (MessageException e) {
             LOG.error("[ Error when getting config message. ] {}", e.getMessage());
             throw new ConfigMessageException("[ Error when getting config message. ]");
         }
     }
-    
+
     private void connectToQueue() throws JMSException {
         connection = connectionFactory.createConnection();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
