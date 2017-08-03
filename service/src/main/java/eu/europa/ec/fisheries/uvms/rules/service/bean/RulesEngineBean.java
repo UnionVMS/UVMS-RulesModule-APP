@@ -64,8 +64,8 @@ public class RulesEngineBean {
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
 		mdrCacheServiceBean.loadMDRCache();
-	//	generator.setExtraValueMap(map);
-	//	mdrCacheServiceBean.loadMDRCache();
+		generator.setExtraValueMap(map);
+		mdrCacheServiceBean.loadMDRCache();
 		facts.addAll(generator.generateAllFacts());
 		templateEngine.evaluateFacts(facts);
 		return facts;
