@@ -217,7 +217,7 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
 
 
         for(FACatch faCatch : specifiedFACatches){
-            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode()) && typeCode.equals(faCatch.getTypeCode())){
+            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())){
                 return true;
             }
         }
