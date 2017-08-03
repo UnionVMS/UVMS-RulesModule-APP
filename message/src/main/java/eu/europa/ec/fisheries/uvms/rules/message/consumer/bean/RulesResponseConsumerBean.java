@@ -71,7 +71,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
                 throw new RuntimeException(e);
             }
         }
-        responseQueue = JMSUtils.lookupQueue(ctx, MessageConstants.RULES_RESPONSE_QUEUE);
+        responseQueue = JMSUtils.lookupQueue(MessageConstants.RULES_RESPONSE_QUEUE);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
