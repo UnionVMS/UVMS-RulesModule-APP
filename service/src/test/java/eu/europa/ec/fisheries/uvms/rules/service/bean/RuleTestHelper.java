@@ -187,6 +187,15 @@ public class RuleTestHelper {
         fluxLocationsBFT.add(createFluxLocationWithTypeCodeValue("LOCATION"));
         bftFaCatch.setDestinationFLUXLocations(fluxLocationsBFT);
 
+        FACatch loadedBFT =new FACatch();
+        loadedBFT.setTypeCode(getCodeTypeUNCEFACT("LOADED",""));
+        loadedBFT.setSpeciesCode(getCodeTypeUNCEFACT("BFT",""));
+        loadedBFT.setDestinationFLUXLocations(fluxLocationsBFT);
+        fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
+        loadedBFT.setSpecifiedFLUXLocations(fluxLocations);
+        faCatches.add(loadedBFT);
+
+
         return faCatches;
     }
 
