@@ -1036,6 +1036,31 @@ public abstract class AbstractFact {
         return true;
     }
 
+    /**
+     * This function checks that the IdType exist in MDR code list or not.
+     * The MDR list is defined by the property schemeId from the IdType
+     *
+     * @param id - IdType that will be checked against ListName
+     * @return true when it exists
+     */
+    public boolean isIdTypePresentInMDRList(IdType id) {
+        if (id == null) {
+            return false;
+        }
+
+        String schemeId = id.getSchemeId();
+        String value = id.getValue();
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, schemeId);
+        if (anEnum == null) {
+            log.error(THE_LIST + schemeId + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
+
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+        return codeListValues.contains(value);
+    }
+
     public boolean matchWithFluxTL(List<IdType> idTypes){
         boolean match = false;
         for (IdType idType : idTypes){

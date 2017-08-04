@@ -10,7 +10,6 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -33,24 +32,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi
@@ -1434,4 +1415,34 @@ public class AbstractFactTest {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
+
+    @Test
+    public void testIsIdTypePresentInMDRListWhenIdIsNull() {
+        assertFalse(fact.isIdTypePresentInMDRList(null));
+    }
+
+    @Test
+    public void testIsIdTypePresentInMDRListWhenSchemeIdIsNotAKnownListInMDR() {
+        IdType idType = new IdType();
+        idType.setSchemeId(MDRAcronymType.FLUX_SALES_PARTY_ROLE.name());
+        idType.setValue("test");
+        assertFalse(fact.isIdTypePresentInMDRList(idType));
+    }
+
+    @Test
+    public void testIsIdTypePresentInMDRListWhenNotPresent() {
+        IdType idType = new IdType();
+        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
+        idType.setValue("fake");
+        assertFalse(fact.isIdTypePresentInMDRList(idType));
+    }
+
+    @Test
+    public void testIsIdTypePresentInMDRListWhenPresent() {
+        IdType idType = new IdType();
+        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
+        idType.setValue("PS1");
+        assertTrue(fact.isIdTypePresentInMDRList(idType));
+    }
+
 }
