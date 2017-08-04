@@ -77,12 +77,11 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
 
         switch (typeCode.getValue()){
             case "ROLE":
-                return !isCodeTypeValidFormat("FLUX_SALES_QUERY_PARAM_ROLE", valueCode);
+                return !isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue());
             case "FLAG":
-                return !isCodeTypeValidFormat("LOCATION", valueCode);
+                return !isPresentInMDRList("TERRITORY", valueCode.getValue());
             case "PLACE":
-                // TODO validate with MDR data
-                return false;
+                return !isPresentInMDRList("LOCATION", valueCode.getValue());
             default:
                 return true;
         }
