@@ -14,10 +14,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import java.util.List;
+import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+
+import java.util.List;
 
 /**
  * @author padhyad
@@ -25,6 +28,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
  * @author Andi Kovi
  */
 public abstract class AbstractGenerator<T> {
+
+    protected Map<ExtraValueType, Object> extraValueMap;
 
     public abstract List<AbstractFact> generateAllFacts();
 
@@ -37,10 +42,13 @@ public abstract class AbstractGenerator<T> {
      * <p>
      * This way we avoid having to set global EJB objects that sometimes need to be invoked in the drts.
      *
-     * @param additionalObject
-     * @param validationType
      */
-    public void setAdditionalValidationObject(Object additionalObject, AdditionalValidationObjectType validationType) {
+    public void setAdditionalValidationObject() {
         return;
     }
+
+    public void setExtraValueMap(Map<ExtraValueType, Object> map) {
+        this.extraValueMap = map;
+    }
+
 }

@@ -53,6 +53,9 @@ public class MDRCacheHolder {
 
         List<ObjectRepresentation> ObjectRepresentationList = cache.get(type);
 
+        if (CollectionUtils.isEmpty(ObjectRepresentationList))
+            return Collections.emptyList();
+
         for (ObjectRepresentation representation : ObjectRepresentationList) {
             List<ColumnDataType> columnDataTypes = representation.getFields();
             if (CollectionUtils.isEmpty(columnDataTypes)) {
