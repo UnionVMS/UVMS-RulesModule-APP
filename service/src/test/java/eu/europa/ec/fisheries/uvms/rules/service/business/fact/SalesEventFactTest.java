@@ -6,13 +6,11 @@ import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SalesEventFactTest {
 
     @Test
-    @Ignore // FIXME
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesEventFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
@@ -21,7 +19,7 @@ public class SalesEventFactTest {
                 .withPrefabValues(AAPProductType.class, new AAPProductType().withSpeciesCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProductType().withSpeciesCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
                 .verify();
     }
 

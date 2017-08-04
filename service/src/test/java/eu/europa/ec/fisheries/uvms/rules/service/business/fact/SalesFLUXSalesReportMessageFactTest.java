@@ -1,20 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.FACatchType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
-import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
-import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SalesFLUXSalesReportMessageFactTest {
 
     @Test
-    @Ignore // FIXME
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesFLUXSalesReportMessageFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
@@ -25,7 +18,7 @@ public class SalesFLUXSalesReportMessageFactTest {
                 .withPrefabValues(AAPProcessType.class, new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
                 .verify();
     }
 

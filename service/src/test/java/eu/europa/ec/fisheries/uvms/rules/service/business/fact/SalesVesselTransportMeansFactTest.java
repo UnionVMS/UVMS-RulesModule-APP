@@ -6,13 +6,11 @@ import eu.europa.ec.fisheries.schema.sales.FishingGearType;
 import eu.europa.ec.fisheries.schema.sales.GearCharacteristicType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SalesVesselTransportMeansFactTest {
 
     @Test
-    @Ignore // FIXME
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesVesselTransportMeansFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
@@ -22,7 +20,7 @@ public class SalesVesselTransportMeansFactTest {
                 .withPrefabValues(GearCharacteristicType.class, new GearCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new GearCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FLUXCharacteristicType.class, new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "source", "sequence")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
                 .verify();
     }
 
