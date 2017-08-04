@@ -10,73 +10,28 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.apache.commons.lang3.StringUtils;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Before;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
+import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -899,6 +854,48 @@ public class AbstractFactTest {
         List<CodeType> uniqueValues = Collections.emptyList();
 
         boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(uniqueValues);
+        assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllListIdsUniqueWhenListContainsUniqueValues() throws Exception {
+        CodeType codeTypeA = new CodeType();
+        codeTypeA.setListId("a");
+
+        CodeType codeTypeB = new CodeType();
+        codeTypeB.setListId("b");
+
+        CodeType codeTypeC = new CodeType();
+        codeTypeC.setListId("c");
+
+        List<CodeType> uniqueValues = Arrays.asList(codeTypeA, codeTypeB, codeTypeC);
+
+        boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
+        assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllListIdsUniqueWhenListContainsDuplicateValues() throws Exception {
+        CodeType codeTypeA = new CodeType();
+        codeTypeA.setListId("duplicate");
+
+        CodeType codeTypeB = new CodeType();
+        codeTypeB.setListId("duplicate");
+
+        CodeType codeTypeC = new CodeType();
+        codeTypeC.setListId("c");
+
+        List<CodeType> uniqueValues = Arrays.asList(codeTypeA, codeTypeB, codeTypeC);
+
+        boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
+        assertFalse(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllListIdsUniqueWhenListIsEmpty() throws Exception {
+        List<CodeType> uniqueValues = Collections.emptyList();
+
+        boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
         assertTrue(listIsUnique);
     }
 

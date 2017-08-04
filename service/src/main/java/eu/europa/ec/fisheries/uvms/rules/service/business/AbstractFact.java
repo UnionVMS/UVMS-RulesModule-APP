@@ -865,6 +865,27 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isListEmptyOrAllListIdsUnique(List<CodeType> sourceList){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> listIds = new ArrayList<>();
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                continue;
+            }
+
+            if (listIds.contains(codeType.getListId())) {
+                return false;
+            }
+
+            listIds.add(codeType.getListId());
+        }
+
+        return true;
+    }
+
     public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch){
         if (isEmpty(sourceList)) {
             return true;
