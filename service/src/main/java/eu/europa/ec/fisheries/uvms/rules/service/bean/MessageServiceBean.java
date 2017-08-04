@@ -13,6 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static java.util.Collections.singletonList;
 
 import javax.ejb.EJB;
@@ -54,7 +60,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
@@ -111,7 +117,8 @@ public class MessageServiceBean implements MessageService {
             FLUXSalesQueryMessage salesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_QUERY_MSG, salesQueryMessage);
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_SALES_QUERY_MSG, salesQueryMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_QUERY_MSG, salesQueryMessage, extraValueTypeObjectMap);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesQueryMessageAsString);
 
             //send to sales
@@ -139,7 +146,7 @@ public class MessageServiceBean implements MessageService {
             Report salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_REPORT_MSG, salesReportMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString);
 
             //send to sales
@@ -168,7 +175,7 @@ public class MessageServiceBean implements MessageService {
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
 
             updateRequestMessageStatus(rulesRequest.getLogGuid(), validationResult);
@@ -186,7 +193,7 @@ public class MessageServiceBean implements MessageService {
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
@@ -212,7 +219,7 @@ public class MessageServiceBean implements MessageService {
             FLUXSalesResponseMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_SALES_REPORT_MSG, salesReportMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
@@ -245,7 +252,9 @@ public class MessageServiceBean implements MessageService {
 
                 if (isContinueValidation) {
                     log.info("Trigger rule engine to do validation of incoming message");
-                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
+                    extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
                     ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest());
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isContinueValidation));
 
@@ -398,6 +407,26 @@ public class MessageServiceBean implements MessageService {
         return responseMessage;
     }
 
+    @Override
+    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+            FLUXResponseDocument responseDocument = fluxResponseMessage.getFLUXResponseDocument();
+            if (responseDocument != null) {
+                fluxResponseDocument.setReferencedID((CollectionUtils.isNotEmpty(responseDocument.getIDS())) ? responseDocument.getIDS().get(0) : null); // Set Request Id
+            }
+            setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
+
     private void setFluxResponseDocumentIDs(FLUXResponseDocument fluxResponseDocument) {
         IDType responseId = new IDType();
         responseId.setValue(UUID.randomUUID().toString());
@@ -484,7 +513,9 @@ public class MessageServiceBean implements MessageService {
         try {
             //Validate response message
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
-            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType);
+
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType);
+            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType, extraValueTypeObjectMap);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse);
 
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);

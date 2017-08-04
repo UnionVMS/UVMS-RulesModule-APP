@@ -102,4 +102,13 @@ public class XPathConstants {
     public static final String SUBMITTED_DATE_TIME = "SubmittedDateTime";
     public static final String SUBMITTER_FLUX_PARTY = "SubmitterFLUXParty";
     public static final String SIMPLE_FA_QUERY_PARAMETER = "SimpleFAQueryParameter";
+    public static final String RELATED_VALIDATION_RESULT_DOCUMENT ="RelatedValidationResultDocument";
+    public static final String RELATED_VALIDATION_QUALITY_ANALYSIS ="RelatedValidationQualityAnalysis";
+    public static final String VALIDATOR_ID = "ValidatorID";
+    public static final String LEVEL_CODE = "LevelCode";
+    public static final String RESULT = "Result";
+    public static final String REFERENCED_ITEM = "ReferencedItem";
+    public static final String RESPONSE_CODE = "ResponseCode";
+    public static final String RESPONDENT_FLUX_PARTY = "RespondentFLUXParty";
+
 }

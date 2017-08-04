@@ -12,6 +12,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
@@ -186,6 +187,15 @@ public class RuleTestHelper {
         fluxLocationsBFT.add(createFluxLocationWithTypeCodeValue("LOCATION"));
         bftFaCatch.setDestinationFLUXLocations(fluxLocationsBFT);
 
+        FACatch loadedBFT =new FACatch();
+        loadedBFT.setTypeCode(getCodeTypeUNCEFACT("LOADED",""));
+        loadedBFT.setSpeciesCode(getCodeTypeUNCEFACT("BFT",""));
+        loadedBFT.setDestinationFLUXLocations(fluxLocationsBFT);
+        fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
+        loadedBFT.setSpecifiedFLUXLocations(fluxLocations);
+        faCatches.add(loadedBFT);
+
+
         return faCatches;
     }
 
@@ -229,6 +239,14 @@ public class RuleTestHelper {
     }
 
 
+    public static ValidationResultDocument getValidationResultDocument(){
+        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
+        validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value","SchemeId"));
+
+        return validationResultDocument;
+
+
+    }
 
 
 }
