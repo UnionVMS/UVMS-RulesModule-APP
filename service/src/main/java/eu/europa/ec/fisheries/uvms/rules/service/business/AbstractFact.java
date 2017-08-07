@@ -392,7 +392,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isCodeTypeValidFormat(String requiredListId, CodeType codeType) {
-        if (codeType == null || isEmpty(requiredListId) || isEmpty(codeType.getListId()) || isEmpty(codeType.getValue()) || codeType.getListId() != requiredListId) {
+        if (codeType == null || isEmpty(requiredListId) || isEmpty(codeType.getListId()) || isEmpty(codeType.getValue()) || !codeType.getListId().equals(requiredListId)) {
             return false;
         }
         try {

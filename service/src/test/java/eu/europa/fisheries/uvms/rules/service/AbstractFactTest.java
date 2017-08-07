@@ -943,6 +943,15 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void isCodeTypeValidFormatWhenProvidedListIDDiffersFromRequiredListId() {
+        CodeType codeType = new CodeType();
+        codeType.setListId("CFR");
+        codeType.setValue("aaa123456789");
+
+        assertFalse(fact.isCodeTypeValidFormat("somethingElse", codeType));
+    }
+
+    @Test
     public void isCodeTypeValidFormatWhenListIDIsInvalid() {
         CodeType codeType = new CodeType();
         codeType.setListId("notvalid");
