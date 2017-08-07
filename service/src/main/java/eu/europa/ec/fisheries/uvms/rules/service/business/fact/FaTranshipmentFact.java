@@ -41,7 +41,7 @@ public class FaTranshipmentFact extends AbstractFact {
 
     private List<FACatch> specifiedFACatches;
 
-    private List<CodeType> faCatchTypeCodes;
+    private List<CodeType> faCatchTypeCodes ;
 
     private List<CodeType> fluxLocationTypeCodes;
 
@@ -185,6 +185,13 @@ public class FaTranshipmentFact extends AbstractFact {
         return isPresent;
     }
 
+    /**
+     * This method will check Rule for SpecifiedFLUXCharacteristic. Rule will be checked for passed fluxLocationSchemeId
+     * @param specifiedFLUXCharacteristics
+     * @param fluxLocationSchemeId
+     * @return
+     * @throws Exception
+     */
     public boolean checkRuleForSpecifiedFLUXCharacteristic(List<FLUXCharacteristic> specifiedFLUXCharacteristics,String fluxLocationSchemeId) throws Exception {
         if(fluxLocationSchemeId ==null){
             log.error("Please provide value for fluxLocationSchemeId");
@@ -200,7 +207,7 @@ public class FaTranshipmentFact extends AbstractFact {
                 if(CollectionUtils.isNotEmpty(fluxLocations)){
                     for(FLUXLocation fluxLocation : fluxLocations){
                         if(fluxLocation.getTypeCode() !=null && "LOCATION".equals(fluxLocation.getTypeCode().getValue()) && fluxLocation.getID()!=null &&
-                                fluxLocationSchemeId.equals(fluxLocation.getID().getSchemeID()) && isPresentInMDRList("LOCATION",fluxLocation.getID().getValue())) {
+                                fluxLocationSchemeId.equals(fluxLocation.getID().getSchemeID()) && isPresentInMDRList(fluxLocationSchemeId,fluxLocation.getID().getValue())) {
                             return true;
                         }
                     }
