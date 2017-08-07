@@ -97,7 +97,7 @@ public class SalesQueryFact extends SalesAbstractFact {
 
         for (SalesQueryParameterType queryParameter :simpleSalesQueryParameters) {
             if (queryParameter != null
-                    && queryParameter.getTypeCode() != null && queryParameter.getTypeCode().getValue() == "ROLE"
+                    && queryParameter.getTypeCode() != null && queryParameter.getTypeCode().getValue().equals("ROLE")
                     && queryParameter.getValueCode() != null && !isEmpty(queryParameter.getValueCode().getValue())){
                 return true;
             }
