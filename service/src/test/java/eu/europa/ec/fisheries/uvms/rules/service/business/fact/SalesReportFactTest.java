@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -45,24 +46,33 @@ public class SalesReportFactTest {
     }
 
     @Test
-    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenSellerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SELLER", "BUYER", "SELLER");
+    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenOnlySellerIsSpecified() throws Exception {
+        SalesPartyFact seller = new SalesPartyFact();
+        seller.setRoleCodes(Lists.newArrayList(new CodeType("SELLER")));
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Lists.newArrayList(seller));
+        salesDocumentFact.setSpecifiedSalesBatches(Lists.newArrayList(new SalesBatchType().withSpecifiedAAPProducts(new AAPProductType().withTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ONE))))));
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertFalse(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertTrue(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
     @Test
-    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenBuyerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER", "BUYER", "SELLER");
-        setSalesBatchWithATotalPrice(salesDocumentFact);
+    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenOnlyBuyerIsSpecified() throws Exception {
+        SalesPartyFact buyer = new SalesPartyFact();
+        buyer.setRoleCodes(Lists.newArrayList(new CodeType("BUYER")));
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Lists.newArrayList(buyer));
+        salesDocumentFact.setSpecifiedSalesBatches(Lists.newArrayList(new SalesBatchType().withSpecifiedAAPProducts(new AAPProductType().withTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ONE))))));
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertFalse(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertTrue(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
     @Test
@@ -88,10 +98,16 @@ public class SalesReportFactTest {
     }
 
     @Test
+    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithTakeOverDocument() throws Exception {
+        fact.setItemTypeCode(new CodeType("TOD"));
+        assertFalse(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+    }
+
+    @Test
     public void isRecipientRoleNotSpecifiedForTakeOverDocumentWhenRecipientIsPresent() throws Exception {
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         CodeType codeType = new CodeType();
-        codeType.setListId("RECIPIENT");
+        codeType.setValue("RECIPIENT");
 
         SalesPartyFact salesPartyFact = new SalesPartyFact();
         salesPartyFact.setRoleCodes(Arrays.asList(codeType));
@@ -108,7 +124,7 @@ public class SalesReportFactTest {
     public void isRecipientRoleNotSpecifiedForTakeOverDocumentWhenRecipientIsNotPresent() throws Exception {
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         CodeType codeType = new CodeType();
-        codeType.setListId("RECIPIENTNOTPRESENT");
+        codeType.setValue("RECIPIENTNOTPRESENT");
 
         SalesPartyFact salesPartyFact = new SalesPartyFact();
         salesPartyFact.setRoleCodes(Arrays.asList(codeType));

@@ -37,6 +37,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.AmountType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
@@ -826,6 +827,10 @@ public abstract class AbstractFact {
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
         return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public boolean isBlank(IdType id) {
+        return id == null || StringUtils.isBlank(id.getValue());
     }
 
     public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {

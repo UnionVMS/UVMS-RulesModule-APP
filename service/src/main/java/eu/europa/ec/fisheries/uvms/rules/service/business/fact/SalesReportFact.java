@@ -1,8 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
@@ -100,22 +97,20 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     public boolean isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase(){
-        if(itemTypeCode != null && Objects.equals(itemTypeCode.getValue(), "SN") && !isEmpty(includedSalesDocuments))
-        {
-            for (SalesDocumentFact salesDocument:includedSalesDocuments) {
+        if(itemTypeCode != null && "SN".equals(itemTypeCode.getValue()) && !isEmpty(includedSalesDocuments)) {
+            for (SalesDocumentFact salesDocument : includedSalesDocuments) {
                 // If the document does not have a price greater than zero it can not pass the test since it is not considered a purchase
-                if (salesDocument == null  || isTotalZero(salesDocument))
-                {
+                if (salesDocument == null || isTotalZero(salesDocument)) {
                     return false;
                 }
 
-                if ( salesDocument.getSpecifiedSalesParties() == null){
+                if (salesDocument.getSpecifiedSalesParties() == null) {
                     return true;
                 }
 
                 boolean sellerAvailable = false;
                 boolean buyerAvailable = false;
-                for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
+                for (SalesPartyFact salesParty : salesDocument.getSpecifiedSalesParties()) {
                     if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
                         sellerAvailable = true;
                     }
@@ -124,13 +119,10 @@ public class SalesReportFact extends SalesAbstractFact {
                     }
                 }
 
-                if (sellerAvailable || buyerAvailable) {
-                    return false;
-                }
+                return !sellerAvailable || !buyerAvailable;
             }
         }
-
-        return true;
+        return false;
     }
 
     public boolean isRecipientRoleNotSpecifiedForTakeOverDocument(){
@@ -143,7 +135,7 @@ public class SalesReportFact extends SalesAbstractFact {
 
                 boolean recipientAvailable = false;
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !listIdDoesNotContainAll(salesParty.getRoleCodes(), "RECIPIENT")) {
+                    if (salesParty != null && !valueCodeTypeContainsAny(salesParty.getRoleCodes(), "RECIPIENT")) {
                         recipientAvailable = true;
                     }
                 }

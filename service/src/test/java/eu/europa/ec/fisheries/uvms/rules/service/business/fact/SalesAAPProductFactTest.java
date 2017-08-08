@@ -41,6 +41,44 @@ public class SalesAAPProductFactTest {
     }
 
     @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenSizeDistributionIsNull() throws Exception {
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenSizeDistributionHasNoClassCodes() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType());
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheClassCodeIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes((eu.europa.ec.fisheries.schema.sales.CodeType) null));
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheClassCodeValueIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType()));
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheUsageCodeIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("BMS")));
+
+        assertTrue(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
     public void isOriginFLUXLocationEmptyOrTypeNotLocationWhenTypeIsNotLocation() throws Exception {
         fact.setOriginFLUXLocations(Collections.singletonList(new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("NOT LOCATION"))));
 
@@ -53,22 +91,6 @@ public class SalesAAPProductFactTest {
                 .withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("LOCATION"))));
 
         assertFalse(fact.isOriginFLUXLocationEmptyOrTypeNotLocation());
-    }
-
-    @Test
-    public void isInvalidUsageCodeWhenInvalid() throws Exception {
-        fact.setUsageCode(new CodeType("INVALID"));
-
-        boolean invalidUsageCode = fact.isInvalidUsageCode();
-        assertTrue(invalidUsageCode);
-    }
-
-    @Test
-    public void isInvalidUsageCodeWhenValid() throws Exception {
-        fact.setUsageCode(new CodeType("HCN"));
-
-        boolean validCode = fact.isInvalidUsageCode();
-        assertFalse(validCode);
     }
 
     @Test

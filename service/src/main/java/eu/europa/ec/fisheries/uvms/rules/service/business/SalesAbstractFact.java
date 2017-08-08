@@ -13,8 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.schema.sales.AmountType;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collection;
 
 @Slf4j
 @ToString
@@ -42,6 +45,18 @@ public abstract class SalesAbstractFact extends AbstractFact {
             return true;
         }
 
+        return false;
+    }
+
+    public boolean nullValuesInAmountTypes(Collection<AmountType> amountTypes) {
+        if (amountTypes == null || amountTypes.isEmpty()) {
+            return true;
+        }
+        for (AmountType amountType : amountTypes) {
+            if (amountType == null || amountType.getValue() == null) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -158,35 +158,14 @@ public class SalesAAPProductFact extends SalesAbstractFact {
         return Objects.hash(speciesCode, unitQuantity, weightMeasure, weighingMeansCode, usageCode, packagingUnitQuantity, packagingTypeCode, packagingUnitAverageWeightMeasure, appliedAAPProcesses, totalSalesPrice, specifiedSizeDistribution, originFLUXLocations, originFishingActivity);
     }
 
-
-    public boolean isInvalidUsageCode() {
-        String[] validUsages = new String[10];
-        validUsages[0] = "HCN";
-        validUsages[1] = "HCN-INDIRECT";
-        validUsages[2] = "IND";
-        validUsages[3] = "BAI";
-        validUsages[4] = "ANF";
-        validUsages[5] = "WST";
-        validUsages[6] = "WDR";
-        validUsages[7] = "COV";
-        validUsages[8] = "UNK";
-        validUsages[9] = "STO";
-
-        return valueContainsAny(usageCode, validUsages);
-    }
-
     public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption(){
-        if (specifiedSizeDistribution == null || isEmpty(specifiedSizeDistribution.getClassCodes())){
+        if (specifiedSizeDistribution == null || isEmpty(specifiedSizeDistribution.getClassCodes()) || specifiedSizeDistribution.getClassCodes().get(0) == null){
             return false;
         }
 
         // If the class code (can only be one) is BMS and the usage code is anything but
-        if(specifiedSizeDistribution.getClassCodes().get(0).getValue() == "BMS"
-                && (usageCode == null || usageCode.getValue() != "HCN-INDIRECT")){
-            return true;
-        }
-
-        return false;
+        return "BMS".equals(specifiedSizeDistribution.getClassCodes().get(0).getValue())
+                && (usageCode == null || !"HCN-INDIRECT".equals(usageCode.getValue()));
     }
 
 

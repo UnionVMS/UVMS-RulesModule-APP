@@ -1454,4 +1454,34 @@ public class AbstractFactTest {
         assertTrue(fact.isIdTypePresentInMDRList(idType));
     }
 
+    @Test
+    public void testIsBlankWhenIdTypeAndIdIsNull() {
+        assertTrue(fact.isBlank((IdType)null));
+    }
+
+    @Test
+    public void testIsBlankWhenIdTypeAndIdIsEmptyString() {
+        assertTrue(fact.isBlank(new IdType("")));
+    }
+
+    @Test
+    public void testIsBlankWhenIdTypeAndIdIsNotBlank() {
+        assertFalse(fact.isBlank(new IdType("test")));
+    }
+
+    @Test
+    public void testIsBlankWhenTextTypeAndTextIsNull() {
+        assertTrue(fact.isBlank((eu.europa.ec.fisheries.schema.sales.TextType)null));
+    }
+
+    @Test
+    public void testIsBlankWhenTextTypeAndTextIsEmptyString() {
+        assertTrue(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("")));
+    }
+
+    @Test
+    public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
+        assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
+    }
+
 }
