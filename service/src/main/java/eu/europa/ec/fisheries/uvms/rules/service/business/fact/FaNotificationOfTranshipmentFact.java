@@ -202,28 +202,6 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
     }
 
 
-    /**
-     * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
-     * @param specifiedFACatches FACatches from this list would be matched against
-     * @param speciesCode FACatch speciesCode value to be matched
-     * @param typeCode FACatch typeCode value to be matched
-     * @return  TRUE : Atleast one FACatch with matching criteria found
- *              FALSE :  No FACatch with matching criteria found
-     */
-    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches,String speciesCode, String typeCode){
-        if(CollectionUtils.isEmpty(specifiedFACatches) || speciesCode ==null || typeCode ==null){
-            return false;
-        }
-
-
-        for(FACatch faCatch : specifiedFACatches){
-            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())){
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     @Override
     public void setFactType() {
