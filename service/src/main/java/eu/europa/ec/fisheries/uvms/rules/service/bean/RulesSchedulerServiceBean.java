@@ -22,6 +22,10 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 
 import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,7 +44,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     private static final String RULES_SCHEDULER_CONFIG_KEY = "RULES_SCHEDULER_CONFIG";
 
     @EJB
-    private RulesConfigurationCache rulesConfigCache;
+    private ParameterService parameterService;
 
     @EJB
     private TemplateEngine templateEngine;
@@ -66,7 +70,11 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
      */
     @Override
     public String getActualSchedulerConfiguration() {
-        return rulesConfigCache.getSingleConfig(RULES_SCHEDULER_CONFIG_KEY);
+        try {
+			return parameterService.getStringValue(ParameterKey.RULES_SCHEDULER_CONFIG_KEY.getKey());
+		} catch (ConfigServiceException e) {
+			return "";
+		}
     }
 
     /**
