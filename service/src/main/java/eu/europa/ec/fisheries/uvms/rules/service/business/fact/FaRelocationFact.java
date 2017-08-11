@@ -13,14 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.*;
-import org.apache.commons.collections.*;
-import org.apache.commons.lang3.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.
@@ -127,7 +128,7 @@ public class FaRelocationFact extends AbstractFact {
     }
 
     public boolean anyFluxLocationTypeCodesListIdContains(List<FLUXLocation> fluxLocations, String listId) {
-        if (isEmpty(fluxLocations) || listId == null) {
+        if (isEmpty(fluxLocations) || StringUtils.isBlank(listId)) {
             return false;
         }
 
@@ -143,7 +144,7 @@ public class FaRelocationFact extends AbstractFact {
     }
 
     public boolean faCatchTypeCodeAndSpeciesCodeValuesContain(List<FACatch> faCatches, String typeCodeValue, String speciesCodeValue) {
-        if (isEmpty(faCatches) || typeCodeValue == null || speciesCodeValue == null) {
+        if (isEmpty(faCatches) || StringUtils.isBlank(typeCodeValue) || StringUtils.isBlank(speciesCodeValue)) {
             return false;
         }
 
@@ -151,12 +152,12 @@ public class FaRelocationFact extends AbstractFact {
     }
 
     public boolean anyFaCatchSpeciesCodeContains(List<FACatch> faCatches, String codeValue) {
-        if (isEmpty(faCatches) || codeValue == null) {
+        if (isEmpty(faCatches) || StringUtils.isBlank(codeValue)) {
             return false;
         }
 
         for (FACatch faCatch : faCatches) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getTypeCode();
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getSpeciesCode();
 
             if (typeCode != null && codeValue.equals(typeCode.getValue())) {
                 return true;
@@ -195,6 +196,22 @@ public class FaRelocationFact extends AbstractFact {
                 if (vesselTransportMeanContainsSchemeId) {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean anyVesselTransportMeansSchemeIdContainsAndValid(List<VesselTransportMeans> vesselTransportMeans, String format, String... schemeIds) {
+        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(vesselTransportMeans)) {
+            return false;
+        }
+
+        for (String schemeId : schemeIds) {
+            if (anyVesselTransportMeansSchemeIdContains(vesselTransportMeans, schemeId)) {
+                String schemeIdValue = getVesselTransportMeansIdsSchemeIdValue(vesselTransportMeans, schemeId);
+
+                return validateFormat(schemeIdValue, FORMATS.valueOf(format).getFormatStr());
             }
         }
 
