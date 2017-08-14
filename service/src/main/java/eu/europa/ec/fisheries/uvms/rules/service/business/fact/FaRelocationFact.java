@@ -112,21 +112,6 @@ public class FaRelocationFact extends AbstractFact {
         this.faReportDocumentRelatedReportIds = faReportDocumentRelatedReportIds;
     }
 
-    public boolean isRelocationDeclaration() {
-        if (fishingActivityTypeCode == null || faReportDocumentTypeCode == null) {
-            return false;
-        }
-
-        boolean relocationFishingActivity = !valueContainsAny(fishingActivityTypeCode, "RELOCATION");
-        boolean declarationFAReportDocument = !valueContainsAny(faReportDocumentTypeCode, "DECLARATION");
-
-        if (relocationFishingActivity && declarationFAReportDocument) {
-            return true;
-        }
-
-        return false;
-    }
-
     public boolean anyFluxLocationTypeCodesListIdContains(List<FLUXLocation> fluxLocations, String listId) {
         if (isEmpty(fluxLocations) || StringUtils.isBlank(listId)) {
             return false;
