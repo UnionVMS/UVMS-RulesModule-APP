@@ -26,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -1201,5 +1203,114 @@ public class AbstractFactTest {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
 
+    @Test
+    public void testAnyFluxLocationTypeCodesListIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        typeCode.setListID("POSITION");
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode2 = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        typeCode2.setListID("LISTID");
+        fluxLocations.add(RuleTestHelper.getFLUXLocation(typeCode, new IDType()));
+        fluxLocations.add(RuleTestHelper.getFLUXLocation(typeCode2, new IDType()));
 
+        assertTrue(faRelocationFact.anyFluxLocationTypeCodesListIdContains(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFaCatchSpeciesCodeContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchSpeciesCodeContains(RuleTestHelper.getFACatchList(), "BFT"));
+    }
+
+    @Test
+    public void testFaCatchTypeCodeAndSpeciesCodeValuesContain() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.faCatchTypeCodeAndSpeciesCodeValuesContain(RuleTestHelper.getFACatchList(), "LOADED", "BFT"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansSchemeIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans("ICCAT", "ATEU0ESP09999");
+        assertTrue(faRelocationFact.anyVesselTransportMeansSchemeIdContains(Arrays.asList(vesselTransportMeans), "ICCAT"));
+    }
+
+    @Test
+    public void anyVesselTransportMeansSchemeIdContainsAndValid() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans("ICCAT", "ATEU0ESP09999");
+        assertTrue(faRelocationFact.anyVesselTransportMeansSchemeIdContainsAndValid(Arrays.asList(vesselTransportMeans), "ICCAT", "ICCAT"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansRoleCodeContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        vesselTransportMeans.getRoleCode().setValue("RECEIVER");
+        assertTrue(faRelocationFact.anyVesselTransportMeansRoleCodeContains(Arrays.asList(vesselTransportMeans), "RECEIVER"));
+    }
+
+    @Test
+    public void testAnyFaCatchTypeCodeValueContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFACatchTypeCodeValueContains(RuleTestHelper.getFACatchList(), "LOADED"));
+    }
+
+    @Test
+    public void testAnyFaCatchDestinationFluxLocationSchemeIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchDestinationFluxLocationSchemeIdContains(RuleTestHelper.getFACatchList(), "FARM"));
+    }
+
+    @Test
+    public void testGetFaCatchDestinationFluxLocationSchemeIdValue() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        String schemeIdValue = faRelocationFact.getFaCatchDestinationFluxLocationSchemeIdValue(RuleTestHelper.getFACatchList(), "FARM");
+
+        assertEquals(StringUtils.EMPTY, schemeIdValue);
+    }
+
+    @Test
+    public void testAnyFaCatchFluxLocationPresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchFluxLocationPresent(RuleTestHelper.getFACatchList()));
+    }
+
+    @Test
+    public void testAnyFaCatchFluxLocationTypeCodeContainsValue() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchFluxLocationTypeCodeContainsValue(RuleTestHelper.getFACatchList(), "LOCATION"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansContactPartyRoleCodeListIdAndValueContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        ContactParty contactParty = new ContactParty();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FLUX_CONTACT_ROLE");
+        codeType.setValue("MASTER");
+        contactParty.setRoleCodes(Arrays.asList(codeType));
+        vesselTransportMeans.setSpecifiedContactParties(Arrays.asList(contactParty));
+
+        assertTrue(faRelocationFact.anyVesselTransportMeansContactPartyRoleCodeListIdAndValueContains(Arrays.asList(vesselTransportMeans), "FLUX_CONTACT_ROLE", "MASTER"));
+    }
+
+    @Test
+    public void testNotAnyVesselTransportMeansContactPartyRoleCodePresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+
+        assertFalse(faRelocationFact.anyVesselTransportMeansContactPartyRoleCodePresent(Arrays.asList(vesselTransportMeans)));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansNamePresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        vesselTransportMeans.setNames(Arrays.asList(new TextType("NAME", "LANGUAGE_ID", "LANGUAGE_LOCAL_ID")));
+
+        assertTrue(faRelocationFact.anyVesselTransportMeansNamePresent(Arrays.asList(vesselTransportMeans)));
+    }
 }

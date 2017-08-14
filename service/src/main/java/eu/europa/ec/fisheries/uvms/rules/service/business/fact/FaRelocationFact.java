@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.util.List;
 
@@ -27,10 +28,6 @@ import java.util.List;
  * Created by padhyad on 4/21/2017.
  */
 public class FaRelocationFact extends AbstractFact {
-
-    private CodeType fishingActivityTypeCode;
-
-    private CodeType faReportDocumentTypeCode;
 
     private List<FACatch> specifiedFACatches;
 
@@ -46,22 +43,6 @@ public class FaRelocationFact extends AbstractFact {
 
     public FaRelocationFact() {
         setFactType();
-    }
-
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
     }
 
     public List<FACatch> getSpecifiedFACatches() {
@@ -225,8 +206,14 @@ public class FaRelocationFact extends AbstractFact {
         }
 
         for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-            if (!isEmpty(vesselTransportMean.getNames())) {
-                return true;
+            List<TextType> names = vesselTransportMean.getNames();
+
+            if (!isEmpty(names)) {
+                for (TextType name : vesselTransportMean.getNames()) {
+                    if (StringUtils.isNotBlank(name.getValue())) {
+                        return true;
+                    }
+                }
             }
         }
 
@@ -310,7 +297,7 @@ public class FaRelocationFact extends AbstractFact {
 
         for (FACatch faCatch : faCatches) {
             if (anyFluxLocationSchemeIdContains(faCatch.getDestinationFLUXLocations(), schemeId)) {
-                getFluxLocationIdsSchemeIdValue(faCatch.getDestinationFLUXLocations(), schemeId);
+                return getFluxLocationIdsSchemeIdValue(faCatch.getDestinationFLUXLocations(), schemeId);
             }
         }
 

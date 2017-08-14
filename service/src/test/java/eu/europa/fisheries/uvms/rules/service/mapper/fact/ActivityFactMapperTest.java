@@ -10,31 +10,34 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.*;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.*;
-import lombok.*;
-import org.apache.commons.io.*;
-import org.junit.*;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.*;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.*;
-import java.io.*;
-import java.math.*;
-import java.text.*;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
-import static java.util.Collections.*;
-import static org.apache.commons.collections.CollectionUtils.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.junit.Assert.*;
 
 /**
@@ -598,11 +601,11 @@ public class ActivityFactMapperTest {
 
         FishingActivity fishingActivity = new FishingActivity();
 
-        fishingActivity.setTypeCode(codeType);
+        fishingActivity.setSpecifiedFACatches(RuleTestHelper.getFACatchList());
 
         FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(fishingActivity, new FAReportDocument());
 
-        assertEquals(codeType.getValue(), faRelocationFact.getFishingActivityTypeCode());
+        assertNotNull(faRelocationFact.getSpecifiedFACatches());
     }
 
 

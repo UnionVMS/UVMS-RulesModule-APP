@@ -1179,12 +1179,6 @@ public class ActivityFactMapper {
         final String partialXpath = xPathUtil.getValue();
         FaRelocationFact faRelocationFact = new FaRelocationFact();
 
-        faRelocationFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faRelocationFact, FISHING_ACTIVITY_TYPE_CODE_PROP);
-
-        faRelocationFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faRelocationFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
-
         faRelocationFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faRelocationFact, SPECIFIED_FA_CATCHES);
 
@@ -1201,7 +1195,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC).storeInRepo(faRelocationFact, SOURCE_VESSEL_STORAGE_CHARACTERISTIC_PROP);
 
         faRelocationFact.setFaReportDocumentRelatedReportIds(mapToIdType(faReportDocument.getRelatedReportIDs()));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_REPORT_ID).storeInRepo(faRelocationFact, RELATED_REPORT_IDS_PROP);
+        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).append(RELATED_REPORT_ID).storeInRepo(faRelocationFact, RELATED_REPORT_IDS_PROP);
 
         return faRelocationFact;
     }
