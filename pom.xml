@@ -1,10 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fish.focus.uvms.maven</groupId>
+		<artifactId>uvms-pom</artifactId>
+		<version>1.8</version>
+	</parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.3-SNAPSHOT</version>
+    <version>3.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -31,18 +36,18 @@
         <orika.version>1.5.1</orika.version>
         <equalsverifier.version>2.3</equalsverifier.version>
 
-        <usm4uvms.version>3.0.4</usm4uvms.version>
-        <uvms.config.version>3.0.4</uvms.config.version>
+        <usm4uvms.version>3.0.5</usm4uvms.version>
+        <uvms.config.version>3.1.1</uvms.config.version>
         <uvms.common.version>2.0.25</uvms.common.version>
-        <movement.model.version>3.0.4</movement.model.version>
+        <movement.model.version>3.0.6</movement.model.version>
         <exchange.model.version>3.0.6</exchange.model.version>
-        <mobileterminal.model.version>3.0.4</mobileterminal.model.version>
+        <mobileterminal.model.version>3.0.7</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
 
         <activity.model.version>0.5.13</activity.model.version>
         <mdr.model.version>0.5.2</mdr.model.version>
 
-        <asset.model.version>3.0.4</asset.model.version>
+        <asset.model.version>3.0.5</asset.model.version>
         <audit.model.version>3.0.4</audit.model.version>
         <rules.model.version>3.0.7</rules.model.version>
         <sales.model.version>1.0.0</sales.model.version>
@@ -143,7 +148,7 @@
         <repository>
             <id>focus-repo</id>
             <name>Focus nexus repository</name>
-            <url>http://nexus.focus.fish/</url>
+            <url>http://nexus.focus.fish/nexus/</url>
         </repository>
         <repository>
             <id>jboss</id>
@@ -238,7 +243,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>${maven-release-plugin}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.scm</groupId>
