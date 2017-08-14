@@ -12,6 +12,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
 
 @Stateless
 public class RulesConfigHelper implements ConfigHelper {
+
+    @PersistenceContext(unitName = MessageConstants.MODULE_NAME)
+    protected EntityManager em;
 
     @Override
     public List<String> getAllParameterKeys() {
@@ -36,5 +42,10 @@ public class RulesConfigHelper implements ConfigHelper {
     public String getModuleName() {
         return MessageConstants.MODULE_NAME;
     }
+    
+	@Override
+	public EntityManager getEntityManager() {
+		return em;
+	}
 
 }

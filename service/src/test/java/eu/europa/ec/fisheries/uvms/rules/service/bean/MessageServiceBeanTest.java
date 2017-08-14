@@ -36,6 +36,8 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -97,7 +99,7 @@ public class MessageServiceBeanTest {
     RulesPreProcessBean rulesPreProcessBean;
 
     @Mock
-    RulesConfigurationCache ruleModuleCache;
+    ParameterService parameterService;
 
     private IDType idType;
     private CodeType codeType;
@@ -161,8 +163,8 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testGenerateFluxResponseMessage() {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
+    public void testGenerateFluxResponseMessage() throws Exception {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
@@ -174,8 +176,8 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testGenerateFluxResponseMessageForFaQuery() {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
+    public void testGenerateFluxResponseMessageForFaQuery() throws Exception {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), fluxfaQueryMessage);
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
@@ -215,14 +217,14 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testSendRequestToActivity() throws RulesServiceException, MessageException {
+    public void testSendRequestToActivity() throws RulesServiceException, MessageException, ConfigServiceException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
         messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX);
     }
 
     @Test
-    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
+    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException, ConfigServiceException {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());

@@ -10,22 +10,24 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.*;
-import org.apache.commons.lang3.*;
-import org.joda.time.*;
-import org.junit.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
-import java.math.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -1011,47 +1013,47 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsEmptyList() {
+    public void testValueNotContainsEmptyList() {
 
         List<CodeType> codeTypes = new ArrayList<>();
-        assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
+        assertTrue(fact.valueNotContains(codeTypes, "ZZZ", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappy() {
+    public void testValueNotContainsHappy() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 1));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits() {
+    public void testValueNotContainsHappyWithMoreHits() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
         CodeType codeType2 = new CodeType();
-        codeType2.setListId("TYPECODE");
+        codeType2.setValue("TYPECODE");
         codeTypes.add(codeType2);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits2() {
+    public void testValueNotContainsHappyWithMoreHits2() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertTrue(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertTrue(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
@@ -1181,7 +1183,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testMatchWithFluxTL(){
+    public void testMatchWithFluxTL() {
         IdType idType = new IdType();
         idType.setValue("TEST");
         fact.setSenderOrReceiver("TEST");
@@ -1189,13 +1191,15 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testMatchWithFluxTLWithEmptyList(){
+    public void testMatchWithFluxTLWithEmptyList() {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
 
     @Test
-    public void testMatchWithFluxTLWithSenderReceiverNull(){
+    public void testMatchWithFluxTLWithSenderReceiverNull() {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
+
+
 }
