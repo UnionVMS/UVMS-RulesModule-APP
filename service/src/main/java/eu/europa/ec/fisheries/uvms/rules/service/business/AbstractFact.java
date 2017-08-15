@@ -13,17 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -31,11 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
@@ -43,17 +28,20 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -829,7 +817,7 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-        String getFormatStr() {
+        public String getFormatStr() {
             return formatStr;
         }
 
@@ -917,20 +905,20 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean matchWithFluxTL(List<IdType> idTypes){
+    public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean match = false;
-        for (IdType idType : idTypes){
+        for (IdType idType : idTypes) {
             match = matchWithFluxTL(idType);
-            if (match){
+            if (match) {
                 break;
             }
         }
         return match;
     }
 
-    public boolean matchWithFluxTL(IdType idType){
+    public boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
-        if (idType != null){
+        if (idType != null) {
             match = StringUtils.equals(idType.getValue(), senderOrReceiver);
         }
         return match;
@@ -985,7 +973,7 @@ public abstract class AbstractFact {
     }
 
     public boolean anyFluxLocationTypeCodeContainsValue(List<FLUXLocation> fluxLocations, String value) {
-        if (CollectionUtils.isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
+        if (isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
             return false;
         }
 
@@ -999,6 +987,56 @@ public abstract class AbstractFact {
 
         return false;
     }
+
+    public boolean anyFluxLocationSchemeIdContains(List<FLUXLocation> fluxLocations, String... schemeIds) {
+        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(fluxLocations)) {
+            return false;
+        }
+
+        for (String schemeId : schemeIds) {
+            for (FLUXLocation fluxLocation : fluxLocations) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
+                if (id != null && schemeId.equals(id.getSchemeID())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public String getFluxLocationIdsSchemeIdValue(List<FLUXLocation> fluxLocations, String schemeId) {
+        if (StringUtils.isEmpty(schemeId) || isEmpty(fluxLocations)) {
+            return null;
+        }
+
+        for (FLUXLocation fluxLocation : fluxLocations) {
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
+            if (id != null && schemeId.equals(id.getSchemeID())) {
+                return id.getValue();
+            }
+
+        }
+
+        return null;
+    }
+
+    public String getVesselTransportMeansIdsSchemeIdValue(List<VesselTransportMeans> vesselTransportMeans, String schemeId) {
+        if (StringUtils.isEmpty(schemeId) || isEmpty(vesselTransportMeans)) {
+            return null;
+        }
+
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            for (IDType id : vesselTransportMean.getIDS()) {
+                if (id != null && schemeId.equals(id.getSchemeID())) {
+                    return id.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     public Integer getSequence() {
         return sequence;
