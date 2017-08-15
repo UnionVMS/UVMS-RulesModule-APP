@@ -65,6 +65,17 @@
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-monitoring-deps</artifactId>
+				<version>1.8</version>
+				<type>pom</type>
+			</dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
