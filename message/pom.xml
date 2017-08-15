@@ -14,6 +14,11 @@
     
     <dependencies>
         <dependency>
+			<groupId>fish.focus.uvms.maven</groupId>
+			<artifactId>uvms-pom-monitoring-deps</artifactId>
+			<type>pom</type>
+		</dependency>            
+        <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
             <version>${rules.model.version}</version>
