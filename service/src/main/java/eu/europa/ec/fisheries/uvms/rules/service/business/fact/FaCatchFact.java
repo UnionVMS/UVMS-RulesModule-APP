@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class FaCatchFact extends AbstractFact {
 
+    private CodeType fishingActivityTypeCode;
     private CodeType typeCode;
     private CodeType speciesCode;
     private MeasureType unitQuantity;
@@ -205,5 +206,13 @@ public class FaCatchFact extends AbstractFact {
 
     public void setSpecifiedFLUXLocations(List<FLUXLocation> specifiedFLUXLocations) {
         this.specifiedFLUXLocations = specifiedFLUXLocations;
+    }
+
+    public CodeType getFishingActivityTypeCode() {
+        return fishingActivityTypeCode;
+    }
+
+    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
+        this.fishingActivityTypeCode = fishingActivityTypeCode;
     }
 }
