@@ -664,6 +664,9 @@ public class ActivityFactMapper {
 
             FaCatchFact faCatchFact = new FaCatchFact();
 
+            faCatchFact.setFishingActivityTypeCode(mapToCodeType(activity.getTypeCode()));
+            xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityTypeCode");
+
             partialXPath = xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
             faCatchFact.setResultAAPProduct(getAppliedProcessAAPProducts(faCatch.getAppliedAAPProcesses()));
