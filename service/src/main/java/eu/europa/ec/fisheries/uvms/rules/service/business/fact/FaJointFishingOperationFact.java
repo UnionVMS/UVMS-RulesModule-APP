@@ -13,13 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import org.apache.commons.collections.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -46,6 +48,7 @@ public class FaJointFishingOperationFact extends AbstractFact {
     private List<CodeType> relatedFishingActivityFaCatchTypeCodes;
 
     private List<FACatch> relatedFishingActivityFaCatch;
+
 
 
     public FaJointFishingOperationFact() {
@@ -141,16 +144,16 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * This will check if every FishingActivity has atlease one VesselTransportMeans associated with it.
      *
      * @return TRUE : If every FishingActivity has VesselTransport
-     * FALSE : If atleast one FishingActivity is without VesselTransport OR fishingActivityList is empty
+     *         FALSE : If atleast one FishingActivity is without VesselTransport OR fishingActivityList is empty
      */
-    public boolean ifVesselTransportPresent(List<FishingActivity> fishingActivityList) {
+    public boolean ifVesselTransportPresent(List<FishingActivity> fishingActivityList){
 
-        if (CollectionUtils.isEmpty(fishingActivityList)) {
+        if(CollectionUtils.isEmpty(fishingActivityList)){
             return false;
         }
 
-        for (FishingActivity fishingActivity : fishingActivityList) {
-            if (CollectionUtils.isEmpty(fishingActivity.getRelatedVesselTransportMeans())) {
+        for(FishingActivity fishingActivity : fishingActivityList){
+            if(CollectionUtils.isEmpty(fishingActivity.getRelatedVesselTransportMeans())){
                 return false;
             }
         }
@@ -162,16 +165,16 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * This will check if every FishingActivity has atlease one FACatch associated with it.
      *
      * @return TRUE : If every FishingActivity has FACatch
-     * FALSE : If atleast one FishingActivity is without FACatch OR fishingActivityList is empty
+     *         FALSE : If atleast one FishingActivity is without FACatch OR fishingActivityList is empty
      */
-    public boolean ifFACatchPresent(List<FishingActivity> fishingActivityList) {
+    public boolean ifFACatchPresent(List<FishingActivity> fishingActivityList){
 
-        if (CollectionUtils.isEmpty(fishingActivityList)) {
+        if(CollectionUtils.isEmpty(fishingActivityList)){
             return false;
         }
 
-        for (FishingActivity fishingActivity : fishingActivityList) {
-            if (CollectionUtils.isEmpty(fishingActivity.getSpecifiedFACatches())) {
+        for(FishingActivity fishingActivity : fishingActivityList){
+            if(CollectionUtils.isEmpty(fishingActivity.getSpecifiedFACatches())){
                 return false;
             }
         }
@@ -184,21 +187,21 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * This will check if every FACatch in FishingActivity has atleast one with typeCode value ALLOCATED_TO_QUOTA
      *
      * @return TRUE : If every FishingActivity has FACatch with typeCode value ALLOCATED_TO_QUOTA
-     * FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
+     *         FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
      */
-    public boolean atLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList) {
+    public boolean atLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList){
 
-        if (CollectionUtils.isEmpty(fishingActivityList)) {
+        if(CollectionUtils.isEmpty(fishingActivityList)){
             return false;
         }
 
-        boolean isPresent = false;
-        for (FishingActivity fishingActivity : fishingActivityList) {
-            if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
+        boolean isPresent= false;
+        for(FishingActivity fishingActivity : fishingActivityList){
+            if(CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())){
                 isPresent = false;
-                for (FACatch faCatch : fishingActivity.getSpecifiedFACatches()) {
-                    if (faCatch.getTypeCode() != null && "ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue())) {
-                        isPresent = true;
+                for(FACatch faCatch : fishingActivity.getSpecifiedFACatches()){
+                    if(faCatch.getTypeCode() !=null && "ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue())){
+                        isPresent =true;
                         break;
                     }
                 }
@@ -211,7 +214,6 @@ public class FaJointFishingOperationFact extends AbstractFact {
 
     /**
      * Based on validationCondition value, specific attribute would be validated for FLUXDestination. This method do validation for FACatches with BFT species
-     *
      * @param faCatchList
      * @param validationCondition
      * @return
@@ -255,6 +257,8 @@ public class FaJointFishingOperationFact extends AbstractFact {
 
         return true;
     }
+
+
 
 
 }
