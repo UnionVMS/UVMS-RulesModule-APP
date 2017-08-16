@@ -10,36 +10,12 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
@@ -48,12 +24,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -1036,14 +1015,14 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueNotContainsEmptyList(){
+    public void testValueNotContainsEmptyList() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         assertTrue(fact.valueNotContains(codeTypes, "ZZZ", 1));
     }
 
     @Test
-    public void testValueNotContainsHappy(){
+    public void testValueNotContainsHappy() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1054,7 +1033,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueNotContainsHappyWithMoreHits(){
+    public void testValueNotContainsHappyWithMoreHits() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1069,7 +1048,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueNotContainsHappyWithMoreHits2(){
+    public void testValueNotContainsHappyWithMoreHits2() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
@@ -1080,16 +1059,16 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsGreaterThanZero(){
-        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1),"km"));
+    public void testIsGreaterThanZero() {
+        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1), "km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
 
     @Test
-    public void testGetDataTypeForMDRListNullCheck(){
-       String result= fact.getDataTypeForMDRList("TEST",null);
-        assertEquals("",result);
+    public void testGetDataTypeForMDRListNullCheck() {
+        String result = fact.getDataTypeForMDRList("TEST", null);
+        assertEquals("", result);
     }
 
     @Test
@@ -1166,7 +1145,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsTypeCodeValuePresentInList(){
+    public void testIsTypeCodeValuePresentInList() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1180,7 +1159,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsTypeCodeValuePresentInList_single(){
+    public void testIsTypeCodeValuePresentInList_single() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1192,7 +1171,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testValidateFormatCodeTypes(){
+    public void testValidateFormatCodeTypes() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("UUID");
         typeCode.setValue("OTR");
@@ -1200,13 +1179,13 @@ public class AbstractFactTest {
         typeCode2.setListId("UUID");
         typeCode2.setValue("NCC");
         List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
-        boolean result =fact.validateFormatCodeTypes(typeCodes);
+        boolean result = fact.validateFormatCodeTypes(typeCodes);
         assertTrue(result);
     }
 
 
     @Test
-    public void testMatchWithFluxTL(){
+    public void testMatchWithFluxTL() {
         IdType idType = new IdType();
         idType.setValue("TEST");
         fact.setSenderOrReceiver("TEST");
@@ -1214,13 +1193,124 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testMatchWithFluxTLWithEmptyList(){
+    public void testMatchWithFluxTLWithEmptyList() {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
 
     @Test
-    public void testMatchWithFluxTLWithSenderReceiverNull(){
+    public void testMatchWithFluxTLWithSenderReceiverNull() {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
+    }
+
+    @Test
+    public void testAnyFluxLocationTypeCodesListIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        typeCode.setListID("POSITION");
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode2 = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        typeCode2.setListID("LISTID");
+        fluxLocations.add(RuleTestHelper.getFLUXLocation(typeCode, new IDType()));
+        fluxLocations.add(RuleTestHelper.getFLUXLocation(typeCode2, new IDType()));
+
+        assertTrue(faRelocationFact.anyFluxLocationTypeCodesListIdContains(fluxLocations, "POSITION"));
+    }
+
+    @Test
+    public void testAnyFaCatchSpeciesCodeContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchSpeciesCodeContains(RuleTestHelper.getFACatchList(), "BFT"));
+    }
+
+    @Test
+    public void testFaCatchTypeCodeAndSpeciesCodeValuesContain() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.faCatchTypeCodeAndSpeciesCodeValuesContain(RuleTestHelper.getFACatchList(), "LOADED", "BFT"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansSchemeIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans("ICCAT", "ATEU0ESP09999");
+        assertTrue(faRelocationFact.anyVesselTransportMeansSchemeIdContains(Arrays.asList(vesselTransportMeans), "ICCAT"));
+    }
+
+    @Test
+    public void anyVesselTransportMeansSchemeIdContainsAndValid() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans("ICCAT", "ATEU0ESP09999");
+        assertTrue(faRelocationFact.anyVesselTransportMeansSchemeIdContainsAndValid(Arrays.asList(vesselTransportMeans), "ICCAT", "ICCAT"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansRoleCodeContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        vesselTransportMeans.getRoleCode().setValue("RECEIVER");
+        assertTrue(faRelocationFact.anyVesselTransportMeansRoleCodeContains(Arrays.asList(vesselTransportMeans), "RECEIVER"));
+    }
+
+    @Test
+    public void testAnyFaCatchTypeCodeValueContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFACatchTypeCodeValueContains(RuleTestHelper.getFACatchList(), "LOADED"));
+    }
+
+    @Test
+    public void testAnyFaCatchDestinationFluxLocationSchemeIdContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchDestinationFluxLocationSchemeIdContains(RuleTestHelper.getFACatchList(), "FARM"));
+    }
+
+    @Test
+    public void testGetFaCatchDestinationFluxLocationSchemeIdValue() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        String schemeIdValue = faRelocationFact.getFaCatchDestinationFluxLocationSchemeIdValue(RuleTestHelper.getFACatchList(), "FARM");
+
+        assertEquals(StringUtils.EMPTY, schemeIdValue);
+    }
+
+    @Test
+    public void testAnyFaCatchFluxLocationPresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchFluxLocationPresent(RuleTestHelper.getFACatchList()));
+    }
+
+    @Test
+    public void testAnyFaCatchFluxLocationTypeCodeContainsValue() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        assertTrue(faRelocationFact.anyFaCatchFluxLocationTypeCodeContainsValue(RuleTestHelper.getFACatchList(), "LOCATION"));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansContactPartyRoleCodeListIdAndValueContains() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        ContactParty contactParty = new ContactParty();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FLUX_CONTACT_ROLE");
+        codeType.setValue("MASTER");
+        contactParty.setRoleCodes(Arrays.asList(codeType));
+        vesselTransportMeans.setSpecifiedContactParties(Arrays.asList(contactParty));
+
+        assertTrue(faRelocationFact.anyVesselTransportMeansContactPartyRoleCodeListIdAndValueContains(Arrays.asList(vesselTransportMeans), "FLUX_CONTACT_ROLE", "MASTER"));
+    }
+
+    @Test
+    public void testNotAnyVesselTransportMeansContactPartyRoleCodePresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+
+        assertFalse(faRelocationFact.anyVesselTransportMeansContactPartyRoleCodePresent(Arrays.asList(vesselTransportMeans)));
+    }
+
+    @Test
+    public void testAnyVesselTransportMeansNamePresent() {
+        FaRelocationFact faRelocationFact = new FaRelocationFact();
+        VesselTransportMeans vesselTransportMeans = RuleTestHelper.getVesselTransportMeans();
+        vesselTransportMeans.setNames(Arrays.asList(new TextType("NAME", "LANGUAGE_ID", "LANGUAGE_LOCAL_ID")));
+
+        assertTrue(faRelocationFact.anyVesselTransportMeansNamePresent(Arrays.asList(vesselTransportMeans)));
     }
 }
