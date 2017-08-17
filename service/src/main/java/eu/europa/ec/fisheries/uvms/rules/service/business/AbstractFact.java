@@ -13,17 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -51,6 +40,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -1093,20 +1086,21 @@ public abstract class AbstractFact {
 
     /**
      * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
+     *
      * @param specifiedFACatches FACatches from this list would be matched against
-     * @param speciesCode FACatch speciesCode value to be matched
-     * @param typeCode FACatch typeCode value to be matched
-     * @return  TRUE : Atleast one FACatch with matching criteria found
-     *              FALSE :  No FACatch with matching criteria found
+     * @param speciesCode        FACatch speciesCode value to be matched
+     * @param typeCode           FACatch typeCode value to be matched
+     * @return TRUE : Atleast one FACatch with matching criteria found
+     * FALSE :  No FACatch with matching criteria found
      */
-    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches,String speciesCode, String typeCode){
-        if(CollectionUtils.isEmpty(specifiedFACatches) || speciesCode ==null || typeCode ==null){
+    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches, String speciesCode, String typeCode) {
+        if (CollectionUtils.isEmpty(specifiedFACatches) || speciesCode == null || typeCode == null) {
             return false;
         }
 
 
-        for(FACatch faCatch : specifiedFACatches){
-            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())){
+        for (FACatch faCatch : specifiedFACatches) {
+            if (faCatch.getSpeciesCode() != null && faCatch.getTypeCode() != null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())) {
                 return true;
             }
         }
