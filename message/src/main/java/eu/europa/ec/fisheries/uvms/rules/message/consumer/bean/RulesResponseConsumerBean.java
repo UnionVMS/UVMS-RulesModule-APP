@@ -17,26 +17,39 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
 import eu.europa.ec.fisheries.uvms.message.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.*;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
+
+import javax.annotation.*;
+import javax.ejb.*;
+import javax.jms.*;
+import javax.naming.*;
 
 @Stateless
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
+    private final static long TEN_SECONDS = 10000;
+
     private Queue responseQueue;
 
     private ConnectionFactory connectionFactory;
+
+    private Connection connection = null;
+    private Session session = null;
 
     @PostConstruct
     private void init() {
@@ -51,19 +64,19 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
     		LOG.error("[ No CorrelationID provided when listening to JMS message, aborting ]");
     		throw new MessageException("No CorrelationID provided!");
     	}
-    	
+
     	Connection connection=null;
         try {
 
             connection = connectionFactory.createConnection();
             final Session session = JMSUtils.connectToQueue(connection);
-            
+
             T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(60000);
             if (response == null) {
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
             return response;
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("[ Error when getting message ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
         } finally {
@@ -76,11 +89,10 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
     public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
         try {
             return getMessage(correlationId, type);
-        }
-        catch (MessageException e) {
+        } catch (MessageException e) {
             LOG.error("[ Error when getting config message. ] {}", e.getMessage());
             throw new ConfigMessageException("[ Error when getting config message. ]");
         }
     }
-    
+
 }
