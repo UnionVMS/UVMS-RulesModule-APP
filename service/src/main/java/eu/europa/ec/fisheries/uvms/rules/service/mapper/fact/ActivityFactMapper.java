@@ -1179,6 +1179,154 @@ public class ActivityFactMapper {
         final String partialXpath = xPathUtil.getValue();
         FaRelocationFact faRelocationFact = new FaRelocationFact();
 
+        if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
+            List<CodeType> typeCodes = new ArrayList<>();
+            List<CodeType> speciesCodes = new ArrayList<>();
+            List<CodeType> fluxLocationTypeCodes = new ArrayList<>();
+            List<IdType> fluxLocationIds = new ArrayList<>();
+            List<FLUXLocation> destinationFluxLocations = new ArrayList<>();
+
+            int index = 1;
+
+            for (FACatch faCatch : fishingActivity.getSpecifiedFACatches()) {
+                typeCodes.add(mapToCodeType(faCatch.getTypeCode()));
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index).append(TYPE_CODE).storeInRepo(faRelocationFact, "specifiedFACatchTypeCodes");
+
+                speciesCodes.add(mapToCodeType(faCatch.getSpeciesCode()));
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index).append(SPECIES_CODE).storeInRepo(faRelocationFact, "specifiedFACatchSpeciesCodes");
+
+                if (CollectionUtils.isNotEmpty(faCatch.getDestinationFLUXLocations())) {
+                    int destinationFluxLocationIndex = 1;
+
+                    for (FLUXLocation fluxLocation : faCatch.getDestinationFLUXLocations()) {
+                        if (fluxLocation.getTypeCode() != null) {
+                            fluxLocationTypeCodes.add(mapToCodeType(fluxLocation.getTypeCode()));
+                            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index).appendWithIndex(DESTINATION_FLUX_LOCATION, destinationFluxLocationIndex).
+                                    storeInRepo(faRelocationFact, "specifiedFACatchDestinationFluxLocationTypeCodes");
+
+                            destinationFluxLocationIndex++;
+                        }
+
+                        if (fluxLocation.getID() != null) {
+                            fluxLocationIds.add(mapToSingleIdType(fluxLocation.getID()));
+                            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, index).appendWithIndex(DESTINATION_FLUX_LOCATION, destinationFluxLocationIndex).
+                                    storeInRepo(faRelocationFact, "specifiedFACatchDestinationFluxLocationIDs");
+                        }
+
+                        destinationFluxLocations.add(fluxLocation);
+                    }
+
+                }
+
+                index++;
+            }
+
+            faRelocationFact.setSpecifiedFACatchTypeCodes(typeCodes);
+            faRelocationFact.setSpecifiedFACatchSpeciesCodes(speciesCodes);
+            faRelocationFact.setSpecifiedFACatchDestinationFluxLocationTypeCodes(fluxLocationTypeCodes);
+            faRelocationFact.setSpecifiedFACatchDestinationFluxLocationIDs(fluxLocationIds);
+            faRelocationFact.setDestinationFLUXLocations(destinationFluxLocations);
+        }
+
+        if (CollectionUtils.isNotEmpty(fishingActivity.getRelatedFLUXLocations())) {
+            List<CodeType> typeCodes = new ArrayList<>();
+
+            int index = 1;
+
+            for (FLUXLocation fluxLocation : fishingActivity.getRelatedFLUXLocations()) {
+                typeCodes.add(mapToCodeType(fluxLocation.getTypeCode()));
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION, index).append(TYPE_CODE).storeInRepo(faRelocationFact, "relatedFLUXLocationTypeCodes");
+
+                index++;
+            }
+
+            faRelocationFact.setRelatedFLUXLocationTypeCodes(typeCodes);
+        }
+
+        if (fishingActivity.getDestinationVesselStorageCharacteristic() != null) {
+            List<CodeType> typeCodes = new ArrayList<>();
+
+            if (CollectionUtils.isNotEmpty(fishingActivity.getDestinationVesselStorageCharacteristic().getTypeCodes())) {
+                int index = 1;
+
+                for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode : fishingActivity.getDestinationVesselStorageCharacteristic().getTypeCodes()) {
+                    typeCodes.add(mapToCodeType(typeCode));
+                    xPathUtil.appendWithoutWrapping(partialXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC).appendWithIndex(TYPE_CODE, index++).
+                            storeInRepo(faRelocationFact, "destinationVesselStorageCharacteristicTypeCodes");
+                }
+
+                faRelocationFact.setDestinationVesselStorageCharacteristicTypeCodes(typeCodes);
+            } else {
+                xPathUtil.appendWithoutWrapping(partialXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC).storeInRepo(faRelocationFact, "destinationVesselStorageCharacteristicTypeCodes");
+            }
+        }
+
+        if (fishingActivity.getDestinationVesselStorageCharacteristic() != null) {
+            faRelocationFact.setDestinationVesselStorageCharacteristicID(mapToSingleIdType(fishingActivity.getDestinationVesselStorageCharacteristic().getID()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC, "ID").storeInRepo(faRelocationFact, "destinationVesselStorageCharacteristicID");
+        }
+
+        if (CollectionUtils.isNotEmpty(fishingActivity.getRelatedVesselTransportMeans())) {
+            List<IdType> idTypes = new ArrayList<>();
+            List<CodeType> roleCodes = new ArrayList<>();
+            List<CodeType> contactPartyRoleCodes = new ArrayList<>();
+            List<TextType> relatedVesselTransportMeansNames = new ArrayList<>();
+            int index = 1;
+
+            for (VesselTransportMeans vesselTransportMeans : fishingActivity.getRelatedVesselTransportMeans()) {
+                if (CollectionUtils.isNotEmpty(vesselTransportMeans.getIDS())) {
+                    int idIndex = 1;
+                    for (IDType idType : vesselTransportMeans.getIDS()) {
+                        idTypes.add(mapToSingleIdType(idType));
+                        xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).appendWithIndex("ID", idIndex++).storeInRepo(faRelocationFact, "relatedVesselTransportMeansIDs");
+                    }
+                }
+
+                if (vesselTransportMeans.getRoleCode() != null) {
+                    roleCodes.add(mapToCodeType(vesselTransportMeans.getRoleCode()));
+                    xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).append(ROLE_CODE).storeInRepo(faRelocationFact, "relatedVesselTransportMeansRoleCodes");
+                }
+
+                if (CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
+                    int contactPartyIndex = 1;
+
+                    for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
+                        if (CollectionUtils.isNotEmpty(contactParty.getRoleCodes())) {
+                            contactPartyRoleCodes.addAll(mapToCodeType(contactParty.getRoleCodes()));
+                            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).appendWithIndex(SPECIFIED_CONTACT_PARTY, contactPartyIndex++).
+                                    storeInRepo(faRelocationFact, "relatedVesselTransportMeansRoleCodes");
+                        }
+                    }
+                }
+
+                if (CollectionUtils.isNotEmpty(vesselTransportMeans.getNames())) {
+                    relatedVesselTransportMeansNames.addAll(vesselTransportMeans.getNames());
+                }
+
+                index++;
+            }
+
+            faRelocationFact.setRelatedVesselTransportMeansIDs(idTypes);
+            faRelocationFact.setRelatedVesselTransportMeansRoleCodes(roleCodes);
+            faRelocationFact.setRelatedVesselTransportMeansContactPartyRoleCodes(contactPartyRoleCodes);
+            faRelocationFact.setRelatedVesselTransportMeansNames(relatedVesselTransportMeansNames);
+        }
+
+        if (fishingActivity.getSourceVesselStorageCharacteristic() != null) {
+            List<CodeType> typeCodes = new ArrayList<>();
+
+            int index = 1;
+
+            for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode : fishingActivity.getSourceVesselStorageCharacteristic().getTypeCodes()) {
+                typeCodes.add(mapToCodeType(typeCode));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC).appendWithIndex(TYPE_CODE, index).storeInRepo(faRelocationFact, "sourceVesselStorageCharacteristicTypeCodes");
+
+                index++;
+            }
+
+            faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(typeCodes);
+        }
+
         faRelocationFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faRelocationFact, SPECIFIED_FA_CATCHES);
 

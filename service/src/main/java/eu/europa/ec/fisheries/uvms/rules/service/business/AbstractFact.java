@@ -28,15 +28,17 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
@@ -176,6 +178,10 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
+
+        idTypes = new ArrayList<>(idTypes);
+        CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
+
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -972,6 +978,22 @@ public abstract class AbstractFact {
         return null;
     }
 
+    public String getValueForSchemeId(String schemeId, List<IdType> ids) {
+        if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
+            return null;
+        }
+
+        for (IdType id : ids) {
+            String idsSchemeId = id.getSchemeId();
+
+            if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
+                return id.getValue();
+            }
+        }
+
+        return null;
+    }
+
     public boolean anyFluxLocationTypeCodeContainsValue(List<FLUXLocation> fluxLocations, String value) {
         if (isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
             return false;
@@ -987,56 +1009,6 @@ public abstract class AbstractFact {
 
         return false;
     }
-
-    public boolean anyFluxLocationSchemeIdContains(List<FLUXLocation> fluxLocations, String... schemeIds) {
-        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(fluxLocations)) {
-            return false;
-        }
-
-        for (String schemeId : schemeIds) {
-            for (FLUXLocation fluxLocation : fluxLocations) {
-                un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
-                if (id != null && schemeId.equals(id.getSchemeID())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public String getFluxLocationIdsSchemeIdValue(List<FLUXLocation> fluxLocations, String schemeId) {
-        if (StringUtils.isEmpty(schemeId) || isEmpty(fluxLocations)) {
-            return null;
-        }
-
-        for (FLUXLocation fluxLocation : fluxLocations) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType id = fluxLocation.getID();
-            if (id != null && schemeId.equals(id.getSchemeID())) {
-                return id.getValue();
-            }
-
-        }
-
-        return null;
-    }
-
-    public String getVesselTransportMeansIdsSchemeIdValue(List<VesselTransportMeans> vesselTransportMeans, String schemeId) {
-        if (StringUtils.isEmpty(schemeId) || isEmpty(vesselTransportMeans)) {
-            return null;
-        }
-
-        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-            for (IDType id : vesselTransportMean.getIDS()) {
-                if (id != null && schemeId.equals(id.getSchemeID())) {
-                    return id.getValue();
-                }
-            }
-        }
-
-        return null;
-    }
-
 
     public Integer getSequence() {
         return sequence;
@@ -1114,20 +1086,21 @@ public abstract class AbstractFact {
 
     /**
      * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
+     *
      * @param specifiedFACatches FACatches from this list would be matched against
-     * @param speciesCode FACatch speciesCode value to be matched
-     * @param typeCode FACatch typeCode value to be matched
-     * @return  TRUE : Atleast one FACatch with matching criteria found
-     *              FALSE :  No FACatch with matching criteria found
+     * @param speciesCode        FACatch speciesCode value to be matched
+     * @param typeCode           FACatch typeCode value to be matched
+     * @return TRUE : Atleast one FACatch with matching criteria found
+     * FALSE :  No FACatch with matching criteria found
      */
-    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches,String speciesCode, String typeCode){
-        if(CollectionUtils.isEmpty(specifiedFACatches) || speciesCode ==null || typeCode ==null){
+    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches, String speciesCode, String typeCode) {
+        if (CollectionUtils.isEmpty(specifiedFACatches) || speciesCode == null || typeCode == null) {
             return false;
         }
 
 
-        for(FACatch faCatch : specifiedFACatches){
-            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())){
+        for (FACatch faCatch : specifiedFACatches) {
+            if (faCatch.getSpeciesCode() != null && faCatch.getTypeCode() != null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())) {
                 return true;
             }
         }

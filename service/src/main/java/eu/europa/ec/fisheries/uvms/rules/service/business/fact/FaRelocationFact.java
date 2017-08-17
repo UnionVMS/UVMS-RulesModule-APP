@@ -15,11 +15,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.util.List;
@@ -29,9 +28,35 @@ import java.util.List;
  */
 public class FaRelocationFact extends AbstractFact {
 
+    private List<CodeType> specifiedFACatchTypeCodes;
+
+    private List<CodeType> relatedFLUXLocationTypeCodes;
+
+    private List<CodeType> specifiedFACatchSpeciesCodes;
+
+    private List<CodeType> destinationVesselStorageCharacteristicTypeCodes;
+
+    private IdType destinationVesselStorageCharacteristicID;
+
+    private List<IdType> relatedVesselTransportMeansIDs;
+
+    private List<CodeType> sourceVesselStorageCharacteristicTypeCodes;
+
+    private List<CodeType> relatedVesselTransportMeansRoleCodes;
+
+    private List<CodeType> specifiedFACatchDestinationFluxLocationTypeCodes;
+
+    private List<IdType> specifiedFACatchDestinationFluxLocationIDs;
+
+    private List<CodeType> relatedVesselTransportMeansContactPartyRoleCodes;
+
+    private List<TextType> relatedVesselTransportMeansNames;
+
     private List<FACatch> specifiedFACatches;
 
     private List<FLUXLocation> relatedFLUXLocations;
+
+    private List<FLUXLocation> destinationFLUXLocations;
 
     private List<VesselTransportMeans> relatedVesselTransportMeans;
 
@@ -43,6 +68,102 @@ public class FaRelocationFact extends AbstractFact {
 
     public FaRelocationFact() {
         setFactType();
+    }
+
+    public List<CodeType> getSpecifiedFACatchTypeCodes() {
+        return specifiedFACatchTypeCodes;
+    }
+
+    public void setSpecifiedFACatchTypeCodes(List<CodeType> specifiedFACatchTypeCodes) {
+        this.specifiedFACatchTypeCodes = specifiedFACatchTypeCodes;
+    }
+
+    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
+        return relatedFLUXLocationTypeCodes;
+    }
+
+    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
+        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
+    }
+
+    public List<CodeType> getSpecifiedFACatchSpeciesCodes() {
+        return specifiedFACatchSpeciesCodes;
+    }
+
+    public void setSpecifiedFACatchSpeciesCodes(List<CodeType> specifiedFACatchSpeciesCodes) {
+        this.specifiedFACatchSpeciesCodes = specifiedFACatchSpeciesCodes;
+    }
+
+    public List<CodeType> getDestinationVesselStorageCharacteristicTypeCodes() {
+        return destinationVesselStorageCharacteristicTypeCodes;
+    }
+
+    public void setDestinationVesselStorageCharacteristicTypeCodes(List<CodeType> destinationVesselStorageCharacteristicTypeCodes) {
+        this.destinationVesselStorageCharacteristicTypeCodes = destinationVesselStorageCharacteristicTypeCodes;
+    }
+
+    public IdType getDestinationVesselStorageCharacteristicID() {
+        return destinationVesselStorageCharacteristicID;
+    }
+
+    public void setDestinationVesselStorageCharacteristicID(IdType destinationVesselStorageCharacteristicID) {
+        this.destinationVesselStorageCharacteristicID = destinationVesselStorageCharacteristicID;
+    }
+
+    public List<IdType> getRelatedVesselTransportMeansIDs() {
+        return relatedVesselTransportMeansIDs;
+    }
+
+    public void setRelatedVesselTransportMeansIDs(List<IdType> relatedVesselTransportMeansIDs) {
+        this.relatedVesselTransportMeansIDs = relatedVesselTransportMeansIDs;
+    }
+
+    public List<CodeType> getSourceVesselStorageCharacteristicTypeCodes() {
+        return sourceVesselStorageCharacteristicTypeCodes;
+    }
+
+    public void setSourceVesselStorageCharacteristicTypeCodes(List<CodeType> sourceVesselStorageCharacteristicTypeCodes) {
+        this.sourceVesselStorageCharacteristicTypeCodes = sourceVesselStorageCharacteristicTypeCodes;
+    }
+
+    public List<CodeType> getRelatedVesselTransportMeansRoleCodes() {
+        return relatedVesselTransportMeansRoleCodes;
+    }
+
+    public void setRelatedVesselTransportMeansRoleCodes(List<CodeType> relatedVesselTransportMeansRoleCodes) {
+        this.relatedVesselTransportMeansRoleCodes = relatedVesselTransportMeansRoleCodes;
+    }
+
+    public List<CodeType> getSpecifiedFACatchDestinationFluxLocationTypeCodes() {
+        return specifiedFACatchDestinationFluxLocationTypeCodes;
+    }
+
+    public void setSpecifiedFACatchDestinationFluxLocationTypeCodes(List<CodeType> specifiedFACatchDestinationFluxLocationTypeCodes) {
+        this.specifiedFACatchDestinationFluxLocationTypeCodes = specifiedFACatchDestinationFluxLocationTypeCodes;
+    }
+
+    public List<IdType> getSpecifiedFACatchDestinationFluxLocationIDs() {
+        return specifiedFACatchDestinationFluxLocationIDs;
+    }
+
+    public void setSpecifiedFACatchDestinationFluxLocationIDs(List<IdType> specifiedFACatchDestinationFluxLocationIDs) {
+        this.specifiedFACatchDestinationFluxLocationIDs = specifiedFACatchDestinationFluxLocationIDs;
+    }
+
+    public List<CodeType> getRelatedVesselTransportMeansContactPartyRoleCodes() {
+        return relatedVesselTransportMeansContactPartyRoleCodes;
+    }
+
+    public void setRelatedVesselTransportMeansContactPartyRoleCodes(List<CodeType> relatedVesselTransportMeansContactPartyRoleCodes) {
+        this.relatedVesselTransportMeansContactPartyRoleCodes = relatedVesselTransportMeansContactPartyRoleCodes;
+    }
+
+    public List<TextType> getRelatedVesselTransportMeansNames() {
+        return relatedVesselTransportMeansNames;
+    }
+
+    public void setRelatedVesselTransportMeansNames(List<TextType> relatedVesselTransportMeansNames) {
+        this.relatedVesselTransportMeansNames = relatedVesselTransportMeansNames;
     }
 
     public List<FACatch> getSpecifiedFACatches() {
@@ -59,6 +180,14 @@ public class FaRelocationFact extends AbstractFact {
 
     public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
         this.relatedFLUXLocations = relatedFLUXLocations;
+    }
+
+    public List<FLUXLocation> getDestinationFLUXLocations() {
+        return destinationFLUXLocations;
+    }
+
+    public void setDestinationFLUXLocations(List<FLUXLocation> destinationFLUXLocations) {
+        this.destinationFLUXLocations = destinationFLUXLocations;
     }
 
     public List<VesselTransportMeans> getRelatedVesselTransportMeans() {
@@ -91,231 +220,6 @@ public class FaRelocationFact extends AbstractFact {
 
     public void setFaReportDocumentRelatedReportIds(List<IdType> faReportDocumentRelatedReportIds) {
         this.faReportDocumentRelatedReportIds = faReportDocumentRelatedReportIds;
-    }
-
-    public boolean anyFluxLocationTypeCodesListIdContains(List<FLUXLocation> fluxLocations, String listId) {
-        if (isEmpty(fluxLocations) || StringUtils.isBlank(listId)) {
-            return false;
-        }
-
-        for (FLUXLocation fluxLocation : fluxLocations) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
-
-            if (typeCode != null && listId.equals(typeCode.getListID())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean faCatchTypeCodeAndSpeciesCodeValuesContain(List<FACatch> faCatches, String typeCodeValue, String speciesCodeValue) {
-        if (isEmpty(faCatches) || StringUtils.isBlank(typeCodeValue) || StringUtils.isBlank(speciesCodeValue)) {
-            return false;
-        }
-
-        return anyFACatchTypeCodeValueContains(faCatches, typeCodeValue) && anyFaCatchSpeciesCodeContains(faCatches, speciesCodeValue);
-    }
-
-    public boolean anyFaCatchSpeciesCodeContains(List<FACatch> faCatches, String codeValue) {
-        if (isEmpty(faCatches) || StringUtils.isBlank(codeValue)) {
-            return false;
-        }
-
-        for (FACatch faCatch : faCatches) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getSpeciesCode();
-
-            if (typeCode != null && codeValue.equals(typeCode.getValue())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyFACatchTypeCodeValueContains(List<FACatch> faCatches, String... codes) {
-        if (ArrayUtils.isEmpty(codes) || isEmpty(faCatches)) {
-            return false;
-        }
-
-        for (String code : codes) {
-            for (FACatch faCatch : faCatches) {
-                if (faCatch.getTypeCode() != null && code.equals(faCatch.getTypeCode().getValue())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansSchemeIdContains(List<VesselTransportMeans> vesselTransportMeans, String... schemeIds) {
-        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (String schemeId : schemeIds) {
-            for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-                List<IdType> ids = ActivityFactMapper.mapToIdType(vesselTransportMean.getIDS());
-                boolean vesselTransportMeanContainsSchemeId = !schemeIdContainsAny(ids, schemeId);
-
-                if (vesselTransportMeanContainsSchemeId) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansSchemeIdContainsAndValid(List<VesselTransportMeans> vesselTransportMeans, String format, String... schemeIds) {
-        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (String schemeId : schemeIds) {
-            if (anyVesselTransportMeansSchemeIdContains(vesselTransportMeans, schemeId)) {
-                String schemeIdValue = getVesselTransportMeansIdsSchemeIdValue(vesselTransportMeans, schemeId);
-
-                return validateFormat(schemeIdValue, FORMATS.valueOf(format).getFormatStr());
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansRoleCodeContains(List<VesselTransportMeans> vesselTransportMeans, String... roleCodeValues) {
-        if (ArrayUtils.isEmpty(roleCodeValues) || isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (String roleCodeValue : roleCodeValues) {
-            for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-                if (vesselTransportMean.getRoleCode() != null && roleCodeValue.equals(vesselTransportMean.getRoleCode().getValue())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansNamePresent(List<VesselTransportMeans> vesselTransportMeans) {
-        if (isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-            List<TextType> names = vesselTransportMean.getNames();
-
-            if (!isEmpty(names)) {
-                for (TextType name : vesselTransportMean.getNames()) {
-                    if (StringUtils.isNotBlank(name.getValue())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansContactPartyRoleCodePresent(List<VesselTransportMeans> vesselTransportMeans) {
-        if (isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-            for (ContactParty contactParty : vesselTransportMean.getSpecifiedContactParties()) {
-                if (!isEmpty(contactParty.getRoleCodes())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyVesselTransportMeansContactPartyRoleCodeListIdAndValueContains(List<VesselTransportMeans> vesselTransportMeans, String listId, String value) {
-        if (StringUtils.isBlank(listId) || StringUtils.isBlank(value) || isEmpty(vesselTransportMeans)) {
-            return false;
-        }
-
-        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
-            for (ContactParty contactParty : vesselTransportMean.getSpecifiedContactParties()) {
-                List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> contactPartyRoleCodes = contactParty.getRoleCodes();
-
-                for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType contactPartyRoleCode : contactPartyRoleCodes) {
-                    String contactPartyRoleCodeListId = contactPartyRoleCode.getListID();
-                    String contactPartyRoleCodeValue = contactPartyRoleCode.getValue();
-
-                    if (StringUtils.equals(contactPartyRoleCodeListId, listId) && StringUtils.equals(contactPartyRoleCodeValue, value)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyFaCatchFluxLocationTypeCodeContainsValue(List<FACatch> faCatches, String codeValue) {
-        if (isEmpty(faCatches) || StringUtils.isBlank(codeValue)) {
-            return false;
-        }
-
-        for (FACatch faCatch : faCatches) {
-            List<FLUXLocation> destinationFluxLocations = faCatch.getDestinationFLUXLocations();
-            if (CollectionUtils.isNotEmpty(destinationFluxLocations) && anyFluxLocationTypeCodeContainsValue(destinationFluxLocations, codeValue)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean anyFaCatchDestinationFluxLocationSchemeIdContains(List<FACatch> faCatches, String... schemeIds) {
-        if (ArrayUtils.isEmpty(schemeIds) || isEmpty(faCatches)) {
-            return false;
-        }
-
-        for (String schemeId : schemeIds) {
-            for (FACatch faCatch : faCatches) {
-                if (anyFluxLocationSchemeIdContains(faCatch.getDestinationFLUXLocations(), schemeIds)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public String getFaCatchDestinationFluxLocationSchemeIdValue(List<FACatch> faCatches, String schemeId) {
-        if (StringUtils.isEmpty(schemeId) || isEmpty(faCatches)) {
-            return null;
-        }
-
-        for (FACatch faCatch : faCatches) {
-            if (anyFluxLocationSchemeIdContains(faCatch.getDestinationFLUXLocations(), schemeId)) {
-                return getFluxLocationIdsSchemeIdValue(faCatch.getDestinationFLUXLocations(), schemeId);
-            }
-        }
-
-        return null;
-    }
-
-    public boolean anyFaCatchFluxLocationPresent(List<FACatch> faCatches) {
-        if (isEmpty(faCatches)) {
-            return false;
-        }
-
-        for (FACatch faCatch : faCatches) {
-            if (!isEmpty(faCatch.getDestinationFLUXLocations())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
