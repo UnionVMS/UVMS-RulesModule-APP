@@ -8,13 +8,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.math.BigDecimal;
@@ -162,35 +156,35 @@ public class RuleTestHelper {
         codeType.setListID("FLUX_LOCATION_TYPE");
         codeType.setValue(typeCodeValue);
         fluxLocation.setTypeCode(codeType);
-        fluxLocation.setID(getIdTypeUNCEFACT("","FARM"));
+        fluxLocation.setID(getIdTypeUNCEFACT("", "FARM"));
 
         return fluxLocation;
     }
 
     public static List<FACatch> getFACatchList() {
         List<FACatch> faCatches = new ArrayList<>(2);
-        FACatch faCatch =new FACatch();
+        FACatch faCatch = new FACatch();
 
-        faCatch.setTypeCode(getCodeTypeUNCEFACT("LOADED",""));
-        List<FLUXLocation>  fluxLocations = new ArrayList<>();
+        faCatch.setTypeCode(getCodeTypeUNCEFACT("LOADED", ""));
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
         fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
         faCatch.setSpecifiedFLUXLocations(fluxLocations);
         faCatches.add(faCatch);
 
-        FACatch allocatedQutaFaCatch =new FACatch();
-        allocatedQutaFaCatch.setTypeCode(getCodeTypeUNCEFACT("ALLOCATED_TO_QUOTA",""));
+        FACatch allocatedQutaFaCatch = new FACatch();
+        allocatedQutaFaCatch.setTypeCode(getCodeTypeUNCEFACT("ALLOCATED_TO_QUOTA", ""));
         faCatches.add(allocatedQutaFaCatch);
 
-        FACatch bftFaCatch =new FACatch();
-        bftFaCatch.setSpeciesCode(getCodeTypeUNCEFACT("BFT",""));
+        FACatch bftFaCatch = new FACatch();
+        bftFaCatch.setSpeciesCode(getCodeTypeUNCEFACT("BFT", ""));
 
-        List<FLUXLocation>  fluxLocationsBFT = new ArrayList<>();
+        List<FLUXLocation> fluxLocationsBFT = new ArrayList<>();
         fluxLocationsBFT.add(createFluxLocationWithTypeCodeValue("LOCATION"));
         bftFaCatch.setDestinationFLUXLocations(fluxLocationsBFT);
 
-        FACatch loadedBFT =new FACatch();
-        loadedBFT.setTypeCode(getCodeTypeUNCEFACT("LOADED",""));
-        loadedBFT.setSpeciesCode(getCodeTypeUNCEFACT("BFT",""));
+        FACatch loadedBFT = new FACatch();
+        loadedBFT.setTypeCode(getCodeTypeUNCEFACT("LOADED", ""));
+        loadedBFT.setSpeciesCode(getCodeTypeUNCEFACT("BFT", ""));
         loadedBFT.setDestinationFLUXLocations(fluxLocationsBFT);
         fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
         loadedBFT.setSpecifiedFLUXLocations(fluxLocations);
@@ -199,7 +193,6 @@ public class RuleTestHelper {
 
         return faCatches;
     }
-
 
 
     public static un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType getCodeTypeUNCEFACT(String value, String listId) {
@@ -217,55 +210,65 @@ public class RuleTestHelper {
         return idType;
     }
 
-    public static FLAPDocument getFLAPDocument(){
+    public static FLAPDocument getFLAPDocument() {
         FLAPDocument flapDocument = new FLAPDocument();
-        flapDocument.setID(getIdTypeUNCEFACT("value","FLAP_DOCUMENT_ID"));
+        flapDocument.setID(getIdTypeUNCEFACT("value", "FLAP_DOCUMENT_ID"));
         return flapDocument;
     }
 
 
-    public static FishingActivity getFishingActivity(){
+    public static FishingActivity getFishingActivity() {
         FishingActivity fishingActivity = new FishingActivity();
         fishingActivity.setRelatedVesselTransportMeans(Arrays.asList(getVesselTransportMeans()));
         fishingActivity.setSpecifiedFACatches(getFACatchList());
         return fishingActivity;
     }
 
-    public static VesselTransportMeans getVesselTransportMeans(){
+    public static VesselTransportMeans getVesselTransportMeans() {
         VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
 
-        vesselTransportMeans.setRoleCode(getCodeTypeUNCEFACT("FA_VESSEL_ROLE","PARTICIPATING_VESSEL"));
+        vesselTransportMeans.setRoleCode(getCodeTypeUNCEFACT("FA_VESSEL_ROLE", "PARTICIPATING_VESSEL"));
 
         return vesselTransportMeans;
     }
 
 
-    public static ValidationResultDocument getValidationResultDocument(){
+    public static ValidationResultDocument getValidationResultDocument() {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
-        validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value","SchemeId"));
+        validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value", "SchemeId"));
 
         return validationResultDocument;
 
 
     }
 
-    public static FLUXCharacteristic getFLUXCharacteristic(){
+    public static FLUXCharacteristic getFLUXCharacteristic() {
         FLUXCharacteristic fluxCharacteristic = new FLUXCharacteristic();
-        fluxCharacteristic.setTypeCode(getCodeTypeUNCEFACT("DESTINATION_LOCATION",""));
+        fluxCharacteristic.setTypeCode(getCodeTypeUNCEFACT("DESTINATION_LOCATION", ""));
 
         List<FLUXLocation> fluxLocations = new ArrayList<>();
-        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION",""),getIdTypeUNCEFACT("","LOCATION")));
-        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION",""),getIdTypeUNCEFACT("","FARM")));
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "LOCATION")));
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "FARM")));
 
         fluxCharacteristic.setSpecifiedFLUXLocations(fluxLocations);
         return fluxCharacteristic;
     }
 
-    public static FLUXLocation getFLUXLocation(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode, IDType id){
+    public static FLUXLocation getFLUXLocation(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode, IDType id) {
         FLUXLocation fluxLocation = new FLUXLocation();
         fluxLocation.setTypeCode(typeCode);
         fluxLocation.setID(id);
         return fluxLocation;
+    }
+
+    public static VesselTransportMeans getVesselTransportMeans(String schemeId, String value) {
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+        IDType id = new IDType();
+        id.setSchemeID(schemeId);
+        id.setValue(value);
+        vesselTransportMeans.setIDS(Arrays.asList(id));
+
+        return vesselTransportMeans;
     }
 
 }

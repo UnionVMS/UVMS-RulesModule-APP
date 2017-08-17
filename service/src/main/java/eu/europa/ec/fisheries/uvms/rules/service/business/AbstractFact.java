@@ -13,17 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -31,11 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
@@ -43,6 +28,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -54,6 +40,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -188,6 +178,10 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
+
+        idTypes = new ArrayList<>(idTypes);
+        CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
+
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -829,7 +823,7 @@ public abstract class AbstractFact {
             setFormatStr(someFromat);
         }
 
-        String getFormatStr() {
+        public String getFormatStr() {
             return formatStr;
         }
 
@@ -917,20 +911,20 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean matchWithFluxTL(List<IdType> idTypes){
+    public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean match = false;
-        for (IdType idType : idTypes){
+        for (IdType idType : idTypes) {
             match = matchWithFluxTL(idType);
-            if (match){
+            if (match) {
                 break;
             }
         }
         return match;
     }
 
-    public boolean matchWithFluxTL(IdType idType){
+    public boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
-        if (idType != null){
+        if (idType != null) {
             match = StringUtils.equals(idType.getValue(), senderOrReceiver);
         }
         return match;
@@ -978,6 +972,22 @@ public abstract class AbstractFact {
 
             if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
                 return typeCode.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    public String getValueForSchemeId(String schemeId, List<IdType> ids) {
+        if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
+            return null;
+        }
+
+        for (IdType id : ids) {
+            String idsSchemeId = id.getSchemeId();
+
+            if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
+                return id.getValue();
             }
         }
 
@@ -1076,20 +1086,21 @@ public abstract class AbstractFact {
 
     /**
      * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
+     *
      * @param specifiedFACatches FACatches from this list would be matched against
-     * @param speciesCode FACatch speciesCode value to be matched
-     * @param typeCode FACatch typeCode value to be matched
-     * @return  TRUE : Atleast one FACatch with matching criteria found
-     *              FALSE :  No FACatch with matching criteria found
+     * @param speciesCode        FACatch speciesCode value to be matched
+     * @param typeCode           FACatch typeCode value to be matched
+     * @return TRUE : Atleast one FACatch with matching criteria found
+     * FALSE :  No FACatch with matching criteria found
      */
-    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches,String speciesCode, String typeCode){
-        if(CollectionUtils.isEmpty(specifiedFACatches) || speciesCode ==null || typeCode ==null){
+    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches, String speciesCode, String typeCode) {
+        if (CollectionUtils.isEmpty(specifiedFACatches) || speciesCode == null || typeCode == null) {
             return false;
         }
 
 
-        for(FACatch faCatch : specifiedFACatches){
-            if(faCatch.getSpeciesCode() !=null && faCatch.getTypeCode() !=null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())){
+        for (FACatch faCatch : specifiedFACatches) {
+            if (faCatch.getSpeciesCode() != null && faCatch.getTypeCode() != null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())) {
                 return true;
             }
         }
