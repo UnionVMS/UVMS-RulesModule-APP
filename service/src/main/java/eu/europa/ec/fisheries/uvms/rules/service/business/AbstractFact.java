@@ -13,17 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -54,6 +43,17 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @ToString
@@ -633,6 +633,34 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean isPositiveInteger(List<MeasureType> value) {
+        if (value == null) {
+            return true;
+        }
+        for (MeasureType type : value) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    private boolean isIntegerValue(BigDecimal bigDecimal) {
+     if(bigDecimal ==null){
+         return false;
+     }
+
+        if( bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0){
+          return true;
+        }else{
+           return false;
+        }
+
+    }
+
     /**
      * This method will check if all values passed  to this method are greater than zero.
      *
@@ -880,6 +908,27 @@ public abstract class AbstractFact {
 
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
+            return false;
+        }
+
+        for (CodeType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getListId()))
                 return false;
         }
 
