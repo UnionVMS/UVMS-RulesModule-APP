@@ -68,6 +68,7 @@ public enum MDRAcronymType {
     LOCATION,
     PROD_USAGE,
     RFMO,
+    SALE_BR,
     TERRITORY,
     TERRITORY_CURR,
     VESSEL_ACTIVITY,
