@@ -8,10 +8,10 @@ type
 level
 propertyNames
 
-
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
+import java.util.Arrays;
 
 template "@{tname}"
 

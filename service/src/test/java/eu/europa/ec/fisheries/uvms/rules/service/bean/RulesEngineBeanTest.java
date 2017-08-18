@@ -13,9 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,14 +41,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -64,6 +67,9 @@ public class RulesEngineBeanTest {
 
     @Mock
     RuleAssetsBean ruleAssetsBean;
+
+    @Mock
+    RulesActivityServiceBean activityService;
 
     @Test
     public void testEvaluate() throws RulesValidationException {
@@ -102,5 +108,15 @@ public class RulesEngineBeanTest {
         doc.setRelatedFLUXReportDocument(fluxReportDocument);
         msg.setFAReportDocuments(Arrays.asList(doc));
         return msg;
+    }
+
+    @Test
+    public void testGenerateExtraValueMap(){
+
+        Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngineBean.generateExtraValueMap(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
+
+        assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_NON_UNIQUE_IDS)).size());
+        assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_WITH_TRIP_IDS)).size());
+
     }
 }

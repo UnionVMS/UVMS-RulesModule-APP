@@ -18,10 +18,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
@@ -30,6 +32,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
 
 /**
  * @author Gregory Rinaldi
@@ -56,7 +62,6 @@ public class RulesResource {
     @EJB
     private TemplateEngine templateEngine;
 
-
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
@@ -64,7 +69,8 @@ public class RulesResource {
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
         FLUXResponseMessage fluxResponseMessage;
         try {
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, request);
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
@@ -74,9 +80,49 @@ public class RulesResource {
             return Response.ok(e.getMessage()).build();
         }
         return Response.ok(fluxResponseMessage).build();
-
     }
 
+    @POST
+    @Consumes(value = {MediaType.APPLICATION_XML})
+    @Produces(value = {MediaType.APPLICATION_XML})
+    @Path("/evaluate/fluxfaquerymessage")
+    public Response evaluate(FLUXFAQueryMessage request) throws ServiceException {
+
+        FLUXResponseMessage fluxResponseMessage;
+        try {
+            Map<ExtraValueType, Object> extraValueMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, request);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, request, extraValueMap);
+            String s = JAXBMarshaller.marshallJaxBObjectToString(request);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
+            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            XPathRepository.INSTANCE.clear(facts);
+        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+            log.error(e.getMessage(), e);
+            return Response.ok(e.getMessage()).build();
+        }
+        return Response.ok(fluxResponseMessage).build();
+    }
+
+    @POST
+    @Consumes(value = {MediaType.APPLICATION_XML})
+    @Produces(value = {MediaType.APPLICATION_XML})
+    @Path("/evaluate/fluxfaResponsemessage")
+    public Response evaluate(FLUXResponseMessage request) throws ServiceException {
+
+        FLUXResponseMessage fluxResponseMessage;
+        try {
+
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
+            String s = JAXBMarshaller.marshallJaxBObjectToString(request);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
+            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            XPathRepository.INSTANCE.clear(facts);
+        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+            log.error(e.getMessage(), e);
+            return Response.ok(e.getMessage()).build();
+        }
+        return Response.ok(fluxResponseMessage).build();
+    }
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -85,5 +131,4 @@ public class RulesResource {
         templateEngine.reInitialize();
         return Response.ok("Initialization successfully finished. The Rules DRLs were reloaded.").build();
     }
-
 }

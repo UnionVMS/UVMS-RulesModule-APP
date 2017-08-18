@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesStructuredAd
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselCountryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -136,10 +134,6 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
     @Override
     public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
         this.report = businessObject;
-    }
-
-    @Override public <T> void setAdditionalValidationObject(Collection<T> additionalObject, AdditionalValidationObjectType validationType) {
-
     }
 
     private void fillMap() {

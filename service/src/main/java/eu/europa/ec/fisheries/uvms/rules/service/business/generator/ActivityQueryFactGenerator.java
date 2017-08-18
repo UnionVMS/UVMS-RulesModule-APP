@@ -13,12 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.Collection;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
@@ -27,23 +32,38 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
  */
 public class ActivityQueryFactGenerator extends AbstractGenerator {
 
-    private FAQuery faQuery;
+    private FLUXFAQueryMessage fluxfaQueryMessage;
+    private ActivityFactMapper activityFactMapper;
+    private XPathStringWrapper xPathUtil;
+
+    public ActivityQueryFactGenerator() {
+        xPathUtil = new XPathStringWrapper();
+        activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
 
     @Override
     public List<AbstractFact> generateAllFacts() {
-        //TODO facts
-        return null;
+        List<AbstractFact> factList = new ArrayList<>();
+        if (fluxfaQueryMessage != null){
+            FAQuery faQuery = fluxfaQueryMessage.getFAQuery();
+            if(faQuery != null){
+
+                xPathUtil.append(FLUXFA_REPORT_MESSAGE).append(FA_QUERY);
+                factList.add(activityFactMapper.generateFactsForFaQuery(faQuery));
+
+                xPathUtil.append(FLUXFA_REPORT_MESSAGE).append(FA_QUERY);
+                factList.addAll(activityFactMapper.generateFactsForFaQueryParameters(faQuery.getSimpleFAQueryParameters(), faQuery));
+            }
+        }
+        return factList;
     }
 
     @Override
     public void setBusinessObjectMessage(Object businessObject) throws RulesValidationException {
-        if (!(businessObject instanceof  FAQuery)) {
+        if (!(businessObject instanceof FLUXFAQueryMessage)) {
             throw new RulesValidationException("Business object does not match required type");
         }
-        this.faQuery = (FAQuery) businessObject;
+        this.fluxfaQueryMessage = (FLUXFAQueryMessage) businessObject;
     }
 
-    @Override public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
-        // Set internal Validation Object if needed.
-    }
 }

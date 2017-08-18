@@ -68,17 +68,17 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             LOG.error("Failed to get InitialContext",e);
             throw new RuntimeException(e);
         }
-        responseQueue = JMSUtils.lookupQueue(ctx, MessageConstants.RULES_RESPONSE_QUEUE);
-        movementQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
-        configQueue = JMSUtils.lookupQueue(ctx, ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
-        assetQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ASSET_MESSAGE_IN_QUEUE);
-        mobileTerminalQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE);
-        exchangeQueue = JMSUtils.lookupQueue(ctx, MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
-        userQueue = JMSUtils.lookupQueue(ctx, MessageConstants.USER_MESSAGE_IN_QUEUE);
-        auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
-        activityQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
-        mdrEventQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MDR_EVENT);
-        salesQueue = JMSUtils.lookupQueue(ctx, MessageConstants.SALES_QUEUE);
+        responseQueue = JMSUtils.lookupQueue(MessageConstants.RULES_RESPONSE_QUEUE);
+        movementQueue = JMSUtils.lookupQueue(MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
+        configQueue = JMSUtils.lookupQueue(ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
+        assetQueue = JMSUtils.lookupQueue(MessageConstants.ASSET_MESSAGE_IN_QUEUE);
+        mobileTerminalQueue = JMSUtils.lookupQueue(MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE);
+        exchangeQueue = JMSUtils.lookupQueue(MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
+        userQueue = JMSUtils.lookupQueue(MessageConstants.USER_MESSAGE_IN_QUEUE);
+        auditQueue = JMSUtils.lookupQueue(MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
+        activityQueue = JMSUtils.lookupQueue(MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
+        mdrEventQueue = JMSUtils.lookupQueue(MessageConstants.MDR_EVENT);
+        salesQueue = JMSUtils.lookupQueue(MessageConstants.SALES_QUEUE);
     }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {

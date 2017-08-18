@@ -13,11 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,11 +28,19 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 @Stateless
 @Slf4j
@@ -45,17 +56,40 @@ public class RulesEngineBean {
 	@EJB
 	private RuleAssetsBean ruleAssetsBean;
 
-    public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
+    @EJB
+    private RulesActivityServiceBean activityService;
+
+	public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
 		List<AbstractFact> facts = new ArrayList<>();
 		AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
 		generator.setBusinessObjectMessage(businessObject);
-		if(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
-			generator.setAdditionalValidationObject(ruleAssetsBean.getAssetList(businessObject), AdditionalValidationObjectType.ASSET_LIST);
-		}
+		mdrCacheServiceBean.loadMDRCache();
+		generator.setExtraValueMap(map);
 		mdrCacheServiceBean.loadMDRCache();
 		facts.addAll(generator.generateAllFacts());
 		templateEngine.evaluateFacts(facts);
 		return facts;
     }
+
+	public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
+		return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
+	}
+
+    public Map<ExtraValueType, Object> generateExtraValueMap(BusinessObjectType businessObjectType, Object businessObject) {
+
+		Map<ExtraValueType, Object> map = new HashMap<>();
+
+		if (FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)){
+			Map<ActivityTableType, List<IdType>> nonUniqueIdsList = activityService.getNonUniqueIdsList(businessObject);
+			map.put(ACTIVITY_NON_UNIQUE_IDS, nonUniqueIdsList);
+			Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesForTrips = activityService.getFishingActivitiesForTrips(businessObject);
+			map.put(ACTIVITY_WITH_TRIP_IDS, fishingActivitiesForTrips);
+			// Uncomment when assets work correctly (Now assets has JMS issues - namely not closing connection)
+			//List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
+			//map.put(ASSET_LIST, assetList);
+		}
+
+		return map;
+	}
 
 }

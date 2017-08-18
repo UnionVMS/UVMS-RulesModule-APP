@@ -8,9 +8,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -134,4 +137,138 @@ public class RuleTestHelper {
 
         return objectRepresentations;
     }
+
+    public static List<FLUXLocation> createFluxLocationsWithPositionValue() {
+        List<FLUXLocation> fluxLocations = new ArrayList<>(2);
+        FLUXLocation fluxLocation = createFluxLocationWithTypeCodeValue("POSITION");
+        fluxLocations.add(fluxLocation);
+        fluxLocation = createFluxLocationWithTypeCodeValue("AREA");
+        fluxLocations.add(fluxLocation);
+        fluxLocation = createFluxLocationWithTypeCodeValue("TEST");
+        fluxLocations.add(fluxLocation);
+
+        return fluxLocations;
+    }
+
+    public static FLUXLocation createFluxLocationWithTypeCodeValue(String typeCodeValue) {
+        FLUXLocation fluxLocation = new FLUXLocation();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FLUX_LOCATION_TYPE");
+        codeType.setValue(typeCodeValue);
+        fluxLocation.setTypeCode(codeType);
+        fluxLocation.setID(getIdTypeUNCEFACT("", "FARM"));
+
+        return fluxLocation;
+    }
+
+    public static List<FACatch> getFACatchList() {
+        List<FACatch> faCatches = new ArrayList<>(2);
+        FACatch faCatch = new FACatch();
+
+        faCatch.setTypeCode(getCodeTypeUNCEFACT("LOADED", ""));
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+        fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
+        faCatch.setSpecifiedFLUXLocations(fluxLocations);
+        faCatches.add(faCatch);
+
+        FACatch allocatedQutaFaCatch = new FACatch();
+        allocatedQutaFaCatch.setTypeCode(getCodeTypeUNCEFACT("ALLOCATED_TO_QUOTA", ""));
+        faCatches.add(allocatedQutaFaCatch);
+
+        FACatch bftFaCatch = new FACatch();
+        bftFaCatch.setSpeciesCode(getCodeTypeUNCEFACT("BFT", ""));
+
+        List<FLUXLocation> fluxLocationsBFT = new ArrayList<>();
+        fluxLocationsBFT.add(createFluxLocationWithTypeCodeValue("LOCATION"));
+        bftFaCatch.setDestinationFLUXLocations(fluxLocationsBFT);
+
+        FACatch loadedBFT = new FACatch();
+        loadedBFT.setTypeCode(getCodeTypeUNCEFACT("LOADED", ""));
+        loadedBFT.setSpeciesCode(getCodeTypeUNCEFACT("BFT", ""));
+        loadedBFT.setDestinationFLUXLocations(fluxLocationsBFT);
+        fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
+        loadedBFT.setSpecifiedFLUXLocations(fluxLocations);
+        faCatches.add(loadedBFT);
+
+
+        return faCatches;
+    }
+
+
+    public static un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType getCodeTypeUNCEFACT(String value, String listId) {
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(listId);
+        codeType.setValue(value);
+
+        return codeType;
+    }
+
+    public static IDType getIdTypeUNCEFACT(String value, String schemeId) {
+        IDType idType = new IDType();
+        idType.setValue(value);
+        idType.setSchemeID(schemeId);
+        return idType;
+    }
+
+    public static FLAPDocument getFLAPDocument() {
+        FLAPDocument flapDocument = new FLAPDocument();
+        flapDocument.setID(getIdTypeUNCEFACT("value", "FLAP_DOCUMENT_ID"));
+        return flapDocument;
+    }
+
+
+    public static FishingActivity getFishingActivity() {
+        FishingActivity fishingActivity = new FishingActivity();
+        fishingActivity.setRelatedVesselTransportMeans(Arrays.asList(getVesselTransportMeans()));
+        fishingActivity.setSpecifiedFACatches(getFACatchList());
+        return fishingActivity;
+    }
+
+    public static VesselTransportMeans getVesselTransportMeans() {
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+
+        vesselTransportMeans.setRoleCode(getCodeTypeUNCEFACT("FA_VESSEL_ROLE", "PARTICIPATING_VESSEL"));
+
+        return vesselTransportMeans;
+    }
+
+
+    public static ValidationResultDocument getValidationResultDocument() {
+        ValidationResultDocument validationResultDocument = new ValidationResultDocument();
+        validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value", "SchemeId"));
+
+        return validationResultDocument;
+
+
+    }
+
+    public static FLUXCharacteristic getFLUXCharacteristic() {
+        FLUXCharacteristic fluxCharacteristic = new FLUXCharacteristic();
+        fluxCharacteristic.setTypeCode(getCodeTypeUNCEFACT("DESTINATION_LOCATION", ""));
+
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "LOCATION")));
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "FARM")));
+
+        fluxCharacteristic.setSpecifiedFLUXLocations(fluxLocations);
+        return fluxCharacteristic;
+    }
+
+    public static FLUXLocation getFLUXLocation(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode, IDType id) {
+        FLUXLocation fluxLocation = new FLUXLocation();
+        fluxLocation.setTypeCode(typeCode);
+        fluxLocation.setID(id);
+        return fluxLocation;
+    }
+
+    public static VesselTransportMeans getVesselTransportMeans(String schemeId, String value) {
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+        IDType id = new IDType();
+        id.setSchemeID(schemeId);
+        id.setValue(value);
+        vesselTransportMeans.setIDS(Arrays.asList(id));
+
+        return vesselTransportMeans;
+    }
+
 }

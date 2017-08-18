@@ -15,8 +15,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
@@ -26,6 +28,7 @@ import java.util.List;
  * @autor padhyad
  * @author Gregory Rinaldi
  */
+@Slf4j
 public class FaTranshipmentFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
@@ -38,7 +41,7 @@ public class FaTranshipmentFact extends AbstractFact {
 
     private List<FACatch> specifiedFACatches;
 
-    private List<CodeType> faCatchTypeCodes;
+    private List<CodeType> faCatchTypeCodes ;
 
     private List<CodeType> fluxLocationTypeCodes;
 
@@ -49,6 +52,12 @@ public class FaTranshipmentFact extends AbstractFact {
     private List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes;
 
     private List<CodeType> fluxCharacteristicTypeCodes;
+
+    private List<CodeType> facatchSpeciesCode;
+
+    private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
+
+
 
     public FaTranshipmentFact() {
         setFactType();
@@ -147,6 +156,14 @@ public class FaTranshipmentFact extends AbstractFact {
         this.fluxCharacteristicTypeCodes = fluxCharacteristicTypeCodes;
     }
 
+    public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
+        return specifiedFLUXCharacteristics;
+    }
+
+    public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
+        this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
+    }
+
     /**
      * This method checks if there are FLUXLocations present for every FaCatch. If not, it will return false.
      * @param specifiedFACatches
@@ -166,5 +183,47 @@ public class FaTranshipmentFact extends AbstractFact {
         }
 
         return isPresent;
+    }
+
+    /**
+     * This method will check Rule for SpecifiedFLUXCharacteristic. Rule will be checked for passed fluxLocationSchemeId
+     * @param specifiedFLUXCharacteristics
+     * @param fluxLocationSchemeId
+     * @return
+     * @throws Exception
+     */
+    public boolean checkRuleForSpecifiedFLUXCharacteristic(List<FLUXCharacteristic> specifiedFLUXCharacteristics,String fluxLocationSchemeId) throws Exception {
+        if(fluxLocationSchemeId ==null){
+            log.error("Please provide value for fluxLocationSchemeId");
+            throw new Exception("Please provide value for fluxLocationSchemeId");
+        }
+        if(CollectionUtils.isEmpty(specifiedFLUXCharacteristics)) {
+            return false;
+        }
+
+        for(FLUXCharacteristic fluxCharacteristic : specifiedFLUXCharacteristics){
+            if(fluxCharacteristic.getTypeCode()!=null && fluxCharacteristic.getTypeCode().getValue().equals("DESTINATION_LOCATION")){
+                List<FLUXLocation> fluxLocations=  fluxCharacteristic.getSpecifiedFLUXLocations();
+                if(CollectionUtils.isNotEmpty(fluxLocations)){
+                    for(FLUXLocation fluxLocation : fluxLocations){
+                        if(fluxLocation.getTypeCode() !=null && "LOCATION".equals(fluxLocation.getTypeCode().getValue()) && fluxLocation.getID()!=null &&
+                                fluxLocationSchemeId.equals(fluxLocation.getID().getSchemeID()) && isPresentInMDRList(fluxLocationSchemeId,fluxLocation.getID().getValue())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    public List<CodeType> getFaCatchSpeciesCodes() {
+        return facatchSpeciesCode;
+    }
+
+    public void setFaCatchSpeciesCodes(List<CodeType> facatchSpeciesCode) {
+        this.facatchSpeciesCode = facatchSpeciesCode;
     }
 }

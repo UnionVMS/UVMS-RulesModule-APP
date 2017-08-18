@@ -8,6 +8,7 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.fisheries.uvms.rules.service.business;
 
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -27,16 +27,15 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
  * Created by kovian on 28/06/2017.
@@ -53,7 +52,6 @@ public class BusinessObjectFactoryTest {
             assertNotNull(businessObjFactGenerator);
             System.out.println("For BusinessObjectType ["+objType+"] found Generator ["+businessObjFactGenerator.getClass()+"]");
         }
-
     }
 
     @Test
@@ -113,7 +111,7 @@ public class BusinessObjectFactoryTest {
     public void testSetBusinessObjectMessageNull_ActivityQueryFactGenerator() {
         try {
             ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
-            activityQueryFactGenerator.setBusinessObjectMessage(new FAQuery());
+            activityQueryFactGenerator.setBusinessObjectMessage(new FLUXFAQueryMessage());
         } catch (RulesValidationException e) {
             assertNull(e);
         }
@@ -128,19 +126,18 @@ public class BusinessObjectFactoryTest {
 
     @Test
     public void testSetAdditionalValidation_ActivityQueryFactGenerator() {
-        try {
-            ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
-            activityQueryFactGenerator.setAdditionalValidationObject(Collections.emptyList(), AdditionalValidationObjectType.ASSET_LIST);
-        } catch (Exception e) {
-            assertNull(e);
-        }
+        ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
+        activityQueryFactGenerator.setAdditionalValidationObject();
     }
 
     @Test
     public void testGenerateAllFacts_ActivityQueryFactGenerator() {
         ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
         List<AbstractFact> facts = activityQueryFactGenerator.generateAllFacts();
-        assertNull(facts);
+        assertNotNull(facts);
     }
 
 

@@ -13,12 +13,31 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -30,6 +49,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,21 +57,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.NoSuchElementException;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -82,12 +99,86 @@ public class MessageServiceBeanTest {
     RulesPreProcessBean rulesPreProcessBean;
 
     @Mock
-    RulesConfigurationCache ruleModuleCache;
+    ParameterService parameterService;
+
+    private IDType idType;
+    private CodeType codeType;
+    private DelimitedPeriod delimitedPeriod;
+    private DateTimeType dateTimeType;
+    private Date date;
+    private FAQuery faQuery;
+    private List<FAQueryParameter> faQueryParameterList;
+
+    private FLUXFAQueryMessage fluxfaQueryMessage;
+
+    @Before
+    @SneakyThrows
+    public void before(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+
+        date = sdf.parse("31-08-1982 10:20:56");
+
+        idType = new IDType();
+        idType.setValue("value");
+        idType.setSchemeID("schemeId");
+
+        codeType = new CodeType();
+        codeType.setValue("value");
+
+        delimitedPeriod = new DelimitedPeriod();
+        MeasureType durationMeasure = new MeasureType();
+        durationMeasure.setUnitCode("unitCode");
+        durationMeasure.setValue(new BigDecimal(10));
+        delimitedPeriod.setDurationMeasure(durationMeasure);
+
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+
+        dateTimeType = new DateTimeType();
+        dateTimeType.setDateTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+        delimitedPeriod.setStartDateTime(dateTimeType);
+        delimitedPeriod.setEndDateTime(dateTimeType);
+
+        faQueryParameterList = new ArrayList<>();
+        FAQueryParameter faQueryParameter = new FAQueryParameter();
+        faQueryParameter.setTypeCode(codeType);
+        faQueryParameter.setValueCode(codeType);
+        faQueryParameter.setValueDateTime(dateTimeType);
+        faQueryParameter.setValueID(idType);
+        faQueryParameterList.add(faQueryParameter);
+
+        faQuery = new FAQuery();
+        faQuery.setID(idType);
+        faQuery.setSimpleFAQueryParameters(faQueryParameterList);
+        faQuery.setSpecifiedDelimitedPeriod(delimitedPeriod);
+        faQuery.setSubmittedDateTime(dateTimeType);
+        faQuery.setTypeCode(codeType);
+
+        FLUXFAQueryMessage message = new FLUXFAQueryMessage();
+        message.setFAQuery(faQuery);
+
+        fluxfaQueryMessage = new FLUXFAQueryMessage();
+        fluxfaQueryMessage.setFAQuery(faQuery);
+
+    }
 
     @Test
-    public void testGenerateFluxResponseMessage() {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
+    public void testGenerateFluxResponseMessage() throws Exception {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
+        assertNotNull(fluxResponseMessage);
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
+        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
+    }
+
+    @Test
+    public void testGenerateFluxResponseMessageForFaQuery() throws Exception {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), fluxfaQueryMessage);
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
@@ -121,22 +212,21 @@ public class MessageServiceBeanTest {
         try {
             messageServiceBean.setFLUXFAReportMessageReceived(req);
         } catch (NoSuchElementException ex){
-
+            assertNotNull(ex);
         }
-
     }
 
     @Test
-    public void testSendRequestToActivity() throws RulesServiceException, MessageException {
+    public void testSendRequestToActivity() throws RulesServiceException, MessageException, ConfigServiceException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
         messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX);
     }
 
     @Test
-    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
+    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException, ConfigServiceException {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
-        Mockito.doReturn(Collections.emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage);
+        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
@@ -154,7 +244,7 @@ public class MessageServiceBeanTest {
         validationMessageType.setErrorType(ErrorType.ERROR);
         validationMessageType.setLevel("L01");
         validationMessageType.setMessage("Test message");
-        faReportValidationResult.setValidationMessages(Arrays.asList(validationMessageType));
+        faReportValidationResult.setValidationMessages(singletonList(validationMessageType));
         return faReportValidationResult;
     }
 
@@ -163,7 +253,7 @@ public class MessageServiceBeanTest {
         IDType id = new IDType();
         id.setSchemeID("123-abc");
         id.setValue("val1");
-        fluxReportDocument.setIDS(Arrays.asList(id));
+        fluxReportDocument.setIDS(singletonList(id));
 
 
         FLUXFAReportMessage msg = new FLUXFAReportMessage();
@@ -171,7 +261,7 @@ public class MessageServiceBeanTest {
 
         FAReportDocument doc = new FAReportDocument();
         doc.setRelatedFLUXReportDocument(fluxReportDocument);
-        msg.setFAReportDocuments(Arrays.asList(doc));
+        msg.setFAReportDocuments(singletonList(doc));
         return msg;
     }
 

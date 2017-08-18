@@ -50,84 +50,19 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<FishingActivity> specifiedFishingActivities;
 
+    private List<Date> specifiedAndRealtedFishActOccurrenceDateTimes;
+
+    private List<String> specifiedFishingActivitiesTypes;
+
     private List<IdType> relatedFLUXReportDocumentIDs;
 
     private IdType relatedFLUXReportDocumentReferencedID;
 
+    private List<IdType> nonUniqueIdsList;
+
+
     public FaReportDocumentFact() {
         setFactType();
-    }
-
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public List<IdType> getRelatedReportIDs() {
-        return relatedReportIDs;
-    }
-
-    public void setRelatedReportIDs(List<IdType> relatedReportIDs) {
-        this.relatedReportIDs = relatedReportIDs;
-    }
-
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-
-    public FLUXReportDocument getRelatedFLUXReportDocument() {
-        return relatedFLUXReportDocument;
-    }
-
-    public void setRelatedFLUXReportDocument(FLUXReportDocument relatedFLUXReportDocument) {
-        this.relatedFLUXReportDocument = relatedFLUXReportDocument;
-    }
-
-    public CodeType getPurposeCode() {
-        return purposeCode;
-    }
-
-    public void setPurposeCode(CodeType purposeCode) {
-        this.purposeCode = purposeCode;
-    }
-
-    public IdType getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(IdType referencedID) {
-        this.referencedID = referencedID;
-    }
-
-    public List<IdType> getOwnerFluxPartyIds() {
-        return ownerFluxPartyIds;
-    }
-
-    public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
-        this.ownerFluxPartyIds = ownerFluxPartyIds;
-    }
-
-    public VesselTransportMeans getSpecifiedVesselTransportMeans() {
-        return specifiedVesselTransportMeans;
-    }
-
-    public void setSpecifiedVesselTransportMeans(VesselTransportMeans specifiedVesselTransportMeans) {
-        this.specifiedVesselTransportMeans = specifiedVesselTransportMeans;
-    }
-
-    public List<FishingActivity> getSpecifiedFishingActivities() {
-        return specifiedFishingActivities;
-    }
-
-    public void setSpecifiedFishingActivities(List<FishingActivity> specifiedFishingActivities) {
-        this.specifiedFishingActivities = specifiedFishingActivities;
     }
 
     @Override
@@ -145,36 +80,107 @@ public class FaReportDocumentFact extends AbstractFact {
         this.factType = FactType.FA_REPORT_DOCUMENT;
     }
 
+    public CodeType getTypeCode() {
+        return typeCode;
+    }
+    public void setTypeCode(CodeType typeCode) {
+        this.typeCode = typeCode;
+    }
+    public List<IdType> getRelatedReportIDs() {
+        return relatedReportIDs;
+    }
+    public void setRelatedReportIDs(List<IdType> relatedReportIDs) {
+        this.relatedReportIDs = relatedReportIDs;
+    }
+    public List<IdType> getIds() {
+        return ids;
+    }
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+    public FLUXReportDocument getRelatedFLUXReportDocument() {
+        return relatedFLUXReportDocument;
+    }
+    public void setRelatedFLUXReportDocument(FLUXReportDocument relatedFLUXReportDocument) {
+        this.relatedFLUXReportDocument = relatedFLUXReportDocument;
+    }
+    public CodeType getPurposeCode() {
+        return purposeCode;
+    }
+    public void setPurposeCode(CodeType purposeCode) {
+        this.purposeCode = purposeCode;
+    }
+    public IdType getReferencedID() {
+        return referencedID;
+    }
+    public void setReferencedID(IdType referencedID) {
+        this.referencedID = referencedID;
+    }
+    public List<IdType> getOwnerFluxPartyIds() {
+        return ownerFluxPartyIds;
+    }
+    public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
+        this.ownerFluxPartyIds = ownerFluxPartyIds;
+    }
+    public VesselTransportMeans getSpecifiedVesselTransportMeans() {
+        return specifiedVesselTransportMeans;
+    }
+    public void setSpecifiedVesselTransportMeans(VesselTransportMeans specifiedVesselTransportMeans) {
+        this.specifiedVesselTransportMeans = specifiedVesselTransportMeans;
+    }
+    public List<FishingActivity> getSpecifiedFishingActivities() {
+        return specifiedFishingActivities;
+    }
+    public void setSpecifiedFishingActivities(List<FishingActivity> specifiedFishingActivities) {
+        this.specifiedFishingActivities = specifiedFishingActivities;
+    }
     public Date getAcceptanceDateTime() {
         return acceptanceDateTime;
     }
-
     public void setAcceptanceDateTime(Date acceptanceDateTime) {
         this.acceptanceDateTime = acceptanceDateTime;
     }
-
     public Date getCreationDateTime() {
         return creationDateTime;
     }
-
     public void setCreationDateTime(Date creationDateTime) {
         this.creationDateTime = creationDateTime;
     }
-
     public List<IdType> getRelatedFLUXReportDocumentIDs() {
         return relatedFLUXReportDocumentIDs;
     }
-
     public void setRelatedFLUXReportDocumentIDs(List<IdType> relatedFLUXReportDocumentIDs) {
         this.relatedFLUXReportDocumentIDs = relatedFLUXReportDocumentIDs;
     }
-
     public IdType getRelatedFLUXReportDocumentReferencedID() {
         return relatedFLUXReportDocumentReferencedID;
     }
-
     public void setRelatedFLUXReportDocumentReferencedID(IdType relatedFLUXReportDocumentReferencedID) {
         this.relatedFLUXReportDocumentReferencedID = relatedFLUXReportDocumentReferencedID;
+    }
+
+    public List<IdType> getNonUniqueIdsList() {
+        return nonUniqueIdsList;
+    }
+
+    public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
+        this.nonUniqueIdsList = nonUniqueIdsList;
+    }
+
+    public List<Date> getSpecifiedAndRealtedFishActOccurrenceDateTimes() {
+        return specifiedAndRealtedFishActOccurrenceDateTimes;
+    }
+
+    public void setSpecifiedAndRealtedFishActOccurrenceDateTimes(List<Date> specifiedAndRealtedFishActOccurrenceDateTimes) {
+        this.specifiedAndRealtedFishActOccurrenceDateTimes = specifiedAndRealtedFishActOccurrenceDateTimes;
+    }
+
+    public List<String> getSpecifiedFishingActivitiesTypes() {
+        return specifiedFishingActivitiesTypes;
+    }
+
+    public void setSpecifiedFishingActivitiesTypes(List<String> specifiedFishingActivitiesTypes) {
+        this.specifiedFishingActivitiesTypes = specifiedFishingActivitiesTypes;
     }
 }
 

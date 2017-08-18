@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -54,7 +53,7 @@ import org.kie.internal.definition.KnowledgePackage;
 public class FactRuleEvaluator {
 
     private KieServices kieServices = KieServices.Factory.get();
-    private KieFileSystem  kieFileSystem = kieServices.newKieFileSystem();
+    private KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
     private List<String> systemPackagesPaths = new ArrayList<>();
@@ -67,8 +66,8 @@ public class FactRuleEvaluator {
         KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
         KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
         Collection<KiePackage> kiePackages = kBase.getKiePackages();
-        if(CollectionUtils.isNotEmpty(kiePackages)){
-         kBase.removeKiePackage(kiePackages.iterator().next().getName());
+        if (CollectionUtils.isNotEmpty(kiePackages)) {
+            kBase.removeKiePackage(kiePackages.iterator().next().getName());
         }
         kieFileSystem.delete(systemPackagesPaths.toArray(new String[systemPackagesPaths.size()]));
         log.info("[END] --> Deleted [" + systemPackagesPaths.size() + "] packages from KieFileSystem.");
@@ -102,10 +101,10 @@ public class FactRuleEvaluator {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             Collection<?> objects = null; // FIXME whole fact is remove this is not right
-            if(ksession != null){
+            if (ksession != null) {
                 objects = ksession.getObjects();
             }
-            if(CollectionUtils.isNotEmpty(objects)){
+            if (CollectionUtils.isNotEmpty(objects)) {
                 Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
                 AbstractFact next = failedFacts.iterator().next();
                 String message = e.getMessage();
@@ -210,7 +209,7 @@ public class FactRuleEvaluator {
 
         kieServices.newKieBuilder(kieFileSystem).buildAll();
         KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl)kContainer.getKieBase();
+        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
 
         Collection<KnowledgePackage> allPackages = Collections2.transform(packages, new Function<KiePackage, KnowledgePackage>() {
             @Override

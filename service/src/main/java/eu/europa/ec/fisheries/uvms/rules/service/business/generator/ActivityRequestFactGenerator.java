@@ -13,10 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.config.AdditionalValidationObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -25,15 +27,55 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTAL_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SOURCE_VESSEL_STORAGE_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FA_CATCH;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
+ * @author Andi Kovi
  */
 @Slf4j
 public class ActivityRequestFactGenerator extends AbstractGenerator {
@@ -58,16 +100,25 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     }
 
     @Override
-    public void setAdditionalValidationObject(Collection additionalObject, AdditionalValidationObjectType validationType) {
-        if (additionalObject != null && AdditionalValidationObjectType.ASSET_LIST.equals(validationType)) {
-            activityFactMapper.setAssetList((List<IdTypeWithFlagState>) additionalObject);
-        }
+    public void setAdditionalValidationObject() {
+        List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_LIST);
+        activityFactMapper.setAssetList(idTypeWithFlagStates);
+
+        Map<ActivityTableType, List<IdType>> activityTableTypeListMap = (Map<ActivityTableType, List<IdType>>) extraValueMap.get(ACTIVITY_NON_UNIQUE_IDS);
+        activityFactMapper.setNonUniqueIdsMap(activityTableTypeListMap);
+
+        Map<String, List<FishingActivityWithIdentifiers>> stringListMap = (Map<String, List<FishingActivityWithIdentifiers>>) extraValueMap.get(ACTIVITY_WITH_TRIP_IDS);
+        activityFactMapper.setFishingActivitiesWithTripIds(stringListMap);
+
+        String senderReceiver = (String)extraValueMap.get(SENDER_RECEIVER);
+        activityFactMapper.setSenderReceiver(senderReceiver);
+
     }
 
     @Override
     public List<AbstractFact> generateAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
-        facts.add(activityFactMapper.generateFactForFluxReportMessage(fluxfaReportMessage));
+        facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
             facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments));
@@ -130,6 +181,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForGearProblems(facts, gearProblems);
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.addAll(activityFactMapper.generateFactsForFluxCharacteristics(activity.getSpecifiedFLUXCharacteristics(), SPECIFIED_FLUX_CHARACTERISTIC));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactsForFluxLocations(activity.getRelatedFLUXLocations()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
@@ -149,6 +203,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
                 facts.add(activityFactMapper.generateFactsForVesselStorageCharacteristic(activity.getDestinationVesselStorageCharacteristic()));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument));
 
                 index++;
             }
@@ -261,12 +318,23 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     case LANDING:
                         abstractFact = activityFactMapper.generateFactsForLanding(activity, faReportDocument);
                         break;
+                    case DISCARD:
+                        abstractFact = activityFactMapper.generateFactsForDiscard(activity, faReportDocument);
+                        break;
                     case TRANSHIPMENT:
                         if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = activityFactMapper.generateFactsForTranshipment(activity, faReportDocument);
                         } else if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = activityFactMapper.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
                         }
+                        break;
+                    case RELOCATION:
+                        if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
+                        }
+                        break;
+                    case FISHING_OPERATION:
+                        abstractFact = activityFactMapper.generateFactsForFishingOperation(activity, faReportDocument);
                         break;
                     default:
                         log.info("No rule to be applied for the received activity type : " + fishingActivityType);

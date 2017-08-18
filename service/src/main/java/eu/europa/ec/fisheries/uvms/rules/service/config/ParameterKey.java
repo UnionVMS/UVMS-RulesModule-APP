@@ -13,7 +13,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.config;
 
 public enum ParameterKey {
 
-    KEY("rules.key.attribute");
+    KEY("rules.key.attribute"),
+    RULES_SCHEDULER_CONFIG_KEY("RULES_SCHEDULER_CONFIG"),
+    FLUX_LOCAL_NATIONAL_CODE("flux_local_nation_code");
 
     private final String key;
 
