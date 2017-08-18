@@ -10,6 +10,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
@@ -281,5 +282,23 @@ public class RuleTestHelper {
 
     }
 
+    public static FLUXCharacteristic getFLUXCharacteristic(){
+        FLUXCharacteristic fluxCharacteristic = new FLUXCharacteristic();
+        fluxCharacteristic.setTypeCode(getCodeTypeUNCEFACT("DESTINATION_LOCATION",""));
+
+        List<FLUXLocation> fluxLocations = new ArrayList<>();
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION",""),getIdTypeUNCEFACT("","LOCATION")));
+        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION",""),getIdTypeUNCEFACT("","FARM")));
+
+        fluxCharacteristic.setSpecifiedFLUXLocations(fluxLocations);
+        return fluxCharacteristic;
+    }
+
+    public static FLUXLocation getFLUXLocation(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode, IDType id){
+        FLUXLocation fluxLocation = new FLUXLocation();
+        fluxLocation.setTypeCode(typeCode);
+        fluxLocation.setID(id);
+        return fluxLocation;
+    }
 
 }

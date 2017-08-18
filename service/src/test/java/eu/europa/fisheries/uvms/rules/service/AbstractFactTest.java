@@ -10,6 +10,25 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -1237,47 +1256,47 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsEmptyList(){
+    public void testValueNotContainsEmptyList(){
 
         List<CodeType> codeTypes = new ArrayList<>();
-        assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
+        assertTrue(fact.valueNotContains(codeTypes, "ZZZ", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappy(){
+    public void testValueNotContainsHappy(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 1));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits(){
+    public void testValueNotContainsHappyWithMoreHits(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
         CodeType codeType2 = new CodeType();
-        codeType2.setListId("TYPECODE");
+        codeType2.setValue("TYPECODE");
         codeTypes.add(codeType2);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits2(){
+    public void testValueNotContainsHappyWithMoreHits2(){
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertTrue(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertTrue(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
