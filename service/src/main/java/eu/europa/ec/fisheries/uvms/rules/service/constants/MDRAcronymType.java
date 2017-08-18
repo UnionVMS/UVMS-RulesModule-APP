@@ -74,5 +74,7 @@ public enum MDRAcronymType {
     VESSEL_ACTIVITY,
     VESSEL_STORAGE_TYPE,
     WEIGHT_MEANS,
+    STAT_RECTANGLE,
+    MANAGEMENT_AREA
 
 }

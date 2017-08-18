@@ -11,15 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
-import javax.jms.Session;
-
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
 import eu.europa.ec.fisheries.uvms.message.JMSUtils;
@@ -29,14 +20,28 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
+import javax.jms.Session;
+
 @Stateless
 public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
+    private final static long TEN_SECONDS = 10000;
+
     private Queue responseQueue;
 
     private ConnectionFactory connectionFactory;
+
+    private Connection connection = null;
+    private Session session = null;
 
     @PostConstruct
     private void init() {
@@ -47,27 +52,27 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @Override
     public <T> T getMessage(String correlationId, Class type) throws MessageException {
-    	if (correlationId == null || correlationId.isEmpty()) {
-    		LOG.error("[ No CorrelationID provided when listening to JMS message, aborting ]");
-    		throw new MessageException("No CorrelationID provided!");
-    	}
-    	
-    	Connection connection=null;
+        if (correlationId == null || correlationId.isEmpty()) {
+            LOG.error("[ No CorrelationID provided when listening to JMS message, aborting ]");
+            throw new MessageException("No CorrelationID provided!");
+        }
+
+        Connection connection = null;
         try {
 
             connection = connectionFactory.createConnection();
             final Session session = JMSUtils.connectToQueue(connection);
-            
+
             T response = (T) session.createConsumer(responseQueue, "JMSCorrelationID='" + correlationId + "'").receive(60000);
             if (response == null) {
                 throw new MessageException("[ Timeout reached or message null in RulesResponseConsumerBean. ]");
             }
             return response;
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("[ Error when getting message ] {}", e.getMessage());
             throw new MessageException("Error when retrieving message: ", e);
         } finally {
-        	JMSUtils.disconnectQueue(connection);
+            JMSUtils.disconnectQueue(connection);
         }
     }
 
@@ -76,11 +81,10 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
     public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
         try {
             return getMessage(correlationId, type);
-        }
-        catch (MessageException e) {
+        } catch (MessageException e) {
             LOG.error("[ Error when getting config message. ] {}", e.getMessage());
             throw new ConfigMessageException("[ Error when getting config message. ]");
         }
     }
-    
+
 }
