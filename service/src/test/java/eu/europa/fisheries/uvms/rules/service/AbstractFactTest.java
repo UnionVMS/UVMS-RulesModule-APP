@@ -509,6 +509,19 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testIsCodeTypeListIdPresentInMDRList() {
+
+        List<CodeType> codeTypes = new ArrayList<>();
+
+        codeTypes.add(RuleTestHelper.getCodeType("RELEASED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        boolean result = fact.isCodeTypeListIdPresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(true, result);
+    }
+
+
+    @Test
     public void testIsPresentInMdrList() {
         boolean result = fact.isPresentInMDRList("TEST", "TEST");
         assertFalse(false);
