@@ -1,7 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProductFact;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,11 +18,24 @@ import static org.junit.Assert.assertTrue;
 
 public class SalesAbstractFactTest {
 
-    private SalesAbstractFact fact;
+
+    private SalesFLUXSalesReportMessageFact fact;
 
     @Before
     public void init() {
-        fact = new SalesAAPProductFact();
+        fact = new SalesFLUXSalesReportMessageFact();
+    }
+
+    @Test
+    public void testIsNotUTCWhenNotUTC() throws Exception {
+        DateTimeType creationDateTime = new DateTimeType().withDateTime(DateTime.now().withZone(DateTimeZone.forOffsetHours(3)));
+        assertTrue(fact.isNotUTC(creationDateTime));
+    }
+
+    @Test
+    public void testIsNotUTCWhenUTC() throws Exception {
+        DateTimeType creationDateTime = new DateTimeType().withDateTime(DateTime.now().withZone(DateTimeZone.UTC));
+        assertFalse(fact.isNotUTC(creationDateTime));
     }
 
     @Test
