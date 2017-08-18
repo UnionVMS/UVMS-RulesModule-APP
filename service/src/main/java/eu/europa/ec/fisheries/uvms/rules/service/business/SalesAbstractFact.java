@@ -14,8 +14,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.util.Collection;
 
@@ -58,6 +61,14 @@ public abstract class SalesAbstractFact extends AbstractFact {
             }
         }
         return false;
+    }
+
+    public boolean isNotUTC(DateTimeType dateTimeType) {
+        return isNotUTC(dateTimeType.getDateTime());
+    }
+
+    public boolean isNotUTC(DateTime dateTime) {
+        return dateTime.getZone() != DateTimeZone.UTC;
     }
 
     public Source getSource() {
