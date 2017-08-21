@@ -201,7 +201,7 @@ public class MessageServiceBean implements MessageService {
             String requestForExchange = ExchangeModuleRequestMapper.createSendSalesResponseRequest(rulesRequest.getRequest(),
                     rulesRequest.getMessageGuid(),
                     rulesRequest.getFluxDataFlow(),
-                    rulesRequest.getRecipient(),
+                    rulesRequest.getPluginToSendResponseThrough(),
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
@@ -216,7 +216,7 @@ public class MessageServiceBean implements MessageService {
         try {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
-            FLUXSalesResponseMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
+            FLUXSalesReportMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage);
