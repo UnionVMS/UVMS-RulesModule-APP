@@ -1,48 +1,28 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
+import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.Report;
+import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProcessFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProductFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAuctionSaleFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesBatchFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesContactPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesContactPersonFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesEventFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeographicalCoordinateFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXLocationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXOrganizationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingTripFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPriceFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesReportFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesReportWrapperFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesSizeDistributionFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesStructuredAddressFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselCountryFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesVesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,6 +33,9 @@ public class SalesReportFactGeneratorTest {
     private MapperFacade mapper;
 
     private SalesObjectsHelper helper;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -72,10 +55,23 @@ public class SalesReportFactGeneratorTest {
         salesReportFactGenerator.setBusinessObjectMessage(report);
         salesReportFactGenerator.generateAllFacts();
     }
+    @Test
+    public void testSetBusinessObjectWithInvalidData() throws Exception {
+        Report report = new Report()
+                .withFLUXSalesReportMessage(null)
+                .withAuctionSale(new AuctionSaleType().withSalesCategory(null));
+
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("SalesCategory in AuctionSale cannot be null");
+
+        salesReportFactGenerator.setBusinessObjectMessage(report);
+        salesReportFactGenerator.generateAllFacts();
+    }
 
     @Test
     public void getAllFactsWhenChainDoesntContainNull() throws Exception {
         Report report = helper.generateFullFLUXSalesReportMessage();
+        report.getAuctionSale().setSalesCategory(SalesCategoryType.VARIOUS_SUPPLY);
 
         salesReportFactGenerator.setBusinessObjectMessage(report);
         List<AbstractFact> allFacts = salesReportFactGenerator.generateAllFacts();
@@ -91,7 +87,15 @@ public class SalesReportFactGeneratorTest {
             assertTrue(clazz + " not found while it was expected", testValid);
         }
 
+        checkSalesCategoryInFact(allFacts);
+
         assertEquals(listOfClassesThatShouldBeCreated.size(), listOfClassesThatWereCreated.size());
+    }
+
+    private void checkSalesCategoryInFact(List<AbstractFact> allFacts) {
+        for (AbstractFact fact : allFacts) {
+            assertTrue(SalesCategoryType.VARIOUS_SUPPLY.equals((((SalesAbstractFact) fact).getSalesCategoryType())));
+        }
     }
 
     private List<Class<? extends SalesAbstractFact>> createListOfClassesThatShouldBeCreated() {

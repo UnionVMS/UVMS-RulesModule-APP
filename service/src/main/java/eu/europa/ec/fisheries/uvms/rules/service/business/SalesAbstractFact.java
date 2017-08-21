@@ -13,8 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.base.Preconditions;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -25,9 +27,13 @@ import java.util.Collection;
 @Slf4j
 @ToString
 public abstract class SalesAbstractFact extends AbstractFact {
+
     protected Source source;
+    private SalesCategoryType salesCategoryType;
 
     public boolean isQuery() {
+        checkNotNull();
+
         if (source.equals(Source.QUERY)) {
             return true;
         }
@@ -36,6 +42,8 @@ public abstract class SalesAbstractFact extends AbstractFact {
     }
 
     public boolean isResponse() {
+        checkNotNull();
+
         if (source.equals(Source.RESPONSE)) {
             return true;
         }
@@ -44,11 +52,28 @@ public abstract class SalesAbstractFact extends AbstractFact {
     }
 
     public boolean isReport() {
+        checkNotNull();
+
         if (source.equals(Source.REPORT)) {
             return true;
         }
 
         return false;
+    }
+
+    public boolean isNotVariousSupply() {
+        checkNotNull();
+
+        if (source.equals(Source.AUCTION) && salesCategoryType.equals(SalesCategoryType.VARIOUS_SUPPLY)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected void checkNotNull() {
+        Preconditions.checkNotNull(source, "Source cannot be null. Did you forget to add it to the fact generator?");
+        Preconditions.checkNotNull(salesCategoryType, "SalesCategoryType cannot be null. Did you forget to add it to the fact generator?");
     }
 
     public boolean nullValuesInAmountTypes(Collection<AmountType> amountTypes) {
@@ -77,5 +102,13 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
     public void setSource(Source source) {
         this.source = source;
+    }
+
+    public void setSalesCategoryType(SalesCategoryType salesCategoryType) {
+        this.salesCategoryType = salesCategoryType;
+    }
+
+    public SalesCategoryType getSalesCategoryType() {
+        return salesCategoryType;
     }
 }

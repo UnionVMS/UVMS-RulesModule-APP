@@ -2,11 +2,14 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,12 +21,60 @@ import static org.junit.Assert.assertTrue;
 
 public class SalesAbstractFactTest {
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     private SalesFLUXSalesReportMessageFact fact;
 
     @Before
     public void init() {
         fact = new SalesFLUXSalesReportMessageFact();
+        fact.setSalesCategoryType(SalesCategoryType.FIRST_SALE);
+    }
+
+    @Test
+    public void testCheckNotNullWhenNotNull() throws Exception {
+        fact.setSource(Source.AUCTION);
+        fact.setSalesCategoryType(SalesCategoryType.VARIOUS_SUPPLY);
+
+        // No errors
+        fact.checkNotNull();
+    }
+
+    @Test
+    public void testCheckNotNullWhenSourceNull() throws Exception {
+        fact.setSource(null);
+        fact.setSalesCategoryType(SalesCategoryType.VARIOUS_SUPPLY);
+
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Source cannot be null. Did you forget to add it to the fact generator?");
+        fact.checkNotNull();
+    }
+
+    @Test
+    public void testCheckNotNullWhenCategoryNull() throws Exception {
+        fact.setSource(Source.AUCTION);
+        fact.setSalesCategoryType(null);
+
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("SalesCategoryType cannot be null. Did you forget to add it to the fact generator?");
+        fact.checkNotNull();
+    }
+
+    @Test
+    public void testIsNotVariousSupplyWhenVariousSupply() throws Exception {
+        fact.setSource(Source.AUCTION);
+        fact.setSalesCategoryType(SalesCategoryType.VARIOUS_SUPPLY);
+
+        assertFalse(fact.isNotVariousSupply());
+    }
+
+    @Test
+    public void testIsNotVariousSupplyWhenNotVariousSupply() throws Exception {
+        fact.setSource(Source.AUCTION);
+        fact.setSalesCategoryType(SalesCategoryType.FIRST_SALE);
+
+        assertTrue(fact.isNotVariousSupply());
     }
 
     @Test
