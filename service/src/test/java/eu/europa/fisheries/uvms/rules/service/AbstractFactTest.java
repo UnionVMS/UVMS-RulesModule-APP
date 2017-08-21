@@ -10,6 +10,7 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -25,6 +26,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
@@ -488,6 +490,19 @@ public class AbstractFactTest {
         boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
     }
+
+    @Test
+    public void testIsCodeTypeListIdPresentInMDRList() {
+
+        List<CodeType> codeTypes = new ArrayList<>();
+
+        codeTypes.add(RuleTestHelper.getCodeType("RELEASED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        boolean result = fact.isCodeTypeListIdPresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(true, result);
+    }
+
 
     @Test
     public void testIsPresentInMdrList() {
@@ -1237,60 +1252,60 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListIdNotContainsEmptyList(){
+    public void testValueNotContainsEmptyList() {
 
         List<CodeType> codeTypes = new ArrayList<>();
-        assertTrue(fact.listIdNotContains(codeTypes, "ZZZ", 1));
+        assertTrue(fact.valueNotContains(codeTypes, "ZZZ", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappy(){
+    public void testValueNotContainsHappy() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 1));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 1));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits(){
+    public void testValueNotContainsHappyWithMoreHits() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
         CodeType codeType2 = new CodeType();
-        codeType2.setListId("TYPECODE");
+        codeType2.setValue("TYPECODE");
         codeTypes.add(codeType2);
 
-        assertFalse(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertFalse(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
-    public void testListIdNotContainsHappyWithMoreHits2(){
+    public void testValueNotContainsHappyWithMoreHits2() {
 
         List<CodeType> codeTypes = new ArrayList<>();
         CodeType codeType = new CodeType();
-        codeType.setListId("TYPECODE");
+        codeType.setValue("TYPECODE");
         codeTypes.add(codeType);
 
-        assertTrue(fact.listIdNotContains(codeTypes, "TYPECODE", 2));
+        assertTrue(fact.valueNotContains(codeTypes, "TYPECODE", 2));
     }
 
     @Test
-    public void testIsGreaterThanZero(){
-        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1),"km"));
+    public void testIsGreaterThanZero() {
+        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1), "km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
 
     @Test
-    public void testGetDataTypeForMDRListNullCheck(){
-       String result= fact.getDataTypeForMDRList("TEST",null);
-        assertEquals("",result);
+    public void testGetDataTypeForMDRListNullCheck() {
+        String result = fact.getDataTypeForMDRList("TEST", null);
+        assertEquals("", result);
     }
 
     @Test
@@ -1367,7 +1382,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testIsTypeCodeValuePresentInList(){
+    public void testIsTypeCodeValuePresentInList() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1381,7 +1396,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsTypeCodeValuePresentInList_single(){
+    public void testIsTypeCodeValuePresentInList_single() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OTR");
@@ -1393,7 +1408,7 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testValidateFormatCodeTypes(){
+    public void testValidateFormatCodeTypes() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("UUID");
         typeCode.setValue("OTR");
@@ -1401,13 +1416,13 @@ public class AbstractFactTest {
         typeCode2.setListId("UUID");
         typeCode2.setValue("NCC");
         List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
-        boolean result =fact.validateFormatCodeTypes(typeCodes);
+        boolean result = fact.validateFormatCodeTypes(typeCodes);
         assertTrue(result);
     }
 
 
     @Test
-    public void testMatchWithFluxTL(){
+    public void testMatchWithFluxTL() {
         IdType idType = new IdType();
         idType.setValue("TEST");
         fact.setSenderOrReceiver("TEST");
@@ -1415,12 +1430,12 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testMatchWithFluxTLWithEmptyList(){
+    public void testMatchWithFluxTLWithEmptyList() {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
 
     @Test
-    public void testMatchWithFluxTLWithSenderReceiverNull(){
+    public void testMatchWithFluxTLWithSenderReceiverNull() {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
     }
@@ -1483,5 +1498,14 @@ public class AbstractFactTest {
     public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
         assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
     }
+
+
+    @Test
+    public void testisPositiveInteger(){
+
+        boolean result= fact.isPositiveInteger(Arrays.asList( RuleTestHelper.getMeasureType(new BigDecimal(22),null)));
+        assertTrue(result);
+    }
+
 
 }

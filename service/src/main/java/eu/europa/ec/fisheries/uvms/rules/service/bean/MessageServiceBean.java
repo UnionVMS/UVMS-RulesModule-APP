@@ -48,6 +48,8 @@ import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
 import eu.europa.ec.fisheries.schema.sales.Report;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
@@ -61,6 +63,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
@@ -68,6 +71,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -106,8 +110,9 @@ public class MessageServiceBean implements MessageService {
     RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
-    RulesConfigurationCache ruleModuleCache;
+    private ParameterService parameterService;
 
+    
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
@@ -482,7 +487,11 @@ public class MessageServiceBean implements MessageService {
 
     private FLUXParty getRespondedFluxParty() {
         IDType idType = new IDType();
-        String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+        String fluxNationCode=null;
+		try {
+			fluxNationCode = parameterService.getStringValue(ParameterKey.FLUX_LOCAL_NATIONAL_CODE.getKey());
+		} catch (ConfigServiceException e) {
+		}
         String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
         idType.setValue(nationCode);
         idType.setSchemeID("FLUX_GP_PARTY");
@@ -521,7 +530,11 @@ public class MessageServiceBean implements MessageService {
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
 
             //Create Response
-            String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+            String fluxNationCode=null;
+    		try {
+    			fluxNationCode = parameterService.getStringValue(ParameterKey.FLUX_LOCAL_NATIONAL_CODE.getKey());
+    		} catch (ConfigServiceException e) {
+    		}
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
             String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"

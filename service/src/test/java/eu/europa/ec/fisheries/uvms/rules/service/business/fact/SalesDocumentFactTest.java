@@ -212,4 +212,130 @@ public class SalesDocumentFactTest {
         assertFalse(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
     }
 
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndAllProductsHaveAZeroPrice() {
+        fact.setTotalSalesPrice(null);
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertTrue(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndNotAllProductsHaveAZeroPrice() {
+        fact.setTotalSalesPrice(null);
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullAndAllProductsHaveAZeroPrice() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertTrue(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullAndNotAllProductsHaveAZeroPrice() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndAllProductsHaveZeroPrice() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO)));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndNotAllProductsHaveAZeroPrice() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndNoProducts() {
+        fact.setTotalSalesPrice(null);
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullNullAndNoProducts() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndNoProducts() {
+        fact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
+        fact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket());
+    }
+
 }

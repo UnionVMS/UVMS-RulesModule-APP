@@ -27,6 +27,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -177,6 +178,10 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
+
+        idTypes = new ArrayList<>(idTypes);
+        CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
+
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -610,13 +615,13 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean listIdNotContains(List<CodeType> codeTypes, String value, int hits) {
+    public boolean valueNotContains(List<CodeType> codeTypes, String value, int hits) {
         if (value == null || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
         int found = 0;
         for (CodeType codeType : codeTypes) {
-            if (value.equals(codeType.getListId())) {
+            if (value.equals(codeType.getValue())) {
                 found++;
             }
         }
@@ -665,6 +670,34 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    public boolean isPositiveInteger(List<MeasureType> value) {
+        if (value == null) {
+            return true;
+        }
+        for (MeasureType type : value) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    private boolean isIntegerValue(BigDecimal bigDecimal) {
+     if(bigDecimal ==null){
+         return false;
+     }
+
+        if( bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0){
+          return true;
+        }else{
+           return false;
+        }
+
     }
 
     /**
@@ -1008,6 +1041,27 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (anEnum == null) {
+            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
+            return false;
+        }
+
+        for (CodeType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getListId()))
+                return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * This function checks that all the IdType values passed to the function exist in MDR code list or not
@@ -1064,20 +1118,20 @@ public abstract class AbstractFact {
         return codeListValues.contains(value);
     }
 
-    public boolean matchWithFluxTL(List<IdType> idTypes){
+    public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean match = false;
-        for (IdType idType : idTypes){
+        for (IdType idType : idTypes) {
             match = matchWithFluxTL(idType);
-            if (match){
+            if (match) {
                 break;
             }
         }
         return match;
     }
 
-    public boolean matchWithFluxTL(IdType idType){
+    public boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
-        if (idType != null){
+        if (idType != null) {
             match = StringUtils.equals(idType.getValue(), senderOrReceiver);
         }
         return match;
@@ -1125,6 +1179,22 @@ public abstract class AbstractFact {
 
             if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
                 return typeCode.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    public String getValueForSchemeId(String schemeId, List<IdType> ids) {
+        if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
+            return null;
+        }
+
+        for (IdType id : ids) {
+            String idsSchemeId = id.getSchemeId();
+
+            if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
+                return id.getValue();
             }
         }
 
@@ -1220,6 +1290,31 @@ public abstract class AbstractFact {
         }
         return isMoreTheOneDeclaration;
     }
+
+    /**
+     * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
+     *
+     * @param specifiedFACatches FACatches from this list would be matched against
+     * @param speciesCode        FACatch speciesCode value to be matched
+     * @param typeCode           FACatch typeCode value to be matched
+     * @return TRUE : Atleast one FACatch with matching criteria found
+     * FALSE :  No FACatch with matching criteria found
+     */
+    public boolean containsAnyFaCatch(List<FACatch> specifiedFACatches, String speciesCode, String typeCode) {
+        if (CollectionUtils.isEmpty(specifiedFACatches) || speciesCode == null || typeCode == null) {
+            return false;
+        }
+
+
+        for (FACatch faCatch : specifiedFACatches) {
+            if (faCatch.getSpeciesCode() != null && faCatch.getTypeCode() != null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     public String getSenderOrReceiver() {
         return senderOrReceiver;

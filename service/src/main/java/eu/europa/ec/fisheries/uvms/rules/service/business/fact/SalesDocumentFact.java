@@ -238,11 +238,14 @@ public class SalesDocumentFact extends SalesAbstractFact {
 
     public boolean isTotalPriceFieldDifferentFromSumOfProducts(){
         // Field is optional so no value is ok
-        if(totalSalesPrice == null ||  isEmpty(totalSalesPrice.getChargeAmounts())){
+        if(totalSalesPrice == null
+                || isEmpty(totalSalesPrice.getChargeAmounts())
+                || totalSalesPrice.getChargeAmounts().get(0) == null
+                || totalSalesPrice.getChargeAmounts().get(0).getValue() == null){
             return false;
         }
 
-        return getTotalOfAllProducts().compareTo(getSum(totalSalesPrice.getChargeAmounts())) != 0;
+        return getTotalOfAllProducts().compareTo(totalSalesPrice.getChargeAmounts().get(0).getValue()) != 0;
     }
 
     public boolean hasTheNationalNumberPartOfTheIDAnIncorrectFormat() {
@@ -257,38 +260,70 @@ public class SalesDocumentFact extends SalesAbstractFact {
         return takeoverDocumentIDs != null && !takeoverDocumentIDs.isEmpty() && !validateFormat(takeoverDocumentIDs.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_TAKE_OVER_DOCUMENT_ID.getFormatStr());
     }
 
-    private BigDecimal getTotalOfAllProducts(){
+    public boolean doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket() {
+        boolean totalSalesPriceIsNull = totalSalesPrice == null
+                || isEmpty(totalSalesPrice.getChargeAmounts())
+                || totalSalesPrice.getChargeAmounts().get(0) == null
+                || totalSalesPrice.getChargeAmounts().get(0).getValue() == null;
 
-        if(isEmpty(specifiedSalesBatches))        {
+        boolean allProductsHaveAZeroPrice = doAllProductHaveAZeroPrice();
+
+        return totalSalesPriceIsNull && allProductsHaveAZeroPrice;
+    }
+
+    private boolean doAllProductHaveAZeroPrice() {
+        List<BigDecimal> prices = getPriceOfEveryProduct();
+
+        if (prices.isEmpty()) {
+            return false;
+        }
+
+        for (BigDecimal price : getPriceOfEveryProduct()) {
+            if (price.compareTo(BigDecimal.ZERO) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private BigDecimal getTotalOfAllProducts() {
+        if (isEmpty(specifiedSalesBatches)) {
             return BigDecimal.ZERO;
         }
 
         BigDecimal total = BigDecimal.ZERO;
-        for (SalesBatchType salesBatch :specifiedSalesBatches) {
-            if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
-                for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
-                    if (product != null && product.getTotalSalesPrice() != null){
-                        total = total.add(getSum(product.getTotalSalesPrice().getChargeAmounts()));
-                    }
-                }
-            }
+        for (BigDecimal price : getPriceOfEveryProduct()) {
+            total = total.add(price);
         }
 
         return total;
     }
 
-    private BigDecimal getSum(List<AmountType> amounts){
-        if(isEmpty(amounts)) {
-            return BigDecimal.ZERO;
-        }
-
-        BigDecimal total = BigDecimal.ZERO;
-        for (AmountType amount :amounts) {
-            if (amount != null){
-                total = total.add(amount.getValue());
+    private List<BigDecimal> getPriceOfEveryProduct() {
+        List<BigDecimal> prices = new ArrayList<>();
+        for (AAPProductType product : getAllProducts()) {
+            if (product.getTotalSalesPrice() != null
+                    && !isEmpty(product.getTotalSalesPrice().getChargeAmounts())
+                    && product.getTotalSalesPrice().getChargeAmounts().get(0) != null
+                    && product.getTotalSalesPrice().getChargeAmounts().get(0).getValue() != null) {
+                prices.add(product.getTotalSalesPrice().getChargeAmounts().get(0).getValue());
             }
         }
+        return prices;
+    }
 
-        return total;
+    private List<AAPProductType> getAllProducts() {
+        List<AAPProductType> products = new ArrayList<>();
+        for (SalesBatchType salesBatch :specifiedSalesBatches) {
+            if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
+                for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
+                    if (product != null) {
+                        products.add(product);
+                    }
+                }
+            }
+        }
+        return products;
     }
 }

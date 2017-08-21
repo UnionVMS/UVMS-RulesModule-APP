@@ -213,6 +213,583 @@ public class SalesReportFactTest {
                 .verify();
     }
 
+    @Test
+    public void isSalesNoteAndIsFreshnessNotPresentWhenTakeOverDocumentAndFreshnessIsPresent() {
+        eu.europa.ec.fisheries.schema.sales.CodeType presentation = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_PRESENTATION");
+        eu.europa.ec.fisheries.schema.sales.CodeType freshness = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_FRESHNESS");
+
+        AAPProcessType aapProcessType1 = new AAPProcessType().withTypeCodes(presentation, freshness);
+        AAPProcessType aapProcessType2 = new AAPProcessType().withTypeCodes(presentation, freshness);
+
+        AAPProductType aapProductType1 = new AAPProductType().withAppliedAAPProcesses(aapProcessType1, aapProcessType2);
+        AAPProductType aapProductType2 = new AAPProductType().withAppliedAAPProcesses(aapProcessType1, aapProcessType2);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndIsFreshnessNotPresent());
+    }
+
+    @Test
+    public void isSalesNoteAndIsFreshnessNotPresentWhenTakeOverDocumentAndFreshnessIsNotPresent() {
+        eu.europa.ec.fisheries.schema.sales.CodeType presentation = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_PRESENTATION");
+        eu.europa.ec.fisheries.schema.sales.CodeType freshness = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_FRESHNESS");
+
+        AAPProcessType aapProcessTypeWithFreshness = new AAPProcessType().withTypeCodes(presentation, freshness);
+        AAPProcessType aapProcessWithoutFreshness = new AAPProcessType().withTypeCodes(presentation);
+
+        AAPProductType aapProductType1 = new AAPProductType().withAppliedAAPProcesses(aapProcessTypeWithFreshness, aapProcessWithoutFreshness);
+        AAPProductType aapProductType2 = new AAPProductType().withAppliedAAPProcesses(aapProcessTypeWithFreshness, aapProcessWithoutFreshness);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndIsFreshnessNotPresent());
+    }
+
+    @Test
+    public void isSalesNoteAndIsFreshnessNotPresentWhenSalesNoteAndFreshnessIsPresentEverywhere() {
+        eu.europa.ec.fisheries.schema.sales.CodeType presentation = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_PRESENTATION");
+        eu.europa.ec.fisheries.schema.sales.CodeType freshness = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_FRESHNESS");
+
+        AAPProcessType aapProcessType1 = new AAPProcessType().withTypeCodes(presentation, freshness);
+        AAPProcessType aapProcessType2 = new AAPProcessType().withTypeCodes(presentation, freshness);
+
+        AAPProductType aapProductType1 = new AAPProductType().withAppliedAAPProcesses(aapProcessType1, aapProcessType2);
+        AAPProductType aapProductType2 = new AAPProductType().withAppliedAAPProcesses(aapProcessType1, aapProcessType2);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isSalesNoteAndIsFreshnessNotPresent());
+    }
+
+    @Test
+    public void isSalesNoteAndIsFreshnessNotPresentWhenSalesNoteAndFreshnessIsNotPresentEverywhere() {
+        eu.europa.ec.fisheries.schema.sales.CodeType presentation = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_PRESENTATION");
+        eu.europa.ec.fisheries.schema.sales.CodeType freshness = new eu.europa.ec.fisheries.schema.sales.CodeType().withListID("FISH_FRESHNESS");
+
+        AAPProcessType aapProcessTypeWithFreshness = new AAPProcessType().withTypeCodes(presentation, freshness);
+        AAPProcessType aapProcessWithoutFreshness = new AAPProcessType().withTypeCodes(presentation);
+
+        AAPProductType aapProductType1 = new AAPProductType().withAppliedAAPProcesses(aapProcessTypeWithFreshness, aapProcessWithoutFreshness);
+        AAPProductType aapProductType2 = new AAPProductType().withAppliedAAPProcesses(aapProcessTypeWithFreshness, aapProcessWithoutFreshness);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndIsFreshnessNotPresent());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndAllFLUXOrganizationsHaveAName() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                    .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheDocument() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithoutName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheVesselTransportMeans() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithoutName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndAllFLUXOrganizationsHaveAName() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheDocument() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithoutName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertTrue(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheVesselTransportMeans() {
+        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
+        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
+
+        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
+                .withOwnerSalesParty(new SalesPartyType()
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithoutName));
+
+        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
+        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
+        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertTrue(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+    }
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenSalesNoteAndAllChargeAmountsAreGreater() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(positiveAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(positiveAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenSalesNoteAndTheTotalPriceIsNegative() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+        SalesPriceType negativeAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.valueOf(-15)));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(positiveAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(negativeAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenSalesNoteAndThePriceOfOneOfTheProductsIsNegative() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+        SalesPriceType negativeAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.valueOf(-15)));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(negativeAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(positiveAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenTakeOverDocumentAndAllChargeAmountsAreGreater() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(positiveAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(positiveAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenTakeOverDocumentAndTheTotalPriceIsNegative() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+        SalesPriceType negativeAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.valueOf(-15)));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(positiveAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(negativeAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+
+    @Test
+    public void isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZeroWhenTakeOverDocumentAndThePriceOfOneOfTheProductsIsNegative() {
+        SalesPriceType positiveAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+        SalesPriceType negativeAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.valueOf(-15)));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(positiveAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(negativeAmount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(zeroAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenSalesNoteAndNoChargeAmountsAreNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenSalesNoteAndTheTotalChargeAmountsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amountWithEmptyCharge);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenSalesNoteAndTheChargeAmountsOfOneOfTheProductsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amountWithEmptyCharge);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenTakeOverDocumentAndNoChargeAmountsAreNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenTakeOverDocumentAndTheTotalChargeAmountsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amountWithEmptyCharge);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+    @Test
+    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenTakeOverDocumentAndTheChargeAmountsOfOneOfTheProductsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amountWithEmptyCharge);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
+    }
+
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenSalesNoteAndNoChargeAmountsAreZero() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenSalesNoteAndTheTotalChargeAmountsIsZero() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(zeroAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenSalesNoteAndTheChargeAmountsOfOneOfTheProductsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenTakeOverDocumentAndNoChargeAmountsAreNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenTakeOverDocumentAndTheTotalChargeAmountsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(zeroAmount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+    @Test
+    public void isSalesNoteAndAnyChargeAmountIsEqualToZeroWhenTakeOverDocumentAndTheChargeAmountsOfOneOfTheProductsIsNull() {
+        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
+        SalesPriceType zeroAmount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO));
+
+        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(zeroAmount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+
+        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
+        salesDocumentFact.setTotalSalesPrice(amount);
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
     private SalesDocumentFact createSalesDocumentFactWithRole(String role, String buyer, String seller) {
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         CodeType codeType = new CodeType();
