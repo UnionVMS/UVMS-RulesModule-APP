@@ -12,11 +12,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -24,7 +25,6 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import javax.naming.InitialContext;
 
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
-    @EJB
-    JMSConnectorBean connector;
     private Queue responseQueue;
     private Queue movementQueue;
     private Queue configQueue;
@@ -58,16 +56,11 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Queue activityQueue;
     private Queue mdrEventQueue;
     private Queue salesQueue;
+    private ConnectionFactory connectionFactory;
 
     @PostConstruct
     public void init() {
-        InitialContext ctx;
-        try {
-            ctx = new InitialContext();
-        } catch (Exception e) {
-            LOG.error("Failed to get InitialContext",e);
-            throw new RuntimeException(e);
-        }
+    	connectionFactory = JMSUtils.lookupConnectionFactory();
         responseQueue = JMSUtils.lookupQueue(MessageConstants.RULES_RESPONSE_QUEUE);
         movementQueue = JMSUtils.lookupQueue(MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
         configQueue = JMSUtils.lookupQueue(ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
@@ -93,8 +86,10 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         LOG.debug("Sending message to {}", queue.name());
 
+        Connection connection=null;
         try {
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
@@ -137,22 +132,28 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
-        try {
+        Connection connection=null;
+    	try {
             LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(),
                     message.getJMSReplyTo());
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             TextMessage response = session.createTextMessage(text);
             response.setJMSCorrelationID(message.getJMSMessageID());
             MessageProducer producer = getProducer(session, message.getJMSReplyTo());
             producer.send(response);
         } catch (JMSException e) {
             LOG.error("[ Error when returning module rules request. ] {}", e.getMessage());
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
@@ -169,10 +170,12 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
 
     @Override
     public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
+    	Connection connection=null;
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
 
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
             TextMessage response = session.createTextMessage(data);
             response.setJMSCorrelationID(message.getJmsMessage().getJMSMessageID());
@@ -180,6 +183,8 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             producer.send(response);
         } catch (RulesModelMarshallException | JMSException e) {
             LOG.error("Error when returning Error message to recipient");
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
