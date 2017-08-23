@@ -6,9 +6,9 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesFLUXReportDocumentFact extends AbstractFact {
+public class SalesFLUXReportDocumentFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private IdType referencedID;
@@ -80,7 +80,6 @@ public class SalesFLUXReportDocumentFact extends AbstractFact {
     public void setOwnerFLUXParty(SalesFLUXPartyFact ownerFLUXParty) {
         this.ownerFLUXParty = ownerFLUXParty;
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -3,10 +3,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
-public class SalesVesselCountryFact extends AbstractFact {
+public class SalesVesselCountryFact extends SalesAbstractFact {
 
     private IdType id;
 

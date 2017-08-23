@@ -22,9 +22,9 @@ import eu.europa.ec.fisheries.schema.sales.VesselEquipmentCharacteristicType;
 import eu.europa.ec.fisheries.schema.sales.VesselPositionEventType;
 import eu.europa.ec.fisheries.schema.sales.VesselStorageCharacteristicType;
 import eu.europa.ec.fisheries.schema.sales.VesselTechnicalCharacteristicType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesVesselTransportMeansFact extends AbstractFact {
+public class SalesVesselTransportMeansFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private List<TextType> names;

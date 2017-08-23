@@ -103,6 +103,39 @@ public class RuleTestHelper {
         return objectRepresentations;
     }
 
+    public static List<ObjectRepresentation> getObjectRepresentationForLOCATION() {
+
+        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
+
+        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
+        objectRepresentations.add(getObjectRepresentation("code", "BEOST", "string"));
+
+
+        return objectRepresentations;
+    }
+
+    public static List<ObjectRepresentation> getObjectRepresentationForTERRITORY() {
+
+        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
+
+        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
+        objectRepresentations.add(getObjectRepresentation("code", "BEL", "string"));
+
+
+        return objectRepresentations;
+    }
+
+    public static List<ObjectRepresentation> getObjectRepresentationForFLUX_SALES_QUERY_PARAM_ROLE() {
+
+        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
+
+        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
+        objectRepresentations.add(getObjectRepresentation("code", "FLAG", "string"));
+
+
+        return objectRepresentations;
+    }
+
     public static ObjectRepresentation getObjectRepresentationForGearCharacteristic() {
 
         List<ColumnDataType> columnDataTypes = new ArrayList<>();

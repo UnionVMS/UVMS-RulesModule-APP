@@ -5,10 +5,10 @@ import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
-public class SalesPriceFact extends AbstractFact {
+public class SalesPriceFact extends SalesAbstractFact {
 
     private List<AmountType> chargeAmounts;
 

@@ -1,16 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
-public class SalesFLUXResponseDocumentFact extends AbstractFact {
+public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private IdType referencedID;
@@ -118,5 +115,45 @@ public class SalesFLUXResponseDocumentFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty);
+    }
+
+    public boolean anyValidationResultDocumentsWithEmptyValidationQualityAnalyses(){
+        if (relatedValidationResultDocuments.isEmpty()) {
+            return true;
+        }
+
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument == null || isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean anyValidationQualityAnalysisWithoutReferencedTextItems(){
+        if (isEmpty(relatedValidationResultDocuments)){
+            return false;
+        }
+
+        for (ValidationResultDocumentType validationResultDocument:relatedValidationResultDocuments) {
+            if (validationResultDocument != null && !isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+                for (ValidationQualityAnalysisType validationQualityAnalysis:validationResultDocument.getRelatedValidationQualityAnalysises()) {
+                    if(validationQualityAnalysis != null && isEmpty(validationQualityAnalysis.getReferencedItems())){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasIDInvalidFormat() {
+        return ids != null && !ids.isEmpty() && !validateFormat(ids.get(0).getValue(), FORMATS.UUID.getFormatStr());
+    }
+
+    public boolean hasReferencedIDInvalidFormat() {
+        return referencedID != null && !validateFormat(referencedID.getValue(), FORMATS.UUID.getFormatStr());
     }
 }

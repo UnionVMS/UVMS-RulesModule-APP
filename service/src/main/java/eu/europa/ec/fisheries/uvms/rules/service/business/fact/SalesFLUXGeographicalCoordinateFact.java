@@ -4,9 +4,9 @@ import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesFLUXGeographicalCoordinateFact extends AbstractFact {
+public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
 
     private eu.europa.ec.fisheries.schema.sales.MeasureType longitudeMeasure;
     private eu.europa.ec.fisheries.schema.sales.MeasureType latitudeMeasure;

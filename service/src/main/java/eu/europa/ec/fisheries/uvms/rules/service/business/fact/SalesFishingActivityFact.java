@@ -1,26 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
-import eu.europa.ec.fisheries.schema.sales.FACatchType;
-import eu.europa.ec.fisheries.schema.sales.FLAPDocumentType;
-import eu.europa.ec.fisheries.schema.sales.FLUXCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.FishingGearType;
-import eu.europa.ec.fisheries.schema.sales.FishingTripType;
-import eu.europa.ec.fisheries.schema.sales.GearProblemType;
-import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.schema.sales.QuantityType;
-import eu.europa.ec.fisheries.schema.sales.VesselStorageCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.VesselTransportMeansType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
-public class SalesFishingActivityFact extends AbstractFact {
+public class SalesFishingActivityFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private CodeType typeCode;
@@ -248,5 +236,19 @@ public class SalesFishingActivityFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans);
+    }
+
+    public boolean isRelatedFLUXLocationsEmptyOrTypeLocation() {
+        if (isEmpty(relatedFLUXLocations)){
+            return true;
+        }
+
+        for (FLUXLocationType location: relatedFLUXLocations) {
+            if (location != null && location.getTypeCode() != null && !location.getTypeCode().getValue().equals("LOCATION")){
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -5,9 +5,11 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesReportWrapperFact extends AbstractFact {
+import java.util.Objects;
+
+public class SalesReportWrapperFact extends SalesAbstractFact {
 
     private FLUXSalesReportMessage fluxSalesReportMessage;
     private AuctionSaleType auctionSale;

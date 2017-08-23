@@ -7,9 +7,9 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
 import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesPartyFact extends AbstractFact {
+public class SalesPartyFact extends SalesAbstractFact {
 
     private IdType id;
     private TextType name;

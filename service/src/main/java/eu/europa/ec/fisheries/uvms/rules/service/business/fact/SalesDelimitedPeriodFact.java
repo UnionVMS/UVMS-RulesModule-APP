@@ -5,9 +5,9 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesDelimitedPeriodFact extends AbstractFact {
+public class SalesDelimitedPeriodFact extends SalesAbstractFact {
 
     private DateTimeType startDateTime;
     private DateTimeType endDateTime;
