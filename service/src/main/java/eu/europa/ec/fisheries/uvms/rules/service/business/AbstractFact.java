@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -39,6 +38,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.AmountType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
@@ -385,6 +385,30 @@ public abstract class AbstractFact {
         return value.matches(format);
     }
 
+    public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
+        if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || idType.getSchemeId() != requiredSchemeId) {
+            return false;
+        }
+        try {
+            return validateFormat(idType.getValue(), FORMATS.valueOf(requiredSchemeId).getFormatStr());
+        } catch (IllegalArgumentException ex) {
+            log.error("The SchemeId : '" + requiredSchemeId + "' is not mapped in the AbstractFact.FORMATS enum.", ex.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isCodeTypeValidFormat(String requiredListId, CodeType codeType) {
+        if (codeType == null || isEmpty(requiredListId) || isEmpty(codeType.getListId()) || isEmpty(codeType.getValue()) || !codeType.getListId().equals(requiredListId)) {
+            return false;
+        }
+        try {
+            return validateFormat(codeType.getValue(), FORMATS.valueOf(requiredListId).getFormatStr());
+        } catch (IllegalArgumentException ex) {
+            log.error("The ListId : '" + requiredListId + "' is not mapped in the AbstractFact.FORMATS enum.", ex.getMessage());
+            return false;
+        }
+    }
+
     public boolean listIdContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -411,19 +435,19 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyType> salesPartyTypes, String... valuesToMatch) {
-        List<eu.europa.ec.fisheries.schema.sales.CodeType> codeTypes = new ArrayList<>();
+    public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
+        List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
 
-        for (SalesPartyType salesPartyType : salesPartyTypes) {
-            codeTypes.addAll(salesPartyType.getRoleCodes());
+        for (SalesPartyFact salesPartyFact : salesPartyTypes) {
+            codeTypes.addAll(salesPartyFact.getRoleCodes());
         }
 
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
 
-        for (eu.europa.ec.fisheries.schema.sales.CodeType codeType : codeTypes) {
+        for (CodeType codeType : codeTypes) {
             String value = codeType.getValue();
 
             if (valuesToBeFound.contains(value)) {
@@ -443,10 +467,31 @@ public abstract class AbstractFact {
         }
 
         for (CodeType codeType : codeTypes) {
-            String listId = codeType.getListId();
+            if (codeType != null) {
+                String listId = codeType.getListId();
 
-            if (valuesToBeFound.contains(listId)) {
-                valuesFoundInListOfCodeTypes.add(listId);
+                if (valuesToBeFound.contains(listId)) {
+                    valuesFoundInListOfCodeTypes.add(listId);
+                }
+            }
+        }
+
+        return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
+    }
+
+    public boolean valueDoesNotContainAll(List<CodeType> codeTypes, String... valuesToMatch) {
+        HashSet<String> valuesFoundInListOfCodeTypes = new HashSet<>();
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
+            return true;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            String value = codeType.getValue();
+
+            if (valuesToBeFound.contains(value)) {
+                valuesFoundInListOfCodeTypes.add(value);
             }
         }
 
@@ -817,6 +862,89 @@ public abstract class AbstractFact {
         return textType == null || StringUtils.isBlank(textType.getValue());
     }
 
+    public boolean isBlank(IdType id) {
+        return id == null || StringUtils.isBlank(id.getValue());
+    }
+
+    public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {
+        compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
+
+        return (sourceList != null && sourceList.isEmpty()) || (sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems);
+    }
+
+    public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
+        compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
+
+        return (sourceList != null && !sourceList.isEmpty()) && sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems;
+    }
+
+    private void compareMinimumToMaximum(int minNumberOfItems, int maxNumberOfItems) {
+        if (minNumberOfItems > maxNumberOfItems) {
+            throw new IllegalArgumentException("minNumberOfItems '" + minNumberOfItems + "' can't be bigger than '" + maxNumberOfItems + "'.");
+        }
+    }
+
+    public boolean isListEmptyOrAllValuesUnique(List<CodeType> sourceList){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> values = new ArrayList<>();
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                continue;
+            }
+
+            if (values.contains(codeType.getValue())) {
+                return false;
+            }
+
+            values.add(codeType.getValue());
+        }
+
+        return true;
+    }
+
+    public boolean isListEmptyOrAllListIdsUnique(List<CodeType> sourceList){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> listIds = new ArrayList<>();
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                continue;
+            }
+
+            if (listIds.contains(codeType.getListId())) {
+                return false;
+            }
+
+            listIds.add(codeType.getListId());
+        }
+
+        return true;
+    }
+
+    public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch){
+        if (isEmpty(sourceList)) {
+            return true;
+        }
+
+        List<String> matchList =  Arrays.asList(valuesToMatch);
+        for (CodeType codeType : sourceList) {
+            if (codeType == null){
+                return false;
+            }
+
+            if (!matchList.contains(codeType.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
         String string = bigDecimal.stripTrailingZeros().toPlainString();
         int index = string.indexOf('.');
@@ -843,12 +971,17 @@ public abstract class AbstractFact {
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_TAKE_OVER_DOCUMENT_ID("[A-Z]{3}-TOD-[A-Za-z0-9\\-]{1,20}"),
         EU_SALES_SALES_NOTE_ID("[A-Z]{3}-SN-[A-Za-z0-9\\-]{1,20}"),
-        EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}");
+        EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}"),
+        FLUX_SALES_TYPE("(SN\\+TOD|SN|TOD|TRD)"),
+        FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
+        FLUX_GP_VALIDATION_LEVEL("(L00|L01|L02|L03)"),
+        FLUX_GP_VALIDATION_TYPE("(ERR|WAR|IGN|OK)"),
+        FLUX_GP_RESPONSE("(OK|NOK|WOK)");
 
         String formatStr;
 
-        FORMATS(String someFromat) {
-            setFormatStr(someFromat);
+        FORMATS(String someFormat) {
+            setFormatStr(someFormat);
         }
 
         public String getFormatStr() {
@@ -958,6 +1091,31 @@ public abstract class AbstractFact {
         }
 
         return true;
+    }
+
+    /**
+     * This function checks that the IdType exist in MDR code list or not.
+     * The MDR list is defined by the property schemeId from the IdType
+     *
+     * @param id - IdType that will be checked against ListName
+     * @return true when it exists
+     */
+    public boolean isIdTypePresentInMDRList(IdType id) {
+        if (id == null) {
+            return false;
+        }
+
+        String schemeId = id.getSchemeId();
+        String value = id.getValue();
+
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, schemeId);
+        if (anEnum == null) {
+            log.error(THE_LIST + schemeId + DOESN_T_EXIST_IN_MDR_MODULE);
+            return false;
+        }
+
+        List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+        return codeListValues.contains(value);
     }
 
     public boolean matchWithFluxTL(List<IdType> idTypes) {

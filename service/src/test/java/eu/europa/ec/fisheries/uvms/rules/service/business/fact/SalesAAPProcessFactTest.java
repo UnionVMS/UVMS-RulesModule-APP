@@ -5,13 +5,11 @@ import eu.europa.ec.fisheries.schema.sales.CodeType;
 import eu.europa.ec.fisheries.schema.sales.FACatchType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SalesAAPProcessFactTest {
 
     @Test
-    @Ignore // FIXME
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesAAPProcessFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
@@ -19,7 +17,7 @@ public class SalesAAPProcessFactTest {
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new CodeType().withValue("a")), new FACatchType().withTypeCode(new CodeType().withValue("b")))
                 .withPrefabValues(AAPProductType.class, new AAPProductType().withSpeciesCode(new CodeType().withValue("a")), new AAPProductType().withSpeciesCode(new CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "senderOrReceiver")
                 .verify();
     }
 

@@ -15,6 +15,7 @@ import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryParameterType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesQueryMessageFact;
@@ -67,7 +68,7 @@ public class SalesQueryFactGeneratorTest {
         salesQueryFactGenerator.setBusinessObjectMessage(fluxSalesQueryMessage);
         List<AbstractFact> allFacts = salesQueryFactGenerator.generateAllFacts();
 
-        List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
+        List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesQueryMessageFact.class, SalesFLUXPartyFact.class,
                         SalesDelimitedPeriodFact.class, SalesQueryFact.class, SalesQueryParameterFact.class);
         List<Class> listOfClassesThatWereCreated = newArrayList();

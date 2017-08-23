@@ -5,9 +5,9 @@ import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesFLUXPartyFact extends AbstractFact {
+public class SalesFLUXPartyFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private List<TextType> names;

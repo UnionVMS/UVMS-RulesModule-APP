@@ -1,19 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.schema.sales.QuantityType;
-import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
-import eu.europa.ec.fisheries.schema.sales.SizeDistributionType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
-public class SalesAAPProductFact extends AbstractFact {
+public class SalesAAPProductFact extends SalesAbstractFact {
 
     private CodeType speciesCode;
     private QuantityType unitQuantity;
@@ -163,21 +158,28 @@ public class SalesAAPProductFact extends AbstractFact {
         return Objects.hash(speciesCode, unitQuantity, weightMeasure, weighingMeansCode, usageCode, packagingUnitQuantity, packagingTypeCode, packagingUnitAverageWeightMeasure, appliedAAPProcesses, totalSalesPrice, specifiedSizeDistribution, originFLUXLocations, originFishingActivity);
     }
 
+    public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption(){
+        if (specifiedSizeDistribution == null || isEmpty(specifiedSizeDistribution.getClassCodes()) || specifiedSizeDistribution.getClassCodes().get(0) == null){
+            return false;
+        }
 
-    public boolean isInvalidUsageCode() {
-        String[] validUsages = new String[10];
-        validUsages[0] = "HCN";
-        validUsages[1] = "HCN-INDIRECT";
-        validUsages[2] = "IND";
-        validUsages[3] = "BAI";
-        validUsages[4] = "ANF";
-        validUsages[5] = "WST";
-        validUsages[6] = "WDR";
-        validUsages[7] = "COV";
-        validUsages[8] = "UNK";
-        validUsages[9] = "STO";
-
-        return valueContainsAny(usageCode, validUsages);
+        // If the class code (can only be one) is BMS and the usage code is anything but
+        return "BMS".equals(specifiedSizeDistribution.getClassCodes().get(0).getValue())
+                && (usageCode == null || !"HCN-INDIRECT".equals(usageCode.getValue()));
     }
 
+
+    public boolean isOriginFLUXLocationEmptyOrTypeNotLocation() {
+        if (isEmpty(originFLUXLocations)){
+            return true;
+        }
+
+        for (FLUXLocationType location: originFLUXLocations) {
+            if (location != null && location.getTypeCode() != null && Objects.equals(location.getTypeCode().getValue(), "LOCATION")){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

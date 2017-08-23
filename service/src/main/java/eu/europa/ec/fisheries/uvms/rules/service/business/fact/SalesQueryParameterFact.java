@@ -1,13 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesQueryParameterFact extends AbstractFact {
+import java.util.Objects;
+
+public class SalesQueryParameterFact extends SalesAbstractFact {
 
     protected CodeType typeCode;
 
@@ -15,7 +15,7 @@ public class SalesQueryParameterFact extends AbstractFact {
 
     protected DateTimeType valueDateTime;
 
-    protected IDType valueID;
+    protected IdType valueID;
 
     @Override
     public void setFactType() {
@@ -46,11 +46,11 @@ public class SalesQueryParameterFact extends AbstractFact {
         this.valueDateTime = valueDateTime;
     }
 
-    public IDType getValueID() {
+    public IdType getValueID() {
         return valueID;
     }
 
-    public void setValueID(IDType valueID) {
+    public void setValueID(IdType valueID) {
         this.valueID = valueID;
     }
 
@@ -68,5 +68,30 @@ public class SalesQueryParameterFact extends AbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
+    }
+
+    public boolean isValueNotValid(){
+        if (typeCode == null || valueCode == null){
+            return true;
+        }
+
+        switch (typeCode.getValue()){
+            case "ROLE":
+                return !isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue());
+            case "FLAG":
+                return !isPresentInMDRList("TERRITORY", valueCode.getValue());
+            case "PLACE":
+                return !isPresentInMDRList("LOCATION", valueCode.getValue());
+            default:
+                return true;
+        }
+    }
+
+    public boolean hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat() {
+        return valueID != null && !validateFormat(valueID.getValue(), AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
+    }
+
+    public boolean hasTheCommonPartOfTheValueIDAnIncorrectFormat() {
+        return valueID != null && !validateFormat(valueID.getValue(), AbstractFact.FORMATS.EU_SALES_ID_COMMON.getFormatStr());
     }
 }

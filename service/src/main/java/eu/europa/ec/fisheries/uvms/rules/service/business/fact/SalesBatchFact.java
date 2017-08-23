@@ -6,9 +6,12 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesBatchFact extends AbstractFact {
+import java.util.List;
+import java.util.Objects;
+
+public class SalesBatchFact extends SalesAbstractFact {
 
     private List<IdType> ids;
     private List<AAPProductType> specifiedAAPProducts;

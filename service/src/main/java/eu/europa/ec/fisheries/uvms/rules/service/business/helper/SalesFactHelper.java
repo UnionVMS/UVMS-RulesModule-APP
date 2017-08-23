@@ -1,14 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by MATBUL on 21/06/2017.
@@ -50,7 +50,7 @@ public class SalesFactHelper {
 
     public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {
         for (AmountType amountType : amountTypes) {
-            if (amountType == null || amountType.getValue() == null || amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
+            if (amountType != null && amountType.getValue() != null && amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
                 return false;
             }
         }
