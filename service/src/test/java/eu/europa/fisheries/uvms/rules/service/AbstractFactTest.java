@@ -11,21 +11,19 @@
 package eu.europa.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
@@ -505,9 +503,9 @@ public class AbstractFactTest {
 
         List<CodeType> codeTypes = new ArrayList<>();
 
-        codeTypes.add(RuleTestHelper.getCodeType("RELEASED","ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("RELEASED", "ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
         boolean result = fact.isCodeTypeListIdPresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
     }
@@ -1395,7 +1393,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenIdTypeAndIdIsNull() {
-        assertTrue(fact.isBlank((IdType)null));
+        assertTrue(fact.isBlank((IdType) null));
     }
 
     @Test
@@ -1410,7 +1408,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNull() {
-        assertTrue(fact.isBlank((eu.europa.ec.fisheries.schema.sales.TextType)null));
+        assertTrue(fact.isBlank((eu.europa.ec.fisheries.schema.sales.TextType) null));
     }
 
     @Test
@@ -1425,12 +1423,11 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testisPositiveInteger(){
+    public void testisPositiveInteger() {
 
-        boolean result= fact.isPositiveInteger(Arrays.asList( RuleTestHelper.getMeasureType(new BigDecimal(22),null)));
+        boolean result = fact.isPositiveInteger(Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(22), null)));
         assertTrue(result);
     }
-
 
 
     @Test
