@@ -13,19 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.util.List;
 
 /**
@@ -33,8 +28,6 @@ import java.util.List;
  */
 @Slf4j
 public class FishingGearFact extends AbstractFact {
-
-    private RulesDomainModel rulesDomainModel;
 
     private CodeType typeCode;
 
@@ -86,10 +79,6 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public void setDomainModel(RulesDomainModel rulesDomainModel) {
-        this.rulesDomainModel = rulesDomainModel;
-    }
-
     public boolean isRequiredGearCharacteristicsPresent(CodeType fishingGearTypeCode) {
         if (fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue()) || applicableGearCharacteristics == null) {
             return false;
@@ -130,26 +119,5 @@ public class FishingGearFact extends AbstractFact {
         }
 
         return hits == requiredFishingGearCharacteristicCodes.size();
-    }
-
-    private void initDomainModel() {
-        try {
-            InitialContext context = (InitialContext) getInitialContext();
-            rulesDomainModel = (RulesDomainModel) context.lookup(ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL);
-            setDomainModel(rulesDomainModel);
-        } catch (NamingException e) {
-            log.error("Error while retrieving RulesDomainModel", e);
-        }
-    }
-
-    private Context getInitialContext() {
-        InitialContext initialContext = null;
-        try {
-            initialContext = new InitialContext();
-        } catch (NamingException e) {
-            log.error("Failed to get InitialContext", e);
-        }
-
-        return initialContext;
     }
 }
