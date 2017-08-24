@@ -10,30 +10,33 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.apache.commons.lang3.StringUtils;
+import lombok.SneakyThrows;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Gregory Rinaldi
@@ -45,12 +48,16 @@ public class AbstractFactTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Mock
+    private RulesDomainModel model;
+
     @Before
     public void before() {
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, RuleTestHelper.getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC());
+        MockitoAnnotations.initMocks(this);
     }
 
 
@@ -496,9 +503,9 @@ public class AbstractFactTest {
 
         List<CodeType> codeTypes = new ArrayList<>();
 
-        codeTypes.add(RuleTestHelper.getCodeType("RELEASED","ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED","ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("RELEASED", "ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
+        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
         boolean result = fact.isCodeTypeListIdPresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
     }
@@ -1030,102 +1037,17 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testRetrieveFishingGearTypeCode() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("GEAR_TYPE");
-        typeCode.setValue("PS");
-
-        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
-        assertEquals(FishingGearTypeCode.PS, fishingGearTypeCode);
-    }
-
-    @Test
-    public void testRetrieveFishingGearTypeCodeIsNull() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("GEAR_TYPE");
-        typeCode.setValue(StringUtils.EMPTY);
-
-        FishingGearTypeCode fishingGearTypeCode = fishingGearFact.retrieveFishingGearTypeCode(typeCode);
-        assertNull(fishingGearTypeCode);
-    }
-
-    @Test
-    public void testGearCharacteristicCode() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = new CodeType();
-        typeCode.setListId(FactConstants.GEAR_TYPE);
-        typeCode.setValue("PS");
-        GearCharacteristic gearCharacteristic = new GearCharacteristic();
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("ME");
-        gearCharacteristic.setTypeCode(codeType);
-
-        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
-        assertEquals(FishingGearCharacteristicCode.ME, fishingGearCharacteristicCode);
-    }
-
-    @Test
-    public void testGearCharacteristicCodeIsNull() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = new CodeType();
-        typeCode.setListId(FactConstants.GEAR_TYPE);
-        typeCode.setValue(StringUtils.EMPTY);
-        GearCharacteristic gearCharacteristic = new GearCharacteristic();
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue(StringUtils.EMPTY);
-
-        FishingGearCharacteristicCode fishingGearCharacteristicCode = fishingGearFact.retrieveGearCharacteristicCode(gearCharacteristic);
-        assertNull(fishingGearCharacteristicCode);
-    }
-
-    @Test
+    @SneakyThrows
     public void testIsRequiredGearCharacteristicsPresent() {
         FishingGearFact fishingGearFact = new FishingGearFact();
-        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
-        GearCharacteristic gearCharacteristic = new GearCharacteristic();
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("ME");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GM");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GN");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
+        fishingGearFact.setApplicableGearCharacteristics(RuleTestHelper.getGearCharacteristics());
 
-        CodeType typeCode = new CodeType();
-        typeCode.setListId(FactConstants.GEAR_TYPE);
-        typeCode.setValue("TBB");
+        List<String> fishingGearCharacteristicCodes = Arrays.asList("ME", "GM", "HE", "GD");
+        when(model.getFishingGearCharacteristicCodes("PS", true)).thenReturn(fishingGearCharacteristicCodes);
 
-        fishingGearFact.setTypeCode(typeCode);
-        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+        fishingGearFact.setDomainModel(model);
 
-        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
-    }
-
-    @Test
-    public void testIsRequiredGearCharacteristicsPresentNoRequired() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
-
-        CodeType typeCode = new CodeType();
-        typeCode.setListId(FactConstants.GEAR_TYPE);
-        typeCode.setValue("RG");
-
-        fishingGearFact.setTypeCode(typeCode);
-        fishingGearFact.setApplicableGearCharacteristics(gearCharacteristics);
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
 
         assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
     }
@@ -1471,7 +1393,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenIdTypeAndIdIsNull() {
-        assertTrue(fact.isBlank((IdType)null));
+        assertTrue(fact.isBlank((IdType) null));
     }
 
     @Test
@@ -1486,7 +1408,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNull() {
-        assertTrue(fact.isBlank((eu.europa.ec.fisheries.schema.sales.TextType)null));
+        assertTrue(fact.isBlank((eu.europa.ec.fisheries.schema.sales.TextType) null));
     }
 
     @Test
@@ -1501,11 +1423,21 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testisPositiveInteger(){
+    public void testisPositiveInteger() {
 
-        boolean result= fact.isPositiveInteger(Arrays.asList( RuleTestHelper.getMeasureType(new BigDecimal(22),null)));
+        boolean result = fact.isPositiveInteger(Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(22), null)));
         assertTrue(result);
     }
 
 
+    @Test
+    public void testGetValueForSchemeId() {
+        List<IdType> idTypes = new ArrayList<>();
+        IdType idType1 = RuleTestHelper.getIdType("FARM_VALUE", "FARM");
+        IdType idType2 = RuleTestHelper.getIdType("ICCAT_VALUE", "ICCAT");
+        idTypes.add(idType1);
+        idTypes.add(idType2);
+
+        assertEquals("FARM_VALUE", fact.getValueForSchemeId("FARM", idTypes));
+    }
 }

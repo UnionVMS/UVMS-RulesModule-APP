@@ -209,7 +209,7 @@ public class SalesReportFactTest {
                 .withPrefabValues(AAPProcessType.class, new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "rulesDomainModel")
                 .verify();
     }
 
@@ -303,7 +303,7 @@ public class SalesReportFactTest {
 
         VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
                 .withOwnerSalesParty(new SalesPartyType()
-                    .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
 
         SalesPartyFact salesPartyFact1 = new SalesPartyFact();
         salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
