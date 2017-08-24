@@ -39,7 +39,6 @@ public class FishingGearFact extends AbstractFact {
 
     public FishingGearFact() {
         setFactType();
-        initDomainModel();
     }
 
     @Override
@@ -86,6 +85,10 @@ public class FishingGearFact extends AbstractFact {
 
         List<String> requiredFishingGearCharacteristicCodes = null;
         try {
+            if (rulesDomainModel == null) {
+                initDomainModel();
+            }
+
             requiredFishingGearCharacteristicCodes = rulesDomainModel.getFishingGearCharacteristicCodes(fishingGearTypeCode.getValue(), true);
         } catch (RulesModelException e) {
             log.error("Error while retrieving fishing gear characteristic codes", e);

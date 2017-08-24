@@ -12,7 +12,7 @@ public class SalesPartyFactTest {
                 .suppress(Warning.STRICT_INHERITANCE)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "rulesDomainModel")
                 .verify();
     }
 
