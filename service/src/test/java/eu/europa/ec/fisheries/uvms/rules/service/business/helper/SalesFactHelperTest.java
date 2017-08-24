@@ -1,14 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by MATBUL on 21/06/2017.
@@ -40,8 +40,14 @@ public class SalesFactHelperTest {
     }
 
     @Test
-    public void testAllValuesGreaterOrEqualToZeroWhenOneOfTheValuesIsNull() throws Exception {
+    public void testAllValuesGreaterOrEqualToZeroWhenOneOfTheValuesIsNullAndTheRestIsGreaterThanOrEqualToZero() throws Exception {
         boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(null), new AmountType().withValue(BigDecimal.TEN), new AmountType().withValue(BigDecimal.ZERO)));
+        assertTrue(allValuesGreaterOrEqualToZero);
+    }
+
+    @Test
+    public void testAllValuesGreaterOrEqualToZeroWhenOneOfTheValuesIsNullAndTheRestIsSmallerThanZero() throws Exception {
+        boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(null), new AmountType().withValue(new BigDecimal(-5))));
         assertFalse(allValuesGreaterOrEqualToZero);
     }
 

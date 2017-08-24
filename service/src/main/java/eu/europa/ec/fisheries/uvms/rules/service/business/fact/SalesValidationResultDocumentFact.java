@@ -6,9 +6,9 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesValidationResultDocumentFact extends AbstractFact {
+public class SalesValidationResultDocumentFact extends SalesAbstractFact {
 
     private IdType validatorID;
     private DateTimeType creationDateTime;

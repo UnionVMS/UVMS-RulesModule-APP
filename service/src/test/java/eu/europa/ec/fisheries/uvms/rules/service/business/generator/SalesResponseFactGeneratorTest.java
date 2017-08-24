@@ -13,6 +13,7 @@ import eu.europa.ec.fisheries.schema.sales.SalesReportType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesResponseMessageFact;
@@ -58,7 +59,7 @@ public class SalesResponseFactGeneratorTest {
         salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
         List<AbstractFact> allFacts = salesResponseFactGenerator.generateAllFacts();
 
-        List<Class<? extends AbstractFact>> listOfClassesThatShouldBeCreated =
+        List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =
                 Arrays.asList(SalesFLUXSalesResponseMessageFact.class, SalesFLUXResponseDocumentFact.class,
                         SalesFLUXPartyFact.class, SalesValidationResultDocumentFact.class, SalesValidationQualityAnalysisFact.class);
         List<Class> listOfClassesThatWereCreated = newArrayList();

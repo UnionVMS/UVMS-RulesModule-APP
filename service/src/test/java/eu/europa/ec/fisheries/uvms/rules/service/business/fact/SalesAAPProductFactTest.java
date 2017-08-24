@@ -1,17 +1,15 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.FACatchType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -19,26 +17,83 @@ import org.junit.Test;
  */
 public class SalesAAPProductFactTest {
 
-    @Test
-    public void isInvalidUsageCodeWhenInvalid() throws Exception {
-        SalesAAPProductFact salesAAPProductFact = new SalesAAPProductFact();
-        salesAAPProductFact.setUsageCode(new CodeType("INVALID"));
+    private SalesAAPProductFact fact;
 
-        boolean invalidUsageCode = salesAAPProductFact.isInvalidUsageCode();
-        assertTrue(invalidUsageCode);
+    @Before
+    public void setUp() throws Exception {
+        fact = new SalesAAPProductFact();
     }
 
     @Test
-    public void isInvalidUsageCodeWhenValid() throws Exception {
-        SalesAAPProductFact salesAAPProductFact = new SalesAAPProductFact();
-        salesAAPProductFact.setUsageCode(new CodeType("HCN"));
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenUsageIsHCN() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("BMS")));
+        fact.setUsageCode(new CodeType("HCN"));
 
-        boolean validCode = salesAAPProductFact.isInvalidUsageCode();
-        assertFalse(validCode);
+        assertTrue(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
     }
 
     @Test
-    @Ignore // FIXME
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenUsageIsHCNIndirect() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("BMS")));
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenSizeDistributionIsNull() throws Exception {
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenSizeDistributionHasNoClassCodes() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType());
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheClassCodeIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes((eu.europa.ec.fisheries.schema.sales.CodeType) null));
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheClassCodeValueIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType()));
+        fact.setUsageCode(new CodeType("HCN-INDIRECT"));
+
+        assertFalse(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumptionWhenTheUsageCodeIsNull() throws Exception {
+        fact.setSpecifiedSizeDistribution(new SizeDistributionType().withClassCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("BMS")));
+
+        assertTrue(fact.isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption());
+    }
+
+    @Test
+    public void isOriginFLUXLocationEmptyOrTypeNotLocationWhenTypeIsNotLocation() throws Exception {
+        fact.setOriginFLUXLocations(Collections.singletonList(new FLUXLocationType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("NOT LOCATION"))));
+
+        assertTrue(fact.isOriginFLUXLocationEmptyOrTypeNotLocation());
+    }
+
+    @Test
+    public void isOriginFLUXLocationEmptyOrTypeNotLocationWhenTypeIsLocation() throws Exception {
+        fact.setOriginFLUXLocations(Collections.singletonList(new FLUXLocationType()
+                .withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("LOCATION"))));
+
+        assertFalse(fact.isOriginFLUXLocationEmptyOrTypeNotLocation());
+    }
+
+    @Test
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesAAPProductFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
@@ -48,7 +103,7 @@ public class SalesAAPProductFactTest {
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withID(new IDType().withValue("BE")), new FLUXLocationType().withID(new IDType().withValue("SWE")))
                 .withPrefabValues(FishingActivityType.class, new FishingActivityType().withIDS(new IDType().withValue("BE")), new FishingActivityType().withIDS(new IDType().withValue("SWE")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver")
                 .verify();
     }
 

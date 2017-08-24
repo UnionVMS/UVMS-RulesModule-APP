@@ -1,16 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryParameterType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesQueryFact extends AbstractFact {
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+public class SalesQueryFact extends SalesAbstractFact {
 
     private IdType id;
     private DateTimeType submittedDateTime;
@@ -89,4 +91,64 @@ public class SalesQueryFact extends AbstractFact {
     public int hashCode() {
         return Objects.hash(id, submittedDateTime, typeCode, specifiedDelimitedPeriod, submitterFLUXParty, simpleSalesQueryParameters);
     }
+
+    public boolean anyQueryParameterOfTypeRoleWithValue(){
+        Optional<SalesQueryParameterType> queryParameterWithTypeRole = getQueryParameterWithType("ROLE");
+        return queryParameterWithTypeRole.isPresent()
+                && queryParameterWithTypeRole.get().getValueCode() != null
+                && !isEmpty(queryParameterWithTypeRole.get().getValueCode().getValue());
+    }
+
+    public boolean hasIDInvalidFormat() {
+        return id != null && !validateFormat(id.getValue(), FORMATS.UUID.getFormatStr());
+    }
+
+    public boolean triesToQueryOnTypeFlagButIsNotAnInternationalOrganization() {
+        return !isInternationalOrganization()
+                && getQueryParameterWithType("FLAG").isPresent();
+    }
+
+    public boolean triesToQueryOnTypeRoleAndValueFlagOrLandButIsAnInternationalOrganization() {
+        Optional<SalesQueryParameterType> queryParameterWithTypeRole = getQueryParameterWithType("ROLE");
+
+        return isInternationalOrganization()
+                && queryParameterWithTypeRole.isPresent()
+                && queryParameterWithTypeRole.get().getValueCode() != null
+                && !isEmpty(queryParameterWithTypeRole.get().getValueCode().getValue())
+                && Arrays.asList("FLAG", "LAND").contains(queryParameterWithTypeRole.get().getValueCode().getValue());
+    }
+
+    public boolean triesToQueryOnTypeRoleAndValueIntButIsNotAnInternationalOrganization() {
+        Optional<SalesQueryParameterType> queryParameterWithTypeRole = getQueryParameterWithType("ROLE");
+
+        return !isInternationalOrganization()
+                && queryParameterWithTypeRole.isPresent()
+                && queryParameterWithTypeRole.get().getValueCode() != null
+                && !isEmpty(queryParameterWithTypeRole.get().getValueCode().getValue())
+                && "INT".contains(queryParameterWithTypeRole.get().getValueCode().getValue());
+    }
+
+    private boolean isInternationalOrganization() {
+        return submitterFLUXParty != null
+                && !isEmpty(submitterFLUXParty.getIDS())
+                && submitterFLUXParty.getIDS().get(0)!= null
+                && !isEmpty(submitterFLUXParty.getIDS().get(0).getValue())
+                && submitterFLUXParty.getIDS().get(0).getValue().startsWith("X");
+    }
+
+    private Optional<SalesQueryParameterType> getQueryParameterWithType(String type) {
+        if(isEmpty(simpleSalesQueryParameters)){
+            return Optional.absent();
+        }
+
+        for (SalesQueryParameterType queryParameter : simpleSalesQueryParameters) {
+            if (queryParameter != null
+                    && queryParameter.getTypeCode() != null
+                    && type.equals(queryParameter.getTypeCode().getValue())) {
+                return Optional.of(queryParameter);
+            }
+        }
+        return Optional.absent();
+    }
+
 }

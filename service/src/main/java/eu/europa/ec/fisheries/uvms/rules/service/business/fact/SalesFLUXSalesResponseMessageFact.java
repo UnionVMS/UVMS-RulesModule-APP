@@ -6,9 +6,9 @@ import java.util.Objects;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXResponseDocumentType;
 import eu.europa.ec.fisheries.schema.sales.SalesReportType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-public class SalesFLUXSalesResponseMessageFact extends AbstractFact {
+public class SalesFLUXSalesResponseMessageFact extends SalesAbstractFact {
 
     protected FLUXResponseDocumentType fluxResponseDocument;
 

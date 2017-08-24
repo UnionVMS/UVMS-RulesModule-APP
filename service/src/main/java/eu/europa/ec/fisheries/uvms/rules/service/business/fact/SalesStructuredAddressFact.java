@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
-public class SalesStructuredAddressFact extends AbstractFact {
+public class SalesStructuredAddressFact extends SalesAbstractFact {
 
     private IdType id;
     private CodeType postcodeCode;

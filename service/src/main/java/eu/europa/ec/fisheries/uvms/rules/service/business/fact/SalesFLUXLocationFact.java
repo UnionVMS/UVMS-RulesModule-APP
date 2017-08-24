@@ -9,10 +9,10 @@ import eu.europa.ec.fisheries.schema.sales.FLUXGeographicalCoordinateType;
 import eu.europa.ec.fisheries.schema.sales.SpecifiedPolygonType;
 import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
-public class SalesFLUXLocationFact extends AbstractFact {
+public class SalesFLUXLocationFact extends SalesAbstractFact {
 
     private CodeType typeCode;
     private IdType countryID;

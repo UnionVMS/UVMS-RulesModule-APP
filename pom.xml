@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.7-SNAPSHOT</version>
+    <version>3.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -50,8 +49,8 @@
 
         <asset.model.version>3.0.5</asset.model.version>
         <audit.model.version>3.0.4</audit.model.version>
-        <rules.model.version>3.0.7-SNAPSHOT</rules.model.version>
-        <sales.model.version>1.0.0</sales.model.version>
+        <rules.model.version>3.0.8-SNAPSHOT</rules.model.version>
+        <sales.model.version>1.0.3-SNAPSHOT</sales.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
@@ -68,12 +67,12 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>fish.focus.uvms.maven</groupId>
-                <artifactId>uvms-pom-monitoring-deps</artifactId>
-                <version>1.8</version>
-                <type>pom</type>
-            </dependency>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-monitoring-deps</artifactId>
+				<version>1.8</version>
+				<type>pom</type>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -112,7 +111,7 @@
             <version>${logback.core.version}</version>
         </dependency>
 
-
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -126,12 +125,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
 
         <!-- https://mvnrepository.com/artifact/com.ximpleware/vtd-xml -->
         <dependency>
@@ -143,10 +142,10 @@
 
 
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
-        </dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+		</dependency>
 
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
@@ -184,8 +183,8 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>HEAD</tag>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <profiles>
         <profile>
@@ -196,6 +195,9 @@
                     <url>https://apjenp01.dg3.be/nexus/repository/maven-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
+            <properties>
+                <focus-pom.java.version>1.8</focus-pom.java.version>
+            </properties>
         </profile>
         <profile>
             <id>dg-mare</id>
@@ -212,13 +214,10 @@
                 </snapshotRepository>
             </distributionManagement>
 
-            <properties>
-                <scm.connection>
-                    scm:git:https://emserveje@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-RulesModule-APP.git
-                </scm.connection>
-                <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
-            </properties>
-        </profile>
+			<properties>
+				<scm.connection>scm:git:https://emserveje@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-RulesModule-APP.git</scm.connection>
+			<release.branch.name>uvms-3.0.5-C3PO</release.branch.name></properties>
+		</profile>
     </profiles>
 
     <build>
