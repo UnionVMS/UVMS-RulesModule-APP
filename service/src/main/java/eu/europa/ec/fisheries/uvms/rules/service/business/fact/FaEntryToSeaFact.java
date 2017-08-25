@@ -136,7 +136,7 @@ public class FaEntryToSeaFact extends AbstractFact {
             return false;
         }
 
-        if(faReportDocumentTypeCode.equals("DECLARATION")) {
+        if(faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
 
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
 
