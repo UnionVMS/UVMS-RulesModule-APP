@@ -110,6 +110,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
+
 @Stateless
 public class RulesServiceBean implements RulesService {
 
@@ -163,7 +164,6 @@ public class RulesServiceBean implements RulesService {
      * @param customRule
      * @throws RulesServiceException
      * @throws RulesFaultException
-     *
      */
     @Override
     public CustomRuleType createCustomRule(CustomRuleType customRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
@@ -176,9 +176,9 @@ public class RulesServiceBean implements RulesService {
             } else {
                 LOG.warn("User {} is not connected to any organisation!", customRule.getUpdatedBy());
             }
-            if(customRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (customRule.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(customRule.getUpdatedBy(), applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -188,7 +188,7 @@ public class RulesServiceBean implements RulesService {
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, createdRule.getGuid(), null, customRule.getUpdatedBy());
             return createdRule;
 
-        } catch (RulesModelMapperException | MessageException  e) {
+        } catch (RulesModelMapperException | MessageException e) {
             throw new RulesServiceException(e.getMessage());
         } catch (eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
             throw new RulesServiceException(e.getMessage());
@@ -233,9 +233,9 @@ public class RulesServiceBean implements RulesService {
                 LOG.warn("User {} is not connected to any organisation!", oldCustomRule.getUpdatedBy());
             }
 
-            if(oldCustomRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (oldCustomRule.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(oldCustomRule.getUpdatedBy(), applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -285,7 +285,7 @@ public class RulesServiceBean implements RulesService {
 
             CustomRuleType updateCustomRule = rulesDomainModel.updateCustomRuleSubscription(updateSubscriptionType);
 
-            if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation()))  {
+            if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation())) {
                 // TODO: Don't log rule guid, log subscription guid?
                 sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, updateSubscriptionType.getRuleGuid(), updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType(), username);
             } else if (SubscritionOperationType.REMOVE.equals(updateSubscriptionType.getOperation())) {
@@ -313,9 +313,9 @@ public class RulesServiceBean implements RulesService {
 
         try {
             CustomRuleType customRuleFromDb = getCustomRuleByGuid(guid);
-            if(customRuleFromDb.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (customRuleFromDb.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(username, applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -324,7 +324,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, deletedRule.getGuid(), null, username);
             return deletedRule;
-        } catch (RulesModelMapperException  e) {
+        } catch (RulesModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
@@ -489,7 +489,7 @@ public class RulesServiceBean implements RulesService {
             TicketType ticket = rulesDomainModel.getTicketByAssetGuid(fact.getAssetGuid(), ruleName);
             if (ticket == null) {
                 createAssetNotSendingTicket(ruleName, fact);
-            } else if (ticket.getTicketCount() != null){
+            } else if (ticket.getTicketCount() != null) {
                 ticket.setTicketCount(ticket.getTicketCount() + 1);
                 updateTicketCount(ticket);
             } else {
@@ -1264,8 +1264,8 @@ public class RulesServiceBean implements RulesService {
 
         MobileTerminalType mobileTerminal = null;
 
-        for(MobileTerminalType mobileTerminalType : resultList){
-            if(mobileTerminalType.getConnectId()!=null){
+        for (MobileTerminalType mobileTerminalType : resultList) {
+            if (mobileTerminalType.getConnectId() != null) {
                 mobileTerminal = mobileTerminalType;
                 break;
             }
@@ -1285,8 +1285,7 @@ public class RulesServiceBean implements RulesService {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
-        }
-        catch (AuditModelMarshallException | MessageException e) {
+        } catch (AuditModelMarshallException | MessageException e) {
             LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
     }
