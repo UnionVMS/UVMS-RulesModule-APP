@@ -313,7 +313,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = activityFactMapper.generateFactsForExitArea(activity, faReportDocument);
                         break;
                     case JOINT_FISHING_OPERATION:
-                        abstractFact = activityFactMapper.generateFactsForJointFishingOperation(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForJointFishingOperation(activity, faReportDocument);
+                        }
                         break;
                     case LANDING:
                         abstractFact = activityFactMapper.generateFactsForLanding(activity, faReportDocument);

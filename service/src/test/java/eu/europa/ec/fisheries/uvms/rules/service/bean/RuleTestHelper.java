@@ -195,6 +195,12 @@ public class RuleTestHelper {
         return fluxLocation;
     }
 
+    public static FACatch getFACatch(String typeCode,String speciesCode){
+        FACatch faCatch = new FACatch();
+        faCatch.setTypeCode(getCodeTypeUNCEFACT(typeCode, ""));
+        faCatch.setSpeciesCode(getCodeTypeUNCEFACT(speciesCode, ""));
+        return faCatch;
+    }
     public static List<FACatch> getFACatchList() {
         List<FACatch> faCatches = new ArrayList<>(2);
         FACatch faCatch = new FACatch();
