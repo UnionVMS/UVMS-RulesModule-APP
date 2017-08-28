@@ -336,7 +336,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         }
                         break;
                     case FISHING_OPERATION:
-                        abstractFact = activityFactMapper.generateFactsForFishingOperation(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForFishingOperation(activity, faReportDocument);
+                        }
                         break;
                     default:
                         log.info("No rule to be applied for the received activity type : " + fishingActivityType);
