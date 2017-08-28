@@ -340,4 +340,18 @@ public class RuleTestHelper {
         return gearCharacteristics;
     }
 
+    public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
+        ContactParty contactParty = new ContactParty();
+        contactParty.setRoleCodes(Arrays.asList(roleCode));
+        contactParty.setSpecifiedStructuredAddresses(Arrays.asList(structuredAddress));
+        return contactParty;
+    }
+
+    public static StructuredAddress getStructuredAddress(){
+        StructuredAddress structuredAddress = new StructuredAddress();
+
+        return structuredAddress;
+    }
+
+
 }
