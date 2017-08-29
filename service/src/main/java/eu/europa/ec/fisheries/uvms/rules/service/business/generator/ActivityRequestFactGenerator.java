@@ -204,9 +204,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
                 facts.add(activityFactMapper.generateFactsForVesselStorageCharacteristic(activity.getDestinationVesselStorageCharacteristic()));
 
-                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument));
-
                 index++;
             }
         }
@@ -333,6 +330,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     case RELOCATION:
                         if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = activityFactMapper.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
+                        }else if(FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())){
+                            abstractFact = activityFactMapper.generateFactsForRelocation(activity, faReportDocument);
                         }
                         break;
                     case FISHING_OPERATION:
