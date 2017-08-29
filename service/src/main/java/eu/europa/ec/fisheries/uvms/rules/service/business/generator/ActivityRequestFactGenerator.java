@@ -318,7 +318,9 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = activityFactMapper.generateFactsForLanding(activity, faReportDocument);
                         break;
                     case DISCARD:
-                        abstractFact = activityFactMapper.generateFactsForDiscard(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForDiscard(activity, faReportDocument);
+                        }
                         break;
                     case TRANSHIPMENT:
                         if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
