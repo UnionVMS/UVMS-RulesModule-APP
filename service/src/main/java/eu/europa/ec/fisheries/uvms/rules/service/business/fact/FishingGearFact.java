@@ -13,20 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.FishingApplicableGearHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearCharacteristicCode;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingGearTypeCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
  */
+@Slf4j
 public class FishingGearFact extends AbstractFact {
 
     private CodeType typeCode;
@@ -36,6 +36,15 @@ public class FishingGearFact extends AbstractFact {
     private List<GearCharacteristic> applicableGearCharacteristics;
 
     private boolean fishingActivity;
+
+    public FishingGearFact() {
+        setFactType();
+    }
+
+    @Override
+    public void setFactType() {
+        this.factType = FactType.FISHING_GEAR;
+    }
 
     public CodeType getTypeCode() {
         return typeCode;
@@ -69,47 +78,21 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public FishingGearFact() {
-        setFactType();
-    }
-
-    @Override
-    public void setFactType() {
-        this.factType = FactType.FISHING_GEAR;
-    }
-
-    public FishingGearTypeCode retrieveFishingGearTypeCode(CodeType fishingGearTypeCode) {
-        if (fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue())) {
-            return null;
-        }
-
-        try {
-            return FishingGearTypeCode.valueOf(fishingGearTypeCode.getValue());
-        } catch (IllegalArgumentException | NullPointerException exc) {
-            return null;
-        }
-    }
-
-    public FishingGearCharacteristicCode retrieveGearCharacteristicCode(GearCharacteristic gearCharacteristic) {
-        if (gearCharacteristic == null) {
-            return null;
-        }
-
-        try {
-            return FishingGearCharacteristicCode.valueOf(gearCharacteristic.getTypeCode().getValue());
-        } catch (IllegalArgumentException | NullPointerException exc) {
-            return null;
-        }
-    }
-
     public boolean isRequiredGearCharacteristicsPresent(CodeType fishingGearTypeCode) {
-        FishingGearTypeCode gearTypeCode = retrieveFishingGearTypeCode(fishingGearTypeCode);
-
-        if (gearTypeCode == null || applicableGearCharacteristics == null) {
+        if (fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue()) || applicableGearCharacteristics == null) {
             return false;
         }
 
-        List<FishingGearCharacteristicCode> requiredFishingGearCharacteristicCodes = FishingApplicableGearHolder.getInstance().getFishingGearCharacteristicCodes(gearTypeCode);
+        List<String> requiredFishingGearCharacteristicCodes = null;
+        try {
+            if (rulesDomainModel == null) {
+                initDomainModel();
+            }
+
+            requiredFishingGearCharacteristicCodes = rulesDomainModel.getFishingGearCharacteristicCodes(fishingGearTypeCode.getValue(), true);
+        } catch (RulesModelException e) {
+            log.error("Error while retrieving fishing gear characteristic codes", e);
+        }
 
         if (requiredFishingGearCharacteristicCodes.isEmpty()) {
             return true;
@@ -120,18 +103,22 @@ public class FishingGearFact extends AbstractFact {
         int hits = 0;
         for (GearCharacteristic applicableGearCharacteristic : applicableGearCharacteristics) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType applicableGearCharacteristicTypeCode = applicableGearCharacteristic.getTypeCode();
-            if (!FactConstants.FA_GEAR_CHARACTERISTIC.equals(applicableGearCharacteristicTypeCode.getListID())) {
-                continue;
+
+            String fishingGearCharacteristicCode = null;
+            try {
+                if (!FactConstants.FA_GEAR_CHARACTERISTIC.equals(applicableGearCharacteristicTypeCode.getListID())) {
+                    continue;
+                }
+
+                fishingGearCharacteristicCode = applicableGearCharacteristic.getTypeCode().getValue();
+            } catch (NullPointerException npe) {
+                fishingGearCharacteristicCode = null;
             }
 
-            FishingGearCharacteristicCode fishingGearCharacteristicCode = retrieveGearCharacteristicCode(applicableGearCharacteristic);
-
-            if (fishingGearCharacteristicCode != null && requiredFishingGearCharacteristicCodes.contains(fishingGearCharacteristicCode)) {
+            if (StringUtils.isNotBlank(fishingGearCharacteristicCode) && requiredFishingGearCharacteristicCodes.contains(fishingGearCharacteristicCode)) {
                 hits++;
                 continue;
             }
-
-            return false;
         }
 
         return hits == requiredFishingGearCharacteristicCodes.size();

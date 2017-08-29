@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
@@ -194,6 +195,12 @@ public class RuleTestHelper {
         return fluxLocation;
     }
 
+    public static FACatch getFACatch(String typeCode,String speciesCode){
+        FACatch faCatch = new FACatch();
+        faCatch.setTypeCode(getCodeTypeUNCEFACT(typeCode, ""));
+        faCatch.setSpeciesCode(getCodeTypeUNCEFACT(speciesCode, ""));
+        return faCatch;
+    }
     public static List<FACatch> getFACatchList() {
         List<FACatch> faCatches = new ArrayList<>(2);
         FACatch faCatch = new FACatch();
@@ -303,5 +310,48 @@ public class RuleTestHelper {
 
         return vesselTransportMeans;
     }
+
+    public static List<GearCharacteristic> getGearCharacteristics() {
+        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("ME");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GM");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        gearCharacteristic = new GearCharacteristic();
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("HE");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
+        codeType.setValue("GD");
+        gearCharacteristic.setTypeCode(codeType);
+        gearCharacteristics.add(gearCharacteristic);
+
+        return gearCharacteristics;
+    }
+
+    public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
+        ContactParty contactParty = new ContactParty();
+        contactParty.setRoleCodes(Arrays.asList(roleCode));
+        contactParty.setSpecifiedStructuredAddresses(Arrays.asList(structuredAddress));
+        return contactParty;
+    }
+
+    public static StructuredAddress getStructuredAddress(){
+        StructuredAddress structuredAddress = new StructuredAddress();
+
+        return structuredAddress;
+    }
+
 
 }

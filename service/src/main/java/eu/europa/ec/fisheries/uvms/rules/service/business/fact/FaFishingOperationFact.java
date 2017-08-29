@@ -13,13 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+
+import java.util.List;
 
 /**
  * @author padhyad
@@ -40,6 +42,10 @@ public class FaFishingOperationFact extends AbstractFact {
     private List<FishingActivity> relatedFishingActivities;
 
     private List<CodeType> fishingGearRoleCodes;
+
+    private List<CodeType> relatedFishingActivityTypeCodes;
+
+    private List<ContactParty>  vesselTransportMeansContactParties;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -98,6 +104,14 @@ public class FaFishingOperationFact extends AbstractFact {
         this.relatedFishingActivities = relatedFishingActivities;
     }
 
+    public List<CodeType> getRelatedFishingActivityTypeCodes() {
+        return relatedFishingActivityTypeCodes;
+    }
+
+    public void setRelatedFishingActivityTypeCodes(List<CodeType> relatedFishingActivityTypeCodes) {
+        this.relatedFishingActivityTypeCodes = relatedFishingActivityTypeCodes;
+    }
+
     public boolean isFLUXLocationPresentForFishingActivity(List<FishingActivity> relatedFishingActivities) {
         if (CollectionUtils.isEmpty(relatedFishingActivities)) {
             return false;
@@ -119,5 +133,34 @@ public class FaFishingOperationFact extends AbstractFact {
 
     public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
         this.fishingGearRoleCodes = fishingGearRoleCodes;
+    }
+
+    public List<ContactParty> getVesselTransportMeansContactParties() {
+        return vesselTransportMeansContactParties;
+    }
+
+    public void setVesselTransportMeansContactParties(List<ContactParty> vesselTransportMeansContactParties) {
+        this.vesselTransportMeansContactParties = vesselTransportMeansContactParties;
+    }
+
+    // FA-L00-00-0079
+    public boolean verifyContactPartyRule(List<ContactParty> contactParties) {
+        if (CollectionUtils.isEmpty(contactParties)) {
+            return true;
+        }
+
+        for (ContactParty contactParty : contactParties) {
+            List<StructuredAddress> structuredAddresses=contactParty.getSpecifiedStructuredAddresses();
+            List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> roleCodeTypes = contactParty.getRoleCodes();
+            if (CollectionUtils.isNotEmpty(roleCodeTypes)) {
+                 for(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode: roleCodeTypes){
+                     if("PAIR_FISHING_PARTNER".equals(roleCode.getValue()) && CollectionUtils.isEmpty(structuredAddresses)){
+                              return false;
+                     }
+                 }
+            }
+        }
+       return true;
+
     }
 }
