@@ -29,7 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
@@ -69,15 +68,6 @@ public class MDRCache {
 
         }
         return null;
-    }
-
-
-    private void extractCodes(List<String> stringList, ObjectRepresentation objectRep) {
-        for (ColumnDataType nameVal : objectRep.getFields()) {
-            if ("code".equals(nameVal.getColumnName())) {
-                stringList.add(nameVal.getColumnValue());
-            }
-        }
     }
 
     public void init(){
