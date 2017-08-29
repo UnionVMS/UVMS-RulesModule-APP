@@ -99,6 +99,7 @@ public class MdrCacheTest {
         List<ObjectRepresentation> faCatchTypeEntries = null;
 
         try {
+            mdrCache.init();
             faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         } catch (CacheLoader.InvalidCacheLoadException ex) {
             System.out.println("Exception thrown as expected : " + ex.getMessage());
