@@ -13,6 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
@@ -22,13 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 @Slf4j
@@ -41,10 +41,15 @@ public class TemplateEngine {
     @EJB
     private FactRuleEvaluator ruleEvaluator;
 
+    @EJB
+    private MDRCache mdrCache;
+
     @PostConstruct
     public void initialize() {
         log.info("Initializing templates and rules [START]");
         ruleEvaluator.initializeRules(getAllTemplates());
+        log.info("Initializing MDR cache");
+        mdrCache.init();
         updateRulesStatus(ruleEvaluator.getFailedRules());
     }
 

@@ -48,24 +48,6 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-
-    public MDRCache() {
-        if (cache == null) {
-            cache = CacheBuilder.newBuilder()
-                    .maximumSize(1000)
-                    .expireAfterWrite(1, TimeUnit.HOURS)
-                    .refreshAfterWrite(1, TimeUnit.HOURS)
-                    .build(
-                            new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
-                                @Override
-                                public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
-                                    return mdrCodeListByAcronymType(acronymType);
-                                }
-                            }
-                    );
-        }
-    }
-
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
         List<ObjectRepresentation> result = emptyList();
         if (acronymType != null) {
@@ -96,5 +78,20 @@ public class MDRCache {
                 stringList.add(nameVal.getColumnValue());
             }
         }
+    }
+
+    public void init(){
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                .refreshAfterWrite(1, TimeUnit.HOURS)
+                .build(
+                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
+                            @Override
+                            public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
+                                return mdrCodeListByAcronymType(acronymType);
+                            }
+                        }
+                );
     }
 }
