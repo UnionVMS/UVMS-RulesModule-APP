@@ -1035,6 +1035,10 @@ public class ActivityFactMapper {
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).storeInRepo(faExitFromSeaFact, RELATED_FISHING_ACTIVITIES_PROP);
 
             }
+
+            faExitFromSeaFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).storeInRepo(faExitFromSeaFact, "relatedFishingActivities");
+
         }
         if (faReportDocument != null) {
             faExitFromSeaFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
