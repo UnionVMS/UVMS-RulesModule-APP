@@ -10,6 +10,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.TextMessage;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -20,7 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
@@ -48,30 +56,7 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-
-    public MDRCache() {
-        if (cache == null) {
-            cache = CacheBuilder.newBuilder()
-                    .maximumSize(1000)
-                    .expireAfterWrite(1, TimeUnit.HOURS)
-                    .refreshAfterWrite(1, TimeUnit.HOURS)
-                    .build(
-                            new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
-                                @Override
-                                public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
-                                    return mdrCodeListByAcronymType(acronymType);
-                                }
-                            }
-                    );
-        }
-    }
-
-
-
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
-
-
-
         List<ObjectRepresentation> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
@@ -94,12 +79,18 @@ public class MDRCache {
         return null;
     }
 
-
-    private void extractCodes(List<String> stringList, ObjectRepresentation objectRep) {
-        for (ColumnDataType nameVal : objectRep.getFields()) {
-            if ("code".equals(nameVal.getColumnName())) {
-                stringList.add(nameVal.getColumnValue());
-            }
-        }
+    public void init(){
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                .refreshAfterWrite(1, TimeUnit.HOURS)
+                .build(
+                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
+                            @Override
+                            public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
+                                return mdrCodeListByAcronymType(acronymType);
+                            }
+                        }
+                );
     }
 }

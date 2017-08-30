@@ -28,11 +28,8 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 @Slf4j
 public class MDRCacheServiceBean {
 
-
     @EJB
     private MDRCache cache;
-
-
 
     public void loadMDRCache(){
     log.info("Load MDR Cache");
@@ -40,7 +37,7 @@ public class MDRCacheServiceBean {
             List<ObjectRepresentation> values = cache.getEntry(acronymType);
             MDRCacheHolder.getInstance().addToCache(acronymType,values);
         }
-    log.info("Cache loading is complete.");
+        log.info("Cache loading is complete.");
     }
 
 }

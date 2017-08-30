@@ -58,6 +58,9 @@ public class TemplateEngineBeanTest {
     RulesDomainModel rulesDb;
 
     @Mock
+    MDRCache mdrCache;
+
+    @Mock
     FactRuleEvaluator ruleEvaluator;
 
     @Test(expected = RulesValidationException.class)
