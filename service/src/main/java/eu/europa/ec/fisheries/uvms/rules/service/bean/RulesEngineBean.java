@@ -65,6 +65,7 @@ public class RulesEngineBean {
         generator.setBusinessObjectMessage(businessObject);
         mdrCacheServiceBean.loadMDRCache();
         generator.setExtraValueMap(map);
+        generator.setAdditionalValidationObject();
         facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
         return facts;
