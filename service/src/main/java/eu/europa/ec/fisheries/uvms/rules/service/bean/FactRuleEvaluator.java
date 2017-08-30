@@ -13,21 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +38,19 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import java.io.InputStream;
+import java.util.*;
+
 @Slf4j
 @Singleton
 @LocalBean
 public class FactRuleEvaluator {
+
+    @EJB
+    private SalesRulesService salesRulesService;
 
     private KieServices kieServices = KieServices.Factory.get();
     private KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
@@ -93,6 +93,9 @@ public class FactRuleEvaluator {
         try {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
+
+            ksession.setGlobal("salesService", salesRulesService);
+
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
@@ -182,7 +185,6 @@ public class FactRuleEvaluator {
             systemPackagesPaths.add(systemPackage);
             kieFileSystem.write(systemPackage, rule);
             KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
-
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
                 log.error("Rule failed to build {} ", templateName);
                 kieFileSystem.delete(ruleName.toString(), rule);
@@ -193,6 +195,10 @@ public class FactRuleEvaluator {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
 
             KieBase kBase = container.getKieBase();
+//
+//            for (KieSession kieSession : kBase.getKieSessions()) {
+//                kieSession.setGlobal("salesRulesService", salesRulesService);
+//            }
             compiledPackages = kBase.getKiePackages();
         }
         return compiledPackages;

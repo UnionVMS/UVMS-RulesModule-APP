@@ -52,16 +52,6 @@ public class SalesAbstractFactTest {
     }
 
     @Test
-    public void testCheckNotNullWhenCategoryNull() throws Exception {
-        fact.setSource(Source.AUCTION);
-        fact.setSalesCategoryType(null);
-
-        exception.expect(NullPointerException.class);
-        exception.expectMessage("SalesCategoryType cannot be null. Did you forget to add it to the fact generator?");
-        fact.checkNotNull();
-    }
-
-    @Test
     public void testIsNotVariousSupplyWhenVariousSupply() throws Exception {
         fact.setSource(Source.AUCTION);
         fact.setSalesCategoryType(SalesCategoryType.VARIOUS_SUPPLY);

@@ -62,9 +62,11 @@ public abstract class SalesAbstractFact extends AbstractFact {
     }
 
     public boolean isNotVariousSupply() {
-        checkNotNull();
+        if (salesCategoryType == null) {
+            return true;
+        }
 
-        if (source.equals(Source.AUCTION) && salesCategoryType.equals(SalesCategoryType.VARIOUS_SUPPLY)) {
+        if (salesCategoryType.equals(SalesCategoryType.VARIOUS_SUPPLY)) {
             return false;
         }
 
@@ -73,7 +75,6 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
     protected void checkNotNull() {
         Preconditions.checkNotNull(source, "Source cannot be null. Did you forget to add it to the fact generator?");
-        Preconditions.checkNotNull(salesCategoryType, "SalesCategoryType cannot be null. Did you forget to add it to the fact generator?");
     }
 
     public boolean nullValuesInAmountTypes(Collection<AmountType> amountTypes) {
