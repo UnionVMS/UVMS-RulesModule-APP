@@ -13,11 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.util.List;
 
 /**
  * @author padhyad
@@ -36,6 +39,8 @@ public class FaExitFromSeaFact extends AbstractFact {
     private List<CodeType> relatedFluxLocationTypeCodes;
 
     private List<IdType> relatedFluxLocationIDs;
+
+    private List<FishingActivity> relatedFishingActivities;
 
     public FaExitFromSeaFact() {
         setFactType();
@@ -92,5 +97,38 @@ public class FaExitFromSeaFact extends AbstractFact {
 
     public List<CodeType> getRelatedFluxLocationTypeCodes() {
         return relatedFluxLocationTypeCodes;
+    }
+
+    public List<FishingActivity> getRelatedFishingActivities() {
+        return relatedFishingActivities;
+    }
+
+    public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
+        this.relatedFishingActivities = relatedFishingActivities;
+    }
+
+    /**
+     * For  Rule FA-L02-00-0251
+     * @return
+     */
+    public boolean verifyFLUXLocationIDValue(List<FLUXLocation> relatedFLUXLocations){
+        if(CollectionUtils.isEmpty(relatedFLUXLocations)){
+            return false;
+        }
+
+        if(faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
+
+            for (FLUXLocation fluxLocation : relatedFLUXLocations) {
+
+                if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
+                    IDType idType = fluxLocation.getID();
+                    if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
