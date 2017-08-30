@@ -32,6 +32,15 @@ import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.TextMessage;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
+
 /**
  * @author Gregory Rinaldi
  */
