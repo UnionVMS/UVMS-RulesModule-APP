@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -31,6 +32,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIde
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -65,6 +67,7 @@ public class RulesEngineBean {
         generator.setBusinessObjectMessage(businessObject);
         mdrCacheServiceBean.loadMDRCache();
         generator.setExtraValueMap(map);
+        generator.setAdditionalValidationObject();
         facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
         return facts;
@@ -83,9 +86,8 @@ public class RulesEngineBean {
             map.put(ACTIVITY_NON_UNIQUE_IDS, nonUniqueIdsList);
             Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesForTrips = activityService.getFishingActivitiesForTrips(businessObject);
             map.put(ACTIVITY_WITH_TRIP_IDS, fishingActivitiesForTrips);
-            // Uncomment when assets work correctly (Now assets has JMS issues - namely not closing connection)
-            //List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
-            //map.put(ASSET_LIST, assetList);
+            List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
+            map.put(ASSET_LIST, assetList);
         }
 
         return map;
