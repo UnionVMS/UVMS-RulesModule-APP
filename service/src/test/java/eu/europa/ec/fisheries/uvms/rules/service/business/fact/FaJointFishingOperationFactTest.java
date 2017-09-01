@@ -11,6 +11,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 import java.util.Arrays;
 
@@ -40,7 +41,9 @@ public class FaJointFishingOperationFactTest {
 
     @Test
     public void testAtLeastOneFaCatchTypeCodePresent(){
-        boolean result= faJointFishingOperationFact.atLeastOneFaCatchTypeCodePresent(Arrays.asList(RuleTestHelper.getFishingActivity()));
+        FishingActivity fishingActivity= RuleTestHelper.getFishingActivity();
+        fishingActivity.setSpecifiedFACatches(Arrays.asList(RuleTestHelper.getFACatch("ALLOCATED_TO_QUOTA","BFT")));
+        boolean result= faJointFishingOperationFact.verifyAtLeastOneFaCatchTypeCodePresent(Arrays.asList(fishingActivity));
         assertTrue(result);
     }
 

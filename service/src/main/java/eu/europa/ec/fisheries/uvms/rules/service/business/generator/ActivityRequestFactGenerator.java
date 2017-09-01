@@ -204,9 +204,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
                 facts.add(activityFactMapper.generateFactsForVesselStorageCharacteristic(activity.getDestinationVesselStorageCharacteristic()));
 
-                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument));
-
                 index++;
             }
         }
@@ -313,13 +310,17 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                         abstractFact = activityFactMapper.generateFactsForExitArea(activity, faReportDocument);
                         break;
                     case JOINT_FISHING_OPERATION:
-                        abstractFact = activityFactMapper.generateFactsForJointFishingOperation(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForJointFishingOperation(activity, faReportDocument);
+                        }
                         break;
                     case LANDING:
                         abstractFact = activityFactMapper.generateFactsForLanding(activity, faReportDocument);
                         break;
                     case DISCARD:
-                        abstractFact = activityFactMapper.generateFactsForDiscard(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForDiscard(activity, faReportDocument);
+                        }
                         break;
                     case TRANSHIPMENT:
                         if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
@@ -331,10 +332,14 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                     case RELOCATION:
                         if (FaReportDocumentType.NOTIFICATION.name().equals(faReportDocument.getTypeCode().getValue())) {
                             abstractFact = activityFactMapper.generateFactsForNotificationOfTranshipment(activity, faReportDocument);
+                        }else if(FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())){
+                            abstractFact = activityFactMapper.generateFactsForRelocation(activity, faReportDocument);
                         }
                         break;
                     case FISHING_OPERATION:
-                        abstractFact = activityFactMapper.generateFactsForFishingOperation(activity, faReportDocument);
+                        if (FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())) {
+                            abstractFact = activityFactMapper.generateFactsForFishingOperation(activity, faReportDocument);
+                        }
                         break;
                     default:
                         log.info("No rule to be applied for the received activity type : " + fishingActivityType);

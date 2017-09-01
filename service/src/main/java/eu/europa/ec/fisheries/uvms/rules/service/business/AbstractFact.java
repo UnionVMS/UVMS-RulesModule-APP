@@ -13,15 +13,36 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +59,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.AmountType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 
 @Slf4j
 @ToString
@@ -66,6 +82,7 @@ public abstract class AbstractFact {
 
     private Integer sequence = 0;
 
+    protected RulesDomainModel rulesDomainModel;
 
     public AbstractFact() {
         this.uniqueIds = new ArrayList<>();
@@ -498,6 +515,33 @@ public abstract class AbstractFact {
         return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
     }
 
+    /**
+     * This method will return false if any codeType do not have matching value from the list valuesToBe matched
+     * @param codeTypes
+     * @param valuesToMatch
+     * @return
+     */
+    public boolean codeTypeValueContainsMatch(List<CodeType> codeTypes, String... valuesToMatch){
+        if(CollectionUtils.isEmpty(codeTypes) ||valuesToMatch==null){
+            return false;
+        }
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if(CollectionUtils.isEmpty(codeTypes)){
+            return false;
+        }
+
+        for(CodeType codeType : codeTypes){
+            if(codeType ==null || codeType.getValue() ==null || !valuesToBeFound.contains(codeType.getValue())){
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
+
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
             return true;
@@ -598,7 +642,7 @@ public abstract class AbstractFact {
     }
 
     public boolean listIdNotContains(CodeType codeType, String... values) {
-        return listIdNotContains(Arrays.asList(codeType), values);
+        return listIdNotContains(Collections.singletonList(codeType), values);
     }
 
     public boolean listIdNotContains(List<CodeType> codeTypes, String... values) {
@@ -678,7 +722,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val) ) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val)) {
                 return false;
             }
         }
@@ -686,16 +730,15 @@ public abstract class AbstractFact {
     }
 
 
-
     private boolean isIntegerValue(BigDecimal bigDecimal) {
-     if(bigDecimal ==null){
-         return false;
-     }
+        if (bigDecimal == null) {
+            return false;
+        }
 
-        if( bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0){
-          return true;
-        }else{
-           return false;
+        if (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) {
+            return true;
+        } else {
+            return false;
         }
 
     }
@@ -872,7 +915,7 @@ public abstract class AbstractFact {
         return (sourceList != null && sourceList.isEmpty()) || (sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems);
     }
 
-    public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems){
+    public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {
         compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
 
         return (sourceList != null && !sourceList.isEmpty()) && sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems;
@@ -884,14 +927,14 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean isListEmptyOrAllValuesUnique(List<CodeType> sourceList){
+    public boolean isListEmptyOrAllValuesUnique(List<CodeType> sourceList) {
         if (isEmpty(sourceList)) {
             return true;
         }
 
         List<String> values = new ArrayList<>();
         for (CodeType codeType : sourceList) {
-            if (codeType == null){
+            if (codeType == null) {
                 continue;
             }
 
@@ -905,14 +948,14 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean isListEmptyOrAllListIdsUnique(List<CodeType> sourceList){
+    public boolean isListEmptyOrAllListIdsUnique(List<CodeType> sourceList) {
         if (isEmpty(sourceList)) {
             return true;
         }
 
         List<String> listIds = new ArrayList<>();
         for (CodeType codeType : sourceList) {
-            if (codeType == null){
+            if (codeType == null) {
                 continue;
             }
 
@@ -926,14 +969,14 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch){
+    public boolean isListEmptyOrValuesMatchPassedArguments(List<CodeType> sourceList, String... valuesToMatch) {
         if (isEmpty(sourceList)) {
             return true;
         }
 
-        List<String> matchList =  Arrays.asList(valuesToMatch);
+        List<String> matchList = Arrays.asList(valuesToMatch);
         for (CodeType codeType : sourceList) {
-            if (codeType == null){
+            if (codeType == null) {
                 return false;
             }
 
@@ -1324,4 +1367,28 @@ public abstract class AbstractFact {
         this.senderOrReceiver = senderOrReceiver;
     }
 
+    public void initDomainModel() {
+        try {
+            InitialContext context = (InitialContext) getInitialContext();
+            rulesDomainModel = (RulesDomainModel) context.lookup(ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL);
+            setDomainModel(rulesDomainModel);
+        } catch (NamingException e) {
+            log.error("Error while retrieving RulesDomainModel", e);
+        }
+    }
+
+    public Context getInitialContext() {
+        InitialContext initialContext = null;
+        try {
+            initialContext = new InitialContext();
+        } catch (NamingException e) {
+            log.error("Failed to get InitialContext", e);
+        }
+
+        return initialContext;
+    }
+
+    public void setDomainModel(RulesDomainModel rulesDomainModel) {
+        this.rulesDomainModel = rulesDomainModel;
+    }
 }

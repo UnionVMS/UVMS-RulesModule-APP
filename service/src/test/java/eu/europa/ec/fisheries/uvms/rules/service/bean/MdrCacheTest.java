@@ -18,13 +18,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
+import javax.jms.TextMessage;
+import java.util.List;
+
 import com.google.common.cache.CacheLoader;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import java.util.List;
-import javax.jms.TextMessage;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
@@ -43,7 +44,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MdrCacheTest {
-
 
     @Mock
     MDRCacheServiceBean mdrCacheServiceBean;
@@ -75,6 +75,7 @@ public class MdrCacheTest {
         Whitebox.setInternalState(mdrCache, "producer", producer);
         Whitebox.setInternalState(textMessage, "text", new SimpleString(getMockedSettingsResponse()));
         Whitebox.setInternalState(textMessage, "jmsCorrelationID", "SomeCorrId");
+
     }
 
     @Test
@@ -83,6 +84,7 @@ public class MdrCacheTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
+        mdrCache.init();
         List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
 
         assertTrue(CollectionUtils.isNotEmpty(faCatchTypeEntries));
@@ -97,6 +99,7 @@ public class MdrCacheTest {
         List<ObjectRepresentation> faCatchTypeEntries = null;
 
         try {
+            mdrCache.init();
             faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         } catch (CacheLoader.InvalidCacheLoadException ex) {
             System.out.println("Exception thrown as expected : " + ex.getMessage());
