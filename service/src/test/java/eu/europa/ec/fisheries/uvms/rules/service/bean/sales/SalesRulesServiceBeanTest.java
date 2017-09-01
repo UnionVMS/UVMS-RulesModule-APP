@@ -3,26 +3,41 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SalesRulesServiceBeanTest {
 
     SalesFLUXSalesReportMessageFact salesFLUXSalesReportMessageFact;
 
-    SalesRulesService service;
+    @InjectMocks
+    SalesRulesServiceBean service;
+
+    @Mock
+    SalesService salesService;
+
 
     @Before
     public void setUp() throws Exception {
         salesFLUXSalesReportMessageFact = new SalesFLUXSalesReportMessageFact();
-        service = new SalesRulesServiceBean();
     }
 
     @Test
@@ -185,28 +200,77 @@ public class SalesRulesServiceBeanTest {
         assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
-
-//
-//    @Test
-//    public void isReceptionDate48hAfterSaleDateWhenOccurrenceDateTimeIsNull() throws Exception {
-//        SalesEventType salesEventType = new SalesEventType()
-//                .withOccurrenceDateTime(null);
-//
-//        SalesDocumentType salesDocumentType = new SalesDocumentType()
-//                .withSpecifiedSalesEvents(Arrays.asList(salesEventType));
-//
-//        salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments(salesDocumentType)));
-//
-//        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
-//    }
-
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenDateTimeIsNull() throws Exception {
-//        SalesEventType salesEventType = new SalesEventType()
-//                .withOccurrenceDateTime(new DateTimeType().withDateTime(null));
-//        salesDocumentFact.setSpecifiedSalesEvents(Arrays.asList(salesEventType));
-//
-//        assertFalse(service.isReceptionDate48hAfterSaleDate(salesDocumentFact));
+    public void isIdNotUniqueWhenFactIsNull() throws Exception {
+        assertFalse(service.isIdNotUnique(null));
     }
 
+    @Test
+    public void isIdNotUniqueWhenIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setIDS(null);
+        assertFalse(service.isIdNotUnique(fact));
+    }
+
+    @Test
+    public void isIdNotUniqueWhenIdsInFactIsEmpty() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setIDS(Lists.<IdType>newArrayList());
+        assertFalse(service.isIdNotUnique(fact));
+    }
+
+    @Test
+    public void isIdNotUniqueWhenFirstEntryInIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        List<IdType> listWithNull = new ArrayList<>();
+        listWithNull.add(null);
+
+        fact.setIDS(listWithNull);
+        assertFalse(service.isIdNotUnique(fact));
+    }
+
+    @Test
+    public void isIdNotUniqueWhenValueInIdsInFactIsBlank() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setIDS(Arrays.asList(new IdType("")));
+        assertFalse(service.isIdNotUnique(fact));
+    }
+
+    @Test
+    public void isIdNotUniqueWhenValueInIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setIDS(Arrays.asList(new IdType(null)));
+        assertFalse(service.isIdNotUnique(fact));
+    }
+
+    @Test
+    public void doesTakeOverDocumentIdExistWhenFactIsNull() throws Exception {
+        assertFalse(service.doesTakeOverDocumentIdExist(null));
+    }
+
+    @Test
+    public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setTakeoverDocumentIDs(null);
+        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+    }
+
+    @Test
+    public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsEmpty() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setTakeoverDocumentIDs(Lists.<IdType>newArrayList());
+        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+    }
+
+    @Test
+    public void doesTakeOverDocumentIdExistWhenTODIdsInFactContainsNulls() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setTakeoverDocumentIDs(Arrays.asList(new IdType("aaa"), new IdType("bbb"), new IdType(null)));
+
+        List<String> ids = Arrays.asList("aaa", "bbb");
+
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.TAKEOVER_DOCUMENT);
+
+        assertTrue(service.doesTakeOverDocumentIdExist(fact));
+    }
 }

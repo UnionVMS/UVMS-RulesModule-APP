@@ -2,8 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
 import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -17,6 +16,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import java.util.List;
 
 @Singleton
 public class SalesServiceBeanHelper {
@@ -37,8 +37,8 @@ public class SalesServiceBeanHelper {
         return unmarshal(receivedMessageAsString);
     }
 
-    protected String sendMessageToSales(String findReportByIdRequest) throws MessageException {
-        return messageProducer.sendDataSourceMessage(findReportByIdRequest, DataSourceQueue.SALES);
+    protected String sendMessageToSales(String request) throws MessageException {
+        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES);
     }
 
 
@@ -64,5 +64,15 @@ public class SalesServiceBeanHelper {
         cache.cacheMessage(guid, originalReport);
 
         return Optional.fromNullable(originalReport);
+    }
+
+    public boolean areAnyOfTheseIdsNotUnique(List<String> id, UniqueIDType type) throws SalesMarshallException, MessageException, JMSException {
+        String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(id, type);
+        String correlationID = sendMessageToSales(checkForUniqueIdRequest);
+
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class);
+
+        CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
+        return !response.isUnique();
     }
 }

@@ -1,5 +1,6 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
@@ -21,13 +22,11 @@ import static org.mockito.Mockito.doReturn;
 @PrepareForTest({JAXBMarshaller.class, SalesModuleRequestMapper.class})
 @PowerMockIgnore( {"javax.management.*"})
 public class SalesServiceBeanTest {
-
     @InjectMocks
     SalesServiceBean service;
 
     @Mock
     SalesServiceBeanHelper helper;
-
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsEqual() throws Exception {
@@ -41,11 +40,14 @@ public class SalesServiceBeanTest {
                 .withFLUXReportDocument(fluxReportDocumentType)
                 .withSalesReports(salesReportType);
 
-        doReturn(fluxSalesReportMessage).when(helper).findReport(fluxSalesReportMessage.getFLUXReportDocument().getReferencedID().getValue());
+        Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.of(fluxSalesReportMessage);
+
+        doReturn(fluxSalesReportMessageOptional).when(helper).findReport(fluxSalesReportMessage.getFLUXReportDocument().getReferencedID().getValue());
 
         boolean result = service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage);
-        assertTrue(result);
+        assertFalse(result);
     }
+
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsNotEqual() throws Exception {
@@ -63,12 +65,12 @@ public class SalesServiceBeanTest {
                 .withFLUXReportDocument(fluxReportDocumentType)
                 .withSalesReports(salesReportTypeOriginal);
 
-        doReturn(fluxSalesReportMessageOriginal).when(helper).findReport(fluxSalesReportMessage.getFLUXReportDocument().getReferencedID().getValue());
+        Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.of(fluxSalesReportMessageOriginal);
+        doReturn(fluxSalesReportMessageOptional).when(helper).findReport(fluxSalesReportMessage.getFLUXReportDocument().getReferencedID().getValue());
 
         boolean result = service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage);
-        assertFalse(result);
+        assertTrue(result);
     }
-
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsNotACorrection() throws Exception {
@@ -84,6 +86,7 @@ public class SalesServiceBeanTest {
 
         assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage));
     }
+
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsNull() throws Exception {

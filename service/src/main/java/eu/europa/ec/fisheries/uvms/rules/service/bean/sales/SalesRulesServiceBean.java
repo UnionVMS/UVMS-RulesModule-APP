@@ -1,9 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import ma.glasnost.orika.MapperFacade;
@@ -121,5 +124,31 @@ public class SalesRulesServiceBean implements SalesRulesService {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isIdNotUnique(SalesDocumentFact fact) {
+        if (fact == null || isEmpty(fact.getIDS()) || fact.getIDS().get(0) == null || isBlank(fact.getIDS().get(0).getValue())) {
+            return false;
+        }
+
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_DOCUMENT);
+    }
+
+    @Override
+    public boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact) {
+        if (fact == null || isEmpty(fact.getTakeoverDocumentIDs())) {
+            return false;
+        }
+
+
+        List<String> takeOverDocumentIds = Lists.newArrayList();
+
+        for (IdType takeoverDocumentIDType : fact.getTakeoverDocumentIDs()) {
+            if (takeoverDocumentIDType != null && !isBlank(takeoverDocumentIDType.getValue())) {
+                takeOverDocumentIds.add(takeoverDocumentIDType.getValue());
+            }
+        }
+        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.TAKEOVER_DOCUMENT);
     }
 }

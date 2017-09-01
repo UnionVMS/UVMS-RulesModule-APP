@@ -2,15 +2,22 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.UniqueIDType;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Singleton
 @Slf4j
@@ -39,24 +46,9 @@ public class SalesServiceBean implements SalesService {
             //TODO: returns false, does this rule also return when the referencedID in the corrected report doesn't exist?
             return false;
         } catch (SalesMarshallException | JMSException | eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException e) {
-            e.printStackTrace();//TODO: exception handling
+            throw new RulesServiceException("Something went while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean");
         }
-
-
-        return false;
     }
-
-    private boolean isTypeCodeBetweenReportsNotEqual(FLUXSalesReportMessage originalReport, FLUXSalesReportMessage correctedReport) {
-        if (originalReport == null) {
-            return false;
-        }
-
-        String typeCodeOfCorrection = correctedReport.getSalesReports().get(0).getItemTypeCode().getValue();
-        String typeCodeOfOriginal = originalReport.getSalesReports().get(0).getItemTypeCode().getValue();
-
-        return !typeCodeOfOriginal.equals(typeCodeOfCorrection);
-    }
-
 
     @Override
     public boolean doesReportExistWithId(String id) {
@@ -68,9 +60,41 @@ public class SalesServiceBean implements SalesService {
 
             return false;
         } catch (MessageException | SalesMarshallException | JMSException e) {
-            e.printStackTrace(); //TODO: exception handling
+            throw new RulesServiceException("Something went while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
+        }
+    }
+
+
+    @Override
+    public boolean isIdNotUnique(String id, UniqueIDType type) {
+        if (isBlank(id) || type == null) {
+            throw new NullPointerException("Null received in isIdNotUnique. Sanitize your inputs");
         }
 
-        return false;
+        return areAnyOfTheseIdsNotUnique(Arrays.asList(id), type);
+    }
+
+    @Override
+    public boolean areAnyOfTheseIdsNotUnique(List<String> ids, UniqueIDType type) {
+        if (isEmpty(ids) || type == null) {
+            throw new NullPointerException("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
+        }
+
+        try {
+            return helper.areAnyOfTheseIdsNotUnique(ids, type);
+        } catch (MessageException | JMSException | SalesMarshallException e) {
+            throw new RulesServiceException("Something went while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
+        }
+    }
+
+    private boolean isTypeCodeBetweenReportsNotEqual(FLUXSalesReportMessage originalReport, FLUXSalesReportMessage correctedReport) {
+        if (originalReport == null) {
+            return false;
+        }
+
+        String typeCodeOfCorrection = correctedReport.getSalesReports().get(0).getItemTypeCode().getValue();
+        String typeCodeOfOriginal = originalReport.getSalesReports().get(0).getItemTypeCode().getValue();
+
+        return !typeCodeOfOriginal.equals(typeCodeOfCorrection);
     }
 }

@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 
@@ -39,5 +40,9 @@ public interface SalesRulesService {
      * @param fact
      * @return
      */
-//    boolean doesSalesDocumentExistWithId(SalesFLUXReportDocumentFact fact);
+    boolean isIdNotUnique(SalesDocumentFact fact);
+
+    boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact);
+
+
 }
