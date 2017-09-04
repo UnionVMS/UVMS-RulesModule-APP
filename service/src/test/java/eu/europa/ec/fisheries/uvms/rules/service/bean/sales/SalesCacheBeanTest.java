@@ -108,8 +108,8 @@ public class SalesCacheBeanTest {
 
     @Test
     public void cacheMessageWhenPassedReportIsNull() throws Exception {
-        exception.expect(NullPointerException.class);
         cache.cacheMessage("123", null);
+        assertTrue(cache.isMessageCached("123"));
     }
 
 }

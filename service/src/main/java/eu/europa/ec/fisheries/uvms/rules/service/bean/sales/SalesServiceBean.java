@@ -41,7 +41,7 @@ public class SalesServiceBean implements SalesService {
             Optional<FLUXSalesReportMessage> originalReport = helper.findReport(correctedReport.getFLUXReportDocument().getReferencedID().getValue());
             return originalReport.isPresent() && isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);
         } catch (SalesMarshallException | JMSException | eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException e) {
-            throw new RulesServiceException("Something went while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean");
+            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean", e);
         }
     }
 
@@ -51,7 +51,7 @@ public class SalesServiceBean implements SalesService {
             Optional<FLUXSalesReportMessage> optionalReport = helper.findReport(id);
             return optionalReport.isPresent();
         } catch (MessageException | SalesMarshallException | JMSException e) {
-            throw new RulesServiceException("Something went while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
+            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean", e);
         }
     }
 
@@ -74,7 +74,7 @@ public class SalesServiceBean implements SalesService {
         try {
             return helper.areAnyOfTheseIdsNotUnique(ids, type);
         } catch (MessageException | JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Something went while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
+            throw new RulesServiceException("Something went while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
         }
     }
 

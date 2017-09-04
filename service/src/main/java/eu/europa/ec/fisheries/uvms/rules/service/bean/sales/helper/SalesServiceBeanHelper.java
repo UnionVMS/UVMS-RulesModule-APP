@@ -11,6 +11,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesCache;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
+import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -31,7 +32,7 @@ public class SalesServiceBeanHelper {
     SalesCache cache;
 
 
-    protected FLUXSalesReportMessage receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
+    protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
@@ -42,9 +43,13 @@ public class SalesServiceBeanHelper {
     }
 
 
-    protected FLUXSalesReportMessage unmarshal(String message) throws SalesMarshallException {
+    protected Optional<FLUXSalesReportMessage> unmarshal(String message) throws SalesMarshallException {
         FindReportByIdResponse findReportByIdResponse = JAXBMarshaller.unmarshallString(message, FindReportByIdResponse.class);
-        return JAXBMarshaller.unmarshallString(findReportByIdResponse.getReport(), FLUXSalesReportMessage.class);
+        if (StringUtils.isNotBlank(findReportByIdResponse.getReport())) {
+            return Optional.of((FLUXSalesReportMessage) JAXBMarshaller.unmarshallString(findReportByIdResponse.getReport(), FLUXSalesReportMessage.class));
+        } else {
+            return Optional.absent();
+        }
     }
 
     public Optional<FLUXSalesReportMessage> findReport(String guid) throws MessageException, SalesMarshallException, JMSException {
@@ -58,12 +63,12 @@ public class SalesServiceBeanHelper {
         String findReportByIdRequest = SalesModuleRequestMapper.createFindReportByIdRequest(guid);
 
         String correlationId = sendMessageToSales(findReportByIdRequest);
-        FLUXSalesReportMessage originalReport = receiveMessageFromSales(correlationId);
+        Optional<FLUXSalesReportMessage> originalReport = receiveMessageFromSales(correlationId);
 
         // Cache the result
-        cache.cacheMessage(guid, originalReport);
+        cache.cacheMessage(guid, originalReport.orNull());
 
-        return Optional.fromNullable(originalReport);
+        return originalReport;
     }
 
     public boolean areAnyOfTheseIdsNotUnique(List<String> id, UniqueIDType type) throws SalesMarshallException, MessageException, JMSException {

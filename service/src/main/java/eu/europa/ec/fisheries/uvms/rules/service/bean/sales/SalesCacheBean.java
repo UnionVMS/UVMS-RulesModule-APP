@@ -14,7 +14,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Singleton
 public class SalesCacheBean implements SalesCache {
 
-    private Cache<String, FLUXSalesReportMessage> cache;
+    private Cache<String, Optional<FLUXSalesReportMessage>> cache;
 
     public SalesCacheBean() {
         cache = CacheBuilder.newBuilder()
@@ -27,14 +27,18 @@ public class SalesCacheBean implements SalesCache {
     public Optional<FLUXSalesReportMessage> retrieveMessageFromCache(String messageGuid) {
         checkArgument(!isNullOrEmpty(messageGuid),"You're trying to retrieve a message with a null/blank guid");
 
-        return Optional.fromNullable(cache.getIfPresent(messageGuid));
+        Optional<FLUXSalesReportMessage> cachedReport = cache.getIfPresent(messageGuid);
+        if (cachedReport == null) {
+            return Optional.absent();
+        } else {
+            return cachedReport;
+        }
     }
 
     @Override
-    public Boolean isMessageCached(String messageGuid) {
+    public boolean isMessageCached(String messageGuid) {
         checkArgument(!isNullOrEmpty(messageGuid),"You're trying to retrieve a message with a null/blank guid");
-
-        return Optional.fromNullable(cache.getIfPresent(messageGuid)).isPresent();
+        return cache.getIfPresent(messageGuid) != null;
     }
 
     @Override
@@ -42,6 +46,6 @@ public class SalesCacheBean implements SalesCache {
         checkArgument(!isNullOrEmpty(guid), "You're trying to add a null or empty key to the SalesCache");
         // Allow null reports here, so when a report doesn't exist in Sales, it's still cached and doesn't use ActiveMQ.
 
-        cache.put(guid, report);
+        cache.put(guid, Optional.fromNullable(report));
     }
 }

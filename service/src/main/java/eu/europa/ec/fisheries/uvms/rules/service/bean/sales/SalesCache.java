@@ -9,7 +9,7 @@ import javax.ejb.Local;
 public interface SalesCache {
 
     Optional<FLUXSalesReportMessage> retrieveMessageFromCache(String messageGuid);
-    Boolean isMessageCached(String messageGuid);
-
+    boolean isMessageCached(String messageGuid);
     void cacheMessage(String guid, FLUXSalesReportMessage originalReport);
+
 }

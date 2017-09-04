@@ -109,7 +109,6 @@ public class SalesServiceBeanHelperTest {
         FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
         Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.absent();
 
-
         TextMessage mockTextMessage = mock(TextMessage.class);
         mockStatic(SalesModuleRequestMapper.class, JAXBMarshaller.class);
         doReturn(fluxSalesReportMessageOptional).when(cache).retrieveMessageFromCache("guid");
