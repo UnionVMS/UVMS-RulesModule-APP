@@ -127,6 +127,7 @@ public class RulesServiceBean implements RulesService {
     RulesValidator rulesValidator;
     @EJB
     ValidationService validationService;
+
     @Inject
     @AlarmReportEvent
     private Event<NotificationMessage> alarmReportEvent;
