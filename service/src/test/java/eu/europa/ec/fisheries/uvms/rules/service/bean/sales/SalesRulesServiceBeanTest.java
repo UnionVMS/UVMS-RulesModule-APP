@@ -76,7 +76,7 @@ public class SalesRulesServiceBeanTest {
         SalesEventType salesEventType3 = new SalesEventType()
                 .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(3)));
         SalesEventType salesEventType4 = new SalesEventType()
-                .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(47).minusMinutes(59)));
+                .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(48)));
 
         SalesDocumentType salesDocumentFact1 = new SalesDocumentType();
         salesDocumentFact1.getSpecifiedSalesEvents().addAll(Arrays.asList(salesEventType1, salesEventType2, salesEventType3, salesEventType4));
@@ -165,13 +165,6 @@ public class SalesRulesServiceBeanTest {
         assertTrue(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
-    /**
-     * isEmpty(fact.getSalesReports()) ||
-     isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()) ||
-     isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()
-     .get(0).getSpecifiedFishingActivities()) ||
-     * @throws Exception
-     */
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenSalesReportsIsEmpty() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Lists.<SalesReportType>newArrayList());

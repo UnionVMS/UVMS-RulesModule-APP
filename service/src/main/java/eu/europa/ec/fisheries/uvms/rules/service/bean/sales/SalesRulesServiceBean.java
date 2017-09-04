@@ -72,12 +72,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
         for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
             for (SalesEventType salesEventType : includedSalesDocument.getSpecifiedSalesEvents()) {
                 if (salesEventType.getOccurrenceDateTime() != null && salesEventType.getOccurrenceDateTime().getDateTime() != null) {
-                    DateTime saleDate = salesEventType.getOccurrenceDateTime().getDateTime();
-                    // Add 49 hours to salesDate to determine the latest acceptable date
-                    DateTime latestAcceptableDate = saleDate.plusHours(48).plusMinutes(1);
-
-                    // If receptionDate is after latestAcceptableDate, return true
-                    if (receptionDate.isAfter(latestAcceptableDate)) {
+                    if (isMoreThan48HoursLater(receptionDate, salesEventType.getOccurrenceDateTime().getDateTime())) {
                         return true;
                     }
                 }
@@ -88,6 +83,18 @@ public class SalesRulesServiceBean implements SalesRulesService {
         return false;
     }
 
+    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime eventDate) {
+        DateTime saleDate = eventDate;
+
+        // Add 48 hours and 1 minute to salesDate to determine the latest acceptable date.
+        // Adding 48 hours isn't enough, a report sent exactly 48h after the event is still valid.
+        // This is why there's a buffer of 1 minute. Not sure if this is enough: time will tell (pun intended)
+        DateTime latestAcceptableDate = saleDate.plusHours(48).plusMinutes(1);
+
+        // If receptionDate is after latestAcceptableDate, return true
+        return receptionDate.isAfter(latestAcceptableDate);
+    }
+
     @Override
     public boolean isReceptionDate48hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact) {
         if (fact == null ||
@@ -95,7 +102,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 fact.getSalesReports().get(0) == null ||
                 isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()) ||
                 fact.getSalesReports().get(0).getIncludedSalesDocuments()
-                        .get(0) == null||
+                        .get(0) == null ||
                 isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()
                         .get(0).getSpecifiedFishingActivities()) ||
                 fact.getFLUXReportDocument() == null ||
@@ -109,13 +116,10 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
         List<SalesDocumentType> includedSalesDocuments = fact.getSalesReports().get(0).getIncludedSalesDocuments();
         for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
-            for (FishingActivityType fishingActivityType: includedSalesDocument.getSpecifiedFishingActivities()) {
+            for (FishingActivityType fishingActivityType : includedSalesDocument.getSpecifiedFishingActivities()) {
                 for (DelimitedPeriodType delimitedPeriodType : fishingActivityType.getSpecifiedDelimitedPeriods()) {
                     if (delimitedPeriodType.getStartDateTime() != null && delimitedPeriodType.getStartDateTime().getDateTime() != null) {
-                        DateTime dateTime = delimitedPeriodType.getStartDateTime().getDateTime();
-                        DateTime latestAcceptableDateTime = dateTime.plusHours(48).plusMinutes(1);
-
-                        if (receptionDate.isAfter(latestAcceptableDateTime)) {
+                        if (isMoreThan48HoursLater(receptionDate, delimitedPeriodType.getStartDateTime().getDateTime())) {
                             return true;
                         }
                     }

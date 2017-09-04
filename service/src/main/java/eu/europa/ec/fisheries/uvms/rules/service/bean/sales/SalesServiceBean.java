@@ -39,12 +39,7 @@ public class SalesServiceBean implements SalesService {
 
         try {
             Optional<FLUXSalesReportMessage> originalReport = helper.findReport(correctedReport.getFLUXReportDocument().getReferencedID().getValue());
-            if (originalReport.isPresent()) {
-                return isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);
-            }
-
-            //TODO: returns false, does this rule also return when the referencedID in the corrected report doesn't exist?
-            return false;
+            return originalReport.isPresent() && isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);
         } catch (SalesMarshallException | JMSException | eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException e) {
             throw new RulesServiceException("Something went while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean");
         }
@@ -54,11 +49,7 @@ public class SalesServiceBean implements SalesService {
     public boolean doesReportExistWithId(String id) {
         try {
             Optional<FLUXSalesReportMessage> optionalReport = helper.findReport(id);
-            if (optionalReport.isPresent()) {
-                return true;
-            }
-
-            return false;
+            return optionalReport.isPresent();
         } catch (MessageException | SalesMarshallException | JMSException e) {
             throw new RulesServiceException("Something went while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
         }

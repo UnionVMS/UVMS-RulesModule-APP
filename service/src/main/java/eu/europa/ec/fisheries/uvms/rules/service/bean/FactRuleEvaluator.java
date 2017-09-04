@@ -195,10 +195,6 @@ public class FactRuleEvaluator {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
 
             KieBase kBase = container.getKieBase();
-//
-//            for (KieSession kieSession : kBase.getKieSessions()) {
-//                kieSession.setGlobal("salesRulesService", salesRulesService);
-//            }
             compiledPackages = kBase.getKiePackages();
         }
         return compiledPackages;

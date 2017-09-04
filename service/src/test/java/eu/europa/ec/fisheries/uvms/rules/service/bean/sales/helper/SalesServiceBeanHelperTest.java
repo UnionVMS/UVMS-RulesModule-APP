@@ -41,56 +41,6 @@ public class SalesServiceBeanHelperTest {
     @Mock
     SalesCache cache;
 
-//    @Test
-//    public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsNotEqual() throws Exception {
-//        FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
-//                .withPurposeCode(new CodeType().withValue("5"))
-//                .withReferencedID(new IDType().withValue("abc-123"));
-//
-//        FLUXReportDocumentType originalFluxReportDocumentType = new FLUXReportDocumentType()
-//                .withPurposeCode(new CodeType().withValue("9"))
-//                .withReferencedID(new IDType().withValue("abc-123"));
-//
-//        SalesReportType salesReportType = new SalesReportType().withItemTypeCode(new CodeType().withValue("SN"));
-//
-//        SalesReportType originalSalesReportType = new SalesReportType().withItemTypeCode(new CodeType().withValue("TOD"));
-//
-//        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage()
-//                .withFLUXReportDocument(fluxReportDocumentType)
-//                .withSalesReports(salesReportType);
-//
-//        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
-//                .withFLUXReportDocument(originalFluxReportDocumentType)
-//                .withSalesReports(originalSalesReportType);
-//
-//        FindReportByIdResponse findReportByIdResponse = new FindReportByIdResponse()
-//                .withReport("this should contain a marshalled report");
-//
-//        mockStatic(JAXBMarshaller.class);
-//        mockStatic(SalesModuleRequestMapper.class);
-//
-//        TextMessage mockTextMessage = mock(TextMessage.class);
-//        when(mockTextMessage.getText()).thenReturn("bla");
-//
-//        when(producer.sendDataSourceMessage("this is the request made by JAXBMarshaller", DataSourceQueue.SALES)).thenReturn("correlationID");
-//        when(consumer.getMessage("correlationID", TextMessage.class)).thenReturn(mockTextMessage);
-//        when(JAXBMarshaller.unmarshallString("bla", FindReportByIdResponse.class)).thenReturn(findReportByIdResponse);
-//        when(JAXBMarshaller.unmarshallString("this should contain a marshalled report", FLUXSalesReportMessage.class)).thenReturn(originalReport);
-//        when(SalesModuleRequestMapper.createFindReportByIdRequest("abc-123")).thenReturn("this is the request made by JAXBMarshaller");
-//
-//        boolean result = service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage);
-//
-//
-//        verify(consumer).getMessage("correlationID", TextMessage.class);
-//        verify(producer).sendDataSourceMessage("this is the request made by JAXBMarshaller", DataSourceQueue.SALES);
-//
-//        verifyStatic();
-//        JAXBMarshaller.unmarshallString("bla", FindReportByIdResponse.class);
-//        SalesModuleRequestMapper.createFindReportByIdRequest("abc-123");
-//
-//        assertFalse(result);
-//    }
-
     @Test
     public void receiveMessageFromSales() throws Exception {
 
