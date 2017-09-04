@@ -981,7 +981,8 @@ public class ActivityFactMapper {
                 List<CodeType> codeTypes = new ArrayList<>();
                 for (FLUXLocation fluxLocation : relatedFLUXLocations) {
                     un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
-                    codeTypes.add(mapToCodeType(typeCode));
+                    if(typeCode !=null)
+                        codeTypes.add(mapToCodeType(typeCode));
                 }
                 faDepartureFact.setRelatedFLUXLocationTypeCodes(codeTypes);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE_PROP).storeInRepo(faDepartureFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
