@@ -1672,4 +1672,10 @@ public class AbstractFactTest {
 
         assertFalse(fact.getIdTypeValueArray(idType, "'").length == 3);
     }
+
+    @Test
+    public void testCodeTypeValueContainsMatch(){
+     boolean result=   fact.codeTypeValueContainsMatch(Arrays.asList(RuleTestHelper.getCodeType("TEST",null)),"TEST");
+        assertTrue(result);
+    }
 }

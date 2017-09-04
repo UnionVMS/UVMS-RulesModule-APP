@@ -539,6 +539,34 @@ public abstract class AbstractFact {
         return !valuesFoundInListOfCodeTypes.equals(valuesToBeFound);
     }
 
+    /**
+     * This method will return false if any codeType do not have matching value from the list valuesToBe matched
+     *
+     * @param codeTypes
+     * @param valuesToMatch
+     * @return
+     */
+    public boolean codeTypeValueContainsMatch(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (CollectionUtils.isEmpty(codeTypes) || valuesToMatch == null) {
+            return false;
+        }
+        HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
+
+        if (CollectionUtils.isEmpty(codeTypes)) {
+            return false;
+        }
+
+        for (CodeType codeType : codeTypes) {
+            if (codeType == null || codeType.getValue() == null || !valuesToBeFound.contains(codeType.getValue())) {
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
+
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(measureTypes)) {
             return true;
@@ -639,7 +667,7 @@ public abstract class AbstractFact {
     }
 
     public boolean listIdNotContains(CodeType codeType, String... values) {
-        return listIdNotContains(Arrays.asList(codeType), values);
+        return listIdNotContains(Collections.singletonList(codeType), values);
     }
 
     public boolean listIdNotContains(List<CodeType> codeTypes, String... values) {

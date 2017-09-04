@@ -181,31 +181,29 @@ public class FaJointFishingOperationFact extends AbstractFact {
 
 
     /**
-     * This will check if every FACatch in FishingActivity has atleast one with typeCode value ALLOCATED_TO_QUOTA
+     * This will check if every FACatch in FishingActivity has atleast one with typeCode value ALLOCATED_TO_QUOTA if FACatchSpecies is BFT
      *
      * @return TRUE : If every FishingActivity has FACatch with typeCode value ALLOCATED_TO_QUOTA
      * FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
      */
-    public boolean atLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList) {
+    public boolean verifyAtLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList) {
 
         if (CollectionUtils.isEmpty(fishingActivityList)) {
-            return false;
+            return true;
         }
 
-        boolean isPresent = false;
+
         for (FishingActivity fishingActivity : fishingActivityList) {
             if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
-                isPresent = false;
                 for (FACatch faCatch : fishingActivity.getSpecifiedFACatches()) {
-                    if (faCatch.getTypeCode() != null && "ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue())) {
-                        isPresent = true;
-                        break;
+                    if (faCatch.getSpeciesCode()!=null && "BFT".equals(faCatch.getSpeciesCode().getValue()) && (faCatch.getTypeCode() == null || !"ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue()))) {
+                       return false;
                     }
                 }
             }
         }
 
-        return isPresent;
+        return true;
     }
 
 

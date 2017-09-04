@@ -203,6 +203,12 @@ public class RuleTestHelper {
         return fluxLocation;
     }
 
+    public static FACatch getFACatch(String typeCode,String speciesCode){
+        FACatch faCatch = new FACatch();
+        faCatch.setTypeCode(getCodeTypeUNCEFACT(typeCode, ""));
+        faCatch.setSpeciesCode(getCodeTypeUNCEFACT(speciesCode, ""));
+        return faCatch;
+    }
     public static List<FACatch> getFACatchList() {
         List<FACatch> faCatches = new ArrayList<>(2);
         FACatch faCatch = new FACatch();
@@ -341,5 +347,19 @@ public class RuleTestHelper {
 
         return gearCharacteristics;
     }
+
+    public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
+        ContactParty contactParty = new ContactParty();
+        contactParty.setRoleCodes(Arrays.asList(roleCode));
+        contactParty.setSpecifiedStructuredAddresses(Arrays.asList(structuredAddress));
+        return contactParty;
+    }
+
+    public static StructuredAddress getStructuredAddress(){
+        StructuredAddress structuredAddress = new StructuredAddress();
+
+        return structuredAddress;
+    }
+
 
 }
