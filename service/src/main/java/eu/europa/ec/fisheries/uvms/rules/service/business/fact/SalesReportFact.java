@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
@@ -126,46 +127,14 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     public boolean isRecipientRoleNotSpecifiedForTakeOverDocument(){
-        if(isItemTypeEqualTo("TOD") && !isEmpty(includedSalesDocuments))
-        {
-            for (SalesDocumentFact salesDocument:includedSalesDocuments) {
-                if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
-                    return true;
-                }
-
-                boolean recipientAvailable = false;
-                for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueCodeTypeContainsAny(salesParty.getRoleCodes(), "RECIPIENT")) {
-                        recipientAvailable = true;
-                    }
-                }
-
-                if (!recipientAvailable) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return isItemTypeEqualTo("TOD") && !findRecipient().isPresent();
     }
 
-    public boolean isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocument(){
-        if(isItemTypeEqualTo("TOD") && !isEmpty(includedSalesDocuments))
-        {
-            for (SalesDocumentFact salesDocument:includedSalesDocuments) {
-                if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
-                    continue;
-                }
-
-                for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && salesParty.getSpecifiedFLUXOrganization() == null) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+    public boolean isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument(){
+        Optional<SalesPartyFact> recipient = findRecipient();
+        return isItemTypeEqualTo("TOD")
+                && recipient.isPresent()
+                && (recipient.get().getSpecifiedFLUXOrganization() == null || isBlank(recipient.get().getSpecifiedFLUXOrganization().getName()));
     }
 
     public boolean isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProducts(){
@@ -201,6 +170,22 @@ public class SalesReportFact extends SalesAbstractFact {
 
     public boolean isSalesNoteAndAnyChargeAmountIsEqualToZero() {
         return isItemTypeEqualTo("SN") && isAChargeAmountZero();
+    }
+
+    private Optional<SalesPartyFact> findRecipient(){
+        for (SalesDocumentFact salesDocument:includedSalesDocuments) {
+            if (salesDocument == null || salesDocument.getSpecifiedSalesParties() == null){
+                continue;
+            }
+
+            for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
+                if (salesParty != null && !valueCodeTypeContainsAny(salesParty.getRoleCodes(), "RECIPIENT")) {
+                    return Optional.of(salesParty);
+                }
+            }
+        }
+
+        return Optional.absent();
     }
 
     private boolean isAChargeAmountNull() {

@@ -144,8 +144,15 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
     public boolean isNotMostPreciseFAOArea() {
         List<ObjectRepresentation> faoAreas = MDRCacheHolder.getInstance()
                                                             .getObjectRepresentationList(MDRAcronymType.FAO_AREA);
-        return ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
                 (id.getValue(), "terminal_ind", "true", faoAreas);
+    }
+
+    public boolean isLocationNotInCountry() {
+        List<ObjectRepresentation> locations = MDRCacheHolder.getInstance()
+                .getObjectRepresentationList(MDRAcronymType.LOCATION);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
+                (id.getValue(), "code_2", countryID.getValue(), locations);
     }
 
     @Override
