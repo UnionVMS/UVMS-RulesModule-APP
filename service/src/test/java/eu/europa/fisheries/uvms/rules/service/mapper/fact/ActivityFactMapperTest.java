@@ -10,6 +10,7 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
@@ -27,6 +28,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -857,6 +859,34 @@ public class ActivityFactMapperTest {
         idType.setSchemeID(null);
         document.setIDS(singletonList(idType));
         assertTrue(isEmpty(ActivityFactMapper.getIds(document)));
+    }
+
+    @Test
+    public void testGetDateXMLStringNoDateTime() {
+        String dateString = "2016-08-01T03:48:23Z";
+        DateTimeType dateTimeType = new DateTimeType(null, new DateTimeType.DateTimeString(dateString, "YYYY-MM-DD'T'hh:mm:ss'Z'"));
+        String dateXMLString = ActivityFactMapper.getDateXMLString(dateTimeType);
+
+        assertTrue(dateString.equals(dateXMLString));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetDateXMLStringWithDateTime() {
+        Date date = null;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'hh:mm:ss'Z'");
+        date = DatatypeConverter.parseDate("2016-08-01T03:48:23Z").getTime();
+
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+        XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl(DatatypeFactory.newInstance().newXMLGregorianCalendar(c).toGregorianCalendar());
+
+        String dateString = "2016-08-01T03:48:23Z";
+        DateTimeType dateTimeType = new DateTimeType(xmlGregorianCalendar, null);
+        String dateXMLString = ActivityFactMapper.getDateXMLString(dateTimeType);
+
+        assertTrue(dateString.equals(dateXMLString));
     }
 
 }

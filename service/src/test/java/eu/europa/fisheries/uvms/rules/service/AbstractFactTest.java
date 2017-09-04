@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
@@ -317,6 +318,73 @@ public class AbstractFactTest {
         contactPeople.add(contactPerson);
 
         assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnTrueWithNullAliasAndFalseCheckAliasEmptyness() {
+        ContactPerson contactPerson1 = new ContactPerson();
+        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        ContactPerson contactPerson2 = new ContactPerson();
+        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
+
+        List<ContactPerson> contactPeople = new ArrayList<>();
+        contactPeople.add(contactPerson1);
+        contactPeople.add(contactPerson2);
+
+        assertTrue(fact.checkAliasFromContactList(contactPeople, false));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnTrueWithEmptyAliasAndTrueCheckAliasEmptyness() {
+        ContactPerson contactPerson1 = new ContactPerson();
+        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        ContactPerson contactPerson2 = new ContactPerson();
+        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
+        contactPerson2.setAlias(RuleTestHelper.getTextType(StringUtils.EMPTY, null, null));
+
+        List<ContactPerson> contactPeople = new ArrayList<>();
+        contactPeople.add(contactPerson1);
+        contactPeople.add(contactPerson2);
+
+        assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnFalseWithAllDataTrueCheckAliasEmptyness() {
+        ContactPerson contactPerson1 = new ContactPerson();
+        contactPerson1.setGivenName(RuleTestHelper.getTextType("GivenName1", null, null));
+        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        ContactPerson contactPerson2 = new ContactPerson();
+        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
+        contactPerson2.setAlias(RuleTestHelper.getTextType("FamilyName2", null, null));
+        contactPerson2.setAlias(RuleTestHelper.getTextType("Alias2", null, null));
+
+        List<ContactPerson> contactPeople = new ArrayList<>();
+        contactPeople.add(contactPerson1);
+        contactPeople.add(contactPerson2);
+
+        assertFalse(fact.checkAliasFromContactList(contactPeople, true));
+    }
+
+    @Test
+    public void testCheckAliasFromContactListShouldReturnFalseWithAllDataFalseCheckAliasEmptyness() {
+        ContactPerson contactPerson1 = new ContactPerson();
+        contactPerson1.setGivenName(RuleTestHelper.getTextType("GivenName1", null, null));
+        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        ContactPerson contactPerson2 = new ContactPerson();
+        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
+        contactPerson2.setAlias(RuleTestHelper.getTextType("FamilyName2", null, null));
+        contactPerson2.setAlias(RuleTestHelper.getTextType("Alias2", null, null));
+
+        List<ContactPerson> contactPeople = new ArrayList<>();
+        contactPeople.add(contactPerson1);
+        contactPeople.add(contactPerson2);
+
+        assertFalse(fact.checkAliasFromContactList(contactPeople, false));
     }
 
     @Test
@@ -1439,5 +1507,169 @@ public class AbstractFactTest {
         idTypes.add(idType2);
 
         assertEquals("FARM_VALUE", fact.getValueForSchemeId("FARM", idTypes));
+    }
+
+    @Test
+    public void testIsSchemeIdPresent() {
+        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+
+        assertTrue(fact.isSchemeIdPresent(idType));
+    }
+
+    @Test
+    public void testIsSchemeIdPresentNullValue() {
+        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
+
+        assertFalse(fact.isSchemeIdPresent(idType));
+    }
+
+    @Test
+    public void testIsAllSchemeIdsPresent() {
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+
+        assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+    }
+
+    @Test
+    public void testIsAllSchemeIdsPresentOneIsNull() {
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
+        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+
+        assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+    }
+
+    @Test
+    public void testIsAllSchemeIdsPresentOneIsEmpty() {
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", StringUtils.EMPTY);
+        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+
+        assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+    }
+
+    @Test
+    public void testIsSchemeIdPresentInMDRList() {
+        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
+        assertTrue(fact.isSchemeIdPresentInMDRList("VESSEL_STORAGE_TYPE", idType));
+    }
+
+    @Test
+    public void testIsSchemeIdPresentInMDRListNullValue() {
+        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
+        assertFalse(fact.isSchemeIdPresentInMDRList("VESSEL_STORAGE_TYPE", idType));
+    }
+
+    @Test
+    public void testIsAllSchemeIdsPresentInMDRList() {
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
+        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OSS");
+        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "NCC");
+
+        assertTrue(fact.isAllSchemeIdsPresentInMDRList("VESSEL_STORAGE_TYPE", Arrays.asList(idType1, idType2, idType3)));
+    }
+
+    @Test
+    public void testIsAllSchemeIdsPresentInMDRListNullValue() {
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
+        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
+        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "NCC");
+
+        assertFalse(fact.isAllSchemeIdsPresentInMDRList("VESSEL_STORAGE_TYPE", Arrays.asList(idType1, idType2, idType3)));
+    }
+
+    @Test
+    public void validateFormatIsoDateStringWithMillis() {
+        String isoDateStringWithMillis = "2016-08-01T03:48:23.000Z";
+
+        assertTrue(fact.isIsoDateStringValidFormat(isoDateStringWithMillis));
+    }
+
+    @Test
+    public void validateFormatIsoDateStringNoMillis() {
+        String isoDateStringNoMillis = "2016-08-01T03:48:23Z";
+
+        assertTrue(fact.isIsoDateStringValidFormat(isoDateStringNoMillis));
+    }
+
+    @Test
+    public void testMatchWithFluxTLCorrectValues() {
+        IdType idType1 = RuleTestHelper.getIdType("ABC:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = RuleTestHelper.getIdType("SDF:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+
+        fact.setSenderOrReceiver("SDF");
+
+        assertTrue(fact.matchWithFluxTL(idTypes));
+    }
+
+    @Test
+    public void testMatchWithFluxTLCorrectValueAndNullAndEmpty() {
+        IdType idType1 = RuleTestHelper.getIdType(null, "FLUX_GP_PARTY");
+        IdType idType2 = RuleTestHelper.getIdType(StringUtils.EMPTY, "FLUX_GP_PARTY");
+        IdType idType3 = RuleTestHelper.getIdType("SDF:GHJ", "FLUX_GP_PARTY");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+
+        fact.setSenderOrReceiver("SDF");
+
+        assertTrue(fact.matchWithFluxTL(idTypes));
+    }
+
+    @Test
+    public void testMatchWithFluxTLWrongValues() {
+        IdType idType1 = RuleTestHelper.getIdType("SDF;DEF", "FLUX_GP_PARTY");
+        IdType idType2 = RuleTestHelper.getIdType("SDFGHJ", "FLUX_GP_PARTY");
+        IdType idType3 = RuleTestHelper.getIdType("SDF-XCV", "FLUX_GP_PARTY");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+
+        fact.setSenderOrReceiver("SDF");
+
+        assertFalse(fact.matchWithFluxTL(idTypes));
+    }
+
+    @Test
+    public void testMatchWithFluxTLExceptPartiesCorrectValues() {
+        IdType idType1 = RuleTestHelper.getIdType("XEU:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = RuleTestHelper.getIdType("XFA:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+
+        fact.setSenderOrReceiver("SDF");
+
+        assertTrue(fact.matchWithFluxTLExceptParties(idTypes, "XEU", "XFD"));
+    }
+
+    @Test
+    public void testMatchWithFluxTLExceptPartiesWrongValues() {
+        IdType idType1 = RuleTestHelper.getIdType("XEU:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = RuleTestHelper.getIdType("XFA:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+
+        fact.setSenderOrReceiver("SDF");
+
+        assertFalse(fact.matchWithFluxTLExceptParties(idTypes, "XED", "XFD"));
+    }
+
+    @Test
+    public void testGetIdTypeValueArrayCorrectValue() {
+        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
+
+        assertTrue(fact.getIdTypeValueArray(idType, ":").length == 3);
+    }
+
+    @Test
+    public void testGetIdTypeValueArrayWrongSeparator() {
+        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
+
+        assertFalse(fact.getIdTypeValueArray(idType, "'").length == 3);
     }
 }
