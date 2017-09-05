@@ -738,8 +738,15 @@ public class ActivityFactMapper {
 
             partialXPath = xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
+            faCatchFact.setAppliedAAPProcess(faCatch.getAppliedAAPProcesses());
+            xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS).storeInRepo(faCatchFact, "appliedAAPProcess");
+
             faCatchFact.setResultAAPProduct(getAppliedProcessAAPProducts(faCatch.getAppliedAAPProcesses()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS, RESULT_AAP_PRODUCT).storeInRepo(faCatchFact, "resultAAPProduct");
+
+
+            faCatchFact.setDestinationFLUXLocations(faCatch.getDestinationFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXPath).append(DESTINATION_FLUX_LOCATION).storeInRepo(faCatchFact, "destinationFLUXLocations");
 
             faCatchFact.setSpeciesCode(mapToCodeType(faCatch.getSpeciesCode()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIES_CODE).storeInRepo(faCatchFact, "speciesCode");
