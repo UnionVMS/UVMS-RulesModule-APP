@@ -1674,8 +1674,8 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testCodeTypeValueContainsMatch(){
-     boolean result=   fact.codeTypeValueContainsMatch(Arrays.asList(RuleTestHelper.getCodeType("TEST",null)),"TEST");
+    public void testCodeTypeValueContainsMatch() {
+        boolean result = fact.codeTypeValueContainsMatch(Arrays.asList(RuleTestHelper.getCodeType("TEST", null)), "TEST");
         assertTrue(result);
     }
 }
