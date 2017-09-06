@@ -703,6 +703,10 @@ public abstract class AbstractFact {
         return Integer.toString(i).length();
     }
 
+    public boolean isPositive(MeasureType value) {
+        return isPositive(Collections.singletonList(value));
+    }
+
     public boolean isPositive(List<MeasureType> value) {
         if (value == null) {
             return true;
@@ -824,7 +828,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) <= 0;
+        return value.compareTo(BigDecimal.ZERO) >= 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
