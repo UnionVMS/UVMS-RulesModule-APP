@@ -13,26 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static java.util.Collections.singletonList;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
@@ -41,6 +21,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -62,8 +43,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
@@ -71,7 +54,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,6 +71,26 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static java.util.Collections.singletonList;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -246,7 +248,7 @@ public class MessageServiceBean implements MessageService {
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
     public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) {
-        log.debug("inside setFLUXFAReportMessageReceived", request.getRequest());
+        log.info("inside setFLUXFAReportMessageReceived", request.getRequest());
         try {
             FLUXFAReportMessage fluxfaReportMessage = JAXBMarshaller.unMarshallMessage(request.getRequest(), FLUXFAReportMessage.class);
             if (fluxfaReportMessage != null) {
@@ -284,8 +286,35 @@ public class MessageServiceBean implements MessageService {
             updateRequestMessageStatus(request.getLogGuid(), null);
         }
         catch (RulesModelMarshallException e) {
+            log.error(e.getMessage(), e);
+            sendFLUXResponseMessageOnException(e.getMessage(),null,request,request.getRequest());
             throw new RulesServiceException(e.getMessage(), e);
         }
+    }
+
+
+    public void sendFLUXResponseMessageOnException(String errorMessage,String rawMessage,RulesBaseRequest request,Object message){
+        if(request ==null){
+            log.error("Could not send FLUXResponseMessage. Request is null.");
+        }
+
+        List<String> xpaths = new ArrayList<>();
+        xpaths.add(errorMessage);
+        RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", xpaths);;
+        ValidationResultDto validationResultDto=rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, ErrorType.ERROR,rawMessage);
+
+        FLUXResponseMessage fluxResponseMessage=null;
+        if(message instanceof  FLUXFAReportMessage) {
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAReportMessage) message);
+        }else if(message instanceof FLUXFAQueryMessage){
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAQueryMessage) message);
+        }else if(message instanceof FLUXResponseMessage){
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXResponseMessage) message);
+        }else{
+            fluxResponseMessage =generateFluxResponseMessage(validationResultDto);
+        }
+        log.info("FLUXResponseMessage has been generated after exception: "+fluxResponseMessage);
+        sendResponseToExchange(fluxResponseMessage, request);
     }
 
     private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) {
@@ -383,6 +412,22 @@ public class MessageServiceBean implements MessageService {
                 List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
                 fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
             }
+            setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+            return responseMessage;
+
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
+    @Override
+    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
             setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
@@ -545,7 +590,10 @@ public class MessageServiceBean implements MessageService {
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("FLUXFAResponse has been sent back to Exchange.");
-        } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException | RulesValidationException e) {
+        } catch(RulesModelMarshallException e){
+            log.error(e.getMessage(), e);
+            sendFLUXResponseMessageOnException(e.getMessage(),null,request,fluxResponseMessageType);
+        } catch (  ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
