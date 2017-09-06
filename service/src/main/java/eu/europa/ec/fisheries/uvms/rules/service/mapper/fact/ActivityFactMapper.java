@@ -277,8 +277,12 @@ public class ActivityFactMapper {
         faReportDocumentFact.setCreationDateTime(getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, "creationDateTime");
 
+        faReportDocumentFact.setCreationDateTimeString(getDateXMLString(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
+
         faReportDocumentFact.setAcceptanceDateTime(getDate(faReportDocument.getAcceptanceDateTime()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ACCEPTANCE_DATE_TIME).storeInRepo(faReportDocumentFact, ACCEPTANCE_DATE_TIME_PROP);
+
+        faReportDocumentFact.setAcceptanceDateTimeString(getDateXMLString(faReportDocument.getAcceptanceDateTime()));
 
         faReportDocumentFact.setIds(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentIDS(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, IDS_PROP);
@@ -508,6 +512,8 @@ public class ActivityFactMapper {
 
         fluxFaReportMessageFact.setCreationDateTime(getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "creationDateTime");
+
+        fluxFaReportMessageFact.setCreationDateTimeString(getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage)));
 
         if (fluxfaReportMessage.getFAReportDocuments() != null) {
             fluxFaReportMessageFact.setFaReportDocuments(new ArrayList<>(fluxfaReportMessage.getFAReportDocuments()));
@@ -2687,6 +2693,20 @@ public class ActivityFactMapper {
         }
 
         return date;
+    }
+
+    public static String getDateXMLString(DateTimeType dateTimeType) {
+        String xmlDateString = null;
+
+        if (dateTimeType != null) {
+            if (dateTimeType.getDateTime() != null) {
+                xmlDateString = dateTimeType.getDateTime().toXMLFormat();
+            } else if (dateTimeType.getDateTimeString() != null) {
+                xmlDateString = dateTimeType.getDateTimeString().getValue();
+            }
+        }
+
+        return xmlDateString;
     }
 
     public static List<AAPProduct> getAppliedProcessAAPProducts(List<AAPProcess> appliedAAPProcesses) {
