@@ -13,20 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -60,6 +46,20 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @ToString
@@ -1135,6 +1135,22 @@ public abstract class AbstractFact {
 
         return true;
     }
+
+    public boolean isIdTypePresentInMDRList(List<IdType> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return false;
+        }
+
+
+        for(IdType idType : ids){
+            if(isIdTypePresentInMDRList(idType) ==false){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * This function checks that the IdType exist in MDR code list or not.

@@ -1364,7 +1364,8 @@ public class AbstractFactTest {
 
     @Test
     public void testIsIdTypePresentInMDRListWhenIdIsNull() {
-        assertFalse(fact.isIdTypePresentInMDRList(null));
+        IdType idType = null;
+        assertFalse(fact.isIdTypePresentInMDRList(idType));
     }
 
     @Test
