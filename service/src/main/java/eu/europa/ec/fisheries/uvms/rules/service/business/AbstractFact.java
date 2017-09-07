@@ -20,12 +20,7 @@ import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -35,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -52,14 +48,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @ToString
@@ -209,6 +199,32 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isSchemeIdPresent(IdType idType) {
+        if (idType == null) {
+            return true;
+        }
+
+        return StringUtils.isNotBlank(idType.getSchemeId());
+    }
+
+    public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
+        if (CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+
+        idTypes = new ArrayList<>(idTypes);
+        CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
+
+
+        for (IdType idType : idTypes) {
+            if (!isSchemeIdPresent(idType)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Checks if one of the String... array elements exists in the idTypes list.
      * Depending on checkEmptyness value it also checks (or not) if the values are empty.
@@ -252,7 +268,7 @@ public abstract class AbstractFact {
             TextType givenName = contPers.getGivenName();
             TextType familyName = contPers.getFamilyName();
             TextType alias = contPers.getAlias();
-            if (givenName == null && familyName == null) {
+            if (givenName == null || familyName == null) {
                 if (alias == null || (checkAliasEmptyness && StringUtils.isEmpty(alias.getValue()))) {
                     return true;
                 }
@@ -402,6 +418,14 @@ public abstract class AbstractFact {
         return value.matches(format);
     }
 
+    public boolean isIsoDateStringValidFormat(String value) {
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
+
+        return value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
+    }
+
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
         if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || idType.getSchemeId() != requiredSchemeId) {
             return false;
@@ -517,22 +541,23 @@ public abstract class AbstractFact {
 
     /**
      * This method will return false if any codeType do not have matching value from the list valuesToBe matched
+     *
      * @param codeTypes
      * @param valuesToMatch
      * @return
      */
-    public boolean codeTypeValueContainsMatch(List<CodeType> codeTypes, String... valuesToMatch){
-        if(CollectionUtils.isEmpty(codeTypes) ||valuesToMatch==null){
+    public boolean codeTypeValueContainsMatch(List<CodeType> codeTypes, String... valuesToMatch) {
+        if (CollectionUtils.isEmpty(codeTypes) || valuesToMatch == null) {
             return false;
         }
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
 
-        if(CollectionUtils.isEmpty(codeTypes)){
+        if (CollectionUtils.isEmpty(codeTypes)) {
             return false;
         }
 
-        for(CodeType codeType : codeTypes){
-            if(codeType ==null || codeType.getValue() ==null || !valuesToBeFound.contains(codeType.getValue())){
+        for (CodeType codeType : codeTypes) {
+            if (codeType == null || codeType.getValue() == null || !valuesToBeFound.contains(codeType.getValue())) {
                 return false;
             }
 
@@ -703,6 +728,10 @@ public abstract class AbstractFact {
         return Integer.toString(i).length();
     }
 
+    public boolean isPositive(MeasureType value) {
+        return isPositive(Collections.singletonList(value));
+    }
+
     public boolean isPositive(List<MeasureType> value) {
         if (value == null) {
             return true;
@@ -824,7 +853,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) <= 0;
+        return value.compareTo(BigDecimal.ZERO) >= 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
@@ -1019,7 +1048,8 @@ public abstract class AbstractFact {
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_GP_VALIDATION_LEVEL("(L00|L01|L02|L03)"),
         FLUX_GP_VALIDATION_TYPE("(ERR|WAR|IGN|OK)"),
-        FLUX_GP_RESPONSE("(OK|NOK|WOK)");
+        FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
+        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z");
 
         String formatStr;
 
@@ -1177,6 +1207,48 @@ public abstract class AbstractFact {
         return codeListValues.contains(value);
     }
 
+    public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
+        if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
+            return false;
+        }
+
+        for (IdType idType : idTypes) {
+            if (!isSchemeIdPresentInMDRList(listName, idType)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
+        if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
+            return false;
+        }
+
+        return isPresentInMDRList(listName, idType.getSchemeId());
+    }
+
+    public boolean matchWithFluxTLExceptParties(List<IdType> idTypes, String... parties) {
+        if (isEmpty(idTypes) || ArrayUtils.isEmpty(parties)) {
+            return false;
+        }
+
+        List<String> partiesAllowedToSend = Arrays.asList(parties);
+
+        for (IdType idType : idTypes) {
+            String[] idTypeValueArray = getIdTypeValueArray(idType, ":");
+
+            if (idTypeValueArray != null) {
+                if (partiesAllowedToSend.contains(idTypeValueArray[0]) || matchWithFluxTL(idType)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean match = false;
         for (IdType idType : idTypes) {
@@ -1191,9 +1263,33 @@ public abstract class AbstractFact {
     public boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
         if (idType != null) {
-            match = StringUtils.equals(idType.getValue(), senderOrReceiver);
+            String[] idValueArray = getIdTypeValueArray(idType, ":");
+
+            if (idValueArray != null) {
+                match = StringUtils.equals(idValueArray[0], senderOrReceiver);
+            }
         }
+
         return match;
+    }
+
+    public String[] getIdTypeValueArray(IdType idType, String separator) {
+        if (StringUtils.isBlank(separator)) {
+            return null;
+        }
+
+        String[] idValueArray = null;
+
+        if (idType != null) {
+            try {
+                idValueArray = idType.getValue().split(separator);
+            } catch (NullPointerException | PatternSyntaxException ex) {
+                log.error("Error splitting IdType's value to array!", ex);
+                return null;
+            }
+        }
+
+        return idValueArray;
     }
 
     public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {

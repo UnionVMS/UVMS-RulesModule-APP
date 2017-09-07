@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -31,6 +31,8 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private Date creationDateTime;
 
+    private String creationDateTimeString;
+
     private CodeType purposeCode;
 
     private List<IdType> ownerFluxPartyIds;
@@ -42,27 +44,35 @@ public class FluxFaReportMessageFact extends AbstractFact {
     public FluxFaReportMessageFact() {
         setFactType();
     }
+
     public List<IdType> getIds() {
         return ids;
     }
+
     public void setIds(List<IdType> ids) {
         this.ids = ids;
     }
+
     public CodeType getPurposeCode() {
         return purposeCode;
     }
+
     public void setPurposeCode(CodeType purposeCode) {
         this.purposeCode = purposeCode;
     }
+
     public List<IdType> getOwnerFluxPartyIds() {
         return ownerFluxPartyIds;
     }
+
     public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
         this.ownerFluxPartyIds = ownerFluxPartyIds;
     }
+
     public List<FAReportDocument> getFaReportDocuments() {
         return faReportDocuments;
     }
+
     public void setFaReportDocuments(List<FAReportDocument> faReportDocuments) {
         this.faReportDocuments = faReportDocuments;
     }
@@ -96,6 +106,14 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     public void setCreationDateTime(Date creationDateTime) {
         this.creationDateTime = creationDateTime;
+    }
+
+    public String getCreationDateTimeString() {
+        return creationDateTimeString;
+    }
+
+    public void setCreationDateTimeString(String creationDateTimeString) {
+        this.creationDateTimeString = creationDateTimeString;
     }
 
     public IdType getReferencedID() {
