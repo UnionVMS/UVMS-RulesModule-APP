@@ -1913,12 +1913,12 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
             faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
 
+            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
+            faResponseFact.setRespondentFLUXParty(fluxResponseDocument.getRespondentFLUXParty());
+
             if (fluxResponseDocument.getRespondentFLUXParty() != null) {
                 xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
                 faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
-
-                xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
-                faResponseFact.setRespondentFLUXParty(fluxResponseDocument.getRespondentFLUXParty());
             }
 
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
