@@ -2,12 +2,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +35,6 @@ public class SalesRulesServiceBeanTest {
         salesFLUXSalesReportMessageFact = new SalesFLUXSalesReportMessageFact();
     }
 
-
     @Test
     public void isReceptionDate48hAfterSaleDateWhenSaleDateMoreThan48hBeforeNow() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
@@ -65,6 +60,7 @@ public class SalesRulesServiceBeanTest {
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments(Arrays.asList(salesDocumentFact1, salesDocumentFact2, salesDocumentFact3))));
         assertTrue(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
+
 
     @Test
     public void isReceptionDate48hAfterSaleDateWhenSaleDate1hBeforeNow() throws Exception {
@@ -145,7 +141,6 @@ public class SalesRulesServiceBeanTest {
         assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
-
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hAfter() throws Exception {
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
@@ -171,6 +166,7 @@ public class SalesRulesServiceBeanTest {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
         assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
+
 
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenSalesReportsIsNull() throws Exception {
@@ -310,6 +306,36 @@ public class SalesRulesServiceBeanTest {
         fact.setStartDateTime(new DateTimeType().withDateTime(null));
 
         assertFalse(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
+    @Test
+    public void isDateOfValidationAfterCreationDateOfResponseWhenValidationIsBeforeCreationOfResponse() throws Exception {
+        DateTime responseCreationDate = DateTime.now();
+        DateTime validationResultCreationDate = DateTime.now().minusYears(10);
+
+        SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
+        fact.setCreationDateTime(new DateTimeType().withDateTime(responseCreationDate));
+        fact.setRelatedValidationResultDocuments(Arrays.asList(
+                new ValidationResultDocumentType().withCreationDateTime(new DateTimeType().withDateTime(validationResultCreationDate))));
+
+        boolean result = service.isDateOfValidationAfterCreationDateOfResponse(fact);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isDateOfValidationAfterCreationDateOfResponseWhenValidationIsAfterCreationOfResponse() throws Exception {
+        DateTime responseCreationDate = DateTime.now();
+        DateTime validationResultCreationDate = DateTime.now().plusYears(10);
+
+        SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
+        fact.setCreationDateTime(new DateTimeType().withDateTime(responseCreationDate));
+        fact.setRelatedValidationResultDocuments(Arrays.asList(
+                new ValidationResultDocumentType().withCreationDateTime(new DateTimeType().withDateTime(validationResultCreationDate))));
+
+        boolean result = service.isDateOfValidationAfterCreationDateOfResponse(fact);
+
+        assertTrue(result);
     }
 
 }

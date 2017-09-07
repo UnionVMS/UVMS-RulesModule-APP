@@ -202,4 +202,27 @@ public class SalesRulesServiceBean implements SalesRulesService {
         return fact.getCreationDateTime().getDateTime().isAfter(DateTime.now());
     }
 
+
+    @Override
+    public boolean isDateOfValidationAfterCreationDateOfResponse(SalesFLUXResponseDocumentFact fact) {
+        if (fact == null || fact.getCreationDateTime() == null || fact.getCreationDateTime().getDateTime() == null
+                || fact.getRelatedValidationResultDocuments() == null || isEmpty(fact.getRelatedValidationResultDocuments())) {
+            return false;
+        }
+
+        DateTime creationDateOfReport = fact.getCreationDateTime().getDateTime();
+
+        for (ValidationResultDocumentType validationResultDocumentType : fact.getRelatedValidationResultDocuments()) {
+            if (validationResultDocumentType.getCreationDateTime() != null && validationResultDocumentType.getCreationDateTime().getDateTime() != null) {
+                DateTime creationDateOfValidationResult = validationResultDocumentType.getCreationDateTime().getDateTime();
+
+                if (creationDateOfValidationResult.isAfter(creationDateOfReport)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

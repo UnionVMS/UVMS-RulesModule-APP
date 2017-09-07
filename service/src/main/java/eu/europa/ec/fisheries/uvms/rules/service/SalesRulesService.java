@@ -72,4 +72,6 @@ public interface SalesRulesService {
     boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact);
 
     boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact);
+
+    boolean isDateOfValidationAfterCreationDateOfResponse(SalesFLUXResponseDocumentFact fact);
 }
