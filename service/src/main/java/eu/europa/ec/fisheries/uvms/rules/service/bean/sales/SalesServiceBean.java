@@ -74,7 +74,7 @@ public class SalesServiceBean implements SalesService {
         try {
             return helper.areAnyOfTheseIdsNotUnique(ids, type);
         } catch (MessageException | JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Something went while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
+            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
         }
     }
 

@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 
@@ -140,6 +137,37 @@ public class SalesRulesServiceBean implements SalesRulesService {
     }
 
     @Override
+    public boolean isIdNotUnique(SalesQueryFact fact) {
+        if (fact == null || fact.getID() == null || isBlank(fact.getID().getValue())) {
+            return false;
+        }
+
+        return salesService.isIdNotUnique(fact.getID().getValue(), UniqueIDType.SALES_QUERY);
+    }
+
+    @Override
+    public boolean isIdNotUnique(SalesFLUXResponseDocumentFact fact) {
+        if (fact == null || fact.getIDS() == null ||
+                isEmpty(fact.getIDS()) || fact.getIDS().get(0) == null
+                || isBlank(fact.getIDS().get(0).getValue())) {
+            return false;
+        }
+
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_RESPONSE);
+    }
+
+    @Override
+    public boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact) {
+        if (fact == null || fact.getIDS() == null ||
+                isEmpty(fact.getIDS()) || fact.getIDS().get(0) == null
+                || isBlank(fact.getIDS().get(0).getValue())) {
+            return false;
+        }
+
+        return !salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+    }
+
+    @Override
     public boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact) {
         if (fact == null || isEmpty(fact.getTakeoverDocumentIDs())) {
             return false;
@@ -155,4 +183,23 @@ public class SalesRulesServiceBean implements SalesRulesService {
         }
         return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.TAKEOVER_DOCUMENT);
     }
+
+    @Override
+    public boolean isStartDateMoreThan3YearsAgo(SalesDelimitedPeriodFact fact) {
+        if (fact == null || fact.getStartDateTime() == null || fact.getStartDateTime().getDateTime() == null) {
+            return false;
+        }
+
+        return fact.getStartDateTime().getDateTime().isBefore(DateTime.now().minusYears(3).minusMinutes(1));
+    }
+
+    @Override
+    public boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact) {
+        if (fact == null || fact.getCreationDateTime() == null || fact.getCreationDateTime().getDateTime() == null) {
+            return false;
+        }
+
+        return fact.getCreationDateTime().getDateTime().isAfter(DateTime.now());
+    }
+
 }

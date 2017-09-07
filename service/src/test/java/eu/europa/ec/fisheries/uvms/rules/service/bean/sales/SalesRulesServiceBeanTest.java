@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import org.joda.time.DateTime;
@@ -25,7 +26,6 @@ import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SalesRulesServiceBeanTest {
-
     SalesFLUXSalesReportMessageFact salesFLUXSalesReportMessageFact;
 
     @InjectMocks
@@ -34,11 +34,11 @@ public class SalesRulesServiceBeanTest {
     @Mock
     SalesService salesService;
 
-
     @Before
     public void setUp() throws Exception {
         salesFLUXSalesReportMessageFact = new SalesFLUXSalesReportMessageFact();
     }
+
 
     @Test
     public void isReceptionDate48hAfterSaleDateWhenSaleDateMoreThan48hBeforeNow() throws Exception {
@@ -127,7 +127,6 @@ public class SalesRulesServiceBeanTest {
         assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
-
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hBefore() throws Exception {
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
@@ -165,6 +164,7 @@ public class SalesRulesServiceBeanTest {
         assertTrue(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
+
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenSalesReportsIsEmpty() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Lists.<SalesReportType>newArrayList());
@@ -195,7 +195,7 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void isIdNotUniqueWhenFactIsNull() throws Exception {
-        assertFalse(service.isIdNotUnique(null));
+        assertFalse(service.isIdNotUnique((SalesDocumentFact) null));
     }
 
     @Test
@@ -266,4 +266,50 @@ public class SalesRulesServiceBeanTest {
 
         assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgo() throws Exception {
+        SalesDelimitedPeriodFact fact = new SalesDelimitedPeriodFact();
+        fact.setStartDateTime(new DateTimeType().withDateTime(DateTime.now()));
+
+        assertFalse(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgoWhenMoreThan3YearsAgo() throws Exception {
+        SalesDelimitedPeriodFact fact = new SalesDelimitedPeriodFact();
+        fact.setStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusYears(4)));
+
+        assertTrue(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgoWhen3Years2MinutesAgo() throws Exception {
+        SalesDelimitedPeriodFact fact = new SalesDelimitedPeriodFact();
+        fact.setStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusYears(3).minusMinutes(2)));
+
+        assertTrue(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgoWhenFactIsNull() throws Exception {
+        assertFalse(service.isStartDateMoreThan3YearsAgo(null));
+    }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgoWhenStartDateInFactIsNull() throws Exception {
+        SalesDelimitedPeriodFact fact = new SalesDelimitedPeriodFact();
+        fact.setStartDateTime(null);
+
+        assertFalse(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
+    @Test
+    public void isStartDateMoreThan3YearsAgoWhenDateTimeInStartDateInFactIsNull() throws Exception {
+        SalesDelimitedPeriodFact fact = new SalesDelimitedPeriodFact();
+        fact.setStartDateTime(new DateTimeType().withDateTime(null));
+
+        assertFalse(service.isStartDateMoreThan3YearsAgo(fact));
+    }
+
 }

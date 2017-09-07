@@ -1,8 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
+import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 
 import javax.ejb.Local;
 
@@ -57,4 +57,19 @@ public interface SalesRulesService {
      * @return
      */
     boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact);
+
+    /**
+     * Checks if a sales query ID is not unique
+     * @param fact
+     * @return
+     */
+    boolean isIdNotUnique(SalesQueryFact fact);
+
+    boolean isStartDateMoreThan3YearsAgo(SalesDelimitedPeriodFact fact);
+
+    boolean isIdNotUnique(SalesFLUXResponseDocumentFact fact);
+
+    boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact);
+
+    boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact);
 }
