@@ -29,6 +29,10 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @Override
     public boolean isCorrectionAndIsItemTypeTheSameAsInTheOriginal(SalesFLUXSalesReportMessageFact fluxSalesReportMessageFact) {
+        if (fluxSalesReportMessageFact == null) {
+            return false;
+        }
+
         FLUXSalesReportMessage fluxSalesReportMessage = mapper.map(fluxSalesReportMessageFact, FLUXSalesReportMessage.class);
         return salesService.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage);
     }
@@ -158,13 +162,11 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @Override
     public boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact) {
-        if (fact == null || fact.getIDS() == null ||
-                isEmpty(fact.getIDS()) || fact.getIDS().get(0) == null
-                || isBlank(fact.getIDS().get(0).getValue())) {
+        if (fact == null || fact.getReferencedID() == null || isBlank(fact.getReferencedID().getValue())) {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
     }
 
     @Override
