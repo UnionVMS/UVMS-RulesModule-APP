@@ -1166,6 +1166,22 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isIdTypePresentInMDRList(List<IdType> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return false;
+        }
+
+
+        for(IdType idType : ids){
+            if(isIdTypePresentInMDRList(idType) ==false){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     /**
      * This function checks that the IdType exist in MDR code list or not.
      * The MDR list is defined by the property schemeId from the IdType
