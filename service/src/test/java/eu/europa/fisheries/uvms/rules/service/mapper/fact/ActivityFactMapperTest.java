@@ -29,6 +29,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -872,8 +873,8 @@ public class ActivityFactMapperTest {
     @Test
     @SneakyThrows
     public void testGetDateXMLStringWithDateTime() {
-        XMLGregorianCalendarImpl xmlGregorianCalendar = (XMLGregorianCalendarImpl) DatatypeFactory.newInstance().newXMLGregorianCalendar("2016-08-01T03:48:23Z");
         String dateString = "2016-08-01T03:48:23Z";
+        XMLGregorianCalendar xmlGregorianCalendar = XMLGregorianCalendarImpl.parse("2016-08-01T03:48:23Z");
         DateTimeType dateTimeType = new DateTimeType(xmlGregorianCalendar, null);
         String dateXMLString = ActivityFactMapper.getDateXMLString(dateTimeType);
 
