@@ -30,6 +30,7 @@ public class FaResponseFact extends AbstractFact {
     private IdType referencedID;
     private CodeType responseCode;
     private Date creationDateTime;
+    private String creationDateTimeString;
     private List<IdType> fluxPartyIds;
     List<ValidationResultDocument> relatedValidationResultDocuments;
     private List<IdType> validatorIDs;
@@ -70,6 +71,14 @@ public class FaResponseFact extends AbstractFact {
         this.creationDateTime = creationDateTime;
     }
 
+    public String getCreationDateTimeString() {
+        return creationDateTimeString;
+    }
+
+    public void setCreationDateTimeString(String creationDateTimeString) {
+        this.creationDateTimeString = creationDateTimeString;
+    }
+
     public List<IdType> getFluxPartyIds() {
         return fluxPartyIds;
     }
@@ -94,13 +103,13 @@ public class FaResponseFact extends AbstractFact {
         this.validatorIDs = validatorIDs;
     }
 
-    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
-        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
 
-        for(ValidationResultDocument validationResultDocument : relatedValidationResultDocuments){
-            if(validationResultDocument.getValidatorID() ==null){
+        for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
+            if (validationResultDocument.getValidatorID() == null) {
                 return false;
             }
         }
