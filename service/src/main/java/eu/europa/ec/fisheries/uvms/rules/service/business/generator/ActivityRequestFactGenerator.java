@@ -36,6 +36,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_GEAR_PROBLEM;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
@@ -217,9 +218,18 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             xPathUtil.clear();
             return;
         }
+        String partialXpath = xPathUtil.getValue();
+        int index = 1;
         for (GearProblem gearProblem : gearProblems) {
+
+            String partialCatchXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_GEAR_PROBLEM, index).getValue();
+
             List<FishingGear> relatedfishingGears = gearProblem.getRelatedFishingGears();
+
+            xPathUtil.appendWithoutWrapping(partialCatchXpath);
             addFactsForFishingGearAndCharacteristics(facts, relatedfishingGears, RELATED_FISHING_GEAR);
+
+            xPathUtil.appendWithoutWrapping(partialCatchXpath);
             addFactsForFLUXLocation(facts, gearProblem.getSpecifiedFLUXLocations(), SPECIFIED_FLUX_LOCATION);
         }
     }
@@ -273,10 +283,13 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         for (FLUXLocation fluxLocation : fluxLocations) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index);
             addFactsForStructuredAddress(facts, fluxLocation.getPostalStructuredAddresses(), POSTAL_STRUCTURED_ADDRESS);
+
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index).append(PHYSICAL_STRUCTURED_ADDRESS);
             facts.add(activityFactMapper.generateFactsForStructureAddress(fluxLocation.getPhysicalStructuredAddress()));
+
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index);
             facts.add(activityFactMapper.generateFactForFluxLocation(fluxLocation));
+
             index++;
         }
         xPathUtil.clear();
