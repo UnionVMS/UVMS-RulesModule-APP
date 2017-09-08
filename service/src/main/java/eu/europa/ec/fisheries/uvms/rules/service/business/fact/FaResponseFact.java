@@ -114,8 +114,8 @@ public class FaResponseFact extends AbstractFact {
         this.respondentFLUXParty = respondentFLUXParty;
     }
 
-    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
-        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
 
@@ -128,13 +128,13 @@ public class FaResponseFact extends AbstractFact {
         return true;
     }
 
-    public boolean isValidationQualityAnalysisPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
-        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+    public boolean isValidationQualityAnalysisPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
 
-        for(ValidationResultDocument validationResultDocument : relatedValidationResultDocuments){
-            if(CollectionUtils.isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())){
+        for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
+            if (CollectionUtils.isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())) {
                 return false;
             }
         }
