@@ -734,6 +734,12 @@ public class ActivityFactMapper {
             faCatchFact.setSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
             xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact, "specifiedFLUXLocations");
 
+            if (faCatch.getSpecifiedFLUXLocations() != null) {
+                faCatchFact.setFaCatchFluxLocationId(mapFLUXLocationList(faCatch.getSpecifiedFLUXLocations()));
+                xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "faCatchFluxLocationId");
+            }
+
+
             faCatchFact.setSpecifiedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(faCatch.getSpecifiedFLUXLocations()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(faCatchFact, "specifiedFluxLocationRFMOCodeList");
 
