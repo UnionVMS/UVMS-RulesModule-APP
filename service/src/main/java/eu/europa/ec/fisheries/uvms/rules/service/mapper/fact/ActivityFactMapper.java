@@ -1625,7 +1625,7 @@ public class ActivityFactMapper {
             faArrivalFact.setFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faArrivalFact, "fluxLocationTypeCodes");
 
-            faArrivalFact.setFishingTripIds(mapToIdType(fishingActivitySpecifiedFishingTripIDS(fishingActivity)));
+            faArrivalFact.setFishingTripIds(mapToIdType(fishingActivitySpecifiedFishingTripIDS(fishingActivity, faReportDocument)));
             faArrivalFact.setFaTypesPerTrip(fishingActivitiesWithTripIds);
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP, ID).storeInRepo(faArrivalFact, "fishingTripIds");
 
@@ -2345,18 +2345,27 @@ public class ActivityFactMapper {
         return value;
     }
 
-    private List<IDType> fishingActivitySpecifiedFishingTripIDS(FishingActivity fishingActivity) {
+    private List<IDType> fishingActivitySpecifiedFishingTripIDS(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
 
-        if (fishingActivity == null) {
-            return emptyList();
-        }
-        FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
-        if (specifiedFishingTrip == null) {
-            return emptyList();
-        }
-        List<IDType> iDS = specifiedFishingTrip.getIDS();
-        if (iDS == null) {
-            return emptyList();
+        List<IDType> iDS = emptyList();
+
+        if (fishingActivity != null) {
+
+            FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
+
+            if (relatedFLUXReportDocument != null) {
+
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType purposeCode = relatedFLUXReportDocument.getPurposeCode();
+
+                if (purposeCode != null && "9".equals(purposeCode.getValue())) {
+
+                    FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
+
+                    if (specifiedFishingTrip != null) {
+                        iDS = specifiedFishingTrip.getIDS();
+                    }
+                }
+            }
         }
         return iDS;
     }
