@@ -18,4 +18,8 @@ public class ServiceConstants {
 
     public static final String DB_ACCESS_RULES_DOMAIN_MODEL = "java:global/rules-dbaccess-module/rules-dbaccess-domain/RulesDomainModelBean!eu.europa.ec.fisheries.remote.RulesDomainModel";
 
+    public static final String INVALID_XML_RULE="FA-L00-00-0000";
+
+    public static final String INVALID_XML_RULE_MESSAGE="Verify whether or not the message is valid XML and validates against the XSD schema.";
+
 }

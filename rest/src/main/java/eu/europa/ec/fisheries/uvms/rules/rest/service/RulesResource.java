@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.exception.ServiceException;
@@ -67,7 +68,7 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
     public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
-        FLUXResponseMessage fluxResponseMessage;
+        FLUXResponseMessage fluxResponseMessage=null;
         try {
             Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, request);
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, request, extraValueTypeObjectMap);
@@ -75,7 +76,10 @@ public class RulesResource {
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
-        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+        } catch(ActivityModelMarshallException e){
+            log.error(e.getMessage(), e);
+
+        }catch (RulesServiceException |  RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
@@ -88,7 +92,8 @@ public class RulesResource {
     @Path("/evaluate/fluxfaquerymessage")
     public Response evaluate(FLUXFAQueryMessage request) throws ServiceException {
 
-        FLUXResponseMessage fluxResponseMessage;
+        FLUXResponseMessage fluxResponseMessage=null;
+        SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest =null;
         try {
             Map<ExtraValueType, Object> extraValueMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, request);
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, request, extraValueMap);
@@ -96,12 +101,18 @@ public class RulesResource {
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
-        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+        }catch(ActivityModelMarshallException e){
+            log.error(e.getMessage(), e);
+
+        }
+        catch (RulesServiceException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
         return Response.ok(fluxResponseMessage).build();
     }
+
+
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
@@ -109,7 +120,7 @@ public class RulesResource {
     @Path("/evaluate/fluxfaResponsemessage")
     public Response evaluate(FLUXResponseMessage request) throws ServiceException {
 
-        FLUXResponseMessage fluxResponseMessage;
+        FLUXResponseMessage fluxResponseMessage=null;
         try {
 
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
@@ -117,7 +128,9 @@ public class RulesResource {
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s);
             fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
-        } catch (RulesServiceException | ActivityModelMarshallException | RulesValidationException e) {
+        } catch(ActivityModelMarshallException e){
+            log.error(e.getMessage(), e);
+        } catch (RulesServiceException |  RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
