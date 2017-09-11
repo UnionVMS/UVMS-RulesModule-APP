@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rules-service</artifactId>
@@ -11,13 +12,15 @@
         <artifactId>rules</artifactId>
         <version>3.0.9-SNAPSHOT</version>
     </parent>
-    
+
     <!-- PROPERTIES USED FOR LOGBACK -->
     <properties>
-        <application.name>${project.parent.artifactId}</application.name> 
+        <application.name>${project.parent.artifactId}</application.name>
         <application.version>${project.parent.version}</application.version>
-        <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
-        <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
+        <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log
+        </application.logfile>
+        <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log
+        </application.error.logfile>
     </properties>
 
     <dependencyManagement>
@@ -31,13 +34,13 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-  
+
     <dependencies>
         <dependency>
-			<groupId>fish.focus.uvms.maven</groupId>
-			<artifactId>uvms-pom-monitoring-deps</artifactId>
-			<type>pom</type>
-		</dependency>        
+            <groupId>fish.focus.uvms.maven</groupId>
+            <artifactId>uvms-pom-monitoring-deps</artifactId>
+            <type>pom</type>
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
@@ -50,7 +53,7 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
             <artifactId>movement-model</artifactId>
@@ -93,11 +96,11 @@
         </dependency>
 
 
-		<dependency>
-			<groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
-			<artifactId>mdr-model</artifactId>
-			<version>${mdr.model.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
+            <artifactId>mdr-model</artifactId>
+            <version>${mdr.model.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
@@ -105,7 +108,7 @@
             <version>3.0.4</version>
         </dependency>
 
-		<!-- drools dependencies -->
+        <!-- drools dependencies -->
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
