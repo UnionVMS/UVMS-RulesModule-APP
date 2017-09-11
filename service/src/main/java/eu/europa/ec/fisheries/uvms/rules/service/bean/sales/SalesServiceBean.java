@@ -74,12 +74,20 @@ public class SalesServiceBean implements SalesService {
         try {
             return helper.areAnyOfTheseIdsNotUnique(ids, type);
         } catch (MessageException | JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Something went while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
+            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
         }
     }
 
-    private boolean isTypeCodeBetweenReportsNotEqual(FLUXSalesReportMessage originalReport, FLUXSalesReportMessage correctedReport) {
-        if (originalReport == null) {
+    protected boolean isTypeCodeBetweenReportsNotEqual(FLUXSalesReportMessage originalReport, FLUXSalesReportMessage correctedReport) {
+        if (originalReport == null || originalReport.getSalesReports() == null || isEmpty(originalReport.getSalesReports()) ||
+                originalReport.getSalesReports().get(0) == null || originalReport.getSalesReports().get(0).getItemTypeCode() == null ||
+                isBlank(originalReport.getSalesReports().get(0).getItemTypeCode().getValue())) {
+            return false;
+        }
+        
+        if (correctedReport == null || correctedReport.getSalesReports() == null || isEmpty(correctedReport.getSalesReports()) ||
+                correctedReport.getSalesReports().get(0) == null || correctedReport.getSalesReports().get(0).getItemTypeCode() == null ||
+                isBlank(correctedReport.getSalesReports().get(0).getItemTypeCode().getValue())) {
             return false;
         }
 

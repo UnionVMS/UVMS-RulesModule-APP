@@ -1,32 +1,40 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.jms.JMSException;
+import javax.swing.text.html.Option;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({JAXBMarshaller.class, SalesModuleRequestMapper.class})
-@PowerMockIgnore( {"javax.management.*"})
+@RunWith(MockitoJUnitRunner.class)
 public class SalesServiceBeanTest {
+
     @InjectMocks
     SalesServiceBean service;
 
     @Mock
     SalesServiceBeanHelper helper;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsEqual() throws Exception {
@@ -47,7 +55,6 @@ public class SalesServiceBeanTest {
         boolean result = service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage);
         assertFalse(result);
     }
-
 
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsNotEqual() throws Exception {
@@ -98,6 +105,7 @@ public class SalesServiceBeanTest {
         assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(new FLUXSalesReportMessage().withFLUXReportDocument(null)));
     }
 
+
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenPurposeCodeInFLUXReportDocumentInReportIsNull() throws Exception {
         assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(new FLUXSalesReportMessage().withFLUXReportDocument(new FLUXReportDocumentType().withPurposeCode(null))));
@@ -106,6 +114,268 @@ public class SalesServiceBeanTest {
     @Test
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenValueInPurposeCodeInFLUXReportDocumentInReportIsNull() throws Exception {
         assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(new FLUXSalesReportMessage().withFLUXReportDocument(new FLUXReportDocumentType().withPurposeCode(new CodeType().withValue(null)))));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenNotEqual() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("TOD")));
+        assertTrue(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenEqual() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenOriginalReportIsNull() throws Exception {
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(null, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenSalesReportsInOriginalReportIsEmpty() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(Lists.<SalesReportType>newArrayList());
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenItemTypeCodeInSalesReportsInOriginalReportIsNull() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(null));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenValueItemTypeCodeInSalesReportsInOriginalReportIsNull() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue(null)));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenValueItemTypeCodeInSalesReportsInOriginalReportIsBlank() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue(null)));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenCorrectedReportIsNull() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, null));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenSalesReportsInCorrectedReportIsEmpty() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(Lists.<SalesReportType>newArrayList());
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenItemTypeCodeInSalesReportsInCorrectedReportIsNull() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(null));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenValueItemTypeCodeInSalesReportsInCorrectedReportIsNull() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue(null)));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void isTypeCodeBetweenReportsNotEqualWhenValueItemTypeCodeInSalesReportsInCorrectedReportIsBlank() throws Exception {
+        FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
+        FLUXSalesReportMessage correctedReport = new FLUXSalesReportMessage()
+                .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue(null)));
+        assertFalse(service.isTypeCodeBetweenReportsNotEqual(originalReport, correctedReport));
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenNotUnique() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        doReturn(true).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+
+        assertTrue(service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY));
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenUnique() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        doReturn(false).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+
+        assertFalse(service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY));
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenMessageExceptionWasThrown() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        doThrow(MessageException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
+
+        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenJMSExceptionWasThrown() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        doThrow(JMSException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
+
+        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenSalesMarshallExceptionWasThrown() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        doThrow(SalesMarshallException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
+
+        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenListIsEmpty() throws Exception {
+        List<String> ids = Lists.newArrayList();
+
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
+
+        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenListIsNull() throws Exception {
+        List<String> ids = null;
+
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
+
+        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void areAnyOfTheseIdsNotUniqueWhenTypeIsNull() throws Exception {
+        List<String> ids = Arrays.asList("abc");
+
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
+
+        service.areAnyOfTheseIdsNotUnique(ids, null);
+    }
+
+
+
+    @Test
+    public void isIdNotUniqueWhenIdIsBlank() throws Exception {
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Null received in isIdNotUnique. Sanitize your inputs");
+
+        service.isIdNotUnique("", UniqueIDType.SALES_QUERY);
+    }
+
+    @Test
+    public void isIdNotUniqueWhenTypeIsNull() throws Exception {
+        exception.expect(NullPointerException.class);
+        exception.expectMessage("Null received in isIdNotUnique. Sanitize your inputs");
+
+        service.isIdNotUnique("id", null);
+    }
+
+    @Test
+    public void doesReportExistWithIdWhenExists() throws Exception {
+        doReturn(Optional.of(new FLUXSalesReportMessage())).when(helper).findReport("id");
+
+        assertTrue(service.doesReportExistWithId("id"));
+        verify(helper).findReport("id");
+        verifyNoMoreInteractions(helper);
+    }
+
+    @Test
+    public void doesReportExistWithIdWhenIdDoesNotExist() throws Exception {
+        doReturn(Optional.absent()).when(helper).findReport("id");
+
+        assertFalse(service.doesReportExistWithId("id"));
+        verify(helper).findReport("id");
+        verifyNoMoreInteractions(helper);
+    }
+
+    @Test
+    public void doesReportExistWithIdWhenMessageExceptionWasThrown() throws Exception {
+        doThrow(MessageException.class).when(helper).findReport("id");
+
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
+
+        service.doesReportExistWithId("id");
+        verify(helper).findReport("id");
+        verifyNoMoreInteractions(helper);
+    }
+
+    @Test
+    public void doesReportExistWithIdWhenSalesMarshallExceptionWasThrown() throws Exception {
+        doThrow(SalesMarshallException.class).when(helper).findReport("id");
+
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
+
+        service.doesReportExistWithId("id");
+        verify(helper).findReport("id");
+        verifyNoMoreInteractions(helper);
+    }
+
+    @Test
+    public void doesReportExistWithIdWhenJMSExceptionWasThrown() throws Exception {
+        doThrow(JMSException.class).when(helper).findReport("id");
+
+        exception.expect(RulesServiceException.class);
+        exception.expectMessage("Something went wrong while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean");
+
+        service.doesReportExistWithId("id");
+        verify(helper).findReport("id");
+        verifyNoMoreInteractions(helper);
     }
 
 }
