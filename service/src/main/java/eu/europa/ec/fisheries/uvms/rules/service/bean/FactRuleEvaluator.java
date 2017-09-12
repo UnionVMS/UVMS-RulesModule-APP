@@ -112,7 +112,7 @@ public class FactRuleEvaluator {
                 String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
                 next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
                 next.setOk(false);
-                facts.remove(next);
+                facts.remove(next); // remove fact with exception and re-validate the other facts
                 exceptionsList.add(next);
                 validateFact(facts);
             }
