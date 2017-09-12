@@ -14,8 +14,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
 import java.util.List;
 
 /**
@@ -26,8 +24,8 @@ public class ValidationQualityAnalysisFact extends AbstractFact {
     private IdType id;
     private CodeType levelCode;
     private CodeType typeCode;
-    private List<TextType> results;
-    private List<TextType> referencedItems;
+    private List<String> results;
+    private List<String> referencedItems;
 
     public IdType getId() {
         return id;
@@ -53,19 +51,19 @@ public class ValidationQualityAnalysisFact extends AbstractFact {
         this.typeCode = typeCode;
     }
 
-    public List<TextType> getResults() {
+    public List<String> getResults() {
         return results;
     }
 
-    public void setResults(List<TextType> results) {
+    public void setResults(List<String> results) {
         this.results = results;
     }
 
-    public List<TextType> getReferencedItems() {
+    public List<String> getReferencedItems() {
         return referencedItems;
     }
 
-    public void setReferencedItems(List<TextType> referencedItems) {
+    public void setReferencedItems(List<String> referencedItems) {
         this.referencedItems = referencedItems;
     }
 
