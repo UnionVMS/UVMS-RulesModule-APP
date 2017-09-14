@@ -13,23 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
@@ -47,13 +30,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Ignore;
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -72,13 +52,24 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import java.util.Arrays;
-import java.util.Collections;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.NoSuchElementException;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertNotNull;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -242,6 +233,13 @@ public class MessageServiceBeanTest {
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
         messageServiceBean.sendResponseToExchange(fluxResponseMessage, request);
+    }
+
+    @Test
+    public void testGenerateFluxResponseMessageForException() throws ConfigServiceException {
+        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult());
+        assertNotNull(fluxResponseMessage);
     }
 
     private ValidationResultDto getValidationResult() {

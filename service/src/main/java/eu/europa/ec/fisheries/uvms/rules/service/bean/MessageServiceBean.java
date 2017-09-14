@@ -254,7 +254,7 @@ public class MessageServiceBean implements MessageService {
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
     public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) {
-        log.debug("inside setFLUXFAReportMessageReceived", request.getRequest());
+        log.info("inside setFLUXFAReportMessageReceived", request.getRequest());
         try {
             FLUXFAReportMessage fluxfaReportMessage = JAXBMarshaller.unMarshallMessage(request.getRequest(), FLUXFAReportMessage.class);
             if (fluxfaReportMessage != null) {
@@ -292,8 +292,35 @@ public class MessageServiceBean implements MessageService {
             updateRequestMessageStatus(request.getLogGuid(), null);
         }
         catch (RulesModelMarshallException e) {
+            log.error(e.getMessage(), e);
+            sendFLUXResponseMessageOnException(e.getMessage(),null,request,request.getRequest());
             throw new RulesServiceException(e.getMessage(), e);
         }
+    }
+
+
+    public void sendFLUXResponseMessageOnException(String errorMessage,String rawMessage,RulesBaseRequest request,Object message){
+        if(request ==null){
+            log.error("Could not send FLUXResponseMessage. Request is null.");
+        }
+
+        List<String> xpaths = new ArrayList<>();
+        xpaths.add(errorMessage);
+        RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", xpaths);;
+        ValidationResultDto validationResultDto=rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, ErrorType.ERROR,rawMessage);
+
+        FLUXResponseMessage fluxResponseMessage=null;
+        if(message instanceof  FLUXFAReportMessage) {
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAReportMessage) message);
+        }else if(message instanceof FLUXFAQueryMessage){
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAQueryMessage) message);
+        }else if(message instanceof FLUXResponseMessage){
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXResponseMessage) message);
+        }else{
+            fluxResponseMessage =generateFluxResponseMessage(validationResultDto);
+        }
+        log.info("FLUXResponseMessage has been generated after exception: "+fluxResponseMessage);
+        sendResponseToExchange(fluxResponseMessage, request);
     }
 
     private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) {
@@ -391,6 +418,22 @@ public class MessageServiceBean implements MessageService {
                 List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
                 fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
             }
+            setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+            return responseMessage;
+
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
+    @Override
+    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
             setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
@@ -553,7 +596,10 @@ public class MessageServiceBean implements MessageService {
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("FLUXFAResponse has been sent back to Exchange.");
-        } catch (RulesModelMarshallException | ExchangeModelMarshallException | MessageException | RulesValidationException e) {
+        } catch(RulesModelMarshallException e){
+            log.error(e.getMessage(), e);
+            sendFLUXResponseMessageOnException(e.getMessage(),null,request,fluxResponseMessageType);
+        } catch (  ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }

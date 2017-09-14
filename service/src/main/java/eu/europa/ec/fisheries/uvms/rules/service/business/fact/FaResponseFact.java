@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 
 import java.util.Date;
@@ -30,9 +31,11 @@ public class FaResponseFact extends AbstractFact {
     private IdType referencedID;
     private CodeType responseCode;
     private Date creationDateTime;
+    private String creationDateTimeString;
     private List<IdType> fluxPartyIds;
-    List<ValidationResultDocument> relatedValidationResultDocuments;
+    private List<ValidationResultDocument> relatedValidationResultDocuments;
     private List<IdType> validatorIDs;
+    private FLUXParty respondentFLUXParty;
 
     public IdType getReferencedID() {
         return referencedID;
@@ -70,6 +73,14 @@ public class FaResponseFact extends AbstractFact {
         this.creationDateTime = creationDateTime;
     }
 
+    public String getCreationDateTimeString() {
+        return creationDateTimeString;
+    }
+
+    public void setCreationDateTimeString(String creationDateTimeString) {
+        this.creationDateTimeString = creationDateTimeString;
+    }
+
     public List<IdType> getFluxPartyIds() {
         return fluxPartyIds;
     }
@@ -94,13 +105,36 @@ public class FaResponseFact extends AbstractFact {
         this.validatorIDs = validatorIDs;
     }
 
-    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments){
-        if(CollectionUtils.isEmpty(relatedValidationResultDocuments)){
+
+    public FLUXParty getRespondentFLUXParty() {
+        return respondentFLUXParty;
+    }
+
+    public void setRespondentFLUXParty(FLUXParty respondentFLUXParty) {
+        this.respondentFLUXParty = respondentFLUXParty;
+    }
+
+    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
 
-        for(ValidationResultDocument validationResultDocument : relatedValidationResultDocuments){
-            if(validationResultDocument.getValidatorID() ==null){
+        for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
+            if (validationResultDocument.getValidatorID() == null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isValidationQualityAnalysisPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
+            return false;
+        }
+
+        for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
+            if (CollectionUtils.isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())) {
                 return false;
             }
         }

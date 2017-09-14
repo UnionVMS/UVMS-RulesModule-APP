@@ -28,6 +28,7 @@ public class FaDiscardFact extends AbstractFact {
     private List<FLUXLocation> relatedFLUXLocations;
     private List<CodeType> fluxLocationTypeCode;
     private List<CodeType> specifiedFACatchTypeCode;
+    private CodeType reasonCode;
 
 
     public CodeType getFaReportDocumentTypeCode() {
@@ -64,6 +65,15 @@ public class FaDiscardFact extends AbstractFact {
 
     public FaDiscardFact() {
         setFactType();
+    }
+
+
+    public CodeType getReasonCode() {
+        return reasonCode;
+    }
+
+    public void setReasonCode(CodeType reasonCode) {
+        this.reasonCode = reasonCode;
     }
 
     @Override

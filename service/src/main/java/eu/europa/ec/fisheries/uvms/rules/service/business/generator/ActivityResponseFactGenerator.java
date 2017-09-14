@@ -51,14 +51,18 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
     @Override
     public List<AbstractFact> generateAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
+        xPathUtil.append(FLUX_RESPONSE_MESSAGE).append(FLUX_RESPONSE_DOCUMENT);
         facts.add(activityFactMapper.generateFactsForFaResponse(fluxResponseMessage));
+
         FLUXResponseDocument fluxResponseDocument=fluxResponseMessage.getFLUXResponseDocument();
         if(fluxResponseDocument!=null){
             List<ValidationResultDocument> validationResultDocuments= fluxResponseDocument.getRelatedValidationResultDocuments();
             int index = 1;
+            String partialXpath = xPathUtil.getValue();
             for(ValidationResultDocument validationResultDocument : validationResultDocuments){
+                String partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index).getValue();
 
-                xPathUtil.append(FLUX_RESPONSE_MESSAGE,FLUX_RESPONSE_DOCUMENT).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index);
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(addFactsForValidationQualityAnalysis(validationResultDocument.getRelatedValidationQualityAnalysises()));
 
                 index++;

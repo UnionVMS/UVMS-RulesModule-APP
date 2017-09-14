@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
@@ -45,6 +46,9 @@ public class FaCatchFact extends AbstractFact {
     private List<NumericType> appliedAAPProcessConversionFactorNumber;
     private List<FLUXLocation> specifiedFLUXLocations;
     private List<CodeType> specifiedFluxLocationRFMOCodeList;
+    private List<AAPProcess> appliedAAPProcess;
+    List<FLUXLocation> destinationFLUXLocations;
+    private List<IdType> faCatchFluxLocationId;
 
     public FaCatchFact() {
         setFactType();
@@ -214,5 +218,29 @@ public class FaCatchFact extends AbstractFact {
 
     public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
         this.fishingActivityTypeCode = fishingActivityTypeCode;
+    }
+
+    public List<AAPProcess> getAppliedAAPProcess() {
+        return appliedAAPProcess;
+    }
+
+    public void setAppliedAAPProcess(List<AAPProcess> appliedAAPProcess) {
+        this.appliedAAPProcess = appliedAAPProcess;
+    }
+
+    public List<FLUXLocation> getDestinationFLUXLocations() {
+        return destinationFLUXLocations;
+    }
+
+    public void setDestinationFLUXLocations(List<FLUXLocation> destinationFLUXLocations) {
+        this.destinationFLUXLocations = destinationFLUXLocations;
+    }
+
+    public List<IdType> getFaCatchFluxLocationId() {
+        return faCatchFluxLocationId;
+    }
+
+    public void setFaCatchFluxLocationId(List<IdType> faCatchFluxLocationId) {
+        this.faCatchFluxLocationId = faCatchFluxLocationId;
     }
 }
