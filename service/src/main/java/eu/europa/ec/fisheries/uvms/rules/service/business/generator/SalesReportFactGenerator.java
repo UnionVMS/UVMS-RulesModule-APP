@@ -100,7 +100,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
     @Override
     public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
         if (businessObject.getAuctionSale() != null && businessObject.getAuctionSale().getSalesCategory() == null) {
-            throw new RuntimeException("SalesCategory in AuctionSale cannot be null");
+            throw new NullPointerException("SalesCategory in AuctionSale cannot be null");
         }
         this.report = businessObject;
     }
