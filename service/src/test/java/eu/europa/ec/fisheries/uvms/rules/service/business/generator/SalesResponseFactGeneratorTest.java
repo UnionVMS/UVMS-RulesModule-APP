@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
@@ -21,6 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationQu
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesValidationResultDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
@@ -57,6 +59,7 @@ public class SalesResponseFactGeneratorTest {
                 .withSalesReports(new SalesReportType());
 
         salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
+        salesResponseFactGenerator.setExtraValueMap(Collections.<ExtraValueType, Object>emptyMap());
         List<AbstractFact> allFacts = salesResponseFactGenerator.generateAllFacts();
 
         List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =

@@ -19,7 +19,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 
 @Slf4j
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
@@ -80,15 +81,27 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
         for (Object objectToMapToFact : objectsToMapToFacts) {
             SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
-            fact.setSource(Source.REPORT);
+            fillMappingVariables(fact);
             facts.add(fact);
         }
 
         return facts;
     }
 
+    private void fillMappingVariables(SalesAbstractFact fact) {
+        fact.setSource(Source.REPORT);
+        fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
+
+        if (report.getAuctionSale() != null) {
+            fact.setSalesCategoryType(report.getAuctionSale().getSalesCategory());
+        }
+    }
+
     @Override
     public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
+        if (businessObject.getAuctionSale() != null && businessObject.getAuctionSale().getSalesCategory() == null) {
+            throw new RuntimeException("SalesCategory in AuctionSale cannot be null");
+        }
         this.report = businessObject;
     }
 

@@ -19,7 +19,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -30,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
@@ -72,6 +73,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         for (Object objectToMapToFact : objectsToMapToFacts) {
             SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
             fact.setSource(Source.RESPONSE);
+            fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
             facts.add(fact);
         }
 

@@ -56,7 +56,7 @@ public class MdrCaheHolderTest {
 
         mdrCacheHolder.addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
 
-        final List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresntationList(MDRAcronymType.GEAR_TYPE);
+        final List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresentationList(MDRAcronymType.GEAR_TYPE);
         assertTrue(CollectionUtils.isNotEmpty(gearTypeList));
 
     }
@@ -64,7 +64,7 @@ public class MdrCaheHolderTest {
     @Test
     public void testGetObjectRepresntationListCheckNull() {
 
-        List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresntationList(null);
+        List<ObjectRepresentation> gearTypeList = mdrCacheHolder.getObjectRepresentationList(null);
         assertEquals(Collections.emptyList(),gearTypeList);
 
     }

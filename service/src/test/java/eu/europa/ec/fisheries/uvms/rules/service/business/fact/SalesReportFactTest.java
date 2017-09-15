@@ -138,24 +138,87 @@ public class SalesReportFactTest {
     }
 
     @Test
-    public void isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocumentWhenFluxOrganizationIsPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
+    public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenFluxOrganizationIsPresent() throws Exception {
+        SalesPartyFact sender = new SalesPartyFact();
+        sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
 
+        SalesPartyFact recipient = new SalesPartyFact();
+        recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
+        recipient.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender, recipient));
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
 
-        assertFalse(fact.isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocument());
+        assertFalse(fact.isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument());
     }
 
     @Test
-    public void isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocumentWhenFluxOrganizationIsNotPresent() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("SENDER", "BUYER", "SELLER");
-        salesDocumentFact.getSpecifiedSalesParties().get(0).setSpecifiedFLUXOrganization(null);
+    public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenFluxOrganizationIsNotPresent() throws Exception {
+        SalesPartyFact sender = new SalesPartyFact();
+        sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
 
+        SalesPartyFact recipient = new SalesPartyFact();
+        recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender, recipient));
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
 
-        assertTrue(fact.isFluxOrganizationNotSpecifiedOnAllSalesPartiesForTakeOverDocument());
+        assertTrue(fact.isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument());
+    }
+
+    @Test
+    public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenNameOfFluxOrganizationIsNotPresent() throws Exception {
+        SalesPartyFact sender = new SalesPartyFact();
+        sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+
+        SalesPartyFact recipient = new SalesPartyFact();
+        recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType());
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender, recipient));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertTrue(fact.isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument());
+    }
+
+    @Test
+    public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenNotTOD() throws Exception {
+        SalesPartyFact sender = new SalesPartyFact();
+        sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+
+        SalesPartyFact recipient = new SalesPartyFact();
+        recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender, recipient));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument());
+    }
+
+    @Test
+    public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenNoRecipient() throws Exception {
+        SalesPartyFact sender = new SalesPartyFact();
+        sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType());
+
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument());
     }
 
     @Test
@@ -209,7 +272,7 @@ public class SalesReportFactTest {
                 .withPrefabValues(AAPProcessType.class, new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "rulesDomainModel")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "rulesDomainModel", "originatingPlugin", "sender")
                 .verify();
     }
 
@@ -303,7 +366,7 @@ public class SalesReportFactTest {
 
         VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
                 .withOwnerSalesParty(new SalesPartyType()
-                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
+                    .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
 
         SalesPartyFact salesPartyFact1 = new SalesPartyFact();
         salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);

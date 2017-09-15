@@ -1419,7 +1419,7 @@ public abstract class AbstractFact {
         }
 
 
-        List<ObjectRepresentation> representations = MDRCacheHolder.getInstance().getObjectRepresntationList(anEnum);
+        List<ObjectRepresentation> representations = MDRCacheHolder.getInstance().getObjectRepresentationList(anEnum);
         boolean valueFound = false;
         if (CollectionUtils.isNotEmpty(representations)) {
             for (ObjectRepresentation representation : representations) {

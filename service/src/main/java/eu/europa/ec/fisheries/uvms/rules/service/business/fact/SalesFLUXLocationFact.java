@@ -1,16 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
 import java.util.List;
 import java.util.Objects;
-
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.FLUXCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.FLUXGeographicalCoordinateType;
-import eu.europa.ec.fisheries.schema.sales.SpecifiedPolygonType;
-import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 public class SalesFLUXLocationFact extends SalesAbstractFact {
 
@@ -139,6 +139,20 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
 
     public boolean isCountryIdValid() {
         return SalesFactHelper.isCountryIdValid(countryID);
+    }
+
+    public boolean isNotMostPreciseFAOArea() {
+        List<ObjectRepresentation> faoAreas = MDRCacheHolder.getInstance()
+                                                            .getObjectRepresentationList(MDRAcronymType.FAO_AREA);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
+                (id.getValue(), "terminal_ind", "true", faoAreas);
+    }
+
+    public boolean isLocationNotInCountry() {
+        List<ObjectRepresentation> locations = MDRCacheHolder.getInstance()
+                .getObjectRepresentationList(MDRAcronymType.LOCATION);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
+                (id.getValue(), "code_2", countryID.getValue(), locations);
     }
 
     @Override
