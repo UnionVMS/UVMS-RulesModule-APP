@@ -71,7 +71,7 @@ public class MDRCacheHolder {
         return codeColumnValues;
     }
 
-    public List<ObjectRepresentation> getObjectRepresntationList(MDRAcronymType type) {
+    public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType type) {
         if (type == null)
             return Collections.emptyList();
 

@@ -11,38 +11,41 @@ public class FactGeneratorHelper {
         List<Object> foundObjects = new ArrayList<>();
 
         Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
 
         if (classesToSearchFor.contains(clazz)) {
             foundObjects.add(object);
         }
 
-        //loop over all fields of the object
-        for (Field field : fields) {
-            Class<?> fieldClazz = field.getType();
+        if (!clazz.isEnum()) {
+            //loop over all fields of the object
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                Class<?> fieldClazz = field.getType();
 
-            boolean originallyAccessible = field.isAccessible();
-            field.setAccessible(true);
-            Object fieldObject = field.get(object);
-            field.setAccessible(originallyAccessible);
+                boolean originallyAccessible = field.isAccessible();
+                field.setAccessible(true);
+                Object fieldObject = field.get(object);
+                field.setAccessible(originallyAccessible);
 
-            if (fieldObject != null) {
+                if (fieldObject != null) {
 
-                //is the field a collection? Loop over all items in the collection!
-                if (Collection.class.isAssignableFrom(fieldClazz)) {
-                    Collection collection = (Collection) fieldObject;
-                    for (Object collectionObject : collection) {
-                        foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(collectionObject, classesToSearchFor));
+                    //is the field a collection? Loop over all items in the collection!
+                    if (Collection.class.isAssignableFrom(fieldClazz)) {
+                        Collection collection = (Collection) fieldObject;
+                        for (Object collectionObject : collection) {
+                            foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(collectionObject, classesToSearchFor));
+                        }
                     }
-                }
 
-                //is the field an object of Union/UNCEFACT? Let's repeat this logic for that object
-                if (fieldClazz.getName().startsWith("eu.") || fieldClazz.getName().startsWith("un.")) {
-                    foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(fieldObject, classesToSearchFor));
-                }
+                    //is the field an object of Union/UNCEFACT? Let's repeat this logic for that object
+                    if (fieldClazz.getName().startsWith("eu.") || fieldClazz.getName().startsWith("un.")) {
+                        foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(fieldObject, classesToSearchFor));
+                    }
 
+                }
             }
         }
+
 
         return foundObjects;
     }

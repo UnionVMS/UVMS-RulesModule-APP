@@ -17,7 +17,7 @@ public class SalesAAPProcessFactTest {
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new CodeType().withValue("a")), new FACatchType().withTypeCode(new CodeType().withValue("b")))
                 .withPrefabValues(AAPProductType.class, new AAPProductType().withSpeciesCode(new CodeType().withValue("a")), new AAPProductType().withSpeciesCode(new CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "senderOrReceiver", "rulesDomainModel")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "senderOrReceiver", "salesCategoryType", "rulesDomainModel", "originatingPlugin", "sender")
                 .verify();
     }
 
