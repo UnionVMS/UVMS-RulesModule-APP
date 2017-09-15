@@ -917,6 +917,30 @@ public abstract class AbstractFact {
         return CollectionUtils.isEmpty(list);
     }
 
+    /**
+     * Checks if the list of strings contains empty (null / "") elements.
+     *
+     * @param stringsList
+     * @return true / false
+     */
+    public boolean containsEmptyStrings(List<String> stringsList){
+        if(!isEmpty(stringsList)){
+            return stringsList.contains(null) || stringsList.contains("");
+        }
+        return true;
+    }
+
+    public boolean containsOnlyEmptyStrings(List<String> stringsList){
+        if(!isEmpty(stringsList)){
+            for(String str : stringsList){
+                if(StringUtils.isNotEmpty(str)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean isNumeric(List<NumericType> list) {
         for (NumericType type : list) {
             if (type.getValue() == null) {
