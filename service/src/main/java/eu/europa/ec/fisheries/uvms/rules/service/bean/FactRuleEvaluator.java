@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
@@ -103,7 +104,7 @@ public class FactRuleEvaluator {
             ksession.dispose();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            Collection<?> objects = null; // FIXME whole fact is remove this is not right
+            Collection<?> objects = null;
             if (ksession != null) {
                 objects = ksession.getObjects();
             }
@@ -112,9 +113,9 @@ public class FactRuleEvaluator {
                 AbstractFact next = failedFacts.iterator().next();
                 String message = e.getMessage();
                 String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-                //     next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
-                //     next.setOk(false);
-                facts.remove(next);
+                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
+                next.setOk(false);
+                facts.remove(next); // remove fact with exception and re-validate the other facts
                 exceptionsList.add(next);
                 validateFact(facts);
             }
