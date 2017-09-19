@@ -24,7 +24,7 @@
         <sl4j.version>1.7.25</sl4j.version>
         <logback.version>1.2.3</logback.version>
         <logback.core.version>1.2.3</logback.core.version>
-        <drools.version>6.2.0.Final</drools.version>
+        <drools.version>6.5.0.Final</drools.version>
         <maven.plugins.version>3.5</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
         <equalsverifier.version>2.3.3</equalsverifier.version>
