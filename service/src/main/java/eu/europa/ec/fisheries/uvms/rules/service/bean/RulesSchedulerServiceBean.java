@@ -10,6 +10,8 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
+import java.util.Collection;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
@@ -19,13 +21,6 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.transaction.Transactional;
-import java.util.Collection;
-
-import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,7 +39,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     private static final String RULES_SCHEDULER_CONFIG_KEY = "RULES_SCHEDULER_CONFIG";
 
     @EJB
-    private ParameterService parameterService;
+    private RulesConfigurationCache rulesConfigCache;
 
     @EJB
     private TemplateEngine templateEngine;
@@ -70,11 +65,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
      */
     @Override
     public String getActualSchedulerConfiguration() {
-        try {
-			return parameterService.getStringValue(ParameterKey.RULES_SCHEDULER_CONFIG_KEY.getKey());
-		} catch (ConfigServiceException e) {
-			return "";
-		}
+        return rulesConfigCache.getSingleConfig(RULES_SCHEDULER_CONFIG_KEY);
     }
 
     /**
