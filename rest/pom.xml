@@ -24,13 +24,19 @@
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>commons-logging</groupId>
+            		<artifactId>commons-logging</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
 			<groupId>fish.focus.uvms.maven</groupId>
 			<artifactId>uvms-pom-monitoring-deps</artifactId>
 			<type>pom</type>
-		</dependency>                
+		</dependency>
 
         <!-- TEST DEPENDENCIES -->
         <dependency>
@@ -44,7 +50,7 @@
 			<artifactId>javax.json</artifactId>
 			<version>${javax.json.version}</version>
 			<scope>test</scope>
-		</dependency> 
+		</dependency>
     </dependencies>
 
     <build>
