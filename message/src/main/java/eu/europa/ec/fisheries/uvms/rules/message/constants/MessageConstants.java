@@ -13,6 +13,10 @@ package eu.europa.ec.fisheries.uvms.rules.message.constants;
 
 public class MessageConstants {
 
+    private MessageConstants() {
+        super();
+    }
+
     public static final String CONNECTION_FACTORY = "ConnectionFactory";
     public static final String CONNECTION_TYPE = "javax.jms.MessageListener";
     public static final String DESTINATION_TYPE_QUEUE = "javax.jms.Queue";
@@ -20,6 +24,7 @@ public class MessageConstants {
     public static final String RULES_MESSAGE_IN_QUEUE_NAME = "UVMSRulesEvent";
     public static final String RULES_RESPONSE_QUEUE = "jms/queue/UVMSRules";
     public static final String QUEUE_DATASOURCE_INTERNAL = "jms/queue/UVMSRulesModel";
+    public static final String SALES_QUEUE = "jms/queue/UVMSSalesEvent";
 
     public static final String MOVEMENT_MESSAGE_IN_QUEUE = "jms/queue/UVMSMovementEvent";
     public static final String ASSET_MESSAGE_IN_QUEUE = "jms/queue/UVMSAssetEvent";
@@ -31,4 +36,7 @@ public class MessageConstants {
     public static final String MDC_IDENTIFIER = "clientName";
 
     public static final String MODULE_NAME = "rules";
+
+    public static final String ACTIVITY_MESSAGE_IN_QUEUE = "jms/queue/UVMSActivityEvent";
+    public static final String MDR_EVENT = "jms/queue/UVMSMdrEvent";
 }

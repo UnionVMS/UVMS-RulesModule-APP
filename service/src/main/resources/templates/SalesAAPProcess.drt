@@ -1,0 +1,28 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesAAPProcessFact;
+
+template "@{tname}"
+
+rule "Sales AAP Process @{tname} - @{brid}"
+
+when
+
+    $fact : SalesAAPProcessFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
+end
+
+end template

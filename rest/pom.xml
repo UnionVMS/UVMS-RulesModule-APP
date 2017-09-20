@@ -9,11 +9,11 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>2.1.3-SNAPSHOT</version>
+        <version>3.0.9-SNAPSHOT</version>
     </parent>
 
     <dependencies>
-        <!-- EJB DEPENDENCS -->
+        <!-- EJB DEPENDENCIES -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-service</artifactId>
@@ -24,7 +24,19 @@
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>commons-logging</groupId>
+            		<artifactId>commons-logging</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
+
+        <dependency>
+			<groupId>fish.focus.uvms.maven</groupId>
+			<artifactId>uvms-pom-monitoring-deps</artifactId>
+			<type>pom</type>
+		</dependency>
 
         <!-- TEST DEPENDENCIES -->
         <dependency>
@@ -38,7 +50,7 @@
 			<artifactId>javax.json</artifactId>
 			<version>${javax.json.version}</version>
 			<scope>test</scope>
-		</dependency> 
+		</dependency>
     </dependencies>
 
     <build>
@@ -46,17 +58,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>

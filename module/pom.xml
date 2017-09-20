@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>2.1.3-SNAPSHOT</version>
+        <version>3.0.9-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -19,7 +19,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
-                <version>2.7</version>
                 <configuration>
                     <modules>
                         <ejbModule>
@@ -33,6 +32,7 @@
                         <jarModule>
                             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
                             <artifactId>rules-model</artifactId>
+                            <classifier>date</classifier>
                         </jarModule>
                         <webModule>
                             <groupId>${project.groupId}</groupId>
@@ -77,6 +77,12 @@
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>commons-logging</groupId>
+            		<artifactId>commons-logging</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
         <!-- TEST DEPENDENCIES -->

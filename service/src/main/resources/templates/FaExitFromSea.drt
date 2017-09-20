@@ -1,0 +1,31 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
+import java.util.Arrays;
+
+template "@{tname}"
+
+rule "Vessel Transport means @{tname} - @{brid}"
+
+when
+
+    $fact : FaExitFromSeaFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
+
+end
+
+end template

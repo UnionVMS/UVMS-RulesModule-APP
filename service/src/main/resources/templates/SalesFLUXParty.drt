@@ -1,0 +1,29 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXPartyFact;
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+
+template "@{tname}"
+
+rule "Sales FLUX Party @{tname} - @{brid}"
+
+when
+
+    $fact : SalesFLUXPartyFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
+end
+
+end template

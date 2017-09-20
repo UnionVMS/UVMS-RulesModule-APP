@@ -11,16 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package rest.service.dto;
 
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
+import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
-import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 
 public class ResponseTest {
 
