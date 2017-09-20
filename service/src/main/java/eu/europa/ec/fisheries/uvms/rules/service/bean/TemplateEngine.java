@@ -46,11 +46,13 @@ public class TemplateEngine {
 
     @PostConstruct
     public void initialize() {
-        log.info("Initializing templates and rules [START]");
+        log.info("[START] Initializing templates and rules...");
         ruleEvaluator.initializeRules(getAllTemplates());
-        log.info("Initializing MDR cache");
+        log.info("[START] Initializing MDR cache...");
         mdrCache.init();
+        log.info("[START] Updating Rules Status...");
         updateRulesStatus(ruleEvaluator.getFailedRules());
+        log.info("[END] Finished Initializing Templates.");
     }
 
     public void reInitialize() {
