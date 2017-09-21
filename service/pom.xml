@@ -32,6 +32,11 @@
                 <version>${drools.version}</version>
                 <scope>import</scope>
             </dependency>
+ 			<dependency>
+			    <groupId>com.thoughtworks.xstream</groupId>
+			    <artifactId>xstream</artifactId>
+			    <version>1.4.10-java7</version>
+			</dependency>            	
         </dependencies>
     </dependencyManagement>
 
@@ -113,6 +118,11 @@
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
         </dependency>
+        <dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>            	
+        
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
