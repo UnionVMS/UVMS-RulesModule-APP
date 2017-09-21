@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -95,7 +96,13 @@ public class FactRuleEvaluator {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
 
-            ksession.setGlobal("salesService", salesRulesService);
+            Iterator<AbstractFact> factsIterator = facts.iterator();
+            while (factsIterator.hasNext()) {
+                if (factsIterator.next() instanceof SalesAbstractFact) {
+                    ksession.setGlobal("salesService", salesRulesService);
+                    break;
+                }
+            }
 
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
