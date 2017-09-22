@@ -12,6 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,8 @@ public class RulesConfigurationCache extends AbstractConfigCache {
     private RulesMessageProducer producer;
 
 
-    public RulesConfigurationCache() {
+    @PostConstruct
+    public void initializeCache(){
         initializeCache();
     }
 
