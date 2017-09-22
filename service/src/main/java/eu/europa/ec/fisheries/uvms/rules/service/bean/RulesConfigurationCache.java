@@ -34,7 +34,7 @@ public class RulesConfigurationCache extends AbstractConfigCache {
 
 
     @PostConstruct
-    public void initializeCache(){
+    public void initializeBeam(){
         initializeCache();
     }
 
