@@ -11,6 +11,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,6 +64,13 @@ public class RuleTestHelper {
         return numericType;
     }
 
+    public static TextType getTextType(String value, String languageId, String languageLocaleId) {
+        TextType textType = new TextType();
+        textType.setValue(value);
+        textType.setLanguageID(languageId);
+        textType.setLanguageLocaleID(languageLocaleId);
+        return textType;
+    }
 
     public static List<ObjectRepresentation> getObjectRepresentationForFA_CATCH() {
 

@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author padhyad
@@ -32,9 +32,15 @@ public class FaQueryFact extends AbstractFact {
 
     private Date submittedDateTime;
 
+    private String submittedDateTimeString;
+
     private List<IdType> submittedFLUXPartyIds;
 
     private DelimitedPeriod specifiedDelimitedPeriod;
+
+    private String sdpStartDateTimeString;
+
+    private String sdpEndDateTimeString;
 
     private List<CodeType> simpleFAQueryParameterTypeCodes;
 
@@ -71,6 +77,14 @@ public class FaQueryFact extends AbstractFact {
         this.submittedDateTime = submittedDateTime;
     }
 
+    public String getSubmittedDateTimeString() {
+        return submittedDateTimeString;
+    }
+
+    public void setSubmittedDateTimeString(String submittedDateTimeString) {
+        this.submittedDateTimeString = submittedDateTimeString;
+    }
+
     public List<IdType> getSubmittedFLUXPartyIds() {
         return submittedFLUXPartyIds;
     }
@@ -85,6 +99,22 @@ public class FaQueryFact extends AbstractFact {
 
     public void setSpecifiedDelimitedPeriod(DelimitedPeriod specifiedDelimitedPeriod) {
         this.specifiedDelimitedPeriod = specifiedDelimitedPeriod;
+    }
+
+    public String getSdpStartDateTimeString() {
+        return sdpStartDateTimeString;
+    }
+
+    public void setSdpStartDateTimeString(String sdpStartDateTimeString) {
+        this.sdpStartDateTimeString = sdpStartDateTimeString;
+    }
+
+    public String getSdpEndDateTimeString() {
+        return sdpEndDateTimeString;
+    }
+
+    public void setSdpEndDateTimeString(String sdpEndDateTimeString) {
+        this.sdpEndDateTimeString = sdpEndDateTimeString;
     }
 
     public List<CodeType> getSimpleFAQueryParameterTypeCodes() {

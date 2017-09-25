@@ -39,6 +39,8 @@ public interface MessageService {
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
+    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult);
+
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage);
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);

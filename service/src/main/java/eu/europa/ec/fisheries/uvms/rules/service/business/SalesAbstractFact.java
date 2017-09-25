@@ -29,7 +29,17 @@ import java.util.Collection;
 public abstract class SalesAbstractFact extends AbstractFact {
 
     protected Source source;
+
+    private String sender;
+
+    private String originatingPlugin;
+
     private SalesCategoryType salesCategoryType;
+
+
+    public boolean isAuction() {
+        return "OTHER".equals(originatingPlugin);
+    }
 
     public boolean isQuery() {
         checkNotNull();
@@ -73,6 +83,18 @@ public abstract class SalesAbstractFact extends AbstractFact {
         return true;
     }
 
+    public boolean isVariousSupply() {
+        if (salesCategoryType == null) {
+            return false;
+        }
+
+        if (salesCategoryType.equals(SalesCategoryType.VARIOUS_SUPPLY)) {
+            return true;
+        }
+
+        return false;
+    }
+
     protected void checkNotNull() {
         Preconditions.checkNotNull(source, "Source cannot be null. Did you forget to add it to the fact generator?");
     }
@@ -111,5 +133,21 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
     public SalesCategoryType getSalesCategoryType() {
         return salesCategoryType;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getOriginatingPlugin() {
+        return originatingPlugin;
+    }
+
+    public void setOriginatingPlugin(String originatingPlugin) {
+        this.originatingPlugin = originatingPlugin;
     }
 }

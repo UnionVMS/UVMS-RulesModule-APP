@@ -4,18 +4,22 @@ import com.google.common.base.Optional;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ObjectRepresentationHelper {
 
-    private static Optional<ObjectRepresentation> findWithCode(String codeToSearchFor, Collection<ObjectRepresentation> objectRepresentations) {
+    private static List<ObjectRepresentation> findWithCode(String codeToSearchFor, Collection<ObjectRepresentation> objectRepresentations) {
+        List<ObjectRepresentation> foundObjectRepresentations = new ArrayList<>();
+
         for (ObjectRepresentation objectRepresentation : objectRepresentations) {
             Optional<String> foundCode = getValueOfColumn("code", objectRepresentation);
             if (foundCode.isPresent() && foundCode.get().equalsIgnoreCase(codeToSearchFor)) {
-                return Optional.of(objectRepresentation);
+                foundObjectRepresentations.add(objectRepresentation);
             }
         }
-        return Optional.absent();
+        return foundObjectRepresentations;
     }
 
     private static Optional<String> getValueOfColumn(String columnName, ObjectRepresentation objectRepresentation) {
@@ -31,10 +35,9 @@ public class ObjectRepresentationHelper {
             (String code, String columnName, String columnValue,
              Collection<ObjectRepresentation> objectRepresentations) {
 
-        Optional<ObjectRepresentation> foundObjectRepresentation = findWithCode(code, objectRepresentations);
-        if (foundObjectRepresentation.isPresent()) {
-
-            Optional<String> foundColumnValue = getValueOfColumn(columnName, foundObjectRepresentation.get());
+        Collection<ObjectRepresentation> foundObjectRepresentation = findWithCode(code, objectRepresentations);
+        for (ObjectRepresentation objectRepresentation : foundObjectRepresentation) {
+            Optional<String> foundColumnValue = getValueOfColumn(columnName, objectRepresentation);
             if (foundColumnValue.isPresent()) {
                 return foundColumnValue.get().equalsIgnoreCase(columnValue);
             }

@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+
 @Slf4j
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
@@ -88,6 +90,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
     private void fillMappingVariables(SalesAbstractFact fact) {
         fact.setSource(Source.REPORT);
+        fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
 
         if (report.getAuctionSale() != null) {
             fact.setSalesCategoryType(report.getAuctionSale().getSalesCategory());
@@ -97,7 +100,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
     @Override
     public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
         if (businessObject.getAuctionSale() != null && businessObject.getAuctionSale().getSalesCategory() == null) {
-            throw new RuntimeException("SalesCategory in AuctionSale cannot be null");
+            throw new NullPointerException("SalesCategory in AuctionSale cannot be null");
         }
         this.report = businessObject;
     }

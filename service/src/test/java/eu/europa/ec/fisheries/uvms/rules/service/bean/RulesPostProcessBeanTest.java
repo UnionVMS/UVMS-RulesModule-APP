@@ -14,11 +14,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -72,4 +75,19 @@ public class RulesPostProcessBeanTest {
         assertFalse(validationResult.isWarning());
         assertTrue(validationResult.isOk());
     }
+
+
+
+    @Test
+    public void testCheckAndUpdateValidationResultForGeneralBuinessRules() throws RulesModelException, RulesServiceException {
+        Mockito.doNothing().when(rulesDomainModel).saveValidationMessages(Mockito.any(RawMessageType.class));
+        AbstractFact fact = new FaReportDocumentFact();
+        fact.setOk(true);
+        RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", null);;
+        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, ErrorType.ERROR, "<FLUXFAReportMessage></FLUXFAReportMessage>");
+        assertFalse(validationResult.isError());
+        assertFalse(validationResult.isWarning());
+        assertFalse(validationResult.isOk());
+    }
+
 }

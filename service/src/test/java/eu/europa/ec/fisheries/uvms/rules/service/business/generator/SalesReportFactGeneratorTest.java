@@ -8,6 +8,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -53,6 +55,7 @@ public class SalesReportFactGeneratorTest {
                 .withFLUXSalesReportMessage(null);
 
         salesReportFactGenerator.setBusinessObjectMessage(report);
+        salesReportFactGenerator.setExtraValueMap(Collections.<ExtraValueType, Object>emptyMap());
         salesReportFactGenerator.generateAllFacts();
     }
     @Test
@@ -74,6 +77,7 @@ public class SalesReportFactGeneratorTest {
         report.getAuctionSale().setSalesCategory(SalesCategoryType.VARIOUS_SUPPLY);
 
         salesReportFactGenerator.setBusinessObjectMessage(report);
+        salesReportFactGenerator.setExtraValueMap(Collections.<ExtraValueType, Object>emptyMap());
         List<AbstractFact> allFacts = salesReportFactGenerator.generateAllFacts();
 
         List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated = createListOfClassesThatShouldBeCreated();
