@@ -30,7 +30,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
-import com.google.common.collect.Maps;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
@@ -73,7 +72,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -324,7 +322,7 @@ public class MessageServiceBean implements MessageService {
             fluxResponseMessage =generateFluxResponseMessage(validationResultDto);
         }
         log.info("FLUXResponseMessage has been generated after exception: "+fluxResponseMessage);
-        sendResponseToExchange(fluxResponseMessage, request);
+        sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
     private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) {
@@ -555,7 +553,7 @@ public class MessageServiceBean implements MessageService {
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String fluxFAReportMessage, String username, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType) {
+    public void sendRequestToActivity(String fluxFAReportMessage, String username, PluginType pluginType) {
         try {
             String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
