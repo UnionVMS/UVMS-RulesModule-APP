@@ -30,18 +30,18 @@
         <equalsverifier.version>2.3.3</equalsverifier.version>
 
         <usm4uvms.version>3.0.8</usm4uvms.version>
-        <uvms.config.version>3.1.1</uvms.config.version>
+        <uvms.config.version>4.0.0</uvms.config.version>
         <uvms.common.version>2.0.29</uvms.common.version>
-        <movement.model.version>3.0.8</movement.model.version>
-        <exchange.model.version>3.0.7</exchange.model.version>
-        <mobileterminal.model.version>3.0.9</mobileterminal.model.version>
+        <movement.model.version>4.0.0</movement.model.version>
+        <exchange.model.version>4.0.0</exchange.model.version>
+        <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
 
         <activity.model.version>0.5.13</activity.model.version>
         <mdr.model.version>0.5.2</mdr.model.version>
 
-        <asset.model.version>3.0.7</asset.model.version>
-        <audit.model.version>3.0.5</audit.model.version>
+        <asset.model.version>4.0.0</asset.model.version>
+        <audit.model.version>4.0.0</audit.model.version>
         <rules.model.version>3.0.8</rules.model.version>
         <sales.model.version>1.0.4</sales.model.version>
 
@@ -213,6 +213,47 @@
                 <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
             </properties>
         </profile>
+        <!-- enforce-jdk-version -->
+        <profile>
+            <id>enforce-jdk-version</id>
+            <activation>
+                <!-- To disable profile, define property -Dfocus-pom.enforce.jdk.version.disabled=true -->
+                <property>
+                    <name>!focus-pom.enforce.jdk.version.disabled</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>enforce-jdk-version</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[${focus-pom.java.version},${focus-pom.java.version}.999)</version>
+                                        </requireJavaVersion>
+                                        <enforceBytecodeVersion>
+                                            <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
+                                            <!-- NOTE: xstream do contain support for multiple jdk:s -->
+                                            <excludes>
+                    							<exclude>com.thoughtworks.xstream:xstream</exclude>
+                  							</excludes>
+                                        </enforceBytecodeVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
@@ -240,6 +281,9 @@
             </plugin>
         </plugins>
     </build>
+
+
+
     <modules>
         <module>rest</module>
         <module>service</module>
