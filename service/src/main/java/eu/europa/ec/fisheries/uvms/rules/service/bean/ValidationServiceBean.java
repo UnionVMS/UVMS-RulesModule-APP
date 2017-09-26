@@ -105,7 +105,7 @@ public class ValidationServiceBean implements ValidationService {
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     /**

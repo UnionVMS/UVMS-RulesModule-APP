@@ -43,7 +43,7 @@ public class RulesPreValidationInterceptor {
     @EJB
     RulesMessageProducer producer;
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     @AroundInvoke

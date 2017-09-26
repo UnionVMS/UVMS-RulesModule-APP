@@ -143,7 +143,7 @@ public class RulesServiceBean implements RulesService {
     @Inject
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {

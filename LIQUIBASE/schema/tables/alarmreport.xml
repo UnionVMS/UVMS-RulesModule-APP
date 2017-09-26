@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="alarmreport-01">
+        
+        <createTable tableName="alarmreport" remarks="Alarm Report table.">
+            
+            <column name="alarmrep_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="alarmrep_pk"/>
+            </column>
+            <column name="alarmrep_plugintype" type="varchar(100)" remarks="Type of the plugin the report came from."/>
+            <column name="alarmrep_guid" type="varchar(36)" remarks="Guid of alarm."/>
+            <column name="alarmrep_assetguid" type="varchar(36)" remarks="Guid of asset."/>
+            <column name="alarmrep_status" type="varchar(20)" remarks="OPEN or CLOSED."/>
+            <column name="alarmrep_createddate" type="TIMESTAMP WITH TIME ZONE" remarks="When the report is created."/>
+            <column name="alarmrep_recipient" type="varchar(20)" remarks="Recipient country code."/>
+            <column name="alarmrep_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="alarmrep_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        
+        <rollback>
+            <dropTable tableName="alarmreport" cascadeConstraints="true" />
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

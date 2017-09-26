@@ -19,8 +19,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
                     <modules>
+                        <ejbModule>
+                            <groupId>${project.groupId}</groupId>   
+                            <artifactId>rules-dbaccess-domain</artifactId>
+                            <bundleFileName>rules-dbaccess-domain.jar</bundleFileName>
+                        </ejbModule>                    
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>rules-message</artifactId>
@@ -48,6 +54,12 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rules-dbaccess-domain</artifactId>
+            <version>${project.parent.version}</version>
+            <type>ejb</type>
+        </dependency>    
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-message</artifactId>

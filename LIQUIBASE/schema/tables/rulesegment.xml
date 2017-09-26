@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rulesegment-01">
+        <createTable tableName="rulesegment" remarks="Rule segment table.">
+            <column name="ruleseg_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ruleseg_pk"/>
+            </column>
+            <column name="ruleseg_start_operator" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_criteria" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_subcriteria" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_condition" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_value" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_end_operator" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_logic_operator" type="VARCHAR(100)" remarks="Part of the rule."/>
+            <column name="ruleseg_order" type="INTEGER" remarks="The order of the rule segments."/>
+            <column name="ruleseg_rule_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+			constraintName="ruleseg_rule_fk"
+			baseTableName="rulesegment"
+			baseColumnNames="ruleseg_rule_id"
+			referencedTableName="customrule"
+			referencedColumnNames="rule_id"
+		/>
+
+        <rollback>
+            <dropTable tableName="rulesegment" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+	<changeSet id="ruleseg_rule_fk_inx-01" author="andtho">
+		<createIndex tableName="rulesegment" indexName="ruleseg_rule_fk_inx">
+			<column name="ruleseg_rule_id"></column>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

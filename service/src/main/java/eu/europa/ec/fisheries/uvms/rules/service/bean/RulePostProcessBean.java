@@ -44,7 +44,7 @@ import java.util.List;
 @Slf4j
 public class RulePostProcessBean {
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     @EJB

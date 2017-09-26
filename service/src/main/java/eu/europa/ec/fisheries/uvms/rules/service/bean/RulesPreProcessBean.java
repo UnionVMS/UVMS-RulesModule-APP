@@ -39,7 +39,7 @@ import java.util.*;
 @Slf4j
 public class RulesPreProcessBean {
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     public ValidationResultDto getValidationResultIfExist(List<String> ids) throws RulesModelException {

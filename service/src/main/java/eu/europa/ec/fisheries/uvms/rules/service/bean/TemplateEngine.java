@@ -35,7 +35,7 @@ import org.apache.commons.collections.CollectionUtils;
 @Startup
 public class TemplateEngine {
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDb;
 
     @EJB
