@@ -69,7 +69,7 @@ public class AbstractFactTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
-    private RulesDomainModel model;
+    private RulesDomainModelBean model;
 
     @Before
     public void before() {

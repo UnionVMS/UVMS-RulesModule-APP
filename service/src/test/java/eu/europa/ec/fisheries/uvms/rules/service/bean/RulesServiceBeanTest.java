@@ -84,7 +84,7 @@ public class RulesServiceBeanTest {
     @Mock
     TextMessage response;
     @Mock
-    private RulesDomainModel rulesDomainModel;
+    private RulesDomainModelBean rulesDomainModel;
 
     @Before
     public void initMocks() {
