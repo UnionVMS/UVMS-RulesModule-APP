@@ -16,7 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.uvms.rules.bean.RulesDomainModelBean;
+import eu.europa.ec.fisheries.uvms.rules.domain.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
@@ -44,7 +44,7 @@ import java.util.List;
 public class RulePostProcessBean {
 
     @EJB
-    private RulesDomainModelBean rulesDomainModel;
+    private RulesDomainModel rulesDomainModel;
 
     @EJB
     private MessageService messageService;

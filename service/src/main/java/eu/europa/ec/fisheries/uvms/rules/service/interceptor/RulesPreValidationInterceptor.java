@@ -18,7 +18,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.bean.RulesDomainModelBean;
+import eu.europa.ec.fisheries.uvms.rules.domain.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
@@ -40,7 +40,7 @@ public class RulesPreValidationInterceptor {
     RulesMessageProducer producer;
 
     @EJB
-    private RulesDomainModelBean rulesDomainModel;
+    private RulesDomainModel rulesDomainModel;
 
     @AroundInvoke
     public Object validateRuleIsInitialized(final InvocationContext ic) throws Exception {

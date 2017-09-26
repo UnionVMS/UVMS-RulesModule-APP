@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.domain.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
@@ -69,7 +69,7 @@ public class AbstractFactTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
-    private RulesDomainModelBean model;
+    private RulesDomainModel model;
 
     @Before
     public void before() {
