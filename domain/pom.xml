@@ -12,15 +12,15 @@
     <artifactId>rules-dbaccess-domain</artifactId>
     <version>3.0.9-SNAPSHOT</version>
     <packaging>ejb</packaging>
-    
+
     <!-- PROPERTIES USED FOR LOGBACK -->
     <properties>
-        <application.name>${project.parent.artifactId}</application.name> 
+        <application.name>${project.parent.artifactId}</application.name>
         <application.version>${project.parent.version}</application.version>
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
     </properties>
-    
+
     <dependencies>
  		<dependency>
 			<groupId>fish.focus.uvms.maven</groupId>
@@ -38,7 +38,6 @@
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
             <version>${rules.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
@@ -62,7 +61,7 @@
         </dependency>
 
     </dependencies>
-    
+
     <build>
         <finalName>${project.name}-${project.parent.version}</finalName>
         <plugins>
@@ -76,7 +75,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>

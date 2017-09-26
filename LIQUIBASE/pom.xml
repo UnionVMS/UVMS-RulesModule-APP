@@ -10,6 +10,7 @@
 
     <artifactId>liquibase</artifactId>
     <name>liquibase</name>
+    <packaging>jar</packaging>
 
     <properties>
         <project.scm.id>github</project.scm.id>
@@ -64,7 +65,7 @@
 		            <artifactId>${driver.artifactId}</artifactId>
 		            <version>${driver.version}</version>
 		        </dependency>
-		    </dependencies>            
+		    </dependencies>
         </profile>
         <profile>
             <id>oracle</id>
@@ -87,7 +88,7 @@
 		            <artifactId>${driver.artifactId}</artifactId>
 		            <version>${driver.version}</version>
 		        </dependency>
-		    </dependencies>            
+		    </dependencies>
         </profile>
         <profile>
             <id>release</id>
@@ -154,53 +155,57 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4.1</version>
-                    <configuration>
-                        <descriptor>assembly.xml</descriptor>
-                        <finalName>${artifactId}</finalName>
-                        <appendAssemblyId>false</appendAssemblyId>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.1</version>
-                    <executions>
-                        <execution>
-                            <id>default-jar</id>
-                            <!-- put the default-jar in the none phase to skip it from being created -->
-                            <phase>none</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.6</version>
-                    <goals>
-                        <goal>deploy-file</goal>
-                    </goals>
-                    <configuration>
-                        <repositoryId>${repository.id}</repositoryId>
-                        <packaging>zip</packaging>
-                        <generatePom>true</generatePom>
-                        <url>${repository.url}</url>
-                        <artifactId>${project.artifactId}</artifactId>
-                        <groupId>${project.groupId}</groupId>
-                        <version>${project.version}</version>
-                        <file>target/liquibase.zip</file>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<descriptor>assembly.xml</descriptor>
+					<finalName>${artifactId}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<!-- put the default-jar in the none phase to skip it from being created -->
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.6</version>
+				<goals>
+					<goal>deploy-file</goal>
+				</goals>
+				<configuration>
+					<repositoryId>${repository.id}</repositoryId>
+					<packaging>zip</packaging>
+					<generatePom>true</generatePom>
+					<url>${repository.url}</url>
+					<artifactId>${project.artifactId}</artifactId>
+					<groupId>${project.groupId}</groupId>
+					<version>${project.version}</version>
+					<file>target/liquibase.zip</file>
+				</configuration>
+			</plugin>
+	  </plugins>
+
     </build>
 </project>

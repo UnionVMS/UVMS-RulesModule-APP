@@ -14,6 +14,7 @@
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
+    	<installAtEnd>false</installAtEnd>
         <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
@@ -44,7 +45,7 @@
 
         <asset.model.version>4.0.0</asset.model.version>
         <audit.model.version>4.0.0</audit.model.version>
-        <rules.model.version>3.0.8</rules.model.version>
+        <rules.model.version>3.0.9-SNAPSHOT</rules.model.version>
         <sales.model.version>1.0.4</sales.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -118,7 +119,7 @@
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct-processor</artifactId>
 				<version>${mapstruct.version}</version>
-			</dependency>            
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -197,7 +198,7 @@
             <artifactId>equalsverifier</artifactId>
             <version>${equalsverifier.version}</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -309,37 +310,10 @@
         </profile>
     </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>${maven.plugins.version}</version>
-                <configuration>
-                    <goalPrefix>plugin</goalPrefix>
-                    <outputDirectory>target/dir</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-
-
     <modules>
 		<module>LIQUIBASE</module>
-        <module>domain</module>		    
+		<module>model</module>
+        <module>domain</module>
         <module>rest</module>
         <module>service</module>
         <module>message</module>
