@@ -133,6 +133,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
             <artifactId>sales-model</artifactId>
             <version>${sales.model.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+    				<artifactId>rules-model</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
