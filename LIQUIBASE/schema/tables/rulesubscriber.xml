@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rulesubscription-01">
+        <createTable tableName="rulesubscription" remarks="Rule subscription table.">
+            <column name="rulesub_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rulesub_pk"/>
+            </column>
+            <column name="rulesub_owner" type="VARCHAR(100)" remarks="Owner of the subscription."/>
+            <column name="rulesub_type" type="VARCHAR(100)" remarks="Type of subscription."/>
+            <column name="rulesub_rule_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+			constraintName="rulesub_rule_fk"
+			baseTableName="rulesubscription"
+			baseColumnNames="rulesub_rule_id"
+			referencedTableName="customrule"
+			referencedColumnNames="rule_id"
+		/>
+
+        <rollback>
+            <dropTable tableName="rulesubscription" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+	<changeSet id="rulesub_rule_fk_inx-01" author="andtho">
+		<createIndex tableName="rulesubscription" indexName="rulesub_rule_fk_inx">
+			<column name="rulesub_rule_id"></column>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

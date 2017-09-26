@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="previousreport_testdata-01" author="andtho" context="test">	
+
+        <insert tableName="previousreport">
+            <column name="prevrep_id" value="1"/>
+            <column name="prevrep_vesselguid" value="VESSEL_GUID_1"/>
+            <column name="prevrep_positiontime" valueDate="${now}"/>
+            <column name="prevrep_updattim" valueDate="${now}"/>
+            <column name="prevrep_upuser" value="UVMS"/>
+        </insert>
+
+        <insert tableName="previousreport">
+            <column name="prevrep_id" value="2"/>
+            <column name="prevrep_vesselguid" value="VESSEL_GUID_2"/>
+            <column name="prevrep_positiontime" valueDate="${now}"/>
+            <column name="prevrep_updattim" valueDate="${now}"/>
+            <column name="prevrep_upuser" value="UVMS"/>
+        </insert>
+
+        <insert tableName="previousreport">
+            <column name="prevrep_id" value="3"/>
+            <column name="prevrep_vesselguid" value="VESSEL_GUID_3"/>
+            <column name="prevrep_positiontime" valueDate="${now}"/>
+            <column name="prevrep_updattim" valueDate="${now}"/>
+            <column name="prevrep_upuser" value="UVMS"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="ticket">
+                <where>
+                    ticket_id in (1,2,3)
+                </where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

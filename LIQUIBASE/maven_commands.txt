@@ -1,0 +1,40 @@
+## Check status
+mvn liquibase:status -Ppostgres
+
+## Update database
+mvn liquibase:update -Ppostgres
+
+## Drop All Tables
+mvn liquibase:dropAll -Ppostgres
+
+## Rollback the database to a specified tag
+mvn liquibase:rollback -P postgres-local -Dliquibase.rollbackTag=version_0.1
+
+## Rollback the database a specific number of changes
+mvn liquibase:rollback -P postgres-local -Dliquibase.rollbackCount=1
+
+## Other profiles for different databases ####
+postgres-dev
+postgres-test
+
+## Generate changelog
+mvn liquibase:generateChangeLog -Ppostgres
+
+## Generate changeLog with data included
+mvn liquibase:generateChangeLog -Ppostgres,export
+
+Regarding contexts:
+- At the moment we use one context ("test" - for test data), i.e: <changeSet id="xxx" author="yyy" context="test">
+In order to run all non-context changesets AND selected:
+- mvn liquibase:update -P postgres-local -Dliquibase.contexts=test
+In order to only run all non-context changesets, run with a context that doesn't exist:
+- mvn liquibase:update -P postgres-local -Dliquibase.contexts=blurk
+
+mvn liquibase:generateChangeLog -Ppostgres
+
+Delete ####
+mvn liquibase:dropAll -Ppostgres
+
+
+Update ####
+mvn liquibase:update -Ppostgres

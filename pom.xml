@@ -14,6 +14,7 @@
     <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
+    	<installAtEnd>false</installAtEnd>
         <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.2</powermock.version>
@@ -28,6 +29,8 @@
         <maven.plugins.version>3.5</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
         <equalsverifier.version>2.3.3</equalsverifier.version>
+        <mapstruct.version>1.1.0.Final</mapstruct.version>
+        <uvms.test.version>0.0.8</uvms.test.version>
 
         <usm4uvms.version>3.0.8</usm4uvms.version>
         <uvms.config.version>4.0.0</uvms.config.version>
@@ -42,7 +45,7 @@
 
         <asset.model.version>4.0.0</asset.model.version>
         <audit.model.version>4.0.0</audit.model.version>
-        <rules.model.version>3.0.8</rules.model.version>
+        <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>1.0.4</sales.model.version>
 
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -60,12 +63,63 @@
 
     <dependencyManagement>
         <dependencies>
+        	<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-gis-deps</artifactId>
+				<version>1.11</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-logging-deps</artifactId>
+				<version>1.11</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-monitoring-deps</artifactId>
+				<version>1.11</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-test-deps</artifactId>
+				<version>1.11</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>fish.focus.uvms.maven</groupId>
+				<artifactId>uvms-pom-arquillian-deps</artifactId>
+				<version>1.11</version>
+				<type>pom</type>
+			</dependency>
             <dependency>
-                <groupId>fish.focus.uvms.maven</groupId>
-                <artifactId>uvms-pom-monitoring-deps</artifactId>
-                <version>1.11</version>
-                <type>pom</type>
+                <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                <artifactId>uvms-test</artifactId>
+                <version>${uvms.test.version}</version>
+                <scope>test</scope>
             </dependency>
+            <dependency>
+				<groupId>eu.europa.ec.fisheries.uvms</groupId>
+				<artifactId>uvms-commons</artifactId>
+				<version>${uvms.common.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.geotools</groupId>
+						<artifactId>gt-geojson</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct-processor</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -256,35 +310,10 @@
         </profile>
     </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>${maven.plugins.version}</version>
-                <configuration>
-                    <goalPrefix>plugin</goalPrefix>
-                    <outputDirectory>target/dir</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-
-
     <modules>
+		<module>LIQUIBASE</module>
+		<module>model</module>
+        <module>domain</module>
         <module>rest</module>
         <module>service</module>
         <module>message</module>
