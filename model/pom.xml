@@ -146,8 +146,11 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>${basedir}/src/main/java/eu/europa/ec/fisheries/schema</directory>
+									<directory>${basedir}/src/main/java/eu/europa/ec/fisheries/schema</directory>									
 								</fileset>
+								<fileset>
+									<directory>${basedir}/src/main/java/org</directory>									
+								</fileset>								
 							</filesets>
 						</configuration>
 					</execution>
