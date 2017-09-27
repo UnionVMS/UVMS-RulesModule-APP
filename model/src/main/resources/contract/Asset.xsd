@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:asset="urn:asset.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:asset.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+    
+    <xsd:complexType name="AssetId">
+        <xsd:sequence>
+            <xsd:element name="assetType" type="asset:AssetType"/>
+            <xsd:element name="assetIdList" type="asset:AssetIdList" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="AssetType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="VESSEL"/>
+            <xsd:enumeration value="AIR"/>
+            <xsd:enumeration value="VEHICLE"/>
+            <xsd:enumeration value="OTHER"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="AssetIdList">
+        <xsd:sequence>
+            <xsd:element name="idType" type="asset:AssetIdType"/>
+            <xsd:element name="value" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="AssetIdType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ID" />
+            <xsd:enumeration value="CFR" />
+            <xsd:enumeration value="IRCS" />
+            <xsd:enumeration value="IMO" />
+            <xsd:enumeration value="MMSI"/>
+            <xsd:enumeration value="GUID"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+</xsd:schema>

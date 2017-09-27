@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="customrule-01">
+        <createTable tableName="customrule" remarks="Custom rule table.">
+            <column name="rule_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rule_pk"/>
+            </column>
+            <column name="rule_guid" type="varchar(36)" remarks="Unique identifyer."/>
+            <column name="rule_name" type="varchar(100)" remarks="Name of rule."/>
+            <column name="rule_description" type="varchar(500)" remarks="Description."/>
+            <column name="rule_availability" type="varchar(50)" remarks="The scope (GLOBAL, PRIVATE or PUBLIC)."/>
+            <column name="rule_active" type="boolean" remarks="If the rule is activated."/>
+            <column name="rule_archived" type="boolean" remarks="If the rule is archived."/>
+            <column name="rule_lasttriggered" type="TIMESTAMP WITH TIME ZONE" remarks="Last time the rule triggered."/>
+            <column name="rule_startdate" type="TIMESTAMP WITH TIME ZONE" remarks="The date this version of the rule was activated."/>
+            <column name="rule_organisation" type="varchar(100)" remarks="The organisation that ownes the rule."/>
+            <column name="rule_enddate" type="TIMESTAMP WITH TIME ZONE" remarks="The date this version of the rule was inactivated."/>
+            <column name="rule_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rule_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+       
+        <rollback>
+            <dropTable tableName="customrule" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    
+
+</databaseChangeLog>

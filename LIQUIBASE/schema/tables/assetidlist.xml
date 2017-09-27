@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="nhily" id="rawassetidlist-01">
+        <createTable tableName="rawassetidlist" remarks="The type of an asset.">
+            <column name="rawassetidlist_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawassetidlist_id_pk"/>
+            </column>
+            <column name="rawassetidlist_type" type="VARCHAR(100)" remarks="Asset type, e.g. DNID."/>
+            <column name="rawassetidlist_value" type="VARCHAR(100)" remarks="Asset type value."/>
+            <column name="rawassetidlist_rawmoveasset_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+            constraintName="rawassetidlist_id_fk"
+            baseTableName="rawassetidlist"
+            baseColumnNames="rawassetidlist_rawmoveasset_id"
+            referencedTableName="rawmoveasset"
+            referencedColumnNames="rawmoveasset_id"
+        />
+
+        <rollback>
+            <dropTable tableName="rawassetidlist" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

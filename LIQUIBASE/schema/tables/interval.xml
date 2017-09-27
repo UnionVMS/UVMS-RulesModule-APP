@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="interval-01">
+        <createTable tableName="interval" remarks="Time interval when the rule is active.">
+            <column name="interval_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="interval_pk"/>
+            </column>
+            <column name="interval_start" type="TIMESTAMP WITH TIME ZONE" remarks="Start of the interval."/>
+            <column name="interval_end" type="TIMESTAMP WITH TIME ZONE" remarks="End of the interval."/>
+            <column name="interval_rule_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+            constraintName="interval_rule_fk"
+            baseTableName="interval"
+            baseColumnNames="interval_rule_id"
+            referencedTableName="customrule"
+            referencedColumnNames="rule_id"
+        />
+
+        <rollback>
+            <dropTable tableName="interval" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="interval_rule_fk_inx-01" author="andtho">
+        <createIndex tableName="interval" indexName="interval_rule_fk_inx">
+            <column name="interval_rule_id"></column>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

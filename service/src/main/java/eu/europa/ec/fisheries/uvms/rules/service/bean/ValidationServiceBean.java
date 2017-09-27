@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
@@ -46,6 +45,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperE
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -63,7 +63,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
@@ -105,7 +104,7 @@ public class ValidationServiceBean implements ValidationService {
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     /**

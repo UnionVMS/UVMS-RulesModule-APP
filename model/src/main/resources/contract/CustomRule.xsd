@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:complexType name="CustomRuleType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="availability" type="customrule:AvailabilityType"/>
+            <xsd:element name="active" type="xsd:boolean"/>
+            <xsd:element name="archived" type="xsd:boolean"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="timeIntervals" type="customrule:CustomRuleIntervalType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="definitions" type="customrule:CustomRuleSegmentType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="actions" type="customrule:CustomRuleActionType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="subscriptions" type="customrule:SubscriptionType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="lastTriggered" type="xsd:string"/>
+            <xsd:element name="organisation" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="AvailabilityType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="GLOBAL"/>
+            <xsd:enumeration value="PUBLIC"/>
+            <xsd:enumeration value="PRIVATE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="CustomRuleSegmentType">
+        <xsd:sequence>
+            <xsd:element name="startOperator" type="customrule:StartOperatorType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="criteria" type="customrule:CriteriaType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="subCriteria" type="customrule:SubCriteriaType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="condition" type="customrule:ConditionType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="endOperator" type="customrule:EndOperatorType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="logicBoolOperator" type="customrule:LogicOperatorType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="order" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="CriteriaType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVITY"/>
+            <xsd:enumeration value="AREA"/>
+            <xsd:enumeration value="ASSET"/>
+            <xsd:enumeration value="ASSET_GROUP"/>
+            <xsd:enumeration value="MOBILE_TERMINAL"/>
+            <xsd:enumeration value="POSITION"/>
+            <xsd:enumeration value="REPORT"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SubCriteriaType">
+        <xsd:restriction base="xsd:string">
+            <!-- ASSET_GROUP -->
+            <xsd:enumeration value="ASSET_GROUP"/>
+            <!-- ACTIVITY -->
+            <xsd:enumeration value="ACTIVITY_CALLBACK"/>
+            <xsd:enumeration value="ACTIVITY_MESSAGE_ID"/>
+            <xsd:enumeration value="ACTIVITY_MESSAGE_TYPE"/>
+            <!-- AREA -->
+            <xsd:enumeration value="AREA_CODE"/>
+            <xsd:enumeration value="AREA_TYPE"/>
+            <xsd:enumeration value="AREA_CODE_ENT"/>
+            <xsd:enumeration value="AREA_TYPE_ENT"/>
+            <xsd:enumeration value="AREA_CODE_EXT"/>
+            <xsd:enumeration value="AREA_TYPE_EXT"/>
+            <!-- ASSET -->
+            <xsd:enumeration value="ASSET_ID_GEAR_TYPE"/>
+            <xsd:enumeration value="EXTERNAL_MARKING"/>
+            <xsd:enumeration value="FLAG_STATE"/>
+            <xsd:enumeration value="ASSET_CFR"/>
+            <xsd:enumeration value="ASSET_IRCS"/>
+            <xsd:enumeration value="ASSET_NAME"/>
+            <xsd:enumeration value="ASSET_STATUS"/>
+            <!-- MOBILE_TERMINAL -->
+            <xsd:enumeration value="COMCHANNEL_TYPE"/>
+            <xsd:enumeration value="MT_TYPE"/>
+            <xsd:enumeration value="MT_DNID"/>
+            <xsd:enumeration value="MT_MEMBER_ID"/>
+            <xsd:enumeration value="MT_SERIAL_NO"/>
+            <xsd:enumeration value="MT_STATUS"/>
+            <!-- POSITION-->
+            <xsd:enumeration value="ALTITUDE"/>
+            <xsd:enumeration value="LATITUDE"/>
+            <xsd:enumeration value="LONGITUDE"/>
+            <xsd:enumeration value="CALCULATED_COURSE"/>
+            <xsd:enumeration value="CALCULATED_SPEED"/>
+            <xsd:enumeration value="MOVEMENT_TYPE"/>
+            <xsd:enumeration value="POSITION_REPORT_TIME"/>
+            <xsd:enumeration value="REPORTED_COURSE"/>
+            <xsd:enumeration value="REPORTED_SPEED"/>
+            <xsd:enumeration value="SEGMENT_TYPE"/>
+            <xsd:enumeration value="SOURCE"/>
+            <xsd:enumeration value="STATUS_CODE"/>
+            <xsd:enumeration value="CLOSEST_COUNTRY_CODE"/>
+            <xsd:enumeration value="CLOSEST_PORT_CODE"/>
+            <!-- REPORT -->
+            <xsd:enumeration value="TIME_DIFF_POSITION_REPORT"/>
+            <xsd:enumeration value="SUM_POSITION_REPORT"/>
+
+            <xsd:enumeration value="VICINITY_OF"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="LogicOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AND"/>
+            <xsd:enumeration value="OR"/>
+            <xsd:enumeration value="NONE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ConditionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EQ"/>
+            <xsd:enumeration value="NE"/>
+            <xsd:enumeration value="GT"/>
+            <xsd:enumeration value="GE"/>
+            <xsd:enumeration value="LT"/>
+            <xsd:enumeration value="LE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StartOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="("/>
+            <xsd:enumeration value="(("/>
+            <xsd:enumeration value="((("/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EndOperatorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value=")"/>
+            <xsd:enumeration value="))"/>
+            <xsd:enumeration value=")))"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="CustomRuleIntervalType">
+        <xsd:sequence>
+            <xsd:element name="start" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="end" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CustomRuleActionType">
+        <xsd:sequence>
+            <xsd:element name="action" type="customrule:ActionType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="order" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SubscriptionType">
+        <xsd:sequence>
+            <xsd:element name="owner" type="xsd:string"/>
+            <xsd:element name="type" type="customrule:SubscriptionTypeType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="SubscriptionTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TICKET"/>
+            <xsd:enumeration value="EMAIL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ActionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SEND_TO_FLUX"/>
+            <xsd:enumeration value="SEND_TO_NAF"/>
+            <xsd:enumeration value="EMAIL"/>
+
+            <!-- NOT IMPLEMENTED YET
+            <xsd:enumeration value="MANUAL_POLL"/>
+            <xsd:enumeration value="ON_HOLD"/>
+            <xsd:enumeration value="SMS"/>
+            <xsd:enumeration value="TOP_BAR_NOTIFICATION"/>
+            -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MobileTerminalStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="INACTIVE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AssetStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ACTIVE"/>
+            <xsd:enumeration value="INACTIVE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+
+    <xsd:complexType name="UpdateSubscriptionType">
+        <xsd:sequence>
+            <xsd:element name="ruleGuid" type="xsd:string"/>
+            <xsd:element name="operation" type="customrule:SubscritionOperationType"/>
+            <xsd:element name="subscription" type="customrule:SubscriptionType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="SubscritionOperationType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ADD"/>
+            <xsd:enumeration value="REMOVE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+
+    <!-- SANITY RULES -->
+    <xsd:complexType name="SanityRuleType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="expression" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+
+</xsd:schema>

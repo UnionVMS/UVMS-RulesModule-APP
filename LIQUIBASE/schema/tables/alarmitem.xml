@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="alarmitem-01">
+        
+        <createTable tableName="alarmitem" remarks="Alarm Item table.">
+            <column name="alarmitem_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="alarmitem_pk"/>
+            </column>
+            <column name="alarmitem_guid" type="varchar(36)" remarks="Guid of the alarm item."/>
+            <column name="alarmitem_ruleguid" type="varchar(100)" remarks="Guid of rule."/>
+            <column name="alarmitem_rulename" type="varchar(100)" remarks="Name of rule."/>
+
+            <column name="alarmitem_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="alarmitem_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="alarmitem_alarmrep_id" type="bigint" remarks="FK to Alarm Report."/>
+        </createTable>
+
+        <addForeignKeyConstraint 
+            constraintName="alarmitem_alarmrep_fk" 
+            baseTableName="alarmitem" 
+            baseColumnNames="alarmitem_alarmrep_id" 
+            referencedTableName="alarmreport" 
+            referencedColumnNames="alarmrep_id"
+        />
+
+        <rollback>
+            <dropTable tableName="alarmitem" cascadeConstraints="true" />
+        </rollback>
+        
+    </changeSet>
+
+</databaseChangeLog>
