@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="\schema\tables\hibernatesequence.xml"/>
+
+    <include file="\schema\tables\parameter.xml"/>
+
+    <!-- CUSTOM RULES -->
+    <include file="\schema\tables\customrule.xml"/>
+    <include file="\schema\tables\rulesegment.xml"/>
+    <include file="\schema\tables\action.xml"/>
+    <include file="\schema\tables\interval.xml"/>
+    <include file="\schema\tables\rulesubscriber.xml"/>
+    <include file="\schema\tables\template.xml"/>
+    <include file="\schema\tables\rule.xml"/>
+    <include file="\schema\tables\externalrule.xml"/>
+    <include file="\schema\tables\failedrule.xml"/>
+    <include file="\schema\tables\rawmessage.xml"/>
+    <include file="\schema\tables\validationmessage.xml"/>
+    <include file="\schema\tables\messageid.xml"/>
+
+    <include file="\schema\tables\rulestatus.xml"/>
+
+    <include file="\schema\tables\fishinggeartypecharacteristic.xml"/>
+
+
+    <!-- SANITY RULES -->
+    <include file="\schema\tables\sanityrule.xml"/>
+
+    <!-- ALARMS -->
+    <include file="\schema\tables\alarmreport.xml"/>
+    <include file="\schema\tables\alarmitem.xml"/>
+    <include file="\schema\tables\rawmovement.xml"/>
+    <include file="\schema\tables\activity.xml"/>
+    <include file="\schema\tables\position.xml"/>
+    <include file="\schema\tables\asset.xml"/>
+    <include file="\schema\tables\mobileterminal.xml"/>
+    <include file="\schema\tables\mobileterminalid.xml"/>
+    <include file="\schema\tables\assetidlist.xml"/>
+
+
+    <!-- TICKETS -->
+    <include file="\schema\tables\ticket.xml"/>
+
+    <!-- PREVIOUS REPORT -->
+    <include file="\schema\tables\previousreport.xml"/>
+
+</databaseChangeLog>

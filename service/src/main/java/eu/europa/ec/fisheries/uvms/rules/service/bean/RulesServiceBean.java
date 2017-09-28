@@ -81,7 +81,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.*;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -143,7 +142,7 @@ public class RulesServiceBean implements RulesService {
     @Inject
     @TicketCountEvent
     private Event<NotificationMessage> ticketCountEvent;
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {

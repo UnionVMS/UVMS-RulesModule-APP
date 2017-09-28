@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:complexType name="TicketType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="status" type="ticket:TicketStatusType"/>
+            <xsd:element name="openDate" type="xsd:string"/>
+            <xsd:element name="assetGuid" type="xsd:string"/>
+            <xsd:element name="mobileTerminalGuid" type="xsd:string"/>
+            <xsd:element name="channelGuid" type="xsd:string"/>
+            <xsd:element name="ruleGuid" type="xsd:string"/>
+            <xsd:element name="ruleName" type="xsd:string"/>
+            <xsd:element name="movementGuid" type="xsd:string"/>
+            <xsd:element name="recipient" type="xsd:string"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
+            <xsd:element name="ticketCount" type="xsd:long" nillable="true"/>
+            <xsd:element name="comment" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="TicketStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OPEN"/>
+            <xsd:enumeration value="PENDING"/>
+            <xsd:enumeration value="CLOSED"/>
+            <xsd:enumeration value="NONE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

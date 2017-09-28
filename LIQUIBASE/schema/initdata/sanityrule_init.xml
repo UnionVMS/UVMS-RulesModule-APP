@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="sanityrule-init01" author="andtho">	
+
+        <!-- This is moved to Notification
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="1"/>
+            <column name="sanityrule_name" value="Asset not sending"/>
+            <column name="sanityrule_guid" value="Asset not sending"/>
+            <column name="sanityrule_description" value="Asset not sending"/>
+            <column name="sanityrule_expression" value="eval(false)"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        -->
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="2"/>
+            <column name="sanityrule_name" value="Lat missing"/>
+            <column name="sanityrule_guid" value="Lat missing"/>
+            <column name="sanityrule_description" value="Latitude must exist"/>
+            <column name="sanityrule_expression" value="latitude == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="3"/>
+            <column name="sanityrule_name" value="Long missing"/>
+            <column name="sanityrule_guid" value="Long missing"/>
+            <column name="sanityrule_description" value="Longitude must exist"/>
+            <column name="sanityrule_expression" value="longitude == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="4"/>
+            <column name="sanityrule_name" value="Transponder not found"/>
+            <column name="sanityrule_guid" value="Transponder not found"/>
+            <column name="sanityrule_description" value="A mobile terminal must be connected to an asset"/>
+            <column name="sanityrule_expression" value="mobileTerminalConnectId == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot;"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="5"/>
+            <column name="sanityrule_name" value="Asset not found"/>
+            <column name="sanityrule_guid" value="Asset not found"/>
+            <column name="sanityrule_description" value="An asset must exist"/>
+            <column name="sanityrule_expression" value="assetGuid == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="6"/>
+            <column name="sanityrule_name" value="Mem No. missing"/>
+            <column name="sanityrule_guid" value="Mem No. missing"/>
+            <column name="sanityrule_description" value="Member number must exist when INMARSAT_C"/>
+            <column name="sanityrule_expression" value="mobileTerminalMemberNumber == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot; &amp;&amp; mobileTerminalType == &quot;INMARSAT_C&quot;"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="7"/>
+            <column name="sanityrule_name" value="DNID missing"/>
+            <column name="sanityrule_guid" value="DNID missing"/>
+            <column name="sanityrule_description" value="DNID must exist when INMARSAT_C"/>
+            <column name="sanityrule_expression" value="mobileTerminalDnid == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot; &amp;&amp; mobileTerminalType == &quot;INMARSAT_C&quot;"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="8"/>
+            <column name="sanityrule_name" value="Serial No. missing"/>
+            <column name="sanityrule_guid" value="Serial No. missing"/>
+            <column name="sanityrule_description" value="Serial Number must exist when IRIDIUM"/>
+            <column name="sanityrule_expression" value="mobileTerminalSerialNumber == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot; &amp;&amp; mobileTerminalType == &quot;IRIDIUM&quot;"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="9"/>
+            <column name="sanityrule_name" value="ComChannel Type missing"/>
+            <column name="sanityrule_guid" value="ComChannel Type missing"/>
+            <column name="sanityrule_description" value="ComChannel Type must exist"/>
+            <column name="sanityrule_expression" value="comChannelType == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="10"/>
+            <column name="sanityrule_name" value="CFR and IRCS missing"/>
+            <column name="sanityrule_guid" value="CFR and IRCS missing"/>
+            <column name="sanityrule_description" value="Both CFR and IRCS must exist when FLUX or MANUAL"/>
+            <column name="sanityrule_expression" value="cfr == null &amp;&amp; ircs == null &amp;&amp; (pluginType == &quot;FLUX&quot; || comChannelType == &quot;MANUAL&quot;)"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="11"/>
+            <column name="sanityrule_name" value="Plugin Type missing"/>
+            <column name="sanityrule_guid" value="Plugin Type missing"/>
+            <column name="sanityrule_description" value="Plugin Type must exist"/>
+            <column name="sanityrule_expression" value="pluginType == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="12"/>
+            <column name="sanityrule_name" value="Time in the future"/>
+            <column name="sanityrule_guid" value="Time in the future"/>
+            <column name="sanityrule_description" value="Position time cannot be in the future"/>
+            <column name="sanityrule_expression" value="positionTime != null &amp;&amp; positionTime.getTime() > new Date().getTime()"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+        <insert tableName="sanityrule">
+            <column name="sanityrule_id" value="13"/>
+            <column name="sanityrule_name" value="Time missing"/>
+            <column name="sanityrule_guid" value="Time missing"/>
+            <column name="sanityrule_description" value="Position time must exist"/>
+            <column name="sanityrule_expression" value="positionTime == null"/>
+            <column name="sanityrule_updattim" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="sanityrule_upuser" value="UVMS"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="activitytype">
+                <where>
+                    sanityrule_id in (1,2,3,4,5,6,7,8,9,10,11,12,13)
+                </where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+    <changeSet id="sanityrule-init02" author="osdjup">
+        <update tableName="sanityrule">
+            <column name="sanityrule_expression" value="mobileTerminalConnectId == null"/>
+            <where>sanityrule_id=4</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="sanityrule-init03" author="nhily">
+        <update tableName="sanityrule">
+			<column name="sanityrule_expression" value="mobileTerminalConnectId == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot;"/>
+            <where>sanityrule_id=4</where>
+        </update>
+    </changeSet>
+
+    <!-- The reason for the back and forth changes is temporary rollback because of a miss in the backend implementation of the rule change -->
+    <changeSet id="sanityrule-init04" author="osdjup">
+        <update tableName="sanityrule">
+            <column name="sanityrule_expression" value="mobileTerminalConnectId == null"/>
+            <where>sanityrule_id=4</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

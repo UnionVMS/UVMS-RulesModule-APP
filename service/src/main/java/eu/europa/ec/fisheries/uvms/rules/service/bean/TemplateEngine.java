@@ -20,12 +20,11 @@ import javax.ejb.Startup;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,7 +34,7 @@ import org.apache.commons.collections.CollectionUtils;
 @Startup
 public class TemplateEngine {
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDb;
 
     @EJB
@@ -46,11 +45,13 @@ public class TemplateEngine {
 
     @PostConstruct
     public void initialize() {
-        log.info("Initializing templates and rules [START]");
+        log.info("[START] Initializing templates and rules...");
         ruleEvaluator.initializeRules(getAllTemplates());
-        log.info("Initializing MDR cache");
+        log.info("[START] Initializing MDR cache...");
         mdrCache.init();
+        log.info("[START] Updating Rules Status...");
         updateRulesStatus(ruleEvaluator.getFailedRules());
+        log.info("[END] Finished Initializing Templates.");
     }
 
     public void reInitialize() {

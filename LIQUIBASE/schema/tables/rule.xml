@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="patilva (generated)" id="1494409088766-19">
+        <createTable tableName="rule" remarks="Rule Entity.">
+            <column name="rule_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rul_pk" />
+            </column>
+            <column name="br_id" type="VARCHAR(100)" remarks="The Business rule id ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expression" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="error_type" type="VARCHAR(100)"/>
+            <column name="rule_created_on" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="template_id" type="BIGINT" />
+            <column name="property_names" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="disabled" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseColumnNames="template_id"
+                baseTableName="rule"
+                constraintName="template_rule_fk"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="template_id"
+                referencedTableName="template"/>
+
+        <!-- <rollback>
+             <dropTable tableName="rule" cascadeConstraints="true" />
+         </rollback>-->
+    </changeSet>
+
+    <changeSet id="template_id_fk_inx-01" author="patilva">
+        <createIndex tableName="rule" indexName="rule_template_fk_inx">
+            <column name="template_id"></column>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

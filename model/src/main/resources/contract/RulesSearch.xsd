@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:simpleType name="CustomRuleSearchKey">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NAME"/>
+            <xsd:enumeration value="GUID"/>
+            <xsd:enumeration value="TYPE"/>           <!-- GLOBAL/EVENT -->
+            <xsd:enumeration value="AVAILABILITY"/>   <!-- PRIVATE/PUBLIC -->
+            <xsd:enumeration value="RULE_USER"/>
+            <xsd:enumeration value="TICKET_ACTION_USER"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="CustomRuleQuery">
+        <xsd:sequence>
+            <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="customRuleSearchCriteria" type="search:CustomRuleListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="dynamic" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CustomRuleListCriteria">
+        <xsd:sequence>
+            <xsd:element name="key" type="search:CustomRuleSearchKey" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:simpleType name="AlarmSearchKey">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ALARM_GUID"/>
+            <xsd:enumeration value="ASSET_GUID"/>
+            <xsd:enumeration value="STATUS"/>
+            <xsd:enumeration value="RULE_RECIPIENT"/>
+            <xsd:enumeration value="FROM_DATE"/>
+            <xsd:enumeration value="TO_DATE"/>
+            <xsd:enumeration value="RULE_GUID"/>
+            <xsd:enumeration value="RULE_NAME"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="AlarmQuery">
+        <xsd:sequence>
+            <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="alarmSearchCriteria" type="search:AlarmListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="dynamic" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AlarmListCriteria">
+        <xsd:sequence>
+            <xsd:element name="key" type="search:AlarmSearchKey" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:simpleType name="TicketSearchKey">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TICKET_GUID"/>
+            <xsd:enumeration value="ASSET_GUID"/>
+            <xsd:enumeration value="RULE_GUID"/>
+            <xsd:enumeration value="RULE_NAME"/>
+            <xsd:enumeration value="RULE_RECIPIENT"/>
+            <xsd:enumeration value="STATUS"/>
+            <xsd:enumeration value="FROM_DATE"/>
+            <xsd:enumeration value="TO_DATE"/>
+            <xsd:enumeration value="UPDATED_BY"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="TicketQuery">
+        <xsd:sequence>
+            <xsd:element name="pagination" type="search:ListPagination" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="ticketSearchCriteria" type="search:TicketListCriteria" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="TicketListCriteria">
+        <xsd:sequence>
+            <xsd:element name="key" type="search:TicketSearchKey" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="ListPagination">
+        <xsd:sequence>
+            <xsd:element name="page" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="listSize" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+</xsd:schema>

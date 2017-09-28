@@ -13,14 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -30,10 +36,18 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.NoSuchElementException;
+import javax.xml.datatype.DatatypeFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -54,25 +68,8 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 /**
- * Created by padhyad on 6/7/2017.
+ * Created by kovian on 6/7/2017.
  */
 public class MessageServiceBeanTest {
 
@@ -100,7 +97,7 @@ public class MessageServiceBeanTest {
     RulesPreProcessBean rulesPreProcessBean;
 
     @Mock
-    ParameterService parameterService;
+    RulesConfigurationCache ruleModuleCache;
 
     private IDType idType;
     private CodeType codeType;
@@ -164,8 +161,8 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testGenerateFluxResponseMessage() throws Exception {
-        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
+    public void testGenerateFluxResponseMessage() {
+        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
@@ -177,8 +174,8 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testGenerateFluxResponseMessageForFaQuery() throws Exception {
-        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
+    public void testGenerateFluxResponseMessageForFaQuery() {
+        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), fluxfaQueryMessage);
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
@@ -218,28 +215,20 @@ public class MessageServiceBeanTest {
     }
 
     @Test
-    public void testSendRequestToActivity() throws RulesServiceException, MessageException, ConfigServiceException {
+    public void testSendRequestToActivity() throws RulesServiceException, MessageException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
         messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX);
     }
 
-    @Ignore //TODO: remove ignore. Test fails because of FA code
     @Test
-    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException, ConfigServiceException {
-        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
+    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
+        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
         messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
-    }
-
-    @Test
-    public void testGenerateFluxResponseMessageForException() throws ConfigServiceException {
-        when(parameterService.getStringValue(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult());
-        assertNotNull(fluxResponseMessage);
     }
 
     private ValidationResultDto getValidationResult() {

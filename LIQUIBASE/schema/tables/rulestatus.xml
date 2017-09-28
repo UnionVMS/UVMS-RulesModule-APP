@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="padhyad" id="1494409088777-20">
+        <createTable tableName="rulestatus" remarks="Rule status Entity.">
+            <column name="rule_status_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rule_status_id_pk"/>
+            </column>
+            <column name="rule_status" type="VARCHAR(100)" remarks="The rule status ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+
+        <rollback>
+            <dropTable tableName="rulestatus" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

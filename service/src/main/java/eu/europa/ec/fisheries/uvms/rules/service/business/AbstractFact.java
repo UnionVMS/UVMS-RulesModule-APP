@@ -16,10 +16,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -915,6 +915,30 @@ public abstract class AbstractFact {
 
     public boolean isEmpty(List<?> list) {
         return CollectionUtils.isEmpty(list);
+    }
+
+    /**
+     * Checks if the list of strings contains empty (null / "") elements.
+     *
+     * @param stringsList
+     * @return true / false
+     */
+    public boolean containsEmptyStrings(List<String> stringsList){
+        if(!isEmpty(stringsList)){
+            return stringsList.contains(null) || stringsList.contains("");
+        }
+        return true;
+    }
+
+    public boolean containsOnlyEmptyStrings(List<String> stringsList){
+        if(!isEmpty(stringsList)){
+            for(String str : stringsList){
+                if(StringUtils.isNotEmpty(str)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public boolean isNumeric(List<NumericType> list) {

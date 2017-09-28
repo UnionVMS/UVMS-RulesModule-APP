@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="dordevdr (generated)" id="1503410826849-11">
+        <createTable tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fishing_gear_characteristic_code" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="mandatory" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="fishinggeartypecharacteristic" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+    <changeSet author="dordevdr (generated)" id="1503410826849-37">
+        <addPrimaryKey columnNames="fishing_gear_type_code, fishing_gear_characteristic_code" constraintName="fishinggeartypecharacteristic_pkey" tableName="fishinggeartypecharacteristic"/>
+    </changeSet>
+
+    <!--<changeSet author="dordevdr (generated)" id="1503413892103-1">
+        <createSequence sequenceName="fish_gear_type_char_seq"/>
+    </changeSet>-->
+</databaseChangeLog>
