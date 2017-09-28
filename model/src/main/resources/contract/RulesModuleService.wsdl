@@ -116,7 +116,9 @@
 						<xsd:extension base="module:RulesBaseRequest">
 							<xsd:sequence>
 								<xsd:element name="request" type="xsd:string"/>
-							</xsd:sequence>
+                                <xsd:element name="sender" type="xsd:string"/>
+                                <xsd:element name="messageGuid" type="xsd:string"/>
+                            </xsd:sequence>
 						</xsd:extension>
 					</xsd:complexContent>
 				</xsd:complexType>
