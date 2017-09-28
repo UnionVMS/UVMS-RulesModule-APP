@@ -490,7 +490,7 @@
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="234"/>
-            <column name="br_id" value="FA-L01-00-0234"/>
+            <column name="br_id" value="FA-L00-00-0234"/>
             <column name="expression"
                     value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; occurrenceDateTime == null"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233)"/>
