@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rawmoveasset-01">
+        <createTable tableName="rawmoveasset" remarks="The asset connected to the movement.">
+            <column name="rawmoveasset_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawmoveasset_pk"/>
+            </column>
+            <column name="rawmoveasset_assettype" type="VARCHAR(50)" remarks="Type of asset, e.g. VESSEL."/>
+            <column name="rawmoveasset_rawmove_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+            constraintName="rawmoveasset_rawmove_fk"
+            baseTableName="rawmoveasset"
+            baseColumnNames="rawmoveasset_rawmove_id"
+            referencedTableName="rawmovement"
+            referencedColumnNames="rawmove_id"
+        />
+
+        <rollback>
+            <dropTable tableName="rawmoveasset" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="rawmoveasset_rawmove_fk_inx-01" author="andtho">
+        <createIndex tableName="rawmoveasset" indexName="rawmoveasset_rawmove_fk_inx">
+            <column name="rawmoveasset_rawmove_id"></column>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

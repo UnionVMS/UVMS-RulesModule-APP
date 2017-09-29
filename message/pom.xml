@@ -11,18 +11,17 @@
         <artifactId>rules</artifactId>
         <version>3.0.9-SNAPSHOT</version>
     </parent>
-    
+
     <dependencies>
         <dependency>
 			<groupId>fish.focus.uvms.maven</groupId>
 			<artifactId>uvms-pom-monitoring-deps</artifactId>
 			<type>pom</type>
-		</dependency>            
+		</dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
             <version>${rules.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
 	        <groupId>eu.europa.ec.fisheries.uvms</groupId>
@@ -54,5 +53,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>

@@ -44,3 +44,14 @@ The jndi name example is taken from wildfly8.2 application server
 
 * https://github.com/UnionVMS/UVMS-RulesModule-DB
 * https://github.com/UnionVMS/UVMS-RulesModule-MODEL
+
+## Maven 
+
+To speedup building with maven, sometimes it is better only to build changed modules. 
+To only build a module and it's dependant modules, you can add "-pl MODULE_NAME -amd" which will start build from module instead of all modules.   
+
+1. Build from domain "mvn clean install -pl domain  -amd"
+
+2. Build from service "mvn clean install -pl service  -amd"
+
+3. Build from rest "mvn clean install -pl rest  -amd"

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xsd:schema xmlns:rule="urn:rule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:rule.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:complexType name="RuleType">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:long"/>
+            <xsd:element name="createdOn" type="xsd:date"/>
+            <xsd:element name="brId" type="xsd:string"/>
+            <xsd:element name="expression" type="xsd:string"/>
+            <xsd:element name="note" type="xsd:string"/>
+            <xsd:element name="errorType" type="rule:ErrorType"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="level" type="xsd:string"/>
+            <xsd:element name="propertyNames" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ExternalRuleType">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:long"/>
+            <xsd:element name="createdOn" type="xsd:date"/>
+            <xsd:element name="brId" type="xsd:string"/>
+            <xsd:element name="drl" type="xsd:string"/>
+            <xsd:element name="note" type="xsd:string"/>
+            <xsd:element name="errorType" type="rule:ErrorType"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="level" type="xsd:string"/>
+            <xsd:element name="propertyNames" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="RuleStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SUCCESSFUL" />
+            <xsd:enumeration value="FAILED" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ErrorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="WARNING" />
+            <xsd:enumeration value="ERROR" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ValidationMessageType">
+        <xsd:sequence>
+            <xsd:element name="errorType" type="rule:ErrorType"/>
+            <xsd:element name="brId" type="xsd:string"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="level" type="xsd:string"/>
+            <xsd:element name="messageId" type="xsd:string" maxOccurs="unbounded"/>
+            <xsd:element name="xpaths" type="xsd:string" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RawMessageType">
+        <xsd:sequence>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="validationMessage" type="rule:ValidationMessageType" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

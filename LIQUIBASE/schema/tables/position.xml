@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rawmoveposition-01">
+        <createTable tableName="rawmoveposition" remarks="The position connected to the movement.">
+            <column name="rawmovepos_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawmovepos_pk"/>
+            </column>
+            <column name="rawmovepos_longitude" type="DOUBLE" remarks="Longitude."/>
+            <column name="rawmovepos_latitude" type="DOUBLE" remarks="Latitude."/>
+            <column name="rawmovepos_altitude" type="DOUBLE" remarks="Altitude."/>
+
+            <column name="rawmovepos_rawmove_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+			constraintName="rawmovepos_rawmove_fk"
+			baseTableName="rawmoveposition"
+			baseColumnNames="rawmovepos_rawmove_id"
+			referencedTableName="rawmovement"
+			referencedColumnNames="rawmove_id"
+		/>
+
+        <rollback>
+            <dropTable tableName="rawmoveposition" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+	
+	<changeSet id="rawmovepos_rawmove_fk_inx-01" author="andtho">
+		<createIndex tableName="rawmoveposition" indexName="rawmovepos_rawmove_fk_inx">
+			<column name="rawmovepos_rawmove_id"></column>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

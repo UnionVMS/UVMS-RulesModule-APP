@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="alarmreport_testdata-01" author="andtho" context="test">	
+
+        <!-- First report -->
+        <insert tableName="alarmreport">
+            <column name="alarmrep_id" value="1"/>
+            <column name="alarmrep_guid" value="ALARM_GUID_1"/>
+            <column name="alarmrep_vesselguid" value="VESSEL_GUID_1"/>
+            <column name="alarmrep_status" value="OPEN"/>
+            <column name="alarmrep_recipient" value="SWE"/>
+            <column name="alarmrep_plugintype" value="SATELLITE_RECEIVER"/>
+            <column name="alarmrep_createddate" valueDate="${now}"/>
+            <column name="alarmrep_updattim" valueDate="${now}"/>
+            <column name="alarmrep_upuser" value="UPDATE USER"/>
+        </insert>
+
+        <insert tableName="alarmitem">
+            <column name="alarmitem_id" value="1"/>
+            <column name="alarmitem_guid" value="ALARM_ITEM_GUID_1"/>
+            <column name="alarmitem_ruleguid" value="Sanity check - longitude must exist"/>
+            <column name="alarmitem_rulename" value="Sanity check - longitude must exist"/>
+            <column name="alarmitem_updattim" valueDate="${now}"/>
+            <column name="alarmitem_upuser" value="UPDATE USER"/>
+            <column name="alarmitem_alarmrep_id" value="1"/>
+        </insert>
+
+        <insert tableName="alarmitem">
+            <column name="alarmitem_id" value="2"/>
+            <column name="alarmitem_guid" value="ALARM_ITEM_GUID_2"/>
+            <column name="alarmitem_ruleguid" value="Sanity check - latitude must exist"/>
+            <column name="alarmitem_rulename" value="Sanity check - latitude must exist"/>
+            <column name="alarmitem_updattim" valueDate="${now}"/>
+            <column name="alarmitem_upuser" value="UPDATE USER"/>
+            <column name="alarmitem_alarmrep_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmovement">
+            <column name="rawmove_id" value="1"/>
+            <column name="rawmove_guid" value="RAW_MOVEMENT_GUID_1"/>
+            <column name="rawmove_status" value="010"/>
+            <column name="rawmove_comchanneltype" value="MOBILE_TERMINAL"/>
+            <column name="rawmove_connectid" value="connectId_1"/>
+            <column name="rawmove_reportedspeed" value="11.1"/>
+            <column name="rawmove_reportedcourse" value="1.11"/>
+            <column name="rawmove_movementtype" value="POS"/>
+            <column name="rawmove_source" value="INMARSAT_C"/>
+            <column name="rawmove_positiontime" valueDate="${now}"/>
+            <column name="rawmove_active" value="true"/>
+            <column name="rawmove_updattim" valueDate="${now}"/>
+            <column name="rawmove_upuser" value="UPDATE USER"/>
+            <column name="rawmove_alarmrep_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmoveasset">
+            <column name="rawmoveasset_id" value="1"/>
+            <column name="rawmoveasset_assettype" value="VESSEL"/>
+            <column name="rawmoveasset_rawmove_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawassetidlist">
+            <column name="rawassetidlist_id" value="1"/>
+            <column name="rawassetidlist_type" value="CFR"/>
+            <column name="rawassetidlist_value" value="SWE111111"/>
+            <column name="rawassetidlist_rawmoveasset_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmoveactivity">
+            <column name="rawmoveact_id" value="1"/>
+            <column name="rawmoveact_messagetype" value="COE"/>
+            <column name="rawmoveact_messageid" value="messageid_1"/>
+            <column name="rawmoveact_callback" value="callback_1"/>
+            <column name="rawmoveact_rawmove_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmoveposition">
+            <column name="rawmovepos_id" value="1"/>
+            <column name="rawmovepos_altitude" value="0.0"/>
+            <column name="rawmovepos_rawmove_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmovemobileterminal">
+            <column name="rawmovemob_id" value="1"/>
+            <column name="rawmovemob_guid" value="MOBILE_TERMINAL_GUID_1"/>
+            <column name="rawmovemob_connectid" value="connectid_1"/>
+            <column name="rawmovemob_rawmove_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmovemobileterminalid">
+            <column name="rawmovemobid_id" value="1"/>
+            <column name="rawmovemobid_type" value="DNID"/>
+            <column name="rawmovemobid_value" value="DNID_1"/>
+            <column name="rawmovemobid_rawmovemob_id" value="1"/>
+        </insert>
+
+        <insert tableName="rawmovemobileterminalid">
+            <column name="rawmovemobid_id" value="2"/>
+            <column name="rawmovemobid_type" value="MEMBER_NUMBER"/>
+            <column name="rawmovemobid_value" value="MEMBER_NUMBER_1"/>
+            <column name="rawmovemobid_rawmovemob_id" value="1"/>
+        </insert>
+
+        <!-- Second report -->
+        <insert tableName="alarmreport">
+            <column name="alarmrep_id" value="2"/>
+            <column name="alarmrep_guid" value="ALARM_GUID_2"/>
+            <column name="alarmrep_vesselguid" value="VESSEL_GUID_2"/>
+            <column name="alarmrep_status" value="REJECTED"/>
+            <column name="alarmrep_recipient" value="SWE"/>
+            <column name="alarmrep_plugintype" value="SATELLITE_RECEIVER"/>
+            <column name="alarmrep_createddate" valueDate="${now}"/>
+            <column name="alarmrep_updattim" valueDate="${now}"/>
+            <column name="alarmrep_upuser" value="UPDATE USER"/>
+        </insert>
+
+        <insert tableName="alarmitem">
+            <column name="alarmitem_id" value="3"/>
+            <column name="alarmitem_guid" value="ALARM_ITEM_GUID_2"/>
+            <column name="alarmitem_ruleguid" value="Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist for INMARSAT_C"/>
+            <column name="alarmitem_rulename" value="Sanity check - mobileTerminalMemberNumber and mobileTerminalDnid must exist for INMARSAT_C"/>
+            <column name="alarmitem_updattim" valueDate="${now}"/>
+            <column name="alarmitem_upuser" value="UPDATE USER"/>
+            <column name="alarmitem_alarmrep_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmovement">
+            <column name="rawmove_id" value="2"/>
+            <column name="rawmove_guid" value="RAW_MOVEMENT_GUID_2"/>
+            <column name="rawmove_status" value="020"/>
+            <column name="rawmove_comchanneltype" value="FLUX"/>
+            <column name="rawmove_connectid" value="connectId_2"/>
+            <column name="rawmove_reportedspeed" value="22.2"/>
+            <column name="rawmove_reportedcourse" value="2.22"/>
+            <column name="rawmove_movementtype" value="POS"/>
+            <column name="rawmove_source" value="INMARSAT_C"/>
+            <column name="rawmove_positiontime" valueDate="${now}"/>
+            <column name="rawmove_active" value="true"/>
+            <column name="rawmove_updattim" valueDate="${now}"/>
+            <column name="rawmove_upuser" value="UPDATE USER"/>
+            <column name="rawmove_alarmrep_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmoveasset">
+            <column name="rawmoveasset_id" value="2"/>
+            <column name="rawmoveasset_assettype" value="VESSEL"/>
+            <column name="rawmoveasset_rawmove_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawassetidlist">
+            <column name="rawassetidlist_id" value="2"/>
+            <column name="rawassetidlist_type" value="CFR"/>
+            <column name="rawassetidlist_value" value="SWE111111"/>
+            <column name="rawassetidlist_rawmoveasset_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmoveactivity">
+            <column name="rawmoveact_id" value="2"/>
+            <column name="rawmoveact_messagetype" value="COX"/>
+            <column name="rawmoveact_messageid" value="messageid_2"/>
+            <column name="rawmoveact_callback" value="callback_2"/>
+            <column name="rawmoveact_rawmove_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmoveposition">
+            <column name="rawmovepos_id" value="2"/>
+            <column name="rawmovepos_longitude" value="2.11"/>
+            <column name="rawmovepos_latitude" value="2.22"/>
+            <column name="rawmovepos_altitude" value="0.0"/>
+            <column name="rawmovepos_rawmove_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmovemobileterminal">
+            <column name="rawmovemob_id" value="2"/>
+            <column name="rawmovemob_guid" value="MOBILE_TERMINAL_GUID_2"/>
+            <column name="rawmovemob_connectid" value="connectid_2"/>
+            <column name="rawmovemob_rawmove_id" value="2"/>
+        </insert>
+
+        <insert tableName="rawmovemobileterminalid">
+            <column name="rawmovemobid_id" value="3"/>
+            <column name="rawmovemobid_type" value="DNID"/>
+            <column name="rawmovemobid_value" value="DNID_2"/>
+            <column name="rawmovemobid_rawmovemob_id" value="2"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="rawmovemobileterminalid">
+                <where>
+                    rawmovemobid_id in (1,2,3,4)
+                </where>
+            </delete>
+            <delete tableName="rawmovemobileterminal">
+                <where>
+                    rawmovemob_id in (1,2)
+                </where>
+            </delete>
+            <delete tableName="rawmoveposition">
+                <where>
+                    rawmovepos_id in (1,2)
+                </where>
+            </delete>
+            <delete tableName="rawmoveactivity">
+                <where>
+                    rawmoveact_id in (1,2)
+                </where>
+            </delete>
+            <delete tableName="rawassetidlist">
+                <where>
+                    rawassetidlist_id in (1)
+                </where>
+            </delete>
+            <delete tableName="rawmoveasset">
+                <where>
+                    rawmoveasset_id in (1,2)
+                </where>
+            </delete>
+            <delete tableName="rawmovement">
+                <where>
+                    rawmove_id in (1,2)
+                </where>
+            </delete>
+            <delete tableName="alarmitem">
+                <where>
+                    alarmitem_id in (1,2,3)
+                </where>
+            </delete>
+            <delete tableName="alarmreport">
+                <where>
+                    alarmrep_id in (1,2)
+                </where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

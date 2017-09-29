@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	
+	<changeSet author="nhily" id="Add hibernate seq">
+		<createSequence sequenceName="HIBERNATE_SEQUENCE" startValue="100"/>
+		<rollback>
+			<dropSequence schemaName="exchange" sequenceName="HIBERNATE_SEQUENCE"/>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>	

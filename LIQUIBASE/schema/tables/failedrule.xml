@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rule-01">
+        <createTable tableName="failedrule" remarks="Failed Rule Entity.">
+            <column name="rule_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="failedrul_pk"/>
+            </column>
+            <column name="br_id" type="TEXT" remarks="The Business rule id ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+
+        <rollback>
+            <dropTable tableName="failedrule" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

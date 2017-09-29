@@ -1,0 +1,1671 @@
+<definitions xmlns:source="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:customrule="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:ticket="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:previous="urn:previous.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:common="urn:common.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:search="urn:search.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:ticketrule="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="RulesDataSource"
+             targetNamespace="urn:source.rules.schema.fisheries.ec.europa.eu:v1"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:source.rules.schema.fisheries.ec.europa.eu:v1">
+
+            <xsd:import namespace="urn:customrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="CustomRule.xsd"/>
+            <xsd:import namespace="urn:common.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesCommon.xsd"/>
+            <xsd:import namespace="urn:search.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="RulesSearch.xsd"/>
+            <xsd:import namespace="urn:ticket.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Ticket.xsd"/>
+            <xsd:import namespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Alarm.xsd"/>
+            <xsd:import namespace="urn:previous.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="PreviousReport.xsd"/>
+            <xsd:import namespace="urn:ticketrule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="TicketAndRule.xsd"/>
+            <xsd:import namespace="urn:template.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Template.xsd"/>
+            <xsd:import namespace="urn:rule.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Rule.xsd"/>
+
+            <!-- Rules Base Request -->
+            <xsd:simpleType name="RulesDataSourceMethod">
+                <xsd:restriction base="xsd:string">
+                    <!-- Actions triggered by user -->
+                    <xsd:enumeration value="CREATE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="UPDATE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="DELETE_CUSTOM_RULE"/>
+                    <xsd:enumeration value="UPDATE_CUSTOM_RULE_LAST_TRIGGERED"/>
+                    <xsd:enumeration value="GET_RUNNABLE_CUSTOM_RULES"/>
+                    <xsd:enumeration value="LIST_CUSTOM_RULES_BY_USER"/>
+                    <xsd:enumeration value="LIST_CUSTOM_RULES_BY_QUERY"/>
+                    <xsd:enumeration value="SET_TICKET_STATUS"/>
+                    <xsd:enumeration value="UPDATE_TICKET_COUNT"/>
+                    <xsd:enumeration value="UPDATE_TICKET_STATUS_BY_QUERY"/>
+                    <xsd:enumeration value="LIST_TICKETS"/>
+                    <xsd:enumeration value="GET_TICKETS_BY_MOVEMENTS"/>
+                    <xsd:enumeration value="COUNT_TICKETS_BY_MOVEMENTS"/>
+                    <xsd:enumeration value="SET_ALARM_STATUS"/>
+                    <xsd:enumeration value="LIST_ALARMS"/>
+                    <xsd:enumeration value="GET_CUSTOM_RULE"/>
+                    <xsd:enumeration value="GET_ALARM"/>
+                    <xsd:enumeration value="GET_TICKET"/>
+                    <xsd:enumeration value="GET_NUMBER_OF_OPEN_TICKETS"/>
+                    <xsd:enumeration value="GET_NUMBER_OF_OPEN_ALARMS"/>
+                    <xsd:enumeration value="UPDATE_CUSTOM_RULE_SUBSCRIPTION"/>
+                    <xsd:enumeration value="REPROCESS_ALARMS"/>
+                    <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
+
+                    <!-- Actions triggered by rule engine -->
+                    <xsd:enumeration value="CREATE_ALARM_REPORT"/>
+                    <xsd:enumeration value="CREATE_TICKET"/>
+                    <xsd:enumeration value="GET_TICKET_BY_ASSET_AND_RULE"/>
+                    <xsd:enumeration value="GET_ALARM_REPORT_BY_ASSET_AND_RULE"/>
+                    <xsd:enumeration value="UPSERT_PREVIOUS_REPORT"/>
+                    <xsd:enumeration value="GET_PREVIOUS_REPORT_BY_ASSET_GUID"/>
+                    <xsd:enumeration value="GET_SANITY_RULES"/>
+
+                    <!-- Actions triggered by timer -->
+                    <xsd:enumeration value="GET_PREVIOUS_REPORTS"/>
+
+                    <!-- Ping -->
+                    <xsd:enumeration value="PING"/>
+
+                    <!-- Actions triggered by widget -->
+                    <xsd:enumeration value="GET_NUMBER_OF_ASSETS_NOT_SENDING"/>
+
+                </xsd:restriction>
+            </xsd:simpleType>
+
+            <xsd:complexType name="RulesBaseRequest" abstract="true">
+                <xsd:sequence>
+                    <xsd:element name="method" type="source:RulesDataSourceMethod"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Create custom rule request -->
+            <xsd:element name="CreateCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="customRule" type="customrule:CustomRuleType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create custom rule response -->
+            <xsd:element name="CreateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules for rule engine request -->
+            <xsd:element name="GetRunnableCustomRulesRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules for rule engine response -->
+            <xsd:element name="GetRunnableCustomRulesResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Sanity rules request -->
+            <xsd:element name="GetSanityRulesRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Sanity rules response -->
+            <xsd:element name="GetSanityRulesResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="sanityRules" type="customrule:SanityRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules by user request -->
+            <xsd:element name="GetCustomRulesByUserRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="userName" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rules by user response -->
+            <xsd:element name="GetCustomRulesByUserResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rule QueryList request -->
+            <xsd:element name="GetCustomRuleListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:CustomRuleQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Custom rule QueryList response -->
+            <xsd:element name="GetCustomRuleListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRules" type="customrule:CustomRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get custom rule request by guid-->
+            <xsd:element name="GetCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Get custom rule by guid response -->
+            <xsd:element name="GetCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule request -->
+            <xsd:element name="UpdateCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="customRule" type="customrule:CustomRuleType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule response -->
+            <xsd:element name="UpdateCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule subscription request -->
+            <xsd:element name="UpdateCustomRuleSubscriptionRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="subscription" type="customrule:UpdateSubscriptionType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule subscription response -->
+            <xsd:element name="UpdateCustomRuleSubscriptionResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Delete custom rule request -->
+            <xsd:element name="DeleteCustomRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                                <xsd:element name="username" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Delete custom rule response -->
+            <xsd:element name="DeleteCustomRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule last triggered request -->
+            <xsd:element name="UpdateCustomRuleLastTriggeredRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="customRuleGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update custom rule last triggered response -->
+            <xsd:element name="UpdateCustomRuleLastTriggeredResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customRule" type="customrule:CustomRuleType" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- List tickets request -->
+            <xsd:element name="GetTicketListRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:TicketQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- List tickets response -->
+            <xsd:element name="GetTicketListResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status request -->
+            <xsd:element name="SetTicketStatusRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Set ticket status response -->
+            <xsd:element name="SetTicketStatusResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status request -->
+            <xsd:element name="UpdateTicketCountRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set ticket status response -->
+            <xsd:element name="UpdateTicketCountResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Update ticket status by query request -->
+            <xsd:element name="UpdateTicketStatusByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="loggedInUser" type="xsd:string"/>
+                                <xsd:element name="query" type="search:TicketQuery"/>
+                                <xsd:element name="status" type="ticket:TicketStatusType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateTicketStatusByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="1" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Set alarm status request -->
+            <xsd:element name="SetAlarmStatusRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Set alarm status response -->
+            <xsd:element name="SetAlarmStatusResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Create alarm report request -->
+            <xsd:element name="CreateAlarmReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create alarm report response -->
+            <xsd:element name="CreateAlarmReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ack" type="xsd:string"/>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Create ticket request -->
+            <xsd:element name="CreateTicketRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Create ticket response -->
+            <xsd:element name="CreateTicketResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ack" type="xsd:string"/>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Alarms QueryList request -->
+            <xsd:element name="GetAlarmListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="query" type="search:AlarmQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Alarms QueryList response -->
+            <xsd:element name="GetAlarmListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarms" type="alarm:AlarmReportType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Tickets QueryList request -->
+            <xsd:element name="GetTicketListByQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="loggedInUser" type="xsd:string"/>
+                                <xsd:element name="query" type="search:TicketQuery"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Ticket QueryList response -->
+            <xsd:element name="GetTicketListByQueryResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get tickets by movements -->
+            <xsd:element name="GetTicketListByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketListByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tickets" type="ticket:TicketType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Count tickets by movements -->
+            <xsd:element name="CountTicketListByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CountTicketListByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="count" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Ping request -->
+            <xsd:element name="PingRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Ping response -->
+            <xsd:element name="PingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous reports request -->
+            <xsd:element name="GetPreviousReportsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report response -->
+            <xsd:element name="GetPreviousReportsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReports" type="previous:PreviousReportType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report by asset guid request -->
+            <xsd:element name="GetPreviousReportByAssetGuidRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="assetGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get previous report by asset guid response -->
+            <xsd:element name="GetPreviousReportByAssetGuidResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReport" type="previous:PreviousReportType" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by asset guid request -->
+            <xsd:element name="GetTicketByAssetAndRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="assetGuid" type="xsd:string"/>
+                                <xsd:element name="ruleGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by asset guid response -->
+            <xsd:element name="GetTicketByAssetAndRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get alarm by asset guid request -->
+            <xsd:element name="GetAlarmReportByAssetAndRuleRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="assetGuid" type="xsd:string"/>
+                                <xsd:element name="ruleGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get alarm by asset guid response -->
+            <xsd:element name="GetAlarmReportByAssetAndRuleResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Upsert previous report request -->
+            <xsd:element name="UpsertPreviousReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="previousReport" type="previous:PreviousReportType"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Uppsert previous report response NOT NEEDED? -->
+            <xsd:element name="UpsertPreviousReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="previousReport" type="previous:PreviousReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get alarm by guid request -->
+            <xsd:element name="GetAlarmRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SingleAlarmResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="alarm" type="alarm:AlarmReportType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get ticket by guid request -->
+            <xsd:element name="GetTicketRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SingleTicketResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticket" type="ticket:TicketType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Reprocess alarm request -->
+            <xsd:element name="ReprocessAlarmRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="alarmReportGuid" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Reprocess alarm response -->
+            <xsd:element name="ReprocessAlarmResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open alarms request -->
+            <xsd:element name="GetNumberOfOpenAlarmsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open alarms response -->
+            <xsd:element name="GetNumberOfOpenAlarmsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open tickets request -->
+            <xsd:element name="GetNumberOfOpenTicketsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="userName" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of open tickets response -->
+            <xsd:element name="GetNumberOfOpenTicketsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of assets not sending request -->
+            <xsd:element name="GetNumberOfAssetsNotSendingRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get number of assets not sending response -->
+            <xsd:element name="GetNumberOfAssetsNotSendingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:long"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Get tickets and rules by movements -->
+            <xsd:element name="GetTicketsAndRulesByMovementsRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="source:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="movementGuids" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTicketsAndRulesByMovementsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ticketsAndRules" type="ticketrule:TicketAndRuleType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+        </xsd:schema>
+    </types>
+
+    <message name="RulesException">
+        <part name="body" element="common:RulesFault"/>
+    </message>
+
+    <message name="CreateCustomRuleRequest">
+        <part name="body" element="source:CreateCustomRuleRequest"/>
+    </message>
+    <message name="CreateCustomRuleResponse">
+        <part name="body" element="source:CreateCustomRuleResponse"/>
+    </message>
+
+    <message name="UpdateCustomRuleRequest">
+        <part name="body" element="source:UpdateCustomRuleRequest"/>
+    </message>
+    <message name="UpdateCustomRuleResponse">
+        <part name="body" element="source:UpdateCustomRuleResponse"/>
+    </message>
+
+    <message name="UpdateCustomRuleSubscriptionRequest">
+        <part name="body" element="source:UpdateCustomRuleSubscriptionRequest"/>
+    </message>
+    <message name="UpdateCustomRuleSubscriptionResponse">
+        <part name="body" element="source:UpdateCustomRuleSubscriptionResponse"/>
+    </message>
+
+    <message name="DeleteCustomRuleRequest">
+        <part name="body" element="source:DeleteCustomRuleRequest"/>
+    </message>
+    <message name="DeleteCustomRuleResponse">
+        <part name="body" element="source:DeleteCustomRuleResponse"/>
+    </message>
+
+    <message name="UpdateCustomRuleLastTriggeredRequest">
+        <part name="body" element="source:UpdateCustomRuleLastTriggeredRequest"/>
+    </message>
+    <message name="UpdateCustomRuleLastTriggeredResponse">
+        <part name="body" element="source:UpdateCustomRuleLastTriggeredResponse"/>
+    </message>
+
+    <message name="GetRunnableCustomRulesRequest">
+        <part name="body" element="source:GetRunnableCustomRulesRequest"/>
+    </message>
+    <message name="GetRunnableCustomRulesResponse">
+        <part name="body" element="source:GetRunnableCustomRulesResponse"/>
+    </message>
+
+    <message name="GetSanityRulesRequest">
+        <part name="body" element="source:GetSanityRulesRequest"/>
+    </message>
+    <message name="GetSanityRulesResponse">
+        <part name="body" element="source:GetSanityRulesResponse"/>
+    </message>
+
+    <message name="GetCustomRulesByUserRequest">
+        <part name="body" element="source:GetCustomRulesByUserRequest"/>
+    </message>
+    <message name="GetCustomRulesByUserResponse">
+        <part name="body" element="source:GetCustomRulesByUserResponse"/>
+    </message>
+
+    <message name="GetCustomRuleListByQueryRequest">
+        <part name="body" element="source:GetCustomRuleListByQueryRequest"/>
+    </message>
+    <message name="GetCustomRuleListByQueryResponse">
+        <part name="body" element="source:GetCustomRuleListByQueryResponse"/>
+    </message>
+
+    <message name="GetCustomRuleRequest">
+        <part name="body" element="source:GetCustomRuleRequest"/>
+    </message>
+    <message name="GetCustomRuleResponse">
+        <part name="body" element="source:GetCustomRuleResponse"/>
+    </message>
+
+    <message name="GetTicketListRequest">
+        <part name="body" element="source:GetTicketListRequest"/>
+    </message>
+    <message name="GetTicketListResponse">
+        <part name="body" element="source:GetTicketListResponse"/>
+    </message>
+
+    <message name="SetTicketStatusRequest">
+        <part name="body" element="source:SetTicketStatusRequest"/>
+    </message>
+    <message name="SetTicketStatusResponse">
+        <part name="body" element="source:SetTicketStatusResponse"/>
+    </message>
+
+    <message name="UpdateTicketCountRequest">
+        <part name="body" element="source:UpdateTicketCountRequest"/>
+    </message>
+    <message name="UpdateTicketCountResponse">
+        <part name="body" element="source:UpdateTicketCountResponse"/>
+    </message>
+
+    <message name="UpdateTicketStatusByQueryRequest">
+        <part name="body" element="source:UpdateTicketStatusByQueryRequest"/>
+    </message>
+    <message name="UpdateTicketStatusByQueryResponse">
+        <part name="body" element="source:UpdateTicketStatusByQueryResponse"/>
+    </message>
+
+    <message name="SetAlarmStatusRequest">
+        <part name="body" element="source:SetAlarmStatusRequest"/>
+    </message>
+    <message name="SetAlarmStatusResponse">
+        <part name="body" element="source:SetAlarmStatusResponse"/>
+    </message>
+
+    <message name="CreateAlarmReportRequest">
+        <part name="body" element="source:CreateAlarmReportRequest"/>
+    </message>
+    <message name="CreateAlarmReportResponse">
+        <part name="body" element="source:CreateAlarmReportResponse"/>
+    </message>
+    
+    <message name="CreateTicketRequest">
+        <part name="body" element="source:CreateTicketRequest"/>
+    </message>
+    <message name="CreateTicketResponse">
+        <part name="body" element="source:CreateTicketResponse"/>
+    </message>
+    
+    <message name="GetAlarmListByQueryRequest">
+        <part name="body" element="source:GetAlarmListByQueryRequest"/>
+    </message>
+    <message name="GetAlarmListByQueryResponse">
+        <part name="body" element="source:GetAlarmListByQueryResponse"/>
+    </message>
+
+    <message name="GetTicketListByQueryRequest">
+        <part name="body" element="source:GetTicketListByQueryRequest"/>
+    </message>
+    <message name="GetTicketListByQueryResponse">
+        <part name="body" element="source:GetTicketListByQueryResponse"/>
+    </message>
+
+    <message name="GetTicketListByMovementsRequest">
+        <part name="body" element="source:GetTicketListByMovementsRequest"/>
+    </message>
+    <message name="GetTicketListByMovementsResponse">
+        <part name="body" element="source:GetTicketListByMovementsResponse"/>
+    </message>
+
+    <message name="CountTicketListByMovementsRequest">
+        <part name="body" element="source:CountTicketListByMovementsRequest"/>
+    </message>
+    <message name="CountTicketListByMovementsResponse">
+        <part name="body" element="source:CountTicketListByMovementsResponse"/>
+    </message>
+
+    <message name="PingRequest">
+        <part name="body" element="source:PingRequest"/>
+    </message>
+    <message name="PingResponse">
+        <part name="body" element="source:PingResponse"/>
+    </message>
+
+    <message name="GetPreviousReportsRequest">
+        <part name="body" element="source:GetPreviousReportsRequest"/>
+    </message>
+    <message name="GetPreviousReportsResponse">
+        <part name="body" element="source:GetPreviousReportsResponse"/>
+    </message>
+
+    <message name="GetPreviousReportByAssetGuidRequest">
+        <part name="body" element="source:GetPreviousReportByAssetGuidRequest"/>
+    </message>
+    <message name="GetPreviousReportByAssetGuidResponse">
+        <part name="body" element="source:GetPreviousReportByAssetGuidResponse"/>
+    </message>
+
+    <message name="GetTicketByAssetAndRuleRequest">
+        <part name="body" element="source:GetTicketByAssetAndRuleRequest"/>
+    </message>
+    <message name="GetTicketByAssetAndRuleResponse">
+        <part name="body" element="source:GetTicketByAssetAndRuleResponse"/>
+    </message>
+
+    <message name="GetAlarmReportByAssetAndRuleRequest">
+        <part name="body" element="source:GetAlarmReportByAssetAndRuleRequest"/>
+    </message>
+    <message name="GetAlarmReportByAssetAndRuleResponse">
+        <part name="body" element="source:GetAlarmReportByAssetAndRuleResponse"/>
+    </message>
+
+    <message name="UpsertPreviousReportRequest">
+        <part name="body" element="source:UpsertPreviousReportRequest"/>
+    </message>
+    <message name="UpsertPreviousReportResponse">
+        <part name="body" element="source:UpsertPreviousReportResponse"/>
+    </message>
+
+    <message name="GetAlarmRequest">
+        <part name="body" element="source:GetAlarmRequest"/>
+    </message>
+    <message name="GetAlarmResponse">
+        <part name="body" element="source:SingleAlarmResponse"/>
+    </message>
+
+    <message name="GetTicketRequest">
+        <part name="body" element="source:GetTicketRequest"/>
+    </message>
+    <message name="GetTicketResponse">
+        <part name="body" element="source:SingleTicketResponse"/>
+    </message>
+
+    <message name="ReprocessAlarmRequest">
+        <part name="body" element="source:ReprocessAlarmRequest"/>
+    </message>
+    <message name="ReprocessAlarmResponse">
+        <part name="body" element="source:ReprocessAlarmResponse"/>
+    </message>
+
+    <message name="GetNumberOfOpenAlarmsRequest">
+        <part name="body" element="source:GetNumberOfOpenAlarmsRequest"/>
+    </message>
+    <message name="GetNumberOfOpenAlarmsResponse">
+        <part name="body" element="source:GetNumberOfOpenAlarmsResponse"/>
+    </message>
+
+    <message name="GetNumberOfOpenTicketsRequest">
+        <part name="body" element="source:GetNumberOfOpenTicketsRequest"/>
+    </message>
+    <message name="GetNumberOfOpenTicketsResponse">
+        <part name="body" element="source:GetNumberOfOpenTicketsResponse"/>
+    </message>
+
+    <message name="GetNumberOfAssetsNotSendingRequest">
+        <part name="body" element="source:GetNumberOfAssetsNotSendingRequest"/>
+    </message>
+    <message name="GetNumberOfAssetsNotSendingResponse">
+        <part name="body" element="source:GetNumberOfAssetsNotSendingResponse"/>
+    </message>
+
+    <message name="GetTicketsAndRulesByMovementsRequest">
+        <part name="body" element="source:GetTicketsAndRulesByMovementsRequest"/>
+    </message>
+    <message name="GetTicketsAndRulesByMovementsResponse">
+        <part name="body" element="source:GetTicketsAndRulesByMovementsResponse"/>
+    </message>
+
+    <portType name="RulesModulePortType">
+    
+        <operation name="CreateCustomRule">
+            <input message="source:CreateCustomRuleRequest"/>
+            <output message="source:CreateCustomRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateCustomRule">
+            <input message="source:UpdateCustomRuleRequest"/>
+            <output message="source:UpdateCustomRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateCustomRuleSubscription">
+            <input message="source:UpdateCustomRuleSubscriptionRequest"/>
+            <output message="source:UpdateCustomRuleSubscriptionResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="DeleteCustomRule">
+            <input message="source:DeleteCustomRuleRequest"/>
+            <output message="source:DeleteCustomRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateCustomRuleLastTriggered">
+            <input message="source:UpdateCustomRuleLastTriggeredRequest"/>
+            <output message="source:UpdateCustomRuleLastTriggeredResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetRunnableCustomRules">
+            <input message="source:GetRunnableCustomRulesRequest"/>
+            <output message="source:GetRunnableCustomRulesResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetSanityRules">
+            <input message="source:GetSanityRulesRequest"/>
+            <output message="source:GetSanityRulesResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRulesByUser">
+            <input message="source:GetCustomRulesByUserRequest"/>
+            <output message="source:GetCustomRulesByUserResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRuleListByQuery">
+            <input message="source:GetCustomRuleListByQueryRequest"/>
+            <output message="source:GetCustomRuleListByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetCustomRule">
+            <input message="source:GetCustomRuleRequest"/>
+            <output message="source:GetCustomRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketList">
+            <input message="source:GetTicketListRequest"/>
+            <output message="source:GetTicketListResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="SetTicketStatus">
+            <input message="source:SetTicketStatusRequest"/>
+            <output message="source:SetTicketStatusResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateTicketCount">
+            <input message="source:UpdateTicketCountRequest"/>
+            <output message="source:UpdateTicketCountResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpdateTicketStatusByQuery">
+            <input message="source:UpdateTicketStatusByQueryRequest"/>
+            <output message="source:UpdateTicketStatusByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="SetAlarmStatus">
+            <input message="source:SetAlarmStatusRequest"/>
+            <output message="source:SetAlarmStatusResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="CreateAlarmReport">
+            <input message="source:CreateAlarmReportRequest"/>
+            <output message="source:CreateAlarmReportResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="CreateTicket">
+            <input message="source:CreateTicketRequest"/>
+            <output message="source:CreateTicketResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarmListByQuery">
+            <input message="source:GetAlarmListByQueryRequest"/>
+            <output message="source:GetAlarmListByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketListByQuery">
+            <input message="source:GetTicketListByQueryRequest"/>
+            <output message="source:GetTicketListByQueryResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketListByMovements">
+            <input message="source:GetTicketListByMovementsRequest"/>
+            <output message="source:GetTicketListByMovementsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="CountTicketListByMovements">
+            <input message="source:CountTicketListByMovementsRequest"/>
+            <output message="source:CountTicketListByMovementsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="Ping">
+            <input message="source:PingRequest"/>
+            <output message="source:PingResponse"/>
+        </operation>
+
+        <operation name="GetPreviousReports">
+            <input message="source:GetPreviousReportsRequest"/>
+            <output message="source:GetPreviousReportsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetPreviousReportByAssetGuid">
+            <input message="source:GetPreviousReportByAssetGuidRequest"/>
+            <output message="source:GetPreviousReportByAssetGuidResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketByAssetAndRule">
+            <input message="source:GetTicketByAssetAndRuleRequest"/>
+            <output message="source:GetTicketByAssetAndRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarmReportByAssetAndRule">
+            <input message="source:GetAlarmReportByAssetAndRuleRequest"/>
+            <output message="source:GetAlarmReportByAssetAndRuleResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="UpsertPreviousReport">
+            <input message="source:UpsertPreviousReportRequest"/>
+            <output message="source:UpsertPreviousReportResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetAlarm">
+            <input message="source:GetAlarmRequest"/>
+            <output message="source:GetAlarmResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicket">
+            <input message="source:GetTicketRequest"/>
+            <output message="source:GetTicketResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="ReprocessAlarmReport">
+            <input message="source:ReprocessAlarmRequest"/>
+            <output message="source:ReprocessAlarmResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfOpenAlarms">
+            <input message="source:GetNumberOfOpenAlarmsRequest"/>
+            <output message="source:GetNumberOfOpenAlarmsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfOpenTickets">
+            <input message="source:GetNumberOfOpenTicketsRequest"/>
+            <output message="source:GetNumberOfOpenTicketsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetNumberOfAssetsNotSending">
+            <input message="source:GetNumberOfAssetsNotSendingRequest"/>
+            <output message="source:GetNumberOfAssetsNotSendingResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
+            <input message="source:GetTicketsAndRulesByMovementsRequest"/>
+            <output message="source:GetTicketsAndRulesByMovementsResponse"/>
+            <fault name="RulesException" message="source:RulesException"/>
+        </operation>
+
+    </portType>
+
+    <binding name="RulesModuleSoapBinding" type="source:RulesModulePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="CreateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateCustomRuleSubscription">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="DeleteCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateCustomRuleLastTriggered">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetRunnableCustomRules">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetSanityRules">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRulesByUser">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRuleListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetCustomRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketList">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="SetTicketStatus">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpdateTicketStatusByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="SetAlarmStatus">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CreateAlarmReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CreateTicket">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarmListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketListByQuery">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketListByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="CountTicketListByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="Ping">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="GetPreviousReports">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketByAssetAndRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarmReportByAssetAndRule">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="UpsertPreviousReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetAlarm">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicket">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="ReprocessAlarmReport">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfOpenAlarms">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfOpenTickets">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetNumberOfAssetsNotSending">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="GetTicketsAndRulesByMovements">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="RulesException">
+                <soap:fault name="RulesException" use="literal"/>
+            </fault>
+        </operation>
+
+    </binding>
+
+    <service name="RulesModuleService">
+        <port name="RulesModulePortType" binding="source:RulesModuleSoapBinding">
+            <soap:address location="http://REPLACE_ME"/>
+        </port>
+    </service>
+
+</definitions>

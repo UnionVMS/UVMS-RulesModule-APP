@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="ticket_testdata-01" author="andtho" context="test">	
+
+        <insert tableName="ticket">
+            <column name="ticket_id" value="1"/>
+            <column name="ticket_guid" value="TICKET_GUID_1"/>
+            <column name="ticket_vesselguid" value="DUMMY_VESSEL_GUID_1"/>
+            <column name="ticket_ruleguid" value="RULE_GUID_1"/>
+            <column name="ticket_rulename" value="TEST RULE A"/>
+            <column name="ticket_movementguid" value="MOVEMENT_GUID_1"/>
+            <column name="ticket_status" value="OPEN"/>
+            <column name="ticket_createddate" valueDate="${now}"/>
+            <column name="ticket_updattim" valueDate="${now}"/>
+            <column name="ticket_upuser" value="UPDATE USER"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="ticket_id" value="2"/>
+            <column name="ticket_guid" value="TICKET_GUID_2"/>
+            <column name="ticket_vesselguid" value="DUMMY_VESSEL_GUID_2"/>
+            <column name="ticket_ruleguid" value="RULE_GUID_2"/>
+            <column name="ticket_rulename" value="TEST RULE B"/>
+            <column name="ticket_movementguid" value="MOVEMENT_GUID_2"/>
+            <column name="ticket_status" value="PENDING"/>
+            <column name="ticket_createddate" valueDate="${now}"/>
+            <column name="ticket_updattim" valueDate="${now}"/>
+            <column name="ticket_upuser" value="UPDATE USER"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="ticket_id" value="3"/>
+            <column name="ticket_guid" value="TICKET_GUID_3"/>
+            <column name="ticket_vesselguid" value="DUMMY_VESSEL_GUID_3"/>
+            <column name="ticket_ruleguid" value="RULE_GUID_3"/>
+            <column name="ticket_rulename" value="TEST RULE C"/>
+            <column name="ticket_movementguid" value="MOVEMENT_GUID_3"/>
+            <column name="ticket_status" value="CLOSED"/>
+            <column name="ticket_createddate" valueDate="${now}"/>
+            <column name="ticket_updattim" valueDate="${now}"/>
+            <column name="ticket_upuser" value="UPDATE USER"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="ticket">
+                <where>
+                    ticket_id in (1,2,3)
+                </where>
+            </delete>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xsd:schema xmlns:template="urn:template.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:template.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:complexType name="TemplateType">
+        <xsd:sequence>
+            <xsd:element name="templateName" type="xsd:string"/>
+            <xsd:element name="type" type="template:FactType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="FactType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="FA_REPORT_DOCUMENT"/>
+            <xsd:enumeration value="FLUX_FA_REPORT_MESSAGE"/>
+            <xsd:enumeration value="VESSEL_TRANSPORT_MEANS"/>
+            <xsd:enumeration value="STRUCTURED_ADDRESS"/>
+            <xsd:enumeration value="FISHING_GEAR"/>
+            <xsd:enumeration value="GEAR_CHARACTERISTIC"/>
+            <xsd:enumeration value="GEAR_PROBLEM"/>
+            <xsd:enumeration value="FA_CATCH"/>
+            <xsd:enumeration value="FISHING_TRIP"/>
+            <xsd:enumeration value="FLUX_LOCATION"/>
+            <xsd:enumeration value="FLUX_CHARACTERISTIC"/>
+            <xsd:enumeration value="VESSEL_STORAGE_CHARACTERISTIC"/>
+            <xsd:enumeration value="FISHING_ACTIVITY"/>
+            <xsd:enumeration value="FA_QUERY"/>
+            <xsd:enumeration value="FA_QUERY_PARAMETER"/>
+            <xsd:enumeration value="FA_RESPONSE"/>
+            <xsd:enumeration value="FA_DEPARTURE"/>
+            <xsd:enumeration value="FA_ENTRY_TO_SEA"/>
+            <xsd:enumeration value="FA_FISHING_OPERATION"/>
+            <xsd:enumeration value="FA_JOINT_FISHING_OPERATION"/>
+            <xsd:enumeration value="FA_RELOCATION"/>
+            <xsd:enumeration value="FA_DISCARD"/>
+            <xsd:enumeration value="FA_EXIT_FROM_SEA"/>
+            <xsd:enumeration value="FA_NOTIFICATION_OF_ARRIVAL"/>
+            <xsd:enumeration value="FA_ARRIVAL"/>
+            <xsd:enumeration value="FA_LANDING"/>
+            <xsd:enumeration value="FA_TRANSHIPMENT"/>
+            <xsd:enumeration value="FA_NOTIFICATION_OF_TRANSHIPMENT"/>			
+			<xsd:enumeration value="FA_VALIDATION_QUALITY_ANALYSIS"/>
+
+
+            <!-- Sales -->
+            <xsd:enumeration value="SALES_FLUX_SALES_REPORT_MESSAGE"/>
+            <xsd:enumeration value="SALES_FLUX_REPORT_DOCUMENT"/>
+            <xsd:enumeration value="SALES_FLUX_PARTY"/>
+            <xsd:enumeration value="SALES_REPORT"/>
+            <xsd:enumeration value="SALES_DOCUMENT"/>
+            <xsd:enumeration value="SALES_PARTY"/>
+            <xsd:enumeration value="SALES_EVENT"/>
+            <xsd:enumeration value="SALES_BATCH"/>
+            <xsd:enumeration value="SALES_AAP_PRODUCT"/>
+            <xsd:enumeration value="SALES_AAP_PROCESS"/>
+            <xsd:enumeration value="SALES_SIZE_DISTRIBUTION"/>
+            <xsd:enumeration value="SALES_PRICE"/>
+            <xsd:enumeration value="SALES_FLUX_ORGANIZATION"/>
+            <xsd:enumeration value="SALES_FISHING_ACTIVITY"/>
+            <xsd:enumeration value="SALES_DELIMITED_PERIOD"/>
+            <xsd:enumeration value="SALES_VESSEL_TRANSPORT_MEANS"/>
+            <xsd:enumeration value="SALES_VESSEL_COUNTRY"/>
+            <xsd:enumeration value="SALES_CONTACT_PARTY"/>
+            <xsd:enumeration value="SALES_CONTACT_PERSON"/>
+            <xsd:enumeration value="SALES_FISHING_TRIP"/>
+            <xsd:enumeration value="SALES_FLUX_LOCATION"/>
+            <xsd:enumeration value="SALES_FLUX_GEOGRAPHICAL_COORDINATE"/>
+            <xsd:enumeration value="SALES_STRUCTURED_ADDRESS"/>
+            <xsd:enumeration value="SALES_QUERY"/>
+            <xsd:enumeration value="SALES_FLUX_PARTY"/>
+            <xsd:enumeration value="SALES_DELIMITED_PERIOD"/>
+            <xsd:enumeration value="SALES_FLUX_RESPONSE_DOCUMENT"/>
+            <xsd:enumeration value="SALES_FLUX_PARTY"/>
+            <xsd:enumeration value="SALES_VALIDATION_RESULT_DOCUMENT"/>
+            <xsd:enumeration value="SALES_VALIDATION_QUALITY_ANALYSIS"/>
+            <xsd:enumeration value="SALES_REPORT_WRAPPER"/>
+            <xsd:enumeration value="SALES_AUCTION_SALE"/>
+            <xsd:enumeration value="SALES_FLUX_SALES_QUERY_MESSAGE"/>
+            <xsd:enumeration value="SALES_QUERY_PARAMETER"/>
+            <xsd:enumeration value="SALES_FLUX_SALES_RESPONSE_MESSAGE"/>
+
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

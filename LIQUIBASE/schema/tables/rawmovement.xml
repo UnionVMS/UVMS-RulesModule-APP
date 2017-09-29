@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rawmovement-01">
+        <createTable tableName="rawmovement" remarks="The movement connected to the alarm report.">
+            <column name="rawmove_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawmove_pk"/>
+            </column>
+            <column name="rawmove_guid" type="VARCHAR(40)" remarks="Guid of movement."/>
+            <column name="rawmove_status" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmove_comchanneltype" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmove_connectid" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmove_reportedspeed" type="DOUBLE" remarks="???."/>
+            <column name="rawmove_reportedcourse" type="DOUBLE" remarks="???."/>
+            <column name="rawmove_movementtype" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmove_active" type="BOOLEAN" remarks="If this will be shown on map."/>
+            <column name="rawmove_source" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmove_positiontime" type="TIMESTAMP WITH TIME ZONE" remarks="Reported time of movement."/>
+            <column name="rawmove_assetname" type="varchar(100)" remarks="Asset name as it comes from FLUX/MAN."/>
+            <column name="rawmove_flagstate" type="varchar(100)" remarks="Flagstate as it comes from FLUX/MAN."/>
+            <column name="rawmove_externalmarking" type="varchar(100)" remarks="External markings as it comes from FLUX/MAN."/>
+
+            <column name="rawmove_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rawmove_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+			
+            <column name="rawmove_alarmrep_id" type="BIGINT" />
+			
+        </createTable>
+
+        <addForeignKeyConstraint
+			constraintName="rawmove_alarmrep_fk"
+			baseTableName="rawmovement"
+			baseColumnNames="rawmove_alarmrep_id"
+			referencedTableName="alarmreport"
+			referencedColumnNames="alarmrep_id"
+		/>
+
+        <rollback>
+            <dropTable tableName="rawmovement" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+	<changeSet id="rawmove_alarmrep_fk_inx-01" author="andtho">
+		<createIndex tableName="rawmovement" indexName="rawmove_alarmrep_fk_inx">
+			<column name="rawmove_alarmrep_id"></column>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>
