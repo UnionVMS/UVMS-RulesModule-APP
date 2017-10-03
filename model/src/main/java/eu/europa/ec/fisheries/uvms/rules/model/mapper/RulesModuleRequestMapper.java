@@ -73,13 +73,15 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(receiveSalesQueryRequest);
     }
 
-    public static String createReceiveSalesResponseRequest(String salesResponse, String logGuid) throws RulesModelMarshallException {
+    public static String createReceiveSalesResponseRequest(String salesResponse, String logGuid, String senderOrReceiver) throws RulesModelMarshallException {
         ReceiveSalesResponseRequest receiveSalesResponseRequest = new ReceiveSalesResponseRequest();
         receiveSalesResponseRequest.setMethod(RulesModuleMethod.RECEIVE_SALES_RESPONSE);
         receiveSalesResponseRequest.setRequest(salesResponse);
         receiveSalesResponseRequest.setLogGuid(logGuid);
+        receiveSalesResponseRequest.setSenderOrReceiver(senderOrReceiver);
         return JAXBMarshaller.marshallJaxBObjectToString(receiveSalesResponseRequest);
     }
+
 
     public static String createSendSalesResponseRequest(String salesResponse, String salesResponseGuid, String recipient, String pluginToSendResponseThrough, String fluxDataFlow, Date dateSent) throws RulesModelMarshallException {
         SendSalesResponseRequest sendSalesResponseRequest = new SendSalesResponseRequest();

@@ -1830,14 +1830,14 @@
         <insert tableName="rule">
             <column name="rule_id" value="10227"/>
             <column name="br_id" value="SALE-L02-00-0091"/>
-            <column name="expression" value="doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket()"/>
+            <column name="expression" value="doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote()"/>
             <column name="note" value="For SN"/>
             <column name="message"
                     value="Mandatory for the sales document when products are withdrawn from the market"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="1004"/>
+            <column name="template_id" value="1003"/>
             <column name="property_names" value="totalSalesPrice, totalSalesPrice.charge"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -6968,7 +6968,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10212"/>
             <column name="br_id" value="SALE-L02-00-0041"/>
-            <column name="expression" value="isSellerRoleNotSpecifiedForSalesNote()"/>
+            <column name="expression" value="isProviderRoleNotSpecifiedForSalesNote()"/>
             <column name="note" value=""/>
             <column name="message" value="SELLER role must exist for a SN"/>
             <column name="level" value="L02"/>
@@ -6981,7 +6981,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10213"/>
             <column name="br_id" value="SALE-L02-00-0042"/>
-            <column name="expression" value="isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase()"/>
+            <column name="expression" value="isBuyerNotSpecifiedForSalesNoteWithPurchase()"/>
             <column name="note" value=""/>
             <column name="message"
                     value="SELLER/BUYER role must exist for a SN when products are bought (not withdrawn)"/>
