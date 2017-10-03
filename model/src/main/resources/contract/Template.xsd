@@ -44,7 +44,7 @@
 			<xsd:enumeration value="FA_VALIDATION_QUALITY_ANALYSIS"/>
 
 
-            <!--Sales Report-->
+            <!-- Sales -->
             <xsd:enumeration value="SALES_FLUX_SALES_REPORT_MESSAGE"/>
             <xsd:enumeration value="SALES_FLUX_REPORT_DOCUMENT"/>
             <xsd:enumeration value="SALES_FLUX_PARTY"/>
