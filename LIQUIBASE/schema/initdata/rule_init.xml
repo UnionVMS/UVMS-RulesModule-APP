@@ -293,7 +293,9 @@
             <column name="rule_id" value="295"/>
             <column name="br_id" value="FA-L02-00-0295"/>
             <column name="expression"
-                    value="fishingActivityTypeCode != null  &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;ARRIVAL&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; !isEmpty(relatedFLUXLocations) &amp;&amp; relatedFLUXLocations.size &lt; 1"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
+                     faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; fishingActivityTypeCode.value == &quot;ARRIVAL&quot; &amp;&amp;
+                    !anyFluxLocationTypeCodeContainsValue(relatedFLUXLocations, &quot;LOCATION&quot;)"/>
             <column name="note" value="If arrival notification (FA-L02-00-0290)."/>
             <column name="message" value="RelatedFLUX_Location TypeCode must be LOCATION for at least one occurrence"/>
             <column name="level" value="L02"/>
