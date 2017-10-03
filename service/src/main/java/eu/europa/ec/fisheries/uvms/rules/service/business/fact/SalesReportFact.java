@@ -72,7 +72,68 @@ public class SalesReportFact extends SalesAbstractFact {
         return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments);
     }
 
-    public boolean isSellerRoleNotSpecifiedForSalesNote(){
+    public boolean doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote() {
+        if (!isItemTypeEqualTo("SN")) {
+            return false;
+        }
+
+        SalesDocumentFact salesDocument = includedSalesDocuments.get(0);
+        SalesPriceType totalSalesPrice = salesDocument.getTotalSalesPrice();
+
+        boolean totalSalesPriceIsNull = totalSalesPrice == null
+                || isEmpty(totalSalesPrice.getChargeAmounts())
+                || totalSalesPrice.getChargeAmounts().get(0) == null
+                || totalSalesPrice.getChargeAmounts().get(0).getValue() == null;
+
+        boolean allProductsHaveAZeroPrice = doAllProductHaveAZeroPrice(salesDocument);
+
+        return totalSalesPriceIsNull && allProductsHaveAZeroPrice;
+    }
+
+    private boolean doAllProductHaveAZeroPrice(SalesDocumentFact salesDocument) {
+        List<BigDecimal> prices = getPriceOfEveryProduct(salesDocument.getSpecifiedSalesBatches());
+
+        if (prices.isEmpty()) {
+            return false;
+        }
+
+        for (BigDecimal price : getPriceOfEveryProduct(salesDocument.getSpecifiedSalesBatches())) {
+            if (price.compareTo(BigDecimal.ZERO) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<BigDecimal> getPriceOfEveryProduct(List<SalesBatchType> specifiedSalesBatches) {
+        List<BigDecimal> prices = new ArrayList<>();
+        for (AAPProductType product : getAllProducts(specifiedSalesBatches)) {
+            if (product.getTotalSalesPrice() != null
+                    && !isEmpty(product.getTotalSalesPrice().getChargeAmounts())
+                    && product.getTotalSalesPrice().getChargeAmounts().get(0) != null
+                    && product.getTotalSalesPrice().getChargeAmounts().get(0).getValue() != null) {
+                prices.add(product.getTotalSalesPrice().getChargeAmounts().get(0).getValue());
+            }
+        }
+        return prices;
+    }
+
+    private List<AAPProductType> getAllProducts(List<SalesBatchType> specifiedSalesBatches) {
+        List<AAPProductType> products = new ArrayList<>();
+        for (SalesBatchType salesBatch :specifiedSalesBatches) {
+            if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
+                for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
+                    if (product != null) {
+                        products.add(product);
+                    }
+                }
+            }
+        }
+        return products;
+    }
+
+    public boolean isProviderRoleNotSpecifiedForSalesNote(){
         if(isItemTypeEqualTo("SN") && !isEmpty(includedSalesDocuments))
         {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
@@ -83,7 +144,7 @@ public class SalesReportFact extends SalesAbstractFact {
                 boolean sellerAvailable = false;
 
                 for (SalesPartyFact salesParty:salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
+                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "PROVIDER")) {
                         sellerAvailable = true;
                     }
                 }
@@ -97,7 +158,7 @@ public class SalesReportFact extends SalesAbstractFact {
         return false;
     }
 
-    public boolean isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase(){
+    public boolean isBuyerNotSpecifiedForSalesNoteWithPurchase(){
         if(isItemTypeEqualTo("SN") && !isEmpty(includedSalesDocuments)) {
             for (SalesDocumentFact salesDocument : includedSalesDocuments) {
                 // If the document does not have a price greater than zero it can not pass the test since it is not considered a purchase
@@ -109,18 +170,14 @@ public class SalesReportFact extends SalesAbstractFact {
                     return true;
                 }
 
-                boolean sellerAvailable = false;
                 boolean buyerAvailable = false;
                 for (SalesPartyFact salesParty : salesDocument.getSpecifiedSalesParties()) {
-                    if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "SELLER")) {
-                        sellerAvailable = true;
-                    }
                     if (salesParty != null && !valueDoesNotContainAll(salesParty.getRoleCodes(), "BUYER")) {
                         buyerAvailable = true;
                     }
                 }
 
-                return !sellerAvailable || !buyerAvailable;
+                return !buyerAvailable;
             }
         }
         return false;

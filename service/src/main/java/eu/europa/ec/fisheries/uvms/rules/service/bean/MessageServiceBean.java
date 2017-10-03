@@ -24,6 +24,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SE
 import static java.util.Collections.singletonList;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
@@ -287,7 +288,7 @@ public class MessageServiceBean implements MessageService {
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isContinueValidation), fluxfaReportMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
-                sendResponseToExchange(fluxResponseMessageType, request);
+                sendResponseToExchange(fluxResponseMessageType, request, request.getType());
             }
         } catch (RulesValidationException e) {
             log.error(e.getMessage(), e);
@@ -322,7 +323,7 @@ public class MessageServiceBean implements MessageService {
             fluxResponseMessage =generateFluxResponseMessage(validationResultDto);
         }
         log.info("FLUXResponseMessage has been generated after exception: "+fluxResponseMessage);
-        sendResponseToExchange(fluxResponseMessage, request);
+        sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
     private void updateRequestMessageStatus(String logGuid, ValidationResultDto validationResult) {
@@ -549,7 +550,7 @@ public class MessageServiceBean implements MessageService {
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String fluxFAReportMessage, String username, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType) {
+    public void sendRequestToActivity(String fluxFAReportMessage, String username, PluginType pluginType) {
         try {
             String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
@@ -567,7 +568,7 @@ public class MessageServiceBean implements MessageService {
     }
 
     @Override
-    public void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request) {
+    public void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType) {
         try {
             //Validate response message
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
@@ -584,7 +585,7 @@ public class MessageServiceBean implements MessageService {
             String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
             String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, request.getUsername(), df, messageGuid, nationCode, status, destination);
+            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequest(fluxResponse, request.getUsername(), df, messageGuid, nationCode, status, destination, getExchangePluginType(pluginType));
             log.debug("Message to exchange {}", fluxFAReponseText);
 
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
@@ -639,5 +640,14 @@ public class MessageServiceBean implements MessageService {
             log.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
         }
 
+    }
+
+    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
+        switch (pluginType) {
+            case BELGIAN_ACTIVITY:
+                return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
+            default:
+                return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
+        }
     }
 }

@@ -2389,11 +2389,7 @@ public class ActivityFactMapper {
         if (plotIdentification == null) {
             return null;
         }
-        String value = plotIdentification.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
+        return plotIdentification.getValue();
     }
 
     private List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> faCatchesSpecifiedSizeDistributionClassCodes(FACatch fACatch) {
