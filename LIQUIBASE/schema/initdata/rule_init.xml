@@ -5837,7 +5837,7 @@
             <column name="rule_id" value="267"/>
             <column name="br_id" value="FA-L02-00-0267"/>
             <column name="expression"
-                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; listIdNotContains(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;)"/>
+                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; allValueContainsMatch(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;)"/>
             <column name="note" value="RelatedFLUXLocation TypeCode's listID must be POSITION"/>
             <column name="message" value="RelatedFLUXLocation TypeCode's listID must be POSITION"/>
             <column name="level" value="L02"/>
