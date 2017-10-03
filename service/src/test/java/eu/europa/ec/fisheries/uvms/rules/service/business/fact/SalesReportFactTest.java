@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
@@ -31,18 +32,18 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertTrue(fact.isSellerRoleNotSpecifiedForSalesNote());
+        assertTrue(fact.isProviderRoleNotSpecifiedForSalesNote());
     }
 
 
     @Test
-    public void isSellerRoleNotSpecifiedForSalesNoteWhenSellerIsSpecified() throws Exception {
-        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER", "SENDER", "SELLER");
+    public void isProviderRoleNotSpecifiedForSalesNoteWhenProviderIsSpecified() throws Exception {
+        SalesDocumentFact salesDocumentFact = createSalesDocumentFactWithRole("BUYER", "SENDER", "PROVIDER");
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertFalse(fact.isSellerRoleNotSpecifiedForSalesNote());
+        assertFalse(fact.isProviderRoleNotSpecifiedForSalesNote());
     }
 
     @Test
@@ -57,23 +58,9 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertTrue(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertTrue(fact.isBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
-    @Test
-    public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenOnlyBuyerIsSpecified() throws Exception {
-        SalesPartyFact buyer = new SalesPartyFact();
-        buyer.setRoleCodes(Lists.newArrayList(new CodeType("BUYER")));
-
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedSalesParties(Lists.newArrayList(buyer));
-        salesDocumentFact.setSpecifiedSalesBatches(Lists.newArrayList(new SalesBatchType().withSpecifiedAAPProducts(new AAPProductType().withTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ONE))))));
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("SN"));
-
-        assertTrue(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
-    }
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchaseWhenBuyerOrSellerIsNotSpecified() throws Exception {
@@ -84,7 +71,7 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertTrue(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertTrue(fact.isBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
     @Test
@@ -94,13 +81,13 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
-        assertFalse(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertFalse(fact.isBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
     @Test
     public void isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithTakeOverDocument() throws Exception {
         fact.setItemTypeCode(new CodeType("TOD"));
-        assertFalse(fact.isSellerRoleOrBuyerNotSpecifiedForSalesNoteWithPurchase());
+        assertFalse(fact.isBuyerNotSpecifiedForSalesNoteWithPurchase());
     }
 
     @Test
@@ -851,6 +838,177 @@ public class SalesReportFactTest {
         fact.setItemTypeCode(new CodeType("TOD"));
 
         assertFalse(fact.isSalesNoteAndAnyChargeAmountIsEqualToZero());
+    }
+
+
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndAllProductsHaveAZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(null);
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndNotAllProductsHaveAZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+
+        salesDocumentFact.setTotalSalesPrice(null);
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullAndAllProductsHaveAZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertTrue(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullAndNotAllProductsHaveAZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndAllProductsHaveZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO)));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndNotAllProductsHaveAZeroPrice() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.TEN))),
+                                new AAPProductType()
+                                        .withTotalSalesPrice(new SalesPriceType()
+                                                .withChargeAmounts(new AmountType().withValue(BigDecimal.ZERO))))));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceIsNullAndNoProducts() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(null);
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenChargeIsNullNullAndNoProducts() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts((AmountType) null));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTotalSalesPriceAndChargeAreNotNullAndNoProducts() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("SN"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
+    }
+
+    @Test
+    public void doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketWhenTypeCodeIsTOD() {
+        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
+        salesDocumentFact.setTotalSalesPrice(new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN)));
+        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(
+                new SalesBatchType()
+                        .withSpecifiedAAPProducts(new ArrayList<AAPProductType>())));
+        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
+        fact.setItemTypeCode(new CodeType("TOD"));
+
+        assertFalse(fact.doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote());
     }
 
     private SalesDocumentFact createSalesDocumentFactWithRole(String role, String buyer, String seller) {

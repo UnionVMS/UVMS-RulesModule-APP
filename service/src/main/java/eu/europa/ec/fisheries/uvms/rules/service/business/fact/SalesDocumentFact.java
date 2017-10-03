@@ -260,32 +260,6 @@ public class SalesDocumentFact extends SalesAbstractFact {
         return takeoverDocumentIDs != null && !takeoverDocumentIDs.isEmpty() && !validateFormat(takeoverDocumentIDs.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_TAKE_OVER_DOCUMENT_ID.getFormatStr());
     }
 
-    public boolean doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarket() {
-        boolean totalSalesPriceIsNull = totalSalesPrice == null
-                || isEmpty(totalSalesPrice.getChargeAmounts())
-                || totalSalesPrice.getChargeAmounts().get(0) == null
-                || totalSalesPrice.getChargeAmounts().get(0).getValue() == null;
-
-        boolean allProductsHaveAZeroPrice = doAllProductHaveAZeroPrice();
-
-        return totalSalesPriceIsNull && allProductsHaveAZeroPrice;
-    }
-
-    private boolean doAllProductHaveAZeroPrice() {
-        List<BigDecimal> prices = getPriceOfEveryProduct();
-
-        if (prices.isEmpty()) {
-            return false;
-        }
-
-        for (BigDecimal price : getPriceOfEveryProduct()) {
-            if (price.compareTo(BigDecimal.ZERO) != 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     private BigDecimal getTotalOfAllProducts() {
         if (isEmpty(specifiedSalesBatches)) {
