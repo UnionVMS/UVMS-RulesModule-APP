@@ -26,7 +26,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagSta
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -935,19 +934,6 @@ public abstract class AbstractFact {
             }
         }
         return false;
-    }
-
-
-    public boolean allIdValuesStartWith(List<IdType> ids, String startSequenceToMatch){
-        if(CollectionUtils.isEmpty(ids) || StringUtils.isEmpty(startSequenceToMatch)){
-            return false;
-        }
-        for(IdType idType : ids){
-            if(!StringUtils.startsWith(idType.getValue(), startSequenceToMatch)){
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
