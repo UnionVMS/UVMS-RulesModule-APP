@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.9-SNAPSHOT</version>
+    <version>3.0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -32,13 +31,13 @@
         <mapstruct.version>1.1.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>3.0.8</usm4uvms.version>
+        <usm4uvms.version>3.0.9</usm4uvms.version>
         <uvms.config.version>4.0.0</uvms.config.version>
         <uvms.common.version>2.0.29</uvms.common.version>
         <movement.model.version>4.0.0</movement.model.version>
-        <exchange.model.version>4.0.1-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>4.0.1</exchange.model.version>
         <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
-        <user.model.version>2.0.0</user.model.version>
+        <user.model.version>2.0.2</user.model.version>
 
         <activity.model.version>0.5.13</activity.model.version>
         <mdr.model.version>0.5.2</mdr.model.version>
