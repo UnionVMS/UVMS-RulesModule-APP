@@ -35,7 +35,7 @@
         <uvms.config.version>4.0.0</uvms.config.version>
         <uvms.common.version>2.0.29</uvms.common.version>
         <movement.model.version>4.0.0</movement.model.version>
-        <exchange.model.version>4.0.1-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>4.0.1</exchange.model.version>
         <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
         <user.model.version>2.0.0</user.model.version>
 
