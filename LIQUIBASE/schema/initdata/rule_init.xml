@@ -547,20 +547,19 @@
             <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
         </insert>
 
-            <insert tableName="rule">
-                <column name="rule_id" value="237"/>
-                <column name="br_id" value="FA-L01-00-0237"/>
-                <column name="expression"
-                        value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(relatedFLUXLocationTypeCodes) &amp;&amp; valueDoesNotContainAll(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
-                <column name="note" value="If departure declaration (FA-L02-00-0233)"/>
-                <column name="message" value="RelatedFLUX_Location@TypeCode must be LOCATION or POSITION"/>
-                <column name="level" value="L01"/>
-                <column name="error_type" value="WARNING"/>
-                <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-                <column name="template_id" value="17"/>
-                <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
-                <column name="disabled" value="false"/>
-            </insert>
+        <insert tableName="rule">
+            <column name="rule_id" valueNumeric="237"/>
+            <column name="br_id" value="FA-L01-00-0237"/>
+            <column name="expression" value="!isEmpty(relatedFLUXLocationTypeCodes) &amp;&amp; valueContainsAny(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
+            <column name="note" value="If departure declaration (FA-L02-00-0233)"/>
+            <column name="message" value="RelatedFLUX_Location@TypeCode must be LOCATION or POSITION"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
+            <column name="template_id" valueNumeric="17"/>
+            <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
+            <column name="disabled" valueBoolean="false"/>
+        </insert>
 
         <insert tableName="rule">
             <column name="rule_id" value="238"/>
