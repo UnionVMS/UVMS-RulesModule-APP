@@ -26,6 +26,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagSta
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -160,6 +161,35 @@ public abstract class AbstractFact {
             }
         }
         return valLength > hits;
+    }
+
+    public boolean valueStartsWith(List<IdType> idTypes, String... valuesToMatch) {
+        if (isEmpty(idTypes) || ArrayUtils.isEmpty(valuesToMatch)) {
+            return false;
+        }
+
+        int hits = 0;
+        for (String valueToMatch : valuesToMatch) {
+            for (IdType idType : idTypes) {
+                if (valueStartsWith(idType, valueToMatch)) {
+                    hits++;
+                }
+            }
+        }
+
+        return valuesToMatch.length <= hits;
+    }
+
+    public boolean valueStartsWith(IdType idType, String valueToMatch) {
+        if (valueToMatch == null || idType == null) {
+            return false;
+        }
+
+        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -947,17 +977,17 @@ public abstract class AbstractFact {
      * @param stringsList
      * @return true / false
      */
-    public boolean containsEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
+    public boolean containsEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
             return stringsList.contains(null) || stringsList.contains("");
         }
         return true;
     }
 
-    public boolean containsOnlyEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
-            for(String str : stringsList){
-                if(StringUtils.isNotEmpty(str)){
+    public boolean containsOnlyEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
+            for (String str : stringsList) {
+                if (StringUtils.isNotEmpty(str)) {
                     return false;
                 }
             }
@@ -1220,8 +1250,8 @@ public abstract class AbstractFact {
         }
 
 
-        for(IdType idType : ids){
-            if(isIdTypePresentInMDRList(idType) ==false){
+        for (IdType idType : ids) {
+            if (isIdTypePresentInMDRList(idType) == false) {
                 return false;
             }
         }
