@@ -896,6 +896,19 @@ public abstract class AbstractFact {
         return false;
     }
 
+
+    public boolean allIdValuesStartWith(List<IdType> ids, String startSequenceToMatch){
+        if(CollectionUtils.isEmpty(ids) || StringUtils.isEmpty(startSequenceToMatch)){
+            return false;
+        }
+        for(IdType idType : ids){
+            if(!StringUtils.startsWith(idType.getValue(), startSequenceToMatch)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *

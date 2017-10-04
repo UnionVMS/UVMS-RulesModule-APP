@@ -20,9 +20,9 @@
             <column name="expression" value="isEmpty(ids)"/>
             <column name="note" value="ID Must be present."/>
             <column name="message" value="ID Must be present."/>
-			<column name="level" value="L00"/>
-			<column name="error_type" value="ERROR"/>
-			<column name="rule_created_on"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
             <column name="template_id" value="2"/>
             <column name="property_names" value="ids"/>
             <column name="disabled" value="false"/>
@@ -313,8 +313,10 @@
             <column name="rule_created_on"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
-            <column name="note" value="Check presence. Must be present if the activity is an arrival notification and ReasonCode is LAN (landing)"/>
-            <column name="message" value="Check presence. Must be present if the activity is an arrival notification and ReasonCode is LAN (landing)"/>
+            <column name="note"
+                    value="Check presence. Must be present if the activity is an arrival notification and ReasonCode is LAN (landing)"/>
+            <column name="message"
+                    value="Check presence. Must be present if the activity is an arrival notification and ReasonCode is LAN (landing)"/>
             <column name="template_id" value="24"/>
             <column name="property_names"
                     value="specifiedFACatches"/>
@@ -327,7 +329,8 @@
                     value="!isEmpty(specifiedFACatches) &amp;&amp; !isEmpty(specifiedFACatchTypeCodes) &amp;&amp; valueContainsAny(specifiedFACatchTypeCodes, &quot;ONBOARD&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
-            <column name="note" value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
+            <column name="note"
+                    value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
             <column name="message"
                     value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
             <column name="template_id" value="24"/>
@@ -343,7 +346,8 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="Must have at least one occurrence with TypeCode UNLOADED if the activity is an arrival notification and ReasonCode is LAN (and if SpecifiedFACatch entity provided)."/>
+            <column name="note"
+                    value="Must have at least one occurrence with TypeCode UNLOADED if the activity is an arrival notification and ReasonCode is LAN (and if SpecifiedFACatch entity provided)."/>
             <column name="message"
                     value="Must have at least one occurrence with TypeCode UNLOADED if the activity is an arrival notification and ReasonCode is LAN (and if SpecifiedFACatch entity provided)."/>
             <column name="template_id" value="24"/>
@@ -421,7 +425,8 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="Check presence. At least 2 occurences must be present if the activity is an area exit declaration or notification and no RelatedFishingActivity is present."/>
+            <column name="note"
+                    value="Check presence. At least 2 occurences must be present if the activity is an area exit declaration or notification and no RelatedFishingActivity is present."/>
             <column name="message"
                     value="Check presence. At least 2 occurences must be present if the activity is an area exit declaration or notification and no RelatedFishingActivity is present."/>
             <column name="template_id" value="23"/>
@@ -437,7 +442,8 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="If the activity is an area exit declaration or notification, one occurrence must be POSITION; another occurrence must be AREA."/>
+            <column name="note"
+                    value="If the activity is an area exit declaration or notification, one occurrence must be POSITION; another occurrence must be AREA."/>
             <column name="message"
                     value="If the activity is an area exit declaration or notification, one occurrence must be POSITION; another occurrence must be AREA."/>
             <column name="template_id" value="23"/>
@@ -453,10 +459,12 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION)."/>
-            <column name="message" value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION). "/>
+            <column name="note"
+                    value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION)."/>
+            <column name="message"
+                    value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION). "/>
             <column name="template_id" value="23"/>
-            <column name="property_names"  value="relatedFLUXLocations"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -467,11 +475,12 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
+            <column name="note"
+                    value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
             <column name="message"
                     value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
             <column name="template_id" value="23"/>
-            <column name="property_names"  value="specifiedFACatchesTypeCodes"/>
+            <column name="property_names" value="specifiedFACatchesTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -533,7 +542,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="242"/>
             <column name="br_id" value="FA-L01-00-0242"/>
             <column name="expression"
@@ -550,7 +559,8 @@
         <insert tableName="rule">
             <column name="rule_id" valueNumeric="237"/>
             <column name="br_id" value="FA-L01-00-0237"/>
-            <column name="expression" value="!isEmpty(relatedFLUXLocationTypeCodes) &amp;&amp; valueContainsAny(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
+            <column name="expression"
+                    value="!isEmpty(relatedFLUXLocationTypeCodes) &amp;&amp; valueContainsAny(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233)"/>
             <column name="message" value="RelatedFLUX_Location@TypeCode must be LOCATION or POSITION"/>
             <column name="level" value="L01"/>
@@ -671,8 +681,10 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="note" value="Check presence. At least 2 occurences must be present if the activity is an area entry declaration or notification and no RelatedFishingActivity is present."/>
-            <column name="message" value="Check presence. At least 2 occurences must be present if the activity is an area entry declaration or notification and no RelatedFishingActivity is present"/>
+            <column name="note"
+                    value="Check presence. At least 2 occurences must be present if the activity is an area entry declaration or notification and no RelatedFishingActivity is present."/>
+            <column name="message"
+                    value="Check presence. At least 2 occurences must be present if the activity is an area entry declaration or notification and no RelatedFishingActivity is present"/>
             <column name="template_id" value="18"/>
             <column name="property_names" value="relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
@@ -682,7 +694,8 @@
             <column name="br_id" value="FA-L02-00-0250"/>
             <column name="expression"
                     value="!isEmpty(relatedFluxLocationTypeCodes) &amp;&amp; (valueNotContains(relatedFluxLocationTypeCodes,&quot;POSITION&quot;,1) || valueNotContains(relatedFluxLocationTypeCodes,&quot;AREA&quot;,1))"/>
-            <column name="message" value="RelatedFLUX_Location TypeCode one occurrence must be POSITION. Another occurrence must be AREA"/>
+            <column name="message"
+                    value="RelatedFLUX_Location TypeCode one occurrence must be POSITION. Another occurrence must be AREA"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -701,7 +714,8 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="note" value="If entry in area declaration (FA-L02-00-0245)."/>
-            <column name="message" value="Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area entry declaration (FAReportDocument/TypeCode=DECLARATION)."/>
+            <column name="message"
+                    value="Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area entry declaration (FAReportDocument/TypeCode=DECLARATION)."/>
             <column name="template_id" value="18"/>
             <column name="property_names"
                     value="relatedFLUXLocations"/>
@@ -716,7 +730,8 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="note" value="If entry in area declaration (FA-L02-00-0245)."/>
-            <column name="message" value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
+            <column name="message"
+                    value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
             <column name="template_id" value="18"/>
             <column name="property_names"
                     value="specifiedFACatchesTypeCodes"/>
@@ -1831,7 +1846,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="10227"/>
             <column name="br_id" value="SALE-L02-00-0091"/>
-            <column name="expression" value="doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote()"/>
+            <column name="expression"
+                    value="doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote()"/>
             <column name="note" value="For SN"/>
             <column name="message"
                     value="Mandatory for the sales document when products are withdrawn from the market"/>
@@ -2890,9 +2906,11 @@
         <insert tableName="rule">
             <column name="rule_id" valueNumeric="211"/>
             <column name="br_id" value="FA-L01-00-0211"/>
-            <column name="expression" value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value == null"/>
+            <column name="expression"
+                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value == null"/>
             <column name="note" value="SpecifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure must be a number"/>
-            <column name="message" value="SpecifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure must be a number"/>
+            <column name="message"
+                    value="SpecifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure must be a number"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
@@ -3236,7 +3254,8 @@
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="level" value="L00"/>
-            <column name="message" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
+            <column name="message"
+                    value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-16 00:00:00.0"/>
@@ -3245,7 +3264,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="219"/>
             <column name="br_id" value="FA-L02-00-0219"/>
             <column name="expression"
@@ -3260,7 +3279,7 @@
         </insert>
 
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="189"/>
             <column name="br_id" value="FA-L02-00-0189"/>
             <column name="expression"
@@ -3274,7 +3293,7 @@
             <column name="property_names" value="appliedAAPProcess"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="253"/>
             <column name="br_id" value="FA-L02-00-0253"/>
             <column name="expression"
@@ -3369,7 +3388,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="181"/>
             <column name="br_id" value="FA-L00-00-0181"/>
-            <column name="expression" value="((fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;))
+            <column name="expression"
+                    value="((fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;))
                             || (weightMeasure == null &amp;&amp; unitQuantity == null)) &amp;&amp; isEmpty(resultAAPProductWeightMeasure)"/>
             <column name="note" value="Whenever product weight must be reported"/>
             <column name="message"
@@ -3629,7 +3649,11 @@
             <column name="rule_id" value="184"/>
             <column name="br_id" value="FA-L02-00-0184"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SAL&quot; &amp;&amp; schemeIdContainsAll(fluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp; !valueContainsAll(fluxLocationId,&quot;27.3.d&quot;) "/>
+                    value="(fishingActivityTypeCode!= null &amp;&amp; fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp;
+                    (speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SAL&quot;) &amp;&amp;
+                    schemeIdContainsAll(fluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp;
+                    allIdValuesStartWith(fluxLocationId,&quot;27.3.d&quot;) &amp;&amp;
+                    isEmpty(resultAAPProductUnitQuantity)"/>
             <column name="note"
                     value="Units (number of fish) must be provided for landings/ transhipment's of Salmon from the Baltic sea"/>
             <column name="message"
@@ -4253,9 +4277,11 @@
         <insert tableName="rule">
             <column name="rule_id" value="376"/>
             <column name="br_id" value="FA-L02-00-0376"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value == &quot;TRIPID&quot; &amp;&amp; schemeIdContainsAll(valueID, &quot;EU_TRIP_ID&quot;)"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;TRIPID&quot; &amp;&amp; schemeIdContainsAll(valueID, &quot;EU_TRIP_ID&quot;)"/>
             <column name="note" value="For EU vessels only EU_Trip_ID"/>
-            <column name="message" value="FA_QueryParameter ValueID@schemeID must be value EU_TRIP_ID if Type is TRIPID"/>
+            <column name="message"
+                    value="FA_QueryParameter ValueID@schemeID must be value EU_TRIP_ID if Type is TRIPID"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-30 00:00:00.0"/>
@@ -4267,8 +4293,10 @@
             <column name="rule_id" value="377"/>
             <column name="br_id" value="FA-L01-00-0377"/>
             <column name="expression" value="valueID != null &amp;&amp; validateFormat(valueID)"/>
-            <column name="note" value="FA_QueryParameter ValueID Check format. Must be according to the format specified in schemeID."/>
-            <column name="message" value="FA_QueryParameter ValueID Check format. Must be according to the format specified in schemeID."/>
+            <column name="note"
+                    value="FA_QueryParameter ValueID Check format. Must be according to the format specified in schemeID."/>
+            <column name="message"
+                    value="FA_QueryParameter ValueID Check format. Must be according to the format specified in schemeID."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-30 00:00:00.0"/>
@@ -4279,7 +4307,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="378"/>
             <column name="br_id" value="FA-L02-00-0378"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value == &quot;CONSOLIDATED&quot; &amp;&amp; valueCode == null"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;CONSOLIDATED&quot; &amp;&amp; valueCode == null"/>
             <column name="note" value="FA_QueryParameter ValueCode must be present if Type is CONSOLIDATED"/>
             <column name="message" value="FA_QueryParameter ValueCode must be present if Type is CONSOLIDATED"/>
             <column name="level" value="L02"/>
@@ -4292,7 +4321,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="379"/>
             <column name="br_id" value="FA-L01-00-0379"/>
-            <column name="expression" value="valueCode != null &amp;&amp; valueCode.value != &quot;Y&quot; &amp;&amp; valueCode.value != &quot;N&quot;"/>
+            <column name="expression"
+                    value="valueCode != null &amp;&amp; valueCode.value != &quot;Y&quot; &amp;&amp; valueCode.value != &quot;N&quot;"/>
             <column name="note" value="FA_QueryParameter ValueCode value must be Y or N."/>
             <column name="message" value="FA_QueryParameter ValueCode value must be Y or N."/>
             <column name="level" value="L01"/>
@@ -4755,9 +4785,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="352"/>
             <column name="br_id" value="FA-L01-00-0352"/>
-            <column name="expression" value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
-            <column name="note" value="FA_Query TypeCode@listID must be existing in the list specified in attribute listID."/>
-            <column name="message" value="FA_Query TypeCode@listID must be existing in the list specified in attribute listID."/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+            <column name="note"
+                    value="FA_Query TypeCode@listID must be existing in the list specified in attribute listID."/>
+            <column name="message"
+                    value="FA_Query TypeCode@listID must be existing in the list specified in attribute listID."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4807,7 +4840,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="356"/>
             <column name="br_id" value="FA-L00-00-0356"/>
-            <column name="expression" value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
+            <column name="expression"
+                    value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
             <column name="note" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
             <column name="message" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
             <column name="level" value="L00"/>
@@ -4846,7 +4880,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="359"/>
             <column name="br_id" value="FA-L01-00-0359"/>
-            <column name="expression" value="!isEmpty(submittedFLUXPartyIds) &amp;&amp; schemeIdContainsAll(submittedFLUXPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="expression"
+                    value="!isEmpty(submittedFLUXPartyIds) &amp;&amp; schemeIdContainsAll(submittedFLUXPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
             <column name="note" value="FA_Query SubmitterFLUX_Party ID@ListID must be FLUX_GP_PARTY."/>
             <column name="message" value="FA_Query SubmitterFLUX_Party ID@ListID must be FLUX_GP_PARTY."/>
             <column name="level" value="L01"/>
@@ -4859,7 +4894,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="360"/>
             <column name="br_id" value="FA-L03-00-0360"/>
-            <column name="expression" value="!isEmpty(submittedFLUXPartyIds) &amp;&amp; !matchWithFluxTL(submittedFLUXPartyIds)"/>
+            <column name="expression"
+                    value="!isEmpty(submittedFLUXPartyIds) &amp;&amp; !matchWithFluxTL(submittedFLUXPartyIds)"/>
             <column name="note" value="The party sending must be allowed to send the message"/>
             <column name="message" value="SubmitterFLUX_Party ID is consistent with FLUX TL values."/>
             <column name="level" value="L03"/>
@@ -4872,9 +4908,11 @@
         <insert tableName="rule">
             <column name="rule_id" value="361"/>
             <column name="br_id" value="FA-L02-00-0361"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value == &quot;VESSEL&quot; &amp;&amp; specifiedDelimitedPeriod == null"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;VESSEL&quot; &amp;&amp; specifiedDelimitedPeriod == null"/>
             <column name="note" value="FA_Query SpecifiedDelimitedPeriod must be present if FA_Query.Type is VESSEL."/>
-            <column name="message" value="FA_Query SpecifiedDelimitedPeriod must be present if FA_Query.Type is VESSEL."/>
+            <column name="message"
+                    value="FA_Query SpecifiedDelimitedPeriod must be present if FA_Query.Type is VESSEL."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4885,9 +4923,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="362"/>
             <column name="br_id" value="FA-L00-00-0362"/>
-            <column name="expression" value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.startDateTime == null"/>
-            <column name="note" value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be present if SpecifiedDelimitedPeriod is present."/>
-            <column name="message" value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be present if SpecifiedDelimitedPeriod is present."/>
+            <column name="expression"
+                    value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.startDateTime == null"/>
+            <column name="note"
+                    value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be present if SpecifiedDelimitedPeriod is present."/>
+            <column name="message"
+                    value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be present if SpecifiedDelimitedPeriod is present."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4898,9 +4939,11 @@
         <insert tableName="rule">
             <column name="rule_id" value="363"/>
             <column name="br_id" value="FA-L01-00-0363"/>
-            <column name="expression" value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
+            <column name="expression"
+                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
             <column name="note" value="Time part may be omitted. In such case 00:00:00 is assumed."/>
-            <column name="message" value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be date in UTC according to ISO8601."/>
+            <column name="message"
+                    value="FA_Query SpecifiedDelimitedPeriod StartDateTime must be date in UTC according to ISO8601."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4911,9 +4954,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="364"/>
             <column name="br_id" value="FA-L00-00-0364"/>
-            <column name="expression" value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
-            <column name="note" value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
-            <column name="message" value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
+            <column name="expression"
+                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
+            <column name="note"
+                    value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
+            <column name="message"
+                    value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4924,9 +4970,11 @@
         <insert tableName="rule">
             <column name="rule_id" value="365"/>
             <column name="br_id" value="FA-L01-00-0365"/>
-            <column name="expression" value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.endDateTime == null"/>
+            <column name="expression"
+                    value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.endDateTime == null"/>
             <column name="note" value="Time part may be omitted. In such case 24:00:00 is assumed."/>
-            <column name="message" value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be date in UTC according to ISO8601."/>
+            <column name="message"
+                    value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be date in UTC according to ISO8601."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4937,7 +4985,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="366"/>
             <column name="br_id" value="FA-L02-00-0366"/>
-            <column name="expression" value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 2"/>
+            <column name="expression"
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 2"/>
             <column name="note" value="FA_Query SimpleFA_QueryParameter at least 2 occurrences must be present."/>
             <column name="message" value="FA_Query SimpleFA_QueryParameter at least 2 occurrences must be present."/>
             <column name="level" value="L02"/>
@@ -4950,9 +4999,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="367"/>
             <column name="br_id" value="FA-L01-00-0367"/>
-            <column name="expression" value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 1 &amp;&amp; listIdNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
-            <column name="note" value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
-            <column name="message" value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
+            <column name="expression"
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 1 &amp;&amp; listIdNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
+            <column name="note"
+                    value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
+            <column name="message"
+                    value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4963,9 +5015,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="375"/>
             <column name="br_id" value="FA-L00-00-0375"/>
-            <column name="expression" value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;VESSELID&quot;, 1)"/>
-            <column name="note" value="FA_Query SimpleFA_QueryParameter TypeCode at most one occurrence must be value VESSELID."/>
-            <column name="message" value="FA_Query SimpleFA_QueryParameter TypeCode at most one occurrence must be value VESSELID."/>
+            <column name="expression"
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;VESSELID&quot;, 1)"/>
+            <column name="note"
+                    value="FA_Query SimpleFA_QueryParameter TypeCode at most one occurrence must be value VESSELID."/>
+            <column name="message"
+                    value="FA_Query SimpleFA_QueryParameter TypeCode at most one occurrence must be value VESSELID."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5003,9 +5058,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="422"/>
             <column name="br_id" value="FA-L01-00-0422"/>
-            <column name="expression" value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp;  valueContainsAny(relatedFishingActivityFaCatchTypeCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(fluxLocationTypeCode) &amp;&amp; valueContainsAny(fluxLocationTypeCode, &quot;POSITION&quot;)"/>
-            <column name="note" value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
-            <column name="message" value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
+            <column name="expression"
+                    value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp;  valueContainsAny(relatedFishingActivityFaCatchTypeCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(fluxLocationTypeCode) &amp;&amp; valueContainsAny(fluxLocationTypeCode, &quot;POSITION&quot;)"/>
+            <column name="note"
+                    value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
+            <column name="message"
+                    value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5112,9 +5170,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="429"/>
             <column name="br_id" value="FA-L01-00-0429"/>
-            <column name="expression" value="!isEmpty(relatedFishingActivities) &amp;&amp; !verifyAtLeastOneFaCatchTypeCodePresent(relatedFishingActivities) "/>
-            <column name="note" value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
-            <column name="message" value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
+            <column name="expression"
+                    value="!isEmpty(relatedFishingActivities) &amp;&amp; !verifyAtLeastOneFaCatchTypeCodePresent(relatedFishingActivities) "/>
+            <column name="note"
+                    value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
+            <column name="message"
+                    value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5173,9 +5234,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="109"/>
             <column name="br_id" value="FA-L01-00-0109"/>
-            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; !isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp;  valueContainsAny(relatedFishingActivityFaCatchTypeCodes, &quot;BFT&quot;) &amp;&amp;  schemeIdContainsAll(fishingActivityIds,&quot;JFO&quot;) "/>
-            <column name="note" value="Check attribute schemeID. Must be JFO if the activity is a joint fishing operation declaration and if SpeciesCode is BFT."/>
-            <column name="message" value="Check attribute schemeID. Must be JFO if the activity is a joint fishing operation declaration and if SpeciesCode is BFT."/>
+            <column name="expression"
+                    value="!isEmpty(fishingActivityIds) &amp;&amp; !isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp;  valueContainsAny(relatedFishingActivityFaCatchTypeCodes, &quot;BFT&quot;) &amp;&amp;  schemeIdContainsAll(fishingActivityIds,&quot;JFO&quot;) "/>
+            <column name="note"
+                    value="Check attribute schemeID. Must be JFO if the activity is a joint fishing operation declaration and if SpeciesCode is BFT."/>
+            <column name="message"
+                    value="Check attribute schemeID. Must be JFO if the activity is a joint fishing operation declaration and if SpeciesCode is BFT."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5291,12 +5355,14 @@
             <column name="property_names" value="relatedFishingActivityTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
-		 <insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="79"/>
             <column name="br_id" value="FA-L00-00-0079"/>
-            <column name="expression" value="!isEmpty(vesselTransportMeansContactParties) &amp;&amp; !verifyContactPartyRule(vesselTransportMeansContactParties)"/>
+            <column name="expression"
+                    value="!isEmpty(vesselTransportMeansContactParties) &amp;&amp; !verifyContactPartyRule(vesselTransportMeansContactParties)"/>
             <column name="note" value="Must be provided for pair fishing partner."/>
-            <column name="message" value="SpecifiedStructuredAddress must be present if used in entity FishingActivity/RelatedVesselTransportMeans/SpecifiedContactParty and RelatedVesselTransportMeans/SpecifiedContactParty/RoleCode is PAIR_FISHING_PARTNER."/>
+            <column name="message"
+                    value="SpecifiedStructuredAddress must be present if used in entity FishingActivity/RelatedVesselTransportMeans/SpecifiedContactParty and RelatedVesselTransportMeans/SpecifiedContactParty/RoleCode is PAIR_FISHING_PARTNER."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="19"/>
@@ -5470,7 +5536,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="282"/>
             <column name="br_id" value="FA-L02-00-0282"/>
-            <column name="expression" value="!isEmpty(fluxLocationTypeCode) &amp;&amp; !codeTypeValueContainsMatch(fluxLocationTypeCode, &quot;POSITION&quot;, &quot;LOCATION&quot;)"/>
+            <column name="expression"
+                    value="!isEmpty(fluxLocationTypeCode) &amp;&amp; !codeTypeValueContainsMatch(fluxLocationTypeCode, &quot;POSITION&quot;, &quot;LOCATION&quot;)"/>
             <column name="note" value="Must be POSITION or LOCATION if the activity is a discard declaration."/>
             <column name="message" value="Must be POSITION or LOCATION if the activity is a discard declaration."/>
             <column name="level" value="L02"/>
@@ -5483,9 +5550,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="283"/>
             <column name="br_id" value="FA-L02-00-0283"/>
-            <column name="expression" value="!isEmpty(specifiedFACatchTypeCode) &amp;&amp; valueCodeTypeContainsAny(specifiedFACatchTypeCode, &quot;DISCARDED&quot;, &quot;DEMINIMIS&quot;)  "/>
-            <column name="note" value="Must have at least one occurrence with Type DISCARDED or DEMINIMIS if the activity is a discard declaration."/>
-            <column name="message" value="Must have at least one occurrence with Type DISCARDED or DEMINIMIS if the activity is a discard declaration."/>
+            <column name="expression"
+                    value="!isEmpty(specifiedFACatchTypeCode) &amp;&amp; valueCodeTypeContainsAny(specifiedFACatchTypeCode, &quot;DISCARDED&quot;, &quot;DEMINIMIS&quot;)  "/>
+            <column name="note"
+                    value="Must have at least one occurrence with Type DISCARDED or DEMINIMIS if the activity is a discard declaration."/>
+            <column name="message"
+                    value="Must have at least one occurrence with Type DISCARDED or DEMINIMIS if the activity is a discard declaration."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5494,12 +5564,15 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="284"/>
             <column name="br_id" value="FA-L02-00-0284"/>
-            <column name="expression" value="reasonCode!=null &amp;&amp; reasonCode.listId != &quot;FA_REASON_DISCARD&quot; || (reasonCode.value == &quot;QEX&quot; || reasonCode.value == &quot;OTH&quot;)  "/>
-            <column name="note" value="If the activity is a DISCARD DECLARATION and the ReasonCode is provided, the listID must be FA_REASON_DISCARD. The value may not be QEX nor OTH."/>
-            <column name="message" value="If the activity is a DISCARD DECLARATION and the ReasonCode is provided, the listID must be FA_REASON_DISCARD. The value may not be QEX nor OTH."/>
+            <column name="expression"
+                    value="reasonCode!=null &amp;&amp; reasonCode.listId != &quot;FA_REASON_DISCARD&quot; || (reasonCode.value == &quot;QEX&quot; || reasonCode.value == &quot;OTH&quot;)  "/>
+            <column name="note"
+                    value="If the activity is a DISCARD DECLARATION and the ReasonCode is provided, the listID must be FA_REASON_DISCARD. The value may not be QEX nor OTH."/>
+            <column name="message"
+                    value="If the activity is a DISCARD DECLARATION and the ReasonCode is provided, the listID must be FA_REASON_DISCARD. The value may not be QEX nor OTH."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5536,7 +5609,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
-            <column name="expression" value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; isPresentInMDRList(referencedID.schemeId, &quot;FLUX_GP_MSG_ID&quot;)"/>
+            <column name="expression"
+                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; isPresentInMDRList(referencedID.schemeId, &quot;FLUX_GP_MSG_ID&quot;)"/>
             <column name="note" value="referencedID -- Check attribute schemeID. Must be UUID."/>
             <column name="message" value="referencedID --Check attribute schemeID. Must be UUID."/>
             <column name="level" value="L00"/>
@@ -5575,7 +5649,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="387"/>
             <column name="br_id" value="FA-L02-00-0387"/>
-            <column name="expression" value="responseCode!=null &amp;&amp; listIdContainsAll(responseCode, &quot;FLUX_GP_RESPONSE&quot;)"/>
+            <column name="expression"
+                    value="responseCode!=null &amp;&amp; listIdContainsAll(responseCode, &quot;FLUX_GP_RESPONSE&quot;)"/>
             <column name="note" value="ResponseCode ListId must be FLUX_GP_RESPONSE ."/>
             <column name="message" value="ResponseCode ListId must be FLUX_GP_RESPONSE ."/>
             <column name="level" value="L01"/>
@@ -5588,9 +5663,11 @@
         <insert tableName="rule">
             <column name="rule_id" value="388"/>
             <column name="br_id" value="FA-L02-00-0388"/>
-            <column name="expression" value="responseCode != null &amp;&amp; !isPresentInMDRList(responseCode.listId, responseCode.value)"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; !isPresentInMDRList(responseCode.listId, responseCode.value)"/>
             <column name="note" value="Check responseCode. Must be existing in the list specified in attribute listID"/>
-            <column name="message" value="Check responseCode. Must be existing in the list specified in attribute listID"/>
+            <column name="message"
+                    value="Check responseCode. Must be existing in the list specified in attribute listID"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -5614,7 +5691,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="390"/>
             <column name="br_id" value="FA-L01-00-0390"/>
-            <column name="expression" value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+            <column name="expression"
+                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
             <column name="message" value="creationDateTime Format must be date in UTC according to ISO8601"/>
             <column name="level" value="L01"/>
@@ -5628,7 +5706,8 @@
             <column name="rule_id" value="391"/>
             <column name="br_id" value="FA-L01-00-0391"/>
             <column name="expression" value="creationDateTime != null &amp;&amp; dateNow().before(creationDateTime)"/>
-            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+            <column name="note"
+                    value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Date must be in the past."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
@@ -5651,7 +5730,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="553"/>
             <column name="br_id" value="FA-L00-00-0553"/>
             <column name="expression" value="respondentFLUXParty == null"/>
@@ -5664,10 +5743,11 @@
             <column name="property_names" value="respondentFLUXParty"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="368"/>
             <column name="br_id" value="FA-L02-00-0368"/>
-            <column name="expression" value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
             <column name="note" value="At least one occurrence if ResponseCode = OK"/>
             <column name="message" value="At least one occurrence if ResponseCode = OK"/>
             <column name="level" value="L02"/>
@@ -5677,10 +5757,11 @@
             <column name="property_names" value="relatedValidationResultDocuments"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="393"/>
             <column name="br_id" value="FA-L01-00-0393"/>
-            <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="expression"
+                    value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
             <column name="note" value="fluxPartyIds ListId must be FLUX_GP_PARTY."/>
             <column name="message" value="fluxPartyIds ListId must be FLUX_GP_PARTY."/>
             <column name="level" value="L01"/>
@@ -5706,7 +5787,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="395"/>
             <column name="br_id" value="FA-L00-00-0395"/>
-            <column name="expression" value="!isEmpty(relatedValidationResultDocuments) &amp;&amp; !ifValidatorIdPresent(relatedValidationResultDocuments)"/>
+            <column name="expression"
+                    value="!isEmpty(relatedValidationResultDocuments) &amp;&amp; !ifValidatorIdPresent(relatedValidationResultDocuments)"/>
             <column name="note" value="validatorID must be present."/>
             <column name="message" value="validatorID must be present."/>
             <column name="level" value="L01"/>
@@ -5719,7 +5801,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="396"/>
             <column name="br_id" value="FA-L01-00-0396"/>
-            <column name="expression" value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
+            <column name="expression"
+                    value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
             <column name="note" value="validatorIDs -- Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="validatorIDs --Check Format. Must be according to the specified schemeID."/>
             <column name="level" value="L00"/>
@@ -5730,10 +5813,11 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="555"/>
             <column name="br_id" value="FA-L01-00-0555"/>
-            <column name="expression" value="!isEmpty(validatorIDs) &amp;&amp; !isIdTypePresentInMDRList(validatorIDs)  "/>
+            <column name="expression"
+                    value="!isEmpty(validatorIDs) &amp;&amp; !isIdTypePresentInMDRList(validatorIDs)  "/>
             <column name="note" value="Check value. Must be value from the code list specified in schemeID."/>
             <column name="message" value="Check value. Must be value from the code list specified in schemeID."/>
             <column name="level" value="L01"/>
@@ -5743,10 +5827,11 @@
             <column name="property_names" value="validatorIDs"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="554"/>
             <column name="br_id" value="FA-L02-00-0554"/>
-            <column name="expression" value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)  "/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)  "/>
             <column name="note" value="At least one occurrence must be present if ResponseCode= OK."/>
             <column name="message" value="At least one occurrence must be present if ResponseCode= OK."/>
             <column name="level" value="L02"/>
@@ -5756,7 +5841,7 @@
             <column name="property_names" value="relatedValidationResultDocuments"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="397"/>
             <column name="br_id" value="FA-L00-00-0397"/>
             <column name="expression" value="id ==null "/>
@@ -5786,8 +5871,10 @@
             <column name="rule_id" value="399"/>
             <column name="br_id" value="FA-L01-00-0399"/>
             <column name="expression" value="id != null &amp;&amp; !isPresentInMDRList(id.schemeId, id.value)"/>
-            <column name="note" value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
-            <column name="message" value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
+            <column name="note"
+                    value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
+            <column name="message"
+                    value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5811,7 +5898,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="401"/>
             <column name="br_id" value="FA-L01-00-0401"/>
-            <column name="expression" value="levelCode !=null &amp;&amp; levelCode.listId != &quot;FLUX_GP_VALIDATION_LEVEL&quot;"/>
+            <column name="expression"
+                    value="levelCode !=null &amp;&amp; levelCode.listId != &quot;FLUX_GP_VALIDATION_LEVEL&quot;"/>
             <column name="note" value="Check levelCode listID. Must be FLUX_GP_VALIDATION_LEVEL."/>
             <column name="message" value="Check levelCode listID. Must be FLUX_GP_VALIDATION_LEVEL."/>
             <column name="level" value="L00"/>
@@ -5824,9 +5912,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="402"/>
             <column name="br_id" value="FA-L01-00-0402"/>
-            <column name="expression" value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
-            <column name="note" value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
-            <column name="message" value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
+            <column name="expression"
+                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
+            <column name="note"
+                    value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
+            <column name="message"
+                    value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5851,9 +5942,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="403"/>
             <column name="br_id" value="FA-L01-00-0403"/>
-            <column name="expression" value="typeCode !=null &amp;&amp; (typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot; || !isPresentInMDRList(typeCode.listId, typeCode.value))"/>
-            <column name="note" value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
-            <column name="message" value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
+            <column name="expression"
+                    value="typeCode !=null &amp;&amp; (typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot; || !isPresentInMDRList(typeCode.listId, typeCode.value))"/>
+            <column name="note"
+                    value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
+            <column name="message"
+                    value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5863,10 +5957,11 @@
         </insert>
 
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="406"/>
             <column name="br_id" value="FA-L01-00-0406"/>
-            <column name="expression" value="typeCode !=null &amp;&amp; !isPresentInMDRList(typeCode.listId , typeCode.value)"/>
+            <column name="expression"
+                    value="typeCode !=null &amp;&amp; !isPresentInMDRList(typeCode.listId , typeCode.value)"/>
             <column name="note" value="Check value of TypeCode. Must be in the list specified in listID."/>
             <column name="message" value="Check value of TypeCode. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -5876,7 +5971,7 @@
             <column name="property_names" value="typeCode"/>
         </insert>
 
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" valueNumeric="404"/>
             <column name="br_id" value="FA-L00-00-0404"/>
             <column name="expression" value="containsEmptyStrings(results)"/>
@@ -5892,7 +5987,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="405"/>
             <column name="br_id" value="FA-L01-00-0405"/>
-            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;ERR&quot; || typeCode.value == &quot;WAR&quot;) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; (typeCode.value == &quot;ERR&quot; || typeCode.value == &quot;WAR&quot;) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
             <column name="note" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
             <column name="message" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
             <column name="level" value="L01"/>
@@ -5937,9 +6033,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="271"/>
             <column name="br_id" value="FA-L02-00-0271"/>
-            <column name="expression" value="!isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
-            <column name="note" value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
-            <column name="message" value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
+            <column name="expression"
+                    value="!isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
+            <column name="note"
+                    value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
+            <column name="message"
+                    value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
@@ -6261,7 +6360,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="10107"/>
             <column name="br_id" value="SALE-L01-00-0017"/>
-            <column name="expression" value="ownerFLUXParty != null &amp;&amp; schemeIdContainsAll(ownerFLUXParty.getIDS(), &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="expression"
+                    value="ownerFLUXParty != null &amp;&amp; schemeIdContainsAll(ownerFLUXParty.getIDS(), &quot;FLUX_GP_PARTY&quot;)"/>
             <column name="note" value=""/>
             <column name="message" value="Check attribute listID. Must be FLUX_GP_PARTY"/>
             <column name="level" value="L01"/>
@@ -6626,7 +6726,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="10137"/>
             <column name="br_id" value="SALE-L01-00-0101"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !typeCode.value.equals(&quot;LAN&quot;)"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !typeCode.value.equals(&quot;LAN&quot;)"/>
             <column name="note" value=""/>
             <column name="message" value="Check format"/>
             <column name="level" value="L01"/>
@@ -6842,7 +6943,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="10152"/>
             <column name="br_id" value="SALE-L01-00-0185"/>
-            <column name="expression" value="ID !=null &amp;&amp; &quot;FAO_AREA&quot;.equals(ID.getSchemeId()) &amp;&amp; ID.getValue() != null &amp;&amp; isNotMostPreciseFAOArea()"/>
+            <column name="expression"
+                    value="ID !=null &amp;&amp; &quot;FAO_AREA&quot;.equals(ID.getSchemeId()) &amp;&amp; ID.getValue() != null &amp;&amp; isNotMostPreciseFAOArea()"/>
             <column name="note" value=""/>
             <column name="message" value="If FAO_AREA code, the more precise area must be mentioned"/>
             <column name="level" value="L01"/>
@@ -6908,12 +7010,13 @@
         </insert>
     </changeSet>
 
-  <changeSet id="rule-sales-level-2" author="thovri">
-		<!-- FLUX_Sales_Report_Message entity -->
-		<insert tableName="rule">
+    <changeSet id="rule-sales-level-2" author="thovri">
+        <!-- FLUX_Sales_Report_Message entity -->
+        <insert tableName="rule">
             <column name="rule_id" value="10202"/>
             <column name="br_id" value="SALE-L02-00-0003"/>
-            <column name="expression" value="FLUXReportDocument != null &amp;&amp; FLUXReportDocument.getPurposeCode() != null &amp;&amp; FLUXReportDocument.getPurposeCode().getValue() != &quot;3&quot; &amp;&amp; (salesReports == null || salesReports.size() != 1)"/>
+            <column name="expression"
+                    value="FLUXReportDocument != null &amp;&amp; FLUXReportDocument.getPurposeCode() != null &amp;&amp; FLUXReportDocument.getPurposeCode().getValue() != &quot;3&quot; &amp;&amp; (salesReports == null || salesReports.size() != 1)"/>
             <column name="note" value=""/>
             <column name="message" value="One and only one occurrence of a sales report if purpose is not 'delete'"/>
             <column name="level" value="L02"/>
@@ -7274,8 +7377,8 @@
             <column name="template_id" value="1013"/>
             <column name="property_names" value="relatedVesselTransportMeans"/>
             <column name="disabled" value="false"/>
-		</insert>
-		<insert tableName="rule">
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="11532"/>
             <column name="br_id" value="SALE-L02-00-0103"/>
             <column name="expression" value="!isListEmptyOrBetweenNumberOfItems(relatedFLUXLocations,1,1)"/>
@@ -7420,19 +7523,20 @@
             <column name="template_id" value="1019"/>
             <column name="property_names" value="ID, typeCode"/>
             <column name="disabled" value="false"/>
-		</insert>
- 		<insert tableName="rule">
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="10242"/>
             <column name="br_id" value="SALE-L02-00-0184"/>
-            <column name="expression" value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; &quot;LOCATION&quot;.equals(ID.getSchemeId()) &amp;&amp; (isBlank(countryID) || isLocationNotInCountry())"/>
+            <column name="expression"
+                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; &quot;LOCATION&quot;.equals(ID.getSchemeId()) &amp;&amp; (isBlank(countryID) || isLocationNotInCountry())"/>
             <column name="note" value=""/>
-			<column name="message" value="If LOCATION code, the place must be in the country"/>
+            <column name="message" value="If LOCATION code, the place must be in the country"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1019"/>
             <column name="property_names" value="ID, countryID"/>
-		</insert>
-		<insert tableName="rule">
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="10243"/>
             <column name="br_id" value="SALE-L02-00-0185"/>
             <column name="expression"
@@ -7489,16 +7593,16 @@
             <column name="template_id" value="1019"/>
             <column name="property_names" value="physicalStructuredAddress, countryID"/>
             <column name="disabled" value="false"/>
-		</insert>
+        </insert>
 
-		<!-- Structured_Address entity -->
-		<!-- All moved to other entities -->
+        <!-- Structured_Address entity -->
+        <!-- All moved to other entities -->
 
-	</changeSet>
+    </changeSet>
 
-	<changeSet id="rule-sales-query-level-0" author="thovri">
-		<!-- Sales_Query entity -->
-		<insert tableName="rule">
+    <changeSet id="rule-sales-query-level-0" author="thovri">
+        <!-- Sales_Query entity -->
+        <insert tableName="rule">
             <column name="rule_id" value="10301"/>
             <column name="br_id" value="SALE-L00-00-0401"/>
             <column name="expression" value="submittedDateTime == null || submittedDateTime.dateTime == null"/>
@@ -7564,8 +7668,8 @@
             <column name="disabled" value="false"/>
         </insert>
 
-		<!-- Delimited_Period entity -->
-		<insert tableName="rule">
+        <!-- Delimited_Period entity -->
+        <insert tableName="rule">
             <column name="rule_id" value="10306"/>
             <column name="br_id" value="SALE-L00-00-0420"/>
             <column name="expression"
@@ -7593,10 +7697,10 @@
             <column name="disabled" value="false"/>
         </insert>
 
-	</changeSet>
+    </changeSet>
 
-	<changeSet id="rule-sales-response-level-0" author="thovri">
-		<!-- FLUX Response_Document entity -->
+    <changeSet id="rule-sales-response-level-0" author="thovri">
+        <!-- FLUX Response_Document entity -->
         <insert tableName="rule">
             <column name="rule_id" value="10400"/>
             <column name="br_id" value="SALE-L00-00-0450"/>
@@ -7623,7 +7727,7 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="10402"/>
             <column name="br_id" value="SALE-L00-00-0452"/>
             <column name="expression" value="responseCode == null"/>
@@ -7634,7 +7738,7 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="responseCode"/>
         </insert>
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="10403"/>
             <column name="br_id" value="SALE-L00-00-0453"/>
             <column name="expression" value="creationDateTime == null"/>
@@ -7645,7 +7749,7 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="creationDateTime"/>
         </insert>
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="10404"/>
             <column name="br_id" value="SALE-L00-00-0454"/>
             <column name="expression" value="respondentFLUXParty == null"/>
@@ -7656,7 +7760,7 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="respondentFLUXParty"/>
         </insert>
-		<insert tableName="rule">
+        <insert tableName="rule">
             <column name="rule_id" value="10409"/>
             <column name="br_id" value="SALE-L00-00-0472"/>
             <column name="expression"
@@ -8042,7 +8146,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="10610"/>
             <column name="br_id" value="SALE-L01-00-0480"/>
-            <column name="expression" value="!isAuction() &amp;&amp; (ID != null &amp;&amp; !isPresentInMDRList(ID.schemeId, ID.value))"/>
+            <column name="expression"
+                    value="!isAuction() &amp;&amp; (ID != null &amp;&amp; !isPresentInMDRList(ID.schemeId, ID.value))"/>
             <column name="note" value=""/>
             <column name="message" value="Check value. Code must be value of the specified code list in listID."/>
             <column name="level" value="L01"/>
@@ -8192,7 +8297,8 @@
             <column name="br_id" value="SALE-L03-00-0020"/>
             <column name="expression" value="salesService.isCorrectionAndIsItemTypeTheSameAsInTheOriginal($fact)"/>
             <column name="note" value=""/>
-            <column name="message" value="In case of a correction, the item type must be the same as the item type of the referenced report"/>
+            <column name="message"
+                    value="In case of a correction, the item type must be the same as the item type of the referenced report"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1000"/>
@@ -8224,90 +8330,93 @@
             <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
         </insert>
 
-    <!--<insert tableName="rule">-->
-    <!--<column name="rule_id" value="10903"/>-->
-    <!--<column name="br_id" value="SALE-L03-00-0012"/>-->
-    <!--<column name="expression" value=""/>-->
-    <!--<column name="note" value=""/>-->
-    <!--<column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>-->
-    <!--<column name="level" value="L02"/>-->
-    <!--<column name="error_type" value="WARNING"/>-->
-    <!--<column name="template_id" value="1001"/>-->
-    <!--</insert>-->
-    <!---->
-    <!--&lt;!&ndash; Sales_Document  &ndash;&gt;-->
-    <insert tableName="rule">
-        <column name="rule_id" value="10905"/>
-        <column name="br_id" value="SALE-L03-00-0030"/>
-        <column name="expression" value="salesService.isIdNotUnique($fact)"/>
-        <column name="note" value=""/>
-        <column name="message" value="The reference must be unique"/>
-        <column name="level" value="L03"/>
-        <column name="error_type" value="ERROR"/>
-        <column name="template_id" value="1004"/>
-        <column name="property_names" value="ids"/>
-    </insert>
+        <!--<insert tableName="rule">-->
+        <!--<column name="rule_id" value="10903"/>-->
+        <!--<column name="br_id" value="SALE-L03-00-0012"/>-->
+        <!--<column name="expression" value=""/>-->
+        <!--<column name="note" value=""/>-->
+        <!--<column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>-->
+        <!--<column name="level" value="L02"/>-->
+        <!--<column name="error_type" value="WARNING"/>-->
+        <!--<column name="template_id" value="1001"/>-->
+        <!--</insert>-->
+        <!---->
+        <!--&lt;!&ndash; Sales_Document  &ndash;&gt;-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10905"/>
+            <column name="br_id" value="SALE-L03-00-0030"/>
+            <column name="expression" value="salesService.isIdNotUnique($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must be unique"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="ids"/>
+        </insert>
 
-    <!--<insert tableName="rule">-->
-    <!--<column name="rule_id" value="10906"/>-->
-    <!--<column name="br_id" value="SALE-L03-00-0031"/>-->
-    <!--<column name="expression" value=""/>-->
-    <!--<column name="note" value=""/>-->
-    <!--<column name="message" value="It must be an official currency of the country at that date"/>-->
-    <!--<column name="level" value="L03"/>-->
-    <!--<column name="error_type" value="ERROR"/>-->
-    <!--<column name="template_id" value="1004"/>-->
-    <!--</insert>-->
-    <insert tableName="rule">
-        <column name="rule_id" value="10908"/>
-        <column name="br_id" value="SALE-L03-00-0033"/>
-        <column name="expression" value="!salesService.doesTakeOverDocumentIdExist($fact)"/>
-        <column name="note" value=""/>
-        <column name="message" value="The reference must exist"/>
-        <column name="level" value="L03"/>
-        <column name="error_type" value="WARNING"/>
-        <column name="template_id" value="1004"/>
-        <column name="property_names" value="takeoverDocumentIds"/>
-    </insert>
-    <insert tableName="rule">
-        <column name="rule_id" value="10911"/>
-        <column name="br_id" value="SALE-L03-00-0041"/>
-        <column name="expression" value="ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
-        <column name="note" value=""/>
-        <column name="message" value="If SENDER role, it should be a MS Identification"/>
-        <column name="level" value="L03"/>
-        <column name="error_type" value="ERROR"/>
-        <column name="template_id" value="1005"/>
-        <column name="property_names" value="ID"/>
-    </insert>
-    <!---->
-    <!--&lt;!&ndash; Sales_Event  &ndash;&gt;-->
-    <insert tableName="rule">
-        <column name="rule_id" value="10912"/>
-        <column name="br_id" value="SALE-L03-00-0050"/>
-        <column name="expression" value="salesService.isReceptionDate48hAfterSaleDate($fact)"/>
-        <column name="note" value=""/>
-        <column name="message" value="The reception date (by Market state) should not be later than 48h after the sale date"/>
-        <column name="level" value="L03"/>
-        <column name="error_type" value="WARNING"/>
-        <column name="template_id" value="1000"/>
-        <column name="property_names" value="Creation, Occurrence"/>
-    </insert>
-    <insert tableName="rule">
-        <column name="rule_id" value="10914"/>
-        <column name="br_id" value="SALE-L03-00-0110"/>
-        <column name="expression" value="salesService.isReceptionDate48hAfterLandingDeclaration($fact)"/>
-        <column name="note" value=""/>
-        <column name="message" value="The reception date (by the Take-Over state) should not be later than 48h after the landing declaration date"/>
-        <column name="level" value="L03"/>
-        <column name="error_type" value="WARNING"/>
-        <column name="template_id" value="1000"/>
-        <column name="property_names" value="Creation, Occurrence"/>
-    </insert>
+        <!--<insert tableName="rule">-->
+        <!--<column name="rule_id" value="10906"/>-->
+        <!--<column name="br_id" value="SALE-L03-00-0031"/>-->
+        <!--<column name="expression" value=""/>-->
+        <!--<column name="note" value=""/>-->
+        <!--<column name="message" value="It must be an official currency of the country at that date"/>-->
+        <!--<column name="level" value="L03"/>-->
+        <!--<column name="error_type" value="ERROR"/>-->
+        <!--<column name="template_id" value="1004"/>-->
+        <!--</insert>-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10908"/>
+            <column name="br_id" value="SALE-L03-00-0033"/>
+            <column name="expression" value="!salesService.doesTakeOverDocumentIdExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="takeoverDocumentIds"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10911"/>
+            <column name="br_id" value="SALE-L03-00-0041"/>
+            <column name="expression"
+                    value="ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If SENDER role, it should be a MS Identification"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="ID"/>
+        </insert>
+        <!---->
+        <!--&lt;!&ndash; Sales_Event  &ndash;&gt;-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10912"/>
+            <column name="br_id" value="SALE-L03-00-0050"/>
+            <column name="expression" value="salesService.isReceptionDate48hAfterSaleDate($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="The reception date (by Market state) should not be later than 48h after the sale date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="Creation, Occurrence"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10914"/>
+            <column name="br_id" value="SALE-L03-00-0110"/>
+            <column name="expression" value="salesService.isReceptionDate48hAfterLandingDeclaration($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="The reception date (by the Take-Over state) should not be later than 48h after the landing declaration date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="Creation, Occurrence"/>
+        </insert>
     </changeSet>
     <!---->
     <changeSet id="rule-sales-query-level-3" author="thovri">
-    <!-- Sales_Query -->
+        <!-- Sales_Query -->
         <insert tableName="rule">
             <column name="rule_id" value="11000"/>
             <column name="br_id" value="SALE-L03-00-0400"/>
@@ -8319,8 +8428,8 @@
             <column name="template_id" value="1022"/>
             <column name="property_names" value="id"/>
         </insert>
-    <!---->
-    <!-- Delimited_Period  -->
+        <!---->
+        <!-- Delimited_Period  -->
         <insert tableName="rule">
             <column name="rule_id" value="11001"/>
             <column name="br_id" value="SALE-L03-00-0420"/>
@@ -8335,7 +8444,7 @@
     </changeSet>
     <!---->
     <changeSet id="rule-sales-response-level-3" author="thovri">
-    <!-- FLUX Response_Document  -->
+        <!-- FLUX Response_Document  -->
         <insert tableName="rule">
             <column name="rule_id" value="11100"/>
             <column name="br_id" value="SALE-L03-00-0450"/>
@@ -8369,24 +8478,25 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="creation"/>
         </insert>
-    <!---->
-    <!--&lt;!&ndash; FLUX_Party &ndash;&gt;-->
-    <!--<insert tableName="rule">-->
-    <!--<column name="rule_id" value="11104"/>-->
-    <!--<column name="br_id" value="SALE-L03-00-0460"/>-->
-    <!--<column name="expression" value=""/>-->
-    <!--<column name="note" value="The party sending must be allowed to send the message"/>-->
-    <!--<column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>-->
-    <!--<column name="level" value="L03"/>-->
-    <!--<column name="error_type" value="WARNING"/>-->
-    <!--<column name="template_id" value="1002"/>-->
-    <!--</insert>-->
+        <!---->
+        <!--&lt;!&ndash; FLUX_Party &ndash;&gt;-->
+        <!--<insert tableName="rule">-->
+        <!--<column name="rule_id" value="11104"/>-->
+        <!--<column name="br_id" value="SALE-L03-00-0460"/>-->
+        <!--<column name="expression" value=""/>-->
+        <!--<column name="note" value="The party sending must be allowed to send the message"/>-->
+        <!--<column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>-->
+        <!--<column name="level" value="L03"/>-->
+        <!--<column name="error_type" value="WARNING"/>-->
+        <!--<column name="template_id" value="1002"/>-->
+        <!--</insert>-->
     </changeSet>
     <changeSet id="rule-sales-auction" author="matbul">
         <insert tableName="rule">
             <column name="rule_id" value="11704"/>
             <column name="br_id" value="SALE-BEL-01"/>
-            <column name="expression" value="isAuction() &amp;&amp; (!valueCodeTypeContainsAny(roleCodes, &quot;SELLER&quot;) &amp;&amp; (ID != null &amp;&amp; ID.value != null &amp;&amp; !ID.value.startsWith(&quot;RB-&quot;)))"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; (!valueCodeTypeContainsAny(roleCodes, &quot;SELLER&quot;) &amp;&amp; (ID != null &amp;&amp; ID.value != null &amp;&amp; !ID.value.startsWith(&quot;RB-&quot;)))"/>
             <column name="note" value=""/>
             <column name="message" value="ID of Sales Party must start with RB- when the party is a seller"/>
             <column name="level" value="L00"/>
@@ -8408,7 +8518,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="11706"/>
             <column name="br_id" value="SALE-BEL-04"/>
-            <column name="expression" value="isAuction() &amp;&amp; (purposeCode != null &amp;&amp; purposeCode.value != null &amp;&amp; purposeCode.value.equals(&quot;3&quot;))"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; (purposeCode != null &amp;&amp; purposeCode.value != null &amp;&amp; purposeCode.value.equals(&quot;3&quot;))"/>
             <column name="note" value=""/>
             <column name="message" value="The BEL:SALE class cannot be deleted"/>
             <column name="level" value="L00"/>
@@ -8419,7 +8530,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="11707"/>
             <column name="br_id" value="SALE-BEL-05"/>
-            <column name="expression" value="isVariousSupply() &amp;&amp; (countryCode == null || countryCode.equals(&quot;&quot;))"/>
+            <column name="expression"
+                    value="isVariousSupply() &amp;&amp; (countryCode == null || countryCode.equals(&quot;&quot;))"/>
             <column name="note" value=""/>
             <column name="message" value="BEL:SALECountry is mandatory "/>
             <column name="level" value="L00"/>
@@ -8430,7 +8542,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="11709"/>
             <column name="br_id" value="SALE-BEL-06"/>
-            <column name="expression" value="isAuction() &amp;&amp; !isPresentInMDRList(&quot;TERRITORY&quot;, countryCode)"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; !isPresentInMDRList(&quot;TERRITORY&quot;, countryCode)"/>
             <column name="note" value=""/>
             <column name="message" value="BEL:SALECountry: code should exist in MDR"/>
             <column name="level" value="L00"/>
