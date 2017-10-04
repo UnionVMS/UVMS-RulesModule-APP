@@ -3646,24 +3646,17 @@
             <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="184"/>
+            <column name="rule_id" valueNumeric="184"/>
             <column name="br_id" value="FA-L02-00-0184"/>
-            <column name="expression"
-                    value="(fishingActivityTypeCode!= null &amp;&amp; fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SAL&quot;) &amp;&amp;
-                    schemeIdContainsAll(fluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp;
-                    allIdValuesStartWith(fluxLocationId,&quot;27.3.d&quot;) &amp;&amp;
-                    isEmpty(resultAAPProductUnitQuantity)"/>
-            <column name="note"
-                    value="Units (number of fish) must be provided for landings/ transhipment's of Salmon from the Baltic sea"/>
-            <column name="message"
-                    value="AppliedAAP_Process.ResultAAP_Product UnitQuantity must be present if used in LANDING or TRANSHIPMENT and FA_Catch.SpeciesCode = SAL and SchemeID of FLUX_Location.ID= FAO_AREA and ID value matching 27.3.d (and any sub-divisions)"/>
+            <column name="expression" value="!valueContainsAny(fishingActivityTypeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !valueContainsAny(speciesCode, &quot;SAL&quot;) &amp;&amp; !schemeIdContainsAll(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &#10;&amp;&amp; valueStartsWith(faCatchFluxLocationId,&quot;27.3.d&quot;) &amp;&amp; isEmpty(resultAAPProductUnitQuantity) "/>
+            <column name="note" value="Units (number of fish) must be provided for landings/ transhipment's of Salmon from the Baltic sea"/>
+            <column name="message" value="AppliedAAP_Process.ResultAAP_Product UnitQuantity must be present if used in LANDING or TRANSHIPMENT and FA_Catch.SpeciesCode = SAL and SchemeID of FLUX_Location.ID= FAO_AREA and ID value matching 27.3.d (and any sub-divisions)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-21 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="resultAAPProductUnitQuantity,typeCode,fluxLocationId,speciesCode"/>
-            <column name="disabled" value="false"/>
+            <column name="template_id" valueNumeric="8"/>
+            <column name="property_names" value="resultAAPProduct"/>
+            <column name="disabled" valueBoolean="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="186"/>

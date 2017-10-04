@@ -16,10 +16,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -149,6 +149,35 @@ public abstract class AbstractFact {
             }
         }
         return valLength > hits;
+    }
+
+    public boolean valueStartsWith(List<IdType> idTypes, String... valuesToMatch) {
+        if (isEmpty(idTypes) || ArrayUtils.isEmpty(valuesToMatch)) {
+            return false;
+        }
+
+        int hits = 0;
+        for (String valueToMatch : valuesToMatch) {
+            for (IdType idType : idTypes) {
+                if (valueStartsWith(idType, valueToMatch)) {
+                    hits++;
+                }
+            }
+        }
+
+        return valuesToMatch.length <= hits;
+    }
+
+    public boolean valueStartsWith(IdType idType, String valueToMatch) {
+        if (valueToMatch == null || idType == null) {
+            return false;
+        }
+
+        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -936,17 +965,17 @@ public abstract class AbstractFact {
      * @param stringsList
      * @return true / false
      */
-    public boolean containsEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
+    public boolean containsEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
             return stringsList.contains(null) || stringsList.contains("");
         }
         return true;
     }
 
-    public boolean containsOnlyEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
-            for(String str : stringsList){
-                if(StringUtils.isNotEmpty(str)){
+    public boolean containsOnlyEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
+            for (String str : stringsList) {
+                if (StringUtils.isNotEmpty(str)) {
                     return false;
                 }
             }
@@ -1209,8 +1238,8 @@ public abstract class AbstractFact {
         }
 
 
-        for(IdType idType : ids){
-            if(isIdTypePresentInMDRList(idType) ==false){
+        for (IdType idType : ids) {
+            if (isIdTypePresentInMDRList(idType) == false) {
                 return false;
             }
         }
