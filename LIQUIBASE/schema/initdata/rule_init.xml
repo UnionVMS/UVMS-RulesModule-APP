@@ -5603,9 +5603,9 @@
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
             <column name="expression"
-                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; isPresentInMDRList(referencedID.schemeId, &quot;FLUX_GP_MSG_ID&quot;)"/>
-            <column name="note" value="referencedID -- Check attribute schemeID. Must be UUID."/>
-            <column name="message" value="referencedID --Check attribute schemeID. Must be UUID."/>
+                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId)"/>
+            <column name="note" value="Check attribute schemeID. Must be a valid value from code list FLUX_GP_MSG_ID."/>
+            <column name="message" value="Check attribute schemeID. Must be a valid value from code list FLUX_GP_MSG_ID."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -8630,7 +8630,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="27"/>
             <column name="br_id" value="FA-L03-00-0027"/>
-            <column name="expression" value="acceptanceDateTime != null || !dateNow().before(acceptanceDateTime)"/>
+            <column name="expression" value="acceptanceDateTime != null &amp;&amp; acceptanceDateTime.after(dateNow())"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Date must be in the past."/>
