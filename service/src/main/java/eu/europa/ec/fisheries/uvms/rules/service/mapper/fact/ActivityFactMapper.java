@@ -11,11 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -53,16 +48,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQuality
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -99,6 +84,21 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 
 /**
  * @Author kovian
@@ -307,7 +307,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, FAReportDocument faReportDocument,boolean isSubActivity) {
         if (fishingActivity == null) {
             xPathUtil.clear();
             return null;
@@ -316,6 +316,8 @@ public class ActivityFactMapper {
         String partialXpath = xPathUtil.getValue();
 
         FishingActivityFact fishingActivityFact = getFishingActivityCoreFact(fishingActivity, partialXpath);
+
+        fishingActivityFact.setIsSubActivity(isSubActivity);
 
         if (faReportDocument != null) {
             fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
@@ -412,7 +414,7 @@ public class ActivityFactMapper {
 
         List<FishingActivityFact> list = new ArrayList<>();
         for (FishingActivity fishingActivity : fishingActivities) {
-            list.add(generateFactForFishingActivity(fishingActivity, faReportDocument));
+            list.add(generateFactForFishingActivity(fishingActivity, faReportDocument,true));
         }
 
         return list;

@@ -694,7 +694,7 @@ public class ActivityFactMapperTest {
         final GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(null);
 
         final List<FaReportDocumentFact> faReportDocumentFacts = activityMapper.generateFactForFaReportDocuments(null);
-        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null);
+        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null,false);
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
