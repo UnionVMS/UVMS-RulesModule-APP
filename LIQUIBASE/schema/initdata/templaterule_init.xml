@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="templaterule-init01" author="patilva">
+
+        <insert tableName="template">
+            <column name="template_id" value="1"/>
+            <column name="template_name" value="fa report document template"/>
+            <column name="fact_template" value="FA_REPORT_DOCUMENT"/>
+        </insert>
+
+        <insert tableName="template">
+            <column name="template_id" value="2"/>
+            <column name="template_name" value="flux fa report message template"/>
+            <column name="fact_template" value="FLUX_FA_REPORT_MESSAGE"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="3"/>
+            <column name="template_name" value="Vessel Transport means template"/>
+            <column name="fact_template" value="VESSEL_TRANSPORT_MEANS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="4"/>
+            <column name="template_name" value="Structured address template"/>
+            <column name="fact_template" value="STRUCTURED_ADDRESS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="5"/>
+            <column name="template_name" value="fishing gear template"/>
+            <column name="fact_template" value="FISHING_GEAR"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="6"/>
+            <column name="template_name" value="Gear characteristics template"/>
+            <column name="fact_template" value="GEAR_CHARACTERISTIC"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="7"/>
+            <column name="template_name" value="Gear problem template"/>
+            <column name="fact_template" value="GEAR_PROBLEM"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="8"/>
+            <column name="template_name" value="Fa Catch template"/>
+            <column name="fact_template" value="FA_CATCH"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="9"/>
+            <column name="template_name" value="Fishing trip template"/>
+            <column name="fact_template" value="FISHING_TRIP"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="10"/>
+            <column name="template_name" value="Flux location template"/>
+            <column name="fact_template" value="FLUX_LOCATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="11"/>
+            <column name="template_name" value="Flux characteristics template"/>
+            <column name="fact_template" value="FLUX_CHARACTERISTIC"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="12"/>
+            <column name="template_name" value="Vessel storage characteristic template"/>
+            <column name="fact_template" value="VESSEL_STORAGE_CHARACTERISTIC"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="13"/>
+            <column name="template_name" value="Fishing activity template"/>
+            <column name="fact_template" value="FISHING_ACTIVITY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="14"/>
+            <column name="template_name" value="Fa query template"/>
+            <column name="fact_template" value="FA_QUERY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="15"/>
+            <column name="template_name" value="Fa query parameter template"/>
+            <column name="fact_template" value="FA_QUERY_PARAMETER"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="16"/>
+            <column name="template_name" value="Fa response template"/>
+            <column name="fact_template" value="FA_RESPONSE"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="17"/>
+            <column name="template_name" value="Fa departure template"/>
+            <column name="fact_template" value="FA_DEPARTURE"/>
+        </insert>
+
+        <insert tableName="template">
+            <column name="template_id" value="18"/>
+            <column name="template_name" value="Fa entry to sea template"/>
+            <column name="fact_template" value="FA_ENTRY_TO_SEA"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="19"/>
+            <column name="template_name" value="Fa fishing opearation template"/>
+            <column name="fact_template" value="FA_FISHING_OPERATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="20"/>
+            <column name="template_name" value="Fa joint fishing operation template"/>
+            <column name="fact_template" value="FA_JOINT_FISHING_OPERATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="21"/>
+            <column name="template_name" value="Fa relocation template"/>
+            <column name="fact_template" value="FA_RELOCATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="22"/>
+            <column name="template_name" value="Fa discard template"/>
+            <column name="fact_template" value="FA_DISCARD"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="23"/>
+            <column name="template_name" value="Fa exit from Sea template"/>
+            <column name="fact_template" value="FA_EXIT_FROM_SEA"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="24"/>
+            <column name="template_name" value="Fa notification of arrival template"/>
+            <column name="fact_template" value="FA_NOTIFICATION_OF_ARRIVAL"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="25"/>
+            <column name="template_name" value="Fa arrival template"/>
+            <column name="fact_template" value="FA_ARRIVAL"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="26"/>
+            <column name="template_name" value="Fa landing template"/>
+            <column name="fact_template" value="FA_LANDING"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="27"/>
+            <column name="template_name" value="Fa transhipment template"/>
+            <column name="fact_template" value="FA_TRANSHIPMENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="28"/>
+            <column name="template_name" value="Fa notification of transhipment"/>
+            <column name="fact_template" value="FA_NOTIFICATION_OF_TRANSHIPMENT"/>
+        </insert>
+	   <insert tableName="template">
+            <column name="template_id" value="30"/>
+            <column name="template_name" value="Validation quality analysis"/>
+            <column name="fact_template" value="FA_VALIDATION_QUALITY_ANALYSIS"/>
+        </insert>
+		
+    </changeSet>
+
+    <changeSet id="templaterule-sales01" author="stihft">
+        <insert tableName="template">
+            <column name="template_id" value="1000"/>
+            <column name="template_name" value="Sales FLUX Sales Report Message Template"/>
+            <column name="fact_template" value="SALES_FLUX_SALES_REPORT_MESSAGE"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1001"/>
+            <column name="template_name" value="Sales FLUX Report Document Template"/>
+            <column name="fact_template" value="SALES_FLUX_REPORT_DOCUMENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1002"/>
+            <column name="template_name" value="Sales FLUX Party Template"/>
+            <column name="fact_template" value="SALES_FLUX_PARTY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1003"/>
+            <column name="template_name" value="Sales Report Template"/>
+            <column name="fact_template" value="SALES_REPORT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1004"/>
+            <column name="template_name" value="Sales Document Template"/>
+            <column name="fact_template" value="SALES_DOCUMENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1005"/>
+            <column name="template_name" value="Sales Party Template"/>
+            <column name="fact_template" value="SALES_PARTY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1006"/>
+            <column name="template_name" value="Sales Event Template"/>
+            <column name="fact_template" value="SALES_EVENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1007"/>
+            <column name="template_name" value="Sales Batch Template"/>
+            <column name="fact_template" value="SALES_BATCH"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1008"/>
+            <column name="template_name" value="Sales AAP Product Template"/>
+            <column name="fact_template" value="SALES_AAP_PRODUCT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1009"/>
+            <column name="template_name" value="Sales AAP Process Template"/>
+            <column name="fact_template" value="SALES_AAP_PROCESS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1010"/>
+            <column name="template_name" value="Sales Size Distribution Template"/>
+            <column name="fact_template" value="SALES_SIZE_DISTRIBUTION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1011"/>
+            <column name="template_name" value="Sales Price Template"/>
+            <column name="fact_template" value="SALES_PRICE"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1012"/>
+            <column name="template_name" value="Sales FLUX Organization Template"/>
+            <column name="fact_template" value="SALES_FLUX_ORGANIZATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1013"/>
+            <column name="template_name" value="Sales Fishing Activity Template"/>
+            <column name="fact_template" value="SALES_FISHING_ACTIVITY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1014"/>
+            <column name="template_name" value="Sales Vessel Transport Means Template"/>
+            <column name="fact_template" value="SALES_VESSEL_TRANSPORT_MEANS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1015"/>
+            <column name="template_name" value="Sales Vessel Country Template"/>
+            <column name="fact_template" value="SALES_VESSEL_COUNTRY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1016"/>
+            <column name="template_name" value="Sales Contact Party Template"/>
+            <column name="fact_template" value="SALES_CONTACT_PARTY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1017"/>
+            <column name="template_name" value="Sales Contact Person Template"/>
+            <column name="fact_template" value="SALES_CONTACT_PERSON"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1018"/>
+            <column name="template_name" value="Sales Fishing Trip Template"/>
+            <column name="fact_template" value="SALES_FISHING_TRIP"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1019"/>
+            <column name="template_name" value="Sales FLUX Location Template"/>
+            <column name="fact_template" value="SALES_FLUX_LOCATION"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1020"/>
+            <column name="template_name" value="Sales FLUX Geographical Coordinate Template"/>
+            <column name="fact_template" value="SALES_FLUX_GEOGRAPHICAL_COORDINATE"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1021"/>
+            <column name="template_name" value="Sales Structured Address Template"/>
+            <column name="fact_template" value="SALES_STRUCTURED_ADDRESS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1022"/>
+            <column name="template_name" value="Sales Query Template"/>
+            <column name="fact_template" value="SALES_QUERY"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1023"/>
+            <column name="template_name" value="Sales FLUX Response Document Template"/>
+            <column name="fact_template" value="SALES_FLUX_RESPONSE_DOCUMENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1024"/>
+            <column name="template_name" value="Sales Validation Result Document Template"/>
+            <column name="fact_template" value="SALES_VALIDATION_RESULT_DOCUMENT"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1025"/>
+            <column name="template_name" value="Sales Validation Quality Analysis Template"/>
+            <column name="fact_template" value="SALES_VALIDATION_QUALITY_ANALYSIS"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1026"/>
+            <column name="template_name" value="Sales Report Wrapper"/>
+            <column name="fact_template" value="SALES_REPORT_WRAPPER"/>
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1027"/>
+            <column name="template_name" value="Sales Auction Sale"/>
+            <column name="fact_template" value="SALES_AUCTION_SALE" />
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1028"/>
+            <column name="template_name" value="Sales Delimited Period"/>
+            <column name="fact_template" value="SALES_DELIMITED_PERIOD" />
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1029"/>
+            <column name="template_name" value="Sales FLUX Sales Query Message Template"/>
+            <column name="fact_template" value="SALES_FLUX_SALES_QUERY_MESSAGE" />
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1030"/>
+            <column name="template_name" value="Sales FLUX Sales Response Message Template"/>
+            <column name="fact_template" value="SALES_FLUX_SALES_RESPONSE_MESSAGE" />
+        </insert>
+        <insert tableName="template">
+            <column name="template_id" value="1031"/>
+            <column name="template_name" value="Sales Query Parameter Template"/>
+            <column name="fact_template" value="SALES_QUERY_PARAMETER" />
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

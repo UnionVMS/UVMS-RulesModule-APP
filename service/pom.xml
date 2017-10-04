@@ -32,11 +32,11 @@
                 <version>${drools.version}</version>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
+ 			<dependency>
+			    <groupId>com.thoughtworks.xstream</groupId>
+			    <artifactId>xstream</artifactId>
                 <version>1.4.10</version>
-            </dependency>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -50,38 +50,36 @@
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
             <version>${rules.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-message</artifactId>
             <version>${project.parent.version}</version>
-            <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-dbaccess-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.movement</groupId>
             <artifactId>movement-model</artifactId>
             <version>${movement.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
             <artifactId>asset-model</artifactId>
             <version>${asset.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>
             <artifactId>mobileterminal-model</artifactId>
             <version>${mobileterminal.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
-            <classifier>date</classifier>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.user</groupId>
@@ -110,7 +108,7 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
             <artifactId>config-model</artifactId>
-            <version>3.0.4</version>
+            <version>4.0.0</version>
         </dependency>
 
         <!-- drools dependencies -->
@@ -119,9 +117,9 @@
             <artifactId>kie-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-        </dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
 
         <dependency>
             <groupId>org.drools</groupId>
@@ -158,25 +156,19 @@
             <version>1.1.0.wildfly-008</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mvel</groupId>
+    		<artifactId>mvel2</artifactId>
+    		<version>2.2.8.Final</version>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ejb-plugin</artifactId>
-                <version>2.3</version>
                 <configuration>
                     <ejbVersion>3.1</ejbVersion>
                 </configuration>
@@ -184,7 +176,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>

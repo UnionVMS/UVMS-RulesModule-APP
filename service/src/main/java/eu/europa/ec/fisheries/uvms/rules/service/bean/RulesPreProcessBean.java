@@ -13,12 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
@@ -39,7 +38,7 @@ import java.util.*;
 @Slf4j
 public class RulesPreProcessBean {
 
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
+    @EJB
     private RulesDomainModel rulesDomainModel;
 
     public ValidationResultDto getValidationResultIfExist(List<String> ids) throws RulesModelException {

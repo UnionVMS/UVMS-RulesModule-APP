@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rawmoveactivity-01">
+        <createTable tableName="rawmoveactivity" remarks="The activity connected to the movement.">
+            <column name="rawmoveact_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawmoveact_pk" />
+            </column>
+            <column name="rawmoveact_messagetype" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmoveact_messageid" type="VARCHAR(100)" remarks="???."/>
+            <column name="rawmoveact_callback" type="VARCHAR(100)" remarks="???."/>
+
+            <column name="rawmoveact_rawmove_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+			constraintName="rawmoveact_rawmove_fk"
+			baseTableName="rawmoveactivity"
+			baseColumnNames="rawmoveact_rawmove_id"
+			referencedTableName="rawmovement"
+			referencedColumnNames="rawmove_id"
+		/>
+
+        <rollback>
+            <dropTable tableName="rawmoveactivity" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+	<changeSet id="rawmoveact_rawmove_fk_inx-01" author="andtho">
+		<createIndex tableName="rawmoveactivity" indexName="rawmoveact_rawmove_fk_inx">
+			<column name="rawmoveact_rawmove_id"></column>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

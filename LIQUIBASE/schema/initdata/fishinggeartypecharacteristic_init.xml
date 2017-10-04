@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="dordevdr (generated)" id="1503412383114-3">
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTB"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SV"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SV"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTM"/>
+            <column name="fishing_gear_characteristic_code" value="MT"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTM"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTM"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTM"/>
+            <column name="fishing_gear_characteristic_code" value="MT"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTB"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTB"/>
+            <column name="fishing_gear_characteristic_code" value="MT"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTB"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTM"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTM"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SDN"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SX"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SV"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTB"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTB"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTB"/>
+            <column name="fishing_gear_characteristic_code" value="MT"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBN"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBN"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBS"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBS"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TB"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TB"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SX"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SX"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBB"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBB"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBB"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="TBB"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTT"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTT"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTT"/>
+            <column name="fishing_gear_characteristic_code" value="MT"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTT"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PTB"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="OTT"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SDN"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SDN"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SPR"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SPR"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SPR"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SSC"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SSC"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="SSC"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS1"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS1"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS1"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS1"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS2"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS2"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS2"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="PS2"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LA"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LA"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LA"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LA"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="DRB"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="DRB"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="DRB"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="NL"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="NN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="QG"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GN"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="NL"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="NN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="QG"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNS"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="NL"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="NN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="QG"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GND"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="NL"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="NN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="QG"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GNC"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTN"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="ME"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="GM"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="HE"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="NL"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="NN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="QG"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="GTR"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="FPO"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="FPO"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="FIX"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHP"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHP"/>
+            <column name="fishing_gear_characteristic_code" value="NI"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHM"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHM"/>
+            <column name="fishing_gear_characteristic_code" value="NI"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLS"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLS"/>
+            <column name="fishing_gear_characteristic_code" value="NI"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLD"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLD"/>
+            <column name="fishing_gear_characteristic_code" value="NI"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LL"/>
+            <column name="fishing_gear_characteristic_code" value="GN"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LL"/>
+            <column name="fishing_gear_characteristic_code" value="NI"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LTL"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LX"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHP"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LHM"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLS"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LLD"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="LL"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="HMD"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="MIS"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="RG"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+        <insert tableName="fishinggeartypecharacteristic">
+            <column name="fishing_gear_type_code" value="NK"/>
+            <column name="fishing_gear_characteristic_code" value="GD"/>
+            <column name="mandatory" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

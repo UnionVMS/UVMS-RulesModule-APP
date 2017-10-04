@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="patilva (generated)" id="validationmessage-01">
+        <createTable tableName="validationmessage" remarks="Raw message Entity.">
+            <column name="id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="validationmessage_pk" />
+            </column>
+            <column name="message" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="br_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="error_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="VARCHAR(100)"/>
+            <column name="raw_message_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseColumnNames="raw_message_id"
+                baseTableName="validationmessage"
+                constraintName="validationmsg_rawmsg_fk"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="rawmessage"/>
+
+
+
+        <rollback>
+            <dropTable tableName="validationmessage" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="raw_message_id_fk_inx-01" author="patilva">
+    <createIndex tableName="validationmessage" indexName="rawmessage_validationmessage_fk_inx">
+        <column name="raw_message_id"></column>
+    </createIndex>
+    </changeSet>
+</databaseChangeLog>

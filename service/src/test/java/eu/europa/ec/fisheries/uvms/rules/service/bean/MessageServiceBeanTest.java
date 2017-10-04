@@ -228,7 +228,7 @@ public class MessageServiceBeanTest {
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
-        messageServiceBean.sendResponseToExchange(fluxResponseMessage, request);
+        messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
     private ValidationResultDto getValidationResult() {

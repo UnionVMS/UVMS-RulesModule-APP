@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -94,8 +95,10 @@ public abstract class AbstractConfigCache {
         if(StringUtils.isNotEmpty(moduleName)) {
             try {
                 List<SettingType> settingTypeList = getSettingTypes(moduleName);
-                for (SettingType setting : settingTypeList) {
-                    settingsMap.put(setting.getKey(), setting.getValue());
+                if(CollectionUtils.isNotEmpty(settingTypeList)){
+                    for (SettingType setting : settingTypeList) {
+                        settingsMap.put(setting.getKey(), setting.getValue());
+                    }
                 }
             } catch (MessageException | JMSException | ModelMapperException e) {
                 log.error(e.getMessage(), e);

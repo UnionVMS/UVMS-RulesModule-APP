@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
@@ -44,7 +45,7 @@ public interface MessageService {
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
 
-    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request);
+    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType);
 
     void mapAndSendFLUXMdrRequestToExchange(String request);
 
