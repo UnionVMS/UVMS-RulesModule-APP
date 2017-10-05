@@ -170,7 +170,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForVesselTransportMeansStructuresAddress(facts, activity.getRelatedVesselTransportMeans());
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity));
+                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity,isSubActivity));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForFaCatches(facts, activity.getSpecifiedFACatches());
@@ -393,5 +393,5 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         xPathUtil.clear();
     }
 
-   
+
 }

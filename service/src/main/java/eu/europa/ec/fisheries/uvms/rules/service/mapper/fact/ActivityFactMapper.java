@@ -721,7 +721,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity) {
+    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity,boolean isSubActivity) {
 
         if (activity == null) {
             return emptyList();
@@ -815,6 +815,8 @@ public class ActivityFactMapper {
                 faCatchFact.setFluxLocationId(mapFLUXLocationList(relatedFLUXLocations));
                 xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
             }
+
+            faCatchFact.setSubActivity(isSubActivity);
 
             facts.add(faCatchFact);
 
