@@ -119,7 +119,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
         String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
 
-        Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTripRequest(fishingTripID);
+        Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTrip(fishingTripID);
 
         if (!fishingTripResponse.isPresent()) {
             /**

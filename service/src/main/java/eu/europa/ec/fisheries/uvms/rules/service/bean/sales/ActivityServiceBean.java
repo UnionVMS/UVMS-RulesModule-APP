@@ -21,7 +21,7 @@ public class ActivityServiceBean implements ActivityService {
     private ActivityServiceBeanHelper helper;
 
     @Override
-    public Optional<FishingTripResponse> getFishingTripRequest(String fishingTripID) {
+    public Optional<FishingTripResponse> getFishingTrip(String fishingTripID) {
         Optional<FishingTripResponse> trip = Optional.absent();
 
         try {

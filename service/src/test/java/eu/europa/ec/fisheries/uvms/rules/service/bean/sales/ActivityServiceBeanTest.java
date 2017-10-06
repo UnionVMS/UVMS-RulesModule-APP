@@ -1,11 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
-import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.ActivityServiceBeanHelper;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,7 +29,7 @@ public class ActivityServiceBeanTest {
 
         doReturn(Optional.absent()).when(helper).findTrip(fishingTripID);
 
-        Optional<FishingTripResponse> response = service.getFishingTripRequest(fishingTripID);
+        Optional<FishingTripResponse> response = service.getFishingTrip(fishingTripID);
 
         assertEquals(Optional.absent(), response);
         verify(helper).findTrip(fishingTripID);
@@ -46,7 +43,7 @@ public class ActivityServiceBeanTest {
         FishingTripResponse fishingTripResponse = new FishingTripResponse();
         doReturn(Optional.of(fishingTripResponse)).when(helper).findTrip(fishingTripID);
 
-        Optional<FishingTripResponse> response = service.getFishingTripRequest(fishingTripID);
+        Optional<FishingTripResponse> response = service.getFishingTrip(fishingTripID);
 
         assertSame(fishingTripResponse, response.get());
         verify(helper).findTrip(fishingTripID);
@@ -59,7 +56,7 @@ public class ActivityServiceBeanTest {
 
         doThrow(JMSException.class).when(helper).findTrip(fishingTripID);
 
-        Optional<FishingTripResponse> response = service.getFishingTripRequest(fishingTripID);
+        Optional<FishingTripResponse> response = service.getFishingTrip(fishingTripID);
 
 
         verify(helper).findTrip(fishingTripID);

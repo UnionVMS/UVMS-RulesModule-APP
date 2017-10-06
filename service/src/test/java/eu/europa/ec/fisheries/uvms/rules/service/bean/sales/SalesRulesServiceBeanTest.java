@@ -158,7 +158,7 @@ public class SalesRulesServiceBeanTest {
         fishingTripResponse.getFishingActivityLists().add(fishingActivity);
 
         Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
-        doReturn(fishingTripResponse1).when(activityService).getFishingTripRequest(fishingTripID);
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
@@ -190,7 +190,7 @@ public class SalesRulesServiceBeanTest {
 
         Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
 
-        doReturn(fishingTripResponse1).when(activityService).getFishingTripRequest(fishingTripID);
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));

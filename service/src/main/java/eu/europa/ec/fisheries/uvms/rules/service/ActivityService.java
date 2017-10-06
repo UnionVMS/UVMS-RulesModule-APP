@@ -8,5 +8,5 @@ import javax.ejb.Local;
 @Local
 public interface ActivityService {
 
-    Optional<FishingTripResponse> getFishingTripRequest(String fishingTripID);
+    Optional<FishingTripResponse> getFishingTrip(String fishingTripID);
 }
