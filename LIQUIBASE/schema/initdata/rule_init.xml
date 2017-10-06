@@ -589,7 +589,7 @@
             <column name="rule_id" value="239"/>
             <column name="br_id" value="FA-L01-00-0239"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFishingGearRoleCodeTypes) &amp;&amp; listIdContainsAll(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFishingGearRoleCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="Fishing gear Rolecode is invalid."/>
             <column name="level" value="L01"/>
@@ -603,7 +603,7 @@
             <column name="rule_id" value="240"/>
             <column name="br_id" value="FA-L02-00-0240"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; listIdContainsAll(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="TypeCode of the catches is invalid."/>
             <column name="level" value="L02"/>
@@ -3544,7 +3544,7 @@
             <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
             <column name="message"
                     value="The value of weighing means is invalid."/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-23 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -5028,7 +5028,7 @@
                     value="faReportDocumentTypeCode != null &amp;&amp; faReportDocumentTypeCode.value != &quot;DECLARATION&quot; "/>
             <column name="note" value="FAReportDocument typeCode must be DECLARATION."/>
             <column name="message" value="FAReportDocument typeCode must be DECLARATION."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5057,7 +5057,7 @@
                     value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
             <column name="message"
                     value="At least one location with TypeCode POSITION must be provided for this joint fishing operation."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5071,7 +5071,7 @@
                     value="!isEmpty(relatedFishingActivityTypeCode) &amp;&amp; allValueContainsMatch(relatedFishingActivityTypeCode, &quot;RELOCATION&quot;)"/>
             <column name="note" value="RelatedFishingActivity typeCode must be RELOCATION."/>
             <column name="message" value="Only sub-activities with TypeCode RELOCATION may be provided for this joint fishing operation."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5136,24 +5136,24 @@
             <column name="rule_id" value="427"/>
             <column name="br_id" value="FA-L00-00-0427"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; relatedFishingActivityFaCatch.size != relatedFishingActivityFaCatchTypeCodes.size"/>
+                    value="!notContainsFaCatch(relatedFishingActivities)"/>
             <column name="note" value="RelatedFishingActivity FACatch must have typeCode."/>
             <column name="message" value="Catch TypeCode must be present for this joint fishing operation."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
-            <column name="property_names" value="relatedFishingActivityFaCatchTypeCodes"/>
+            <column name="property_names" value="relatedFishingActivities"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="428"/>
             <column name="br_id" value="FA-L01-00-0428"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; listIdNotContains(relatedFishingActivityFaCatchTypeCodes, &quot;FA_CATCH_TYPE&quot;) "/>
+                    value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; listIdContainsAll(relatedFishingActivityFaCatchTypeCodes, &quot;FA_CATCH_TYPE&quot;) "/>
             <column name="note" value="RelatedFishingActivity FACatch Typecode ListId Must be FA_CATCH_TYPE."/>
             <column name="message" value="Catch TypeCode for the related activity has an invalid listID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5169,7 +5169,7 @@
                     value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
             <column name="message"
                     value="Catch TypeCode for the related activity is invalid."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5233,7 +5233,7 @@
                     value="Check attribute schemeID. Must be JFO if the activity is a joint fishing operation declaration and if SpeciesCode is BFT."/>
             <column name="message"
                     value="Fishing Activity ID has an invalid schemeID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5248,8 +5248,8 @@
             <column name="note"
                     value="FishingActivity ID if present, Check Format. Must be according to the specified schemeID."/>
             <column name="message"
-                    value="Fishing Activity ID is invlalid."/>
-            <column name="level" value="L00"/>
+                    value="Fishing Activity ID is invalid."/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5619,7 +5619,7 @@
             <column name="expression" value="referencedID !=null &amp;&amp; validateFormat(referencedID)  "/>
             <column name="note" value="referencedID -- Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Response referenced ID value is invalid."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="16"/>
@@ -5646,7 +5646,7 @@
                     value="responseCode!=null &amp;&amp; listIdContainsAll(responseCode, &quot;FLUX_GP_RESPONSE&quot;)"/>
             <column name="note" value="ResponseCode ListId must be FLUX_GP_RESPONSE ."/>
             <column name="message" value="ResponseCode has an invalid listID."/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="16"/>
@@ -5661,7 +5661,7 @@
             <column name="note" value="Check responseCode. Must be existing in the list specified in attribute listID"/>
             <column name="message"
                     value="ResponseCode value is invalid."/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="16"/>
@@ -5702,7 +5702,7 @@
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Response creation date/time must be in the past."/>
-            <column name="level" value="L03"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="16"/>
@@ -5784,7 +5784,7 @@
                     value="!isEmpty(relatedValidationResultDocuments) &amp;&amp; !ifValidatorIdPresent(relatedValidationResultDocuments)"/>
             <column name="note" value="validatorID must be present."/>
             <column name="message" value="Validator ID is missing."/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="16"/>
@@ -5798,7 +5798,7 @@
                     value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
             <column name="note" value="validatorIDs -- Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Validator ID has an invalid schemeID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="16"/>
@@ -5853,7 +5853,7 @@
             <column name="expression" value="id !=null &amp;&amp; id.schemeId != &quot;FA_BR&quot;"/>
             <column name="note" value="Id schemeId must be FA_BR."/>
             <column name="message" value="Quality analysis ID has an invalid schemeID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -5868,7 +5868,7 @@
                     value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
             <column name="message"
                     value="Quality analysis ID value is invalid."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -5881,7 +5881,7 @@
             <column name="expression" value="levelCode == null"/>
             <column name="note" value="LevelCode Must be present."/>
             <column name="message" value="LevelCode is missing."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -5895,7 +5895,7 @@
                     value="levelCode !=null &amp;&amp; levelCode.listId != &quot;FLUX_GP_VALIDATION_LEVEL&quot;"/>
             <column name="note" value="Check levelCode listID. Must be FLUX_GP_VALIDATION_LEVEL."/>
             <column name="message" value="LevelCode has an invalid listID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -5911,7 +5911,7 @@
                     value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
             <column name="message"
                     value="LevelCode value is invalid."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -5941,7 +5941,7 @@
                     value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
             <column name="message"
                     value="TypeCode has an invalid listID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="30"/>
@@ -7669,7 +7669,7 @@
                     value="isQuery() &amp;&amp; (startDateTime == null || startDateTime.dateTime == null)"/>
             <column name="note" value=""/>
             <column name="message" value="Must be present"/>
-            <column name="level" value="l00"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1028"/>
