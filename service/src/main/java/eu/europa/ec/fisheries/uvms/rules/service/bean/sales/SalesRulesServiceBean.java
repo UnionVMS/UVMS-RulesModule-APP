@@ -1,8 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
+import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -23,6 +26,9 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
     SalesService salesService;
+
+    @EJB
+    ActivityService activityService;
 
     @Inject
     MapperFacade mapper;
@@ -84,9 +90,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
         return false;
     }
 
-    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime eventDate) {
-        DateTime saleDate = eventDate;
-
+    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime saleDate) {
         // Add 48 hours and 1 minute to salesDate to determine the latest acceptable date.
         // Adding 48 hours isn't enough, a report sent exactly 48h after the event is still valid.
         // This is why there's a buffer of 1 minute. Not sure if this is enough: time will tell (pun intended)
@@ -113,22 +117,26 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
+        String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
 
-        List<SalesDocumentType> includedSalesDocuments = fact.getSalesReports().get(0).getIncludedSalesDocuments();
-        for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
-            for (FishingActivityType fishingActivityType : includedSalesDocument.getSpecifiedFishingActivities()) {
-                for (DelimitedPeriodType delimitedPeriodType : fishingActivityType.getSpecifiedDelimitedPeriods()) {
-                    if (delimitedPeriodType.getStartDateTime() != null && delimitedPeriodType.getStartDateTime().getDateTime() != null) {
-                        if (isMoreThan48HoursLater(receptionDate, delimitedPeriodType.getStartDateTime().getDateTime())) {
-                            return true;
-                        }
-                    }
-                }
-            }
+        Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTripRequest(fishingTripID);
+
+        if (!fishingTripResponse.isPresent()) {
+            /**
+             * In case the query returns no values
+             * (which means there was no fishing trip found with the ID specified in the sales note),
+             * we don't fire the rule
+             */
+            return false;
         }
 
-        return false;
+        FishingTripResponse fishingTrip = fishingTripResponse.get();
+
+        DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
+        DateTime dateTimeFromLandingActivity = new DateTime(fishingTrip.getFishingActivityLists().get(0).getAcceptedDateTime().toGregorianCalendar());
+
+        return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity);
+
     }
 
     @Override
