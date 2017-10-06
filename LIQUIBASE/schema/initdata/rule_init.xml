@@ -5150,7 +5150,7 @@
             <column name="rule_id" value="428"/>
             <column name="br_id" value="FA-L01-00-0428"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; listIdNotContains(relatedFishingActivityFaCatchTypeCodes, &quot;FA_CATCH_TYPE&quot;) "/>
+                    value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; listIdContainsAll(relatedFishingActivityFaCatchTypeCodes, &quot;FA_CATCH_TYPE&quot;) "/>
             <column name="note" value="RelatedFishingActivity FACatch Typecode ListId Must be FA_CATCH_TYPE."/>
             <column name="message" value="RelatedFishingActivity FACatch Typecode ListId Must be FA_CATCH_TYPE."/>
             <column name="level" value="L00"/>
