@@ -8263,7 +8263,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10901"/>
             <column name="br_id" value="SALE-L03-00-0010"/>
-            <column name="expression" value="salesService.doesReportNotExistWithId($fact)"/>
+            <column name="expression" value="!salesService.doesReportNotExistWithId($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The identification must be unique and not already exist"/>
             <column name="level" value="L03"/>
