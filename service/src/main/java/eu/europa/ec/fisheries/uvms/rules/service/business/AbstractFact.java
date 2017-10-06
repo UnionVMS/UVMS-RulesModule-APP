@@ -16,15 +16,34 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,14 +61,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @ToString
@@ -149,6 +160,35 @@ public abstract class AbstractFact {
             }
         }
         return valLength > hits;
+    }
+
+    public boolean valueStartsWith(List<IdType> idTypes, String... valuesToMatch) {
+        if (isEmpty(idTypes) || ArrayUtils.isEmpty(valuesToMatch)) {
+            return false;
+        }
+
+        int hits = 0;
+        for (String valueToMatch : valuesToMatch) {
+            for (IdType idType : idTypes) {
+                if (valueStartsWith(idType, valueToMatch)) {
+                    hits++;
+                }
+            }
+        }
+
+        return valuesToMatch.length <= hits;
+    }
+
+    public boolean valueStartsWith(IdType idType, String valueToMatch) {
+        if (valueToMatch == null || idType == null) {
+            return false;
+        }
+
+        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -896,19 +936,6 @@ public abstract class AbstractFact {
         return false;
     }
 
-
-    public boolean allIdValuesStartWith(List<IdType> ids, String startSequenceToMatch){
-        if(CollectionUtils.isEmpty(ids) || StringUtils.isEmpty(startSequenceToMatch)){
-            return false;
-        }
-        for(IdType idType : ids){
-            if(!StringUtils.startsWith(idType.getValue(), startSequenceToMatch)){
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
      *
@@ -936,17 +963,17 @@ public abstract class AbstractFact {
      * @param stringsList
      * @return true / false
      */
-    public boolean containsEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
+    public boolean containsEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
             return stringsList.contains(null) || stringsList.contains("");
         }
         return true;
     }
 
-    public boolean containsOnlyEmptyStrings(List<String> stringsList){
-        if(!isEmpty(stringsList)){
-            for(String str : stringsList){
-                if(StringUtils.isNotEmpty(str)){
+    public boolean containsOnlyEmptyStrings(List<String> stringsList) {
+        if (!isEmpty(stringsList)) {
+            for (String str : stringsList) {
+                if (StringUtils.isNotEmpty(str)) {
                     return false;
                 }
             }
@@ -1209,8 +1236,8 @@ public abstract class AbstractFact {
         }
 
 
-        for(IdType idType : ids){
-            if(isIdTypePresentInMDRList(idType) ==false){
+        for (IdType idType : ids) {
+            if (isIdTypePresentInMDRList(idType) == false) {
                 return false;
             }
         }
