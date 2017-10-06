@@ -16,20 +16,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
@@ -43,6 +31,17 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -1698,4 +1697,33 @@ public class AbstractFactTest {
         boolean result = fact.codeTypeValueContainsMatch(Arrays.asList(RuleTestHelper.getCodeType("TEST", null)), "TEST");
         assertTrue(result);
     }
+
+    @Test
+    public void testValueStartsWithMultipleIdTypesNoneCorrect() {
+        List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA"),
+                RuleTestHelper.getIdType("28.3.d.27", "FAO_AREA"), RuleTestHelper.getIdType("27.3.bd.27", "FAO_AREA"));
+
+        assertFalse(fact.valueStartsWith(idTypes, "27.3.d"));
+    }
+
+    @Test
+    public void testValueStartsWithMultipleIdTypesAllCorrect() {
+        List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.d.27", "FAO_AREA"),
+                RuleTestHelper.getIdType("27.3.d.27.b", "FAO_AREA"), RuleTestHelper.getIdType("27.3.d", "FAO_AREA"));
+
+        assertTrue(fact.valueStartsWith(idTypes, "27.3.d"));
+    }
+
+    @Test
+    public void testValueStartsWithSingleIdTypeOneCorrect() {
+        IdType idType = RuleTestHelper.getIdType("27.3.d.27", "FAO_AREA");
+        assertTrue(fact.valueStartsWith(idType, "27.3.d"));
+    }
+
+    @Test
+    public void testValueStartsWithSingleIdTypeNoneCorrect() {
+        IdType idType = RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA");
+        assertFalse(fact.valueStartsWith(idType, "27.3.d"));
+    }
+
 }
