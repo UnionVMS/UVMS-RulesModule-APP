@@ -603,7 +603,7 @@
             <column name="rule_id" value="240"/>
             <column name="br_id" value="FA-L02-00-0240"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; listIdContainsAll(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="Specified FA_Catch TypeCode must be ONBOARD"/>
             <column name="level" value="L02"/>
