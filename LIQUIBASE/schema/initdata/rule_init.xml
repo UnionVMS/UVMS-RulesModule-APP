@@ -5033,7 +5033,7 @@
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
             <column name="property_names" value="faReportDocumentTypeCode"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="421"/>
