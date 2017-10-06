@@ -6568,20 +6568,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10124"/>
-            <column name="br_id" value="SALE-L01-00-0062"/>
-            <column name="expression"
-                    value="weightMeasure != null &amp;&amp; !weightMeasure.unitCode.equals(&quot;KGM&quot;)"/>
-            <column name="note" value=""/>
-            <column name="message" value="Check code"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="weightMeasure"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10125"/>
             <column name="br_id" value="SALE-L01-00-0063"/>
             <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value &lt; 0"/>
@@ -6619,20 +6605,6 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1008"/>
             <column name="property_names" value="weightMeasure"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10128"/>
-            <column name="br_id" value="SALE-L01-00-0066"/>
-            <column name="expression"
-                    value="weightMeasure != null &amp;&amp; speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value.equals(&quot;BFT&quot;) &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value) &gt; 3"/>
-            <column name="note" value=""/>
-            <column name="message" value="3 decimals for BFT"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="weightMeasure, speciesCode"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -6705,17 +6677,6 @@
         <!-- Sales_Price entity -->
 
         <!-- Fishing_Activity entity -->
-        <insert tableName="rule">
-            <column name="rule_id" value="10136"/>
-            <column name="br_id" value="SALE-L01-00-0100"/>
-            <column name="expression" value="(!isEmpty(IDS) &amp;&amp; validateFormat(IDS))"/>
-            <column name="note" value=""/>
-            <column name="message" value="Check format"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="template_id" value="1013"/>
-            <column name="property_names" value="IDS"/>
-        </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10137"/>
             <column name="br_id" value="SALE-L01-00-0101"/>

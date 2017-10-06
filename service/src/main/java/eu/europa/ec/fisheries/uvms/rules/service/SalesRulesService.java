@@ -74,4 +74,5 @@ public interface SalesRulesService {
     boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact);
 
     boolean isDateOfValidationAfterCreationDateOfResponse(SalesFLUXResponseDocumentFact fact);
+
 }
