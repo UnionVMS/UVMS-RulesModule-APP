@@ -145,7 +145,7 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
         List<ObjectRepresentation> faoAreas = MDRCacheHolder.getInstance()
                                                             .getObjectRepresentationList(MDRAcronymType.FAO_AREA);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
-                (id.getValue(), "terminal_ind", "true", faoAreas);
+                (id.getValue(), "terminalInd", "1", faoAreas);
     }
 
     public boolean isLocationNotInCountry() {
