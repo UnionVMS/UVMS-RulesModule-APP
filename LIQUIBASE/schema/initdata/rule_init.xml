@@ -478,7 +478,7 @@
             <column name="note"
                     value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
             <column name="message"
-                    value="Mandatory catch TypeCode missing."/>
+                    value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
             <column name="template_id" value="23"/>
             <column name="property_names" value="specifiedFACatchesTypeCodes"/>
             <column name="disabled" value="false"/>
@@ -3173,9 +3173,54 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
+            <column name="rule_id" value="162"/>
+            <column name="br_id" value="FA-L02-00-0162"/>
+            <column name="expression"
+                    value="speciesCode != null  &amp;&amp; weighingMeansCode == null &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
+            <column name="note"
+                    value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
+            <column name="message"
+                    value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="weighingMeansCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="163"/>
+            <column name="br_id" value="FA-L01-00-0163"/>
+            <column name="expression"
+                    value="weighingMeansCode != null &amp;&amp; listIdContainsAll(weighingMeansCode, &quot;WEIGHT_MEANS&quot;)"/>
+            <column name="note" value="FA_Catch Weighing_MeansCode attribute listID must be  WEIGHT_MEANS."/>
+            <column name="message" value="FA_Catch Weighing_MeansCode attribute listID must be  WEIGHT_MEANS."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="weighingMeansCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="164"/>
+            <column name="br_id" value="FA-L01-00-0164"/>
+            <column name="expression"
+                    value="weighingMeansCode != null &amp;&amp; !isPresentInMDRList(&quot;WEIGHT_MEANS&quot; ,weighingMeansCode.value )"/>
+            <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
+            <column name="message"
+                    value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-23 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="weighingMeansCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="165"/>
             <column name="br_id" value="FA-L00-00-0165"/>
-            <column name="expression" value="isEmpty(sizeDistributionClassCode)"/>
+            <column name="expression" value="isEmpty(sizeDistributionClassCode) &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
             <column name="note" value="Specified Size_Distribution ClassCode must be present."/>
             <column name="message" value="Size distribution information missing."/>
             <column name="level" value="L00"/>
@@ -3213,6 +3258,51 @@
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="8"/>
             <column name="property_names" value="sizeDistributionClassCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="168"/>
+            <column name="br_id" value="FA-L02-00-0168"/>
+            <column name="expression"
+                    value="speciesCode != null  &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; categoryCode == null"/>
+            <column name="note" value="Must be extended for other size category lists!"/>
+            <column name="message"
+                    value="Specified Size_Distribution CategoryCode must be present if species BFT, Category must be present."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="speciesCode,categoryCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="169"/>
+            <column name="br_id" value="FA-L01-00-0169"/>
+            <column name="expression"
+                    value="categoryCode != null &amp;&amp; listIdContainsAll(categoryCode, &quot;FA_BFT_SIZE_CATEGORY&quot;)"/>
+            <column name="note" value="If provided"/>
+            <column name="message"
+                    value="Specified Size_Distribution CategoryCode attribute listID must be FA_BFT_SIZE_CATEGORY"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="categoryCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="170"/>
+            <column name="br_id" value="FA-L01-00-0170"/>
+            <column name="expression"
+                    value="categoryCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
+            <column name="note" value="If provided"/>
+            <column name="message"
+                    value="Specified Size_Distribution CategoryCode value must be present in FA_BFT_SIZE_CATEGORY list"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="categoryCode"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3506,96 +3596,7 @@
             <column name="property_names" value="typeCode,fluxLocationId,speciesCode,unitQuantity"/>
             <column name="disabled" value="false"/>
         </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="162"/>
-            <column name="br_id" value="FA-L02-00-0162"/>
-            <column name="expression"
-                    value="speciesCode != null  &amp;&amp; weighingMeansCode == null &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;RELOCATION&quot; "/>
-            <column name="note"
-                    value="FA_Catch Weighing_MeansCode must be present if species BFT and not used in relocation sub-activity."/>
-            <column name="message"
-                    value="Weighing means missing."/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="weighingMeansCode,speciesCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="163"/>
-            <column name="br_id" value="FA-L01-00-0163"/>
-            <column name="expression"
-                    value="weighingMeansCode != null &amp;&amp; listIdContainsAll(weighingMeansCode, &quot;WEIGHT_MEANS&quot;)"/>
-            <column name="note" value="FA_Catch Weighing_MeansCode attribute listID must be  WEIGHT_MEANS."/>
-            <column name="message" value="Weighing means has an invalid listID."/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="weighingMeansCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="164"/>
-            <column name="br_id" value="FA-L01-00-0164"/>
-            <column name="expression"
-                    value="weighingMeansCode != null &amp;&amp; !isPresentInMDRList(&quot;WEIGHT_MEANS&quot; ,weighingMeansCode.value )"/>
-            <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
-            <column name="message"
-                    value="The value of weighing means is invalid."/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-23 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="weighingMeansCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="168"/>
-            <column name="br_id" value="FA-L02-00-0168"/>
-            <column name="expression"
-                    value="speciesCode != null  &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; categoryCode == null"/>
-            <column name="note" value="Must be extended for other size category lists!"/>
-            <column name="message"
-                    value="The size distribution ClassCode is missing."/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="speciesCode,categoryCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="169"/>
-            <column name="br_id" value="FA-L01-00-0169"/>
-            <column name="expression"
-                    value="categoryCode != null &amp;&amp; listIdContainsAll(categoryCode, &quot;FA_BFT_SIZE_CATEGORY&quot;)"/>
-            <column name="note" value="If provided"/>
-            <column name="message"
-                    value="The size distribution CategoryCode has an invalid listID."/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="categoryCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="170"/>
-            <column name="br_id" value="FA-L02-00-0170"/>
-            <column name="expression"
-                    value="categoryCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
-            <column name="note" value="If provided"/>
-            <column name="message"
-                    value="The size distribution CategoryCode value is invalid."/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="categoryCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="440"/>
             <column name="br_id" value="FA-L02-00-0440"/>
