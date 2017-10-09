@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -72,7 +71,7 @@ public class RulesEngineBeanTest {
     RulesActivityServiceBean activityService;
 
     @Mock
-    RulesDao rulesDao;
+    RulesFishingGearBean rulesFishingGearBean;
 
     @Test
     public void testEvaluate() throws RulesValidationException {

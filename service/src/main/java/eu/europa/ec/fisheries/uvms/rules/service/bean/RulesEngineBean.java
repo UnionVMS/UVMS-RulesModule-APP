@@ -15,9 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -59,7 +57,7 @@ public class RulesEngineBean {
     private RulesActivityServiceBean activityService;
 
     @EJB
-    private RulesDao rulesDao;
+    private RulesFishingGearBean rulesFishingGearBean;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
         List<AbstractFact> facts = new ArrayList<>();
@@ -88,14 +86,7 @@ public class RulesEngineBean {
             map.put(ACTIVITY_WITH_TRIP_IDS, fishingActivitiesForTrips);
             List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
             map.put(ASSET_LIST, assetList);
-
-            List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = null;
-            try {
-                fishingGearTypeCharacteristics = rulesDao.getAllFishingGearTypeCharacteristics();
-            } catch (DaoException e) {
-                log.error("Error retrieving FishingGearTypeCharacteristics!", e);
-            }
-
+            List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = rulesFishingGearBean.getAllFishingGearTypeCharacteristics();
             map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics);
         }
 
