@@ -244,7 +244,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public FishingActivityFact generateFactForFishingActivity(FishingActivity fishingActivity, FAReportDocument faReportDocument,boolean isSubActivity) {
         if (fishingActivity == null) {
             xPathUtil.clear();
             return null;
@@ -253,6 +253,8 @@ public class ActivityFactMapper {
         String partialXpath = xPathUtil.getValue();
 
         FishingActivityFact fishingActivityFact = getFishingActivityCoreFact(fishingActivity, partialXpath);
+
+        fishingActivityFact.setIsSubActivity(isSubActivity);
 
         if (faReportDocument != null) {
             fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
@@ -349,7 +351,7 @@ public class ActivityFactMapper {
 
         List<FishingActivityFact> list = new ArrayList<>();
         for (FishingActivity fishingActivity : fishingActivities) {
-            list.add(generateFactForFishingActivity(fishingActivity, faReportDocument));
+            list.add(generateFactForFishingActivity(fishingActivity, faReportDocument,true));
         }
 
         return list;
@@ -658,7 +660,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity) {
+    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity,boolean isSubActivity) {
 
         if (activity == null) {
             return emptyList();
@@ -752,6 +754,8 @@ public class ActivityFactMapper {
                 faCatchFact.setFluxLocationId(mapFLUXLocationList(relatedFLUXLocations));
                 xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
             }
+
+            faCatchFact.setSubActivity(isSubActivity);
 
             facts.add(faCatchFact);
 

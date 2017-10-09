@@ -336,7 +336,7 @@ public class ActivityFactMapperTest {
         }});
         faActivity.setRelatedFLUXLocations(null);
 
-        FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity).get(0);
+        FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity,false).get(0);
 
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());
@@ -673,7 +673,7 @@ public class ActivityFactMapperTest {
         final FaFishingOperationFact faFishingOperationFact = activityMapper.generateFactsForFishingOperation(null, null);
         final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null);
+        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null");
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
@@ -694,7 +694,7 @@ public class ActivityFactMapperTest {
         final GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(null);
 
         final List<FaReportDocumentFact> faReportDocumentFacts = activityMapper.generateFactForFaReportDocuments(null);
-        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null);
+        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null,false);
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
@@ -786,7 +786,7 @@ public class ActivityFactMapperTest {
     @Test //FIXME
     public void testNullInsideObjects() {
         FishingActivity faAct = new FishingActivity();
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct);
+        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct,false);
 
         List<GearProblem> gearList = new ArrayList<GearProblem>() {{
             add(new GearProblem());
