@@ -8333,7 +8333,7 @@
             <column name="rule_id" value="10911"/>
             <column name="br_id" value="SALE-L03-00-0041"/>
             <column name="expression"
-                    value="ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
+                    value="codeTypeValueContainsMatch(roleCodes, &quot;SENDER&quot;) &amp;&amp; ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
             <column name="note" value=""/>
             <column name="message" value="If SENDER role, it should be a MS Identification"/>
             <column name="level" value="L03"/>
