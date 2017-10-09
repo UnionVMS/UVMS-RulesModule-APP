@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -75,6 +76,8 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);
         activityFactMapper.setSenderReceiver(senderReceiver);
 
+        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = (List<FishingGearTypeCharacteristic>) extraValueMap.get(FISHING_GEAR_TYPE_CHARACTERISTICS);
+        activityFactMapper.setFishingGearTypeCharacteristics(fishingGearTypeCharacteristics);
     }
 
     @Override
