@@ -1265,8 +1265,8 @@ public class ActivityFactMapper {
         List<FACatch> faCatchs = new ArrayList<>();
 
         for (FishingActivity activity : fishingActivities) {
-            List<CodeType> faCatchCodes = getFACatchesTypeCodes(activity.getSpecifiedFACatches());
-            if (activity.getSpecifiedFACatches() != null) {
+            List<FACatch> specifiedFACatches = activity.getSpecifiedFACatches();
+            if (!CollectionUtils.isEmpty(specifiedFACatches)) {
                 faCatchs.addAll(activity.getSpecifiedFACatches());
             }
         }

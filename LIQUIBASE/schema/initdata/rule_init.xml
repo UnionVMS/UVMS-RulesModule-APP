@@ -589,7 +589,7 @@
             <column name="rule_id" value="239"/>
             <column name="br_id" value="FA-L01-00-0239"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFishingGearRoleCodeTypes) &amp;&amp; listIdContainsAll(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFishingGearRoleCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="SpecifiedFishing_Gear RoleCode must be ONBOARD"/>
             <column name="level" value="L01"/>
@@ -603,7 +603,7 @@
             <column name="rule_id" value="240"/>
             <column name="br_id" value="FA-L02-00-0240"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; listIdContainsAll(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="Specified FA_Catch TypeCode must be ONBOARD"/>
             <column name="level" value="L02"/>
@@ -5137,14 +5137,14 @@
             <column name="rule_id" value="427"/>
             <column name="br_id" value="FA-L00-00-0427"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp; relatedFishingActivityFaCatch.size != relatedFishingActivityFaCatchTypeCodes.size"/>
+                    value="!notContainsFaCatch(relatedFishingActivities)"/>
             <column name="note" value="RelatedFishingActivity FACatch must have typeCode."/>
             <column name="message" value="RelatedFishingActivity FACatch must have typeCode."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
-            <column name="property_names" value="relatedFishingActivityFaCatchTypeCodes"/>
+            <column name="property_names" value="relatedFishingActivities"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
