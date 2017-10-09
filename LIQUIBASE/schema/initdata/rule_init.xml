@@ -8115,7 +8115,7 @@
             <column name="rule_id" value="10611"/>
             <column name="br_id" value="SALE-L01-00-0481"/>
             <column name="expression"
-                    value="levelCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_GP_VALIDATION_LEVEL&quot;, levelCode)"/>
+                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.schemeId, levelCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8129,7 +8129,7 @@
             <column name="rule_id" value="10612"/>
             <column name="br_id" value="SALE-L01-00-0482"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_GP_VALIDATION_TYPE&quot;, typeCode)"/>
+                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.schemeId, typeCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
