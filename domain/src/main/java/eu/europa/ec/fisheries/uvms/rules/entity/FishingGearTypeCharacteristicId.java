@@ -8,13 +8,14 @@ import java.util.Objects;
 @Embeddable
 public class FishingGearTypeCharacteristicId implements Serializable {
 
-    @Column(name = "fishing_gear_type_code")
+    @Column(name = "fishing_gear_type_code", nullable = false)
     private String fishingGearTypeCode;
 
-    @Column(name = "fishing_gear_characteristic_code")
+    @Column(name = "fishing_gear_characteristic_code", nullable = false)
     private String fishingGearCharacteristicCode;
 
-    public FishingGearTypeCharacteristicId(){}
+    public FishingGearTypeCharacteristicId() {
+    }
 
     public FishingGearTypeCharacteristicId(String fishingGearTypeCode, String fishingGearCharacteristicCode) {
         this.fishingGearTypeCode = fishingGearTypeCode;

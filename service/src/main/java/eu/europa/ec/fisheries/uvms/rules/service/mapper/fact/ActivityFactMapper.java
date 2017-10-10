@@ -13,73 +13,15 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDiscardFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaEntryToSeaFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaExitFromSeaFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaLandingFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfTranshipmentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxFaReportMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
@@ -87,14 +29,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static java.util.Collections.emptyList;
@@ -113,6 +48,8 @@ public class ActivityFactMapper {
      * Additional objects - to be set before validation through generator.setAdditionalValidationObject(.., ..){..}
      **/
     private List<IdTypeWithFlagState> assetList;
+
+    private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
 
     private XPathStringWrapper xPathUtil;
 
@@ -609,6 +546,8 @@ public class ActivityFactMapper {
             fishingGearFact.setApplicableGearCharacteristics(new ArrayList<>(fishingGear.getApplicableGearCharacteristics()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_GEAR_CHARACTERISTIC).storeInRepo(fishingGearFact, APPLICABLE_GEAR_CHARACTERISTICS_PROP);
         }
+
+        fishingGearFact.setFishingGearTypeCharacteristics(fishingGearTypeCharacteristics);
 
         return fishingGearFact;
     }
@@ -2928,6 +2867,15 @@ public class ActivityFactMapper {
 
     public List<IdTypeWithFlagState> getAssetList() {
         return assetList;
+    }
+
+
+    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
+        this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
+    }
+
+    public List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
+        return fishingGearTypeCharacteristics;
     }
 
     public void setNonUniqueIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap) {
