@@ -185,6 +185,7 @@ public class FactRuleEvaluator {
 
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
+        KieContainer container = null;
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
@@ -200,10 +201,12 @@ public class FactRuleEvaluator {
                 continue;
             }
             kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
-            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
 
-            KieBase kBase = container.getKieBase();
-            compiledPackages = kBase.getKiePackages();
+        }
+        
+        if (container != null) {
+        	compiledPackages = container.getKieBase().getKiePackages();        	
         }
         return compiledPackages;
     }
