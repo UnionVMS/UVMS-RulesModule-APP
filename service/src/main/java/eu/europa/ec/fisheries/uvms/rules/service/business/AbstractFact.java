@@ -1513,21 +1513,6 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean notContainsFaCatch(List<FishingActivity> fishingActivities){
-        int hits = 0;
-        if (CollectionUtils.isNotEmpty(fishingActivities)) {
-            for (FishingActivity activity : fishingActivities) {
-                List<FACatch> specifiedFACatches = activity.getSpecifiedFACatches();
-                if (CollectionUtils.isNotEmpty(specifiedFACatches)) {
-                    if (specifiedFACatches.size() > 0) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        return hits == 0;
-    }
-
     public String getSenderOrReceiver() {
         return senderOrReceiver;
     }
