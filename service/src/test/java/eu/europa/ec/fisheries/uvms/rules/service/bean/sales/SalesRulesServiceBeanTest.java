@@ -298,7 +298,7 @@ public class SalesRulesServiceBeanTest {
 
         List<String> ids = Arrays.asList("aaa", "bbb");
 
-        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_REPORT);
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_REPORT);
 
         assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
@@ -329,7 +329,7 @@ public class SalesRulesServiceBeanTest {
 
         List<String> ids = Arrays.asList("aaa", "bbb");
 
-        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_REPORT);
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_REPORT);
 
         assertTrue(service.doesSalesNoteIdExist(fact));
     }
@@ -455,10 +455,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(false).when(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
 
         assertTrue(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -467,10 +467,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(true).when(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(true).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
 
         assertFalse(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -510,10 +510,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(true).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        doReturn(true).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
 
         assertTrue(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -523,10 +523,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(false).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        doReturn(false).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
 
         assertFalse(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -568,10 +568,10 @@ public class SalesRulesServiceBeanTest {
         SalesQueryFact fact = new SalesQueryFact();
         fact.setID(new IdType("id"));
 
-        doReturn(true).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        doReturn(true).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
 
         assertTrue(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -580,10 +580,10 @@ public class SalesRulesServiceBeanTest {
         SalesQueryFact fact = new SalesQueryFact();
         fact.setID(new IdType("id"));
 
-        doReturn(false).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        doReturn(false).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
 
         assertFalse(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
         verifyNoMoreInteractions(salesService);
     }
 

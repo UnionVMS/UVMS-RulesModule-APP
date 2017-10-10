@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.jms.JMSException;
-import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.List;
 
@@ -224,56 +223,56 @@ public class SalesServiceBeanTest {
     public void areAnyOfTheseIdsNotUniqueWhenNotUnique() throws Exception {
         List<String> ids = Arrays.asList("abc");
 
-        doReturn(true).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        doReturn(true).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
 
-        assertTrue(service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY));
-        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        assertTrue(service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY));
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
     public void areAnyOfTheseIdsNotUniqueWhenUnique() throws Exception {
         List<String> ids = Arrays.asList("abc");
 
-        doReturn(false).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        doReturn(false).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
 
-        assertFalse(service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY));
-        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        assertFalse(service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY));
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
     public void areAnyOfTheseIdsNotUniqueWhenMessageExceptionWasThrown() throws Exception {
         List<String> ids = Arrays.asList("abc");
 
-        doThrow(MessageException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        doThrow(MessageException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
         exception.expect(RulesServiceException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
-        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
-        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
     public void areAnyOfTheseIdsNotUniqueWhenJMSExceptionWasThrown() throws Exception {
         List<String> ids = Arrays.asList("abc");
 
-        doThrow(JMSException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        doThrow(JMSException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
         exception.expect(RulesServiceException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
-        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
-        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
     public void areAnyOfTheseIdsNotUniqueWhenSalesMarshallExceptionWasThrown() throws Exception {
         List<String> ids = Arrays.asList("abc");
 
-        doThrow(SalesMarshallException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        doThrow(SalesMarshallException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
         exception.expect(RulesServiceException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
-        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
-        verify(helper).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
+        verify(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
@@ -283,7 +282,7 @@ public class SalesServiceBeanTest {
         exception.expect(NullPointerException.class);
         exception.expectMessage("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
 
-        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
@@ -293,7 +292,7 @@ public class SalesServiceBeanTest {
         exception.expect(NullPointerException.class);
         exception.expectMessage("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
 
-        service.areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_QUERY);
+        service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
     }
 
     @Test
@@ -313,7 +312,7 @@ public class SalesServiceBeanTest {
         exception.expect(NullPointerException.class);
         exception.expectMessage("Null received in isIdNotUnique. Sanitize your inputs");
 
-        service.isIdNotUnique("", UniqueIDType.SALES_QUERY);
+        service.isIdNotUnique("", SalesMessageIdType.SALES_QUERY);
     }
 
     @Test

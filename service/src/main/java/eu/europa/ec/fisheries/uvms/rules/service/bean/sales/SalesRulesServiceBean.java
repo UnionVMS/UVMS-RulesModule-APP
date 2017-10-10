@@ -145,7 +145,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_DOCUMENT);
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), SalesMessageIdType.SALES_DOCUMENT);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getID().getValue(), UniqueIDType.SALES_QUERY);
+        return salesService.isIdNotUnique(fact.getID().getValue(), SalesMessageIdType.SALES_QUERY);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_RESPONSE);
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), SalesMessageIdType.SALES_RESPONSE);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 takeOverDocumentIds.add(takeoverDocumentIDType.getValue());
             }
         }
-        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.SALES_REPORT);
+        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, SalesMessageIdType.SALES_REPORT);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 salesNoteIds.add(salesNoteIDType.getValue());
             }
         }
-        return salesService.areAnyOfTheseIdsNotUnique(salesNoteIds, UniqueIDType.SALES_REPORT);
+        return salesService.areAnyOfTheseIdsNotUnique(salesNoteIds, SalesMessageIdType.SALES_REPORT);
     }
 
     @Override

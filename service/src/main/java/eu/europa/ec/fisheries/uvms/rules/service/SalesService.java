@@ -1,8 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.UniqueIDType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
+import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 
 import javax.ejb.Local;
 import java.util.List;
@@ -14,7 +13,7 @@ public interface SalesService {
 
     boolean doesReportExistWithId(String id);
 
-    boolean isIdNotUnique(String id, UniqueIDType type);
+    boolean isIdNotUnique(String id, SalesMessageIdType type);
 
-    boolean areAnyOfTheseIdsNotUnique(List<String> ids, UniqueIDType type);
+    boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type);
 }

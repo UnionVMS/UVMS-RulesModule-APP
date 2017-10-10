@@ -2,7 +2,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
 import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.CheckForUniqueIdResponse;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
+import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -71,7 +74,7 @@ public class SalesServiceBeanHelper {
         return originalReport;
     }
 
-    public boolean areAnyOfTheseIdsNotUnique(List<String> id, UniqueIDType type) throws SalesMarshallException, MessageException, JMSException {
+    public boolean areAnyOfTheseIdsNotUnique(List<String> id, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
         String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(id, type);
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 

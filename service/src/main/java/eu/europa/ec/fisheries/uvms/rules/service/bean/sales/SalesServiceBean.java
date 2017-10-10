@@ -2,7 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.UniqueIDType;
+import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
@@ -57,7 +57,7 @@ public class SalesServiceBean implements SalesService {
 
 
     @Override
-    public boolean isIdNotUnique(String id, UniqueIDType type) {
+    public boolean isIdNotUnique(String id, SalesMessageIdType type) {
         if (isBlank(id) || type == null) {
             throw new NullPointerException("Null received in isIdNotUnique. Sanitize your inputs");
         }
@@ -66,7 +66,7 @@ public class SalesServiceBean implements SalesService {
     }
 
     @Override
-    public boolean areAnyOfTheseIdsNotUnique(List<String> ids, UniqueIDType type) {
+    public boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type) {
         if (isEmpty(ids) || type == null) {
             throw new NullPointerException("Null received in areAnyOfTheseIdsNotUnique. Sanitize your inputs");
         }
