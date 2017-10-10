@@ -6709,7 +6709,7 @@
             <column name="rule_id" value="10139"/>
             <column name="br_id" value="SALE-L01-00-0111"/>
             <column name="expression"
-                    value="(endDateTime == null || endDateTime.dateTime == null) || endDateTime != null &amp;&amp; endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime)"/>
+                    value="endDateTime != null &amp;&amp; endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime)"/>
             <column name="note" value=""/>
             <column name="message" value="Check format"/>
             <column name="level" value="L01"/>
