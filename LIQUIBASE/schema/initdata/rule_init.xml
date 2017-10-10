@@ -5152,14 +5152,14 @@
             <column name="rule_id" value="427"/>
             <column name="br_id" value="FA-L00-00-0427"/>
             <column name="expression"
-                    value="!notContainsFaCatch(relatedFishingActivities)"/>
+                    value="isEmpty(relatedFishingActivityFaCatchTypeCodes)"/>
             <column name="note" value="RelatedFishingActivity FACatch must have typeCode."/>
             <column name="message" value="Catch TypeCode must be present for this joint fishing operation."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
-            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="property_names" value="relatedFishingActivityFaCatchTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
