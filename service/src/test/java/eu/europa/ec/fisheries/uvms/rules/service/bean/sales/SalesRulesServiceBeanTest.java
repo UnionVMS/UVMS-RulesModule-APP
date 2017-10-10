@@ -274,21 +274,21 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void doesTakeOverDocumentIdExistWhenFactIsNull() throws Exception {
-        assertFalse(service.doesTakeOverDocumentIdExist(null));
+        assertTrue(service.doesTakeOverDocumentIdExist(null));
     }
 
     @Test
     public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsNull() throws Exception {
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setTakeoverDocumentIDs(null);
-        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+        assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
 
     @Test
     public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsEmpty() throws Exception {
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setTakeoverDocumentIDs(Lists.<IdType>newArrayList());
-        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+        assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
 
     @Test
@@ -298,9 +298,40 @@ public class SalesRulesServiceBeanTest {
 
         List<String> ids = Arrays.asList("aaa", "bbb");
 
-        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.TAKEOVER_DOCUMENT);
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_REPORT);
 
         assertTrue(service.doesTakeOverDocumentIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenFactIsNull() throws Exception {
+        assertTrue(service.doesSalesNoteIdExist(null));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(null);
+        assertTrue(service.doesSalesNoteIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactIsEmpty() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(Lists.<IdType>newArrayList());
+        assertTrue(service.doesSalesNoteIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactContainsNulls() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(Arrays.asList(new IdType("aaa"), new IdType("bbb"), new IdType(null)));
+
+        List<String> ids = Arrays.asList("aaa", "bbb");
+
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.SALES_REPORT);
+
+        assertTrue(service.doesSalesNoteIdExist(fact));
     }
 
     @Test

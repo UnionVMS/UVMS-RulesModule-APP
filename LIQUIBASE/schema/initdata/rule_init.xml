@@ -8115,7 +8115,7 @@
             <column name="rule_id" value="10611"/>
             <column name="br_id" value="SALE-L01-00-0481"/>
             <column name="expression"
-                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.schemeId, levelCode.value)"/>
+                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8129,7 +8129,7 @@
             <column name="rule_id" value="10612"/>
             <column name="br_id" value="SALE-L01-00-0482"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.schemeId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8327,7 +8327,18 @@
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1004"/>
-            <column name="property_names" value="takeoverDocumentIds"/>
+            <column name="property_names" value="takeoverDocumentIDs"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10909"/>
+            <column name="br_id" value="SALE-L03-00-0034"/>
+            <column name="expression" value="!salesService.doesSalesNoteIdExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="salesNoteIDs"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10911"/>

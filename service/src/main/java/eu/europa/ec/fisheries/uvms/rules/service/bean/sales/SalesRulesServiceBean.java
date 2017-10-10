@@ -180,9 +180,8 @@ public class SalesRulesServiceBean implements SalesRulesService {
     @Override
     public boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact) {
         if (fact == null || isEmpty(fact.getTakeoverDocumentIDs())) {
-            return false;
+            return true;
         }
-
 
         List<String> takeOverDocumentIds = Lists.newArrayList();
 
@@ -191,7 +190,23 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 takeOverDocumentIds.add(takeoverDocumentIDType.getValue());
             }
         }
-        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.TAKEOVER_DOCUMENT);
+        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.SALES_REPORT);
+    }
+
+    @Override
+    public boolean doesSalesNoteIdExist(SalesDocumentFact fact) {
+        if (fact == null || isEmpty(fact.getSalesNoteIDs())) {
+            return true;
+        }
+
+        List<String> salesNoteIds = Lists.newArrayList();
+
+        for (IdType salesNoteIDType : fact.getSalesNoteIDs()) {
+            if (salesNoteIDType != null && !isBlank(salesNoteIDType.getValue())) {
+                salesNoteIds.add(salesNoteIDType.getValue());
+            }
+        }
+        return salesService.areAnyOfTheseIdsNotUnique(salesNoteIds, UniqueIDType.SALES_REPORT);
     }
 
     @Override
