@@ -7028,7 +7028,7 @@
             <column name="br_id" value="SALE-L02-00-0041"/>
             <column name="expression" value="isProviderRoleNotSpecifiedForSalesNote()"/>
             <column name="note" value=""/>
-            <column name="message" value="SELLER role must exist for a SN"/>
+            <column name="message" value="PROVIDER role must exist for a SN"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
