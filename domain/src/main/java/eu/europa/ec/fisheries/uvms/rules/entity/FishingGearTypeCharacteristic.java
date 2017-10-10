@@ -23,7 +23,7 @@ public class FishingGearTypeCharacteristic implements Serializable {
     @EmbeddedId
     private FishingGearTypeCharacteristicId id;
 
-    @Column(name = "mandatory")
+    @Column(name = "mandatory", nullable = false)
     private Boolean mandatory;
 
     public FishingGearTypeCharacteristicId getId() {

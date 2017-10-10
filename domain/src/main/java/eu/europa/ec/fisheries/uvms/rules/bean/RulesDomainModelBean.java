@@ -890,37 +890,4 @@ public class RulesDomainModelBean implements RulesDomainModel {
             throw new RulesModelException("[ Error when getting list. ]", e);
         }
     }
-
-    @Override
-    public List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode) throws RulesModelException {
-        LOG.info("Retrieving fishing gear characteristic codes by gear type code: " + fishingGearTypeCode);
-        try {
-            return dao.getFishingGearCharacteristicCodes(fishingGearTypeCode);
-        } catch (DaoException e) {
-            LOG.error("[ Error while retrieving fishing gear characteristic codes by gear type code. ] {}", e.getMessage());
-            throw new RulesModelException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode, boolean mandatory) throws RulesModelException {
-        LOG.info("Retrieving all fishing gear characteristic codes by gear type code: " + fishingGearTypeCode);
-        try {
-            return dao.getFishingGearCharacteristicCodes(fishingGearTypeCode, mandatory);
-        } catch (DaoException e) {
-            LOG.error("[ Error while retrieving all fishing gear characteristic codes by gear type code and mandatory. ] {}", e.getMessage());
-            throw new RulesModelException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<String> getAllFishingGearTypeCodes() throws RulesModelException {
-        LOG.info("Retrieving all fishing gear type codes");
-        try {
-            return dao.getAllFishingGearTypeCodes();
-        } catch (DaoException e) {
-            LOG.error("[ Error while retrieving all fishing gear type codes. ] {}", e.getMessage());
-            throw new RulesModelException(e.getMessage(), e);
-        }
-    }
 }

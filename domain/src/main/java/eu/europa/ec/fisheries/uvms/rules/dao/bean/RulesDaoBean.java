@@ -619,4 +619,12 @@ public class RulesDaoBean extends Dao implements RulesDao {
             throw new DaoException(e.getMessage(), e);
         }
     }
+
+    public List<FishingGearTypeCharacteristic> getAllFishingGearTypeCharacteristics() throws DaoException {
+        try {
+            return fishingGearTypeCharacteristicDao.findAllEntity(FishingGearTypeCharacteristic.class);
+        } catch (ServiceException e) {
+            throw new DaoException(e.getMessage(), e);
+        }
+    }
 }

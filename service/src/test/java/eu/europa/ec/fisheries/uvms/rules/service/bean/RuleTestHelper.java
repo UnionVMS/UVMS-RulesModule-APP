@@ -2,6 +2,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristicId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -346,6 +348,24 @@ public class RuleTestHelper {
         gearCharacteristics.add(gearCharacteristic);
 
         return gearCharacteristics;
+    }
+
+    public static List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
+        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics=new ArrayList<>();
+        List<GearCharacteristic> gearCharacteristics = getGearCharacteristics();
+
+        for(GearCharacteristic gearCharacteristic:gearCharacteristics){
+            FishingGearTypeCharacteristic fishingGearTypeCharacteristic=new FishingGearTypeCharacteristic();
+            FishingGearTypeCharacteristicId fishingGearTypeCharacteristicId=new FishingGearTypeCharacteristicId();
+            fishingGearTypeCharacteristicId.setFishingGearTypeCode("PS");
+            fishingGearTypeCharacteristicId.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
+            fishingGearTypeCharacteristic.setId(fishingGearTypeCharacteristicId);
+            fishingGearTypeCharacteristic.setMandatory(true);
+
+            fishingGearTypeCharacteristics.add(fishingGearTypeCharacteristic);
+        }
+
+        return  fishingGearTypeCharacteristics;
     }
 
     public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
