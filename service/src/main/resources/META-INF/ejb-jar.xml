@@ -11,15 +11,15 @@
 	
 	<assembly-descriptor>
 		<interceptor-binding>
-			<ejb-name>EventServiceBean</ejb-name>
-			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
-		</interceptor-binding>
-		<interceptor-binding>
 			<ejb-name>MessageServiceBean</ejb-name>
 			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
 		</interceptor-binding>
 		<interceptor-binding>
 			<ejb-name>RuleAssetsBean</ejb-name>
+			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
+		</interceptor-binding>
+		<interceptor-binding>
+			<ejb-name>RulesFishingGearBean</ejb-name>
 			<interceptor-class>net.bull.javamelody.MonitoringInterceptor</interceptor-class>
 		</interceptor-binding>
 		<interceptor-binding>

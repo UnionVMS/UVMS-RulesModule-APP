@@ -14,13 +14,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +37,8 @@ public class FishingGearFact extends AbstractFact {
     private List<GearCharacteristic> applicableGearCharacteristics;
 
     private boolean fishingActivity;
+
+    private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
 
     public FishingGearFact() {
         setFactType();
@@ -78,20 +81,25 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
+    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
+        this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
+    }
+
     public boolean isRequiredGearCharacteristicsPresent(CodeType fishingGearTypeCode) {
-        if (fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue()) || applicableGearCharacteristics == null) {
+        if (fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue())
+                || applicableGearCharacteristics == null || isEmpty(fishingGearTypeCharacteristics)) {
             return false;
         }
 
-        List<String> requiredFishingGearCharacteristicCodes = null;
-        try {
-            if (rulesDomainModel == null) {
-                initDomainModel();
-            }
+        List<String> requiredFishingGearCharacteristicCodes = new ArrayList<>();
+        for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
+            String typeCode = fishingGearTypeCharacteristic.getId().getFishingGearTypeCode();
+            boolean mandatoryFishingGearCharacteristic = fishingGearTypeCharacteristic.getMandatory();
 
-            requiredFishingGearCharacteristicCodes = rulesDomainModel.getFishingGearCharacteristicCodes(fishingGearTypeCode.getValue(), true);
-        } catch (RulesModelException e) {
-            log.error("Error while retrieving fishing gear characteristic codes", e);
+            if (mandatoryFishingGearCharacteristic && typeCode.equals(fishingGearTypeCode.getValue())) {
+                String characteristicCode = fishingGearTypeCharacteristic.getId().getFishingGearCharacteristicCode();
+                requiredFishingGearCharacteristicCodes.add(characteristicCode);
+            }
         }
 
         if (requiredFishingGearCharacteristicCodes.isEmpty()) {
