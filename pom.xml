@@ -39,7 +39,7 @@
         <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
         <user.model.version>2.0.2</user.model.version>
 
-        <activity.model.version>0.5.14-SNAPSHOT</activity.model.version>
+        <activity.model.version>1.0.0</activity.model.version>
         <mdr.model.version>0.5.2</mdr.model.version>
 
         <asset.model.version>4.0.0</asset.model.version>
