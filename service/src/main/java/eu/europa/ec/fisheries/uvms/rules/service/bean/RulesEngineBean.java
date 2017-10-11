@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -55,6 +56,9 @@ public class RulesEngineBean {
     @EJB
     private RulesActivityServiceBean activityService;
 
+    @EJB
+    private RulesFishingGearBean rulesFishingGearBean;
+
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
         List<AbstractFact> facts = new ArrayList<>();
         AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
@@ -82,6 +86,8 @@ public class RulesEngineBean {
             map.put(ACTIVITY_WITH_TRIP_IDS, fishingActivitiesForTrips);
             List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
             map.put(ASSET_LIST, assetList);
+            List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = rulesFishingGearBean.getAllFishingGearTypeCharacteristics();
+            map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics);
         }
 
         return map;

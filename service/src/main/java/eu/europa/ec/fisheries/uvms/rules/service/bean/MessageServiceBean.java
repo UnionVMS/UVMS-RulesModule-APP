@@ -253,7 +253,6 @@ public class MessageServiceBean implements MessageService {
     }
 
 
-
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
     public void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) {
@@ -276,7 +275,7 @@ public class MessageServiceBean implements MessageService {
 
                     updateRequestMessageStatus(request.getLogGuid(), faReportValidationResult);
 
-                    if (faReportValidationResult!= null && !faReportValidationResult.isError()) {
+                    if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                         log.info("Validation of Report is successful, forwarding message to Activity");
                         log.debug("message to activity : {}", request.getRequest());
                         sendRequestToActivity(request.getRequest(), request.getUsername(), request.getType());
@@ -293,36 +292,36 @@ public class MessageServiceBean implements MessageService {
         } catch (RulesValidationException e) {
             log.error(e.getMessage(), e);
             updateRequestMessageStatus(request.getLogGuid(), null);
-        }
-        catch (RulesModelMarshallException e) {
+        } catch (RulesModelMarshallException e) {
             log.error(e.getMessage(), e);
-            sendFLUXResponseMessageOnException(e.getMessage(),null,request,request.getRequest());
+            sendFLUXResponseMessageOnException(e.getMessage(), null, request, request.getRequest());
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
 
 
-    public void sendFLUXResponseMessageOnException(String errorMessage,String rawMessage,RulesBaseRequest request,Object message){
-        if(request ==null){
+    public void sendFLUXResponseMessageOnException(String errorMessage, String rawMessage, RulesBaseRequest request, Object message) {
+        if (request == null) {
             log.error("Could not send FLUXResponseMessage. Request is null.");
+            return;
         }
-
         List<String> xpaths = new ArrayList<>();
         xpaths.add(errorMessage);
-        RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", xpaths);;
-        ValidationResultDto validationResultDto=rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, ErrorType.ERROR,rawMessage);
+        RuleError ruleError = new RuleError(ServiceConstants.INVALID_XML_RULE, ServiceConstants.INVALID_XML_RULE_MESSAGE, "L00", xpaths);
+        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, ErrorType.ERROR, rawMessage);
 
-        FLUXResponseMessage fluxResponseMessage=null;
-        if(message instanceof  FLUXFAReportMessage) {
+        FLUXResponseMessage fluxResponseMessage;
+        if (message instanceof FLUXFAReportMessage) {
             fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAReportMessage) message);
-        }else if(message instanceof FLUXFAQueryMessage){
+        } else if (message instanceof FLUXFAQueryMessage) {
             fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXFAQueryMessage) message);
-        }else if(message instanceof FLUXResponseMessage){
+        } else if (message instanceof FLUXResponseMessage) {
             fluxResponseMessage = generateFluxResponseMessage(validationResultDto, (FLUXResponseMessage) message);
-        }else{
-            fluxResponseMessage =generateFluxResponseMessage(validationResultDto);
+        } else {
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto);
         }
-        log.info("FLUXResponseMessage has been generated after exception: "+fluxResponseMessage);
+        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(generateReferenceId(request.getOnValue()));
+        log.info("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
         sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
@@ -397,8 +396,8 @@ public class MessageServiceBean implements MessageService {
             analysis.getResults().add(text);
 
             List<String> xpaths = validationMessage.getXpaths();
-            if(CollectionUtils.isNotEmpty(xpaths)){
-                for(String xpath : xpaths){
+            if (CollectionUtils.isNotEmpty(xpaths)) {
+                for (String xpath : xpaths) {
                     TextType referenceItem = new TextType();
                     referenceItem.setValue(xpath);
                     analysis.getReferencedItems().add(referenceItem);
@@ -435,17 +434,24 @@ public class MessageServiceBean implements MessageService {
     public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
-
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
             setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
-
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage(), e);
         }
         return responseMessage;
     }
+
+
+    private IDType generateReferenceId(String onParam) {
+        IDType idType = new IDType();
+        idType.setSchemeID("FLUXTL_ON");
+        idType.setValue(onParam);
+        return idType;
+    }
+
 
     @Override
     public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
@@ -591,17 +597,17 @@ public class MessageServiceBean implements MessageService {
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("FLUXFAResponse has been sent back to Exchange.");
-        } catch(RulesModelMarshallException e){
+        } catch (RulesModelMarshallException e) {
             log.error(e.getMessage(), e);
-            sendFLUXResponseMessageOnException(e.getMessage(),null,request,fluxResponseMessageType);
-        } catch (  ExchangeModelMarshallException | MessageException | RulesValidationException e) {
+            sendFLUXResponseMessageOnException(e.getMessage(), null, request, fluxResponseMessageType);
+        } catch (ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
 
 
     /*
-	 * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
+     * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
 	 * to send a message to ExchangeModule
 	 *
 	 * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestToExchange(java.lang.String)
@@ -611,16 +617,16 @@ public class MessageServiceBean implements MessageService {
         String exchangerStrReq;
         try {
             exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-            if(StringUtils.isNotEmpty(exchangerStrReq)){
+            if (StringUtils.isNotEmpty(exchangerStrReq)) {
                 producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
             } else {
                 log.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
             }
 
         } catch (ExchangeModelMarshallException e) {
-            log.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : "+e.getMessage());
+            log.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : " + e.getMessage());
         } catch (MessageException e) {
-            log.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : "+e.getMessage());
+            log.error("Unable to send SetFLUXMDRSyncMessageRequest to ExchangeModule : " + e.getMessage());
         }
     }
 
@@ -629,15 +635,15 @@ public class MessageServiceBean implements MessageService {
         String mdrSyncResponseReq;
         try {
             mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-            if(StringUtils.isNotEmpty(mdrSyncResponseReq)){
+            if (StringUtils.isNotEmpty(mdrSyncResponseReq)) {
                 producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
             } else {
                 log.error("ERROR : REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
             }
         } catch (MdrModelMarshallException e) {
-            log.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : "+e.getMessage());
+            log.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : " + e.getMessage());
         } catch (MessageException e) {
-            log.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : "+e.getMessage());
+            log.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : " + e.getMessage());
         }
 
     }

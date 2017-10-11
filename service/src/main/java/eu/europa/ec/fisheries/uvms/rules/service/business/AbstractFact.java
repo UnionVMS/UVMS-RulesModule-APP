@@ -16,14 +16,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -43,9 +41,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -71,8 +66,6 @@ public abstract class AbstractFact {
     protected boolean ok = true;
 
     private Integer sequence = 0;
-
-    protected RulesDomainModel rulesDomainModel;
 
     public AbstractFact() {
         this.uniqueIds = new ArrayList<>();
@@ -1521,37 +1514,11 @@ public abstract class AbstractFact {
         return false;
     }
 
-
     public String getSenderOrReceiver() {
         return senderOrReceiver;
     }
 
     public void setSenderOrReceiver(String senderOrReceiver) {
         this.senderOrReceiver = senderOrReceiver;
-    }
-
-    public void initDomainModel() {
-        try {
-            InitialContext context = (InitialContext) getInitialContext();
-            rulesDomainModel = (RulesDomainModel) context.lookup(ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL);
-            setDomainModel(rulesDomainModel);
-        } catch (NamingException e) {
-            log.error("Error while retrieving RulesDomainModel", e);
-        }
-    }
-
-    public Context getInitialContext() {
-        InitialContext initialContext = null;
-        try {
-            initialContext = new InitialContext();
-        } catch (NamingException e) {
-            log.error("Failed to get InitialContext", e);
-        }
-
-        return initialContext;
-    }
-
-    public void setDomainModel(RulesDomainModel rulesDomainModel) {
-        this.rulesDomainModel = rulesDomainModel;
     }
 }

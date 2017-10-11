@@ -49,6 +49,7 @@ public class FaCatchFact extends AbstractFact {
     private List<AAPProcess> appliedAAPProcess;
     List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
+    private boolean isSubActivity = false;
 
     public FaCatchFact() {
         setFactType();
@@ -243,4 +244,16 @@ public class FaCatchFact extends AbstractFact {
     public void setFaCatchFluxLocationId(List<IdType> faCatchFluxLocationId) {
         this.faCatchFluxLocationId = faCatchFluxLocationId;
     }
+
+    public boolean getIsSubActivity() {
+        return isSubActivity;
+    }
+
+    public void setSubActivity(boolean subActivity) {
+
+        isSubActivity = subActivity;
+    }
+
+
+
 }

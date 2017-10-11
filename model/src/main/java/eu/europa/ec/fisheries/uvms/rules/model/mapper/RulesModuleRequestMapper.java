@@ -39,7 +39,8 @@ public class RulesModuleRequestMapper {
         
     }
 
-    public static String createSetFLUXFAReportMessageRequest(PluginType type, String fluxFAReportMessage, String username, String logId, String fluxDataFlow, String senderOrReceiver) throws RulesModelMapperException {
+    public static String createSetFLUXFAReportMessageRequest(PluginType type, String fluxFAReportMessage, String username,
+                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         request.setFluxDataFlow(fluxDataFlow);
@@ -48,6 +49,7 @@ public class RulesModuleRequestMapper {
         request.setUsername(username);
         request.setRequest(fluxFAReportMessage);
         request.setLogGuid(logId);
+        request.setOnValue(onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 

@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -36,6 +27,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentF
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @autor padhyad
@@ -108,7 +109,7 @@ public class FactRuleEvaluatorTest {
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
 
-        RuleType ruleTypeCode = RuleTestHelper.createRuleType("typeCode.value.isEmpty()", "1", "Test Notes", ErrorType.ERROR, "typeCode value is null");
+        RuleType ruleTypeCode = RuleTestHelper.createRuleType("typeCode.value == null", "1", "Test Notes", ErrorType.ERROR, "typeCode value is null");
         templateRuleMapDto.setRules(Arrays.asList(ruleTypeCode));
         templateRuleMapDto.setTemplateType(template);
         templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
@@ -124,7 +125,7 @@ public class FactRuleEvaluatorTest {
         FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
-        assertTrue(facts.isEmpty());
+        assertFalse(facts.isEmpty());
     }
 
     private VesselTransportMeansFact getVesselTransportMeansFact() {

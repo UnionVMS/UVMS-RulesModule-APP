@@ -163,4 +163,6 @@ public interface RulesDao {
     List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode, boolean onlyMandatory) throws DaoException;
 
     List<String> getAllFishingGearTypeCodes() throws DaoException;
+
+    List<FishingGearTypeCharacteristic> getAllFishingGearTypeCharacteristics() throws DaoException;
 }
