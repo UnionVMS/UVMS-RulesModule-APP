@@ -37,6 +37,12 @@ public class SalesServiceBean implements SalesService {
             return false;
         }
 
+        // Don't fire when referenced id is not provided
+        if (correctedReport.getFLUXReportDocument().getReferencedID() == null ||
+                isBlank(correctedReport.getFLUXReportDocument().getReferencedID().getValue())) {
+            return false;
+        }
+
         try {
             Optional<FLUXSalesReportMessage> originalReport = helper.findReport(correctedReport.getFLUXReportDocument().getReferencedID().getValue());
             return originalReport.isPresent() && isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);

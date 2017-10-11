@@ -116,6 +116,50 @@ public class SalesServiceBeanTest {
     }
 
     @Test
+    public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndReferencedIdIsNull() throws Exception {
+        FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
+                .withPurposeCode(new CodeType().withValue("5"));
+
+        SalesReportType salesReportType = new SalesReportType().withItemTypeCode(new CodeType().withValue("SN"));
+
+        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage()
+                .withFLUXReportDocument(fluxReportDocumentType)
+                .withSalesReports(salesReportType);
+
+        assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage));
+    }
+
+    @Test
+    public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndReferencedIdValueIsNull() throws Exception {
+        FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
+                .withPurposeCode(new CodeType().withValue("5"))
+                .withReferencedID(new IDType());
+
+        SalesReportType salesReportType = new SalesReportType().withItemTypeCode(new CodeType().withValue("SN"));
+
+        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage()
+                .withFLUXReportDocument(fluxReportDocumentType)
+                .withSalesReports(salesReportType);
+
+        assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage));
+    }
+
+    @Test
+    public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndReferencedIdValueIsBlank() throws Exception {
+        FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
+                .withPurposeCode(new CodeType().withValue("5"))
+                .withReferencedID(new IDType().withValue(""));
+
+        SalesReportType salesReportType = new SalesReportType().withItemTypeCode(new CodeType().withValue("SN"));
+
+        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage()
+                .withFLUXReportDocument(fluxReportDocumentType)
+                .withSalesReports(salesReportType);
+
+        assertFalse(service.isCorrectionAndIsItemTypeTheSameAsInTheOriginal(fluxSalesReportMessage));
+    }
+
+    @Test
     public void isTypeCodeBetweenReportsNotEqualWhenNotEqual() throws Exception {
         FLUXSalesReportMessage originalReport = new FLUXSalesReportMessage()
                 .withSalesReports(new SalesReportType().withItemTypeCode(new CodeType().withValue("SN")));
