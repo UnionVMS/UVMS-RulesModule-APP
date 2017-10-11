@@ -152,7 +152,7 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
         List<ObjectRepresentation> locations = MDRCacheHolder.getInstance()
                 .getObjectRepresentationList(MDRAcronymType.LOCATION);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
-                ("unloCode", id.getValue(), "code2", countryID.getValue(), locations);
+                ("unloCode", id.getValue(), "code", countryID.getValue(), locations);
     }
 
     @Override
