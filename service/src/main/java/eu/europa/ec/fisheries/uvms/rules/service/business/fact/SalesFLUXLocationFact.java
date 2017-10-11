@@ -157,11 +157,15 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
 
     @Override
     public boolean isIdTypePresentInMDRList(IdType id) {
-        if ("LOCATION".equals(id.getSchemeId())) {
-            List<String> locations = MDRCacheHolder.getInstance().getList(MDRAcronymType.LOCATION, "unloCode");
-            return locations.contains(id.getValue());
-        } else{
-            return super.isIdTypePresentInMDRList(id);
+        if (id != null) {
+            if ("LOCATION".equals(id.getSchemeId())) {
+                List<String> locations = MDRCacheHolder.getInstance().getList(MDRAcronymType.LOCATION, "unloCode");
+                return locations.contains(id.getValue());
+            } else {
+                return super.isIdTypePresentInMDRList(id);
+            }
+        } else {
+            return false;
         }
     }
 
