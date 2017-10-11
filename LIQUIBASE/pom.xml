@@ -106,7 +106,14 @@
                 <db.user>rules</db.user>
                 <db.passwd>rules</db.passwd>
                 <db.defaultSchema>rules</db.defaultSchema>
+                <focus-pom.java.version>1.8</focus-pom.java.version>
             </properties>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>lv-snapshots</id>
+                    <url>https://apjenp01.dg3.be/nexus/repository/maven-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
         <profile>
             <id>belgium-dev</id>
