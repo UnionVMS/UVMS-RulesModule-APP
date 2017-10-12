@@ -6657,9 +6657,9 @@
             <column name="rule_id" value="10130"/>
             <column name="br_id" value="SALE-L01-00-0070"/>
             <column name="expression"
-                    value="listIdDoesNotContainAll(typeCodes, &quot;FISH_FRESHNESS&quot;, &quot;FISH_PRESENTATION&quot;, &quot;FISH_PRESERVATION&quot;)"/>
+                    value="!isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot;, typeCodes)"/>
             <column name="note" value=""/>
-            <column name="message" value="Check code"/>
+            <column name="message" value="Check code from the list listID"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
