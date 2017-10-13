@@ -6535,7 +6535,7 @@
             <column name="rule_id" value="10118"/>
             <column name="br_id" value="SALE-L01-00-0041"/>
             <column name="expression"
-                    value="valueContainsAny(roleCodes, &quot;SENDER&quot;, &quot;SELLER&quot;, &quot;BUYER&quot;, &quot;RECIPIENT&quot;, &quot;CARRIER&quot;)"/>
+                    value="!isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
