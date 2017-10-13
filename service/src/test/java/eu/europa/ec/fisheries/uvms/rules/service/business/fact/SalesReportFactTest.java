@@ -259,7 +259,7 @@ public class SalesReportFactTest {
                 .withPrefabValues(AAPProcessType.class, new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "rulesDomainModel", "originatingPlugin", "sender")
+                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin", "sender")
                 .verify();
     }
 
@@ -625,31 +625,11 @@ public class SalesReportFactTest {
         SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amount);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
 
         assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
-    }
-
-    @Test
-    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenSalesNoteAndTheTotalChargeAmountsIsNull() {
-        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
-        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
-
-        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
-        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
-
-        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amountWithEmptyCharge);
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("SN"));
-
-        assertTrue(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
     }
 
     @Test
@@ -663,7 +643,6 @@ public class SalesReportFactTest {
         SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amount);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("SN"));
@@ -681,26 +660,6 @@ public class SalesReportFactTest {
         SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amount);
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("TOD"));
-
-        assertFalse(fact.isSalesNoteAndAtLeastOneChargeAmountIsNull());
-    }
-
-    @Test
-    public void isSalesNoteAndAtLeastOneChargeAmountIsNullWhenTakeOverDocumentAndTheTotalChargeAmountsIsNull() {
-        SalesPriceType amount = new SalesPriceType().withChargeAmounts(new AmountType().withValue(BigDecimal.TEN));
-        SalesPriceType amountWithEmptyCharge = new SalesPriceType();
-
-        AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amountWithEmptyCharge);
-        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
-
-        SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amount);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
@@ -714,12 +673,11 @@ public class SalesReportFactTest {
         SalesPriceType amountWithEmptyCharge = new SalesPriceType();
 
         AAPProductType aapProductType1 = new AAPProductType().withTotalSalesPrice(amount);
-        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amount);
+        AAPProductType aapProductType2 = new AAPProductType().withTotalSalesPrice(amountWithEmptyCharge);
 
         SalesBatchType salesBatchType = new SalesBatchType().withSpecifiedAAPProducts(aapProductType1, aapProductType2);
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         salesDocumentFact.setSpecifiedSalesBatches(Arrays.asList(salesBatchType));
-        salesDocumentFact.setTotalSalesPrice(amountWithEmptyCharge);
 
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));

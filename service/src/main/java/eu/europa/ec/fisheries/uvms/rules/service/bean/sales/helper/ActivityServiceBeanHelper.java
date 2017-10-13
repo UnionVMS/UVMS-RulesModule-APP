@@ -2,11 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.CheckForUniqueIdResponse;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
-import eu.europa.ec.fisheries.schema.sales.UniqueIDType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
@@ -17,22 +12,17 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesCache;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
-import un.unece.uncefact.data.standard.fluxfaqueryresponsemessage._3.FLUXFAQueryResponseMessage;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

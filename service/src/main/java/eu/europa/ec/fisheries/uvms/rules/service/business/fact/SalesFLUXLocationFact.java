@@ -145,14 +145,28 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
         List<ObjectRepresentation> faoAreas = MDRCacheHolder.getInstance()
                                                             .getObjectRepresentationList(MDRAcronymType.FAO_AREA);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
-                (id.getValue(), "terminal_ind", "true", faoAreas);
+                (id.getValue(), "terminalInd", "1", faoAreas);
     }
 
     public boolean isLocationNotInCountry() {
         List<ObjectRepresentation> locations = MDRCacheHolder.getInstance()
                 .getObjectRepresentationList(MDRAcronymType.LOCATION);
-        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
-                (id.getValue(), "code_2", countryID.getValue(), locations);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
+                ("unloCode", id.getValue(), "code", countryID.getValue(), locations);
+    }
+
+    @Override
+    public boolean isIdTypePresentInMDRList(IdType id) {
+        if (id != null) {
+            if ("LOCATION".equals(id.getSchemeId())) {
+                List<String> locations = MDRCacheHolder.getInstance().getList(MDRAcronymType.LOCATION, "unloCode");
+                return locations.contains(id.getValue());
+            } else {
+                return super.isIdTypePresentInMDRList(id);
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override

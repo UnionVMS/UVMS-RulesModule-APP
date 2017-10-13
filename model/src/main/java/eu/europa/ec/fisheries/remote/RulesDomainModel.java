@@ -32,7 +32,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 
 import javax.ejb.Local;
-import javax.ejb.Remote;
 import java.util.List;
 
 @Local
@@ -119,10 +118,4 @@ public interface RulesDomainModel {
     RuleStatusType checkRuleStatus() throws RulesModelException;
 
     void updateRuleStatus(RuleStatusType ruleStatusType) throws RulesModelException;
-
-    List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode) throws RulesModelException;
-
-    List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode, boolean mandatory) throws RulesModelException;
-
-    List<String> getAllFishingGearTypeCodes() throws RulesModelException;
 }

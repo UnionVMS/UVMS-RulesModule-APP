@@ -10,11 +10,11 @@ import java.util.List;
 
 public class ObjectRepresentationHelper {
 
-    private static List<ObjectRepresentation> findWithCode(String codeToSearchFor, Collection<ObjectRepresentation> objectRepresentations) {
+    private static List<ObjectRepresentation> findWithColumnAndValue(String columnWhichShouldHaveTheGivenValue, String codeToSearchFor, Collection<ObjectRepresentation> objectRepresentations) {
         List<ObjectRepresentation> foundObjectRepresentations = new ArrayList<>();
 
         for (ObjectRepresentation objectRepresentation : objectRepresentations) {
-            Optional<String> foundCode = getValueOfColumn("code", objectRepresentation);
+            Optional<String> foundCode = getValueOfColumn(columnWhichShouldHaveTheGivenValue, objectRepresentation);
             if (foundCode.isPresent() && foundCode.get().equalsIgnoreCase(codeToSearchFor)) {
                 foundObjectRepresentations.add(objectRepresentation);
             }
@@ -34,12 +34,18 @@ public class ObjectRepresentationHelper {
     public static boolean doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
             (String code, String columnName, String columnValue,
              Collection<ObjectRepresentation> objectRepresentations) {
+        return doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues("code", code, columnName, columnValue, objectRepresentations);
+    }
 
-        Collection<ObjectRepresentation> foundObjectRepresentation = findWithCode(code, objectRepresentations);
+    public static boolean doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
+            (String column1, String value1, String column2, String value2,
+             Collection<ObjectRepresentation> objectRepresentations) {
+
+        Collection<ObjectRepresentation> foundObjectRepresentation = findWithColumnAndValue(column1, value1, objectRepresentations);
         for (ObjectRepresentation objectRepresentation : foundObjectRepresentation) {
-            Optional<String> foundColumnValue = getValueOfColumn(columnName, objectRepresentation);
+            Optional<String> foundColumnValue = getValueOfColumn(column2, objectRepresentation);
             if (foundColumnValue.isPresent()) {
-                return foundColumnValue.get().equalsIgnoreCase(columnValue);
+                return foundColumnValue.get().equalsIgnoreCase(value2);
             }
         }
 

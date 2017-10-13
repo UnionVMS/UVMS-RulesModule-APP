@@ -45,6 +45,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singleton;
+
 /**
  * Created by kovian on 03/07/2017.
  */
@@ -106,6 +108,7 @@ public class RuleAssetsBean {
                 vessTranspMeans.addAll(fishActivity.getRelatedVesselTransportMeans());
             }
         }
+        vessTranspMeans.removeAll(singleton(null));
         return vessTranspMeans;
     }
 
