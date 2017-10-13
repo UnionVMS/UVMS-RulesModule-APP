@@ -222,7 +222,7 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     public boolean isSalesNoteAndAtLeastOneChargeAmountIsNull() {
-        return isItemTypeEqualTo("SN") && isAChargeAmountAProductIsNull();
+        return isItemTypeEqualTo("SN") && isAChargeAmountOfAProductNull();
     }
 
     public boolean isSalesNoteAndAnyChargeAmountIsEqualToZero() {
@@ -245,7 +245,7 @@ public class SalesReportFact extends SalesAbstractFact {
         return Optional.absent();
     }
 
-    private boolean isAChargeAmountAProductIsNull() {
+    private boolean isAChargeAmountOfAProductNull() {
         List<AmountType> chargeAmounts = getChargeAmountsOfProducts();
         for (AmountType amount : chargeAmounts) {
             if (amount == null || amount.getValue() == null) {
