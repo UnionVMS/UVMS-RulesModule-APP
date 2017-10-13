@@ -7990,15 +7990,15 @@
             <column name="rule_id" value="10602"/>
             <column name="br_id" value="SALE-L01-00-0452"/>
             <column name="expression"
-                    value="referencedID != null &amp;&amp; referencedID.getSchemeId() != &quot;UUID&quot;"/>
+                    value="referencedID != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId())"/>
             <column name="note" value=""/>
-            <column name="message" value="Check attribute schemeID. Must be UUID."/>
+            <column name="message" value="Check attribute schemeID. Must be in the FLUX_GP_MSG_ID list"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="referencedID"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10603"/>

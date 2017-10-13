@@ -1113,7 +1113,8 @@ public abstract class AbstractFact {
         FLUX_GP_VALIDATION_LEVEL("(L00|L01|L02|L03)"),
         FLUX_GP_VALIDATION_TYPE("(ERR|WAR|IGN|OK)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
-        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z");
+        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z"),
+        FLUXTL_ON("[a-zA-Z0-9]");
 
         String formatStr;
 
