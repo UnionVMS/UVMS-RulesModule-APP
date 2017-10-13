@@ -38,7 +38,7 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
 
     public boolean isAuction() {
-        return "OTHER".equals(originatingPlugin);
+        return "BELGIAN_SALES".equals(originatingPlugin);
     }
 
     public boolean isQuery() {
