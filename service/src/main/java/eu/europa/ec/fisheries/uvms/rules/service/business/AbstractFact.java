@@ -571,19 +571,13 @@ public abstract class AbstractFact {
         }
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
 
-        if (CollectionUtils.isEmpty(codeTypes)) {
-            return false;
-        }
-
         for (CodeType codeType : codeTypes) {
             if (codeType == null || codeType.getValue() == null || !valuesToBeFound.contains(codeType.getValue())) {
                 return false;
             }
-
         }
 
         return true;
-
     }
 
     public boolean unitCodeContainsAll(List<MeasureType> measureTypes, String... valuesToMatch) {
