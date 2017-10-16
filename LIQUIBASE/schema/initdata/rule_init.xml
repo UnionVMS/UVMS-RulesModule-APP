@@ -8316,18 +8316,20 @@
             <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
         </insert>
 
-        <!--<insert tableName="rule">-->
-        <!--<column name="rule_id" value="10903"/>-->
-        <!--<column name="br_id" value="SALE-L03-00-0012"/>-->
-        <!--<column name="expression" value=""/>-->
-        <!--<column name="note" value=""/>-->
-        <!--<column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>-->
-        <!--<column name="level" value="L02"/>-->
-        <!--<column name="error_type" value="WARNING"/>-->
-        <!--<column name="template_id" value="1001"/>-->
-        <!--</insert>-->
-        <!---->
-        <!--&lt;!&ndash; Sales_Document  &ndash;&gt;-->
+        <!-- Flux Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10903"/>
+            <column name="br_id" value="SALE-L03-00-0012"/>
+            <column name="expression" value="(isReport() || isQuery()) &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+        </insert>
+
+        <!-- Sales_Document  -->
         <insert tableName="rule">
             <column name="rule_id" value="10905"/>
             <column name="br_id" value="SALE-L03-00-0030"/>
@@ -8475,18 +8477,20 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="creation"/>
         </insert>
-        <!---->
-        <!--&lt;!&ndash; FLUX_Party &ndash;&gt;-->
-        <!--<insert tableName="rule">-->
-        <!--<column name="rule_id" value="11104"/>-->
-        <!--<column name="br_id" value="SALE-L03-00-0460"/>-->
-        <!--<column name="expression" value=""/>-->
-        <!--<column name="note" value="The party sending must be allowed to send the message"/>-->
-        <!--<column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>-->
-        <!--<column name="level" value="L03"/>-->
-        <!--<column name="error_type" value="WARNING"/>-->
-        <!--<column name="template_id" value="1002"/>-->
-        <!--</insert>-->
+
+        <!-- FLUX_Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11104"/>
+            <column name="br_id" value="SALE-L03-00-0460"/>
+            <column name="expression" value="isResponse() &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value="The party sending must be allowed to send the message"/>
+            <column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+        </insert>
+
     </changeSet>
     <changeSet id="rule-sales-auction" author="matbul">
         <insert tableName="rule">

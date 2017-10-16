@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Slf4j
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
@@ -91,6 +92,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
     private void fillMappingVariables(SalesAbstractFact fact) {
         fact.setSource(Source.REPORT);
         fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
+        fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
 
         if (report.getAuctionSale() != null) {
             fact.setSalesCategoryType(report.getAuctionSale().getSalesCategory());

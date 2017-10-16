@@ -16,7 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Slf4j
 public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
@@ -73,6 +74,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         for (Object objectToMapToFact : objectsToMapToFacts) {
             SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
             fact.setSource(Source.QUERY);
+            fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
 
             facts.add(fact);
         }

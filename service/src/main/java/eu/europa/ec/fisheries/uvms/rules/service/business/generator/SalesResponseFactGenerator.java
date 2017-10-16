@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
@@ -74,6 +75,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
             SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
             fact.setSource(Source.RESPONSE);
             fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
+            fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
             facts.add(fact);
         }
 
