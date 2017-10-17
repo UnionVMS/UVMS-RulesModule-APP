@@ -154,6 +154,6 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact {
     }
 
     public boolean hasReferencedIDInvalidFormat() {
-        return referencedID != null && !validateFormat(referencedID.getValue(), FORMATS.UUID.getFormatStr());
+        return referencedID != null && validateFormat(referencedID);
     }
 }

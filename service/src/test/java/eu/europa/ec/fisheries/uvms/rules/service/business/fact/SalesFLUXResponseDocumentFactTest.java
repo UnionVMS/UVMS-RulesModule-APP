@@ -101,7 +101,7 @@ public class SalesFLUXResponseDocumentFactTest {
 
     @Test
     public void hasReferencedIDInvalidFormatWhenTrue() {
-        fact.setReferencedID(new IdType("abc"));
+        fact.setReferencedID(new IdType("abc", "UUID"));
         assertTrue(fact.hasReferencedIDInvalidFormat());
     }
 
@@ -113,7 +113,7 @@ public class SalesFLUXResponseDocumentFactTest {
 
     @Test
     public void hasReferencedIDInvalidFormatWhenFalseBecauseOfAnInvalidFormat() {
-        fact.setReferencedID(new IdType("c2731113-9e77-4e42-9c10-821575b72115"));
+        fact.setReferencedID(new IdType("c2731113-9e77-4e42-9c10-821575b72115", "UUID"));
         assertFalse(fact.hasReferencedIDInvalidFormat());
     }
 
