@@ -8,6 +8,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactG
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,8 @@ public class SalesResponseFactGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper();
+        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
+        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
         DefaultOrikaMapper defaultOrikaMapper = new DefaultOrikaMapper();
         helper = new SalesObjectsHelper();
 

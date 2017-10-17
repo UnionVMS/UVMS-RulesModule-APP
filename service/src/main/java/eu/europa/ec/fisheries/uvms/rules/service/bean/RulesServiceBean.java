@@ -79,7 +79,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.event.*;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
@@ -122,10 +121,9 @@ public class RulesServiceBean implements RulesService {
 
     @EJB
     RulesMessageProducer producer;
+
     @EJB
     RulesValidator rulesValidator;
-    @EJB
-    ValidationService validationService;
 
     @Inject
     @AlarmReportEvent

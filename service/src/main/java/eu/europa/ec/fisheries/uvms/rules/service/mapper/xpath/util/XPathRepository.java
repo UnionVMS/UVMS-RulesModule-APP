@@ -37,10 +37,10 @@ public class XPathRepository {
     public void addToMap(Integer sequence, String propName, String xpath){
         Map<String, String> xpathSingleMap = xpathsMap.get(sequence);
         if(MapUtils.isNotEmpty(xpathSingleMap)){
-            xpathSingleMap.put(propName, xpath);
+            xpathSingleMap.put(propName.toLowerCase(), xpath);
         } else {
             Map<String, String> newXpathMap = new HashMap<>();
-            newXpathMap.put(propName, xpath);
+            newXpathMap.put(propName.toLowerCase(), xpath);
             xpathsMap.put(sequence, newXpathMap);
         }
     }
@@ -58,7 +58,7 @@ public class XPathRepository {
         String xpath = null;
         Map<String, String> propsMap = INSTANCE.getXpathsMap().get(sequence);
         if(MapUtils.isNotEmpty(propsMap)){
-            xpath = propsMap.get(propName);
+            xpath = propsMap.get(propName.toLowerCase());
         }
         return xpath;
     }
