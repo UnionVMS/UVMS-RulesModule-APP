@@ -201,7 +201,7 @@ public class MessageServiceBean implements MessageService {
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
-            //extraValues.put(SENDER_RECEIVER, ); //TODO: FLUX TL. Get config setting
+            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
 
             //validate
@@ -217,7 +217,7 @@ public class MessageServiceBean implements MessageService {
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
