@@ -1088,7 +1088,7 @@ public abstract class AbstractFact {
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
         ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z"),
-        FLUXTL_ON("[a-zA-Z0-9]");
+        FLUXTL_ON("[a-zA-Z0-9]{20}");
 
         String formatStr;
 
@@ -1097,7 +1097,7 @@ public abstract class AbstractFact {
         }
 
         public String getFormatStr() {
-            return formatStr;
+             return formatStr;
         }
 
         void setFormatStr(String formatStr) {

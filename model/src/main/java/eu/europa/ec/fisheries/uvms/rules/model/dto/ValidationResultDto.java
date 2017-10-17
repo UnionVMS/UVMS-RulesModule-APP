@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by padhyad on 5/5/2017.
@@ -61,5 +62,21 @@ public class ValidationResultDto {
 
     public void setValidationMessages(List<ValidationMessageType> validationMessages) {
         this.validationMessages = validationMessages;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || o instanceof ValidationResultDto) return false;
+        ValidationResultDto that = (ValidationResultDto) o;
+        return isError == that.isError &&
+                isWarning == that.isWarning &&
+                isOk == that.isOk &&
+                Objects.equals(validationMessages, that.validationMessages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isError, isWarning, isOk, validationMessages);
     }
 }
