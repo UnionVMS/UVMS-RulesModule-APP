@@ -586,18 +586,18 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="239"/>
+            <column name="rule_id" valueNumeric="239"/>
             <column name="br_id" value="FA-L01-00-0239"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; !isEmpty(specifiedFishingGearRoleCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="isEmpty(specifiedFishingGearRoleCodeTypes) || !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="Fishing gear Rolecode is invalid."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="17"/>
+            <column name="template_id" valueNumeric="17"/>
             <column name="property_names" value="specifiedFishingGearRoleCodeTypes"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" valueBoolean="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="240"/>
@@ -2383,7 +2383,8 @@
             <column name="expression"
                     value="!isSubActivity &amp;&amp; !isDateProvided &amp;&amp; (validateDelimitedPeriod(delimitedPeriods, true, true) &amp;&amp; validateDelimitedPeriod(relatedDelimitedPeriods, true, true))"/>
             <column name="note" value="check presence"/>
-            <column name="message" value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
+            <column name="message"
+                    value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -3251,7 +3252,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="165"/>
             <column name="br_id" value="FA-L00-00-0165"/>
-            <column name="expression" value="isEmpty(sizeDistributionClassCode) &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
+            <column name="expression"
+                    value="isEmpty(sizeDistributionClassCode) &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
             <column name="note" value="Specified Size_Distribution ClassCode must be present."/>
             <column name="message" value="Size distribution information missing."/>
             <column name="level" value="L00"/>
@@ -3680,9 +3682,12 @@
         <insert tableName="rule">
             <column name="rule_id" valueNumeric="184"/>
             <column name="br_id" value="FA-L02-00-0184"/>
-            <column name="expression" value="!valueContainsAny(fishingActivityTypeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !valueContainsAny(speciesCode, &quot;SAL&quot;) &amp;&amp; !schemeIdContainsAll(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &#10;&amp;&amp; valueStartsWith(faCatchFluxLocationId,&quot;27.3.d&quot;) &amp;&amp; isEmpty(resultAAPProductUnitQuantity) "/>
-            <column name="note" value="Units (number of fish) must be provided for landings/ transhipment's of Salmon from the Baltic sea"/>
-            <column name="message" value="Units (number of fish) must be provided for landings/transhipments of Salmon from the Baltic sea."/>
+            <column name="expression"
+                    value="!valueContainsAny(fishingActivityTypeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !valueContainsAny(speciesCode, &quot;SAL&quot;) &amp;&amp; !schemeIdContainsAll(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &#10;&amp;&amp; valueStartsWith(faCatchFluxLocationId,&quot;27.3.d&quot;) &amp;&amp; isEmpty(resultAAPProductUnitQuantity) "/>
+            <column name="note"
+                    value="Units (number of fish) must be provided for landings/ transhipment's of Salmon from the Baltic sea"/>
+            <column name="message"
+                    value="Units (number of fish) must be provided for landings/transhipments of Salmon from the Baltic sea."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-21 00:00:00.0"/>
@@ -3997,7 +4002,8 @@
             <column name="br_id" value="FA-L02-00-0323"/>
             <column name="expression" value="isEmpty(relatedVesselTransportMeans)"/>
             <column name="note" value="relatedVesselTransportMeans must be present. "/>
-            <column name="message" value="Information concerning the other vessel involved in the transhipment is missing. "/>
+            <column name="message"
+                    value="Information concerning the other vessel involved in the transhipment is missing. "/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
@@ -4868,7 +4874,8 @@
             <column name="expression"
                     value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
             <column name="note" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
-            <column name="message" value="The date/time of sumission if the query must be a valid UTC date and in the correct format."/>
+            <column name="message"
+                    value="The date/time of sumission if the query must be a valid UTC date and in the correct format."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5102,7 +5109,8 @@
             <column name="expression"
                     value="!isEmpty(relatedFishingActivityTypeCode) &amp;&amp; allValueContainsMatch(relatedFishingActivityTypeCode, &quot;RELOCATION&quot;)"/>
             <column name="note" value="RelatedFishingActivity typeCode must be RELOCATION."/>
-            <column name="message" value="Only sub-activities with TypeCode RELOCATION may be provided for this joint fishing operation."/>
+            <column name="message"
+                    value="Only sub-activities with TypeCode RELOCATION may be provided for this joint fishing operation."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5116,7 +5124,8 @@
             <column name="expression"
                     value="!isEmpty(relatedFishingActivities) &amp;&amp; !ifVesselTransportPresent(relatedFishingActivities)"/>
             <column name="note" value="RelatedFishingActivity must have VesselTransportMeans."/>
-            <column name="message" value="Vessel information of the related vessel(s) is missing for this joint fishing operation."/>
+            <column name="message"
+                    value="Vessel information of the related vessel(s) is missing for this joint fishing operation."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -6109,7 +6118,8 @@
             <column name="expression"
                     value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeans)"/>
             <column name="note" value="RelatedVesselTransportMeans must be present if FACatch SpeciesCode is BFT"/>
-            <column name="message" value="Vessel information of the related vessel(s) is missing for thisrelocation operation."/>
+            <column name="message"
+                    value="Vessel information of the related vessel(s) is missing for thisrelocation operation."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
@@ -8634,7 +8644,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="27"/>
             <column name="br_id" value="FA-L03-00-0027"/>
-            <column name="expression" value="acceptanceDateTime != null &amp;&amp; acceptanceDateTime.after(dateNow())"/>
+            <column name="expression"
+                    value="acceptanceDateTime != null &amp;&amp; acceptanceDateTime.after(dateNow())"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not in the past."/>
