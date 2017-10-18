@@ -555,14 +555,43 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsCodeTypePresentInMDRList() {
-
+    public void testIsCodeTypePresentInMDRListWhenProvidingListIdAndPresent() {
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED"));
         codeTypes.add(new CodeType("DISCARDED"));
         codeTypes.add(new CodeType("DEMINIMIS"));
         boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
         assertEquals(true, result);
+    }
+
+    @Test
+    public void testIsCodeTypePresentInMDRListWhenProvidingListIdAndNotPresent() {
+        List<CodeType> codeTypes = new ArrayList<>();
+        codeTypes.add(new CodeType("RELEASED"));
+        codeTypes.add(new CodeType("DISCARDED"));
+        codeTypes.add(new CodeType("STIJN_WAS_HERE"));
+        boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
+        assertEquals(false, result);
+    }
+
+    @Test
+    public void testIsCodeTypePresentInMDRListWhenNotProvidingAListId() {
+        List<CodeType> codeTypes = new ArrayList<>();
+        codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("DISCARDED","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
+        boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void testIsCodeTypePresentInMDRListWhenNotProvidingAListIdAndNotPresent() {
+        List<CodeType> codeTypes = new ArrayList<>();
+        codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
+        boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
+        assertEquals(false, result);
     }
 
     @Test

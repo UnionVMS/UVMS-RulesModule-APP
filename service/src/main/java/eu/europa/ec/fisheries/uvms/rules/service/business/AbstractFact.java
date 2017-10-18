@@ -1126,6 +1126,36 @@ public abstract class AbstractFact {
     }
 
     /**
+     * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
+     *
+     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
+     * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
+     */
+    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
+            return false;
+        }
+
+        for (CodeType codeType : valuesToMatch) {
+            if (codeType == null || codeType.getValue() == null || codeType.getListId() == null) {
+                return false;
+            }
+
+            MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, codeType.getListId());
+            if (anEnum == null) {
+                log.error(THE_LIST + codeType.getListId() + DOESN_T_EXIST_IN_MDR_MODULE);
+                return false;
+            }
+
+            List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+            if (!codeListValues.contains(codeType.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list or not
      *
      * @param listName      - Values passed would be checked agaist this MDR list
@@ -1146,8 +1176,9 @@ public abstract class AbstractFact {
         }
 
         for (CodeType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+            if (!codeListValues.contains(codeType.getValue())) {
                 return false;
+            }
         }
 
         return true;

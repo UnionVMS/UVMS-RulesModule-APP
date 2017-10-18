@@ -6667,7 +6667,7 @@
             <column name="rule_id" value="10130"/>
             <column name="br_id" value="SALE-L01-00-0070"/>
             <column name="expression"
-                    value="!isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot;, typeCodes)"/>
+                    value="!isCodeTypePresentInMDRList(typeCodes)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code from the list listID"/>
             <column name="level" value="L01"/>
@@ -8151,7 +8151,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1025"/>
             <column name="property_names" value="ID.schemeID"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10611"/>
