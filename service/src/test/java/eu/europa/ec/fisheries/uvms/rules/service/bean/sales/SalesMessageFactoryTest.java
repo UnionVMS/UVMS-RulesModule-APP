@@ -75,7 +75,7 @@ public class SalesMessageFactoryTest {
     @Test
     public void mapToValidationQualityAnalysisWhenNoValidationMessagesAndListIsEmpty() {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setValidationMessages(new ArrayList<>());
+        validationResultDto.setValidationMessages(new ArrayList<ValidationMessageType>());
 
         assertEquals(new ArrayList<>(), salesMessageFactory.mapToValidationQualityAnalysis(validationResultDto));
     }
