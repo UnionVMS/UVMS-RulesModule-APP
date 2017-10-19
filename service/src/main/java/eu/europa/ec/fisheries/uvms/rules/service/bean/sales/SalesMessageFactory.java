@@ -17,6 +17,12 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 @Stateless
 public class SalesMessageFactory {
 
+    public static final String FLUX_GP_VALIDATION_TYPE_ERR = "ERR";
+    public static final String FLUX_GP_VALIDATION_TYPE_WAR = "WAR";
+    public static final String FLUX_GP_RESPONSE_NOK = "NOK";
+    public static final String FLUX_GP_RESPONSE_WOK = "WOK";
+    public static final String FLUX_GP_RESPONSE_OK = "OK";
+
     public String createSalesQueryRequest(String request, ValidationResultDto validationResult, String pluginType) throws SalesMarshallException {
         List<ValidationQualityAnalysisType> validationQualityAnalysis = mapToValidationQualityAnalysis(validationResult);
         String messageStatus = getMessageStatus(validationResult);
@@ -52,19 +58,19 @@ public class SalesMessageFactory {
 
     protected String getErrorType(ErrorType errorType) {
         switch (errorType) {
-            case ERROR: return "ERR";
-            case WARNING: return "WAR";
+            case ERROR: return FLUX_GP_VALIDATION_TYPE_ERR;
+            case WARNING: return FLUX_GP_VALIDATION_TYPE_WAR;
             default: throw new UnsupportedOperationException("No mapping provided for a validation message with error type " + errorType);
         }
     }
 
     protected String getMessageStatus(ValidationResultDto validationResultDto) {
         if (validationResultDto.isError()) {
-            return "NOK";
+            return FLUX_GP_RESPONSE_NOK;
         } else if (validationResultDto.isWarning()) {
-            return "WOK";
+            return FLUX_GP_RESPONSE_WOK;
         } else {
-            return "OK";
+            return FLUX_GP_RESPONSE_OK;
         }
     }
 
