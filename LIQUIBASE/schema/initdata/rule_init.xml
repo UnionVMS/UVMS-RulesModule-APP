@@ -8337,6 +8337,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1002"/>
             <column name="property_names" value="IDS"/>
+            <column name="disabled" value="true"/>
         </insert>
 
         <!-- Sales_Document  -->
@@ -8500,6 +8501,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1002"/>
             <column name="property_names" value="IDS"/>
+            <column name="disabled" value="true"/>
         </insert>
 
     </changeSet>
