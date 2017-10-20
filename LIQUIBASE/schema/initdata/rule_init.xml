@@ -3242,7 +3242,7 @@
             <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
             <column name="message"
                     value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-23 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -5226,7 +5226,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5242,7 +5242,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5258,7 +5258,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -7656,7 +7656,7 @@
             <column name="expression" value="!anyQueryParameterOfTypeRoleWithValue()"/>
             <column name="note" value=""/>
             <column name="message" value="A role must exist"/>
-            <column name="level" value="l00"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1022"/>
