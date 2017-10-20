@@ -16,7 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.FactCandidate;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -24,6 +24,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactG
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Slf4j
 public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMessage> {
@@ -40,12 +43,14 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
     private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
     private MapperFacade mapper;
     private FactGeneratorHelper factGeneratorHelper;
+    private XPathStringWrapper xPathUtil;
 
 
     public SalesQueryFactGenerator() {
-        this.factGeneratorHelper = new FactGeneratorHelper();
+        this.xPathUtil = new XPathStringWrapper();
+        this.factGeneratorHelper = new FactGeneratorHelper(xPathUtil);
         this.mapper = new DefaultOrikaMapper().getMapper();
-        mappingsToFacts = new HashMap<>();
+        this.mappingsToFacts = new HashMap<>();
         fillMap();
     }
 
@@ -68,13 +73,17 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
     @Override public List<AbstractFact> generateAllFacts() {
         facts = new ArrayList<>();
 
-        List<Object> objectsToMapToFacts = findObjectsToMapToFacts();
+        List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts();
 
-        for (Object objectToMapToFact : objectsToMapToFacts) {
-            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact, mappingsToFacts.get(objectToMapToFact.getClass()));
+        for (FactCandidate objectToMapToFact : objectsToMapToFacts) {
+            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
             fact.setSource(Source.QUERY);
-
+            fact.setSenderOrReceiver(((String) extraValueMap.get(SENDER_RECEIVER)));
             facts.add(fact);
+
+            for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {
+                xPathUtil.appendWithoutWrapping(propertyAndXPath.getValue()).storeInRepo(fact, propertyAndXPath.getKey());
+            }
         }
 
         return facts;
@@ -85,7 +94,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         this.fluxSalesQueryMessage = businessObject;
     }
 
-    private List<Object> findObjectsToMapToFacts() {
+    private List<FactCandidate> findObjectsToMapToFacts() {
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(fluxSalesQueryMessage, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {

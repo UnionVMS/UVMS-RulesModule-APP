@@ -35,7 +35,10 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
@@ -1083,10 +1086,9 @@ public abstract class AbstractFact {
         EU_TRIP_ID("[A-Z]{3}-TRP-[A-Za-z0-9\\-]{1,20}"),
         FLUX_SALES_TYPE("(SN\\+TOD|SN|TOD|TRD)"),
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
-        FLUX_GP_VALIDATION_LEVEL("(L00|L01|L02|L03)"),
-        FLUX_GP_VALIDATION_TYPE("(ERR|WAR|IGN|OK)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
-        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z");
+        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z"),
+        FLUXTL_ON("[a-zA-Z0-9]{20}");
 
         String formatStr;
 
@@ -1095,7 +1097,7 @@ public abstract class AbstractFact {
         }
 
         public String getFormatStr() {
-            return formatStr;
+             return formatStr;
         }
 
         void setFormatStr(String formatStr) {
@@ -1124,6 +1126,36 @@ public abstract class AbstractFact {
     }
 
     /**
+     * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
+     *
+     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
+     * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
+     */
+    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
+            return false;
+        }
+
+        for (CodeType codeType : valuesToMatch) {
+            if (codeType == null || codeType.getValue() == null || codeType.getListId() == null) {
+                return false;
+            }
+
+            MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, codeType.getListId());
+            if (anEnum == null) {
+                log.error(THE_LIST + codeType.getListId() + DOESN_T_EXIST_IN_MDR_MODULE);
+                return false;
+            }
+
+            List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
+            if (!codeListValues.contains(codeType.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list or not
      *
      * @param listName      - Values passed would be checked agaist this MDR list
@@ -1144,8 +1176,9 @@ public abstract class AbstractFact {
         }
 
         for (CodeType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
+            if (!codeListValues.contains(codeType.getValue())) {
                 return false;
+            }
         }
 
         return true;

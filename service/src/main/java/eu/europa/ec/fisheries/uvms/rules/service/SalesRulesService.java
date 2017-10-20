@@ -1,7 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 
 import javax.ejb.Local;
@@ -52,11 +50,20 @@ public interface SalesRulesService {
     boolean isIdNotUnique(SalesDocumentFact fact);
 
     /**
-     * Checks if a referenced TOD actually exists
+     * Checks if a referenced TOD actually exists.
+     * If no TOD is referenced, this method returns true.
      * @param fact
      * @return
      */
     boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact);
+
+    /**
+     * Checks if a referenced Sales Note actually exists.
+     * If no Sales Note is referenced, this method returns true.
+     * @param fact
+     * @return
+     */
+    boolean doesSalesNoteIdExist(SalesDocumentFact fact);
 
     /**
      * Checks if a sales query ID is not unique

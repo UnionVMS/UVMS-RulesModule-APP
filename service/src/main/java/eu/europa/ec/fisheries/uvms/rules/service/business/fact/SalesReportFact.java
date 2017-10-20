@@ -222,7 +222,7 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     public boolean isSalesNoteAndAtLeastOneChargeAmountIsNull() {
-        return isItemTypeEqualTo("SN") && isAChargeAmountNull();
+        return isItemTypeEqualTo("SN") && isAChargeAmountOfAProductNull();
     }
 
     public boolean isSalesNoteAndAnyChargeAmountIsEqualToZero() {
@@ -245,8 +245,8 @@ public class SalesReportFact extends SalesAbstractFact {
         return Optional.absent();
     }
 
-    private boolean isAChargeAmountNull() {
-        List<AmountType> chargeAmounts = getAllChargeAmounts();
+    private boolean isAChargeAmountOfAProductNull() {
+        List<AmountType> chargeAmounts = getChargeAmountsOfProducts();
         for (AmountType amount : chargeAmounts) {
             if (amount == null || amount.getValue() == null) {
                 return true;
@@ -276,9 +276,22 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     private List<AmountType> getAllChargeAmounts() {
-        List<AAPProductType> products = getProducts();
-        SalesPriceType totalSalesPrice = getTotalSalesPrice();
+        List<AmountType> chargeAmounts = getChargeAmountsOfProducts();
 
+        //add charge amount of total sales price
+        SalesPriceType totalSalesPrice = getTotalSalesPrice();
+        if (totalSalesPrice != null) {
+            if (isEmpty(totalSalesPrice.getChargeAmounts())) {
+                chargeAmounts.add(null);
+            } else {
+                chargeAmounts.add(totalSalesPrice.getChargeAmounts().get(0));
+            }
+        }
+
+        return chargeAmounts;
+    }
+    private List<AmountType> getChargeAmountsOfProducts() {
+        List<AAPProductType> products = getProducts();
         List<AmountType> chargeAmounts = new ArrayList<>();
         for (AAPProductType product: products) {
             if (product != null && product.getTotalSalesPrice() != null) {
@@ -287,13 +300,6 @@ public class SalesReportFact extends SalesAbstractFact {
                 } else{
                     chargeAmounts.add(product.getTotalSalesPrice().getChargeAmounts().get(0));
                 }
-            }
-        }
-        if (totalSalesPrice != null) {
-            if (isEmpty(totalSalesPrice.getChargeAmounts())) {
-                chargeAmounts.add(null);
-            } else {
-                chargeAmounts.add(totalSalesPrice.getChargeAmounts().get(0));
             }
         }
         return chargeAmounts;

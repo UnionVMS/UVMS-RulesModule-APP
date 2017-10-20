@@ -1,49 +1,15 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 
-import static com.google.common.collect.Lists.newArrayList;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
-import eu.europa.ec.fisheries.schema.sales.CodeType;
-import eu.europa.ec.fisheries.schema.sales.ContactPartyType;
-import eu.europa.ec.fisheries.schema.sales.ContactPersonType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
-import eu.europa.ec.fisheries.schema.sales.FLUXGeographicalCoordinateType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
-import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.FishingTripType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
-import eu.europa.ec.fisheries.schema.sales.RegistrationEventType;
-import eu.europa.ec.fisheries.schema.sales.RegistrationLocationType;
-import eu.europa.ec.fisheries.schema.sales.Report;
-import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
-import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
-import eu.europa.ec.fisheries.schema.sales.SalesEventType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
-import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
-import eu.europa.ec.fisheries.schema.sales.SalesReportType;
-import eu.europa.ec.fisheries.schema.sales.SizeDistributionType;
-import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.VesselCountryType;
-import eu.europa.ec.fisheries.schema.sales.VesselTransportMeansType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesEventFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingTripFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import org.joda.time.DateTime;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created by MATBUL on 24/05/2017.
@@ -120,16 +86,13 @@ public class SalesObjectsHelper {
         return report;
     }
 
-    public boolean checkIfFactsContainClass(List<AbstractFact> allFacts, List<Class> listOfClassesThatWereCreated, Class<? extends AbstractFact> clazz, boolean testValid) {
+    public boolean checkIfFactsContainClass(List<AbstractFact> allFacts, Class<? extends AbstractFact> clazz) {
         for (AbstractFact fact : allFacts) {
             if (fact.getClass().equals(clazz)) {
-                listOfClassesThatWereCreated.add(fact.getClass());
-                testValid = true;
-                break;
+                return true;
             }
-            testValid = false;
         }
-        return testValid;
+        return false;
     }
 
     public SalesFLUXSalesReportMessageFact getSalesFLUXSalesReportMessageFact(FLUXReportDocumentType fluxReportDocument, SalesDocumentType salesDocument) {

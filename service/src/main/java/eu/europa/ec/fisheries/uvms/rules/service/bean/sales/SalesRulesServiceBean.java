@@ -1,8 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
+import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -23,6 +26,9 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
     SalesService salesService;
+
+    @EJB
+    ActivityService activityService;
 
     @Inject
     MapperFacade mapper;
@@ -84,9 +90,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
         return false;
     }
 
-    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime eventDate) {
-        DateTime saleDate = eventDate;
-
+    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime saleDate) {
         // Add 48 hours and 1 minute to salesDate to determine the latest acceptable date.
         // Adding 48 hours isn't enough, a report sent exactly 48h after the event is still valid.
         // This is why there's a buffer of 1 minute. Not sure if this is enough: time will tell (pun intended)
@@ -113,22 +117,26 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
+        String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
 
-        List<SalesDocumentType> includedSalesDocuments = fact.getSalesReports().get(0).getIncludedSalesDocuments();
-        for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
-            for (FishingActivityType fishingActivityType : includedSalesDocument.getSpecifiedFishingActivities()) {
-                for (DelimitedPeriodType delimitedPeriodType : fishingActivityType.getSpecifiedDelimitedPeriods()) {
-                    if (delimitedPeriodType.getStartDateTime() != null && delimitedPeriodType.getStartDateTime().getDateTime() != null) {
-                        if (isMoreThan48HoursLater(receptionDate, delimitedPeriodType.getStartDateTime().getDateTime())) {
-                            return true;
-                        }
-                    }
-                }
-            }
+        Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTrip(fishingTripID);
+
+        if (!fishingTripResponse.isPresent()) {
+            /**
+             * In case the query returns no values
+             * (which means there was no fishing trip found with the ID specified in the sales note),
+             * we don't fire the rule
+             */
+            return false;
         }
 
-        return false;
+        FishingTripResponse fishingTrip = fishingTripResponse.get();
+
+        DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
+        DateTime dateTimeFromLandingActivity = new DateTime(fishingTrip.getFishingActivityLists().get(0).getAcceptedDateTime().toGregorianCalendar());
+
+        return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity);
+
     }
 
     @Override
@@ -137,7 +145,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_DOCUMENT);
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), SalesMessageIdType.SALES_DOCUMENT);
     }
 
     @Override
@@ -146,7 +154,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getID().getValue(), UniqueIDType.SALES_QUERY);
+        return salesService.isIdNotUnique(fact.getID().getValue(), SalesMessageIdType.SALES_QUERY);
     }
 
     @Override
@@ -157,7 +165,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), UniqueIDType.SALES_RESPONSE);
+        return salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), SalesMessageIdType.SALES_RESPONSE);
     }
 
     @Override
@@ -166,15 +174,14 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
     }
 
     @Override
     public boolean doesTakeOverDocumentIdExist(SalesDocumentFact fact) {
         if (fact == null || isEmpty(fact.getTakeoverDocumentIDs())) {
-            return false;
+            return true;
         }
-
 
         List<String> takeOverDocumentIds = Lists.newArrayList();
 
@@ -183,7 +190,23 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 takeOverDocumentIds.add(takeoverDocumentIDType.getValue());
             }
         }
-        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, UniqueIDType.TAKEOVER_DOCUMENT);
+        return salesService.areAnyOfTheseIdsNotUnique(takeOverDocumentIds, SalesMessageIdType.SALES_REPORT);
+    }
+
+    @Override
+    public boolean doesSalesNoteIdExist(SalesDocumentFact fact) {
+        if (fact == null || isEmpty(fact.getSalesNoteIDs())) {
+            return true;
+        }
+
+        List<String> salesNoteIds = Lists.newArrayList();
+
+        for (IdType salesNoteIDType : fact.getSalesNoteIDs()) {
+            if (salesNoteIDType != null && !isBlank(salesNoteIDType.getValue())) {
+                salesNoteIds.add(salesNoteIDType.getValue());
+            }
+        }
+        return salesService.areAnyOfTheseIdsNotUnique(salesNoteIds, SalesMessageIdType.SALES_REPORT);
     }
 
     @Override

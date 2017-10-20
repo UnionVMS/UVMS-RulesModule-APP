@@ -30,15 +30,13 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
     protected Source source;
 
-    private String sender;
-
     private String originatingPlugin;
 
     private SalesCategoryType salesCategoryType;
 
 
     public boolean isAuction() {
-        return "OTHER".equals(originatingPlugin);
+        return "BELGIAN_SALES".equals(originatingPlugin);
     }
 
     public boolean isQuery() {
@@ -133,14 +131,6 @@ public abstract class SalesAbstractFact extends AbstractFact {
 
     public SalesCategoryType getSalesCategoryType() {
         return salesCategoryType;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
     }
 
     public String getOriginatingPlugin() {

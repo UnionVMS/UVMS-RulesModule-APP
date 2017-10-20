@@ -13,10 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.Objects;
 
 /**
  * @author padhyad
@@ -31,6 +31,11 @@ public class CodeType {
 
     public CodeType(String value) {
         this.value = value;
+    }
+
+    public CodeType(String value, String listId) {
+        this.value = value;
+        this.listId = listId;
     }
 
     public String getValue() {

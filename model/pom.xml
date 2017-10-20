@@ -128,6 +128,19 @@
                 <envClassifier>xmlgregoriancalendar</envClassifier>
             </properties>
         </profile>
+
+        <profile>
+            <id>belgium-local</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>lv-snapshots</id>
+                    <url>https://apjenp01.dg3.be/nexus/repository/maven-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <properties>
+                <focus-pom.java.version>1.8</focus-pom.java.version>
+            </properties>
+        </profile>
     </profiles>
 
     <build>

@@ -6545,7 +6545,7 @@
             <column name="rule_id" value="10118"/>
             <column name="br_id" value="SALE-L01-00-0041"/>
             <column name="expression"
-                    value="valueContainsAny(roleCodes, &quot;SENDER&quot;, &quot;SELLER&quot;, &quot;BUYER&quot;, &quot;RECIPIENT&quot;, &quot;CARRIER&quot;)"/>
+                    value="!isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6610,20 +6610,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10124"/>
-            <column name="br_id" value="SALE-L01-00-0062"/>
-            <column name="expression"
-                    value="weightMeasure != null &amp;&amp; !weightMeasure.unitCode.equals(&quot;KGM&quot;)"/>
-            <column name="note" value=""/>
-            <column name="message" value="Check code"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="weightMeasure"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10125"/>
             <column name="br_id" value="SALE-L01-00-0063"/>
             <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value &lt; 0"/>
@@ -6664,20 +6650,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10128"/>
-            <column name="br_id" value="SALE-L01-00-0066"/>
-            <column name="expression"
-                    value="weightMeasure != null &amp;&amp; speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value.equals(&quot;BFT&quot;) &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value) &gt; 3"/>
-            <column name="note" value=""/>
-            <column name="message" value="3 decimals for BFT"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="weightMeasure, speciesCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10129"/>
             <column name="br_id" value="SALE-L01-00-0067"/>
             <column name="expression"
@@ -6695,9 +6667,9 @@
             <column name="rule_id" value="10130"/>
             <column name="br_id" value="SALE-L01-00-0070"/>
             <column name="expression"
-                    value="listIdDoesNotContainAll(typeCodes, &quot;FISH_FRESHNESS&quot;, &quot;FISH_PRESENTATION&quot;, &quot;FISH_PRESERVATION&quot;)"/>
+                    value="!isCodeTypePresentInMDRList(typeCodes)"/>
             <column name="note" value=""/>
-            <column name="message" value="Check code"/>
+            <column name="message" value="Check code from the list listID"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -6748,17 +6720,6 @@
 
         <!-- Fishing_Activity entity -->
         <insert tableName="rule">
-            <column name="rule_id" value="10136"/>
-            <column name="br_id" value="SALE-L01-00-0100"/>
-            <column name="expression" value="(!isEmpty(IDS) &amp;&amp; validateFormat(IDS))"/>
-            <column name="note" value=""/>
-            <column name="message" value="Check format"/>
-            <column name="level" value="L01"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="template_id" value="1013"/>
-            <column name="property_names" value="IDS"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10137"/>
             <column name="br_id" value="SALE-L01-00-0101"/>
             <column name="expression"
@@ -6790,7 +6751,7 @@
             <column name="rule_id" value="10139"/>
             <column name="br_id" value="SALE-L01-00-0111"/>
             <column name="expression"
-                    value="(endDateTime == null || endDateTime.dateTime == null) || endDateTime != null &amp;&amp; endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime)"/>
+                    value="endDateTime != null &amp;&amp; (endDateTime.dateTime == null || endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime))"/>
             <column name="note" value=""/>
             <column name="message" value="Check format"/>
             <column name="level" value="L01"/>
@@ -7109,7 +7070,7 @@
             <column name="br_id" value="SALE-L02-00-0041"/>
             <column name="expression" value="isProviderRoleNotSpecifiedForSalesNote()"/>
             <column name="note" value=""/>
-            <column name="message" value="SELLER role must exist for a SN"/>
+            <column name="message" value="PROVIDER role must exist for a SN"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -8071,15 +8032,15 @@
             <column name="rule_id" value="10602"/>
             <column name="br_id" value="SALE-L01-00-0452"/>
             <column name="expression"
-                    value="referencedID != null &amp;&amp; referencedID.getSchemeId() != &quot;UUID&quot;"/>
+                    value="referencedID != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId())"/>
             <column name="note" value=""/>
-            <column name="message" value="Check attribute schemeID. Must be UUID."/>
+            <column name="message" value="Check attribute schemeID. Must be in the FLUX_GP_MSG_ID list"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="referencedID"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10603"/>
@@ -8190,13 +8151,13 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1025"/>
             <column name="property_names" value="ID.schemeID"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10611"/>
             <column name="br_id" value="SALE-L01-00-0481"/>
             <column name="expression"
-                    value="levelCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_GP_VALIDATION_LEVEL&quot;, levelCode)"/>
+                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8210,7 +8171,7 @@
             <column name="rule_id" value="10612"/>
             <column name="br_id" value="SALE-L01-00-0482"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_GP_VALIDATION_TYPE&quot;, typeCode)"/>
+                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8344,7 +8305,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10901"/>
             <column name="br_id" value="SALE-L03-00-0010"/>
-            <column name="expression" value="salesService.doesReportNotExistWithId($fact)"/>
+            <column name="expression" value="!salesService.doesReportNotExistWithId($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The identification must be unique and not already exist"/>
             <column name="level" value="L03"/>
@@ -8365,18 +8326,21 @@
             <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
         </insert>
 
-        <!--<insert tableName="rule">-->
-        <!--<column name="rule_id" value="10903"/>-->
-        <!--<column name="br_id" value="SALE-L03-00-0012"/>-->
-        <!--<column name="expression" value=""/>-->
-        <!--<column name="note" value=""/>-->
-        <!--<column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>-->
-        <!--<column name="level" value="L02"/>-->
-        <!--<column name="error_type" value="WARNING"/>-->
-        <!--<column name="template_id" value="1001"/>-->
-        <!--</insert>-->
-        <!---->
-        <!--&lt;!&ndash; Sales_Document  &ndash;&gt;-->
+        <!-- Flux Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10903"/>
+            <column name="br_id" value="SALE-L03-00-0012"/>
+            <column name="expression" value="(isReport() || isQuery()) &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="true"/>
+        </insert>
+
+        <!-- Sales_Document  -->
         <insert tableName="rule">
             <column name="rule_id" value="10905"/>
             <column name="br_id" value="SALE-L03-00-0030"/>
@@ -8408,13 +8372,24 @@
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1004"/>
-            <column name="property_names" value="takeoverDocumentIds"/>
+            <column name="property_names" value="takeoverDocumentIDs"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10909"/>
+            <column name="br_id" value="SALE-L03-00-0034"/>
+            <column name="expression" value="!salesService.doesSalesNoteIdExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="salesNoteIDs"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10911"/>
             <column name="br_id" value="SALE-L03-00-0041"/>
             <column name="expression"
-                    value="ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
+                    value="codeTypeValueContainsMatch(roleCodes, &quot;SENDER&quot;) &amp;&amp; ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
             <column name="note" value=""/>
             <column name="message" value="If SENDER role, it should be a MS Identification"/>
             <column name="level" value="L03"/>
@@ -8501,6 +8476,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="referencedId"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="11103"/>
@@ -8513,18 +8489,21 @@
             <column name="template_id" value="1023"/>
             <column name="property_names" value="creation"/>
         </insert>
-        <!---->
-        <!--&lt;!&ndash; FLUX_Party &ndash;&gt;-->
-        <!--<insert tableName="rule">-->
-        <!--<column name="rule_id" value="11104"/>-->
-        <!--<column name="br_id" value="SALE-L03-00-0460"/>-->
-        <!--<column name="expression" value=""/>-->
-        <!--<column name="note" value="The party sending must be allowed to send the message"/>-->
-        <!--<column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>-->
-        <!--<column name="level" value="L03"/>-->
-        <!--<column name="error_type" value="WARNING"/>-->
-        <!--<column name="template_id" value="1002"/>-->
-        <!--</insert>-->
+
+        <!-- FLUX_Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11104"/>
+            <column name="br_id" value="SALE-L03-00-0460"/>
+            <column name="expression" value="isResponse() &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value="The party sending must be allowed to send the message"/>
+            <column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="true"/>
+        </insert>
+
     </changeSet>
     <changeSet id="rule-sales-auction" author="matbul">
         <insert tableName="rule">

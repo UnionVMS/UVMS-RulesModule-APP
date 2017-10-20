@@ -49,6 +49,10 @@ public class MDRCacheHolder {
     }
 
     public List<String> getList(MDRAcronymType type) {
+        return getList(type, "code");
+    }
+
+    public List<String> getList(MDRAcronymType type, String column) {
         List<String> codeColumnValues = new ArrayList<>();
 
         List<ObjectRepresentation> ObjectRepresentationList = cache.get(type);
@@ -62,7 +66,7 @@ public class MDRCacheHolder {
                 continue;
             }
             for (ColumnDataType nameVal : columnDataTypes) {
-                if ("code".equals(nameVal.getColumnName())) {
+                if (column.equals(nameVal.getColumnName())) {
                     codeColumnValues.add(nameVal.getColumnValue());
                 }
             }

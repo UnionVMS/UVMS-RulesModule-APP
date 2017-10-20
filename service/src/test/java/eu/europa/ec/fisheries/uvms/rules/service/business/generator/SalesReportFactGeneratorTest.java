@@ -10,6 +10,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactG
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,11 +19,9 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -41,7 +40,8 @@ public class SalesReportFactGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper();
+        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
+        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
         DefaultOrikaMapper defaultOrikaMapper = new DefaultOrikaMapper();
         helper = new SalesObjectsHelper();
 
@@ -73,27 +73,30 @@ public class SalesReportFactGeneratorTest {
 
     @Test
     public void getAllFactsWhenChainDoesntContainNull() throws Exception {
+        // data set
         Report report = helper.generateFullFLUXSalesReportMessage();
         report.getAuctionSale().setSalesCategory(SalesCategoryType.VARIOUS_SUPPLY);
 
+        Map<ExtraValueType, Object> extraValues = new HashMap<>();
+        extraValues.put(SENDER_RECEIVER, "BEL");
+
         salesReportFactGenerator.setBusinessObjectMessage(report);
-        salesReportFactGenerator.setExtraValueMap(Collections.<ExtraValueType, Object>emptyMap());
+        salesReportFactGenerator.setExtraValueMap(extraValues);
+
+        //execute
         List<AbstractFact> allFacts = salesReportFactGenerator.generateAllFacts();
 
         List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated = createListOfClassesThatShouldBeCreated();
-        List<Class> listOfClassesThatWereCreated = newArrayList();
 
         for (Class clazz : listOfClassesThatShouldBeCreated) {
-            boolean testValid = false;
-
-            testValid = helper.checkIfFactsContainClass(allFacts, listOfClassesThatWereCreated, clazz, testValid);
-
-            assertTrue(clazz + " not found while it was expected", testValid);
+            assertTrue(clazz + " not found while it was expected", helper.checkIfFactsContainClass(allFacts, clazz));
         }
 
         checkSalesCategoryInFact(allFacts);
 
-        assertEquals(listOfClassesThatShouldBeCreated.size(), listOfClassesThatWereCreated.size());
+        for (AbstractFact fact : allFacts) {
+            assertEquals("BEL", fact.getSenderOrReceiver());
+        }
     }
 
     private void checkSalesCategoryInFact(List<AbstractFact> allFacts) {

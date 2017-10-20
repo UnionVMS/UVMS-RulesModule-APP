@@ -1,7 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
+import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import ma.glasnost.orika.MapperFacade;
@@ -19,9 +24,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SalesRulesServiceBeanTest {
@@ -36,6 +39,9 @@ public class SalesRulesServiceBeanTest {
 
     @Mock
     MapperFacade mapper;
+
+    @Mock
+    ActivityService activityService;
 
     @Before
     public void setUp() throws Exception {
@@ -132,14 +138,27 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hBefore() throws Exception {
+        String fishingTripID = "MLT-TRP-20160630000001";
+
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
                 .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(1)));
         DelimitedPeriodType delimitedPeriodType2 = new DelimitedPeriodType()
                 .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(48)));
         FishingActivityType fishingActivityType1 = new FishingActivityType()
-                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2));
+                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2))
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
         FishingActivityType fishingActivityType2 = new FishingActivityType()
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue("MLT-TRP-20160630000002")))
                 .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1));
+
+        FishingActivitySummary fishingActivity = new FishingActivitySummary();
+        fishingActivity.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar()));
+
+        FishingTripResponse fishingTripResponse = new FishingTripResponse();
+        fishingTripResponse.getFishingActivityLists().add(fishingActivity);
+
+        Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
@@ -150,19 +169,33 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hAfter() throws Exception {
+        String fishingTripID = "MLT-TRP-20160630000001";
+
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
                 .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(1)));
         DelimitedPeriodType delimitedPeriodType2 = new DelimitedPeriodType()
                 .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(49)));
         FishingActivityType fishingActivityType1 = new FishingActivityType()
-                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2));
+                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2))
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
         FishingActivityType fishingActivityType2 = new FishingActivityType()
-                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1));
+                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1))
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
+
+        FishingActivitySummary fishingActivity = new FishingActivitySummary();
+        fishingActivity.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar()));
+
+        FishingTripResponse fishingTripResponse = new FishingTripResponse();
+        fishingTripResponse.getFishingActivityLists().add(fishingActivity);
+
+        Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
+
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(salesReportType));
-        salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
+        salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now().plusHours(49))));
         assertTrue(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
@@ -241,21 +274,21 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void doesTakeOverDocumentIdExistWhenFactIsNull() throws Exception {
-        assertFalse(service.doesTakeOverDocumentIdExist(null));
+        assertTrue(service.doesTakeOverDocumentIdExist(null));
     }
 
     @Test
     public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsNull() throws Exception {
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setTakeoverDocumentIDs(null);
-        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+        assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
 
     @Test
     public void doesTakeOverDocumentIdExistWhenTODIdsInFactIsEmpty() throws Exception {
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setTakeoverDocumentIDs(Lists.<IdType>newArrayList());
-        assertFalse(service.doesTakeOverDocumentIdExist(fact));
+        assertTrue(service.doesTakeOverDocumentIdExist(fact));
     }
 
     @Test
@@ -265,9 +298,40 @@ public class SalesRulesServiceBeanTest {
 
         List<String> ids = Arrays.asList("aaa", "bbb");
 
-        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, UniqueIDType.TAKEOVER_DOCUMENT);
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_REPORT);
 
         assertTrue(service.doesTakeOverDocumentIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenFactIsNull() throws Exception {
+        assertTrue(service.doesSalesNoteIdExist(null));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactIsNull() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(null);
+        assertTrue(service.doesSalesNoteIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactIsEmpty() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(Lists.<IdType>newArrayList());
+        assertTrue(service.doesSalesNoteIdExist(fact));
+    }
+
+    @Test
+    public void doesSalesNoteIdExistWhenTODIdsInFactContainsNulls() throws Exception {
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setSalesNoteIDs(Arrays.asList(new IdType("aaa"), new IdType("bbb"), new IdType(null)));
+
+        List<String> ids = Arrays.asList("aaa", "bbb");
+
+        doReturn(true).when(salesService).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_REPORT);
+
+        assertTrue(service.doesSalesNoteIdExist(fact));
     }
 
     @Test
@@ -391,10 +455,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(false).when(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
 
         assertTrue(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -403,10 +467,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(true).when(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(true).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
 
         assertFalse(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", UniqueIDType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -446,10 +510,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(true).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        doReturn(true).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
 
         assertTrue(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -459,10 +523,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(false).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        doReturn(false).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
 
         assertFalse(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_RESPONSE);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -504,10 +568,10 @@ public class SalesRulesServiceBeanTest {
         SalesQueryFact fact = new SalesQueryFact();
         fact.setID(new IdType("id"));
 
-        doReturn(true).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        doReturn(true).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
 
         assertTrue(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -516,10 +580,10 @@ public class SalesRulesServiceBeanTest {
         SalesQueryFact fact = new SalesQueryFact();
         fact.setID(new IdType("id"));
 
-        doReturn(false).when(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        doReturn(false).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
 
         assertFalse(service.isIdNotUnique(fact));
-        verify(salesService).isIdNotUnique("id", UniqueIDType.SALES_QUERY);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_QUERY);
         verifyNoMoreInteractions(salesService);
     }
 
