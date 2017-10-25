@@ -14,18 +14,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by padhyad on 4/7/2017.
  */
+@Slf4j
 public class FaReportDocumentFact extends AbstractFact {
 
     private CodeType typeCode;
