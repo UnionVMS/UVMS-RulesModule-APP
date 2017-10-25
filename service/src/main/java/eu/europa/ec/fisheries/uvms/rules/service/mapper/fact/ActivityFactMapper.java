@@ -128,6 +128,8 @@ public class ActivityFactMapper {
 
         FaReportDocumentFact faReportDocumentFact = new FaReportDocumentFact();
 
+        faReportDocumentFact.setSenderOrReceiver(senderReceiver);
+
         faReportDocumentFact.setCreationDateTime(getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, "creationDateTime");
 
@@ -363,6 +365,8 @@ public class ActivityFactMapper {
         }
 
         FluxFaReportMessageFact fluxFaReportMessageFact = new FluxFaReportMessageFact();
+
+        fluxFaReportMessageFact.setSenderOrReceiver(senderReceiver);
 
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
@@ -1678,6 +1682,8 @@ public class ActivityFactMapper {
 
         FaQueryFact faQueryFact = new FaQueryFact();
 
+        faQueryFact.setSenderOrReceiver(senderReceiver);
+
         faQueryFact.setId(mapToSingleIdType(faQuery.getID()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faQueryFact, ID_PROP);
 
@@ -1852,6 +1858,8 @@ public class ActivityFactMapper {
         }
 
         FaResponseFact faResponseFact = new FaResponseFact();
+        faResponseFact.setSenderOrReceiver(senderReceiver);
+
         String partialXpath = xPathUtil.getValue();
 
         if (fluxResponseMessage != null && fluxResponseMessage.getFLUXResponseDocument() != null) {
