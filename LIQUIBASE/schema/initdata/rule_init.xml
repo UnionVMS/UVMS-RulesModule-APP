@@ -3208,7 +3208,10 @@
             <column name="rule_id" value="162"/>
             <column name="br_id" value="FA-L02-00-0162"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; weighingMeansCode == null &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
+                    value="speciesCode != null  &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp;
+                    ((isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
+                    (isSubActivity == false &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
+                    &amp;&amp; (weighingMeansCode == null || isEmpty(weighingMeansCode.value))"/>
             <column name="note"
                     value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
             <column name="message"
