@@ -85,7 +85,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="7"/>
             <column name="br_id" value="FA-L03-00-0007"/>
-            <column name="expression" value="creationDateTime == null || dateNow().before(creationDateTime)"/>
+            <column name="expression" value="creationDateTime == null || dateNotInPast(creationDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Message creation date/time not in the past."/>
@@ -1116,7 +1116,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="41"/>
             <column name="br_id" value="FA-L03-00-0041"/>
-            <column name="expression" value="creationDateTime == null ||  dateNow(2).before(creationDateTime)"/>
+            <column name="expression" value="creationDateTime == null || dateNotInPast(creationDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Report creation date/time not in the past."/>
@@ -1131,7 +1131,7 @@
             <column name="rule_id" value="42"/>
             <column name="br_id" value="FA-L02-00-0042"/>
             <column name="expression"
-                    value="acceptanceDateTime == null || creationDateTime == null || !creationDateTime.after(acceptanceDateTime)"/>
+                    value="creationDateTime == null || acceptanceDateTime == null || acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not before report creation date/time."/>
@@ -4889,7 +4889,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="357"/>
             <column name="br_id" value="FA-L03-00-0357"/>
-            <column name="expression" value="submittedDateTime == null || dateNow().before(submittedDateTime)"/>
+            <column name="expression" value="submittedDateTime == null || dateNotInPast(submittedDateTime, 10)"/>
             <column name="note" value="FA_Query SubmittedDateTime must be in the past."/>
             <column name="message" value="The date/time of sumission if the query must be in the past."/>
             <column name="level" value="L03"/>
@@ -8655,7 +8655,7 @@
             <column name="rule_id" value="27"/>
             <column name="br_id" value="FA-L03-00-0027"/>
             <column name="expression"
-                    value="acceptanceDateTime != null &amp;&amp; acceptanceDateTime.after(dateNow())"/>
+                    value="acceptanceDateTime == null || dateNotInPast(acceptanceDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not in the past."/>
