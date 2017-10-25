@@ -3166,7 +3166,10 @@
         <insert tableName="rule">
             <column name="rule_id" value="159"/>
             <column name="br_id" value="FA-L00-00-0159"/>
-            <column name="expression" value="weightMeasure == null"/>
+            <column name="expression"
+                    value="!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
+                    fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp;
+                    (weightMeasure == null || weightMeasure.value == null)"/>
             <column name="note" value="WeightMeasure must be present"/>
             <column name="message" value="Weight of the catch must be present."/>
             <column name="level" value="L00"/>
@@ -3209,8 +3212,8 @@
             <column name="br_id" value="FA-L02-00-0162"/>
             <column name="expression"
                     value="speciesCode != null  &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp;
-                    ((isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
-                    (isSubActivity == false &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
+                    ((isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
+                    (!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
                     &amp;&amp; (weighingMeansCode == null || isEmpty(weighingMeansCode.value))"/>
             <column name="note"
                     value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
