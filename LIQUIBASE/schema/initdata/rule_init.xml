@@ -4241,6 +4241,24 @@
             <column name="property_names" value="roleCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="134"/>
+            <column name="br_id" value="FA-L01-00-0134"/>
+            <column name="expression"
+                    value="!isEmpty(roleCodes) &amp;&amp; !isCodeTypePresentInMDRList(roleCodes)"/>
+            <column name="note"
+                    value="Check code. Must be existing in the list specified in attribute listID"/>
+            <column name="message"
+                    value="Fishing gear role codes do not exist in list."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+            <column name="template_id" value="5"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="123"/>
             <column name="br_id" value="FA-L02-00-0123"/>
