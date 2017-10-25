@@ -198,7 +198,7 @@
             <column name="note" value="The party sending must be allowed to send the message."/>
             <column name="message" value="Message Owner ID not consistent with FLUX TL envelope parameters."/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="2"/>
             <column name="property_names" value="ownerFluxPartyIds"/>
@@ -554,6 +554,7 @@
             <column name="rule_created_on" value="12-05-2017"/>
             <column name="template_id" value="17"/>
             <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
+            <column name="disabled" value="true"/>
         </insert>
 
         <insert tableName="rule">
