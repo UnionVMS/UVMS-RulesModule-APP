@@ -13,12 +13,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 /**
  * @author Gregory Rinaldi
@@ -33,10 +29,10 @@ public class MDRCacheServiceBean {
 
     public void loadMDRCache(){
     log.info("[START] Loading MDR Cache..");
-        for(MDRAcronymType acronymType :  MDRAcronymType.values()){
-            List<ObjectRepresentation> values = cache.getEntry(acronymType);
-            MDRCacheHolder.getInstance().addToCache(acronymType,values);
-        }
+ //       for(MDRAcronymType acronymType :  MDRAcronymType.values()){
+ //           List<ObjectRepresentation> values = cache.getEntry(acronymType);
+ //           MDRCacheHolder.getInstance().addToCache(acronymType,values);
+ //       }
         log.info("[END] Cache loading is complete.");
     }
 
