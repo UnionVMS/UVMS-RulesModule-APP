@@ -10,36 +10,12 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
@@ -56,6 +32,11 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Gregory Rinaldi
@@ -566,7 +547,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testAcceptanceDateNotBeforeCreationDate(){
+    public void testAcceptanceDateNotBeforeCreationDate() {
         DateTime acceptance = new DateTime(2000, 3, 26, 12, 5, 0, 0);
         DateTime creation = new DateTime(2000, 3, 26, 12, 0, 0, 0);
 
@@ -603,7 +584,7 @@ public class AbstractFactTest {
     public void testIsCodeTypePresentInMDRListWhenNotProvidingAListId() {
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("DISCARDED","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("DISCARDED", "FA_CATCH_TYPE"));
         codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
         boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
         assertEquals(true, result);
@@ -613,7 +594,7 @@ public class AbstractFactTest {
     public void testIsCodeTypePresentInMDRListWhenNotProvidingAListIdAndNotPresent() {
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO", "FA_CATCH_TYPE"));
         codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
         boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
         assertEquals(false, result);
@@ -1165,6 +1146,36 @@ public class AbstractFactTest {
         fishingGearFact.setApplicableGearCharacteristics(RuleTestHelper.getGearCharacteristics());
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
         assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
+    public void testRetrieveGearCharacteristicTypeCodeValues() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
+        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
+        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
+    }
+
+    @Test
+    public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
+        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
+        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
+    }
+
+    @Test
+    public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
+        assertFalse(fishingGearCharacteristicCodes.contains("HE"));
+        assertFalse(fishingGearCharacteristicCodes.contains("GM"));
+        assertFalse(fishingGearCharacteristicCodes.contains("ME"));
+        assertFalse(fishingGearCharacteristicCodes.contains("GD"));
     }
 
     @Test

@@ -329,18 +329,22 @@ public class RuleTestHelper {
         codeType.setValue("ME");
         gearCharacteristic.setTypeCode(codeType);
         gearCharacteristics.add(gearCharacteristic);
+
         gearCharacteristic = new GearCharacteristic();
         codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
         codeType.setValue("GM");
         gearCharacteristic.setTypeCode(codeType);
         gearCharacteristics.add(gearCharacteristic);
+
         gearCharacteristic = new GearCharacteristic();
         codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
         codeType.setValue("HE");
         gearCharacteristic.setTypeCode(codeType);
         gearCharacteristics.add(gearCharacteristic);
+
+        gearCharacteristic = new GearCharacteristic();
         codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
         codeType.setValue("GD");
@@ -351,12 +355,12 @@ public class RuleTestHelper {
     }
 
     public static List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
-        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics=new ArrayList<>();
+        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = new ArrayList<>();
         List<GearCharacteristic> gearCharacteristics = getGearCharacteristics();
 
-        for(GearCharacteristic gearCharacteristic:gearCharacteristics){
-            FishingGearTypeCharacteristic fishingGearTypeCharacteristic=new FishingGearTypeCharacteristic();
-            FishingGearTypeCharacteristicId fishingGearTypeCharacteristicId=new FishingGearTypeCharacteristicId();
+        for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
+            FishingGearTypeCharacteristic fishingGearTypeCharacteristic = new FishingGearTypeCharacteristic();
+            FishingGearTypeCharacteristicId fishingGearTypeCharacteristicId = new FishingGearTypeCharacteristicId();
             fishingGearTypeCharacteristicId.setFishingGearTypeCode("PS");
             fishingGearTypeCharacteristicId.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
             fishingGearTypeCharacteristic.setId(fishingGearTypeCharacteristicId);
@@ -365,7 +369,7 @@ public class RuleTestHelper {
             fishingGearTypeCharacteristics.add(fishingGearTypeCharacteristic);
         }
 
-        return  fishingGearTypeCharacteristics;
+        return fishingGearTypeCharacteristics;
     }
 
     public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
