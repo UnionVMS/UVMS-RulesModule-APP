@@ -13,24 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
@@ -43,6 +32,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathReposito
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,7 +47,20 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @ToString
@@ -637,26 +640,25 @@ public abstract class AbstractFact {
         return eu.europa.ec.fisheries.uvms.common.DateUtils.nowUTC().toDate();
     }
 
-    public boolean dateNotInPast(Date creationDate){
+    public boolean dateNotInPast(Date creationDate) {
         return dateNotInPast(creationDate, 0);
     }
 
     /**
-     *
      * Acceptance date/time not before report creation date/time.
      *
-     * @param creationDate The report creation date/time.
+     * @param creationDate   The report creation date/time.
      * @param acceptanceDate The acceptance date/time.
-     * @param minutes A threshold in minutes to compensate for incorrect clock synchronization of the exchanging systems.
+     * @param minutes        A threshold in minutes to compensate for incorrect clock synchronization of the exchanging systems.
      */
-    public boolean acceptanceDateNotBeforeCreationDate(Date creationDate, Date acceptanceDate, int minutes){
+    public boolean acceptanceDateNotBeforeCreationDate(Date creationDate, Date acceptanceDate, int minutes) {
 
         boolean acceptanceDateNotAfterCreationDate = true;
-        if(creationDate != null && acceptanceDate != null ){
+        if (creationDate != null && acceptanceDate != null) {
             DateTime creationDateTime = new DateTime(creationDate).toDateTime(DateTimeZone.UTC).plusMinutes(minutes);
             DateTime acceptanceDateTime = new DateTime(acceptanceDate).toDateTime(DateTimeZone.UTC);
-            log.debug("creationDate is {}", creationDateTime.toString() );
-            log.debug("acceptanceDateTime is {}", acceptanceDateTime.toString() );
+            log.debug("creationDate is {}", creationDateTime.toString());
+            log.debug("acceptanceDateTime is {}", acceptanceDateTime.toString());
             acceptanceDateNotAfterCreationDate = acceptanceDateTime.toDate().before(creationDateTime.toDate());
 
         }
@@ -667,17 +669,17 @@ public abstract class AbstractFact {
      * Message creation date/time not in the past.
      *
      * @param creationDate The Message creation date/time to be verified.
-     * @param minutes A threshold in minutes to compensate for incorrect clock synchronization of the exchanging systems.
+     * @param minutes      A threshold in minutes to compensate for incorrect clock synchronization of the exchanging systems.
      */
-    public boolean dateNotInPast(Date creationDate, int minutes){
+    public boolean dateNotInPast(Date creationDate, int minutes) {
 
         boolean notInPast = true;
-        if (creationDate != null){
+        if (creationDate != null) {
             DateTime now = eu.europa.ec.fisheries.uvms.common.DateUtils.nowUTC();
-            log.debug("now is {}", now.toString() );
+            log.debug("now is {}", now.toString());
             now = now.plusMinutes(minutes);
             DateTime creationDateUTC = new DateTime(creationDate).toDateTime(DateTimeZone.UTC);
-            log.debug("creationDate is {}", creationDateUTC.toString() );
+            log.debug("creationDate is {}", creationDateUTC.toString());
             notInPast = !creationDateUTC.toDate().before(now.toDate());
         }
         return notInPast;
@@ -1146,7 +1148,7 @@ public abstract class AbstractFact {
         }
 
         public String getFormatStr() {
-             return formatStr;
+            return formatStr;
         }
 
         void setFormatStr(String formatStr) {
