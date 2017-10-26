@@ -13,6 +13,42 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTAL_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SOURCE_VESSEL_STORAGE_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FA_CATCH;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_GEAR_PROBLEM;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -37,38 +73,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_REPORT_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTAL_STRUCTURED_ADDRESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_ACTIVITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_GEAR;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FISHING_TRIP;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SOURCE_VESSEL_STORAGE_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FA_CATCH;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_TRIP;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_LOCATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_GEAR_PROBLEM;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_STRUCTURED_ADDRESS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
 /**
  * @author padhyad
@@ -152,12 +156,12 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
             for (FishingActivity activity : specifiedFishingActivities) {
 
-                String partialSpecFishActXpath = "";
+                String partialSpecFishActXpath;
 
                 if(isSubActivity){
-                    partialSpecFishActXpath=  xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index).getValue();
-                }else {
-                    partialSpecFishActXpath=  xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
+                    partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index).getValue();
+                } else {
+                    partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
                 }
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);

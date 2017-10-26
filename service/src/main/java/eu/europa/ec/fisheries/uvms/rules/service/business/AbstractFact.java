@@ -655,8 +655,8 @@ public abstract class AbstractFact {
         if(creationDate != null && acceptanceDate != null ){
             DateTime creationDateTime = new DateTime(creationDate).toDateTime(DateTimeZone.UTC).plusMinutes(minutes);
             DateTime acceptanceDateTime = new DateTime(acceptanceDate).toDateTime(DateTimeZone.UTC);
-            log.info("creationDate is {}", creationDateTime.toString() );
-            log.info("acceptanceDateTime is {}", acceptanceDateTime.toString() );
+            log.debug("creationDate is {}", creationDateTime.toString() );
+            log.debug("acceptanceDateTime is {}", acceptanceDateTime.toString() );
             acceptanceDateNotAfterCreationDate = acceptanceDateTime.toDate().before(creationDateTime.toDate());
 
         }
@@ -674,10 +674,10 @@ public abstract class AbstractFact {
         boolean notInPast = true;
         if (creationDate != null){
             DateTime now = eu.europa.ec.fisheries.uvms.common.DateUtils.nowUTC();
-            log.info("now is {}", now.toString() );
+            log.debug("now is {}", now.toString() );
             now = now.plusMinutes(minutes);
             DateTime creationDateUTC = new DateTime(creationDate).toDateTime(DateTimeZone.UTC);
-            log.info("creationDate is {}", creationDateUTC.toString() );
+            log.debug("creationDate is {}", creationDateUTC.toString() );
             notInPast = !creationDateUTC.toDate().before(now.toDate());
         }
         return notInPast;
