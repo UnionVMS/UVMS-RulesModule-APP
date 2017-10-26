@@ -420,13 +420,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="286"/>
             <column name="br_id" value="FA-L02-00-0286"/>
-            <column name="expression"
-                    value="isEmpty(relatedFishingActivities) &amp;&amp; (isEmpty(relatedFLUXLocations) || relatedFLUXLocations.size &lt; 2)"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations) || relatedFLUXLocations.size &lt; 2"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="note"
-                    value="Check presence. At least 2 occurences must be present if the activity is an area exit declaration or notification and no RelatedFishingActivity is present."/>
+                    value="Check presence. At least 2 occurrences must be present if the activity is an area exit declaration or notification."/>
             <column name="message"
                     value="Location information missing."/>
             <column name="template_id" value="23"/>
@@ -485,9 +484,9 @@
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="233"/>
-            <column name="br_id" value="FA-L02-00-233"/>
+            <column name="br_id" value="FA-L02-00-0233"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;DEPARTURE&quot;  || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;DEPARTURE&quot; || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="note"
@@ -1408,7 +1407,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="65"/>
@@ -1424,7 +1423,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="66"/>
@@ -1439,7 +1438,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="67"/>
@@ -2991,7 +2990,7 @@
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="8"/>
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="501"/>
@@ -3006,7 +3005,7 @@
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="8"/>
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
@@ -3326,13 +3325,13 @@
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="170"/>
-            <column name="br_id" value="FA-L01-00-0170"/>
+            <column name="br_id" value="FA-L02-00-0170"/>
             <column name="expression"
                     value="categoryCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
             <column name="note" value="If provided"/>
             <column name="message"
                     value="Specified Size_Distribution CategoryCode value must be present in FA_BFT_SIZE_CATEGORY list"/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -3633,14 +3632,14 @@
 
         <insert tableName="rule">
             <column name="rule_id" value="440"/>
-            <column name="br_id" value="FA-L02-00-0440"/>
+            <column name="br_id" value="FA-L00-00-0440"/>
             <column name="expression"
                     value="speciesCode != null  &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot;"/>
             <column name="note"
                     value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
             <column name="message"
                     value="Conversion factor missing."/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
             <column name="template_id" value="8"/>
