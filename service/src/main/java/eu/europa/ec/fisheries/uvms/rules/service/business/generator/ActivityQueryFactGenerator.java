@@ -13,18 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
 
 /**
  * @author padhyad
@@ -39,6 +40,12 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
     public ActivityQueryFactGenerator() {
         xPathUtil = new XPathStringWrapper();
         activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
+
+    @Override
+    public void setAdditionalValidationObject() {
+        String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);
+        activityFactMapper.setSenderReceiver(senderReceiver);
     }
 
     @Override
