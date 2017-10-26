@@ -23,7 +23,6 @@ import javax.jms.TextMessage;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -114,14 +113,15 @@ public class ActivityServiceBeanHelperTest {
         fishingTripResponse.getFishingActivityLists().add(new FishingActivitySummary());
         fishingTripResponse.getFishingTripIdLists().add(new FishingTripIdWithGeometry());
 
-        when(JAXBMarshaller.unmarshallString(message, FishingTripResponse.class))
-                .thenReturn(fishingTripResponse);
-        when(ActivityModuleRequestMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters)).thenReturn("FishingTripResponse");
-
         TextMessage mockTextMessage = mock(TextMessage.class);
         doReturn(message).when(mockTextMessage).getText();
         doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class);
         doReturn(correlationId).when(messageProducer).sendDataSourceMessage("FishingTripResponse", DataSourceQueue.ACTIVITY);
+
+        when(JAXBMarshaller.unmarshallString(message, FishingTripResponse.class))
+                .thenReturn(fishingTripResponse);
+        when(ActivityModuleRequestMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters)).thenReturn("FishingTripResponse");
+
 
         Optional<FishingTripResponse> fishingTripResponseOptional = helper.findTrip(fishingTripID);
 
