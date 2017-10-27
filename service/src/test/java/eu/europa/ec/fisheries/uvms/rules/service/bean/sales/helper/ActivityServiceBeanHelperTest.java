@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -30,7 +29,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({JAXBMarshaller.class, ActivityModuleRequestMapper.class})
+@PrepareForTest({JAXBMarshaller.class})
 @PowerMockIgnore( {"javax.management.*"})
 public class ActivityServiceBeanHelperTest {
 
@@ -42,6 +41,9 @@ public class ActivityServiceBeanHelperTest {
 
     @Mock
     private RulesResponseConsumer messageConsumer;
+
+    @Mock
+    private ActivityModuleRequestMapperFacade activityMapper;
 
     @Test
     public void receiveMessageFromActivity() throws Exception {
@@ -95,10 +97,10 @@ public class ActivityServiceBeanHelperTest {
 
     @Test
     public void findTrip() throws Exception {
+        mockStatic(JAXBMarshaller.class);
         String correlationId = "correlationId";
         String message = "<ns2:FishingTripResponse xmlns:ns2=\"http://europa.eu/ec/fisheries/uvms/activity/model/schemas\"/>";
         String fishingTripID = "fishingTripID";
-        mockStatic(JAXBMarshaller.class, ActivityModuleRequestMapper.class);
 
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append(ISODateTimeFormat.dateTimeNoMillis()).toFormatter().withOffsetParsed();
         List<SingleValueTypeFilter> singleFilters = Arrays.asList(
@@ -117,11 +119,10 @@ public class ActivityServiceBeanHelperTest {
         doReturn(message).when(mockTextMessage).getText();
         doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class);
         doReturn(correlationId).when(messageProducer).sendDataSourceMessage("FishingTripResponse", DataSourceQueue.ACTIVITY);
+        doReturn("FishingTripResponse").when(activityMapper).mapToActivityGetFishingTripRequest(listFilter, singleFilters);
 
         when(JAXBMarshaller.unmarshallString(message, FishingTripResponse.class))
                 .thenReturn(fishingTripResponse);
-        when(ActivityModuleRequestMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters)).thenReturn("FishingTripResponse");
-
 
         Optional<FishingTripResponse> fishingTripResponseOptional = helper.findTrip(fishingTripID);
 
