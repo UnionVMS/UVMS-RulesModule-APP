@@ -16,7 +16,7 @@ import javax.ejb.Stateless;
 import java.util.Date;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import org.slf4j.Logger;

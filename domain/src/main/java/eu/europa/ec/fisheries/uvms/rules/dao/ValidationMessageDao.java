@@ -13,15 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import com.google.common.collect.ImmutableMap;
-import eu.europa.ec.fisheries.uvms.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
-import eu.europa.ec.fisheries.uvms.service.AbstractDAO;
+import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by padhyad on 5/8/2017.
