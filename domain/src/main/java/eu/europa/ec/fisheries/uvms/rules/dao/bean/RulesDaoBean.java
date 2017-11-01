@@ -12,7 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.dao.bean;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
-import eu.europa.ec.fisheries.uvms.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.Dao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;

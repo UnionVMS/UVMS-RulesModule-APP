@@ -18,9 +18,9 @@ import javax.persistence.Query;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
-import eu.europa.ec.fisheries.uvms.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
-import eu.europa.ec.fisheries.uvms.service.AbstractDAO;
+import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import org.apache.commons.collections.CollectionUtils;
 
 /**

@@ -16,7 +16,7 @@ import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import org.slf4j.Logger;

@@ -31,8 +31,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
-import eu.europa.ec.fisheries.uvms.domain.Audit;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.domain.Audit;
 import lombok.ToString;
 
 @Entity
