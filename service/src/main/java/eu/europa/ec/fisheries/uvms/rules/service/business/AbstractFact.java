@@ -637,7 +637,7 @@ public abstract class AbstractFact {
     }
 
     public Date dateNow() {
-        return eu.europa.ec.fisheries.uvms.common.DateUtils.nowUTC().toDate();
+        return eu.europa.ec.fisheries.uvms.commons.date.DateUtils.nowUTC().toDate();
     }
 
     public boolean dateNotInPast(Date creationDate) {
@@ -675,7 +675,7 @@ public abstract class AbstractFact {
 
         boolean notInPast = true;
         if (creationDate != null) {
-            DateTime now = eu.europa.ec.fisheries.uvms.common.DateUtils.nowUTC();
+            DateTime now = eu.europa.ec.fisheries.uvms.commons.date.DateUtils.nowUTC();
             log.debug("now is {}", now.toString());
             now = now.plusMinutes(minutes);
             DateTime creationDateUTC = new DateTime(creationDate).toDateTime(DateTimeZone.UTC);
