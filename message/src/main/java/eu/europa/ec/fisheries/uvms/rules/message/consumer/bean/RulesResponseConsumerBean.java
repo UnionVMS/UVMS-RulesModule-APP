@@ -40,6 +40,8 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
 
     private ConnectionFactory connectionFactory;
 
+    private Connection connection = null;
+    private Session session = null;
 
     @PostConstruct
     private void init() {
