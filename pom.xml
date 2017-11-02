@@ -31,9 +31,9 @@
         <mapstruct.version>1.1.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>4.0.0</usm4uvms.version>
+        <usm4uvms.version>4.0.2</usm4uvms.version>
         <uvms.config.version>4.0.0</uvms.config.version>
-        <uvms.common.version>3.0.0</uvms.common.version>
+        <uvms.common.version>3.0.3</uvms.common.version>
         <movement.model.version>4.0.0</movement.model.version>
         <exchange.model.version>4.0.3</exchange.model.version>
         <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
