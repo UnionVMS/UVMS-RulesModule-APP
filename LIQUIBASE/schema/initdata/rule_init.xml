@@ -4245,7 +4245,7 @@
             <column name="rule_id" value="134"/>
             <column name="br_id" value="FA-L01-00-0134"/>
             <column name="expression"
-                    value="!isEmpty(roleCodes) &amp;&amp; !isCodeTypePresentInMDRList(roleCodes)"/>
+                    value="isEmpty(roleCodes) || !isCodeTypePresentInMDRList(roleCodes)"/>
             <column name="note"
                     value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="message"
