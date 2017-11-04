@@ -297,9 +297,6 @@
                                 </goals>
                                 <configuration>
                                     <rules>
-                                        <requireJavaVersion>
-                                            <version>[${focus-pom.java.version},${focus-pom.java.version}.999)</version>
-                                        </requireJavaVersion>
                                         <enforceBytecodeVersion>
                                             <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
                                             <!-- NOTE: xstream do contain support for multiple jdk:s -->
