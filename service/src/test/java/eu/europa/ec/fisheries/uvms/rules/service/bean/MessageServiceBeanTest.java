@@ -13,13 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -36,15 +43,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.NoSuchElementException;
-import javax.xml.datatype.DatatypeFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -186,18 +184,12 @@ public class MessageServiceBeanTest {
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
-        boolean threw = false;
-        try {
-            messageServiceBean.setFLUXFAReportMessageReceived(null);
-        } catch (RulesServiceException | NullPointerException e) {
-            threw = true;
-        }
-        assertTrue(threw);
+        messageServiceBean.setFLUXFAReportMessageReceived(null);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     @SneakyThrows
     public void testSetFLUXFAReportMessageReceived(){
 
@@ -206,12 +198,8 @@ public class MessageServiceBeanTest {
         req.setType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
+        messageServiceBean.setFLUXFAReportMessageReceived(req);
 
-        try {
-            messageServiceBean.setFLUXFAReportMessageReceived(req);
-        } catch (NoSuchElementException ex){
-            assertNotNull(ex);
-        }
     }
 
     @Test
