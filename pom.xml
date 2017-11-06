@@ -9,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.15-SNAPSHOT</version>
+    <version>3.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -40,7 +40,7 @@
         <user.model.version>2.0.2</user.model.version>
 
         <activity.model.version>1.0.0</activity.model.version>
-        <mdr.model.version>0.5.2</mdr.model.version>
+        <mdr.model.version>1.0.0</mdr.model.version>
 
         <asset.model.version>4.0.0</asset.model.version>
         <audit.model.version>4.0.0</audit.model.version>
@@ -297,9 +297,6 @@
                                 </goals>
                                 <configuration>
                                     <rules>
-                                        <requireJavaVersion>
-                                            <version>[${focus-pom.java.version},${focus-pom.java.version}.999)</version>
-                                        </requireJavaVersion>
                                         <enforceBytecodeVersion>
                                             <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
                                             <!-- NOTE: xstream do contain support for multiple jdk:s -->
