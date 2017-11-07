@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.11-SNAPSHOT</version>
+        <version>3.0.16-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -29,8 +29,8 @@
 	        <version>${uvms.config.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms</groupId>
-            <artifactId>uvms-commons</artifactId>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.common.version}</version>
             <exclusions>
                 <exclusion>

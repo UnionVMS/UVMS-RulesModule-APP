@@ -5,12 +5,12 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.11-SNAPSHOT</version>
+        <version>3.0.16-SNAPSHOT</version>
     </parent>
 
     <name>${project.parent.artifactId}-domain</name>
     <artifactId>rules-dbaccess-domain</artifactId>
-    <version>3.0.11-SNAPSHOT</version>
+    <version>3.0.16-SNAPSHOT</version>
     <packaging>ejb</packaging>
 
     <!-- PROPERTIES USED FOR LOGBACK -->
@@ -40,10 +40,29 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms</groupId>
-            <artifactId>uvms-commons</artifactId>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-message</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-service</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-date</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-domain</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-dao</artifactId>
+            <version>${uvms.common.version}</version>
+        </dependency>                
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>uvms-test</artifactId>

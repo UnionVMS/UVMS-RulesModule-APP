@@ -25,7 +25,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubCriteriaType;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.Interval;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleAction;

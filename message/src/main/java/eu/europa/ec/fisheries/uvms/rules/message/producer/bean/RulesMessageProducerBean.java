@@ -29,7 +29,7 @@ import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
-import eu.europa.ec.fisheries.uvms.message.JMSUtils;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;

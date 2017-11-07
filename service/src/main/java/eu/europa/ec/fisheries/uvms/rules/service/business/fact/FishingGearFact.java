@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,44 +90,23 @@ public class FishingGearFact extends AbstractFact {
             return false;
         }
 
-        List<String> requiredFishingGearCharacteristicCodes = new ArrayList<>();
-        for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
-            String typeCode = fishingGearTypeCharacteristic.getId().getFishingGearTypeCode();
-            boolean mandatoryFishingGearCharacteristic = fishingGearTypeCharacteristic.getMandatory();
-
-            if (mandatoryFishingGearCharacteristic && typeCode.equals(fishingGearTypeCode.getValue())) {
-                String characteristicCode = fishingGearTypeCharacteristic.getId().getFishingGearCharacteristicCode();
-                requiredFishingGearCharacteristicCodes.add(characteristicCode);
-            }
-        }
+        List<String> requiredFishingGearCharacteristicCodes = retrieveFishingGearCharacteristicCodes(fishingGearTypeCharacteristics, fishingGearTypeCode, true);
+        List<String> applicableGearCharacteristicCodes = retrieveGearCharacteristicTypeCodeValues(applicableGearCharacteristics, FactConstants.FA_GEAR_CHARACTERISTIC);
 
         if (requiredFishingGearCharacteristicCodes.isEmpty()) {
             return true;
-        } else if (requiredFishingGearCharacteristicCodes.size() > applicableGearCharacteristics.size()) {
+        } else if (requiredFishingGearCharacteristicCodes.size() > applicableGearCharacteristicCodes.size()) {
             return false;
         }
 
-        int hits = 0;
-        for (GearCharacteristic applicableGearCharacteristic : applicableGearCharacteristics) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType applicableGearCharacteristicTypeCode = applicableGearCharacteristic.getTypeCode();
-
-            String fishingGearCharacteristicCode = null;
-            try {
-                if (!FactConstants.FA_GEAR_CHARACTERISTIC.equals(applicableGearCharacteristicTypeCode.getListID())) {
-                    continue;
-                }
-
-                fishingGearCharacteristicCode = applicableGearCharacteristic.getTypeCode().getValue();
-            } catch (NullPointerException npe) {
-                fishingGearCharacteristicCode = null;
-            }
-
-            if (StringUtils.isNotBlank(fishingGearCharacteristicCode) && requiredFishingGearCharacteristicCodes.contains(fishingGearCharacteristicCode)) {
-                hits++;
+        for (String requiredFishingGearCharacteristicCode : requiredFishingGearCharacteristicCodes) {
+            if (applicableGearCharacteristicCodes.contains(requiredFishingGearCharacteristicCode)) {
                 continue;
+            } else {
+                return false;
             }
         }
 
-        return hits == requiredFishingGearCharacteristicCodes.size();
+        return true;
     }
 }
