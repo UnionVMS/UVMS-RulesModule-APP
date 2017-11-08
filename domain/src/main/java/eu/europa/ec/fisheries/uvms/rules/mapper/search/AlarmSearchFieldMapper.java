@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import eu.europa.ec.fisheries.uvms.rules.exception.SearchMapperException;
 import org.slf4j.Logger;

@@ -4,12 +4,12 @@
     <parent>
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
-        <version>1.12</version>
+        <version>1.13</version>
     </parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.11-SNAPSHOT</version>
+    <version>3.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -31,16 +31,16 @@
         <mapstruct.version>1.1.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>3.0.9</usm4uvms.version>
+        <usm4uvms.version>4.0.2</usm4uvms.version>
         <uvms.config.version>4.0.0</uvms.config.version>
-        <uvms.common.version>2.0.29</uvms.common.version>
+        <uvms.common.version>3.0.3</uvms.common.version>
         <movement.model.version>4.0.0</movement.model.version>
         <exchange.model.version>4.0.3</exchange.model.version>
         <mobileterminal.model.version>4.0.0</mobileterminal.model.version>
         <user.model.version>2.0.2</user.model.version>
 
         <activity.model.version>1.0.0</activity.model.version>
-        <mdr.model.version>0.5.2</mdr.model.version>
+        <mdr.model.version>1.0.0</mdr.model.version>
 
         <asset.model.version>4.0.0</asset.model.version>
         <audit.model.version>4.0.0</audit.model.version>
@@ -65,31 +65,31 @@
         	<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-gis-deps</artifactId>
-				<version>1.12</version>
+				<version>1.13</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-logging-deps</artifactId>
-				<version>1.12</version>
+				<version>1.13</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-monitoring-deps</artifactId>
-				<version>1.12</version>
+				<version>1.13</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-test-deps</artifactId>
-				<version>1.12</version>
+				<version>1.13</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-arquillian-deps</artifactId>
-				<version>1.12</version>
+				<version>1.13</version>
 				<type>pom</type>
 			</dependency>
             <dependency>
@@ -99,8 +99,8 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-				<groupId>eu.europa.ec.fisheries.uvms</groupId>
-				<artifactId>uvms-commons</artifactId>
+	            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+	            <artifactId>uvms-commons-message</artifactId>
 				<version>${uvms.common.version}</version>
 				<exclusions>
 					<exclusion>
@@ -297,9 +297,6 @@
                                 </goals>
                                 <configuration>
                                     <rules>
-                                        <requireJavaVersion>
-                                            <version>[${focus-pom.java.version},${focus-pom.java.version}.999)</version>
-                                        </requireJavaVersion>
                                         <enforceBytecodeVersion>
                                             <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
                                             <!-- NOTE: xstream do contain support for multiple jdk:s -->

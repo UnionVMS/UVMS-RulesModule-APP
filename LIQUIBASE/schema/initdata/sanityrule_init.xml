@@ -155,4 +155,13 @@
             <where>sanityrule_id=4</where>
         </update>
     </changeSet>
+
+	<!-- backend implementation of the rule works, restore condition -->	
+    <changeSet id="sanityrule-init05" author="james">
+        <update tableName="sanityrule">
+            <column name="sanityrule_expression" value="mobileTerminalConnectId == null &amp;&amp; pluginType == &quot;SATELLITE_RECEIVER&quot;"/>
+            <where>sanityrule_id=4</where>
+        </update>
+    </changeSet>
+    
 </databaseChangeLog>

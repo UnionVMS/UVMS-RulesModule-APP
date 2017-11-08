@@ -18,6 +18,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -98,10 +99,13 @@ public class JAXBMarshaller {
         }
     }
 
-    public static <R> R unMarshallMessage(String textMessage, Class clazz) throws RulesModelMarshallException {
+    public static <R> R unMarshallMessage(String textMessage, Class clazz, Schema schema) throws RulesModelMarshallException {
         try {
             JAXBContext jc = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
+            if (schema != null){
+                unmarshaller.setSchema(schema);
+            }
             StringReader sr = new StringReader(textMessage);
             StreamSource source = new StreamSource(sr);
             long before = System.currentTimeMillis();
@@ -111,6 +115,10 @@ public class JAXBMarshaller {
         } catch (JAXBException ex) {
             throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper. Expected class was " + clazz.getName() + " ]", ex);
         }
+    }
+
+    public static <R> R unMarshallMessage(String textMessage, Class clazz) throws RulesModelMarshallException {
+        return unMarshallMessage(textMessage, clazz, null);
     }
 
 }
