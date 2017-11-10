@@ -96,8 +96,27 @@
             		<groupId>commons-logging</groupId>
             		<artifactId>commons-logging</artifactId>
             	</exclusion>
+				<exclusion>
+					<groupId>org.jboss.resteasy</groupId>
+					<artifactId>resteasy-jaxrs</artifactId>
+				</exclusion>
+				<exclusion>
+				    <groupId>net.sf.ehcache</groupId>
+  					<artifactId>ehcache</artifactId>				
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>net.sf.ehcache.internal</groupId>
+		    <artifactId>ehcache-core</artifactId>
+            <version>2.10.4</version>
+            <exclusions>
+            	<exclusion>
+            		 <groupId>org.slf4j</groupId>
+    				 <artifactId>slf4j-api</artifactId>
+            	</exclusion>
             </exclusions>
-        </dependency>
+        </dependency>		
 
         <!-- TEST DEPENDENCIES -->
         <dependency>
