@@ -60,13 +60,6 @@ public class AbstractFactTest {
         MockitoAnnotations.initMocks(this);
     }
 
-
-    @Test
-    public void testCheckDateNowHappy() {
-        Date date = new DateTime(2005, 3, 26, 12, 0, 0, 0).toDate();
-        assertTrue(date.before(fact.dateNow(1)));
-    }
-
     @Test
     public void testListIdContainsAll() {
         List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
@@ -542,11 +535,24 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testDateNow() {
-        Date date = fact.dateNow(-10);
-        assertNotNull(date);
+    public void dateNotInPastWhenDateInFuture() {
+        DateTime dt = new DateTime(2020, 3, 26, 12, 0, 0, 0);
+        assertTrue(fact.dateNotInPast(dt.toDate()));
     }
 
+    @Test
+    public void dateNotInPastWhenDateInPast() {
+        DateTime dt = new DateTime(2000, 3, 26, 12, 0, 0, 0);
+        assertFalse(fact.dateNotInPast(dt.toDate()));
+    }
+
+    @Test
+    public void testAcceptanceDateNotBeforeCreationDate() {
+        DateTime acceptance = new DateTime(2000, 3, 26, 12, 5, 0, 0);
+        DateTime creation = new DateTime(2000, 3, 26, 12, 0, 0, 0);
+
+        assertTrue(fact.acceptanceDateNotBeforeCreationDate(creation.toDate(), acceptance.toDate(), 10));
+    }
 
     @Test
     public void testIsPresentInMDRList() {
@@ -578,7 +584,7 @@ public class AbstractFactTest {
     public void testIsCodeTypePresentInMDRListWhenNotProvidingAListId() {
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("DISCARDED","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("DISCARDED", "FA_CATCH_TYPE"));
         codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
         boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
         assertEquals(true, result);
@@ -588,7 +594,7 @@ public class AbstractFactTest {
     public void testIsCodeTypePresentInMDRListWhenNotProvidingAListIdAndNotPresent() {
         List<CodeType> codeTypes = new ArrayList<>();
         codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO","FA_CATCH_TYPE"));
+        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO", "FA_CATCH_TYPE"));
         codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
         boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
         assertEquals(false, result);
@@ -1140,6 +1146,36 @@ public class AbstractFactTest {
         fishingGearFact.setApplicableGearCharacteristics(RuleTestHelper.getGearCharacteristics());
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
         assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
+    }
+
+    @Test
+    public void testRetrieveGearCharacteristicTypeCodeValues() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
+        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
+        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
+    }
+
+    @Test
+    public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
+        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
+        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
+        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
+    }
+
+    @Test
+    public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
+        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
+        assertFalse(fishingGearCharacteristicCodes.contains("HE"));
+        assertFalse(fishingGearCharacteristicCodes.contains("GM"));
+        assertFalse(fishingGearCharacteristicCodes.contains("ME"));
+        assertFalse(fishingGearCharacteristicCodes.contains("GD"));
     }
 
     @Test

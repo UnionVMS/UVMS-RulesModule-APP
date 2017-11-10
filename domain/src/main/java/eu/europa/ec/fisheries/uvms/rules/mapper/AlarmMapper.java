@@ -38,7 +38,7 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-import eu.europa.ec.fisheries.uvms.common.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.Activity;
 import eu.europa.ec.fisheries.uvms.rules.entity.AlarmItem;
 import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;

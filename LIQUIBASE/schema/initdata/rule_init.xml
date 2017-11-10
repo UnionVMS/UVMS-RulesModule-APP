@@ -85,7 +85,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="7"/>
             <column name="br_id" value="FA-L03-00-0007"/>
-            <column name="expression" value="creationDateTime == null || dateNow().before(creationDateTime)"/>
+            <column name="expression" value="creationDateTime == null || dateNotInPast(creationDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Message creation date/time not in the past."/>
@@ -198,7 +198,7 @@
             <column name="note" value="The party sending must be allowed to send the message."/>
             <column name="message" value="Message Owner ID not consistent with FLUX TL envelope parameters."/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="2"/>
             <column name="property_names" value="ownerFluxPartyIds"/>
@@ -420,13 +420,12 @@
         <insert tableName="rule">
             <column name="rule_id" value="286"/>
             <column name="br_id" value="FA-L02-00-0286"/>
-            <column name="expression"
-                    value="isEmpty(relatedFishingActivities) &amp;&amp; (isEmpty(relatedFLUXLocations) || relatedFLUXLocations.size &lt; 2)"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations) || relatedFLUXLocations.size &lt; 2"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="note"
-                    value="Check presence. At least 2 occurences must be present if the activity is an area exit declaration or notification and no RelatedFishingActivity is present."/>
+                    value="Check presence. At least 2 occurrences must be present if the activity is an area exit declaration or notification."/>
             <column name="message"
                     value="Location information missing."/>
             <column name="template_id" value="23"/>
@@ -485,9 +484,9 @@
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="233"/>
-            <column name="br_id" value="FA-L02-00-233"/>
+            <column name="br_id" value="FA-L02-00-0233"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;DEPARTURE&quot;  || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;DEPARTURE&quot; || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="note"
@@ -554,6 +553,7 @@
             <column name="rule_created_on" value="12-05-2017"/>
             <column name="template_id" value="17"/>
             <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
+            <column name="disabled" value="true"/>
         </insert>
 
         <insert tableName="rule">
@@ -1116,7 +1116,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="41"/>
             <column name="br_id" value="FA-L03-00-0041"/>
-            <column name="expression" value="creationDateTime == null ||  dateNow(2).before(creationDateTime)"/>
+            <column name="expression" value="creationDateTime == null || dateNotInPast(creationDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Report creation date/time not in the past."/>
@@ -1131,7 +1131,7 @@
             <column name="rule_id" value="42"/>
             <column name="br_id" value="FA-L02-00-0042"/>
             <column name="expression"
-                    value="acceptanceDateTime == null || creationDateTime == null || !creationDateTime.after(acceptanceDateTime)"/>
+                    value="creationDateTime == null || acceptanceDateTime == null || acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not before report creation date/time."/>
@@ -1407,7 +1407,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="65"/>
@@ -1423,7 +1423,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="66"/>
@@ -1438,7 +1438,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="67"/>
@@ -2990,7 +2990,7 @@
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="8"/>
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="501"/>
@@ -3005,7 +3005,7 @@
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="8"/>
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
-            <column name="disabled" value="false"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
@@ -3166,7 +3166,10 @@
         <insert tableName="rule">
             <column name="rule_id" value="159"/>
             <column name="br_id" value="FA-L00-00-0159"/>
-            <column name="expression" value="weightMeasure == null"/>
+            <column name="expression"
+                    value="!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
+                    fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp;
+                    (weightMeasure == null || weightMeasure.value == null)"/>
             <column name="note" value="WeightMeasure must be present"/>
             <column name="message" value="Weight of the catch must be present."/>
             <column name="level" value="L00"/>
@@ -3208,7 +3211,10 @@
             <column name="rule_id" value="162"/>
             <column name="br_id" value="FA-L02-00-0162"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; weighingMeansCode == null &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
+                    value="speciesCode != null  &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp;
+                    !((isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
+                    (!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
+                    &amp;&amp; (weighingMeansCode == null || isEmpty(weighingMeansCode.value))"/>
             <column name="note"
                     value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
             <column name="message"
@@ -3242,7 +3248,7 @@
             <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
             <column name="message"
                     value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-23 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -3253,7 +3259,9 @@
             <column name="rule_id" value="165"/>
             <column name="br_id" value="FA-L00-00-0165"/>
             <column name="expression"
-                    value="isEmpty(sizeDistributionClassCode) &amp;&amp; !(isSubActivity == true &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; )"/>
+                    value="!((isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
+                    (!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
+                    &amp;&amp; isEmpty(sizeDistributionClassCode)"/>
             <column name="note" value="Specified Size_Distribution ClassCode must be present."/>
             <column name="message" value="Size distribution information missing."/>
             <column name="level" value="L00"/>
@@ -3325,13 +3333,13 @@
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="170"/>
-            <column name="br_id" value="FA-L01-00-0170"/>
+            <column name="br_id" value="FA-L02-00-0170"/>
             <column name="expression"
                     value="categoryCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
             <column name="note" value="If provided"/>
             <column name="message"
                     value="Specified Size_Distribution CategoryCode value must be present in FA_BFT_SIZE_CATEGORY list"/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -3632,14 +3640,14 @@
 
         <insert tableName="rule">
             <column name="rule_id" value="440"/>
-            <column name="br_id" value="FA-L02-00-0440"/>
+            <column name="br_id" value="FA-L00-00-0440"/>
             <column name="expression"
                     value="speciesCode != null  &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot;"/>
             <column name="note"
                     value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
             <column name="message"
                     value="Conversion factor missing."/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
             <column name="template_id" value="8"/>
@@ -4232,6 +4240,24 @@
             <column name="property_names" value="roleCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="134"/>
+            <column name="br_id" value="FA-L01-00-0134"/>
+            <column name="expression"
+                    value="isEmpty(roleCodes) || !isCodeTypePresentInMDRList(roleCodes)"/>
+            <column name="note"
+                    value="Check code. Must be existing in the list specified in attribute listID"/>
+            <column name="message"
+                    value="Fishing gear role codes do not exist in list."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+            <column name="template_id" value="5"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="123"/>
             <column name="br_id" value="FA-L02-00-0123"/>
@@ -4886,7 +4912,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="357"/>
             <column name="br_id" value="FA-L03-00-0357"/>
-            <column name="expression" value="submittedDateTime == null || dateNow().before(submittedDateTime)"/>
+            <column name="expression" value="submittedDateTime == null || dateNotInPast(submittedDateTime, 10)"/>
             <column name="note" value="FA_Query SubmittedDateTime must be in the past."/>
             <column name="message" value="The date/time of sumission if the query must be in the past."/>
             <column name="level" value="L03"/>
@@ -5226,7 +5252,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5242,7 +5268,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -5258,7 +5284,7 @@
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
             <column name="message"
                     value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="20"/>
@@ -7164,7 +7190,7 @@
             <column name="rule_id" value="10208"/>
             <column name="br_id" value="SALE-L02-00-0032"/>
             <column name="expression"
-                    value="specifiedFishingActivities != null &amp;&amp; specifiedFishingActivities.size() != 1"/>
+                    value="!isAuction() &amp;&amp; (specifiedFishingActivities != null &amp;&amp; specifiedFishingActivities.size() != 1)"/>
             <column name="note" value=""/>
             <column name="message" value="Only one occurrence"/>
             <column name="level" value="L02"/>
@@ -7656,7 +7682,7 @@
             <column name="expression" value="!anyQueryParameterOfTypeRoleWithValue()"/>
             <column name="note" value=""/>
             <column name="message" value="A role must exist"/>
-            <column name="level" value="l00"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1022"/>
@@ -8652,7 +8678,7 @@
             <column name="rule_id" value="27"/>
             <column name="br_id" value="FA-L03-00-0027"/>
             <column name="expression"
-                    value="acceptanceDateTime != null &amp;&amp; acceptanceDateTime.after(dateNow())"/>
+                    value="acceptanceDateTime == null || dateNotInPast(acceptanceDateTime, 10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not in the past."/>

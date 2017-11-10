@@ -10,14 +10,18 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static javax.ejb.ConcurrencyManagementType.BEAN;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+
 import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-
-import static javax.ejb.ConcurrencyManagementType.BEAN;
 
 /**
  * Created by kovian, gregrinaldi on 30/05/2017.
