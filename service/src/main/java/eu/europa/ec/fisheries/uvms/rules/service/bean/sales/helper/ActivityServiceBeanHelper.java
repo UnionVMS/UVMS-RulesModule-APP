@@ -3,7 +3,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ListValueTypeFilter;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SearchFilter;
@@ -32,10 +31,13 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 public class ActivityServiceBeanHelper {
 
     @EJB
-    RulesMessageProducer messageProducer;
+    private RulesMessageProducer messageProducer;
 
     @EJB
-    RulesResponseConsumer messageConsumer;
+    private RulesResponseConsumer messageConsumer;
+
+    @EJB
+    private ActivityModuleRequestMapperFacade activityMapper;
 
     protected Optional<FishingTripResponse> receiveMessageFromActivity(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
@@ -64,7 +66,7 @@ public class ActivityServiceBeanHelper {
         List<ListValueTypeFilter> listFilter = Arrays.asList(
                 new ListValueTypeFilter(SearchFilter.ACTIVITY_TYPE, Arrays.asList("LANDING")));
 
-        String request = ActivityModuleRequestMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
+        String request = activityMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
         String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY);
 
         return receiveMessageFromActivity(correlationId);

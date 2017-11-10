@@ -7190,7 +7190,7 @@
             <column name="rule_id" value="10208"/>
             <column name="br_id" value="SALE-L02-00-0032"/>
             <column name="expression"
-                    value="specifiedFishingActivities != null &amp;&amp; specifiedFishingActivities.size() != 1"/>
+                    value="!isAuction() &amp;&amp; (specifiedFishingActivities != null &amp;&amp; specifiedFishingActivities.size() != 1)"/>
             <column name="note" value=""/>
             <column name="message" value="Only one occurrence"/>
             <column name="level" value="L02"/>
