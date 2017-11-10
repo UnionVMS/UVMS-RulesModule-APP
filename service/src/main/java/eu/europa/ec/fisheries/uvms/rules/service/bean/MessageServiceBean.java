@@ -216,7 +216,7 @@ public class MessageServiceBean implements MessageService {
             String requestForExchange = ExchangeModuleRequestMapper.createSendSalesResponseRequest(rulesRequest.getRequest(),
                     rulesRequest.getMessageGuid(),
                     rulesRequest.getFluxDataFlow(),
-                    rulesRequest.getPluginToSendResponseThrough(),
+                    rulesRequest.getRecipient(),
                     rulesRequest.getDateSent(),
                     validationStatus);
             sendToExchange(requestForExchange);
