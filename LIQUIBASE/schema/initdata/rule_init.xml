@@ -6492,7 +6492,7 @@
             <column name="expression" value="hasTheCommonPartOfTheIDAnIncorrectFormat()"/>
             <column name="note" value="iso-3 code + '-' + type of report"/>
             <column name="message" value="check format of the common part"/>
-            <column name="level" value="l01"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1004"/>
