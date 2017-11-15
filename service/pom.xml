@@ -101,7 +101,6 @@
             <version>${joda-time.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
             <artifactId>mdr-model</artifactId>

@@ -11,8 +11,16 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.fisheries.uvms.rules.service.business;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
@@ -28,12 +36,6 @@ import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by kovian on 28/06/2017.
@@ -143,6 +145,6 @@ public class BusinessObjectFactoryTest {
     @SneakyThrows
     private FLUXFAReportMessage loadTestData(String filePath) {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
-        return JAXBMarshaller.unmarshallTextMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
+        return JAXBUtils.unMarshallMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
 }
