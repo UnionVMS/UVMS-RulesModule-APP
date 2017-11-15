@@ -11,32 +11,33 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
+import javax.jms.Destination;
 import javax.jms.Session;
 
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
+import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Stateless
-public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
+public class RulesResponseConsumerBean extends AbstractProducer implements RulesResponseConsumer, ConfigMessageConsumer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
     private final static long TEN_SECONDS = 10000;
 
-    private Queue responseQueue;
+    private Destination responseQueue;
 
     private ConnectionFactory connectionFactory;
 
@@ -85,4 +86,7 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
         }
     }
 
+    @Override public String getDestinationName() {
+        return null;
+    }
 }
