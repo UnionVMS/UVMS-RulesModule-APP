@@ -18,6 +18,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.Queue;
 import javax.jms.Session;
 
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
@@ -31,16 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
-public class RulesResponseConsumerBean extends AbstractProducer implements RulesResponseConsumer, ConfigMessageConsumer {
+public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigMessageConsumer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
     private final static long TEN_SECONDS = 10000;
 
-    private Destination responseQueue;
+    private Queue responseQueue;
 
     private ConnectionFactory connectionFactory;
-
 
     @PostConstruct
     private void init() {
@@ -86,7 +86,4 @@ public class RulesResponseConsumerBean extends AbstractProducer implements Rules
         }
     }
 
-    @Override public String getDestinationName() {
-        return null;
-    }
 }
