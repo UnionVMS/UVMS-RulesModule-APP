@@ -1621,32 +1621,6 @@
 
     <changeSet id="rule-sales-level-0" author="matbul">
         <insert tableName="rule">
-            <column name="rule_id" value="10004"/>
-            <column name="br_id" value="SALE-L00-00-0011"/>
-            <column name="expression" value="creationDateTime == null"/>
-            <column name="note" value="Creation in FLUXReportDocument must be present."/>
-            <column name="message" value="Creation in FLUXReportDocument must be present."/>
-            <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1001"/>
-            <column name="property_names" value="creationDateTime"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10006"/>
-            <column name="br_id" value="SALE-L00-00-0012"/>
-            <column name="expression" value="purposeCode == null || purposeCode.value == null"/>
-            <column name="note" value="Purpose in FLUXReportDocument must be present."/>
-            <column name="message" value="Purpose in FLUXReportDocument must be present."/>
-            <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1001"/>
-            <column name="property_names" value="purposeCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10007"/>
             <column name="br_id" value="SALE-L00-00-0013"/>
             <column name="expression" value="ownerFLUXParty == null"/>
@@ -1750,19 +1724,6 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1003"/>
             <column name="property_names" value="chargeAmounts"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10012"/>
-            <column name="br_id" value="SALE-L00-00-0030"/>
-            <column name="expression" value="isEmpty(IDS)"/>
-            <column name="note" value="Identification in SalesDocument must be present."/>
-            <column name="message" value="Identification in SalesDocument must be present."/>
-            <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1004"/>
-            <column name="property_names" value="IDS"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
