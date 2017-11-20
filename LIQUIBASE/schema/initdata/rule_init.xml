@@ -6954,28 +6954,28 @@
             <column name="rule_id" value="10155"/>
             <column name="br_id" value="SALE-L01-00-0191"/>
             <column name="expression"
-                    value="longitudeMeasure != null &amp;&amp; longitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(longitudeMeasure.getValue(), BigDecimal.valueOf(-90), BigDecimal.valueOf(90))"/>
+                    value="latitudeMeasure != null &amp;&amp; latitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(latitudeMeasure.getValue(), BigDecimal.valueOf(-90), BigDecimal.valueOf(90))"/>
             <column name="note" value="Boundaries follow the EPSG definition."/>
             <column name="message" value="Check range. Must be between -90 and 90"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1020"/>
-            <column name="property_names" value="longitudeMeasure"/>
+            <column name="property_names" value="latitudeMeasure"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10157"/>
             <column name="br_id" value="SALE-L01-00-0193"/>
             <column name="expression"
-                    value="latitudeMeasure != null &amp;&amp; latitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(latitudeMeasure.getValue(), BigDecimal.valueOf(-180), BigDecimal.valueOf(180))"/>
+                    value="longitudeMeasure != null &amp;&amp; longitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(longitudeMeasure.getValue(), BigDecimal.valueOf(-180), BigDecimal.valueOf(180))"/>
             <column name="note" value="Boundaries follow the EPSG definition."/>
             <column name="message" value="Check range. Must be between -180 and 180"/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1020"/>
-            <column name="property_names" value="latitudeMeasure"/>
+            <column name="property_names" value="longitudeMeasure"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -7553,7 +7553,7 @@
             <column name="rule_id" value="10245"/>
             <column name="br_id" value="SALE-L02-00-0187"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.getValue() == &quot;ADDRESS&quot; &amp;&amp; physicalStructuredAddress == null"/>
+                    value="typeCode != null &amp;&amp; &quot;ADDRESS&quot;.equals(typeCode.getValue()) &amp;&amp; physicalStructuredAddress == null"/>
             <column name="note" value="Must be present if location type is ADDRESS."/>
             <column name="message" value="Check presence. Must be present if location Type is ADDRESS."/>
             <column name="level" value="L02"/>
