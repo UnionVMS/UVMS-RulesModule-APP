@@ -1,16 +1,25 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class SalesDocumentFact extends SalesAbstractFact {
 
@@ -260,6 +269,24 @@ public class SalesDocumentFact extends SalesAbstractFact {
         return takeoverDocumentIDs != null && !takeoverDocumentIDs.isEmpty() && !validateFormat(takeoverDocumentIDs.get(0).getValue(), AbstractFact.FORMATS.EU_SALES_TAKE_OVER_DOCUMENT_ID.getFormatStr());
     }
 
+    /**
+     * @return if the currency used is this document is an official currency of the sales country at the date of the
+     * sales. When one of these parameters (currency, country, occurrence) is missing, this method will return false.
+     */
+    public boolean isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales() {
+        Optional<String> currency = getCurrencyCodeIfExists();
+        Optional<String> country = getCountryIfExists();
+        Optional<DateTime> occurrence = getOccurrenceIfPresent();
+
+        if (currency.isPresent() && country.isPresent() && occurrence.isPresent()) {
+            List<ObjectRepresentation> territoriesAndTheirCurrencies = MDRCacheHolder.getInstance().getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+            return ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(currency.get(), "placesCode", country.get(), territoriesAndTheirCurrencies);
+            //TODO: take only the MDR lists that were active on the day of the occurrence into account
+        } else {
+            return false;
+        }
+    }
+
 
     private BigDecimal getTotalOfAllProducts() {
         if (isEmpty(specifiedSalesBatches)) {
@@ -289,7 +316,7 @@ public class SalesDocumentFact extends SalesAbstractFact {
 
     private List<AAPProductType> getAllProducts() {
         List<AAPProductType> products = new ArrayList<>();
-        for (SalesBatchType salesBatch :specifiedSalesBatches) {
+        for (SalesBatchType salesBatch : specifiedSalesBatches) {
             if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
                 for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
                     if (product != null) {
@@ -299,5 +326,35 @@ public class SalesDocumentFact extends SalesAbstractFact {
             }
         }
         return products;
+    }
+
+    private Optional<String> getCurrencyCodeIfExists() {
+        if (currencyCode != null && isNotBlank(currencyCode.getValue())) {
+            return Optional.of(currencyCode.getValue());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<String> getCountryIfExists() {
+        if (isNotEmpty(specifiedFLUXLocations)
+                && specifiedFLUXLocations.get(0) != null
+                && specifiedFLUXLocations.get(0).getCountryID() != null
+                && isNotBlank(specifiedFLUXLocations.get(0).getCountryID().getValue())) {
+            return Optional.of(specifiedFLUXLocations.get(0).getCountryID().getValue());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getOccurrenceIfPresent() {
+        if (isNotEmpty(specifiedSalesEvents)
+            && specifiedSalesEvents.get(0) != null
+            && specifiedSalesEvents.get(0).getOccurrenceDateTime() != null
+            && specifiedSalesEvents.get(0).getOccurrenceDateTime().getDateTime() != null) {
+            return Optional.of(specifiedSalesEvents.get(0).getOccurrenceDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
     }
 }

@@ -2000,8 +2000,8 @@
             <column name="rule_id" value="10033"/>
             <column name="br_id" value="SALE-L00-00-0103"/>
             <column name="expression" value="specifiedFishingTrip == null"/>
-            <column name="note" value="Vessel Tranport Means in Fishing Activity must be present."/>
-            <column name="message" value="Vessel Tranport Means in Fishing Activity must be present."/>
+            <column name="note" value="Fishing trip must be present."/>
+            <column name="message" value="Fishing trip must be present."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -6613,6 +6613,19 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
+            <column name="rule_id" value="10124"/>
+            <column name="br_id" value="SALE-L01-00-0062"/>
+            <column name="expression" value="!(weightMeasure == null || &quot;KGM&quot;.equals(weightMeasure.unitCode))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check unit code: must be KGM"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="10125"/>
             <column name="br_id" value="SALE-L01-00-0063"/>
             <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value &lt; 0"/>
@@ -8342,17 +8355,17 @@
             <column name="template_id" value="1004"/>
             <column name="property_names" value="ids"/>
         </insert>
-
-        <!--<insert tableName="rule">-->
-        <!--<column name="rule_id" value="10906"/>-->
-        <!--<column name="br_id" value="SALE-L03-00-0031"/>-->
-        <!--<column name="expression" value=""/>-->
-        <!--<column name="note" value=""/>-->
-        <!--<column name="message" value="It must be an official currency of the country at that date"/>-->
-        <!--<column name="level" value="L03"/>-->
-        <!--<column name="error_type" value="ERROR"/>-->
-        <!--<column name="template_id" value="1004"/>-->
-        <!--</insert>-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10906"/>
+            <column name="br_id" value="SALE-L03-00-0031"/>
+            <column name="expression" value="!isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales()"/>
+            <column name="note" value=""/>
+            <column name="message" value="It must be an official currency of the country at that date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="currencyCode, specifiedFLUXLocations, specifiedSalesEvents"/>
+        </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10908"/>
             <column name="br_id" value="SALE-L03-00-0033"/>
