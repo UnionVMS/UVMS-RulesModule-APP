@@ -2035,6 +2035,8 @@
             <column name="property_names" value="startDateTime"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- Sales Vessel Transport Means -->
         <insert tableName="rule">
             <column name="rule_id" value="10036"/>
             <column name="br_id" value="SALE-L00-00-0120"/>
@@ -2061,6 +2063,20 @@
             <column name="property_names" value="specifiedContactParties"/>
             <column name="disabled" value="false"/>
         </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10232"/>
+            <column name="br_id" value="SALE-L02-00-0150"/>
+            <column name="expression" value="doContactPartiesWithTheSameRoleExist()"/>
+            <column name="note" value=""/>
+            <column name="message" value="No duplicated role"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="specifiedContactParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="10039"/>
             <column name="br_id" value="SALE-L00-00-0130"/>
@@ -7398,19 +7414,6 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1014"/>
             <column name="property_names" value="specifiedContactParties"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10232"/>
-            <column name="br_id" value="SALE-L02-00-0150"/>
-            <column name="expression" value="!isListEmptyOrAllValuesUnique(roleCodes)"/>
-            <column name="note" value=""/>
-            <column name="message" value="No duplicated role"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1016"/>
-            <column name="property_names" value="roleCodes"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">

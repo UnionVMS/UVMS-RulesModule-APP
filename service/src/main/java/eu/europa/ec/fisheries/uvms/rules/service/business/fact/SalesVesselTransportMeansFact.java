@@ -1,28 +1,15 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.ConstructionEventType;
-import eu.europa.ec.fisheries.schema.sales.ContactPartyType;
-import eu.europa.ec.fisheries.schema.sales.DateTimeType;
-import eu.europa.ec.fisheries.schema.sales.FLAPDocumentType;
-import eu.europa.ec.fisheries.schema.sales.FLUXPictureType;
-import eu.europa.ec.fisheries.schema.sales.FishingGearType;
-import eu.europa.ec.fisheries.schema.sales.MeasureType;
-import eu.europa.ec.fisheries.schema.sales.RegistrationEventType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.VesselAdministrativeCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.VesselCountryType;
-import eu.europa.ec.fisheries.schema.sales.VesselCrewType;
-import eu.europa.ec.fisheries.schema.sales.VesselDimensionType;
-import eu.europa.ec.fisheries.schema.sales.VesselEngineType;
-import eu.europa.ec.fisheries.schema.sales.VesselEquipmentCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.VesselPositionEventType;
-import eu.europa.ec.fisheries.schema.sales.VesselStorageCharacteristicType;
-import eu.europa.ec.fisheries.schema.sales.VesselTechnicalCharacteristicType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
 
 public class SalesVesselTransportMeansFact extends SalesAbstractFact {
 
@@ -56,6 +43,38 @@ public class SalesVesselTransportMeansFact extends SalesAbstractFact {
     public void setFactType() {
         this.factType = FactType.SALES_VESSEL_TRANSPORT_MEANS;
     }
+
+
+    public boolean doContactPartiesWithTheSameRoleExist() {
+        List<String> earlierFoundRoles = new ArrayList<>();
+
+        for (ContactPartyType contactParty : specifiedContactParties) {
+            List<String> contactPartyRoles = getRolesOfContactParty(contactParty);
+            if (containsAny(earlierFoundRoles, contactPartyRoles)) {
+                return true;
+            } else {
+                earlierFoundRoles.addAll(contactPartyRoles);
+            }
+        }
+
+        return false;
+    }
+
+    private List<String> getRolesOfContactParty(ContactPartyType contactParty) {
+        List<String> roles = new ArrayList<>();
+
+        if (contactParty == null || contactParty.getRoleCodes() == null) {
+            return roles;
+        }
+
+        for (eu.europa.ec.fisheries.schema.sales.CodeType roleCode : contactParty.getRoleCodes()) {
+            if (roleCode != null && roleCode.getValue() != null) {
+                roles.add(roleCode.getValue());
+            }
+        }
+        return roles;
+    }
+
 
     public List<IdType> getIDS() {
         return this.ids;
