@@ -34,11 +34,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.RulesMessageEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
@@ -61,8 +61,7 @@ public class RulesEventConsumerBean implements MessageListener {
     private final static Logger LOG = LoggerFactory.getLogger(RulesEventConsumerBean.class);
 
     @Inject
-    @SetMovementReportReceivedEvent
-    Event<EventMessage> setMovementReportRecievedEvent;
+    private SetMovementReportRequestBean setMovementReportRequestBean;
 
     @Inject
     @GetTicketsByMovementsEvent
@@ -139,6 +138,9 @@ public class RulesEventConsumerBean implements MessageListener {
 
             switch (request.getMethod()) {
                 case SET_MOVEMENT_REPORT:
+
+                    RulesMessageEvent listEvent = new RulesMessageEvent(textMessage, listRequest.getQuery());
+
                     setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
                     break;
                 case PING:
