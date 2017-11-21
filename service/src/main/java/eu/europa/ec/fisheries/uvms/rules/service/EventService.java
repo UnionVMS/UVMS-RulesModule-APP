@@ -29,7 +29,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.RulesMessageEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 
 @Local
@@ -37,7 +37,7 @@ public interface EventService {
 
     void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage);
 
-    void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message);
+    void setMovementReportReceived(@Observes @RulesMessageEvent EventMessage message);
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     void getCustomRule(@Observes @GetCustomRuleReceivedEvent EventMessage message);

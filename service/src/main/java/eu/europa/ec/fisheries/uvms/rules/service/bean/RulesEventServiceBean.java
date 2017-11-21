@@ -12,13 +12,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsByMovementsRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
@@ -29,8 +38,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesResponse;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
@@ -49,7 +56,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
@@ -67,15 +73,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.jms.JMSException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,45 +99,20 @@ public class RulesEventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage) {
-        try {
-            PingResponse pingResponse = new PingResponse();
-            pingResponse.setResponse("pong");
-            String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
-            producer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
-        } catch (RulesModelMarshallException | MessageException e) {
-            LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
-            errorEvent.fire(eventMessage);
-        }
+        //try {
+        //    PingResponse pingResponse = new PingResponse();
+        //    pingResponse.setResponse("pong");
+        //    String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
+        //    producer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
+        //} catch (RulesModelMarshallException | MessageException e) {
+        //    LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
+        //    errorEvent.fire(eventMessage);
+       // }
     }
 
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
-        LOG.info("Validating movement from Exchange Module");
-        try {
-            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
-            String username = baseRequest.getUsername();
-
-            if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
-                String s = " [ Error, Set Movement Report invoked but it is not the intended method, caller is trying: "
-                        + baseRequest.getMethod().name() + " ]";
-                LOG.error(s);
-                //sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.CREATE, baseRequest.getMethod().name(), s, username);
-            }
-
-            SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
-            RawMovementType rawMovementType = request.getRequest();
-
-            String pluginType = request.getType().name();
-
-            rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
-        } catch (RulesModelMapperException | RulesServiceException e) {
-            LOG.error("[ Error when creating movement ] {}", e.getMessage());
-            //sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.CREATE, RulesModuleMethod.SET_MOVEMENT_REPORT.name(), "Error when creating movement", "UVMS");
-        }
-
+    @Override public void setMovementReportReceived(EventMessage message) {
+        // done
     }
-
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

@@ -28,7 +28,7 @@
         <maven.plugins.version>3.5</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
         <equalsverifier.version>2.3.3</equalsverifier.version>
-        <mapstruct.version>1.1.0.Final</mapstruct.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
         <usm4uvms.version>4.0.5-SNAPSHOT</usm4uvms.version>
@@ -86,7 +86,12 @@
 				<version>1.14</version>
 				<type>pom</type>
 			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.18</version>
+            </dependency>
+            <dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-arquillian-deps</artifactId>
 				<version>1.14</version>
@@ -109,7 +114,12 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.18</version>
+            </dependency>
+            <dependency>
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct</artifactId>
 				<version>${mapstruct.version}</version>
@@ -321,6 +331,7 @@
         <module>rest</module>
         <module>service</module>
         <module>message</module>
+        <module>message-impl</module>
         <module>module</module>
     </modules>
 </project>

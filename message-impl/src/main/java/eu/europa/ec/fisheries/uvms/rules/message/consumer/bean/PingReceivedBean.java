@@ -13,12 +13,16 @@ package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import eu.europa.ec.fisheries.uvms.rules.message.event.RulesMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class PingResponseBean {
+public class PingReceivedBean {
+
+    public void pingReceived(RulesMessageEvent messageEvent, String username) {
 
 
+    }
 }

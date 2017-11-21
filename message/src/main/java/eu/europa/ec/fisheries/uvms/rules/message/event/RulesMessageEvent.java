@@ -10,6 +10,25 @@
 
 package eu.europa.ec.fisheries.uvms.rules.message.event;
 
+import javax.jms.TextMessage;
 
-public class RulesEvent {
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
+import lombok.Data;
+
+@Data
+public class RulesMessageEvent {
+
+    private TextMessage message;
+    private SetMovementReportRequest request;
+
+    public RulesMessageEvent(TextMessage message, SetMovementReportRequest reportRequest) {
+        this.message = message;
+        this.request = reportRequest;
+    }
+
+    public RulesMessageEvent(TextMessage message) {
+        this.message = message;
+    }
+
+
 }
