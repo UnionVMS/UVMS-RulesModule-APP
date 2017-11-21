@@ -36,31 +36,34 @@ import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-import eu.europa.ec.fisheries.uvms.rules.message.event.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class SetMovementReportRequestBean {
+public class SetMovementReportRequestMessageBean extends RulesMessageBase {
 
     @EJB
     private RulesService rulesService;
 
-    public void setMovementReportReceived(RulesMessageEvent messageEvent, String username) {
+    @EJB
+    private MessageProducer producer;
 
-        log.info("Validating movement from Exchange Module");
-        try {
-            SetMovementReportRequest eventRequest = messageEvent.getRequest();
-            RawMovementType rawMovementType = eventRequest.getRequest();
-            String pluginType = eventRequest.getType().name();
-            rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
-
-        } catch (RulesServiceException e) {
-            log.error("[ Error when creating movement ] {}", e.getMessage());
-        }
+    @Override
+    MessageProducer getProducer() {
+        return producer;
     }
 
+    @Override
+    void processMessage(RulesMessageEvent message, String username) throws Exception {
+
+        log.info("Validating movement from Exchange Module");
+        SetMovementReportRequest eventRequest = (SetMovementReportRequest) message.getRequest();
+        RawMovementType rawMovementType = eventRequest.getRequest();
+        String pluginType = eventRequest.getType().name();
+        rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
+    }
 }

@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
-
-  This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
-  and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
-  the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rules-message</artifactId>
+    <artifactId>rules-message-impl</artifactId>
     <name>${project.parent.artifactId}-message-impl</name>
     <packaging>ejb</packaging>
 
@@ -39,12 +29,13 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-service</artifactId>
-            <version>3.0.17-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-message</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -52,10 +43,12 @@
 	        <artifactId>uvms-config</artifactId>
 	        <version>${uvms.config.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
@@ -72,10 +65,6 @@
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-monitoring-deps</artifactId>
             <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-            <artifactId>rules-service</artifactId>
         </dependency>
 
     </dependencies>

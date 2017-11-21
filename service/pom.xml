@@ -10,6 +10,7 @@
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
         <version>3.0.17-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- PROPERTIES USED FOR LOGBACK -->
@@ -41,26 +42,21 @@
 
     <dependencies>
         <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-model</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-message</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-monitoring-deps</artifactId>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-            <artifactId>rules-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
-            <artifactId>rules-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rules-message-impl</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-dbaccess-domain</artifactId>

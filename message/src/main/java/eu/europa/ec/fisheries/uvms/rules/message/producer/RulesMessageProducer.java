@@ -15,9 +15,9 @@ import javax.ejb.Local;
 import javax.enterprise.event.Observes;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.uvms.rules.message.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 
 @Local

@@ -24,13 +24,26 @@ import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 import java.util.UUID;
 
-import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.Fault;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -45,90 +58,126 @@ import org.slf4j.MDC;
 public class RulesEventConsumerBean implements MessageListener {
 
     @EJB
-    private SetMovementReportRequestBean movementReportRequestBean;
+    private MessageProducer producer;
 
     @EJB
-    private PingReceivedBean pingReceivedBean;
+    private PingReceivedMessageBean pingReceivedBean;
+
+    @EJB
+    private GetCustomRuleRequestMessageBean customRuleBean;
+
+    @EJB
+    private SetMovementReportRequestMessageBean movementReportBean;
+
+    @EJB
+    private GetTicketsByMovementsRequestMessageBean movementTicketBean;
+
+    @EJB
+    private CountTicketsByMovementsRequestMessageBean countTicketsBean;
+
+    @EJB
+    private GetTicketsAndRulesByMovementsRequestMessageBean ticketsAndRulesMovementBean;
+
+    @EJB
+    private SetFLUXFAReportMessageRequestMessageBean faReportMessageBean;
+
+    @EJB
+    private SetFLUXMDRSyncMessageRulesRequestMessageBean mdrSyncRequestBean;
+
+    @EJB
+    private SetFLUXMDRSyncMessageRulesResponseMessageBean mdrSyncResponseBean;
+
+    @EJB
+    private ReceiveSalesQueryRequestMessageBean salesQueryRequestBean;
+
+    @EJB
+    private ReceiveSalesReportRequestMessageBean receiveSalesReportRequestBean;
+
+    @EJB
+    private SendSalesReportRequestMessageBean sendSalesReportRequestBean;
+
+    @EJB
+    private SendSalesResponseRequestMessageBean sendSalesresponseRequestBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message message) {
+
         String id = UUID.randomUUID().toString();
         MDC.put(MessageConstants.MDC_IDENTIFIER, id);
 
         log.info("Message received in rules");
 
         TextMessage textMessage = (TextMessage) message;
+
         try {
 
-            RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
+            RulesBaseRequest request = JAXBUtils.unMarshallMessage(textMessage.getText(), RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
             String username = request.getUsername();
 
             switch (method) {
                 case SET_MOVEMENT_REPORT:
-                    SetMovementReportRequest reportRequest = JAXBUtils.unMarshallMessage(textMessage.getText(), SetMovementReportRequest.class);
-                    RulesMessageEvent event = new RulesMessageEvent(textMessage, reportRequest);
-                    movementReportRequestBean.setMovementReportReceived(event, username);
+                    movementReportBean.processMessage(textMessage, username, SetMovementReportRequest.class);
                     break;
-
                 case PING:
-
-
-                    pingReceivedBean.pingReceived();
-                    JAXBUtils.unMarshallMessage(textMessage.getText(), )
-                    try {
-                        PingResponse pingResponse = new PingResponse();
-                        pingResponse.setResponse("pong");
-                        String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
-                        producer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
-                    } catch (RulesModelMarshallException | MessageException e) {
-                        LOG.error("[ Error when responding to ping. ] {}", e.getMessage());
-                        errorEvent.fire(eventMessage);
-                    }
+                    pingReceivedBean.pingReceived(new RulesMessageEvent(textMessage), username); // Generify
                     break;
                 case GET_CUSTOM_RULE:
+                    customRuleBean.processMessage(textMessage, username, GetCustomRuleRequest.class);
                     break;
                 case GET_TICKETS_BY_MOVEMENTS:
+                    movementTicketBean.processMessage(textMessage, username, GetTicketsByMovementsRequest.class);
                     break;
                 case COUNT_TICKETS_BY_MOVEMENTS:
+                    countTicketsBean.processMessage(textMessage, username, CountTicketsByMovementsRequest.class);
                     break;
                 case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
+                    ticketsAndRulesMovementBean.processMessage(textMessage, username, GetTicketsAndRulesByMovementsRequest.class);
                     break;
-                case SET_FLUX_FA_REPORT :
+                case SET_FLUX_FA_REPORT:
+                    faReportMessageBean.processMessage(textMessage, username, SetFLUXFAReportMessageRequest.class);
                     break;
-                case SET_FLUX_MDR_SYNC_REQUEST :
+                case SET_FLUX_MDR_SYNC_REQUEST:
+                    mdrSyncRequestBean.processMessage(textMessage, username, SetFLUXMDRSyncMessageRulesRequest.class);
                     break;
-                case GET_FLUX_MDR_SYNC_RESPONSE :
+                case GET_FLUX_MDR_SYNC_RESPONSE:
+                    mdrSyncResponseBean.processMessage(textMessage, username, SetFLUXMDRSyncMessageRulesResponse.class);
                     break;
                 case RECEIVE_SALES_QUERY:
-                    break;
-                case RECEIVE_SALES_RESPONSE:
+                    salesQueryRequestBean.processMessage(textMessage, username, ReceiveSalesQueryRequest.class);
                     break;
                 case RECEIVE_SALES_REPORT:
+                    receiveSalesReportRequestBean.processMessage(textMessage, username, ReceiveSalesReportRequest.class);
+                    break;
+                case RECEIVE_SALES_RESPONSE:
+                    receiveSalesReportRequestBean.processMessage(textMessage, username, ReceiveSalesResponseRequest.class);
                     break;
                 case SEND_SALES_REPORT:
+                    sendSalesReportRequestBean.processMessage(textMessage, username, SendSalesReportRequest.class);
                     break;
                 case SEND_SALES_RESPONSE:
+                    sendSalesresponseRequestBean.processMessage(textMessage, username, SendSalesReportRequest.class);
                     break;
 
                 default:
                     log.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
-                  //  errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));
+                    producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Request method '{}' is not implemented ]"));
                     break;
             }
             if (request.getMethod() == null) {
                 log.error("[ Request method is null ]");
-               // errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
+                producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Request method is null ]"));
             }
 
         } catch (JAXBException | JMSException e) {
-            log.error("[ Error when receiving message in AssetModule. ]");
-            //assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(eu.europa.ec.fisheries.uvms.asset.model.constants.FaultCode.ASSET_MESSAGE, "Method not implemented")));
+            log.error("[ Error when receiving message in Rules. ]");
+            producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Error when receiving message in Rules. ]"));
 
-        } catch (NullPointerException | RulesModelMarshallException e) {
-            log.error("[ Error when receiving message in rules: {}]", e.getMessage());
-           // errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
+        } catch (NullPointerException e) {
+            log.error("[ Error when receiving message in Rules: {}]", e.getMessage());
+            producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Error when receiving message in Rules. ]"));
+
         } finally {
             MDC.remove(MessageConstants.MDC_IDENTIFIER);
         }

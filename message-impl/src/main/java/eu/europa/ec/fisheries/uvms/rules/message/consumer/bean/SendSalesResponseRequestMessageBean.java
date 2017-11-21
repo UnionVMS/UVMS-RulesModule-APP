@@ -10,19 +10,33 @@
 
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-import eu.europa.ec.fisheries.uvms.rules.message.event.RulesMessageEvent;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class PingReceivedBean {
+public class SendSalesResponseRequestMessageBean extends RulesMessageBase {
 
-    public void pingReceived(RulesMessageEvent messageEvent, String username) {
+    @EJB
+    private MessageService rulesService;
 
+    @EJB
+    private MessageProducer producer;
 
+    @Override MessageProducer getProducer() {
+        return producer;
+    }
+
+    @Override void processMessage(RulesMessageEvent message, String username) throws Exception {
+        SendSalesResponseRequest rulesRequest = (SendSalesResponseRequest) message.getRequest();
+        rulesService.sendSalesResponseRequest(rulesRequest);
     }
 }
