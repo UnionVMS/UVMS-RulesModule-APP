@@ -36,8 +36,8 @@ import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,10 +50,10 @@ public class SetMovementReportRequestMessageBean extends RulesMessageBase {
     private RulesService rulesService;
 
     @EJB
-    private MessageProducer producer;
+    private RulesMessageProducer producer;
 
     @Override
-    MessageProducer getProducer() {
+    RulesMessageProducer getProducer() {
         return producer;
     }
 

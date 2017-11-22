@@ -24,6 +24,7 @@ import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 import java.util.UUID;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
@@ -38,11 +39,11 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageReque
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesResponse;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
-import eu.europa.ec.fisheries.uvms.commons.message.api.Fault;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.rules.message.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -58,7 +59,7 @@ import org.slf4j.MDC;
 public class RulesEventConsumerBean implements MessageListener {
 
     @EJB
-    private MessageProducer producer;
+    private RulesMessageProducer producer;
 
     @EJB
     private PingReceivedMessageBean pingReceivedBean;
@@ -161,26 +162,37 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
 
                 default:
-                    log.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
-                    producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Request method '{}' is not implemented ]"));
+                    String errMsg = "[ Request method '{}' is not implemented ]";
+                    log.error(errMsg, request.getMethod().name());
+                    producer.sendModuleErrorResponseMessage(getEventMessage(textMessage, errMsg));
                     break;
             }
             if (request.getMethod() == null) {
-                log.error("[ Request method is null ]");
-                producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Request method is null ]"));
+                String errMsg = "[ Request method is null ]";
+                log.error(errMsg);
+                producer.sendModuleErrorResponseMessage(getEventMessage(textMessage, errMsg));
             }
 
         } catch (JAXBException | JMSException e) {
-            log.error("[ Error when receiving message in Rules. ]");
-            producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Error when receiving message in Rules. ]"));
+            String errMsg = "[ Error when receiving message in Rules. ]";
+            log.error(errMsg, e.getMessage());
+            producer.sendModuleErrorResponseMessage(getEventMessage(textMessage, errMsg));
 
         } catch (NullPointerException e) {
-            log.error("[ Error when receiving message in Rules: {}]", e.getMessage());
-            producer.sendFault(textMessage, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), "[ Error when receiving message in Rules. ]"));
+            String errMsg = "[ Error when receiving message in Rules: {}]";
+            log.error(errMsg, e.getMessage());
+            producer.sendModuleErrorResponseMessage(getEventMessage(textMessage, errMsg));
 
         } finally {
             MDC.remove(MessageConstants.MDC_IDENTIFIER);
         }
+    }
+
+    private EventMessage getEventMessage(TextMessage textMessage, String errMsg) {
+        RulesFault rulesFault = new RulesFault();
+        rulesFault.setCode(FaultCode.RULES_EVENT_SERVICE.getCode());
+        rulesFault.setMessage(errMsg);
+        return new EventMessage(textMessage, rulesFault);
     }
 
 }

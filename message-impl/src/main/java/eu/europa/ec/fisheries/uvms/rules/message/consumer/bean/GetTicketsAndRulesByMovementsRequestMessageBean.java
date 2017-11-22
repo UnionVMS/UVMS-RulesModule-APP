@@ -17,8 +17,8 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +32,9 @@ public class GetTicketsAndRulesByMovementsRequestMessageBean extends RulesMessag
     private RulesService rulesService;
 
     @EJB
-    private MessageProducer producer;
+    private RulesMessageProducer producer;
 
-    @Override MessageProducer getProducer() {
+    @Override RulesMessageProducer getProducer() {
         return producer;
     }
 

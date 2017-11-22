@@ -14,10 +14,11 @@ import static eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils.unMarsh
 
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.uvms.commons.message.api.Fault;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class RulesMessageBase {
 
-    abstract MessageProducer getProducer();
+    abstract RulesMessageProducer getProducer();
 
     public void processMessage(TextMessage message, String username, Class clazz){
 
@@ -37,7 +38,10 @@ public abstract class RulesMessageBase {
 
         } catch (Exception e){
             log.error("[ Error when fetching rule by guid ] {}", e.getMessage());
-            getProducer().sendFault(message, new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), e.getMessage()));
+            RulesFault rulesFault = new RulesFault();
+            rulesFault.setCode(FaultCode.RULES_EVENT_SERVICE.getCode());
+            rulesFault.setMessage(e.getMessage());
+            getProducer().sendModuleErrorResponseMessage(new EventMessage(message, rulesFault));
         }
 
     }

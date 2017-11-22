@@ -179,7 +179,7 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     }
 
     @Override
-    public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
+    public void sendModuleErrorResponseMessage(EventMessage message) {
     	Connection connection=null;
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());

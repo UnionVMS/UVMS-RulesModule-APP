@@ -15,8 +15,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMDRSyncMessageRulesResponse;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,9 +29,9 @@ public class SetFLUXMDRSyncMessageRulesResponseMessageBean extends RulesMessageB
     private MessageService rulesService;
 
     @EJB
-    private MessageProducer producer;
+    private RulesMessageProducer producer;
 
-    @Override MessageProducer getProducer() {
+    @Override RulesMessageProducer getProducer() {
         return producer;
     }
 

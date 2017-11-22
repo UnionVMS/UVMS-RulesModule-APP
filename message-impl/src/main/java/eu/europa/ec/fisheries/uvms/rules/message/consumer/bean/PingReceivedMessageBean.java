@@ -15,11 +15,13 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
 
+import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.module.v1.PingResponse;
-import eu.europa.ec.fisheries.uvms.commons.message.api.Fault;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.rules.message.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PingReceivedMessageBean {
 
     @EJB
-    private MessageProducer producer;
+    private RulesMessageProducer producer;
 
     public void pingReceived(RulesMessageEvent message, String username) {
 
@@ -37,10 +39,13 @@ public class PingReceivedMessageBean {
             PingResponse pingResponse = new PingResponse();
             pingResponse.setResponse("pong");
             producer.sendModuleResponseMessage(message.getMessage(), JAXBUtils.marshallJaxBObjectToString(pingResponse));
-        } catch (JAXBException e) {
-            log.error("[ Error when marshalling ping response ]");
-            producer.sendFault(message.getMessage(), new Fault(FaultCode.RULES_EVENT_SERVICE.getCode(), e.getMessage()));
+        } catch (JAXBException | MessageException e) {
+            log.error("[ Error when sending ping response ]");
+            RulesFault rulesFault = new RulesFault();
+            rulesFault.setMessage(e.getMessage());
+            rulesFault.setCode(FaultCode.RULES_EVENT_SERVICE.getCode());
+            EventMessage eventMessage = new EventMessage(message.getMessage(), rulesFault);
+            producer.sendModuleErrorResponseMessage(eventMessage);
         }
-
     }
 }

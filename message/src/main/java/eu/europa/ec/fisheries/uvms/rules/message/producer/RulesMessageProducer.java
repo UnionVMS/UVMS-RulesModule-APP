@@ -12,12 +12,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.producer;
 
 import javax.ejb.Local;
-import javax.enterprise.event.Observes;
 import javax.jms.TextMessage;
 
 import eu.europa.ec.fisheries.uvms.rules.message.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 
 @Local
@@ -27,5 +25,5 @@ public interface RulesMessageProducer {
 
     void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
 
-    void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message);
+    void sendModuleErrorResponseMessage(EventMessage message);
 }
