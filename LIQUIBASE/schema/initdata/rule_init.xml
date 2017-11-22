@@ -8333,14 +8333,14 @@
         <insert tableName="rule">
             <column name="rule_id" value="10903"/>
             <column name="br_id" value="SALE-L03-00-0012"/>
-            <column name="expression" value="(isReport() || isQuery()) &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="expression" value="(isReport() || isQuery()) &amp;&amp; !isEmpty(IDS) &amp;&amp; !matchWithFluxTL(IDS)"/>
             <column name="note" value=""/>
             <column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1002"/>
             <column name="property_names" value="IDS"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
 
         <!-- Sales_Document  -->
