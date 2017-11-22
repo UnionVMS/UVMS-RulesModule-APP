@@ -102,41 +102,30 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @Override
     public boolean isReceptionDate48hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact) {
-        if (fact == null ||
-                isEmpty(fact.getSalesReports()) ||
-                fact.getSalesReports().get(0) == null ||
-                isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()) ||
-                fact.getSalesReports().get(0).getIncludedSalesDocuments()
-                        .get(0) == null ||
-                isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()
-                        .get(0).getSpecifiedFishingActivities()) ||
-                fact.getFLUXReportDocument() == null ||
-                fact.getFLUXReportDocument().getCreationDateTime() == null ||
-                fact.getFLUXReportDocument().getCreationDateTime().getDateTime() == null) {
-            // Can't let this continue, will cause nullpointers
+        try {
+            String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
+
+            Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTrip(fishingTripID);
+
+            if (!fishingTripResponse.isPresent()) {
+                /**
+                 * In case the query returns no values
+                 * (which means there was no fishing trip found with the ID specified in the sales note),
+                 * we don't fire the rule
+                 */
+                return false;
+            }
+
+            FishingTripResponse fishingTrip = fishingTripResponse.get();
+
+            DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
+            DateTime dateTimeFromLandingActivity = new DateTime(fishingTrip.getFishingActivityLists().get(0).getAcceptedDateTime().toGregorianCalendar());
+
+            return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity);
+        } catch (NullPointerException | IndexOutOfBoundsException ex) {
+            // if anything is not filled in, this rule cannot be evaluated properly
             return false;
         }
-
-        String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
-
-        Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTrip(fishingTripID);
-
-        if (!fishingTripResponse.isPresent()) {
-            /**
-             * In case the query returns no values
-             * (which means there was no fishing trip found with the ID specified in the sales note),
-             * we don't fire the rule
-             */
-            return false;
-        }
-
-        FishingTripResponse fishingTrip = fishingTripResponse.get();
-
-        DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
-        DateTime dateTimeFromLandingActivity = new DateTime(fishingTrip.getFishingActivityLists().get(0).getAcceptedDateTime().toGregorianCalendar());
-
-        return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity);
-
     }
 
     @Override
