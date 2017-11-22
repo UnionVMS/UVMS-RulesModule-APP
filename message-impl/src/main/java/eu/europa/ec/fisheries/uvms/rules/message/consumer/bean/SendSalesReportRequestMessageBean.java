@@ -8,36 +8,37 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.uvms.rules.message.RulesMessageEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
-/**
- * @author Gregory Rinaldi
- */
 @Stateless
 @LocalBean
 @Slf4j
-public class MDRCacheServiceBean {
+public class SendSalesReportRequestMessageBean extends RulesMessageBase {
 
     @EJB
-    private MDRCache cache;
+    private MessageService rulesService;
 
-    public void loadMDRCache(){
-    log.debug("[START] Loading MDR Cache..");
-        for(MDRAcronymType acronymType :  MDRAcronymType.values()){
-            List<ObjectRepresentation> values = cache.getEntry(acronymType);
-            MDRCacheHolder.getInstance().addToCache(acronymType,values);
-        }
-        log.debug("[END] Cache loading is complete.");
+    @EJB
+    private RulesMessageProducer producer;
+
+    @Override
+    RulesMessageProducer getProducer() {
+        return producer;
     }
 
+    @Override
+    void processMessage(RulesMessageEvent message, String username) throws Exception {
+        SendSalesReportRequest rulesRequest = (SendSalesReportRequest) message.getRequest();
+        rulesService.sendSalesReportRequest(rulesRequest);
+    }
 }
