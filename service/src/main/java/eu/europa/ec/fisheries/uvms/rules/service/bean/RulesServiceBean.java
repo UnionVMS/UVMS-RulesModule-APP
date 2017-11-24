@@ -572,7 +572,8 @@ public class RulesServiceBean implements RulesService {
                 RawMovementType rawMovementType = alarm.getRawMovement();
                 // TODO: Use better type (some variation of PluginType...)
                 String pluginType = alarm.getPluginType();
-                setMovementReportReceived(rawMovementType, pluginType, username);
+                //TODO: This needs to be checkout out
+                setMovementReportReceived(rawMovementType, pluginType, username, rawMovementType.getInternalReferenceNumber());
             }
 //            return RulesDataSourceResponseMapper.mapToAlarmListFromResponse(response, messageId);
             // TODO: Better
@@ -606,7 +607,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType, String username) throws RulesServiceException {
+    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType, String username, String jmsXGroupId) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
             Date auditTotalTimestamp = new Date();
@@ -643,7 +644,7 @@ public class RulesServiceBean implements RulesService {
             auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
-                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
+                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username, jmsXGroupId);
 
                 LOG.info("Validating movement from Movement Module");
                 rulesValidator.evaluate(movementFact);
@@ -680,7 +681,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException, RulesServiceException {
+    private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username, final String jmsXGroupId) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException, RulesServiceException {
         int threadNum = 5;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
@@ -716,7 +717,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
-                return sendToMovement(assetGuid, rawMovement, username);
+                return sendToMovement(assetGuid, rawMovement, username, jmsXGroupId);
             }
         });
         executor.execute(sendToMovementTask);
@@ -889,7 +890,7 @@ public class RulesServiceBean implements RulesService {
         return numberOfMovements;
     }
 
-    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement, String username) {
+    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement, String username, String jmsXGroupId) {
         LOG.info("Send the validated raw position to Movement");
 
         Date auditTimestamp = new Date();

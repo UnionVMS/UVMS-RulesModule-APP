@@ -24,6 +24,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 public interface RulesMessageProducer {
 
     String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException;
+    String sendDataSourceMessage(String text, DataSourceQueue queue, String jmsXGroupId) throws MessageException;
 
     void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
 

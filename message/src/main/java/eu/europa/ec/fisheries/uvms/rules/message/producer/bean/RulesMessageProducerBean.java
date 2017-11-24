@@ -84,6 +84,11 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
+        return sendDataSourceMessage(text, queue, null);
+    }
+
+    @Override
+    public String sendDataSourceMessage(String text, DataSourceQueue queue, String jmsXGroupId) throws MessageException {
         LOG.debug("Sending message to {}", queue.name());
 
         Connection connection=null;
@@ -93,6 +98,9 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
+            if(jmsXGroupId != null) {
+                message.setStringProperty("JMSXGroupID", jmsXGroupId);
+            }
 
             switch (queue) {
                 case MOVEMENT:

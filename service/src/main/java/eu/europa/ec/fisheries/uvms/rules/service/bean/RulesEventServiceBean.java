@@ -118,6 +118,7 @@ public class RulesEventServiceBean implements EventService {
     public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
         LOG.info("Validating movement from Exchange Module");
         try {
+            String jmsXGroupId = message.getJmsMessage().getStringProperty("JMSXGroupId");
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             String username = baseRequest.getUsername();
 
@@ -133,8 +134,8 @@ public class RulesEventServiceBean implements EventService {
 
             String pluginType = request.getType().name();
 
-            rulesService.setMovementReportReceived(rawMovementType, pluginType, username);
-        } catch (RulesModelMapperException | RulesServiceException e) {
+            rulesService.setMovementReportReceived(rawMovementType, pluginType, username, jmsXGroupId);
+        } catch (JMSException | RulesModelMapperException | RulesServiceException e) {
             LOG.error("[ Error when creating movement ] {}", e.getMessage());
             //sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.CREATE, RulesModuleMethod.SET_MOVEMENT_REPORT.name(), "Error when creating movement", "UVMS");
         }
