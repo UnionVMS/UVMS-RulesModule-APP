@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.16-SNAPSHOT</version>
+        <version>3.0.17-SNAPSHOT</version>
     </parent>
 
     <artifactId>liquibase</artifactId>
@@ -171,7 +171,7 @@
 							<images>
 								<image>
 									<alias>postgres</alias>
-									<name>uvms/postgres-base:3.14.0</name>
+									<name>uvms/postgres-base:3.19.0</name>
 									<run>
 										<net>bridge</net>
 										<namingStrategy>none</namingStrategy>

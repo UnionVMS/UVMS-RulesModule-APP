@@ -1131,7 +1131,7 @@
             <column name="rule_id" value="42"/>
             <column name="br_id" value="FA-L02-00-0042"/>
             <column name="expression"
-                    value="creationDateTime == null || acceptanceDateTime == null || acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
+                    value="creationDateTime == null || acceptanceDateTime == null || !acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
             <column name="note"
                     value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Acceptance date/time not before report creation date/time."/>
