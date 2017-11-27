@@ -63,6 +63,9 @@ public class TemplateEngineBeanTest {
     @Mock
     FactRuleEvaluator ruleEvaluator;
 
+    @Mock
+    RulesStatusUpdater rulesStatusUpdaterBean;
+
     @Test(expected = RulesValidationException.class)
     public void testEvaluateEmptyFacts() throws RulesValidationException {
         List<AbstractFact> facts = new ArrayList<>();
