@@ -7378,19 +7378,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="11532"/>
-            <column name="br_id" value="SALE-L02-00-0103"/>
-            <column name="expression" value="!isListEmptyOrBetweenNumberOfItems(relatedFLUXLocations,1,1)"/>
-            <column name="note" value=""/>
-            <column name="message" value="Only one occurrence"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1013"/>
-            <column name="property_names" value="relatedFLUXLocations"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="11539"/>
             <column name="br_id" value="SALE-L02-00-0181"/>
             <column name="expression" value="!isRelatedFLUXLocationsEmptyOrTypeLocation()"/>
