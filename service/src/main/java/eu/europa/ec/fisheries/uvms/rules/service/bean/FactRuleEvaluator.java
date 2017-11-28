@@ -22,6 +22,19 @@ import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,12 +52,6 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.definition.KnowledgePackage;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.*;
-
 @Slf4j
 @Singleton
 @LocalBean
@@ -59,7 +66,7 @@ public class FactRuleEvaluator {
     private List<AbstractFact> exceptionsList = new ArrayList<>();
     private List<String> systemPackagesPaths = new ArrayList<>();
 
-
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void reInitializeKieSystem() {
         failedRules = new ArrayList<>();
         exceptionsList = new ArrayList<>();
@@ -75,6 +82,7 @@ public class FactRuleEvaluator {
         systemPackagesPaths.clear();
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
@@ -87,7 +95,6 @@ public class FactRuleEvaluator {
         Collection<KiePackage> packages = createAllPackages(drlsAndRules);
         buildAllPackages(packages);
     }
-
 
     public void validateFact(Collection<AbstractFact> facts) {
         KieSession ksession = null;
@@ -129,18 +136,7 @@ public class FactRuleEvaluator {
 
     }
 
-    public List<AbstractFact> getExceptionsList() {
-        return exceptionsList;
-    }
-
-    public void setExceptionsList(List<AbstractFact> exceptionsList) {
-        this.exceptionsList = exceptionsList;
-    }
-
-    public List<String> getFailedRules() {
-        return failedRules;
-    }
-
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyMap();
@@ -168,6 +164,7 @@ public class FactRuleEvaluator {
         return drlsAndBrId;
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
         if (CollectionUtils.isEmpty(externalRules)) {
             return Collections.emptyMap();
@@ -181,7 +178,7 @@ public class FactRuleEvaluator {
         return drlsAndBrId;
     }
 
-
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
         KieContainer container = null;
@@ -210,7 +207,7 @@ public class FactRuleEvaluator {
         return compiledPackages;
     }
 
-
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void buildAllPackages(Collection<KiePackage> packages) {
         if (packages == null || packages.isEmpty()) {
             log.error("Rule not initialized as there is not Rules defined");
@@ -232,5 +229,16 @@ public class FactRuleEvaluator {
         });
 
         kBase.addKnowledgePackages(allPackages);
+    }
+
+
+    public List<AbstractFact> getExceptionsList() {
+        return exceptionsList;
+    }
+    public void setExceptionsList(List<AbstractFact> exceptionsList) {
+        this.exceptionsList = exceptionsList;
+    }
+    public List<String> getFailedRules() {
+        return failedRules;
     }
 }
