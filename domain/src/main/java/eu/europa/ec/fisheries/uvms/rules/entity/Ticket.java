@@ -9,6 +9,7 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
 import javax.persistence.Column;
@@ -28,8 +29,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
+import lombok.Data;
 
-//@formatter:off
 @Entity
 @Table(name = "ticket")
 @XmlRootElement
@@ -41,10 +42,8 @@ import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
         @NamedQuery(name = UvmsConstants.COUNT_TICKETS_BY_MOVEMENTS, query = "SELECT count(t) FROM Ticket t where t.movementGuid IN :movements"),
         @NamedQuery(name = UvmsConstants.COUNT_ASSETS_NOT_SENDING, query = "SELECT count(t) FROM Ticket t where t.ruleGuid = :ruleGuid")
 })
-//@formatter:on
+@Data
 public class Ticket implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -98,113 +97,4 @@ public class Ticket implements Serializable {
         this.guid = UUID.randomUUID().toString();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getGuid() {
-        return guid;
-    }
-
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
-
-    public String getAssetGuid() {
-        return assetGuid;
-    }
-
-    public void setAssetGuid(String assetGuid) {
-        this.assetGuid = assetGuid;
-    }
-
-    public String getMobileTerminalGuid() {
-        return mobileTerminalGuid;
-    }
-
-    public void setMobileTerminalGuid(String mobileTerminalGuid) {
-        this.mobileTerminalGuid = mobileTerminalGuid;
-    }
-
-    public String getChannelGuid() {
-        return channelGuid;
-    }
-
-    public void setChannelGuid(String channelGuid) {
-        this.channelGuid = channelGuid;
-    }
-
-    public String getRuleGuid() {
-        return ruleGuid;
-    }
-
-    public void setRuleGuid(String ruleGuid) {
-        this.ruleGuid = ruleGuid;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public String getMovementGuid() {
-        return movementGuid;
-    }
-
-    public void setMovementGuid(String movementGuid) {
-        this.movementGuid = movementGuid;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public Long getTicketCount() { return ticketCount; }
-
-    public void setTicketCount(Long ticketCount) {
-        this.ticketCount = ticketCount;
-    }
 }

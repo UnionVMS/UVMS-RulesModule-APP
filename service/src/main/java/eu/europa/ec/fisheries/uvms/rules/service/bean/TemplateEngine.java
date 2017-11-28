@@ -13,19 +13,22 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import java.util.ArrayList;
-import java.util.List;
-
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -41,26 +44,29 @@ public class TemplateEngine {
     private FactRuleEvaluator ruleEvaluator;
 
     @EJB
-    private MDRCache mdrCache;
+    private RulesStatusUpdater rulesStatusUpdaterBean;
 
     @PostConstruct
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void initialize() {
-        log.info("[START] Initializing templates and rules...");
+        final long initTime = System.currentTimeMillis();
+        log.info("[START] Initializing templates and rules... Started @ : [ "+new Date(initTime)+" ] ..");
         ruleEvaluator.initializeRules(getAllTemplates());
-        log.info("[START] Initializing MDR cache...");
-        mdrCache.init();
-        log.info("[START] Updating Rules Status...");
-        updateRulesStatus(ruleEvaluator.getFailedRules());
-        log.info("[END] Finished Initializing Templates.");
+        log.info("[END] Finished Initializing templates and rules...");
+        log.info("[INFO] It took ["+ TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - initTime)+"] minutes for drools engine to be initialized!");
+        rulesStatusUpdaterBean.updateRulesStatus(ruleEvaluator.getFailedRules());
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void reInitialize() {
-        log.info("Re-Initializing templates and rules [START]");
+        log.info("[START] Re-Initializing templates and rules..");
         ruleEvaluator.reInitializeKieSystem();
         initialize();
-        log.info("Re-Initialization of templates and rules [FINISH]");
+        log.info("[END] Re-Initialization of templates and rules..");
     }
 
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
         if (CollectionUtils.isEmpty(facts)) {
             throw new RulesValidationException("No facts available for validation");
@@ -70,6 +76,15 @@ public class TemplateEngine {
         facts.addAll(ruleEvaluator.getExceptionsList());
     }
 
+
+    @PreDestroy
+    public void shutDown() {
+        log.info("[START] TemplateEngine shutting down. Going to destroy the Drools KnowledgeBase..");
+        ruleEvaluator.reInitializeKieSystem();
+        log.info("[END] Destroyed the Drools KnowledgeBase..");
+    }
+
+
     private List<TemplateRuleMapDto> getAllTemplates() {
         try {
             return rulesDb.getAllFactTemplatesAndRules();
@@ -78,12 +93,4 @@ public class TemplateEngine {
         }
     }
 
-    private void updateRulesStatus(List<String> failedBrIds) {
-        try {
-            rulesDb.updateFailedRules(failedBrIds);
-            rulesDb.updateRuleStatus(failedBrIds.isEmpty() ? RuleStatusType.SUCCESSFUL : RuleStatusType.FAILED);
-        } catch (RulesModelException e) {
-            throw new IllegalStateException(e);
-        }
-    }
 }

@@ -11,13 +11,8 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.TextMessage;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import static java.util.Collections.emptyList;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -27,19 +22,16 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.TextMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.TextMessage;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
 
 /**
  * @author Gregory Rinaldi
@@ -55,6 +47,23 @@ public class MDRCache {
 
     @EJB
     private RulesMessageProducer producer;
+
+
+    @PostConstruct
+    public void init(){
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                .refreshAfterWrite(1, TimeUnit.HOURS)
+                .build(
+                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
+                            @Override
+                            public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
+                                return mdrCodeListByAcronymType(acronymType);
+                            }
+                        }
+                );
+    }
 
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
         List<ObjectRepresentation> result = emptyList();
@@ -79,18 +88,4 @@ public class MDRCache {
         return null;
     }
 
-    public void init(){
-        cache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                .refreshAfterWrite(1, TimeUnit.HOURS)
-                .build(
-                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
-                            @Override
-                            public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
-                                return mdrCodeListByAcronymType(acronymType);
-                            }
-                        }
-                );
-    }
 }
