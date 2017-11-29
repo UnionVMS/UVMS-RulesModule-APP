@@ -20,8 +20,24 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-
 import static java.util.Collections.singletonList;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
@@ -63,22 +79,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -416,7 +416,8 @@ public class MessageServiceBean implements MessageService {
         validationResultDocument.setCreationDateTime(dateTime);
 
         IDType idType = new IDType();
-        idType.setValue("XEU"); // TODO to be received from Global config nation_code
+        String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+        idType.setValue(StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU");
         idType.setSchemeID("FLUX_GP_PARTY");
         validationResultDocument.setValidatorID(idType);
 
