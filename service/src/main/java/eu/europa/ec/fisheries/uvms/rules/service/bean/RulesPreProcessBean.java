@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
@@ -44,19 +45,12 @@ public class RulesPreProcessBean {
     public ValidationResultDto getValidationResultIfExist(List<String> ids) throws RulesModelException {
         List<ValidationMessageType> validationMessages = rulesDomainModel.getValidationMessagesById(ids);
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        if (validationMessages == null || validationMessages.isEmpty()) {
+        if (CollectionUtils.isEmpty(validationMessages)) {
             validationResultDto.setIsOk(true);
         } else {
-            boolean isError = false;
-            boolean isWarning = false;
             for (ValidationMessageType validationMessageType : validationMessages) {
-                if (validationMessageType.getErrorType().equals(ErrorType.ERROR)) {
-                    isError = true;
-                } else {
-                    isWarning = true;
-                }
-                validationResultDto.setIsError(isError);
-                validationResultDto.setIsWarning(isWarning);
+                validationResultDto.setIsError(validationMessageType.getErrorType().equals(ErrorType.ERROR));
+                validationResultDto.setIsWarning(!validationMessageType.getErrorType().equals(ErrorType.ERROR));
             }
             validationResultDto.setValidationMessages(validationMessages);
         }

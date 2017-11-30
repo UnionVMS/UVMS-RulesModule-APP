@@ -7285,19 +7285,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10220"/>
-            <column name="br_id" value="SALE-L02-00-0061"/>
-            <column name="expression" value="unitQuantity != null &amp;&amp; weightMeasure != null"/>
-            <column name="note" value=""/>
-            <column name="message" value="Both values should not be available"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="WARNING"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="unitQuantity, weightMeasure"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10224"/>
             <column name="br_id" value="SALE-L02-00-0080"/>
             <column name="expression" value="isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption()"/>
@@ -7388,19 +7375,6 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1013"/>
             <column name="property_names" value="relatedVesselTransportMeans"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="11532"/>
-            <column name="br_id" value="SALE-L02-00-0103"/>
-            <column name="expression" value="!isListEmptyOrBetweenNumberOfItems(relatedFLUXLocations,1,1)"/>
-            <column name="note" value=""/>
-            <column name="message" value="Only one occurrence"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1013"/>
-            <column name="property_names" value="relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
