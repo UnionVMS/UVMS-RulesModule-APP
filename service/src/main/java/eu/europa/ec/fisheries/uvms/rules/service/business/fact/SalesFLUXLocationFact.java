@@ -151,8 +151,8 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
     public boolean isLocationNotInCountry() {
         List<ObjectRepresentation> locations = MDRCacheHolder.getInstance()
                 .getObjectRepresentationList(MDRAcronymType.LOCATION);
-        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
-                ("unloCode", id.getValue(), "code", countryID.getValue(), locations);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
+                id.getValue(), "placesCode", countryID.getValue(), locations);
     }
 
     @Override
