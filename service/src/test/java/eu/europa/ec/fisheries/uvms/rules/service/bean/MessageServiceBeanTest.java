@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -23,10 +24,7 @@ import javax.xml.datatype.DatatypeFactory;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -70,7 +68,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
  * Created by kovian on 6/7/2017.
  */
 public class MessageServiceBeanTest {
-
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
 
     @Rule
@@ -98,13 +95,13 @@ public class MessageServiceBeanTest {
     RulesConfigurationCache ruleModuleCache;
 
     private IDType idType;
+
     private CodeType codeType;
     private DelimitedPeriod delimitedPeriod;
     private DateTimeType dateTimeType;
     private Date date;
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
-
     private FLUXFAQueryMessage fluxfaQueryMessage;
 
     @Before
@@ -219,6 +216,34 @@ public class MessageServiceBeanTest {
         messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
+    @Test
+    public void guidOrFluxOnValueWhenBrIdIsInListOfIds() throws Exception {
+        ValidationMessageType validationMessageType = new ValidationMessageType();
+        validationMessageType.setBrId("SALE-L01-00-0011");
+
+        ValidationResultDto validationResultDto = new ValidationResultDto();
+        validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
+
+
+        boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);
+
+        assertEquals(true, guidOrFluxOnValue);
+    }
+
+    @Test
+    public void guidOrFluxOnValueWhenBrIdIsNotInListOfIds() throws Exception {
+        ValidationMessageType validationMessageType = new ValidationMessageType();
+        validationMessageType.setBrId("SALE-L01-00-0012");
+
+        ValidationResultDto validationResultDto = new ValidationResultDto();
+        validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
+
+
+        boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);
+
+        assertEquals(false, guidOrFluxOnValue);
+    }
+
     private ValidationResultDto getValidationResult() {
         ValidationResultDto faReportValidationResult = new ValidationResultDto();
         faReportValidationResult.setIsError(true);
@@ -257,5 +282,6 @@ public class MessageServiceBeanTest {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
         return JAXBUtils.unMarshallMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
+
 
 }

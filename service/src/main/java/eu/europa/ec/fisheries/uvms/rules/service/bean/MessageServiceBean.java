@@ -34,10 +34,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.Report;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
@@ -64,12 +61,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationI
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -127,6 +119,8 @@ public class MessageServiceBean implements MessageService {
     @EJB
     private SalesMessageFactory salesMessageFactory;
 
+    public static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
+
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
@@ -146,7 +140,15 @@ public class MessageServiceBean implements MessageService {
 
             //send to sales
             if (validationResult.isError()) {
-                String requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesQueryRequest.getMessageGuid(), validationResult, receiveSalesQueryRequest.getPluginType(), receiveSalesQueryRequest.getSender());
+                String requestForSales;
+                if (shouldUseFluxOn(validationResult)) {
+                    requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesQueryRequest.getOnValue(),
+                            validationResult, receiveSalesQueryRequest.getPluginType(), receiveSalesQueryRequest.getSender(), SalesIdType.FLUXTL_ON);
+                } else {
+                    requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesQueryRequest.getMessageGuid(),
+                            validationResult, receiveSalesQueryRequest.getPluginType(), receiveSalesQueryRequest.getSender(), SalesIdType.GUID);
+                }
+
                 sendToSales(requestForSales);
             } else {
                 String requestForSales = salesMessageFactory.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), validationResult, receiveSalesQueryRequest.getPluginType());
@@ -179,7 +181,7 @@ public class MessageServiceBean implements MessageService {
 
             //send to sales
             if (validationResult.isError()) {
-                String requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult, receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender());
+                String requestForSales = createInvalidSalesResponseMessage(receiveSalesReportRequest, validationResult);
                 sendToSales(requestForSales);
             } else {
                 String requestForSales = salesMessageFactory.createSalesReportRequest(receiveSalesReportRequest.getRequest(), validationResult, receiveSalesReportRequest.getPluginType());
@@ -192,6 +194,27 @@ public class MessageServiceBean implements MessageService {
         } catch (SalesMarshallException | RulesValidationException | MessageException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
+    }
+
+    private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResultDto validationResult) throws SalesMarshallException {
+        String requestForSales;
+        if (shouldUseFluxOn(validationResult)) {
+            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
+                    receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.FLUXTL_ON);
+        } else {
+            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult,
+                    receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.GUID);
+        }
+        return requestForSales;
+    }
+
+    protected boolean shouldUseFluxOn(ValidationResultDto validationResult) {
+        for (ValidationMessageType validationMessage : validationResult.getValidationMessages()) {
+            if (RULES_TO_USE_ON_VALUE.contains(validationMessage.getBrId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
