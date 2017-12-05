@@ -1588,7 +1588,7 @@ public class AbstractFactTest {
         IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
         IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
-        assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+        assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
@@ -1597,7 +1597,7 @@ public class AbstractFactTest {
         IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
         IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
-        assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+        assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
@@ -1606,7 +1606,7 @@ public class AbstractFactTest {
         IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", StringUtils.EMPTY);
         IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
-        assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
+        assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
