@@ -247,7 +247,7 @@ public abstract class AbstractFact {
 
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
-            return true;
+            return false;
         }
 
         idTypes = new ArrayList<>(idTypes);
@@ -256,11 +256,11 @@ public abstract class AbstractFact {
 
         for (IdType idType : idTypes) {
             if (!isSchemeIdPresent(idType)) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -1366,7 +1366,6 @@ public abstract class AbstractFact {
                 }
             }
         }
-
         return false;
     }
 
@@ -1401,7 +1400,7 @@ public abstract class AbstractFact {
 
         String[] idValueArray = null;
 
-        if (idType != null) {
+        if (idType != null && idType.getValue()!=null) {
             try {
                 idValueArray = idType.getValue().split(separator);
             } catch (NullPointerException | PatternSyntaxException ex) {
