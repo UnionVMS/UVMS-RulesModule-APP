@@ -118,7 +118,7 @@ public class RulesEventServiceBean implements EventService {
     public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
         LOG.info("Validating movement from Exchange Module");
         try {
-            String jmsXGroupId = message.getJmsMessage().getStringProperty("JMSXGroupId");
+            String jmsXGroupId = message.getJmsMessage().getStringProperty("JMSXGroupID");
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             String username = baseRequest.getUsername();
 
