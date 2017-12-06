@@ -24,6 +24,7 @@ import static java.util.Collections.singletonList;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.XMLConstants;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -118,6 +119,9 @@ public class MessageServiceBean implements MessageService {
 
     @EJB
     private RulesPreProcessBean rulesPreProcessBean;
+
+    @Inject
+    private CodeTypeMapper codeTypeMapper;
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
@@ -436,7 +440,7 @@ public class MessageServiceBean implements MessageService {
             level.setValue(validationMessage.getLevel());
             analysis.setLevelCode(level);
 
-            eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = CodeTypeMapper.INSTANCE.mapErrorType(validationMessage.getErrorType());
+            eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = codeTypeMapper.mapErrorType(validationMessage.getErrorType());
 
             if (errorType != null){
                 CodeType type = new CodeType();

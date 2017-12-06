@@ -42,6 +42,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -50,6 +52,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
@@ -84,8 +87,12 @@ public class MessageServiceBeanTest {
     @Mock
     RulesEngineBean rulesEngine;
 
+    @Spy
+    private CodeTypeMapper mapper = new CodeTypeMapperImpl();
+
     @Mock
     RulePostProcessBean rulePostprocessBean;
+
     @Mock
     RulesConfigurationCache ruleModuleCache;
 
@@ -102,6 +109,7 @@ public class MessageServiceBeanTest {
     @Before
     @SneakyThrows
     public void before(){
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 
         date = sdf.parse("31-08-1982 10:20:56");
