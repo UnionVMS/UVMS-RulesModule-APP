@@ -44,8 +44,8 @@ public class ObjectRepresentationHelper {
         Collection<ObjectRepresentation> foundObjectRepresentation = findWithColumnAndValue(column1, value1, objectRepresentations);
         for (ObjectRepresentation objectRepresentation : foundObjectRepresentation) {
             Optional<String> foundColumnValue = getValueOfColumn(column2, objectRepresentation);
-            if (foundColumnValue.isPresent()) {
-                return foundColumnValue.get().equalsIgnoreCase(value2);
+            if (foundColumnValue.isPresent() && foundColumnValue.get().equalsIgnoreCase(value2)) {
+                return true;
             }
         }
 

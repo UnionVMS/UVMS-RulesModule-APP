@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class ObjectRepresentationHelperTest {
 
     @Test
-    public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenTrue() throws Exception {
+    public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenTrueWithOneMatchForColumnOne() throws Exception {
         String column1 = "test";
         String value1 = "testValue";
         String column2 = "terminal_ind";
@@ -30,6 +30,31 @@ public class ObjectRepresentationHelperTest {
         ObjectRepresentation objectRepresentationB = new ObjectRepresentation(Arrays.asList(columnDataType1ForObjectB, columnDataType2ForObjectB));
 
         List<ObjectRepresentation> objectRepresentations = Arrays.asList(objectRepresentationA, objectRepresentationB);
+
+        assertTrue(ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
+                (column1, value1, column2, value2, objectRepresentations));
+    }
+
+    @Test
+    public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenTrueWithTwoMatchesForColumnOne() throws Exception {
+        String column1 = "test";
+        String value1 = "testValue";
+        String column2 = "terminal_ind";
+        String value2 = "true";
+
+        ColumnDataType columnDataType1ForObjectA = new ColumnDataType(column1, value1, String.class.toString());
+        ColumnDataType columnDataType2ForObjectA = new ColumnDataType(column2, "another value", String.class.toString());
+        ObjectRepresentation objectRepresentationA = new ObjectRepresentation(Arrays.asList(columnDataType1ForObjectA, columnDataType2ForObjectA));
+
+        ColumnDataType columnDataType1ForObjectB = new ColumnDataType(column1, "another code", String.class.toString());
+        ColumnDataType columnDataType2ForObjectB = new ColumnDataType(column2, "another value", String.class.toString());
+        ObjectRepresentation objectRepresentationB = new ObjectRepresentation(Arrays.asList(columnDataType1ForObjectB, columnDataType2ForObjectB));
+
+        ColumnDataType columnDataType1ForObjectC = new ColumnDataType(column1, value1, String.class.toString());
+        ColumnDataType columnDataType2ForObjectC = new ColumnDataType(column2, value2, String.class.toString());
+        ObjectRepresentation objectRepresentationC = new ObjectRepresentation(Arrays.asList(columnDataType1ForObjectC, columnDataType2ForObjectC));
+
+        List<ObjectRepresentation> objectRepresentations = Arrays.asList(objectRepresentationA, objectRepresentationB, objectRepresentationC);
 
         assertTrue(ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValues
                 (column1, value1, column2, value2, objectRepresentations));

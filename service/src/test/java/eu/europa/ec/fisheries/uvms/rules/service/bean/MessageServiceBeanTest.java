@@ -13,21 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
@@ -36,7 +21,6 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
@@ -56,15 +40,26 @@ import org.mockito.junit.MockitoRule;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 6/7/2017.
@@ -80,9 +75,6 @@ public class MessageServiceBeanTest {
     MessageServiceBean messageServiceBean;
 
     @Mock
-    RulesResponseConsumer consumer;
-
-    @Mock
     RulesMessageProducer producer;
 
     @Mock
@@ -90,9 +82,6 @@ public class MessageServiceBeanTest {
 
     @Mock
     RulePostProcessBean rulePostprocessBean;
-
-    @Mock
-    RulesPreProcessBean rulesPreProcessBean;
 
     @Mock
     RulesConfigurationCache ruleModuleCache;
