@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.schema.sales.SalesIdType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
@@ -30,9 +31,9 @@ public class SalesMessageFactory {
     }
 
 
-    public String createRespondToInvalidMessageRequest(String messageGuid, ValidationResultDto validationResult, String pluginType, String sender) throws SalesMarshallException {
+    public String createRespondToInvalidMessageRequest(String messageGuid, ValidationResultDto validationResult, String pluginType, String sender, SalesIdType salesIdType) throws SalesMarshallException {
         List<ValidationQualityAnalysisType> validationQualityAnalysis = mapToValidationQualityAnalysis(validationResult);
-        return SalesModuleRequestMapper.createRespondToInvalidMessageRequest(messageGuid, validationQualityAnalysis, pluginType, sender);
+        return SalesModuleRequestMapper.createRespondToInvalidMessageRequest(messageGuid, validationQualityAnalysis, pluginType, sender, salesIdType);
     }
 
     public String createSalesReportRequest(String request, ValidationResultDto validationResult, String pluginType) throws SalesMarshallException {
