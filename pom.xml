@@ -28,7 +28,7 @@
         <maven.plugins.version>3.5</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
         <equalsverifier.version>2.3.3</equalsverifier.version>
-        <mapstruct.version>1.1.0.Final</mapstruct.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
         <usm4uvms.version>4.0.5</usm4uvms.version>
