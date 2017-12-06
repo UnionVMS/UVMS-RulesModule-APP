@@ -10,17 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import org.mapstruct.Mapper;
 import org.mapstruct.ValueMapping;
 import org.mapstruct.ValueMappings;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "cdi")
 public interface CodeTypeMapper {
-
-    CodeTypeMapper INSTANCE = Mappers.getMapper(CodeTypeMapper.class);
 
     @ValueMappings({
             @ValueMapping(source = "WARNING", target = "WAR"),
