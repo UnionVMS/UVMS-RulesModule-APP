@@ -53,7 +53,7 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String createReceiveSalesReportRequest(String salesReport, String messageGuid, String pluginType, String logGuid, String sender) throws RulesModelMarshallException {
+    public static String createReceiveSalesReportRequest(String salesReport, String messageGuid, String pluginType, String logGuid, String sender, String on) throws RulesModelMarshallException {
         ReceiveSalesReportRequest receiveSalesReportRequest = new ReceiveSalesReportRequest();
         receiveSalesReportRequest.setMethod(RulesModuleMethod.RECEIVE_SALES_REPORT);
         receiveSalesReportRequest.setRequest(salesReport);
@@ -61,10 +61,11 @@ public class RulesModuleRequestMapper {
         receiveSalesReportRequest.setLogGuid(logGuid);
         receiveSalesReportRequest.setSender(sender);
         receiveSalesReportRequest.setMessageGuid(messageGuid);
+        receiveSalesReportRequest.setOnValue(on);
         return JAXBMarshaller.marshallJaxBObjectToString(receiveSalesReportRequest);
     }
 
-    public static String createReceiveSalesQueryRequest(String salesQuery, String messageGuid, String pluginType, String logGuid, String sender) throws RulesModelMarshallException {
+    public static String createReceiveSalesQueryRequest(String salesQuery, String messageGuid, String pluginType, String logGuid, String sender, String on) throws RulesModelMarshallException {
         ReceiveSalesQueryRequest receiveSalesQueryRequest = new ReceiveSalesQueryRequest();
         receiveSalesQueryRequest.setMethod(RulesModuleMethod.RECEIVE_SALES_QUERY);
         receiveSalesQueryRequest.setRequest(salesQuery);
@@ -72,6 +73,7 @@ public class RulesModuleRequestMapper {
         receiveSalesQueryRequest.setLogGuid(logGuid);
         receiveSalesQueryRequest.setSender(sender);
         receiveSalesQueryRequest.setMessageGuid(messageGuid);
+        receiveSalesQueryRequest.setOnValue(on);
         return JAXBMarshaller.marshallJaxBObjectToString(receiveSalesQueryRequest);
     }
 
