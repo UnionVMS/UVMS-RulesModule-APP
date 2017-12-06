@@ -490,14 +490,12 @@ public class MessageServiceBean implements MessageService {
         return responseMessage;
     }
 
-
     private IDType generateReferenceId(String onParam) {
         IDType idType = new IDType();
         idType.setSchemeID("FLUXTL_ON");
         idType.setValue(onParam);
         return idType;
     }
-
 
     @Override
     public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
