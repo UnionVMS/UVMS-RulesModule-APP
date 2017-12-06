@@ -136,7 +136,7 @@ public class MessageServiceBean implements MessageService {
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
             FLUXSalesQueryMessage salesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
 
-            //create mapErrorType with extra values
+            //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesQueryRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesQueryRequest.getPluginType());
@@ -169,7 +169,7 @@ public class MessageServiceBean implements MessageService {
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
             Report salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
 
-            //create mapErrorType with extra values
+            //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesReportRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesReportRequest.getPluginType());
@@ -203,7 +203,7 @@ public class MessageServiceBean implements MessageService {
             String salesResponseMessageAsString = rulesRequest.getRequest();
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
-            //create mapErrorType with extra values
+            //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
 
@@ -227,7 +227,7 @@ public class MessageServiceBean implements MessageService {
             String salesResponseMessageAsString = rulesRequest.getRequest();
             FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
-            //create mapErrorType with extra values
+            //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
