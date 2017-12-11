@@ -109,14 +109,14 @@
                                     <docletArtifact>
                                         <groupId>com.carma</groupId>
                                         <artifactId>swagger-doclet</artifactId>
-                                        <version>1.0.4.1</version>
+                                        <version>1.1.2</version>
                                     </docletArtifact>
                                     <reportOutputDirectory>src/main/webapp</reportOutputDirectory>
                                     <useStandardDocletOptions>false</useStandardDocletOptions>
                                     <additionalparam>
                                         -apiVersion ${project.version}
-                                        -docBasePath http://${hostname}:${port}/${project.parent.artifactId}/apidocs
-                                        -apiBasePath http://${hostname}:${port}/${project.parent.artifactId}/rest</additionalparam>
+                                        -docBasePath /${project.parent.artifactId}/apidocs
+                                        -apiBasePath /${project.parent.artifactId}/rest</additionalparam>
                                 </configuration>
                                 <goals>
                                     <goal>javadoc</goal>
