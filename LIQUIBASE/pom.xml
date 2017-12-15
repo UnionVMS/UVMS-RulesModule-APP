@@ -171,7 +171,7 @@
 							<images>
 								<image>
 									<alias>postgres</alias>
-									<name>uvms/postgres-base:3.19.0</name>
+									<name>uvms/postgres-base:3.22.0</name>
 									<run>
 										<net>bridge</net>
 										<namingStrategy>none</namingStrategy>
