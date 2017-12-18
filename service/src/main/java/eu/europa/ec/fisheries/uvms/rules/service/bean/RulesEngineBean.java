@@ -19,6 +19,15 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.AC
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -30,14 +39,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -60,6 +61,9 @@ public class RulesEngineBean {
     private RuleAssetsBean ruleAssetsBean;
 
     @EJB
+    private FactRuleEvaluator evaluator;
+
+    @EJB
     private RulesActivityServiceBean activityService;
 
     @EJB
@@ -71,13 +75,15 @@ public class RulesEngineBean {
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
         List<AbstractFact> facts = new ArrayList<>();
-        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
-        generator.setBusinessObjectMessage(businessObject);
-        mdrCacheServiceBean.loadMDRCache();
-        generator.setExtraValueMap(map);
-        generator.setAdditionalValidationObject();
-        facts.addAll(generator.generateAllFacts());
-        templateEngine.evaluateFacts(facts);
+        if (evaluator.anyRulesDeployed()){
+            AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+            generator.setBusinessObjectMessage(businessObject);
+            mdrCacheServiceBean.loadMDRCache();
+            generator.setExtraValueMap(map);
+            generator.setAdditionalValidationObject();
+            facts.addAll(generator.generateAllFacts());
+            templateEngine.evaluateFacts(facts);
+        }
         return facts;
     }
 
