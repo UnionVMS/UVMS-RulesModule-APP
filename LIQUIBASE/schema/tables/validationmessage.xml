@@ -8,6 +8,7 @@
             <column name="id" type="bigint" remarks="The synthetic key.">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="validationmessage_pk" />
             </column>
+            <column name="xpath_list" type="text"/>
             <column name="message" type="text">
                 <constraints nullable="false"/>
             </column>
@@ -31,8 +32,6 @@
                 onUpdate="NO ACTION"
                 referencedColumnNames="id"
                 referencedTableName="rawmessage"/>
-
-
 
         <rollback>
             <dropTable tableName="validationmessage" cascadeConstraints="true" />

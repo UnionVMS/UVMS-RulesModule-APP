@@ -13,20 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -44,6 +36,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import javax.xml.datatype.DatatypeFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -71,7 +71,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 /**
  * Created by kovian on 6/7/2017.
  */
-public class MessageServiceBeanTest {
+public class RulesMessageServiceBeanTest {
 
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
 
@@ -79,7 +79,7 @@ public class MessageServiceBeanTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @InjectMocks
-    MessageServiceBean messageServiceBean;
+    RulesMessageServiceBean messageServiceBean;
 
     @Mock
     RulesMessageProducer producer;
@@ -186,7 +186,7 @@ public class MessageServiceBeanTest {
 
     @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
-        messageServiceBean.setFLUXFAReportMessageReceived(null);
+        messageServiceBean.receiveFLUXFAReportRequest(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -198,7 +198,7 @@ public class MessageServiceBeanTest {
         req.setType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
-        messageServiceBean.setFLUXFAReportMessageReceived(req);
+        messageServiceBean.receiveFLUXFAReportRequest(req);
 
     }
 
@@ -213,7 +213,7 @@ public class MessageServiceBeanTest {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
-        Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString());
+        Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), "sss-ooo-mmm-eee");
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
         messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);

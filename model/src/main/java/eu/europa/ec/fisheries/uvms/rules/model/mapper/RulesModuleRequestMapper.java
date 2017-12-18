@@ -12,11 +12,19 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.GetValidationsByRawMsgGuidRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-
 import java.util.Date;
 import java.util.List;
 
@@ -110,4 +118,10 @@ public class RulesModuleRequestMapper {
     }
 
 
+    public static String createGetValidationsByGuidRequest(String guid) throws RulesModelMarshallException {
+        GetValidationsByRawMsgGuidRequest getValidationsByGuidRequest = new GetValidationsByRawMsgGuidRequest();
+        getValidationsByGuidRequest.setMethod(RulesModuleMethod.GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST);
+        getValidationsByGuidRequest.setGuid(guid);
+        return JAXBMarshaller.marshallJaxBObjectToString(getValidationsByGuidRequest);
+    }
 }

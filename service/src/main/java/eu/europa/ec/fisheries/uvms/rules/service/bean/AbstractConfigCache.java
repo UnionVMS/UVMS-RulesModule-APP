@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
  *  The following are a minimal set of methods that need to be overriten :
  *
  *      abstract RulesResponseConsumer getConsumer(); The consumer that will consume the response messages in the related modules Queue.
- *      abstract RulesMessageProducer getProducer();  The producer which will send the request messages to Config module.
+ *      abstract RulesMessageProducer getProducer();  The rulesProducer which will send the request messages to Config module.
  *      abstract String getModuleName(); The module name which will be used as a parameter to get the settings.
  *
  */
