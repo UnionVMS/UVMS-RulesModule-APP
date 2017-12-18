@@ -13,9 +13,17 @@ package eu.europa.ec.fisheries.uvms.rules.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionTypeType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -26,26 +34,49 @@ import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.entity.*;
+import eu.europa.ec.fisheries.uvms.rules.entity.AlarmItem;
+import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.MessageId;
+import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
+import eu.europa.ec.fisheries.uvms.rules.entity.RawMovement;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
+import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.Template;
+import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
+import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import eu.europa.ec.fisheries.uvms.rules.exception.InputArgumentException;
-import eu.europa.ec.fisheries.uvms.rules.mapper.*;
-import eu.europa.ec.fisheries.uvms.rules.mapper.search.*;
+import eu.europa.ec.fisheries.uvms.rules.mapper.AlarmMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.CustomRuleMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.PreviousReportMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.RawMessageMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.RuleMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.SanityRuleMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.TemplateMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.TicketMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchFieldMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchValue;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.CustomRuleSearchFieldMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.CustomRuleSearchValue;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchFieldMapper;
+import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchValue;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class RulesDomainModelBean implements RulesDomainModel {
@@ -98,7 +129,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
                         }
                     }
                 }
-                dao.saveValidationMessages(Arrays.asList(rawMessage));
+                dao.saveValidationMessages(Collections.singletonList(rawMessage));
             }
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
@@ -109,6 +140,16 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public List<ValidationMessageType> getValidationMessagesById(List<String> ids) throws RulesModelException {
         try {
             List<ValidationMessage> validationMessages = dao.getValidationMessagesById(ids);
+            return RawMessageMapper.INSTANCE.mapToValidationMessageTypes(validationMessages);
+        } catch (DaoException e) {
+            throw new RulesModelException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid) throws RulesModelException {
+        try {
+            List<ValidationMessage> validationMessages = dao.getValidationMessagesByRawMsgGuid(rawMsgGuid);
             return RawMessageMapper.INSTANCE.mapToValidationMessageTypes(validationMessages);
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);

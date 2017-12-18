@@ -18,48 +18,57 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.rules.entity.MessageId;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
 import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
+import java.util.Collection;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Created by padhyad on 5/5/2017.
  */
 @Mapper(uses = CustomRuleMapper.class)
-public interface RawMessageMapper {
+public abstract class RawMessageMapper extends AbstractRulesBaseMapper {
 
-    RawMessageMapper INSTANCE = Mappers.getMapper(RawMessageMapper.class);
+    public static final RawMessageMapper INSTANCE = Mappers.getMapper(RawMessageMapper.class);
 
     @Mappings({
             @Mapping(target = "rawMessage", source = "message"),
-            @Mapping(target = "validationMessages", source = "validationMessage")
+            @Mapping(target = "validationMessages", source = "validationMessage"),
+            @Mapping(target = "guid", source = "rawMessageGuid")
     })
-    RawMessage mapToRawMessageEntity(RawMessageType rawMessageType);
+    public abstract RawMessage mapToRawMessageEntity(RawMessageType rawMessageType);
 
     @Mappings({
-            @Mapping(target = "messageIds", source = "messageId")
+            @Mapping(target = "message", source = "rawMessage"),
+            @Mapping(target = "validationMessage", source = "validationMessages"),
+            @Mapping(target = "rawMessageGuid", source = "guid")
     })
-    ValidationMessage mapToValidationMessageEntity(ValidationMessageType validationMessageType);
+    public abstract RawMessageType mapToRawMessageType(RawMessage entity);
 
     @Mappings({
-            @Mapping(target = "messageId", source = "messageIds")
+            @Mapping(target = "messageIds", source = "messageId"),
+            @Mapping(target = "xpathList", expression = "java(joinListOfStringsInCommaSeparatedString(validationMessageType.getXpaths()))")
     })
-    ValidationMessageType mapToValidationMessageType(ValidationMessage validationMessage);
+    public abstract ValidationMessage mapToValidationMessageEntity(ValidationMessageType validationMessageType);
 
-    List<ValidationMessageType> mapToValidationMessageTypes(List<ValidationMessage> validationMessage);
+    @Mappings({
+            @Mapping(target = "messageId", source = "messageIds"),
+            @Mapping(target = "xpaths", expression = "java(splitSingleStringByComma(validationMessage.getXpathList()))")
+    })
+    public abstract ValidationMessageType mapToValidationMessageType(ValidationMessage validationMessage);
+
+    public abstract List<ValidationMessageType> mapToValidationMessageTypes(List<ValidationMessage> validationMessage);
 
     @Mappings({
             @Mapping(target = "messageId", source = "message")
     })
-    MessageId mapToMessageIdEntity(String message);
+    public abstract MessageId mapToMessageIdEntity(String message);
 
-    List<MessageId> mapToMessageIdEntities(List<String> messages);
+    public abstract List<MessageId> mapToMessageIdEntities(List<String> messages);
 
-    List<String> mapToMessageId(List<MessageId> message);
+    public abstract List<String> mapToMessageId(List<MessageId> message);
 
-    Collection<ValidationMessage> mapToValidationMessageEntities(Collection<ValidationMessageType> validationMessageTypes);
+    public abstract Collection<ValidationMessage> mapToValidationMessageEntities(Collection<ValidationMessageType> validationMessageTypes);
 }

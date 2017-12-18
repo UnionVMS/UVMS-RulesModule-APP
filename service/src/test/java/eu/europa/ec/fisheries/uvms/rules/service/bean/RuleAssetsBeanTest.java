@@ -182,11 +182,11 @@ public class RuleAssetsBeanTest {
                 "        <homePort>DKHVS</homePort>\n" +
                 "        <lengthOverAll>33.00</lengthOverAll>\n" +
                 "        <grossTonnageUnit>LONDON</grossTonnageUnit>\n" +
-                "        <producer>\n" +
+                "        <rulesProducer>\n" +
                 "            <id>1</id>\n" +
                 "            <code>2</code>\n" +
                 "            <zipcode>0</zipcode>\n" +
-                "        </producer>\n" +
+                "        </rulesProducer>\n" +
                 "        <contact>\n" +
                 "            <name>Valen</name>\n" +
                 "            <number>0701333333</number>\n" +
