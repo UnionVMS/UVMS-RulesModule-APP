@@ -570,6 +570,15 @@ public class RulesDaoBean extends Dao implements RulesDao {
     }
 
     @Override
+    public List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid) throws DaoException {
+        try {
+            return validationMessageDao.getValidationMessagesByRawMessageGuid(rawMsgGuid);
+        } catch (ServiceException e) {
+            throw new DaoException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public RuleStatusType checkRuleStatus() throws DaoException {
         try {
             return ruleStatusDao.findRuleStatus();

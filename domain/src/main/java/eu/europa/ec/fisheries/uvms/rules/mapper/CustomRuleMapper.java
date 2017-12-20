@@ -11,12 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
@@ -30,8 +24,18 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubCriteriaType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscriptionTypeType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
-import eu.europa.ec.fisheries.uvms.rules.entity.*;
+import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.Interval;
+import eu.europa.ec.fisheries.uvms.rules.entity.MessageId;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleAction;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleSegment;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

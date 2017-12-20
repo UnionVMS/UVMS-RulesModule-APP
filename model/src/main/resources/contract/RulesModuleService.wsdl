@@ -51,10 +51,23 @@
                     <xsd:enumeration value="RECEIVE_SALES_RESPONSE"/>
                     <xsd:enumeration value="SEND_SALES_REPORT"/>
                     <xsd:enumeration value="SEND_SALES_RESPONSE"/>
+                    <xsd:enumeration value="GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST"/>
                 </xsd:restriction>
             </xsd:simpleType>
-			
-			<xsd:element name="SetFLUXFAReportMessageRequest">
+
+            <xsd:element name="GetValidationsByRawMsgGuidRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="guid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SetFLUXFAReportMessageRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">

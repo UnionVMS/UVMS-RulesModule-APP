@@ -33,9 +33,9 @@ import javax.ejb.Local;
  * Created by padhyad on 5/9/2017.
  */
 @Local
-public interface MessageService {
+public interface RulesMessageService {
 
-    void setFLUXFAReportMessageReceived(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+    void receiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
@@ -61,5 +61,5 @@ public interface MessageService {
 
     void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
-
+    String getValidationsForRawMessageGuid(String guid);
 }

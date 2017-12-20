@@ -13,13 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
-
+import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
+import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Created by padhyad on 5/8/2017.
@@ -41,5 +43,19 @@ public class ValidationMessageDao extends AbstractDAO<ValidationMessage> {
         TypedQuery query = this.getEntityManager().createNamedQuery(ValidationMessage.BY_ID, ValidationMessage.class);
         query.setParameter("messageIds", ids);
         return query.getResultList();
+    }
+
+    public List<ValidationMessage> getValidationMessagesByRawMessageGuid(String rawMsgGuid) throws ServiceException {
+        TypedQuery query = this.getEntityManager().createNamedQuery(RawMessage.BY_GUID, RawMessage.class);
+        query.setParameter("rawMsgGuid", rawMsgGuid);
+        List<RawMessage> resultList = (List<RawMessage>) query.getResultList();
+        List<ValidationMessage> validMessages = new ArrayList<>();
+        if(CollectionUtils.isEmpty(resultList)){
+            return validMessages;
+        }
+        for(RawMessage rawMsg : resultList){
+            validMessages.addAll(rawMsg.getValidationMessages());
+        }
+        return validMessages;
     }
 }

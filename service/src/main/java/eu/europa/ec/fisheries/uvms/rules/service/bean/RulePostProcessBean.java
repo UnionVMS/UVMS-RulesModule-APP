@@ -13,27 +13,27 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.MessageService;
+import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Created by padhyad on 5/4/2017.
@@ -47,10 +47,10 @@ public class RulePostProcessBean {
     private RulesDomainModel rulesDomainModel;
 
     @EJB
-    private MessageService messageService;
+    private RulesMessageService messageService;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid) throws RulesServiceException {
         try {
             boolean isError = false;
             boolean isWarning = false;
@@ -73,7 +73,7 @@ public class RulePostProcessBean {
             if (validationMessages.isEmpty()) {
                 isOk = true;
             }
-            saveValidationResult(validationMessages, rawMessage);
+            saveValidationResult(validationMessages, rawMessage, rawMsgGuid);
             ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
 
             // TODO : Create alarm in future
@@ -87,7 +87,7 @@ public class RulePostProcessBean {
 
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, ErrorType errorType, String rawMessage) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, ErrorType errorType, String rawMessage, String rawMsgGuid) throws RulesServiceException {
         try {
             boolean isError = false;
             boolean isWarning = false;
@@ -99,7 +99,7 @@ public class RulePostProcessBean {
             if (validationMessages.isEmpty()) {
                 isOk = true;
             }
-            saveValidationResult(validationMessages, rawMessage);
+            saveValidationResult(validationMessages, rawMessage, rawMsgGuid);
             ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
 
             // TODO : Create alarm in future
@@ -152,12 +152,19 @@ public class RulePostProcessBean {
     }
 
 
-    private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage) throws RulesModelException {
+    private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage, String rawMsgGuid) throws RulesModelException {
         if (!CollectionUtils.isEmpty(validationMessageTypes)) {
             RawMessageType message = new RawMessageType();
             message.setMessage(rawMessage);
             message.getValidationMessage().addAll(validationMessageTypes);
+            message.setRawMessageGuid(rawMsgGuid);
             rulesDomainModel.saveValidationMessages(message);
         }
+    }
+
+    public ValidationMessageTypeResponse getValidationResultsFromRawMsgGuid(String guid) throws RulesModelException {
+        ValidationMessageTypeResponse response = new ValidationMessageTypeResponse();
+        response.getValidationsListResponse().addAll(rulesDomainModel.getValidationMessagesByRawMsgGuid(guid));
+        return response;
     }
 }
