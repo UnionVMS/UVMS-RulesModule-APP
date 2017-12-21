@@ -115,7 +115,7 @@ public interface RulesDomainModel {
 
     List<ValidationMessageType> getValidationMessagesById(List<String> ids) throws RulesModelException;
 
-    List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid) throws RulesModelException;
+    List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException;
 
     RuleStatusType checkRuleStatus() throws RulesModelException;
 

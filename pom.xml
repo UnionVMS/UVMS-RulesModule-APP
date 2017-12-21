@@ -40,7 +40,7 @@
         <user.model.version>2.0.6</user.model.version>
 
         <activity.model.version>1.0.1</activity.model.version>
-        <mdr.model.version>1.0.1</mdr.model.version>
+        <mdr.model.version>1.0.2-SNAPSHOT</mdr.model.version>
 
         <asset.model.version>4.0.4</asset.model.version>
         <audit.model.version>4.0.4</audit.model.version>

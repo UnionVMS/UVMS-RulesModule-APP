@@ -118,10 +118,11 @@ public class RulesModuleRequestMapper {
     }
 
 
-    public static String createGetValidationsByGuidRequest(String guid) throws RulesModelMarshallException {
+    public static String createGetValidationsByGuidRequest(String guid, String type) throws RulesModelMarshallException {
         GetValidationsByRawMsgGuidRequest getValidationsByGuidRequest = new GetValidationsByRawMsgGuidRequest();
         getValidationsByGuidRequest.setMethod(RulesModuleMethod.GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST);
         getValidationsByGuidRequest.setGuid(guid);
+        getValidationsByGuidRequest.setType(type);
         return JAXBMarshaller.marshallJaxBObjectToString(getValidationsByGuidRequest);
     }
 }

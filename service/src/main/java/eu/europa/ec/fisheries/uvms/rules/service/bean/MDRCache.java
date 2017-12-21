@@ -17,26 +17,34 @@ import static java.util.Collections.emptyList;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.jms.TextMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.mdr.communication.MdrGetAllCodeListsResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.mdr.communication.SingleCodeListRappresentation;
 
 /**
  * @author Gregory Rinaldi
  */
 @Singleton
+@Startup
 @Slf4j
 public class MDRCache {
 
@@ -63,6 +71,30 @@ public class MDRCache {
                             }
                         }
                 );
+        //loadAllMdrCache();
+    }
+
+    private void loadAllMdrCache(){
+        try {
+            log.info("[START] Loading All MDR CodeLists...");
+            long start = System.currentTimeMillis();
+            String request = MdrModuleMapper.createFluxMdrGetAllCodeListRequest();
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class);
+            if (message != null) {
+                MdrGetAllCodeListsResponse response = eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller.unmarshallTextMessage(message, MdrGetAllCodeListsResponse.class);
+                List<SingleCodeListRappresentation> codeLists = response.getCodeLists();
+                if(CollectionUtils.isNotEmpty(codeLists)){
+                    for(SingleCodeListRappresentation singleList : codeLists){
+                        cache.put(MDRAcronymType.fromValue(singleList.getAcronym()), singleList.getDataSets());
+                    }
+                }
+            }
+            long end = System.currentTimeMillis() - start;
+            log.info("[FINISH] It took : " + end / 1000 + " seconds to load all MDR Cache (CodeLists)...");
+        } catch (MessageException | MdrModelMarshallException | RulesModelMarshallException e) {
+            log.error("[ERROR] Error while trying to get all mdr codelists!", e);
+        }
     }
 
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
@@ -75,7 +107,7 @@ public class MDRCache {
 
     @SneakyThrows
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
-        log.debug("Contact MDR to get lists");
+        log.debug("Contact MDR to get lists..");
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
         String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(s, TextMessage.class);
