@@ -69,6 +69,19 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 /**
  * Created by kovian on 6/7/2017.
  */
@@ -98,13 +111,13 @@ public class RulesMessageServiceBeanTest {
     RulesConfigurationCache ruleModuleCache;
 
     private IDType idType;
+
     private CodeType codeType;
     private DelimitedPeriod delimitedPeriod;
     private DateTimeType dateTimeType;
     private Date date;
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
-
     private FLUXFAQueryMessage fluxfaQueryMessage;
 
     @Before
@@ -220,6 +233,34 @@ public class RulesMessageServiceBeanTest {
         messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
+    @Test
+    public void guidOrFluxOnValueWhenBrIdIsInListOfIds() throws Exception {
+        ValidationMessageType validationMessageType = new ValidationMessageType();
+        validationMessageType.setBrId("SALE-L01-00-0011");
+
+        ValidationResultDto validationResultDto = new ValidationResultDto();
+        validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
+
+
+        boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);
+
+        assertEquals(true, guidOrFluxOnValue);
+    }
+
+    @Test
+    public void guidOrFluxOnValueWhenBrIdIsNotInListOfIds() throws Exception {
+        ValidationMessageType validationMessageType = new ValidationMessageType();
+        validationMessageType.setBrId("SALE-L01-00-0012");
+
+        ValidationResultDto validationResultDto = new ValidationResultDto();
+        validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
+
+
+        boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);
+
+        assertEquals(false, guidOrFluxOnValue);
+    }
+
     private ValidationResultDto getValidationResult() {
         ValidationResultDto faReportValidationResult = new ValidationResultDto();
         faReportValidationResult.setIsError(true);
@@ -258,5 +299,6 @@ public class RulesMessageServiceBeanTest {
         String fluxFaMessageStr = IOUtils.toString(new FileInputStream(filePath));
         return JAXBUtils.unMarshallMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
+
 
 }
