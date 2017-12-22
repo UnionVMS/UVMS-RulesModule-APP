@@ -56,62 +56,58 @@ public class ValidationMessage implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "validationMessage", cascade = CascadeType.ALL)
     private Set<MessageId> messageIds;
 
+    @Column(columnDefinition = "text", name = "xpath_list")
+    private String xpathList;
+
     @Column(name = "level", nullable = false)
     private String level;
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public ErrorType getErrorType() {
         return errorType;
     }
-
     public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
     }
-
     public String getBrId() {
         return brId;
     }
-
     public void setBrId(String brId) {
         this.brId = brId;
     }
-
     public String getMessage() {
         return message;
     }
-
     public void setMessage(String message) {
         this.message = message;
     }
-
     public RawMessage getRawMessage() {
         return rawMessage;
     }
-
     public void setRawMessage(RawMessage rawMessage) {
         this.rawMessage = rawMessage;
     }
-
     public Set<MessageId> getMessageIds() {
         return messageIds;
     }
-
     public void setMessageIds(Set<MessageId> messageIds) {
         this.messageIds = messageIds;
     }
-
     public String getLevel() {
         return level;
     }
-
     public void setLevel(String level) {
         this.level = level;
+    }
+    public String getXpathList() {
+        return xpathList;
+    }
+    public void setXpathList(String xpathList) {
+        this.xpathList = xpathList;
     }
 }

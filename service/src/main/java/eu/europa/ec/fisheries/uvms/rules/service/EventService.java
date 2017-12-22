@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
 import javax.ejb.Local;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -66,4 +67,6 @@ public interface EventService {
     void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message);
 
     void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message);
+
+    void getValidationResultsByRawGuid(@Observes @GetValidationResultsByRawGuid EventMessage message);
 }

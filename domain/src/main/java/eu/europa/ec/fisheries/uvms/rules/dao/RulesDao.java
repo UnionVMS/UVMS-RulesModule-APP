@@ -152,6 +152,8 @@ public interface RulesDao {
 
     List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException;
 
+    List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid) throws DaoException;
+
     RuleStatusType checkRuleStatus() throws DaoException;
 
     void createRuleStatus(RuleStatus ruleStatus) throws DaoException;

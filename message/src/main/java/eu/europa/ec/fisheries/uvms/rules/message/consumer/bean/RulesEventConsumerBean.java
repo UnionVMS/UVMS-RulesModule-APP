@@ -11,17 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
@@ -30,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEven
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
@@ -45,6 +35,16 @@ import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import java.util.UUID;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -121,6 +121,10 @@ public class RulesEventConsumerBean implements MessageListener {
     Event<EventMessage> sendSalesResponseEvent;
 
     @Inject
+    @GetValidationResultsByRawGuid
+    Event<EventMessage> getValidationResultsByRawMsgGuid;
+
+    @Inject
     @ErrorEvent
     Event<EventMessage> errorEvent;
 
@@ -180,6 +184,10 @@ public class RulesEventConsumerBean implements MessageListener {
                 case SEND_SALES_RESPONSE:
                     sendSalesResponseEvent.fire(new EventMessage(textMessage));
                     break;
+                case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
+                    getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
+                    break;
+
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
                     errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));

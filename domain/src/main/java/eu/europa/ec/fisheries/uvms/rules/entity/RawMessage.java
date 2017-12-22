@@ -22,12 +22,24 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "rawmessage")
+@NamedQueries({
+        @NamedQuery(name = RawMessage.BY_GUID,
+                query = "SELECT DISTINCT rawMsg from RawMessage rawMsg " +
+                        "LEFT JOIN FETCH rawMsg.validationMessages " +
+                        "WHERE rawMsg.guid=:rawMsgGuid")
+})
 public class RawMessage implements Serializable {
+
+
+    public static final String BY_GUID = "rawMsg.byGuid";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "raw_message_guid")
+    private String guid;
 
     @Column(columnDefinition = "text", name = "raw_message", nullable = false)
     private String rawMessage;
@@ -35,26 +47,28 @@ public class RawMessage implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rawMessage", cascade = CascadeType.ALL)
     private Set<ValidationMessage> validationMessages;
 
+
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
+    public String getGuid() {
+        return guid;
+    }
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
     public String getRawMessage() {
         return rawMessage;
     }
-
     public void setRawMessage(String rawMessage) {
         this.rawMessage = rawMessage;
     }
-
     public Set<ValidationMessage> getValidationMessages() {
         return validationMessages;
     }
-
     public void setValidationMessages(Set<ValidationMessage> validationMessages) {
         this.validationMessages = validationMessages;
     }

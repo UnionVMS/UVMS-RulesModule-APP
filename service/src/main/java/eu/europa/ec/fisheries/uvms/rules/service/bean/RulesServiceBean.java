@@ -938,7 +938,7 @@ public class RulesServiceBean implements RulesService {
             query.setPagination(pagination);
 
             String request = MovementModuleRequestMapper.mapToGetMovementListByQueryRequest(query);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
+            String messageId = rulesProducer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
             List<MovementType> movements = MovementModuleResponseMapper.mapToMovementListResponse(movementResponse);
             double centerX = rawMovement.getPosition().getLongitude();

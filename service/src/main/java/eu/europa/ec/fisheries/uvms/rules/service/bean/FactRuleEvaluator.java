@@ -13,6 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
@@ -22,19 +36,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -80,6 +81,13 @@ public class FactRuleEvaluator {
         kieFileSystem.delete(systemPackagesPaths.toArray(new String[systemPackagesPaths.size()]));
         log.info("[END] --> Deleted [" + systemPackagesPaths.size() + "] packages from KieFileSystem.");
         systemPackagesPaths.clear();
+    }
+
+    public boolean anyRulesDeployed(){
+        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
+        Collection<KiePackage> kiePackages = kBase.getKiePackages();
+        return CollectionUtils.isNotEmpty(kiePackages) && CollectionUtils.isNotEmpty(systemPackagesPaths);
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

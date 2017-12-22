@@ -11,6 +11,7 @@
             <column name="raw_message" type="text">
                 <constraints nullable="false"/>
             </column>
+            <column name="raw_message_guid" type="text" />
         </createTable>
         <rollback>
             <dropTable tableName="rawmessage" cascadeConstraints="true"/>
