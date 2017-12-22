@@ -61,5 +61,5 @@ public interface RulesMessageService {
 
     void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
-    String getValidationsForRawMessageGuid(String guid);
+    String getValidationsForRawMessageGuid(String guid, String type);
 }

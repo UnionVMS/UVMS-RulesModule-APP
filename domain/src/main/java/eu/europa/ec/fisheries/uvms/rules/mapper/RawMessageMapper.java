@@ -36,14 +36,16 @@ public abstract class RawMessageMapper extends AbstractRulesBaseMapper {
     @Mappings({
             @Mapping(target = "rawMessage", source = "message"),
             @Mapping(target = "validationMessages", source = "validationMessage"),
-            @Mapping(target = "guid", source = "rawMessageGuid")
+            @Mapping(target = "guid", source = "rawMessageGuid"),
+            @Mapping(target = "rawMsgType", source = "msgType")
     })
     public abstract RawMessage mapToRawMessageEntity(RawMessageType rawMessageType);
 
     @Mappings({
             @Mapping(target = "message", source = "rawMessage"),
             @Mapping(target = "validationMessage", source = "validationMessages"),
-            @Mapping(target = "rawMessageGuid", source = "guid")
+            @Mapping(target = "rawMessageGuid", source = "guid"),
+            @Mapping(target = "msgType", source = "rawMsgType")
     })
     public abstract RawMessageType mapToRawMessageType(RawMessage entity);
 

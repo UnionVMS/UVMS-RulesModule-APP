@@ -12,6 +12,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="raw_message_guid" type="text" />
+            <column name="raw_msg_type" type="varchar(50)" />
         </createTable>
         <rollback>
             <dropTable tableName="rawmessage" cascadeConstraints="true"/>

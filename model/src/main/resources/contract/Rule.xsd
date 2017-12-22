@@ -70,7 +70,23 @@
             <xsd:element name="message" type="xsd:string"/>
             <xsd:element name="validationMessage" type="rule:ValidationMessageType" maxOccurs="unbounded"/>
             <xsd:element name="rawMessageGuid" type="xsd:string"/>
+            <xsd:element name="msgType" type="rule:RawMsgType"/>
         </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:simpleType name="RawMsgType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="MOVEMENT"/>
+            <xsd:enumeration value="POLL"/>
+            <xsd:enumeration value="ALARM"/>
+            <xsd:enumeration value="UNKNOWN"/>
+            <xsd:enumeration value="SALES_QUERY"/>
+            <xsd:enumeration value="SALES_REPORT"/>
+            <xsd:enumeration value="SALES_RESPONSE"/>
+            <xsd:enumeration value="FA_QUERY"/>
+            <xsd:enumeration value="FA_REPORT"/>
+            <xsd:enumeration value="FA_RESPONSE"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>
