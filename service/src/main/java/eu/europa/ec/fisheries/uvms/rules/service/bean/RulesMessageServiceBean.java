@@ -740,9 +740,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String fluxFAReportMessage, String username, PluginType pluginType) {
+    public void sendRequestToActivity(String activityMsgStr, String username, PluginType pluginType) {
         try {
-            String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
+            String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(activityMsgStr, username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
