@@ -13,6 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+
+import static java.util.Collections.singletonList;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
@@ -23,14 +34,18 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
+import eu.europa.ec.fisheries.schema.sales.Report;
+import eu.europa.ec.fisheries.schema.sales.SalesIdType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -56,6 +71,24 @@ import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationI
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -70,29 +103,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.net.URL;
-import java.util.*;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.*;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static java.util.Collections.singletonList;
 
 /**
  * Created by padhyad, kovian on 5/9/2017.
@@ -124,6 +138,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @EJB
     private SalesMessageFactory salesMessageFactory;
+
+    @EJB
+    private RulesActivityServiceBean activityServiceBean;
 
     public static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
 
@@ -316,39 +333,94 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
-    public void receiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) {
-        log.info("inside receiveFLUXFAReportRequest", request.getRequest());
+    public void evaluateFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) {
+        final String requestStr = request.getRequest();
+        log.info("[INFO] Going to evaluate FLUXFAReportMessage : ", requestStr);
         final String logGuid = request.getLogGuid();
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
-            fluxfaReportMessage = extractFluxFaReportMessage(request);
+            // Validate xsd schema
+            fluxfaReportMessage = extractFluxFaReportMessage(requestStr);
             if (fluxfaReportMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
                 boolean isValidationAlreadyPresent = validationAlreadyExists(validationMap);
-                log.info("[INFO] Validation to continue (It continues if doesn't already exist in DB, " +
+                log.info("[INFO] Validation to continue (It continues if GUID doesn't already exist in DB, " +
                         "meaning that this message has already been validated..) : {}", isValidationAlreadyPresent);
                 if (isValidationAlreadyPresent) {
                     log.info("Trigger rule engine to do validation of incoming message");
                     Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
-                    ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, request.getRequest(), logGuid, RawMsgType.FA_REPORT);
-
+                    ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isValidationAlreadyPresent));
                     updateRequestMessageStatus(logGuid, faReportValidationResult);
-
                     if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                        log.info("Validation of Report is successful, forwarding message to Activity");
-                        log.debug("message to activity : {}", request.getRequest());
-                        sendRequestToActivity(request.getRequest(), request.getUsername(), request.getType());
+                        log.info("[INFO] The Validation of Report is successful, forwarding message to Activity");
+                        boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
+                        if(hasPermissions){
+                            log.info("[INFO] Request has permissions. Going to send FaReportMessage to Activity Module...");
+                            sendRequestToActivity(requestStr, request.getUsername(), request.getType());
+                        }
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
                     updateRequestMessageStatus(logGuid, validationMap.get(isValidationAlreadyPresent));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isValidationAlreadyPresent), fluxfaReportMessage);
+                    log.info("[INFO] The Validation of FLUXFAReport is complete and FluxResponse is generated");
+                }
+                sendResponseToExchange(fluxResponseMessageType, request, request.getType());
+            }
+        } catch (SAXException | RulesModelMarshallException e) {
+            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!", e);
+            updateRequestMessageStatus(logGuid, generateValidationResultDtoForFailure());
+            sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+            throw new RulesServiceException(e.getMessage(), e);
+        } catch (RulesValidationException e) {
+            log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
+            updateRequestMessageStatus(logGuid, generateValidationResultDtoForFailure());
+            sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+        }
+    }
+
+
+    @Override
+    public void evaluateFaQueryRequest(SetFaQueryMessageRequest request) {
+        String requestStr = request.getRequest();
+        log.info("[INFO] Going to evaluate FAQuery : ", requestStr);
+        final String logGuid = request.getLogGuid();
+        FLUXFAQueryMessage faQueryMessage = null;
+        try {
+            // Validate xsd schema
+            faQueryMessage = extractFaQueryMessage(requestStr);
+            if (faQueryMessage != null) {
+                FLUXResponseMessage fluxResponseMessageType;
+                Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(faQueryMessage);
+                boolean isValidationAlreadyPresent = validationAlreadyExists(validationMap);
+                log.info("[INFO] Validation to continue (It continues if doesn't already exist in DB, " +
+                        "meaning that this message has already been validated..) : {}", isValidationAlreadyPresent);
+                if (isValidationAlreadyPresent) {
+                    log.info("Trigger rule engine to do validation of incoming message");
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage);
+                    extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
+                    ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
+                    updateValidationResultWithExisting(faQueryValidationReport, validationMap.get(isValidationAlreadyPresent));
+                    updateRequestMessageStatus(logGuid, faQueryValidationReport);
+                    if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
+                        log.info("[INFO] The Validation of FaQueryMessage is successful, forwarding message to Activity");
+                        boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
+                        if(hasPermissions){
+                            log.info("[INFO] Request has permissions. Going to send FaQuery to Activity Module...");
+                            sendRequestToActivity(requestStr, request.getUsername(), request.getType());
+                        }
+                    }
+                    fluxResponseMessageType = generateFluxResponseMessage(faQueryValidationReport, faQueryMessage);
+                    XPathRepository.INSTANCE.clear(faReportFacts);
+                } else {
+                    updateRequestMessageStatus(logGuid, validationMap.get(isValidationAlreadyPresent));
+                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isValidationAlreadyPresent), faQueryMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 sendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -356,14 +428,15 @@ public class RulesMessageServiceBean implements RulesMessageService {
         } catch (SAXException | RulesModelMarshallException e) {
             log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!", e);
             updateRequestMessageStatus(logGuid, generateValidationResultDtoForFailure());
-            sendFLUXResponseMessageOnException(e.getMessage(), request.getRequest(), request, fluxfaReportMessage);
+            sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
             updateRequestMessageStatus(logGuid, generateValidationResultDtoForFailure());
-            sendFLUXResponseMessageOnException(e.getMessage(), request.getRequest(), request, fluxfaReportMessage);
+            sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         }
     }
+
 
     private ValidationResultDto generateValidationResultDtoForFailure() {
         ValidationResultDto resultDto = new ValidationResultDto();
@@ -372,11 +445,18 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return resultDto;
     }
 
-    private FLUXFAReportMessage extractFluxFaReportMessage(SetFLUXFAReportMessageRequest request) throws SAXException, RulesModelMarshallException {
+    private FLUXFAReportMessage extractFluxFaReportMessage(String request) throws SAXException, RulesModelMarshallException {
+        return JAXBMarshaller.unMarshallMessage(request, FLUXFAReportMessage.class, getSchemaForXsd("xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd"));
+    }
+
+    private FLUXFAQueryMessage extractFaQueryMessage(String request) throws SAXException, RulesModelMarshallException {
+        return JAXBMarshaller.unMarshallMessage(request, FLUXFAQueryMessage.class, getSchemaForXsd("xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd"));
+    }
+
+    private Schema getSchemaForXsd(String xsdLocation) throws SAXException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        URL resource = getClass().getClassLoader().getResource("xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd");
-        Schema schema = sf.newSchema(resource);
-        return JAXBMarshaller.unMarshallMessage(request.getRequest(), FLUXFAReportMessage.class, schema);
+        URL resource = getClass().getClassLoader().getResource(xsdLocation);
+        return sf.newSchema(resource);
     }
 
     private Boolean validationAlreadyExists(Map<Boolean, ValidationResultDto> validationMap) {
@@ -566,11 +646,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
     public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
-
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-            if (fluxfaQueryMessage != null) {
-                fluxResponseDocument.setReferencedID(fluxfaQueryMessage.getFAQuery().getID());
-            }
+            fluxResponseDocument.setReferencedID(fluxfaQueryMessage.getFAQuery().getID());
             setFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
         } catch (DatatypeConfigurationException e) {
@@ -663,9 +740,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String fluxFAReportMessage, String username, PluginType pluginType) {
+    public void sendRequestToActivity(String activityMsgStr, String username, PluginType pluginType) {
         try {
-            String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(fluxFAReportMessage, username, pluginType.toString());
+            String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(activityMsgStr, username, pluginType.toString());
             producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);

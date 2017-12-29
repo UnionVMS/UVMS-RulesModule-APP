@@ -178,6 +178,11 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>2.6</version>
 		</dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.subscription</groupId>
+            <artifactId>subscription-model</artifactId>
+            <version>${subscription.model.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

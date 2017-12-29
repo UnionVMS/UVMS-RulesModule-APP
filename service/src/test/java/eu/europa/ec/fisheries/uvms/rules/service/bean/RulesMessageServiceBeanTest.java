@@ -69,18 +69,11 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 6/7/2017.
@@ -200,7 +193,7 @@ public class RulesMessageServiceBeanTest {
 
     @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
-        messageServiceBean.receiveFLUXFAReportRequest(null);
+        messageServiceBean.evaluateFLUXFAReportRequest(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -212,7 +205,7 @@ public class RulesMessageServiceBeanTest {
         req.setType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
-        messageServiceBean.receiveFLUXFAReportRequest(req);
+        messageServiceBean.evaluateFLUXFAReportRequest(req);
 
     }
 
