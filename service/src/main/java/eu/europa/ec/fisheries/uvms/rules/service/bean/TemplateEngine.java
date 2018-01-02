@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
@@ -29,6 +20,16 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
