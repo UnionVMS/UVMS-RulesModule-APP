@@ -167,6 +167,7 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case SET_FLUX_FA_REPORT :
                     setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
                 case SET_FLUX_FA_QUERY :
                     setFaQueryReceivedEvent.fire(new EventMessage(textMessage));
                     break;

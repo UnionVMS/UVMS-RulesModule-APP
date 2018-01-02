@@ -115,6 +115,9 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 @Slf4j
 public class RulesMessageServiceBean implements RulesMessageService {
 
+    public static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
+    public static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
+
     @EJB
     private RulesMessageProducer producer;
 
@@ -344,30 +347,30 @@ public class RulesMessageServiceBean implements RulesMessageService {
             if (fluxfaReportMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
-                boolean isValidationAlreadyPresent = validationAlreadyExists(validationMap);
+                boolean validationDoesntExist = validationAlreadyExists(validationMap);
                 log.info("[INFO] Validation to continue (It continues if GUID doesn't already exist in DB, " +
-                        "meaning that this message has already been validated..) : {}", isValidationAlreadyPresent);
-                if (isValidationAlreadyPresent) {
+                        "meaning that this message has already been validated..) : {}", validationDoesntExist);
+                if (validationDoesntExist) {
                     log.info("Trigger rule engine to do validation of incoming message");
                     Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
                     ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
-                    updateValidationResultWithExisting(faReportValidationResult, validationMap.get(isValidationAlreadyPresent));
+                    updateValidationResultWithExisting(faReportValidationResult, validationMap.get(validationDoesntExist));
                     updateRequestMessageStatus(logGuid, faReportValidationResult);
                     if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                         log.info("[INFO] The Validation of Report is successful, forwarding message to Activity");
                         boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                         if(hasPermissions){
                             log.info("[INFO] Request has permissions. Going to send FaReportMessage to Activity Module...");
-                            sendRequestToActivity(requestStr, request.getUsername(), request.getType());
+                            sendRequestToActivity(requestStr, request.getUsername(), request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE);
                         }
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
-                    updateRequestMessageStatus(logGuid, validationMap.get(isValidationAlreadyPresent));
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isValidationAlreadyPresent), fluxfaReportMessage);
+                    updateRequestMessageStatus(logGuid, validationMap.get(validationDoesntExist));
+                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(validationDoesntExist), fluxfaReportMessage);
                     log.info("[INFO] The Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 sendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -413,7 +416,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                         boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                         if(hasPermissions){
                             log.info("[INFO] Request has permissions. Going to send FaQuery to Activity Module...");
-                            sendRequestToActivity(requestStr, request.getUsername(), request.getType());
+                            sendRequestToActivity(requestStr, request.getUsername(), request.getType(), MessageType.FLUX_FA_QUERY_MESSAGE);
                         }
                     }
                     fluxResponseMessageType = generateFluxResponseMessage(faQueryValidationReport, faQueryMessage);
@@ -446,11 +449,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     private FLUXFAReportMessage extractFluxFaReportMessage(String request) throws SAXException, RulesModelMarshallException {
-        return JAXBMarshaller.unMarshallMessage(request, FLUXFAReportMessage.class, getSchemaForXsd("xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd"));
+        return JAXBMarshaller.unMarshallMessage(request, FLUXFAReportMessage.class, getSchemaForXsd(FLUXFAREPORT_MESSAGE_3P1_XSD));
     }
 
     private FLUXFAQueryMessage extractFaQueryMessage(String request) throws SAXException, RulesModelMarshallException {
-        return JAXBMarshaller.unMarshallMessage(request, FLUXFAQueryMessage.class, getSchemaForXsd("xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd"));
+        return JAXBMarshaller.unMarshallMessage(request, FLUXFAQueryMessage.class, getSchemaForXsd(FLUXFAQUERY_MESSAGE_3P0_XSD));
     }
 
     private Schema getSchemaForXsd(String xsdLocation) throws SAXException {
@@ -740,10 +743,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return fluxParty;
     }
 
-    public void sendRequestToActivity(String activityMsgStr, String username, PluginType pluginType) {
+    public void sendRequestToActivity(String activityMsgStr, String username, PluginType pluginType, MessageType messageType) {
         try {
-            String setFLUXFAReportMessageRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportMessageRequest(activityMsgStr, username, pluginType.toString());
-            producer.sendDataSourceMessage(setFLUXFAReportMessageRequest, DataSourceQueue.ACTIVITY);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, username, pluginType.toString(), messageType);
+            producer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
