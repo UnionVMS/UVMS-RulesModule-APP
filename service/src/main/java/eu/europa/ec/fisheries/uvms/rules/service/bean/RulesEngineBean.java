@@ -61,9 +61,6 @@ public class RulesEngineBean {
     private RuleAssetsBean ruleAssetsBean;
 
     @EJB
-    private FactRuleEvaluator evaluator;
-
-    @EJB
     private RulesActivityServiceBean activityService;
 
     @EJB
@@ -75,15 +72,13 @@ public class RulesEngineBean {
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
         List<AbstractFact> facts = new ArrayList<>();
-        if (evaluator.anyRulesDeployed()){
-            AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
-            generator.setBusinessObjectMessage(businessObject);
-            mdrCacheServiceBean.loadMDRCache();
-            generator.setExtraValueMap(map);
-            generator.setAdditionalValidationObject();
-            facts.addAll(generator.generateAllFacts());
-            templateEngine.evaluateFacts(facts);
-        }
+        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+        generator.setBusinessObjectMessage(businessObject);
+        mdrCacheServiceBean.loadMDRCache();
+        generator.setExtraValueMap(map);
+        generator.setAdditionalValidationObject();
+        facts.addAll(generator.generateAllFacts());
+        templateEngine.evaluateFacts(facts);
         return facts;
     }
 
