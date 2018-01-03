@@ -18,7 +18,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.AC
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,8 +77,6 @@ public class RulesEngineBeanTest {
 
     @Test
     public void testEvaluate() throws RulesValidationException {
-
-        when(ruleEvaluator.anyRulesDeployed()).thenReturn(true);
 
         Mockito.doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) {
