@@ -67,7 +67,7 @@ public class RulesPreProcessBean {
             if (faQuery != null) {
                 IDType idType = faQuery.getID();
                 validationResult = getValidationResultIfExist(idType != null ? Collections.singletonList(idType.getValue()) : Collections.<String>emptyList());
-                validationResultMap.put(validationResult != null && !validationResult.isOk(), validationResult);
+                validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
             }
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage(), e);
