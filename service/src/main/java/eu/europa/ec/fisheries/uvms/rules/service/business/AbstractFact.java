@@ -13,6 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -49,18 +61,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @ToString
@@ -369,7 +369,7 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            log.trace("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
             return false;
         }
         return false;
@@ -1166,7 +1166,7 @@ public abstract class AbstractFact {
     public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
-            log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
+            log.trace(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
@@ -1194,7 +1194,7 @@ public abstract class AbstractFact {
 
             MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, codeType.getListId());
             if (anEnum == null) {
-                log.error(THE_LIST + codeType.getListId() + DOESN_T_EXIST_IN_MDR_MODULE);
+                log.trace(THE_LIST + codeType.getListId() + DOESN_T_EXIST_IN_MDR_MODULE);
                 return false;
             }
 

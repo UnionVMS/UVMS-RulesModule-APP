@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertNotNull;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -39,8 +40,8 @@ public class MdrCacheServiceBeanTest {
     @Mock
     MDRCache cache;
 
-
     @Test
+    @Ignore
     public void testLoadMDRCache() {
         Mockito.doReturn(RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES()).when(cache).getEntry(Mockito.any(MDRAcronymType.class));
         mdrCacheServiceBean.loadMDRCache();

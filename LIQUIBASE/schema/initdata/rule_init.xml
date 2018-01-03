@@ -5595,7 +5595,7 @@
             <column name="rule_id" valueNumeric="284"/>
             <column name="br_id" value="FA-L02-00-0284"/>
             <column name="expression"
-                    value="reasonCode!=null &amp;&amp; reasonCode.listId != &quot;FA_REASON_DISCARD&quot; || (reasonCode.value == &quot;QEX&quot; || reasonCode.value == &quot;OTH&quot;)  "/>
+                    value="(reasonCode != null  &amp;&amp; reasonCode.value != null  &amp;&amp; reasonCode.listId != null) &amp;&amp; (reasonCode.listId != &quot;FA_REASON_DISCARD&quot; || reasonCode.value == &quot;QEX&quot; || reasonCode.value == &quot;OTH&quot;)"/>
             <column name="note"
                     value="If the activity is a DISCARD DECLARATION and the ReasonCode is provided, the listID must be FA_REASON_DISCARD. The value may not be QEX nor OTH."/>
             <column name="message"
