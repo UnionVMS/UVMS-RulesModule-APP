@@ -145,7 +145,7 @@ public class RuleAssetsBean {
             for (IDType idType : ids) { // Avoid imo, uvi
                 String schemeID = idType.getSchemeID();
                 if(!isInSupportedList(schemeID)){
-                    log.warn("Found not compatibile VesselTransportMeans ID : ["+schemeID+"]");
+                    log.trace("Found not compatibile VesselTransportMeans ID : ["+schemeID+"]");
                     continue;
                 }
                 AssetListCriteriaPair criteriaPair = new AssetListCriteriaPair();

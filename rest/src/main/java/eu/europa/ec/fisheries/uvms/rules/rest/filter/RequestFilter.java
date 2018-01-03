@@ -35,7 +35,7 @@ public class RequestFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        LOG.info("Requstfilter starting up!");
+        LOG.debug("Requestfilter starting up!");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class RequestFilter implements Filter {
 
     @Override
     public void destroy() {
-        LOG.info("Requstfilter shuting down!");
+        LOG.debug("Requestfilter shutting down!");
     }
 
 }
