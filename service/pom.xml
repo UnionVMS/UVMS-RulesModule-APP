@@ -152,11 +152,6 @@
             <version>${uvms.common.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
-            <artifactId>uvms-commons-rest</artifactId>
-            <version>${uvms.common.version}</version>
-        </dependency>
-        <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
             <artifactId>activity-model</artifactId>
             <version>${activity.model.version}</version>
