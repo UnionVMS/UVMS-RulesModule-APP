@@ -347,16 +347,15 @@ public class RulesMessageServiceBean implements RulesMessageService {
             if (fluxfaReportMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
-                boolean validationDoesntExist = validationAlreadyExists(validationMap);
-                log.info("[INFO] Validation to continue (It continues if GUID doesn't already exist in DB, " +
-                        "meaning that this message has already been validated..) : {}", validationDoesntExist);
-                if (validationDoesntExist) {
+                boolean needToValidate = validationIsToContinue(validationMap);
+                log.info("[INFO] Validation needs to continue? : " + needToValidate);
+                if (needToValidate) {
                     log.info("Trigger rule engine to do validation of incoming message");
                     Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
                     ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
-                    updateValidationResultWithExisting(faReportValidationResult, validationMap.get(validationDoesntExist));
+                    updateValidationResultWithExisting(faReportValidationResult, validationMap.get(needToValidate));
                     updateRequestMessageStatus(logGuid, faReportValidationResult);
                     if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                         log.info("[INFO] The Validation of Report is successful, forwarding message to Activity");
@@ -369,8 +368,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
-                    updateRequestMessageStatus(logGuid, validationMap.get(validationDoesntExist));
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(validationDoesntExist), fluxfaReportMessage);
+                    updateRequestMessageStatus(logGuid, validationMap.get(needToValidate));
+                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(needToValidate), fluxfaReportMessage);
                     log.info("[INFO] The Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 sendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -400,16 +399,15 @@ public class RulesMessageServiceBean implements RulesMessageService {
             if (faQueryMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(faQueryMessage);
-                boolean isValidationAlreadyPresent = validationAlreadyExists(validationMap);
-                log.info("[INFO] Validation to continue (It continues if doesn't already exist in DB, " +
-                        "meaning that this message has already been validated..) : {}", isValidationAlreadyPresent);
-                if (isValidationAlreadyPresent) {
+                boolean needToValidate = validationIsToContinue(validationMap);
+                log.info("[INFO] Validation needs to continue? : " + needToValidate);
+                if (needToValidate) {
                     log.info("Trigger rule engine to do validation of incoming message");
                     Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
                     List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
                     ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
-                    updateValidationResultWithExisting(faQueryValidationReport, validationMap.get(isValidationAlreadyPresent));
+                    updateValidationResultWithExisting(faQueryValidationReport, validationMap.get(needToValidate));
                     updateRequestMessageStatus(logGuid, faQueryValidationReport);
                     if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                         log.info("[INFO] The Validation of FaQueryMessage is successful, forwarding message to Activity");
@@ -422,8 +420,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     fluxResponseMessageType = generateFluxResponseMessage(faQueryValidationReport, faQueryMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
-                    updateRequestMessageStatus(logGuid, validationMap.get(isValidationAlreadyPresent));
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(isValidationAlreadyPresent), faQueryMessage);
+                    updateRequestMessageStatus(logGuid, validationMap.get(needToValidate));
+                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(needToValidate), faQueryMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 sendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -462,7 +460,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return sf.newSchema(resource);
     }
 
-    private Boolean validationAlreadyExists(Map<Boolean, ValidationResultDto> validationMap) {
+    private Boolean validationIsToContinue(Map<Boolean, ValidationResultDto> validationMap) {
         if (MapUtils.isNotEmpty(validationMap)) {
             return validationMap.entrySet().iterator().next().getKey();
         }

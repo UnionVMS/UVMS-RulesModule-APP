@@ -47,7 +47,7 @@ public class RulesPreValidationInterceptor {
         Object object = null;
         log.info("Validation rules is ready for validation");
         RuleStatusType ruleStatusType = rulesDomainModel.checkRuleStatus();
-        if (ruleStatusType.equals(RuleStatusType.SUCCESSFUL)) {
+        if (ruleStatusType != null && ruleStatusType.equals(RuleStatusType.SUCCESSFUL)) {
             object = ic.proceed();
         } else {
             RulesBaseRequest request = getRulesBaseRequest(ic); // Get the input parameter
