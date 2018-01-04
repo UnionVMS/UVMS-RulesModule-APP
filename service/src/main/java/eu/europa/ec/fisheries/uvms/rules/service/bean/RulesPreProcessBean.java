@@ -80,14 +80,14 @@ public class RulesPreProcessBean {
         Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
         ValidationResultDto validationResult;
         try {
-            validationResult = getValidationResultIfExist(getIds(fluxfaReportMessage.getFLUXReportDocument()));
+            validationResult = getValidationResultIfExist(getIdsFromFluxFaReportDocument(fluxfaReportMessage.getFLUXReportDocument()));
             if (validationResult != null && !validationResult.isOk()) {
                 isContinueValidation = false;
             } else if (fluxfaReportMessage.getFAReportDocuments() != null) {
                 Iterator it = fluxfaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
                     FAReportDocument faReportDocument = (FAReportDocument) it.next();
-                    ValidationResultDto validationResultFa = getValidationResultIfExist(getIds(faReportDocument.getRelatedFLUXReportDocument()));
+                    ValidationResultDto validationResultFa = getValidationResultIfExist(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
                         it.remove();
                         addToValidationResult(validationResult, validationResultFa);
@@ -115,7 +115,7 @@ public class RulesPreProcessBean {
         globalValidationResult.getValidationMessages().addAll(validationResultFa.getValidationMessages());
     }
 
-    private List<String> getIds(FLUXReportDocument fluxReportDocument) {
+    private List<String> getIdsFromFluxFaReportDocument(FLUXReportDocument fluxReportDocument) {
         if (fluxReportDocument == null) {
             return Collections.emptyList();
         }
