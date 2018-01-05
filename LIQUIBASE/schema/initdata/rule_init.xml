@@ -2320,7 +2320,7 @@
             <column name="rule_id" value="111"/>
             <column name="br_id" value="FA-L00-00-0111"/>
             <column name="expression"
-                    value="!isSubActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; (relatedFishingTrip == null &amp;&amp; relatedFishingTrip.empty == true)"/>
+                    value="!isSubActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; isEmpty(relatedFishingTrip)"/>
             <column name="note" value="Check presence"/>
             <column name="message" value="Fishing trip details missing."/>
             <column name="level" value="L00"/>
