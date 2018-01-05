@@ -759,7 +759,7 @@
             <column name="expression"
                     value="countryID != null &amp;&amp; countryID.value != null &amp;&amp; countryID.value != &quot;IRL&quot; &amp;&amp; postalArea == null"/>
             <column name="note"
-                    value="Specified Structured_Address pos must be present except if CountryID = IRL (Ireland)."/>
+                    value="Specified Structured_Address postalArea must be present except if CountryID = IRL (Ireland)."/>
             <column name="message"
                     value="Postal area information missing."/>
             <column name="level" value="L00"/>
