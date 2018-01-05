@@ -10,6 +10,13 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -21,12 +28,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +58,7 @@ public abstract class AbstractConfigCache {
     protected void initializeCache() {
         if (cache == null) {
             cache = CacheBuilder.newBuilder()
-                    .maximumSize(1000)
+                    .maximumSize(100)
                     .expireAfterWrite(1, TimeUnit.HOURS)
                     .build(new CacheLoader<String, Map<String, String>>() {
                                @Override

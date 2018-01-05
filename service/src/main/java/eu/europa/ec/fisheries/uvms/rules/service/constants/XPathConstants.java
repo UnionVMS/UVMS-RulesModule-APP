@@ -68,7 +68,7 @@ public class XPathConstants {
     public static final String SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE = "SpecifiedPhysicalFLUXGeographicalCoordinate";
     public static final String PHYSICAL_STRUCTURED_ADDRESS = "PhysicalStructuredAddress";
     public static final String POSTAL_STRUCTURED_ADDRESS = "PostalStructuredAddress";
-    public static final String POSTCODE_CODE = "PostcodeCode";
+    public static final String POSTAL_AREA = "PostalArea";
     public static final String CITY_NAME = "CityName";
     public static final String STREET_NAME = "StreetName";
     public static final String PLOT_IDENTIFICATION = "PlotIdentification";
