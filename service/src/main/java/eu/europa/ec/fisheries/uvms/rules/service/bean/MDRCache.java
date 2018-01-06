@@ -58,12 +58,9 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-
     @PostConstruct
     public void init(){
         cache = CacheBuilder.newBuilder()
-                .maximumSize(150)
-                .expireAfterWrite(1, TimeUnit.HOURS)
                 .refreshAfterWrite(1, TimeUnit.HOURS)
                 .recordStats()
                 .build(

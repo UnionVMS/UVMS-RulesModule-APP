@@ -13,6 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -27,16 +37,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentF
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @autor padhyad
@@ -94,7 +94,7 @@ public class FactRuleEvaluatorTest {
     @Test
     public void testReInitializeKieSystem() {
         FactRuleEvaluator generator = new FactRuleEvaluator();
-        generator.reInitializeKieSystem();
+        //generator.reInitializeKieSystem();
         assertEquals(generator.getExceptionsList().size(), 0);
         assertEquals(generator.getFailedRules().size(), 0);
     }

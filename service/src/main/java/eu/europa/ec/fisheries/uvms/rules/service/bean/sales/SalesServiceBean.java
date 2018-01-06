@@ -1,5 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
@@ -9,15 +18,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceB
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Singleton
 @Slf4j

@@ -1,6 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.List;
+
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.CheckForUniqueIdResponse;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -16,12 +22,6 @@ import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import org.apache.commons.lang.StringUtils;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.util.List;
-
 @Singleton
 public class SalesServiceBeanHelper {
 
@@ -33,7 +33,6 @@ public class SalesServiceBeanHelper {
 
     @EJB
     SalesCache cache;
-
 
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
