@@ -78,7 +78,7 @@ public class RulesEngineBean {
         List<AbstractFact> facts = new ArrayList<>();
         AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
         generator.setBusinessObjectMessage(businessObject);
-       // mdrCacheServiceBean.loadMDRCache();
+        mdrCacheServiceBean.loadMDRCache();
         generator.setExtraValueMap(map);
         generator.setAdditionalValidationObject();
         facts.addAll(generator.generateAllFacts());

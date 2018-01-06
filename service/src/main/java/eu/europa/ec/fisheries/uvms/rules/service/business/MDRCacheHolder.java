@@ -23,7 +23,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 /**
  * Created by sanera on 20/06/2017.
  */
-// FIXME refactor and delete
+// FIXME
 public class MDRCacheHolder {
 
     private static Map<MDRAcronymType, List<ObjectRepresentation>> cache = new ConcurrentHashMap<>();

@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -89,14 +88,6 @@ public class FactRuleEvaluatorTest {
         // Second Validation
         facts.clear();
 
-    }
-
-    @Test
-    public void testReInitializeKieSystem() {
-        FactRuleEvaluator generator = new FactRuleEvaluator();
-        //generator.reInitializeKieSystem();
-        assertEquals(generator.getExceptionsList().size(), 0);
-        assertEquals(generator.getFailedRules().size(), 0);
     }
 
     @Test

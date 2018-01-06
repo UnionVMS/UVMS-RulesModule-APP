@@ -123,18 +123,6 @@ public class TemplateEngineBeanTest {
         }
     }
 
-    @Test
-    public void testReInitialize() {
-        try {
-            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
-            //Mockito.doNothing().when(ruleEvaluator).reInitializeKieSystem();
-            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
-            templateEngine.reInitialize();
-        } catch (Exception e) {
-            assertNull(e);
-        }
-    }
-
     private FLUXFAReportMessage getFluxFaReportMessage() {
         FLUXReportDocument fluxReportDocument = new FLUXReportDocument();
         IDType id = new IDType();

@@ -11,12 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -38,10 +40,10 @@ import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//@Startup
-// @Singleton
+@Startup
+@Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
-@Stateless
+//@Stateless
 public class RulesValidator {
     private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
 //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
@@ -63,7 +65,7 @@ public class RulesValidator {
     private KieFileSystem customKfs;
     private KieContainer customKcontainer;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         executor.submit(new Runnable() {
@@ -85,27 +87,25 @@ public class RulesValidator {
         try {
             // Fetch sanity rules from DB
             List<SanityRuleType> sanityRules = validationService.getSanityRules();
-            //if (sanityRules != null && !sanityRules.isEmpty()) {
-               // if (checkForChanges(sanityRules)) {
-                   // currentSanityRules = sanityRules;
+            if (sanityRules != null && !sanityRules.isEmpty()) {
+                if (checkForChanges(sanityRules)) {
+                    currentSanityRules = sanityRules;
                     // Add sanity rules
-                   // String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
+                    String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
 
-                   // sanityKfs = kieServices.newKieFileSystem();
+                    sanityKfs = kieServices.newKieFileSystem();
 
-                  //  sanityKfs.write(SANITY_RULES_DRL_FILE, drl);
-                  //  kieServices.newKieBuilder(sanityKfs).buildAll();
-                  //  sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-               // }
-           // } else {
+                    sanityKfs.write(SANITY_RULES_DRL_FILE, drl);
+                    kieServices.newKieBuilder(sanityKfs).buildAll();
+                    sanityKcontainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+                }
+            } else {
                 sanityKfs = null;
                 sanityKcontainer = null;
-
-        } catch (RulesServiceException  e) {
+            }
+        } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting sanity rules ]");
             // TODO: Throw exception???
-        } catch (RulesFaultException e) {
-            e.printStackTrace();
         }
     }
 

@@ -61,7 +61,7 @@ public class FactRuleEvaluator {
     private KieFileSystem kieFileSystem;
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
-    private List<String> stringList;
+    private List<String> systemPackagesPaths;
 
     @PostConstruct
     public void init() {
@@ -81,7 +81,7 @@ public class FactRuleEvaluator {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void  initializeRules(Collection<TemplateRuleMapDto> templates) {
         kieFileSystem = kieServices.newKieFileSystem();
-        stringList = new ArrayList<>();
+        systemPackagesPaths = new ArrayList<>();
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
@@ -143,7 +143,7 @@ public class FactRuleEvaluator {
             String templateName = ruleEntrySet.getValue();
             StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
             String systemPackage = ruleName.append(templateName).append(".drl").toString();
-            stringList.add(systemPackage);
+            systemPackagesPaths.add(systemPackage);
             kieFileSystem.write(systemPackage, rule);
             KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
