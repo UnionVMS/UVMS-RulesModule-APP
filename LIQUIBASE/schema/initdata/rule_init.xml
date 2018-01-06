@@ -2575,7 +2575,7 @@
             <column name="rule_id" value="312"/>
             <column name="br_id" value="FA-L02-00-0312"/>
             <column name="expression"
-                    value="listIdNotContains(relatedFluxLocationTypeCodes,&quot;LOCATION&quot;,&quot;POSITION&quot;,&quot;ADDRESS&quot;)"/>
+                    value="valueContainsAny(relatedFluxLocationTypeCodes,&quot;LOCATION&quot;,&quot;POSITION&quot;,&quot;ADDRESS&quot;)"/>
             <column name="note"
                     value="Check attribute listID .RelatedFluxLocation TypeCodes must be 'LOCATION','POSITION'or'ADDRESS'"/>
             <column name="message" value="Location TypeCode is invalid."/>
@@ -2583,9 +2583,10 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="26"/>
-            <column name="property_names" value="relatedFluxLocationTypeCode"/>
+            <column name="property_names" value="relatedFluxLocationTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="190"/>
             <column name="br_id" value="FA-L00-00-0190"/>
