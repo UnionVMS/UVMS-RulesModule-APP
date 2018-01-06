@@ -819,8 +819,10 @@ public class ActivityFactMapperTest {
     public void testStructuredAddressPostcodeCodeValue() {
 
         StructuredAddress structuredAddress = new StructuredAddress();
-        structuredAddress.setPostcodeCode(codeType);
-        String s = activityMapper.structuredAddressPostcodeCodeValue(structuredAddress);
+        TextType textType = new TextType();
+        textType.setValue("value");
+        structuredAddress.setPostalArea(textType);
+        String s = activityMapper.structuredAddressPostalAreaValue(structuredAddress);
 
         assertEquals(codeType.getValue(), s);
     }
