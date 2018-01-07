@@ -841,7 +841,7 @@
             <column name="rule_id" value="88"/>
             <column name="br_id" value="FA-L01-00-0088"/>
             <column name="expression"
-                    value="countryID != null &amp;&amp; countryID.schemeId != null &amp;&amp; countryID.value != null &amp;&amp; !isPresentInMDRList(countryID.schemeId, countryID.value)"/>
+                    value="countryID != null &amp;&amp; countryID.schemeId != null &amp;&amp; countryID.value != null &amp;&amp; !mdrService.isPresentInMDRList(countryID.schemeId, countryID.value)"/>
             <column name="note"
                     value="Specified Structured_Address CountryID value must be existing in the list specified by CountryID@SchemeId."/>
             <column name="message"
@@ -898,7 +898,7 @@
             <column name="rule_id" value="22"/>
             <column name="br_id" value="FA-L01-00-0022"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
             <column name="message" value="Invalid code for Report type."/>
             <column name="level" value="L01"/>
@@ -1020,7 +1020,7 @@
             <column name="rule_id" value="34"/>
             <column name="br_id" value="FA-L01-00-0034"/>
             <column name="expression"
-                    value="purposeCode != null &amp;&amp; !isPresentInMDRList(purposeCode.listId, purposeCode.value)"/>
+                    value="purposeCode != null &amp;&amp; !mdrService.isPresentInMDRList(purposeCode.listId, purposeCode.value)"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
             <column name="message" value="PurposeCode has an invalid value."/>
             <column name="level" value="L01"/>
@@ -1302,7 +1302,7 @@
             <column name="rule_id" value="57"/>
             <column name="br_id" value="FA-L01-00-0057"/>
             <column name="expression"
-                    value="isFromFaReport &amp;&amp; roleCode != null &amp;&amp; !isPresentInMDRList(roleCode.listId, roleCode.value)"/>
+                    value="isFromFaReport &amp;&amp; roleCode != null &amp;&amp; !mdrService.isPresentInMDRList(roleCode.listId, roleCode.value)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="RoleCode has an invalid value."/>
             <column name="level" value="L01"/>
@@ -1343,7 +1343,7 @@
             <column name="rule_id" value="60"/>
             <column name="br_id" value="FA-L01-00-0060"/>
             <column name="expression"
-                    value="registrationVesselCountryId != null &amp;&amp; !isPresentInMDRList(registrationVesselCountryId.schemeId, registrationVesselCountryId.value)"/>
+                    value="registrationVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(registrationVesselCountryId.schemeId, registrationVesselCountryId.value)"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
             <column name="message" value="Invalid value for country of registration."/>
             <column name="level" value="L01"/>
@@ -1373,7 +1373,7 @@
             <column name="rule_id" value="63"/>
             <column name="br_id" value="FA-L03-00-0063"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp; !isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;)"/>
+                    value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;)"/>
             <column name="note" value="If vessel from EU Member States at time of activity, then CFR mandatory."/>
             <column name="message" value="If vessel from EU Member States at time of activity, then CFR mandatory."/>
             <column name="level" value="L03"/>
@@ -1478,7 +1478,7 @@
             <column name="rule_id" value="70"/>
             <column name="br_id" value="FA-L01-00-0070"/>
             <column name="expression"
-                    value="isFromFaReport &amp;&amp; !isCodeTypePresentInMDRList(&quot;FLUX_CONTACT_ROLE&quot;, specifiedContactPartyRoleCodes)"/>
+                    value="isFromFaReport &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;FLUX_CONTACT_ROLE&quot;, specifiedContactPartyRoleCodes)"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="message" value="Contact RoleCode has an invalid value."/>
             <column name="level" value="L01"/>
@@ -2288,7 +2288,7 @@
             <column name="rule_id" value="112"/>
             <column name="br_id" value="FA-L02-00-0112"/>
             <column name="expression" value="isEmpty(relatedFishingActivities) &amp;&amp;
-            ((faReportDocumentTypeCode == &quot;DECLARATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;FISHING_OPERATION&quot;)) || 
+            ((faReportDocumentTypeCode == &quot;DECLARATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;FISHING_OPERATION&quot;)) ||
 			(faReportDocumentTypeCode == &quot;DECLARATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;JOINT_FISHING_OPERATION&quot;)) ||
 			(faReportDocumentTypeCode == &quot;NOTIFICATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;AREA_ENTRY&quot;)))"/>
             <column name="note"
@@ -2406,7 +2406,7 @@
             <column name="rule_id" value="92"/>
             <column name="br_id" value="FA-L01-00-0092"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="message" value="Fishing activity TypeCode value is invalid."/>
             <column name="level" value="L01"/>
@@ -2435,7 +2435,7 @@
             <column name="rule_id" value="97"/>
             <column name="br_id" value="FA-L01-00-0097"/>
             <column name="expression"
-                    value="reasonCode != null &amp;&amp; !isPresentInMDRList(reasonCode.listId, reasonCode.value)"/>
+                    value="reasonCode != null &amp;&amp; !mdrService.isPresentInMDRList(reasonCode.listId, reasonCode.value)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="ReasonCode value invalid."/>
             <column name="level" value="L01"/>
@@ -2449,7 +2449,7 @@
             <column name="rule_id" value="99"/>
             <column name="br_id" value="FA-L01-00-0099"/>
             <column name="expression"
-                    value="fisheryTypeCode != null &amp;&amp; !isPresentInMDRList(fisheryTypeCode.listId, fisheryTypeCode.value)"/>
+                    value="fisheryTypeCode != null &amp;&amp; !mdrService.isPresentInMDRList(fisheryTypeCode.listId, fisheryTypeCode.value)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="FisheryTypeCode value is invalid."/>
             <column name="level" value="L01"/>
@@ -2463,7 +2463,7 @@
             <column name="rule_id" value="101"/>
             <column name="br_id" value="FA-L01-00-0101"/>
             <column name="expression"
-                    value="speciesTargetCode != null &amp;&amp; !isPresentInMDRList(speciesTargetCode.listId, speciesTargetCode.value)"/>
+                    value="speciesTargetCode != null &amp;&amp; !mdrService.isPresentInMDRList(speciesTargetCode.listId, speciesTargetCode.value)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="Invalid Target species."/>
             <column name="level" value="L01"/>
@@ -2477,7 +2477,7 @@
             <column name="rule_id" value="103"/>
             <column name="br_id" value="FA-L01-00-0103"/>
             <column name="expression"
-                    value="vesselRelatedActivityCode != null &amp;&amp; !isPresentInMDRList(vesselRelatedActivityCode.listId, vesselRelatedActivityCode.value)"/>
+                    value="vesselRelatedActivityCode != null &amp;&amp; !mdrService.isPresentInMDRList(vesselRelatedActivityCode.listId, vesselRelatedActivityCode.value)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="Invalid vessel activity."/>
             <column name="level" value="L01"/>
@@ -2645,7 +2645,7 @@
             <column name="rule_id" value="194"/>
             <column name="br_id" value="FA-L01-00-0194"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(&quot;FISHING_TRIP_TYPE&quot;, typeCode.value) "/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FISHING_TRIP_TYPE&quot;, typeCode.value) "/>
             <column name="note" value="If provided"/>
             <column name="message" value="Trip ID TypeCode value is invalid."/>
             <column name="level" value="L01"/>
@@ -2686,7 +2686,7 @@
             <column name="rule_id" value="197"/>
             <column name="br_id" value="FA-L01-00-0197"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_LOCATION_TYPE&quot;, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_LOCATION_TYPE&quot;, typeCode.value)"/>
             <column name="note" value="Check typeCode value it Must be present in MDR list FLUX_LOCATION_TYPE."/>
             <column name="message" value="Location TypeCode value is invalid."/>
             <column name="level" value="L01"/>
@@ -2729,7 +2729,7 @@
             <column name="rule_id" value="200"/>
             <column name="br_id" value="FA-L01-00-0200"/>
             <column name="expression"
-                    value="countryID != null &amp;&amp; !isPresentInMDRList(&quot;TERRITORY&quot;, countryID.value)"/>
+                    value="countryID != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;TERRITORY&quot;, countryID.value)"/>
             <column name="note" value="CountyID value must be present in MDR list TERRITORY."/>
             <column name="message" value="Location CountryID value is invalid."/>
             <column name="level" value="L01"/>
@@ -2787,7 +2787,7 @@
             <column name="rule_id" value="203"/>
             <column name="br_id" value="FA-L01-00-0203"/>
             <column name="expression"
-                    value="id != null &amp;&amp; id.schemeId != null &amp;&amp; !isPresentInMDRList(id.schemeId, id.value)"/>
+                    value="id != null &amp;&amp; id.schemeId != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value)"/>
             <column name="note" value="Id value must be present in MDR list specified in schemeId of Id"/>
             <column name="message" value="Location ID value is invalid."/>
             <column name="level" value="L01"/>
@@ -2964,7 +2964,7 @@
             <column name="rule_id" value="501"/>
             <column name="br_id" value="FA-L00-00-0501"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFluxLocationRFMOCodeList) &amp;&amp; !isCodeTypePresentInMDRList(&quot;RFMO&quot; , specifiedFluxLocationRFMOCodeList )"/>
+                    value="!isEmpty(specifiedFluxLocationRFMOCodeList) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;RFMO&quot; , specifiedFluxLocationRFMOCodeList )"/>
             <column name="note"
                     value="If provided. Please note that brId for this rule is FA-L01-00-0204. Different Id is used for uniqueness"/>
             <column name="message" value="specifiedFluxLocationRFMOCodeList value must be present in MDR list RFMO."/>
@@ -3007,7 +3007,7 @@
             <column name="rule_id" value="205"/>
             <column name="br_id" value="FA-L01-00-0205"/>
             <column name="expression"
-                    value="!isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !isCodeTypePresentInMDRList(&quot;RFMO&quot; , relatedFluxLocationRFMOCodeList )"/>
+                    value="!isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;RFMO&quot; , relatedFluxLocationRFMOCodeList )"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code value is invalid."/>
             <column name="level" value="L01"/>
@@ -3048,7 +3048,7 @@
             <column name="rule_id" value="152"/>
             <column name="br_id" value="FA-L01-00-0152"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.value != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value )"/>
+                    value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value )"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID "/>
             <column name="message" value="Check code. Must be existing in the list specified in attribute listID "/>
             <column name="level" value="L01"/>
@@ -3090,7 +3090,7 @@
             <column name="rule_id" value="155"/>
             <column name="br_id" value="FA-L01-00-0155"/>
             <column name="expression"
-                    value="speciesCode != null &amp;&amp; speciesCode.listId != null &amp;&amp; speciesCode.value != null &amp;&amp; !isPresentInMDRList(speciesCode.listId, speciesCode.value )"/>
+                    value="speciesCode != null &amp;&amp; speciesCode.listId != null &amp;&amp; speciesCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(speciesCode.listId, speciesCode.value )"/>
             <column name="note" value="Check code. Must be existing in the list specified in attribute listID "/>
             <column name="message" value="Check code. Must be existing in the list specified in attribute listID "/>
             <column name="level" value="L01"/>
@@ -3212,7 +3212,7 @@
             <column name="rule_id" value="164"/>
             <column name="br_id" value="FA-L01-00-0164"/>
             <column name="expression"
-                    value="weighingMeansCode != null &amp;&amp; !isPresentInMDRList(&quot;WEIGHT_MEANS&quot; ,weighingMeansCode.value )"/>
+                    value="weighingMeansCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;WEIGHT_MEANS&quot; ,weighingMeansCode.value )"/>
             <column name="note" value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
             <column name="message"
                     value="FA_Catch Weighing_MeansCode code must be present in MDR codelist WEIGHT_MEANS."/>
@@ -3258,7 +3258,7 @@
             <column name="rule_id" value="167"/>
             <column name="br_id" value="FA-L01-00-0167"/>
             <column name="expression"
-                    value="!isEmpty(sizeDistributionClassCode) &amp;&amp; !isCodeTypePresentInMDRList(&quot;FISH_SIZE_CLASS&quot; , sizeDistributionClassCode )"/>
+                    value="!isEmpty(sizeDistributionClassCode) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;FISH_SIZE_CLASS&quot; , sizeDistributionClassCode )"/>
             <column name="note" value="Si.e. BMS, LSC"/>
             <column name="message"
                     value="The size distribution ClassCode value is invalid."/>
@@ -3303,7 +3303,7 @@
             <column name="rule_id" value="170"/>
             <column name="br_id" value="FA-L02-00-0170"/>
             <column name="expression"
-                    value="categoryCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
+                    value="categoryCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FA_BFT_SIZE_CATEGORY&quot; , categoryCode.value)"/>
             <column name="note" value="If provided"/>
             <column name="message"
                     value="Specified Size_Distribution CategoryCode value must be present in FA_BFT_SIZE_CATEGORY list"/>
@@ -3334,7 +3334,7 @@
             <column name="rule_id" value="172"/>
             <column name="br_id" value="FA-L01-00-0172"/>
             <column name="expression"
-                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes) "/>
+                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes) "/>
             <column name="note" value="The value of the listID attribute must be on the list FLUX_PROCESS_TYPE."/>
             <column name="message" value="The listID for this processing type invalid."/>
             <column name="level" value="L01"/>
@@ -3348,7 +3348,7 @@
             <column name="rule_id" value="173"/>
             <column name="br_id" value="FA-L01-00-0173"/>
             <column name="expression"
-                    value="!isCodeTypePresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
+                    value="!mdrService.isCodeTypePresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
             <column name="note" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
@@ -3425,7 +3425,7 @@
             <column name="rule_id" value="177"/>
             <column name="br_id" value="FA-L01-00-0177"/>
             <column name="expression"
-                    value="!isCodeTypePresentInMDRList(&quot;FISH_PACKAGING&quot; , resultAAPProductPackagingTypeCode)"/>
+                    value="!mdrService.isCodeTypePresentInMDRList(&quot;FISH_PACKAGING&quot; , resultAAPProductPackagingTypeCode)"/>
             <column name="note" value="If provided"/>
             <column name="message"
                     value="The value of packaging TypeCode is invalid."/>
@@ -3723,7 +3723,7 @@
             <column name="rule_id" value="126"/>
             <column name="br_id" value="FA-L01-00-0126"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value)"/>
             <column name="note"
                     value="Gear Characteristic typeCode value must be present in MDR list FA_GEAR_CHARACTERISTIC."/>
             <column name="message"
@@ -3752,7 +3752,7 @@
             <column name="rule_id" value="128"/>
             <column name="br_id" value="FA-L00-00-0128"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure == null "/>
+                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure == null "/>
             <column name="note" value="ValueMeasure must be present. "/>
             <column name="message" value="Expected measure type missing."/>
             <column name="level" value="L00"/>
@@ -3766,7 +3766,7 @@
             <column name="rule_id" value="129"/>
             <column name="br_id" value="FA-L00-00-0129"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
+                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
             <column name="note" value="valueIndicator must be present. "/>
             <column name="message" value="Expected indicator type missing. "/>
             <column name="level" value="L00"/>
@@ -3780,7 +3780,7 @@
             <column name="rule_id" value="130"/>
             <column name="br_id" value="FA-L00-00-0130"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null "/>
+                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null "/>
             <column name="note" value="valueCode must be present. "/>
             <column name="message" value="Expected code value missing. "/>
             <column name="level" value="L00"/>
@@ -3794,7 +3794,7 @@
             <column name="rule_id" value="131"/>
             <column name="br_id" value="FA-L00-00-0131"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;TEXT&quot; &amp;&amp; value == null "/>
+                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;TEXT&quot; &amp;&amp; value == null "/>
             <column name="note" value="value must be present. "/>
             <column name="message" value="Expected text value missing. "/>
             <column name="level" value="L00"/>
@@ -3808,7 +3808,7 @@
             <column name="rule_id" value="132"/>
             <column name="br_id" value="FA-L00-00-0132"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null "/>
+                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null "/>
             <column name="note" value="valueQuantity must be present. "/>
             <column name="message" value="Expected quantity value missing. "/>
             <column name="level" value="L00"/>
@@ -3822,7 +3822,7 @@
             <column name="rule_id" value="133"/>
             <column name="br_id" value="FA-L00-00-0133"/>
             <column name="expression"
-                    value="valueMeasure != null &amp;&amp;  !isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode) "/>
+                    value="valueMeasure != null &amp;&amp;  !mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode) "/>
             <column name="note" value="ValueMeasure unitCode value must be present in MDR list  FLUX_UNIT"/>
             <column name="message" value="Unexpected unit code for Measure."/>
             <column name="level" value="L00"/>
@@ -4183,7 +4183,7 @@
             <column name="rule_id" value="121"/>
             <column name="br_id" value="FA-L01-00-0121"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !isPresentInMDRList(&quot;GEAR_TYPE&quot;, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;GEAR_TYPE&quot;, typeCode.value)"/>
             <column name="note"
                     value="TypeCode(s) must be present in the list specified in the listID attribute named GEAR_TYPE"/>
             <column name="message"
@@ -4213,7 +4213,7 @@
             <column name="rule_id" value="134"/>
             <column name="br_id" value="FA-L01-00-0134"/>
             <column name="expression"
-                    value="isEmpty(roleCodes) || !isCodeTypePresentInMDRList(roleCodes)"/>
+                    value="isEmpty(roleCodes) || !mdrService.isCodeTypePresentInMDRList(roleCodes)"/>
             <column name="note"
                     value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="message"
@@ -4258,7 +4258,7 @@
             <column name="rule_id" value="370"/>
             <column name="br_id" value="FA-L01-00-0370"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value="FA_QueryParameter TypeCode@listID must be FA_QUERY_PARAMETER."/>
             <column name="message"
                     value="The value of the query parameter TypeCode is invalid."/>
@@ -4361,7 +4361,7 @@
             <column name="rule_id" value="373"/>
             <column name="br_id" value="FA-L02-00-0373"/>
             <column name="expression"
-                    value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.listId == &quot;VESSELID&quot; &amp;&amp; !isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID.value))"/>
+                    value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.listId == &quot;VESSELID&quot; &amp;&amp; !mdrService.isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID.value))"/>
             <column name="note"
                     value="FA_QueryParameter ValueID must be value from the list FLUX_VESSEL_ID if CodeType is VESSELID"/>
             <column name="message"
@@ -4542,7 +4542,7 @@
             <column name="rule_id" value="340"/>
             <column name="br_id" value="FA-L02-00-0340"/>
             <column name="expression"
-                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !isIdTypePresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes) "/>
+                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isIdTypePresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes) "/>
             <column name="note" value="FLAPDocument ID Must have valid value from MDR list FLAP_ID_TYPE. "/>
             <column name="message" value="Fishing License, Authorization or Permit ID has an invalid schemeID. "/>
             <column name="level" value="L02"/>
@@ -4688,7 +4688,7 @@
             <column name="rule_id" value="137"/>
             <column name="br_id" value="FA-L01-00-0137"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(&quot;FA_GEAR_PROBLEM&quot;, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FA_GEAR_PROBLEM&quot;, typeCode.value)"/>
             <column name="note"
                     value="TypeCode(s) must be present in the list specified in the listID attribute named FA_GEAR_PROBLEM"/>
             <column name="message"
@@ -4718,7 +4718,7 @@
             <column name="rule_id" value="142"/>
             <column name="br_id" value="FA-L01-00-0142"/>
             <column name="expression"
-                    value="!isEmpty(recoveryMeasureCodes) &amp;&amp; !isCodeTypePresentInMDRList(&quot;FA_GEAR_RECOVERY&quot;, recoveryMeasureCodes)"/>
+                    value="!isEmpty(recoveryMeasureCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;FA_GEAR_RECOVERY&quot;, recoveryMeasureCodes)"/>
             <column name="note" value="TypeCode(s) must be present in the listID attribute named FA_GEAR_RECOVERY"/>
             <column name="message" value="Recovery measure value is invalid."/>
             <column name="level" value="L01"/>
@@ -4811,7 +4811,7 @@
             <column name="rule_id" value="352"/>
             <column name="br_id" value="FA-L01-00-0352"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note"
                     value="FA_Query TypeCode@listID must be existing in the list specified in attribute listID."/>
             <column name="message"
@@ -5440,7 +5440,7 @@
             <column name="rule_id" value="223"/>
             <column name="br_id" value="FA-L00-00-0223"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure == null"/>
             <column name="note" value="Data type must be MEASURE"/>
             <column name="message" value="Expected measure type missing."/>
             <column name="level" value="L00"/>
@@ -5454,7 +5454,7 @@
             <column name="rule_id" value="224"/>
             <column name="br_id" value="FA-L00-00-0224"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;DATETIME&quot; &amp;&amp; valueDateTime == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;DATETIME&quot; &amp;&amp; valueDateTime == null"/>
             <column name="note" value="Data type must be DATETIME"/>
             <column name="message" value="Expected date/time type missing."/>
             <column name="level" value="L00"/>
@@ -5468,7 +5468,7 @@
             <column name="rule_id" value="225"/>
             <column name="br_id" value="FA-L00-00-0225"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null"/>
             <column name="note" value="Data type must be INDICATOR"/>
             <column name="message" value="Expected indicator type missing."/>
             <column name="level" value="L00"/>
@@ -5482,7 +5482,7 @@
             <column name="rule_id" value="226"/>
             <column name="br_id" value="FA-L00-00-0226"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null"/>
             <column name="note" value="Data type must be CODE"/>
             <column name="message" value="Expected code value missing."/>
             <column name="level" value="L00"/>
@@ -5496,7 +5496,7 @@
             <column name="rule_id" value="227"/>
             <column name="br_id" value="FA-L00-00-0227"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isEmpty(values)"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isEmpty(values)"/>
             <column name="note" value="Data type must be TEXT"/>
             <column name="message" value="Expected text value missing."/>
             <column name="level" value="L00"/>
@@ -5510,7 +5510,7 @@
             <column name="rule_id" value="228"/>
             <column name="br_id" value="FA-L00-00-0228"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null"/>
             <column name="note" value="Data type must be QUANTITY"/>
             <column name="message" value="Expected quantity value missing."/>
             <column name="level" value="L00"/>
@@ -5524,7 +5524,7 @@
             <column name="rule_id" value="229"/>
             <column name="br_id" value="FA-L00-00-0229"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode)"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode)"/>
             <column name="note" value="Unit code must be defined in the list FLUX_UNIT"/>
             <column name="message" value="Unexpected unit code for Measure."/>
             <column name="level" value="L00"/>
@@ -5638,7 +5638,7 @@
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
             <column name="expression"
-                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId)"/>
+                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId)"/>
             <column name="note" value="Check attribute schemeID. Must be a valid value from code list FLUX_GP_MSG_ID."/>
             <column name="message" value="Response referenced ID has invalid schemeID."/>
             <column name="level" value="L00"/>
@@ -5692,7 +5692,7 @@
             <column name="rule_id" value="388"/>
             <column name="br_id" value="FA-L02-00-0388"/>
             <column name="expression"
-                    value="responseCode != null &amp;&amp; !isPresentInMDRList(responseCode.listId, responseCode.value)"/>
+                    value="responseCode != null &amp;&amp; !mdrService.isPresentInMDRList(responseCode.listId, responseCode.value)"/>
             <column name="note" value="Check responseCode. Must be existing in the list specified in attribute listID"/>
             <column name="message"
                     value="ResponseCode value is invalid."/>
@@ -5845,7 +5845,7 @@
             <column name="rule_id" valueNumeric="555"/>
             <column name="br_id" value="FA-L01-00-0555"/>
             <column name="expression"
-                    value="!isEmpty(validatorIDs) &amp;&amp; !isIdTypePresentInMDRList(validatorIDs)  "/>
+                    value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs)  "/>
             <column name="note" value="Check value. Must be value from the code list specified in schemeID."/>
             <column name="message" value="Validator ID value is invalid."/>
             <column name="level" value="L01"/>
@@ -5898,7 +5898,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="399"/>
             <column name="br_id" value="FA-L01-00-0399"/>
-            <column name="expression" value="id != null &amp;&amp; !isPresentInMDRList(id.schemeId, id.value)"/>
+            <column name="expression" value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value)"/>
             <column name="note"
                     value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
             <column name="message"
@@ -5941,7 +5941,7 @@
             <column name="rule_id" value="402"/>
             <column name="br_id" value="FA-L01-00-0402"/>
             <column name="expression"
-                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
+                    value="levelCode != null &amp;&amp; !mdrService.isPresentInMDRList(levelCode.listId, levelCode.value)"/>
             <column name="note"
                     value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
             <column name="message"
@@ -5971,7 +5971,7 @@
             <column name="rule_id" value="403"/>
             <column name="br_id" value="FA-L01-00-0403"/>
             <column name="expression"
-                    value="typeCode !=null &amp;&amp; (typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot; || !isPresentInMDRList(typeCode.listId, typeCode.value))"/>
+                    value="typeCode !=null &amp;&amp; (typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot; || !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value))"/>
             <column name="note"
                     value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
             <column name="message"
@@ -5989,7 +5989,7 @@
             <column name="rule_id" valueNumeric="406"/>
             <column name="br_id" value="FA-L01-00-0406"/>
             <column name="expression"
-                    value="typeCode !=null &amp;&amp; !isPresentInMDRList(typeCode.listId , typeCode.value)"/>
+                    value="typeCode !=null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId , typeCode.value)"/>
             <column name="note" value="Check value of TypeCode. Must be in the list specified in listID."/>
             <column name="message" value="TypeCode value is invalid."/>
             <column name="level" value="L01"/>
@@ -6046,7 +6046,7 @@
             <column name="rule_id" value="277"/>
             <column name="br_id" value="FA-L02-00-0277"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) || !isPresentInMDRList(&quot;FARM&quot;, getValueForSchemeId(&quot;FARM&quot;, specifiedFACatchDestinationFluxLocationIDs)))"/>
+                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) || !mdrService.isPresentInMDRList(&quot;FARM&quot;, getValueForSchemeId(&quot;FARM&quot;, specifiedFACatchDestinationFluxLocationIDs)))"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation ID's schemeId must be FARM and it's value must be in the MDR list if SpecifiedFACatch's SpeciesCode is BFT"/>
             <column name="message"
@@ -6404,7 +6404,7 @@
             <column name="rule_id" value="10108"/>
             <column name="br_id" value="SALE-L01-00-0020"/>
             <column name="expression"
-                    value="!isAuction() &amp;&amp; (isReport() &amp;&amp; IDS != null &amp;&amp; IDS.get(0) != null &amp;&amp; IDS.get(0).getValue() != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue()))"/>
+                    value="!isAuction() &amp;&amp; (isReport() &amp;&amp; IDS != null &amp;&amp; IDS.get(0) != null &amp;&amp; IDS.get(0).getValue() != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue()))"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6525,7 +6525,7 @@
             <column name="rule_id" value="10117"/>
             <column name="br_id" value="SALE-L01-00-0040"/>
             <column name="expression"
-                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_SALES_PARTY_ID_TYPE&quot;, ID.getSchemeId())"/>
+                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_SALES_PARTY_ID_TYPE&quot;, ID.getSchemeId())"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6580,7 +6580,7 @@
             <column name="rule_id" value="10122"/>
             <column name="br_id" value="SALE-L01-00-0060"/>
             <column name="expression"
-                    value="speciesCode != null &amp;&amp; speciesCode.getValue() != null &amp;&amp; !isPresentInMDRList(&quot;FAO_SPECIES&quot;, speciesCode.getValue()) "/>
+                    value="speciesCode != null &amp;&amp; speciesCode.getValue() != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FAO_SPECIES&quot;, speciesCode.getValue()) "/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6660,7 +6660,7 @@
             <column name="rule_id" value="10129"/>
             <column name="br_id" value="SALE-L01-00-0067"/>
             <column name="expression"
-                    value="usageCode != null &amp;&amp; !isPresentInMDRList(&quot;PROD_USAGE&quot;, usageCode.getValue())"/>
+                    value="usageCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;PROD_USAGE&quot;, usageCode.getValue())"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6674,7 +6674,7 @@
             <column name="rule_id" value="10130"/>
             <column name="br_id" value="SALE-L01-00-0070"/>
             <column name="expression"
-                    value="!isCodeTypePresentInMDRList(typeCodes)"/>
+                    value="!mdrService.isCodeTypePresentInMDRList(typeCodes)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code from the list listID"/>
             <column name="level" value="L01"/>
@@ -6958,7 +6958,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10153"/>
             <column name="br_id" value="SALE-L01-00-0186"/>
-            <column name="expression" value="!isIdTypePresentInMDRList(ID)"/>
+            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(ID)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="level" value="L01"/>
@@ -7861,7 +7861,7 @@
             <column name="rule_id" value="10503"/>
             <column name="br_id" value="SALE-L01-00-0410"/>
             <column name="expression"
-                    value="isQuery() &amp;&amp; IDS != null &amp;&amp; !IDS.isEmpty() &amp;&amp; IDS.get(0) != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue())"/>
+                    value="isQuery() &amp;&amp; IDS != null &amp;&amp; !IDS.isEmpty() &amp;&amp; IDS.get(0) != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue())"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -8000,7 +8000,7 @@
             <column name="rule_id" value="10602"/>
             <column name="br_id" value="SALE-L01-00-0452"/>
             <column name="expression"
-                    value="referencedID != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId())"/>
+                    value="referencedID != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId())"/>
             <column name="note" value=""/>
             <column name="message" value="Check attribute schemeID. Must be in the FLUX_GP_MSG_ID list"/>
             <column name="level" value="L01"/>
@@ -8083,7 +8083,7 @@
             <column name="rule_id" value="10608"/>
             <column name="br_id" value="SALE-L01-00-0470"/>
             <column name="expression"
-                    value="validatorID != null &amp;&amp; !isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, validatorID.value)"/>
+                    value="validatorID != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, validatorID.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -8111,7 +8111,7 @@
             <column name="rule_id" value="10610"/>
             <column name="br_id" value="SALE-L01-00-0480"/>
             <column name="expression"
-                    value="!isAuction() &amp;&amp; (ID != null &amp;&amp; !isPresentInMDRList(ID.schemeId, ID.value))"/>
+                    value="!isAuction() &amp;&amp; (ID != null &amp;&amp; !mdrService.isPresentInMDRList(ID.schemeId, ID.value))"/>
             <column name="note" value=""/>
             <column name="message" value="Check value. Code must be value of the specified code list in listID."/>
             <column name="level" value="L01"/>
@@ -8125,7 +8125,7 @@
             <column name="rule_id" value="10611"/>
             <column name="br_id" value="SALE-L01-00-0481"/>
             <column name="expression"
-                    value="levelCode != null &amp;&amp; !isPresentInMDRList(levelCode.listId, levelCode.value)"/>
+                    value="levelCode != null &amp;&amp; !mdrService.isPresentInMDRList(levelCode.listId, levelCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8139,7 +8139,7 @@
             <column name="rule_id" value="10612"/>
             <column name="br_id" value="SALE-L01-00-0482"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isPresentInMDRList(typeCode.listId, typeCode.value)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code. Must be in the list specified in listID."/>
             <column name="level" value="L01"/>
@@ -8525,7 +8525,7 @@
             <column name="rule_id" value="11709"/>
             <column name="br_id" value="SALE-BEL-06"/>
             <column name="expression"
-                    value="isAuction() &amp;&amp; !isPresentInMDRList(&quot;TERRITORY&quot;, countryCode)"/>
+                    value="isAuction() &amp;&amp; !mdrService.isPresentInMDRList(&quot;TERRITORY&quot;, countryCode)"/>
             <column name="note" value=""/>
             <column name="message" value="BEL:SALECountry: code should exist in MDR"/>
             <column name="level" value="L00"/>
@@ -8591,7 +8591,7 @@
             <column name="rule_id" value="51"/>
             <column name="br_id" value="FA-L01-00-0051"/>
             <column name="expression"
-                    value="isFromFaReport &amp;&amp; !isAllSchemeIdsPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, ids)"/>
+                    value="isFromFaReport &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, ids)"/>
             <column name="note" value="SchemeIDs must be present in the list FLUX_VESSEL_ID"/>
             <column name="message" value="Vessel ID has an invalid schemeID."/>
             <column name="level" value="L01"/>

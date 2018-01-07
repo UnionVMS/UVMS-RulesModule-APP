@@ -13,6 +13,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXGeographicalCoordinateFact;
 import java.math.BigDecimal;
 
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+
 template "@{tname}"
 
 rule "Sales Geographical Coordinate @{tname} - @{brid}"

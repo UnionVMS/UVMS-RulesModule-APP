@@ -13,8 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -23,23 +24,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -47,96 +47,61 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
-import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.internal.definition.KnowledgePackage;
 
 @Slf4j
 @Singleton
-@LocalBean
+@DependsOn({"MDRCacheServiceBean"})
 public class FactRuleEvaluator {
 
     @EJB
     private SalesRulesService salesRulesService;
 
-    private KieServices kieServices = KieServices.Factory.get();
-    private KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
+    @EJB
+    private MDRCacheRuleService mdrCacheRuleService;
+
+    @EJB
+    private RulesValidator rulesValidator;
+
+    private KieServices kieServices;
+
+    @Getter
+    private KieFileSystem kieFileSystem;
+
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
-    private List<String> systemPackagesPaths = new ArrayList<>();
+    private List<String> systemPackagesPaths;
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reInitializeKieSystem() {
-        failedRules = new ArrayList<>();
-        exceptionsList = new ArrayList<>();
-        log.info("[START] --> Reinitializing KieSession and cleaning KiePackages..");
-        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
-        Collection<KiePackage> kiePackages = kBase.getKiePackages();
-        Iterator<KiePackage> iterator = kiePackages.iterator();
-        while (iterator.hasNext()){
-            KiePackage next = iterator.next();
-            kBase.removeKiePackage(next.getName());
-        }
-        kieFileSystem.delete(systemPackagesPaths.toArray(new String[systemPackagesPaths.size()]));
-        log.info("[END] --> Deleted [" + systemPackagesPaths.size() + "] packages from KieFileSystem.");
-        systemPackagesPaths.clear();
+    @PostConstruct
+    public void init() {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                initServices();
+                //rulesValidator.updateCustomRules();
+            }
+        });
+    }
+
+    private void initServices() {
+        kieServices = KieServices.Factory.get();
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void initializeRules(Collection<TemplateRuleMapDto> templates) {
+    public void  initializeRules(Collection<TemplateRuleMapDto> templates) {
+        kieFileSystem = kieServices.newKieFileSystem();
+        systemPackagesPaths = new ArrayList<>();
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
-            log.debug("Initializing template: " + templateName);
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
             drlsAndRules.putAll(generateExternalRulesFromTemplate(template.getExternalRules()));
         }
-        Collection<KiePackage> packages = createAllPackages(drlsAndRules);
-        buildAllPackages(packages);
-    }
-
-    public void validateFact(Collection<AbstractFact> facts) {
-        KieSession ksession = null;
-        try {
-            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-            ksession = container.newKieSession();
-
-            Iterator<AbstractFact> factsIterator = facts.iterator();
-            while (factsIterator.hasNext()) {
-                if (factsIterator.next() instanceof SalesAbstractFact) {
-                    ksession.setGlobal("salesService", salesRulesService);
-                    break;
-                }
-            }
-
-            for (AbstractFact fact : facts) { // Insert All the facts
-                ksession.insert(fact);
-            }
-            ksession.fireAllRules();
-            ksession.dispose();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            Collection<?> objects = null;
-            if (ksession != null) {
-                objects = ksession.getObjects();
-            }
-            if (CollectionUtils.isNotEmpty(objects)) {
-                Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
-                AbstractFact next = failedFacts.iterator().next();
-                String message = e.getMessage();
-                String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
-                next.setOk(false);
-                facts.remove(next); // remove fact with exception and re-validate the other facts
-                exceptionsList.add(next);
-                validateFact(facts);
-            }
-        }
-
+        createAllPackages(drlsAndRules);
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -185,6 +150,11 @@ public class FactRuleEvaluator {
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
         KieContainer container = null;
+
+        systemPackagesPaths.add("src/main/resources/rules/SanityRules.drl");
+        String drl = rulesValidator.getSanityRuleDrlFile();
+        kieFileSystem.write("src/main/resources/rules/SanityRules.drl", drl);
+
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
@@ -197,39 +167,53 @@ public class FactRuleEvaluator {
                 log.error("Rule failed to build {} ", templateName);
                 kieFileSystem.delete(ruleName.toString(), rule);
                 failedRules.add(templateName);
-                continue;
             }
-            kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
-            container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-
         }
-        
+
+        if (drlsAndRules.size()>0){
+            container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        }
+
         if (container != null) {
-        	compiledPackages = container.getKieBase().getKiePackages();        	
+        	compiledPackages = container.getKieBase().getKiePackages();
         }
         return compiledPackages;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void buildAllPackages(Collection<KiePackage> packages) {
-        KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
-        kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
-        kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
+    public void validateFact(Collection<AbstractFact> facts) {
+        KieSession ksession = null;
+        try {
+            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            ksession = container.newKieSession();
 
-        kieServices.newKieBuilder(kieFileSystem).buildAll();
-        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
+            ksession.setGlobal("salesService", salesRulesService);
+            ksession.setGlobal("mdrService", mdrCacheRuleService);
 
-        Collection<KnowledgePackage> allPackages = Collections2.transform(packages, new Function<KiePackage, KnowledgePackage>() {
-            @Override
-            public KnowledgePackage apply(KiePackage kiePackage) {
-            return (KnowledgePackage) kiePackage;
+            for (AbstractFact fact : facts) { // Insert All the facts
+                ksession.insert(fact);
             }
-        });
 
-        kBase.addKnowledgePackages(allPackages);
+            ksession.fireAllRules();
+            ksession.dispose();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            Collection<?> objects = null;
+            if (ksession != null) {
+                objects = ksession.getObjects();
+            }
+            if (CollectionUtils.isNotEmpty(objects)) {
+                Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
+                AbstractFact next = failedFacts.iterator().next();
+                String message = e.getMessage();
+                String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
+                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
+                next.setOk(false);
+                facts.remove(next); // remove fact with exception and re-validate the other facts
+                exceptionsList.add(next);
+                validateFact(facts);
+            }
+        }
     }
-
 
     public List<AbstractFact> getExceptionsList() {
         return exceptionsList;

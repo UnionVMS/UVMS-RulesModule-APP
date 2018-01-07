@@ -48,7 +48,7 @@ public class RulesTimerBean {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.info("RulesTimerBean init");
+        LOG.debug("RulesTimerBean init");
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
         CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
         comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
