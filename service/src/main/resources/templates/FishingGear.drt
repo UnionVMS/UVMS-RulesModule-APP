@@ -14,6 +14,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import java.util.Arrays;
 
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+
 template "@{tname}"
 
 rule "Vessel Transport means @{tname} - @{brid}"

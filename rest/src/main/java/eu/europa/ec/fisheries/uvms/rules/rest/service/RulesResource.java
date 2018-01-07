@@ -32,7 +32,7 @@ import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
@@ -65,7 +65,7 @@ public class RulesResource {
     private RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
-    private MDRCacheServiceBean mdrService;
+    private MDRCacheService mdrService;
 
     @EJB
     private RulesEngineBean rulesEngine;

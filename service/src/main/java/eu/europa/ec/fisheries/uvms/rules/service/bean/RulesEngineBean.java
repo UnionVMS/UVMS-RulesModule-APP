@@ -53,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RulesEngineBean {
 
     @EJB
-    private MDRCacheServiceBean mdrCacheServiceBean;
+    private MDRCacheService mdrCacheService;
 
     @EJB
     private TemplateEngine templateEngine;
@@ -78,7 +78,7 @@ public class RulesEngineBean {
         List<AbstractFact> facts = new ArrayList<>();
         AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
         generator.setBusinessObjectMessage(businessObject);
-        mdrCacheServiceBean.loadMDRCache();
+        mdrCacheService.loadMDRCache();
         generator.setExtraValueMap(map);
         generator.setAdditionalValidationObject();
         facts.addAll(generator.generateAllFacts());

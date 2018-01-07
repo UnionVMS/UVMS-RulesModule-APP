@@ -21,9 +21,11 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 /**
- * Created by sanera on 20/06/2017.
+ * Does some thing in old style.
+ *
+ * @deprecated use {@link #MDRCacheRuleService()} instead.
  */
-// FIXME
+@Deprecated
 public class MDRCacheHolder {
 
     private static Map<MDRAcronymType, List<ObjectRepresentation>> cache = new ConcurrentHashMap<>();

@@ -14,6 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -34,8 +34,9 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,13 +53,23 @@ import org.kie.api.runtime.KieSession;
 
 @Slf4j
 @Singleton
+@DependsOn({"MDRCacheServiceBean"})
 public class FactRuleEvaluator {
 
     @EJB
     private SalesRulesService salesRulesService;
 
+    @EJB
+    private MDRCacheRuleService mdrCacheRuleService;
+
+    @EJB
+    private RulesValidator rulesValidator;
+
     private KieServices kieServices;
+
+    @Getter
     private KieFileSystem kieFileSystem;
+
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
     private List<String> systemPackagesPaths;
@@ -70,6 +81,7 @@ public class FactRuleEvaluator {
             @Override
             public void run() {
                 initServices();
+                //rulesValidator.updateCustomRules();
             }
         });
     }
@@ -137,7 +149,12 @@ public class FactRuleEvaluator {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
-        KieContainer container;
+        KieContainer container = null;
+
+        systemPackagesPaths.add("src/main/resources/rules/SanityRules.drl");
+        String drl = rulesValidator.getSanityRuleDrlFile();
+        kieFileSystem.write("src/main/resources/rules/SanityRules.drl", drl);
+
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
@@ -152,16 +169,16 @@ public class FactRuleEvaluator {
                 failedRules.add(templateName);
             }
         }
-        container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+
+        if (drlsAndRules.size()>0){
+            container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        }
 
         if (container != null) {
         	compiledPackages = container.getKieBase().getKiePackages();
         }
-        log.info("compiledPackages   "+compiledPackages.size());
-
         return compiledPackages;
     }
-
 
     public void validateFact(Collection<AbstractFact> facts) {
         KieSession ksession = null;
@@ -169,17 +186,13 @@ public class FactRuleEvaluator {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
 
-            Iterator<AbstractFact> factsIterator = facts.iterator();
-            while (factsIterator.hasNext()) {
-                if (factsIterator.next() instanceof SalesAbstractFact) {
-                    ksession.setGlobal("salesService", salesRulesService);
-                    break;
-                }
-            }
+            ksession.setGlobal("salesService", salesRulesService);
+            ksession.setGlobal("mdrService", mdrCacheRuleService);
 
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
+
             ksession.fireAllRules();
             ksession.dispose();
         } catch (Exception e) {
@@ -200,7 +213,6 @@ public class FactRuleEvaluator {
                 validateFact(facts);
             }
         }
-
     }
 
     public List<AbstractFact> getExceptionsList() {
