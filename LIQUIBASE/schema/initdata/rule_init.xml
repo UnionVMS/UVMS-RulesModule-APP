@@ -983,7 +983,7 @@
                     value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party.                                        It is expected to return the same validation results."/>
             <column name="message" value="Report ID already exists."/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="1"/>
             <column name="property_names" value="relatedFLUXReportDocumentIDs"/>

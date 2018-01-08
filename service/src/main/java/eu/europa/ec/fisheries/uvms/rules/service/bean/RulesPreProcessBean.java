@@ -83,7 +83,7 @@ public class RulesPreProcessBean {
             validationResult = getValidationResultIfExist(getIdsFromFluxFaReportDocument(fluxfaReportMessage.getFLUXReportDocument()));
             if (validationResult != null && !validationResult.isOk()) {
                 isContinueValidation = false;
-            } else if (fluxfaReportMessage.getFAReportDocuments() != null) {
+            } else if (CollectionUtils.isNotEmpty(fluxfaReportMessage.getFAReportDocuments())) {
                 Iterator it = fluxfaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
                     FAReportDocument faReportDocument = (FAReportDocument) it.next();
