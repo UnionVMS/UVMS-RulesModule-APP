@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -65,8 +63,6 @@ public class FactRuleEvaluator {
     @EJB
     private RulesValidator rulesValidator;
 
-    private KieServices kieServices;
-
     @Getter
     private KieFileSystem kieFileSystem;
 
@@ -76,22 +72,15 @@ public class FactRuleEvaluator {
 
     @PostConstruct
     public void init() {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                initServices();
-                //rulesValidator.updateCustomRules();
-            }
-        });
+
     }
 
     private void initServices() {
-        kieServices = KieServices.Factory.get();
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void  initializeRules(Collection<TemplateRuleMapDto> templates) {
+        KieServices kieServices = KieServices.Factory.get();
         kieFileSystem = kieServices.newKieFileSystem();
         systemPackagesPaths = new ArrayList<>();
         Map<String, String> drlsAndRules = new HashMap<>();
@@ -155,6 +144,8 @@ public class FactRuleEvaluator {
         String drl = rulesValidator.getSanityRuleDrlFile();
         kieFileSystem.write("src/main/resources/rules/SanityRules.drl", drl);
 
+        KieServices kieServices = KieServices.Factory.get();
+
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
@@ -182,6 +173,7 @@ public class FactRuleEvaluator {
 
     public void validateFact(Collection<AbstractFact> facts) {
         KieSession ksession = null;
+        KieServices kieServices = KieServices.Factory.get();
         try {
             KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
