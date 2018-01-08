@@ -10,8 +10,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-/**
- * TODO create test
- */
-public class ExchangeRuleServiceBean {
+import javax.ejb.Singleton;
+
+import eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService;
+import lombok.extern.slf4j.Slf4j;
+
+@Singleton
+@Slf4j
+public class ExchangeRuleServiceBean implements ExchangeRuleService {
+
+
+
 }
