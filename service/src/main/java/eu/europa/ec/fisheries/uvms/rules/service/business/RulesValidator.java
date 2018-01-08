@@ -64,13 +64,13 @@ public class RulesValidator {
             // Fetch sanity rules from DB
             List<SanityRuleType> sanityRules = validationService.getSanityRules();
             if (sanityRules != null && !sanityRules.isEmpty()) {
-                if (checkForChanges(sanityRules)) {
+              //  if (checkForChanges(sanityRules)) {
                     currentSanityRules = sanityRules;
                     // Add sanity rules
                     String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
                     sanityKfs = KieServices.Factory.get().newKieFileSystem();
                     return drl;
-                }
+              //  }
             }
         } catch (RulesServiceException | RulesFaultException  e) {
             LOG.error("[ Error when getting sanity rules ]");

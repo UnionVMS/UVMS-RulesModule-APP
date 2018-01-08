@@ -21,6 +21,10 @@ public interface MDRCacheRuleService {
 
     boolean isPresentInMDRList(String listName, String codeValue);
 
+    boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes);
+
+    boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode);
+
     boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch);
 
     boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch);
@@ -38,10 +42,6 @@ public interface MDRCacheRuleService {
     String getDataTypeForMDRList(String listName, String codeValue);
 
     String getValueForListId(String listId, List<CodeType> typeCodes);
-
-    boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes);
-
-    boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode);
 
     boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes);
 
