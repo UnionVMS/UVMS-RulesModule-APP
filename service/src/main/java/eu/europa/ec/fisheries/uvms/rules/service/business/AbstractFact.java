@@ -1157,12 +1157,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Check if value passed is present in the MDR list speified
+     * Does some thing in old style.
      *
-     * @param listName  - MDR list name to be ckecked against
-     * @param codeValue - This value will be checked in MDR list
-     * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
@@ -1177,11 +1176,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
+     * Does some thing in old style.
      *
-     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
-     * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
@@ -1207,12 +1206,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     * Does some thing in old style.
      *
-     * @param listName      - Values passed would be checked agaist this MDR list
-     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
-     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
@@ -1258,12 +1256,11 @@ public abstract class AbstractFact {
 
 
     /**
-     * This function checks that all the IdType values passed to the function exist in MDR code list or not
+     * Does some thing in old style.
      *
-     * @param listName      - Values passed would be checked agaist this MDR list
-     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
-     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
@@ -1287,29 +1284,12 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean isIdTypePresentInMDRList(List<IdType> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
-            return false;
-        }
-
-
-        for (IdType idType : ids) {
-            if (isIdTypePresentInMDRList(idType) == false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
     /**
-     * This function checks that the IdType exist in MDR code list or not.
-     * The MDR list is defined by the property schemeId from the IdType
+     * Does some thing in old style.
      *
-     * @param id - IdType that will be checked against ListName
-     * @return true when it exists
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isIdTypePresentInMDRList(IdType id) {
         if (id == null) {
             return false;
@@ -1328,20 +1308,12 @@ public abstract class AbstractFact {
         return codeListValues.contains(value);
     }
 
-    public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
-        if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
-            return false;
-        }
-
-        for (IdType idType : idTypes) {
-            if (!isSchemeIdPresentInMDRList(listName, idType)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
+    /**
+     * Does some thing in old style.
+     *
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     */
+    @Deprecated
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
         if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
             return false;
@@ -1501,12 +1473,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
+     * Does some thing in old style.
      *
-     * @param listName  MDR list name to be matched with
-     * @param codeValue value for CODE column to be matched with
-     * @return DATATYPE column value for the matching record
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {

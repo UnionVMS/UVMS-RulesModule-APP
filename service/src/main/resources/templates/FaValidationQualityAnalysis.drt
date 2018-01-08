@@ -13,6 +13,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+
 template "@{tname}"
 
 rule "Validation Quality Analysis @{tname} - @{brid}"

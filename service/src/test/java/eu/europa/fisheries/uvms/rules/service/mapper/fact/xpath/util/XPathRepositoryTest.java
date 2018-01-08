@@ -347,7 +347,7 @@ public class XPathRepositoryTest {
         constantsList.add(XPathConstants.SPECIFIED_PHYSICAL_FLUX_GEOGRAPHICAL_COORDINATE);
         constantsList.add(XPathConstants.PHYSICAL_STRUCTURED_ADDRESS);
         constantsList.add(XPathConstants.POSTAL_STRUCTURED_ADDRESS);
-        constantsList.add(XPathConstants.POSTCODE_CODE);
+        constantsList.add(XPathConstants.POSTAL_AREA);
         constantsList.add(XPathConstants.CITY_NAME);
         constantsList.add(XPathConstants.STREET_NAME);
         constantsList.add(XPathConstants.PLOT_IDENTIFICATION);

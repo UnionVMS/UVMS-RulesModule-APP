@@ -12,6 +12,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesStructuredAddressFact;
 
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+
 template "@{tname}"
 
 rule "Sales Structured Address @{tname} - @{brid}"

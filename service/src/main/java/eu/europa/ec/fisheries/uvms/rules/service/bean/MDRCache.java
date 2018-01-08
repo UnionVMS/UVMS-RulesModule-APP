@@ -21,6 +21,7 @@ import javax.jms.TextMessage;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -58,13 +59,12 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-
     @PostConstruct
     public void init(){
         cache = CacheBuilder.newBuilder()
-                .maximumSize(150)
-                .expireAfterWrite(1, TimeUnit.HOURS)
                 .refreshAfterWrite(1, TimeUnit.HOURS)
+                .maximumSize(100)
+                .initialCapacity(80)
                 .recordStats()
                 .build(
                         new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
@@ -74,6 +74,7 @@ public class MDRCache {
                             }
                         }
                 );
+
         //loadAllMdrCache();
     }
 
@@ -101,10 +102,17 @@ public class MDRCache {
     }
 
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<ObjectRepresentation> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
+
+        long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
+        if (elapsed > 0.25){
+            log.info("Loading " + acronymType + " took " + stopwatch);
+        }
+
         return result;
     }
 

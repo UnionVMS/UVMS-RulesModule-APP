@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 

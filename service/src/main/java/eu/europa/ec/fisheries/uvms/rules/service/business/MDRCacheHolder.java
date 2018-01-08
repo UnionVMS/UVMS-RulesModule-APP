@@ -9,20 +9,23 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
 /**
- * Created by sanera on 20/06/2017.
+ * Does some thing in old style.
+ *
+ * @deprecated use {@link #MDRCacheRuleService()} instead.
  */
+@Deprecated
 public class MDRCacheHolder {
 
     private static Map<MDRAcronymType, List<ObjectRepresentation>> cache = new ConcurrentHashMap<>();

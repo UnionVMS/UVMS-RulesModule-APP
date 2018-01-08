@@ -1,28 +1,37 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
-import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
-import ma.glasnost.orika.MapperFacade;
-import org.joda.time.DateTime;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
+import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
+import eu.europa.ec.fisheries.schema.sales.SalesEventType;
+import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
+import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
+import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
+import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
 
 @Singleton
 public class SalesRulesServiceBean implements SalesRulesService {
-
 
     @EJB
     SalesService salesService;
