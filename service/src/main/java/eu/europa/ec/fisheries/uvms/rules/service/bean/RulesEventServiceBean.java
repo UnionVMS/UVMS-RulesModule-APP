@@ -254,13 +254,13 @@ public class RulesEventServiceBean implements EventService {
         }
     }
 
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
         try {
-            LOG.info("get SetFLUXFAReportMessageReceived inside rules");
+            LOG.info("\n\n[INFO] Got SetFLUXFAReportMessageReceived inside rules");
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            LOG.info("marshall SetFLUXFAReportMessageRequest successful");
             messageService.evaluateFLUXFAReportRequest(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
@@ -269,13 +269,13 @@ public class RulesEventServiceBean implements EventService {
         }
     }
 
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setFaQueryMessageReceived(@Observes @SetFluxFaQueryMessageReceivedEvent EventMessage message) {
         try {
-            LOG.info("[INFO] SetFluxFaQueryMessageReceivedEvent inside rules..");
+            LOG.info("\n\n[INFO] Got SetFluxFaQueryMessageReceivedEvent inside rules..");
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
-            LOG.info("[INFO] marshall SetFLUXFAReportMessageRequest successful");
             messageService.evaluateFaQueryRequest(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
