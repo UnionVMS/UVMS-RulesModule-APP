@@ -2,6 +2,9 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -12,16 +15,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBea
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
-import java.util.Arrays;
-import java.util.Collections;
-import org.drools.compiler.kie.builder.impl.KieFileSystemImpl;
-import org.drools.compiler.kie.builder.impl.KieServicesImpl;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -41,13 +38,6 @@ public class FLUXSalesReportMessageRuleTest {
 
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
-
-
-    @Before
-    public void setUp() throws Exception {
-        Whitebox.setInternalState(validator, "kieServices", new KieServicesImpl());
-        Whitebox.setInternalState(validator, "kieFileSystem", new KieFileSystemImpl());
-    }
 
     @Test
     public void testFLUXReportDocumentMustBePresent() {
