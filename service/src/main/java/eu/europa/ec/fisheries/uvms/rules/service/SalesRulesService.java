@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 
 import javax.ejb.Local;
@@ -20,13 +21,6 @@ public interface SalesRulesService {
      * @return
      */
     boolean doesReportNotExistWithId(SalesFLUXReportDocumentFact fact);
-
-    /**
-     * Checks if a report exists that is equal to the referencedID of the incoming report
-     * @param fact
-     * @return
-     */
-    boolean doesReportNotExistWithReferencedId(SalesFLUXReportDocumentFact fact);
 
     /**
      * Checks if the reception date is not within 48 hours of the sale date
@@ -76,7 +70,12 @@ public interface SalesRulesService {
 
     boolean isIdNotUnique(SalesFLUXResponseDocumentFact fact);
 
-    boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact);
+    /**
+     * Checks if a report exists that is equal to the referencedID of the incoming report
+     * @param fact fact, containing a document with a referencedID
+     * @return true if no report/query exist with an id equals to the given the referencedID
+     */
+    boolean doesReferencedIdNotExist(FactWithReferencedId fact);
 
     boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact);
 
