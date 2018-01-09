@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService exchangeService;
 
 template "@{tname}"
 

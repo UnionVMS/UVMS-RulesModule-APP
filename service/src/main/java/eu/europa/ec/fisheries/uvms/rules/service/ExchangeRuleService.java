@@ -15,6 +15,5 @@ import javax.ejb.Local;
 @Local
 public interface ExchangeRuleService {
 
-
-
+    boolean faQueryIdentificationExists(String refId, String typeRefType);
 }

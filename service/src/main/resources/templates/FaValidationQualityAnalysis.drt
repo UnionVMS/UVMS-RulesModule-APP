@@ -8,13 +8,13 @@ type
 level
 propertyNames
 
-
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService exchangeService;
 
 template "@{tname}"
 

@@ -153,6 +153,22 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="13"/>
+            <column name="br_id" value="FA-L03-00-0013"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId = 'UUID' &amp;&amp; exchangeService.faQueryIdentificationExists(referencedID.value, String typeRefType);
+ "/>
+            <column name="note" value="Only applicable if provided"/>
+            <column name="message" value="The identification must exist for a FLUXFAQueryMessage"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="2"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="true"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="14"/>
             <column name="br_id" value="FA-L00-00-0014"/>

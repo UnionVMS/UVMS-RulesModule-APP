@@ -29,6 +29,7 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
@@ -60,6 +61,9 @@ public class FactRuleEvaluator {
 
     @EJB
     private RulesValidator rulesValidator;
+
+    @EJB
+    private ExchangeRuleService exchangeRuleService;
 
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
@@ -124,10 +128,8 @@ public class FactRuleEvaluator {
         KieContainer container = null;
 
         List<String> systemPackagesPaths =  new ArrayList<>();
-       // systemPackagesPaths.add("src/main/resources/rules/SanityRules.drl");
         String drl = rulesValidator.getSanityRuleDrlFile();
         KieFileSystem kieFileSystem = KieServices.Factory.get().newKieFileSystem();
-        //kieFileSystem.write("src/main/resources/rules/SanityRules.drl", drl);
 
         String sruletemplateName = "SanityRules";
         drlsAndRules.put(drl, sruletemplateName);
@@ -164,6 +166,7 @@ public class FactRuleEvaluator {
 
             ksession.setGlobal("salesService", salesRulesService);
             ksession.setGlobal("mdrService", mdrCacheRuleService);
+            ksession.setGlobal("exchangeService", exchangeRuleService);
 
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
