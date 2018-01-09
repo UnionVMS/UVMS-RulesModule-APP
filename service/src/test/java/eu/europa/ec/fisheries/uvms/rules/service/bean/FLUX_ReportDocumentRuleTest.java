@@ -14,6 +14,10 @@ import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
 import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
@@ -23,17 +27,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import org.drools.compiler.kie.builder.impl.KieFileSystemImpl;
-import org.drools.compiler.kie.builder.impl.KieServicesImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -59,12 +57,6 @@ public class FLUX_ReportDocumentRuleTest {
 
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
-
-    @Before
-    public void setUp() throws Exception {
-        Whitebox.setInternalState(generator, "kieServices", new KieServicesImpl());
-        Whitebox.setInternalState(generator, "kieFileSystem", new KieFileSystemImpl());
-    }
 
     @Before
     public void beforeClass() {

@@ -16,8 +16,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,21 +28,19 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
-import org.drools.compiler.kie.builder.impl.KieFileSystemImpl;
-import org.drools.compiler.kie.builder.impl.KieServicesImpl;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -66,12 +62,6 @@ public class FactRuleEvaluatorTest {
 
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
-
-    @Before
-    public void setUp() throws Exception {
-        Whitebox.setInternalState(generator, "kieServices", new KieServicesImpl());
-        Whitebox.setInternalState(generator, "kieFileSystem", new KieFileSystemImpl());
-    }
 
     @Test
     public void testComputeRule() {
