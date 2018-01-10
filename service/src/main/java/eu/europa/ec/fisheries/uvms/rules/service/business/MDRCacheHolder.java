@@ -9,6 +9,8 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
@@ -32,7 +35,18 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 @Slf4j
 public class MDRCacheHolder {
 
-    private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
+    private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache  = CacheBuilder.newBuilder()
+            .refreshAfterWrite(100000000000000L,TimeUnit.DAYS)
+                .maximumSize(100)
+                .initialCapacity(80)
+                .recordStats()
+                .build(
+                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
+        @Override
+        public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
+            return Collections.singletonList(null);
+        }
+    });
 
     private MDRCacheHolder() {
         super();
