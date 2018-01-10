@@ -26,7 +26,6 @@ import eu.europa.ec.fisheries.schema.exchange.v1.TypeRefType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 
@@ -41,7 +40,7 @@ public class ExchangeRuleServiceBean implements ExchangeRuleService {
     private RulesMessageProducer producer;
 
     @Override
-    public boolean faQueryIdentificationExists(String refGuid, String typeRefType) {
+    public boolean identificationExists(String refGuid, String typeRefType) {
         Boolean faQueryIdentificationExists = false;
         try {
             LogRefIdByTypeExistsRequest existsRequest = new LogRefIdByTypeExistsRequest();
@@ -54,6 +53,7 @@ public class ExchangeRuleServiceBean implements ExchangeRuleService {
             String text = message.getText();
             LogRefIdByTypeExistsResponse response = unMarshallMessage(text, LogRefIdByTypeExistsResponse.class);
             faQueryIdentificationExists = response.getRefGuid() != null;
+
         } catch (JAXBException | MessageException | JMSException e) {
             e.printStackTrace();
         }

@@ -8,12 +8,12 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service;
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.ejb.Local;
 
 @Local
 public interface ExchangeRuleService {
 
-    boolean faQueryIdentificationExists(String refId, String typeRefType);
+    boolean identificationExists(String refGuid, String typeRefType);
 }

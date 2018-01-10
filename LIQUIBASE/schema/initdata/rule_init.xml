@@ -157,7 +157,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="13"/>
             <column name="br_id" value="FA-L03-00-0013"/>
-            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId = 'UUID' &amp;&amp; exchangeService.faQueryIdentificationExists(referencedID.value, String typeRefType);
+            <column name="expression" value="exchangeService.identificationExists(referencedID, &quot;FA_QUERY&quot;);
  "/>
             <column name="note" value="Only applicable if provided"/>
             <column name="message" value="The identification must exist for a FLUXFAQueryMessage"/>

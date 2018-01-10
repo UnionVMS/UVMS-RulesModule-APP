@@ -29,7 +29,6 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;

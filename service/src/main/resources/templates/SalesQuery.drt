@@ -14,7 +14,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
-global eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService exchangeService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
 
 template "@{tname}"
 
