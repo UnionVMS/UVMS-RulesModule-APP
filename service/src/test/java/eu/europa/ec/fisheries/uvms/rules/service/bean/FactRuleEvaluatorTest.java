@@ -37,14 +37,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import lombok.extern.slf4j.Slf4j;
-import org.drools.compiler.kie.builder.impl.KieFileSystemImpl;
-import org.drools.compiler.kie.builder.impl.KieServicesImpl;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -66,12 +62,6 @@ public class FactRuleEvaluatorTest {
 
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
-
-    @Before
-    public void setUp() throws Exception {
-        Whitebox.setInternalState(generator, "kieServices", new KieServicesImpl());
-        Whitebox.setInternalState(generator, "kieFileSystem", new KieFileSystemImpl());
-    }
 
     @Test
     public void testComputeRule() {

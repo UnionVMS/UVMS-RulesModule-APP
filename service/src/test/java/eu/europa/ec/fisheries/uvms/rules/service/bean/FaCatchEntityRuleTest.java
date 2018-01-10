@@ -2,6 +2,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -14,19 +19,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.drools.compiler.kie.builder.impl.KieFileSystemImpl;
-import org.drools.compiler.kie.builder.impl.KieServicesImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -51,12 +49,6 @@ public class FaCatchEntityRuleTest {
 
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
-
-    @Before
-    public void setUp() throws Exception {
-        Whitebox.setInternalState(generator, "kieServices", new KieServicesImpl());
-        Whitebox.setInternalState(generator, "kieFileSystem", new KieFileSystemImpl());
-    }
 
     @Before
     public void beforeClass() {
