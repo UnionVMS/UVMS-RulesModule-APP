@@ -48,7 +48,7 @@ public class RulesValidator {
     private static final String SANITY_RULES_TEMPLATE = "/templates/SanityRulesTemplate.drt";
 
     @EJB
-    ValidationService validationService;
+    private ValidationService validationService;
 
     private KieFileSystem sanityKfs;
     private KieContainer sanityKcontainer;

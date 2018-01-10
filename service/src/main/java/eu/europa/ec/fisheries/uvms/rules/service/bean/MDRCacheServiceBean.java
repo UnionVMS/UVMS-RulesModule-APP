@@ -10,23 +10,26 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Singleton
 @Slf4j
@@ -38,8 +41,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public void loadMDRCache() {
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
             List<ObjectRepresentation> values = cache.getEntry(acronymType);
-            MDRCacheHolder.getInstance().addToCache(acronymType, values); // FIXME after belgium tem has refactored there ref to cacheholder remove call
         }
+        MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME after belgium tem has refactored there ref to cacheholder remove call
         log.debug(cache.getCache().stats().toString());
         log.info("MDRCache size: " + cache.getCache().asMap().size());
     }
@@ -56,7 +59,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (mdrAcronymType == null) {
             return false;
         }
-
         List<ObjectRepresentation> entry = cache.getEntry(mdrAcronymType);
         List<String> values = getList(entry);
         if (CollectionUtils.isNotEmpty(values)) {
@@ -67,10 +69,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     private List<String> getList(List<ObjectRepresentation> entry) {
         List<String> codeColumnValues = new ArrayList<>();
-
         if (CollectionUtils.isEmpty(entry))
             return Collections.emptyList();
-
         for (ObjectRepresentation representation : entry) {
             List<ColumnDataType> columnDataTypes = representation.getFields();
             if (CollectionUtils.isEmpty(columnDataTypes)) {
@@ -82,7 +82,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 }
             }
         }
-
         return codeColumnValues;
     }
 
@@ -96,17 +95,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (codeType == null || codeType.getValue() == null || codeType.getListId() == null) {
                 return false;
             }
-
             MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, codeType.getListId());
             if (anEnum == null) {
                 return false;
             }
-
             List<ObjectRepresentation> entry = cache.getEntry(anEnum);
             List<String> codeListValues = getList(entry);
             if (!codeListValues.contains(codeType.getValue())) {
@@ -124,7 +120,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
@@ -135,13 +130,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -175,25 +168,20 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
         List<String> codeListValues = getList(entry);
 
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
-
         for (IdType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
-
         return true;
     }
 
@@ -201,14 +189,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (CollectionUtils.isEmpty(ids)) {
             return false;
         }
-
-
         for (IdType idType : ids) {
             if (isIdTypePresentInMDRList(idType) == false) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -241,14 +226,66 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
             return false;
         }
-
         for (IdType idType : idTypes) {
             if (!isSchemeIdPresentInMDRList(listName, idType)) {
                 return false;
             }
         }
-
         return true;
+    }
+
+    @Override
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode) {
+        // clean lists from nulls
+        Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
+        Iterables.removeIf(appliedAAPProcessTypeCodes, Predicates.isNull());
+        // country column
+        String country = StringUtils.EMPTY;
+        if(CollectionUtils.isNotEmpty(specifiedFLUXLocations)){
+            for(FLUXLocation location : specifiedFLUXLocations){
+                final IDType locId = location.getID();
+                if(locId != null && ("TERRITORY".equals(locId.getSchemeID()) || "MANAGEMENT_AREA".equals(locId.getSchemeID()))){
+                    country = locId.getValue();
+                }
+            }
+        }
+        if(isPresentInMDRList("MEMBER_STATE", country)){
+            country = "XEU";
+        }
+        // presentation, state columns
+        String presentation = StringUtils.EMPTY;
+        String state = StringUtils.EMPTY;
+        if(CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)){
+            for(CodeType presPreserv : appliedAAPProcessTypeCodes){
+                if("FISH_PRESENTATION".equals(presPreserv.getListId())){
+                    presentation = presPreserv.getListId();
+                }
+                if("FISH_PRESERVATION".equals(presPreserv.getListId())){
+                    state = presPreserv.getListId();
+                }
+            }
+        }
+        List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+        List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "country", country);
+        List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+        List<ObjectRepresentation> filtered_3_list = filterEntriesByColumn(filtered_2_list, "presentation", presentation);
+        List<ObjectRepresentation> filtered_4_list = filterEntriesByColumn(filtered_3_list, "state", state);
+        return CollectionUtils.isNotEmpty(filtered_4_list);
+    }
+
+    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnValue, String columnName){
+        if(CollectionUtils.isEmpty(entries) || StringUtils.isEmpty(columnValue) || StringUtils.isEmpty(columnName)){
+            return entries;
+        }
+        List<ObjectRepresentation> matchingList = new ArrayList<>();
+        for(ObjectRepresentation entry : entries){
+            for(ColumnDataType field : entry.getFields()){
+                if(field.getColumnName().equals(columnName) && field.getColumnValue().equals(columnValue)){
+                    matchingList.add(entry);
+                }
+            }
+        }
+        return matchingList;
     }
 
     /**
@@ -263,8 +300,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (anEnum == null || codeValue == null) {
             return StringUtils.EMPTY;
         }
-
-
         List<ObjectRepresentation> representations = cache.getEntry(anEnum);
         boolean valueFound = false;
         if (CollectionUtils.isNotEmpty(representations)) {
@@ -296,7 +331,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
             return false;
         }
-
         return isPresentInMDRList(listName, idType.getSchemeId());
     }
 
@@ -310,11 +344,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
-
         if (typeCodeValue == null) {
             return false;
         }
-
         return isPresentInMDRList(listName, typeCodeValue);
     }
 
@@ -322,7 +354,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
         }
-
         for (CodeType typeCode : typeCodes) {
             String typeCodeListId = typeCode.getListId();
 
@@ -330,7 +361,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 return typeCode.getValue();
             }
         }
-
         return null;
     }
 }

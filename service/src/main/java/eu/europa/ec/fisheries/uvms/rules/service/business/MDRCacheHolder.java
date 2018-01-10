@@ -9,6 +9,7 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.cache.LoadingCache;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.concurrent.ExecutionException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -23,12 +26,13 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 /**
  * Does some thing in old style.
  *
- * @deprecated use {@link #MDRCacheRuleService()} instead.
+ * @deprecated use {@link #MDRCacheService()} instead.
  */
 @Deprecated
+@Slf4j
 public class MDRCacheHolder {
 
-    private static Map<MDRAcronymType, List<ObjectRepresentation>> cache = new ConcurrentHashMap<>();
+    private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     private MDRCacheHolder() {
         super();
@@ -47,6 +51,10 @@ public class MDRCacheHolder {
         return Holder.INSTANCE;
     }
 
+    public void setCache(LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache){
+     this.cache = cache;
+    }
+
     public void addToCache(MDRAcronymType type, List<ObjectRepresentation> values) {
         cache.put(type, values);
     }
@@ -57,12 +65,14 @@ public class MDRCacheHolder {
 
     public List<String> getList(MDRAcronymType type, String column) {
         List<String> codeColumnValues = new ArrayList<>();
-
-        List<ObjectRepresentation> ObjectRepresentationList = cache.get(type);
-
+        List<ObjectRepresentation> ObjectRepresentationList = null;
+        try {
+            ObjectRepresentationList = cache.get(type);
+        } catch (ExecutionException e) {
+            log.error("Error while trying to get Entry By type in MDRCache.");
+        }
         if (CollectionUtils.isEmpty(ObjectRepresentationList))
             return Collections.emptyList();
-
         for (ObjectRepresentation representation : ObjectRepresentationList) {
             List<ColumnDataType> columnDataTypes = representation.getFields();
             if (CollectionUtils.isEmpty(columnDataTypes)) {
@@ -74,15 +84,18 @@ public class MDRCacheHolder {
                 }
             }
         }
-
         return codeColumnValues;
     }
 
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType type) {
         if (type == null)
             return Collections.emptyList();
-
-        return cache.get(type);
+        try {
+            return cache.get(type);
+        } catch (ExecutionException e) {
+            log.error("Error while trying to get Entry By type in MDRCache.");
+        }
+        return null;
     }
 
 }
