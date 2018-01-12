@@ -8,7 +8,6 @@ type
 level
 propertyNames
 
-
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaNotificationOfArrivalFact;
@@ -16,8 +15,9 @@ import java.util.Arrays;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
 
-template "@{tname}"
+template "@{tname} "
 
 rule "Vessel Transport means @{tname} - @{brid}"
 

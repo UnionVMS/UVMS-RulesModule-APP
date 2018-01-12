@@ -10,5 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.Local;
+
+@Local
 public interface ExchangeRuleService {
+
+    boolean identificationRefExists(String refGUID, String... typeRefType);
+
+    boolean identificationExists(String messageGuid, String typeRefType);
+
 }

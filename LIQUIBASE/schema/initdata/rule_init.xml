@@ -153,6 +153,22 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="13"/>
+            <column name="br_id" value="FA-L03-00-0013"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;)
+ "/>
+            <column name="note" value="Only applicable if provided"/>
+            <column name="message" value="The identification must exist for a FLUXFAQueryMessage"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="2"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="14"/>
             <column name="br_id" value="FA-L00-00-0014"/>
@@ -5635,6 +5651,20 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
+            <column name="rule_id" value="382"/>
+            <column name="br_id" value="FA-L03-00-0382"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; !exchangeService.identificationExists(ids.get(0).value, &quot;FA_RESPONSE&quot;)"/>
+            <column name="note" value="The identification of the FLUX response Document must be unique and not already exist"/>
+            <column name="message" value="The identification of the FLUX response Document must be unique and not already exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2018-01-12 00:00:00.0"/>
+            <column name="template_id" value="16"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
             <column name="expression"
@@ -5651,7 +5681,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="384"/>
             <column name="br_id" value="FA-L01-00-0384"/>
-            <column name="expression" value="referencedID !=null &amp;&amp; validateFormat(referencedID)  "/>
+            <column name="expression" value="referencedID != null &amp;&amp; validateFormat(referencedID)  "/>
             <column name="note" value="referencedID -- Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Response referenced ID value is invalid."/>
             <column name="level" value="L01"/>
@@ -5661,6 +5691,21 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="385"/>
+            <column name="br_id" value="FA-L03-00-0385"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;, &quot;FA_REPORT&quot;)"/>
+            <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+            <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on" valueDate="2018-01-11 00:00:00.0"/>
+            <column name="template_id" value="16"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="386"/>
             <column name="br_id" value="FA-L00-00-0386"/>
