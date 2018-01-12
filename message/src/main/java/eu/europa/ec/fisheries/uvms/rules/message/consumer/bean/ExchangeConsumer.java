@@ -8,15 +8,19 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
 import javax.ejb.Local;
+import javax.ejb.Stateless;
 
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
+
+@Stateless
 @Local
-public interface ExchangeRuleService {
+public class ExchangeConsumer extends AbstractConsumer {
 
-    boolean identificationRefExists(String refGUID, String... typeRefType);
-
-    boolean identificationExists(String messageGuid, String typeRefType);
-
+    @Override public String getDestinationName() {
+        return MessageConstants.QUEUE_RULES;
+    }
 }

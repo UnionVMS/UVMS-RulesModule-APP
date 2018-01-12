@@ -114,7 +114,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;

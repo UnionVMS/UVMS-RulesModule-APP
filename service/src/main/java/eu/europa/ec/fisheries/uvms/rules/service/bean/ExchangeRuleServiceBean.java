@@ -19,7 +19,11 @@ import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
+import java.util.Collections;
 
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogIdByTypeExistsRequest;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogIdByTypeExistsResponse;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.LogRefIdByTypeExistsRequest;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.LogRefIdByTypeExistsResponse;
 import eu.europa.ec.fisheries.schema.exchange.v1.TypeRefType;
@@ -40,13 +44,16 @@ public class ExchangeRuleServiceBean implements ExchangeRuleService {
     private RulesMessageProducer producer;
 
     @Override
-    public boolean identificationExists(String refGuid, String typeRefType) {
+    public boolean identificationRefExists(String refGuid, String... typeRefType) {
         Boolean faQueryIdentificationExists = false;
         try {
             LogRefIdByTypeExistsRequest existsRequest = new LogRefIdByTypeExistsRequest();
-            TypeRefType refType = EnumUtils.getEnum(TypeRefType.class, typeRefType);
+            for (String refType : typeRefType){
+                existsRequest.getRefTypes().add(EnumUtils.getEnum(TypeRefType.class, refType));
+            }
+            existsRequest.getRefTypes().removeAll(Collections.singleton(null));
             existsRequest.setRefGuid(refGuid);
-            existsRequest.setRefType(refType);
+            existsRequest.setMethod(ExchangeModuleMethod.LOG_REF_ID_BY_TYPE_EXISTS);
             String jaxBObjectToString = marshallJaxBObjectToString(existsRequest);
             String jmsMessageID = producer.sendDataSourceMessage(jaxBObjectToString, EXCHANGE);
             TextMessage message = consumer.getMessage(jmsMessageID, TextMessage.class);
@@ -55,8 +62,29 @@ public class ExchangeRuleServiceBean implements ExchangeRuleService {
             faQueryIdentificationExists = response.getRefGuid() != null;
 
         } catch (JAXBException | MessageException | JMSException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return faQueryIdentificationExists;
+    }
+
+    @Override
+    public boolean identificationExists(String messageGuid, String typeRefType) {
+        Boolean messageGuidIdentificationExists = false;
+        try {
+            LogIdByTypeExistsRequest existsRequest = new LogIdByTypeExistsRequest();
+            existsRequest.setRefType(EnumUtils.getEnum(TypeRefType.class, typeRefType));
+            existsRequest.setMessageGuid(messageGuid);
+            existsRequest.setMethod(ExchangeModuleMethod.LOG_ID_BY_TYPE_EXISTS);
+            String jaxBObjectToString = marshallJaxBObjectToString(existsRequest);
+            String jmsMessageID = producer.sendDataSourceMessage(jaxBObjectToString, EXCHANGE);
+            TextMessage message = consumer.getMessage(jmsMessageID, TextMessage.class);
+            String text = message.getText();
+            LogIdByTypeExistsResponse response = unMarshallMessage(text, LogIdByTypeExistsResponse.class);
+            messageGuidIdentificationExists = response.getMessageGuid() != null;
+
+        } catch (JAXBException | MessageException | JMSException e) {
+            log.error(e.getMessage(), e);
+        }
+        return messageGuidIdentificationExists;
     }
 }

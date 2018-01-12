@@ -18,6 +18,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.jms.TextMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -126,7 +127,7 @@ public class MDRCache {
             return response.getDataSets();
 
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }
