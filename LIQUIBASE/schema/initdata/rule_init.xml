@@ -462,7 +462,7 @@
             <column name="expression"
                     value="!verifyFLUXLocationIDValue(relatedFLUXLocations)"/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="note"
                     value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION)."/>
@@ -2210,7 +2210,7 @@
             <column name="message"
                     value="The start date/time missing."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="delimitedPeriods,typeCode"/>
@@ -2225,7 +2225,7 @@
             <column name="message"
                     value="The end date/time missing."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="delimitedPeriods,typeCode"/>
@@ -2312,7 +2312,7 @@
             <column name="message"
                     value="Sub-activity information not allowed for this type of activity."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="0013-03-09 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="relatedFishingActivities"/>
@@ -4533,7 +4533,7 @@
             <column name="note" value="FLUXCharacteristic ValueQuantity Must be greater than 0. "/>
             <column name="message" value="The value must be a positive integer value. "/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="28"/>
             <column name="property_names" value="fluxCharacteristicValueQuantity"/>
@@ -4654,7 +4654,7 @@
             <column name="message"
                     value="Fishing License, Authorization or Permit ID has an invalid schemeID."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="28"/>
             <column name="property_names" value="flapDocumentIdTypes"/>
