@@ -28,6 +28,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SetFluxFaQueryMessageReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ValidateMovementReportReceivedEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -91,6 +92,10 @@ public class RulesEventConsumerBean implements MessageListener {
     @Inject
     @SetFLUXFAReportMessageReceivedEvent
     Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
+
+    @Inject
+    @SetFluxFaQueryMessageReceivedEvent
+    Event<EventMessage> setFaQueryReceivedEvent;
 
     @Inject
     @SetFLUXMDRSyncMessageReceivedEvent
@@ -162,6 +167,9 @@ public class RulesEventConsumerBean implements MessageListener {
                     break;
                 case SET_FLUX_FA_REPORT :
                     setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SET_FLUX_FA_QUERY :
+                    setFaQueryReceivedEvent.fire(new EventMessage(textMessage));
                     break;
                 case SET_FLUX_MDR_SYNC_REQUEST :
                     setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));

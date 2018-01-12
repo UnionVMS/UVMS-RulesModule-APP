@@ -1,7 +1,7 @@
 create table rules.externalRule (rule_id int8 not null, rule_created_on timestamp, br_id varchar(255) not null, disabled boolean, expression text not null, error_type varchar(255) not null, level varchar(255) not null, message text not null, note text not null, property_names varchar(255) not null, template_id int8, primary key (rule_id))
 create table rules.failedrule (rule_id int8 not null, br_id varchar(255) not null, primary key (rule_id))
 create table rules.messageid (id int8 not null, message_id varchar(255) not null, validation_message_id int8, primary key (id))
-create table rules.rawmessage (id int8 not null, raw_message_guid varchar(255), raw_message text not null, primary key (id))
+create table rules.rawmessage (id int8 not null, raw_message_guid varchar(255), raw_message text not null, raw_msg_type varchar(255), primary key (id))
 create table rules.rule (rule_id int8 not null, rule_created_on timestamp, br_id varchar(255) not null, disabled boolean, error_type varchar(255) not null, expression text not null, level varchar(255) not null, message text not null, note text not null, property_names varchar(255) not null, template_id int8, primary key (rule_id))
 create table rules.rulestatus (rule_status_id int8 not null, rule_status varchar(255) not null, primary key (rule_status_id))
 create table rules.template (template_id int8 not null, template_name varchar(255) not null, fact_template varchar(255) not null, primary key (template_id))

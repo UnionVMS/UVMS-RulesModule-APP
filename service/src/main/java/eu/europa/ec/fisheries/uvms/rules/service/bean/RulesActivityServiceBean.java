@@ -10,20 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper;
@@ -35,11 +21,28 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityForTrip
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetFishingActivitiesForTripResponse;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetNonUniqueIdsResponse;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
+import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionResponse;
+import eu.europa.fisheries.uvms.subscription.model.mapper.SubscriptionModuleResponseMapper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -67,6 +70,20 @@ public class RulesActivityServiceBean {
     private RulesMessageProducer producer;
 
 
+    public boolean checkSubscriptionPermissions(String request, MessageType type) {
+        try {
+            String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
+            String jmsCorrelationId = producer.sendDataSourceMessage(requestStr, DataSourceQueue.ACTIVITY);
+            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
+            SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
+            SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
+            return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
+        } catch (MessageException | ActivityModelMapperException | JMSException | JAXBException e) {
+            log.error("[ERROR] while trying to check subscription permissions..", e);
+        }
+        return false;
+    }
+
     public Map<ActivityTableType, List<IdType>> getNonUniqueIdsList(Object requestMessage) {
         Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
         GetNonUniqueIdsResponse getNonUniqueIdsResponse = null;
@@ -85,7 +102,7 @@ public class RulesActivityServiceBean {
             }
             String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
-            getNonUniqueIdsResponse = mapToGetUniqueIdResponseFromResponse(message, jmsCorrelationId);
+            getNonUniqueIdsResponse = ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse(message, jmsCorrelationId);
         } catch (MessageException | ActivityModelMapperException e) {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
         }

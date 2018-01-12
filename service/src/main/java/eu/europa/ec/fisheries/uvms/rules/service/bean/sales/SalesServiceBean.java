@@ -51,16 +51,6 @@ public class SalesServiceBean implements SalesService {
         }
     }
 
-    @Override
-    public boolean doesReportExistWithId(String id) {
-        try {
-            Optional<FLUXSalesReportMessage> optionalReport = helper.findReport(id);
-            return optionalReport.isPresent();
-        } catch (MessageException | SalesMarshallException | JMSException e) {
-            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in doesReportExistWithId in SalesServiceBean", e);
-        }
-    }
-
 
     @Override
     public boolean isIdNotUnique(String id, SalesMessageIdType type) {

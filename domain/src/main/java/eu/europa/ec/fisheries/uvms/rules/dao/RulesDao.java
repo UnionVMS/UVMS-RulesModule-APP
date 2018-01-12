@@ -152,7 +152,7 @@ public interface RulesDao {
 
     List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException;
 
-    List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid) throws DaoException;
+    List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws DaoException;
 
     RuleStatusType checkRuleStatus() throws DaoException;
 

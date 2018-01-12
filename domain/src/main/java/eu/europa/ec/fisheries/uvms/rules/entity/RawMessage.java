@@ -13,9 +13,22 @@
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import javax.persistence.*;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import java.io.Serializable;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * Created by padhyad on 5/3/2017.
@@ -26,10 +39,9 @@ import java.util.Set;
         @NamedQuery(name = RawMessage.BY_GUID,
                 query = "SELECT DISTINCT rawMsg from RawMessage rawMsg " +
                         "LEFT JOIN FETCH rawMsg.validationMessages " +
-                        "WHERE rawMsg.guid=:rawMsgGuid")
+                        "WHERE rawMsg.guid=:rawMsgGuid AND ((:msgType is NULL) OR rawMsg.rawMsgType=:msgType)")
 })
 public class RawMessage implements Serializable {
-
 
     public static final String BY_GUID = "rawMsg.byGuid";
 
@@ -43,6 +55,10 @@ public class RawMessage implements Serializable {
 
     @Column(columnDefinition = "text", name = "raw_message", nullable = false)
     private String rawMessage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="raw_msg_type")
+    private RawMsgType rawMsgType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rawMessage", cascade = CascadeType.ALL)
     private Set<ValidationMessage> validationMessages;
@@ -71,5 +87,11 @@ public class RawMessage implements Serializable {
     }
     public void setValidationMessages(Set<ValidationMessage> validationMessages) {
         this.validationMessages = validationMessages;
+    }
+    public RawMsgType getRawMsgType() {
+        return rawMsgType;
+    }
+    public void setRawMsgType(RawMsgType rawMsgType) {
+        this.rawMsgType = rawMsgType;
     }
 }

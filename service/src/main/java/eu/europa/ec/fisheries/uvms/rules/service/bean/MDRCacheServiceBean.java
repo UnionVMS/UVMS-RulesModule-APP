@@ -30,6 +30,7 @@ public class MDRCacheServiceBean {
     private MDRCache cache;
 
     public void loadMDRCache() {
+        log.debug(String.valueOf(cache.getCache().stats().toString()));
         log.debug("[START] Loading MDR Cache..");
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
             List<ObjectRepresentation> values = cache.getEntry(acronymType);

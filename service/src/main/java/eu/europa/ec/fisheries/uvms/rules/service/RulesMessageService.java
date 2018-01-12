@@ -21,6 +21,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
@@ -35,7 +36,7 @@ import javax.ejb.Local;
 @Local
 public interface RulesMessageService {
 
-    void receiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+    void evaluateFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
@@ -61,5 +62,7 @@ public interface RulesMessageService {
 
     void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
-    String getValidationsForRawMessageGuid(String guid);
+    String getValidationsForRawMessageGuid(String guid, String type);
+
+    void evaluateFaQueryRequest(SetFaQueryMessageRequest request);
 }

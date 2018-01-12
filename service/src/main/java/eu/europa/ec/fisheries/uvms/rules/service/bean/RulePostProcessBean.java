@@ -16,6 +16,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
@@ -50,7 +51,7 @@ public class RulePostProcessBean {
     private RulesMessageService messageService;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             boolean isError = false;
             boolean isWarning = false;
@@ -73,7 +74,7 @@ public class RulePostProcessBean {
             if (validationMessages.isEmpty()) {
                 isOk = true;
             }
-            saveValidationResult(validationMessages, rawMessage, rawMsgGuid);
+            saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
             ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
 
             // TODO : Create alarm in future
@@ -86,20 +87,17 @@ public class RulePostProcessBean {
 
 
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, ErrorType errorType, String rawMessage, String rawMsgGuid) throws RulesServiceException {
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             boolean isError = false;
             boolean isWarning = false;
-            boolean isOk = false;
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             ValidationMessageType validationMessage = getValidationMessageType(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
             validationMessages.add(validationMessage);
+            boolean isOk = validationMessages.isEmpty();
 
-            if (validationMessages.isEmpty()) {
-                isOk = true;
-            }
-            saveValidationResult(validationMessages, rawMessage, rawMsgGuid);
+            saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
             ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
 
             // TODO : Create alarm in future
@@ -110,26 +108,16 @@ public class RulePostProcessBean {
         }
     }
 
-  /*  public FLUXResponseMessage sendXMLErrorResponseMessage(String errorMessage,String rawMessage,Object request){
-        List<String> xpaths = new ArrayList<>();
-        xpaths.add(errorMessage);
-        RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", xpaths);;
-        ValidationResultDto validationResultDto=checkAndUpdateValidationResultForGeneralBuinessRules(ruleError,ErrorType.ERROR,rawMessage);
-        FLUXResponseMessage fluxResponseMessage=null;
-        if(request instanceof  FLUXFAReportMessage) {
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, (FLUXFAReportMessage) request);
-        }else if(request instanceof FLUXFAQueryMessage){
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, (FLUXFAQueryMessage) request);
-        }else if(request instanceof FLUXResponseMessage){
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, (FLUXResponseMessage) request);
+    private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesModelException {
+        if (!CollectionUtils.isEmpty(validationMessageTypes)) {
+            RawMessageType message = new RawMessageType();
+            message.setMessage(rawMessage);
+            message.getValidationMessage().addAll(validationMessageTypes);
+            message.setRawMessageGuid(rawMsgGuid);
+            message.setMsgType(type);
+            rulesDomainModel.saveValidationMessages(message);
         }
-
-        return fluxResponseMessage;
-    }*/
-
-
-
-
+    }
 
     private ValidationResultDto getValidationResultDto(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
         ValidationResultDto validationResultDto = new ValidationResultDto();
@@ -151,20 +139,9 @@ public class RulePostProcessBean {
         return validationMessage;
     }
 
-
-    private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage, String rawMsgGuid) throws RulesModelException {
-        if (!CollectionUtils.isEmpty(validationMessageTypes)) {
-            RawMessageType message = new RawMessageType();
-            message.setMessage(rawMessage);
-            message.getValidationMessage().addAll(validationMessageTypes);
-            message.setRawMessageGuid(rawMsgGuid);
-            rulesDomainModel.saveValidationMessages(message);
-        }
-    }
-
-    public ValidationMessageTypeResponse getValidationResultsFromRawMsgGuid(String guid) throws RulesModelException {
+    public ValidationMessageTypeResponse getValidationResultsFromRawMsgGuid(String guid, String type) throws RulesModelException {
         ValidationMessageTypeResponse response = new ValidationMessageTypeResponse();
-        response.getValidationsListResponse().addAll(rulesDomainModel.getValidationMessagesByRawMsgGuid(guid));
+        response.getValidationsListResponse().addAll(rulesDomainModel.getValidationMessagesByRawMsgGuid(guid, type));
         return response;
     }
 }

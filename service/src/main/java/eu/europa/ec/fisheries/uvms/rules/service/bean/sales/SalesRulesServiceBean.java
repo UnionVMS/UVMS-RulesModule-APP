@@ -8,6 +8,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
@@ -49,16 +50,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
 
-        return !salesService.doesReportExistWithId(fact.getIDS().get(0).getValue());
-    }
-
-    @Override
-    public boolean doesReportNotExistWithReferencedId(SalesFLUXReportDocumentFact fact) {
-        if (fact == null || fact.getReferencedID() == null || isBlank(fact.getReferencedID().getValue())) {
-            return false;
-        }
-
-        return !salesService.doesReportExistWithId(fact.getReferencedID().getValue());
+        return !salesService.isIdNotUnique(fact.getIDS().get(0).getValue(), SalesMessageIdType.SALES_REPORT);
     }
 
     @Override
@@ -158,12 +150,12 @@ public class SalesRulesServiceBean implements SalesRulesService {
     }
 
     @Override
-    public boolean doesReferencedIdNotExist(SalesFLUXResponseDocumentFact fact) {
+    public boolean doesReferencedIdNotExist(FactWithReferencedId fact) {
         if (fact == null || fact.getReferencedID() == null || isBlank(fact.getReferencedID().getValue())) {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
+        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_REFERENCED_ID);
     }
 
     @Override

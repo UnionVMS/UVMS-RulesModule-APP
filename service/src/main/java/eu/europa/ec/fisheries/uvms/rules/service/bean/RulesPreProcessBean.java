@@ -21,7 +21,9 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
@@ -57,6 +59,22 @@ public class RulesPreProcessBean {
         return validationResultDto;
     }
 
+    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAQueryMessage faQueryMessage) throws RulesServiceException {
+        Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
+        ValidationResultDto validationResult;
+        try {
+            FAQuery faQuery = faQueryMessage.getFAQuery();
+            if (faQuery != null) {
+                IDType idType = faQuery.getID();
+                validationResult = getValidationResultIfExist(idType != null ? Collections.singletonList(idType.getValue()) : Collections.<String>emptyList());
+                validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
+            }
+        } catch (RulesModelException e) {
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+        return validationResultMap;
+    }
+
     public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAReportMessage fluxfaReportMessage) throws RulesServiceException {
         boolean isContinueValidation = true;
         Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
@@ -68,7 +86,7 @@ public class RulesPreProcessBean {
             } else if (fluxfaReportMessage.getFAReportDocuments() != null) {
                 Iterator it = fluxfaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
-                    FAReportDocument faReportDocument = (FAReportDocument)it.next();
+                    FAReportDocument faReportDocument = (FAReportDocument) it.next();
                     ValidationResultDto validationResultFa = getValidationResultIfExist(getIds(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
                         it.remove();

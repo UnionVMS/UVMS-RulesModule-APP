@@ -41,7 +41,14 @@
                     <xsd:enumeration value="COUNT_TICKETS_BY_MOVEMENTS"/>
                     <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
 
+                    <!-- Activity -->
 					<xsd:enumeration value="SET_FLUX_FA_REPORT"/>
+                    <xsd:enumeration value="SEND_FLUX_FA_REPORT"/>
+                    <xsd:enumeration value="SET_FLUX_FA_QUERY"/>
+                    <xsd:enumeration value="SEND_FLUX_FA_QUERY"/>
+                    <xsd:enumeration value="SET_FLUX_RESPONSE"/>
+
+                    <!-- MDR Cache -->
                     <xsd:enumeration value="SET_FLUX_MDR_SYNC_REQUEST"/>
                     <xsd:enumeration value="GET_FLUX_MDR_SYNC_RESPONSE"/>
 
@@ -61,6 +68,7 @@
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
                                 <xsd:element name="guid" type="xsd:string"/>
+                                <xsd:element name="type" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -68,6 +76,19 @@
             </xsd:element>
 
             <xsd:element name="SetFLUXFAReportMessageRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SetFaQueryMessageRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">

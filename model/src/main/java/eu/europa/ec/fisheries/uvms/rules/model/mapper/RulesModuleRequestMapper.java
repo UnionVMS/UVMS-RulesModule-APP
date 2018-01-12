@@ -17,10 +17,12 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.GetValidationsByRawMsgGuidR
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -51,14 +53,28 @@ public class RulesModuleRequestMapper {
                                                              String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
+        request.setRequest(fluxFAReportMessage);
+        request.setType(type);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String createSetFaQueryMessageRequest(PluginType type, String fluxFAReportMessage, String username,
+                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
+        SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
+        request.setMethod(RulesModuleMethod.SET_FLUX_FA_QUERY);
+        request.setRequest(fluxFAReportMessage);
+        request.setType(type);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    private static void populateCommonProperties(RulesBaseRequest request, String username, String logId, String fluxDataFlow, String senderOrReceiver, String onValue) {
         request.setFluxDataFlow(fluxDataFlow);
         request.setSenderOrReceiver(senderOrReceiver);
-        request.setType(type);
         request.setUsername(username);
-        request.setRequest(fluxFAReportMessage);
         request.setLogGuid(logId);
         request.setOnValue(onValue);
-        return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
     public static String createReceiveSalesReportRequest(String salesReport, String messageGuid, String pluginType, String logGuid, String sender, String on) throws RulesModelMarshallException {
@@ -120,10 +136,11 @@ public class RulesModuleRequestMapper {
     }
 
 
-    public static String createGetValidationsByGuidRequest(String guid) throws RulesModelMarshallException {
+    public static String createGetValidationsByGuidRequest(String guid, String type) throws RulesModelMarshallException {
         GetValidationsByRawMsgGuidRequest getValidationsByGuidRequest = new GetValidationsByRawMsgGuidRequest();
         getValidationsByGuidRequest.setMethod(RulesModuleMethod.GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST);
         getValidationsByGuidRequest.setGuid(guid);
+        getValidationsByGuidRequest.setType(type);
         return JAXBMarshaller.marshallJaxBObjectToString(getValidationsByGuidRequest);
     }
 }

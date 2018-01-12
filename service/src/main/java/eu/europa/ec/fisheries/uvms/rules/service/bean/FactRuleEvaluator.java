@@ -75,19 +75,14 @@ public class FactRuleEvaluator {
         KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
         KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
         Collection<KiePackage> kiePackages = kBase.getKiePackages();
-        if (CollectionUtils.isNotEmpty(kiePackages)) {
-            kBase.removeKiePackage(kiePackages.iterator().next().getName());
+        Iterator<KiePackage> iterator = kiePackages.iterator();
+        while (iterator.hasNext()){
+            KiePackage next = iterator.next();
+            kBase.removeKiePackage(next.getName());
         }
         kieFileSystem.delete(systemPackagesPaths.toArray(new String[systemPackagesPaths.size()]));
         log.info("[END] --> Deleted [" + systemPackagesPaths.size() + "] packages from KieFileSystem.");
         systemPackagesPaths.clear();
-    }
-
-    public boolean anyRulesDeployed(){
-        KieContainer kContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
-        KnowledgeBaseImpl kBase = (KnowledgeBaseImpl) kContainer.getKieBase();
-        Collection<KiePackage> kiePackages = kBase.getKiePackages();
-        return CollectionUtils.isNotEmpty(kiePackages) && CollectionUtils.isNotEmpty(systemPackagesPaths);
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -217,10 +212,6 @@ public class FactRuleEvaluator {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     private void buildAllPackages(Collection<KiePackage> packages) {
-        if (packages == null || packages.isEmpty()) {
-            log.error("Rule not initialized as there is not Rules defined");
-            return;
-        }
         KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
         kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
         kieFileSystem.generateAndWritePomXML(kieServices.getRepository().getDefaultReleaseId());
@@ -232,7 +223,7 @@ public class FactRuleEvaluator {
         Collection<KnowledgePackage> allPackages = Collections2.transform(packages, new Function<KiePackage, KnowledgePackage>() {
             @Override
             public KnowledgePackage apply(KiePackage kiePackage) {
-                return (KnowledgePackage) kiePackage;
+            return (KnowledgePackage) kiePackage;
             }
         });
 

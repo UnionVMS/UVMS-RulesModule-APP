@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -61,9 +62,6 @@ public class RulesEngineBean {
     private RuleAssetsBean ruleAssetsBean;
 
     @EJB
-    private FactRuleEvaluator evaluator;
-
-    @EJB
     private RulesActivityServiceBean activityService;
 
     @EJB
@@ -73,17 +71,19 @@ public class RulesEngineBean {
         return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
     }
 
+    @SuppressWarnings("unchecked")
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<AbstractFact> facts = new ArrayList<>();
-        if (evaluator.anyRulesDeployed()){
-            AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
-            generator.setBusinessObjectMessage(businessObject);
-            mdrCacheServiceBean.loadMDRCache();
-            generator.setExtraValueMap(map);
-            generator.setAdditionalValidationObject();
-            facts.addAll(generator.generateAllFacts());
-            templateEngine.evaluateFacts(facts);
-        }
+        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+        generator.setBusinessObjectMessage(businessObject);
+        mdrCacheServiceBean.loadMDRCache();
+        generator.setExtraValueMap(map);
+        generator.setAdditionalValidationObject();
+        facts.addAll(generator.generateAllFacts());
+        log.info(String.format("[START] Validating %s ", businessObjectType));
+        templateEngine.evaluateFacts(facts);
+        log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
         return facts;
     }
 
