@@ -3626,7 +3626,7 @@
             <column name="rule_id" value="440"/>
             <column name="br_id" value="FA-L02-00-0440"/>
             <column name="expression"
-                    value="speciesCode != null &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot;"/>
+                    value="speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; isNumeric(appliedAAPProcessConversionFactorNumber)"/>
             <column name="note"
                     value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
             <column name="message"

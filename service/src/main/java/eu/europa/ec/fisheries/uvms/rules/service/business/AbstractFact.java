@@ -1008,9 +1008,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        for (NumericType type : list) {
-            if (type.getValue() == null) {
-                return true;
+        if(CollectionUtils.isNotEmpty(list)){
+            for (NumericType type : list) {
+                if (type.getValue() == null) {
+                    return true;
+                }
             }
         }
         return false;
