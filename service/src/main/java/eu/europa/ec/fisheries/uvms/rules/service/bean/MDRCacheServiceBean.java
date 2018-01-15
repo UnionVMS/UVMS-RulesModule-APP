@@ -243,22 +243,25 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if(CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)){
             for(CodeType presPreserv : appliedAAPProcessTypeCodes){
                 if("FISH_PRESENTATION".equals(presPreserv.getListId())){
-                    presentation = presPreserv.getListId();
+                    presentation = presPreserv.getValue();
                 }
                 if("FISH_PRESERVATION".equals(presPreserv.getListId())){
-                    state = presPreserv.getListId();
+                    state = presPreserv.getValue();
                 }
             }
         }
-        List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
-        List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "country", country);
-        List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
-        List<ObjectRepresentation> filtered_3_list = filterEntriesByColumn(filtered_2_list, "presentation", presentation);
-        List<ObjectRepresentation> filtered_4_list = filterEntriesByColumn(filtered_3_list, "state", state);
-        return CollectionUtils.isNotEmpty(filtered_4_list);
+        List<ObjectRepresentation> finalList = null;
+        if(!(StringUtils.isBlank(country) || StringUtils.isBlank(presentation) || StringUtils.isBlank(state))){
+            List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+            List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "placesCode", country);
+            List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+            List<ObjectRepresentation> filtered_3_list = filterEntriesByColumn(filtered_2_list, "presentation", presentation);
+            finalList = filterEntriesByColumn(filtered_3_list, "state", state);
+        }
+        return CollectionUtils.isNotEmpty(finalList);
     }
 
-    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnValue, String columnName){
+    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnName, String columnValue){
         if(CollectionUtils.isEmpty(entries) || StringUtils.isEmpty(columnValue) || StringUtils.isEmpty(columnName)){
             return entries;
         }
