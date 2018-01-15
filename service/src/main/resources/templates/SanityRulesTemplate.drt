@@ -5,10 +5,12 @@ expression
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
 import java.util.Date;
+
 global org.slf4j.Logger logger;
 global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
 
 template "SanityRulesTemplate"
 

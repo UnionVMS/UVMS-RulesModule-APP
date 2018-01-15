@@ -13,13 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,13 +25,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import lombok.Getter;
+
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,25 +61,14 @@ public class FactRuleEvaluator {
     @EJB
     private RulesValidator rulesValidator;
 
-    private KieServices kieServices;
-
-    @Getter
-    private KieFileSystem kieFileSystem;
+    @EJB
+    private ExchangeRuleService exchangeRuleService;
 
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
-    private List<String> systemPackagesPaths;
-
-    @PostConstruct
-    public void init() {
-        kieServices = KieServices.Factory.get();
-    }
-
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void  initializeRules(Collection<TemplateRuleMapDto> templates) {
-        kieFileSystem = kieServices.newKieFileSystem();
-        systemPackagesPaths = new ArrayList<>();
+    public void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
@@ -138,10 +126,12 @@ public class FactRuleEvaluator {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
         KieContainer container = null;
 
-        systemPackagesPaths.add("src/main/resources/rules/SanityRules.drl");
+        List<String> systemPackagesPaths =  new ArrayList<>();
         String drl = rulesValidator.getSanityRuleDrlFile();
-        kieFileSystem.write("src/main/resources/rules/SanityRules.drl", drl);
+        KieFileSystem kieFileSystem = KieServices.Factory.get().newKieFileSystem();
 
+        String sruletemplateName = "SanityRules";
+        drlsAndRules.put(drl, sruletemplateName);
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
@@ -149,7 +139,7 @@ public class FactRuleEvaluator {
             String systemPackage = ruleName.append(templateName).append(".drl").toString();
             systemPackagesPaths.add(systemPackage);
             kieFileSystem.write(systemPackage, rule);
-            KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
+            KieBuilder kieBuilder = KieServices.Factory.get().newKieBuilder(kieFileSystem).buildAll();
             if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
                 log.error("Rule failed to build {} ", templateName);
                 kieFileSystem.delete(ruleName.toString(), rule);
@@ -157,8 +147,8 @@ public class FactRuleEvaluator {
             }
         }
 
-        if (drlsAndRules.size()>0){
-            container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        if (drlsAndRules.size() > 0){
+            container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
         }
 
         if (container != null) {
@@ -170,11 +160,12 @@ public class FactRuleEvaluator {
     public void validateFact(Collection<AbstractFact> facts) {
         KieSession ksession = null;
         try {
-            KieContainer container = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+            KieContainer container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
 
             ksession.setGlobal("salesService", salesRulesService);
             ksession.setGlobal("mdrService", mdrCacheRuleService);
+            ksession.setGlobal("exchangeService", exchangeRuleService);
 
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);

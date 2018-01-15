@@ -431,7 +431,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public List<SanityRuleType> getSanityRuleList() throws RulesModelException {
-        LOG.info("Getting list of Sanity Rules (rule engine)");
+        LOG.debug("Getting list of Sanity Rules (rule engine)");
         try {
             List<SanityRuleType> list = new ArrayList<>();
             List<SanityRule> entityList = dao.getSanityRules();

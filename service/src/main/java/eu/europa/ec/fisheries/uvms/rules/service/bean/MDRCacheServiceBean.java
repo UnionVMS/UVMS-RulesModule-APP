@@ -17,7 +17,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.ejb.EJB;
@@ -59,12 +58,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (mdrAcronymType == null) {
             return false;
         }
-        List<ObjectRepresentation> entry = cache.getEntry(mdrAcronymType);
-        List<String> values = getList(entry);
-        if (CollectionUtils.isNotEmpty(values)) {
-            return values.contains(codeValue);
-        }
-        return false;
+        List<String> values = getValues(mdrAcronymType);
+        return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
     private List<String> getList(List<ObjectRepresentation> entry) {
@@ -92,7 +87,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
      */
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
-        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
+        if (CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
         for (CodeType codeType : valuesToMatch) {
@@ -103,11 +98,38 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             if (anEnum == null) {
                 return false;
             }
-            List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-            List<String> codeListValues = getList(entry);
+            List<String> codeListValues = getValues(anEnum);
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    private List<String> getValues(MDRAcronymType anEnum) {
+        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
+        return getList(entry);
+    }
+
+    /**
+     * This function checks that all the IdType values passed to the function exist in MDR code list or not
+     *
+     * @param listName      - Values passed would be checked agaist this MDR list
+     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
+     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     */
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
+        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (anEnum == null) {
+            return false;
+        }
+        List<String> codeListValues = getValues(anEnum);
+        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
+            return false;
+        }
+        for (IdType codeType : valuesToMatch) {
+            if (!codeListValues.contains(codeType.getValue()))
+                return false;
         }
         return true;
     }
@@ -124,9 +146,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (anEnum == null) {
             return false;
         }
-        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        List<String> codeListValues = getList(entry);
-
+        List<String> codeListValues = getValues(anEnum);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -139,47 +159,16 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        List<String> codeListValues = getList(entry);
-
+        List<String> codeListValues = getValues(anEnum);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getListId()))
-                return false;
-        }
-
-        return true;
-    }
-
-
-    /**
-     * This function checks that all the IdType values passed to the function exist in MDR code list or not
-     *
-     * @param listName      - Values passed would be checked agaist this MDR list
-     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
-     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
-     */
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-        MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
-        if (anEnum == null) {
-            return false;
-        }
-        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        List<String> codeListValues = getList(entry);
-
-        if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
-            return false;
-        }
-        for (IdType codeType : valuesToMatch) {
-            if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
         return true;
@@ -190,7 +179,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             return false;
         }
         for (IdType idType : ids) {
-            if (isIdTypePresentInMDRList(idType) == false) {
+            if (!isIdTypePresentInMDRList(idType)) {
                 return false;
             }
         }
@@ -208,17 +197,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (id == null) {
             return false;
         }
-
         String schemeId = id.getSchemeId();
         String value = id.getValue();
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, schemeId);
         if (anEnum == null) {
             return false;
         }
-
-        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        List<String> codeListValues = getList(entry);
+        List<String> codeListValues = getValues(anEnum);
         return codeListValues.contains(value);
     }
 
@@ -328,10 +313,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
-        if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
-            return false;
-        }
-        return isPresentInMDRList(listName, idType.getSchemeId());
+        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId());
     }
 
     private boolean isEmpty(List<?> list) {
@@ -339,15 +321,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
-        return isTypeCodeValuePresentInList(listName, Arrays.asList(typeCode));
+        return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode));
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
-        if (typeCodeValue == null) {
-            return false;
-        }
-        return isPresentInMDRList(listName, typeCodeValue);
+        return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue);
     }
 
     public String getValueForListId(String listId, List<CodeType> typeCodes) {

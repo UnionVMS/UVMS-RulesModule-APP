@@ -33,9 +33,9 @@
 
         <usm4uvms.version>4.0.7</usm4uvms.version>
         <uvms.config.version>4.0.0</uvms.config.version>
-        <uvms.common.version>3.0.7</uvms.common.version>
+        <uvms.common.version>3.0.8-SNAPSHOT</uvms.common.version>
         <movement.model.version>4.0.7</movement.model.version>
-        <exchange.model.version>4.0.8</exchange.model.version>
+        <exchange.model.version>4.0.9-SNAPSHOT</exchange.model.version>
         <mobileterminal.model.version>4.0.4</mobileterminal.model.version>
         <user.model.version>2.0.6</user.model.version>
 
