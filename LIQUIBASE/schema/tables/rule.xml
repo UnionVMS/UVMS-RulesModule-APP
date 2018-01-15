@@ -26,7 +26,7 @@
             <column name="error_type" type="VARCHAR(100)"/>
             <column name="rule_created_on" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="template_id" type="BIGINT" />
-            <column name="property_names" type="VARCHAR(100)">
+            <column name="property_names" type="VARCHAR(150)">
                 <constraints nullable="false"/>
             </column>
             <column name="disabled" type="BOOLEAN" defaultValueBoolean="false">

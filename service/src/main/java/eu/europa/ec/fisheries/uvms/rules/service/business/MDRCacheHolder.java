@@ -44,7 +44,7 @@ public class MDRCacheHolder {
                         new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
         @Override
         public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
-            return Collections.singletonList(null);
+            return new ArrayList<>();
         }
     });
 
