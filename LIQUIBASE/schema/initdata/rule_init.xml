@@ -4305,7 +4305,7 @@
             <column name="rule_id" value="371"/>
             <column name="br_id" value="FA-L02-00-0371"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; faQueryTypeCode != null &amp;&amp; (typeCode.listId != &quot;VESSELID&quot; &amp;&amp; faQueryTypeCode.value == &quot;VESSEL&quot; || typeCode.listId != &quot;TRIPID&quot; &amp;&amp; faQueryTypeCode.value == &quot;TRIP&quot;)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; faQueryTypeCode != null &amp;&amp; (typeCode.value != &quot;VESSELID&quot; &amp;&amp; faQueryTypeCode.value == &quot;VESSEL&quot; || typeCode.value != &quot;TRIPID&quot; &amp;&amp; faQueryTypeCode.value == &quot;TRIP&quot;)"/>
             <column name="note"
                     value="FA_QueryParameter TypeCode@listID must be VESSELID if  FA_Query.Type is VESSEL or must be value TRIPID if FA_QueryType is TRIP."/>
             <column name="message"
@@ -5058,7 +5058,7 @@
             <column name="rule_id" value="367"/>
             <column name="br_id" value="FA-L01-00-0367"/>
             <column name="expression"
-                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 1 &amp;&amp; listIdNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueContainsAny(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
             <column name="note"
                     value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
             <column name="message"
