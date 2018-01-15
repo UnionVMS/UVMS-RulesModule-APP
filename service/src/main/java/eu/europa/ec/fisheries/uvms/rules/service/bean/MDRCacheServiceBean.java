@@ -41,7 +41,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
             List<ObjectRepresentation> values = cache.getEntry(acronymType);
         }
-        MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME after belgium tem has refactored there ref to cacheholder remove call
+        MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME : "MDRCacheHolder" To be removed! and instead use directly MDRCacheRuleService as global in the drts
         log.debug(cache.getCache().stats().toString());
         log.info("MDRCache size: " + cache.getCache().asMap().size());
     }
