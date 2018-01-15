@@ -4409,7 +4409,7 @@
             <column name="rule_id" value="374"/>
             <column name="br_id" value="FA-L02-00-0374"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; valueID != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID.schemeId != &quot;CFR&quot; || valueID.schemeId != &quot;IRCS&quot;)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID == null || (valueID.schemeId != &quot;CFR&quot; &amp;&amp; valueID.schemeId != &quot;IRCS&quot;))"/>
             <column name="note" value="For EU vessels only query on CFR or IRCS"/>
             <column name="message"
                     value="The ValueID schemeID is invalid."/>
