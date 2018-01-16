@@ -2756,12 +2756,8 @@ public class ActivityFactMapper {
     public static String getDateXMLString(DateTimeType dateTimeType) {
         String xmlDateString = null;
 
-        if (dateTimeType != null) {
-            if (dateTimeType.getDateTime() != null) {
-                xmlDateString = dateTimeType.getDateTime().toXMLFormat();
-            } else if (dateTimeType.getDateTimeString() != null) {
-                xmlDateString = dateTimeType.getDateTimeString().getValue();
-            }
+        if (dateTimeType != null && dateTimeType.getDateTime() != null) {
+            xmlDateString = dateTimeType.getDateTime().toString();
         }
 
         return xmlDateString;
