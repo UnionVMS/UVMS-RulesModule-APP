@@ -382,7 +382,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
-                    log.info("[WARNING] Found already existing Validation(s) for message with GUID ["+logGuid+"]. Not going to process or send it to Business module!");
+                    log.info("[WARNING] Found already existing Validation(s) for message with GUID ["+logGuid+"]. \nNot going to process or send it to Business module!");
                     updateRequestMessageStatus(logGuid, validationMap.get(needToValidate));
                     fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(needToValidate), fluxfaReportMessage);
                     log.info("[INFO] The Validation of FLUXFAReport is complete and FluxResponse is generated");
