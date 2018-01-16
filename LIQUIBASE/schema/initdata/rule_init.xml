@@ -4829,7 +4829,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="351"/>
             <column name="br_id" value="FA-L01-00-0351"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode != &quot;FA_QUERY_TYPE&quot;"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.listId != &quot;FA_QUERY_TYPE&quot;"/>
             <column name="note" value="FA_Query TypeCode@listID must be FA_QUERY_TYPE."/>
             <column name="message" value="TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
