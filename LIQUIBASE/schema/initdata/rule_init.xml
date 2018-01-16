@@ -1221,7 +1221,7 @@
             <column name="rule_id" value="40"/>
             <column name="br_id" value="FA-L01-00-0040"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="Format must be date in UTC according to ISO8601."/>
             <column name="message" value="Invalid report creation date/time."/>
             <column name="level" value="L01"/>
@@ -4408,7 +4408,7 @@
             <column name="rule_id" value="374"/>
             <column name="br_id" value="FA-L02-00-0374"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; valueID != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID.schemeId != &quot;CFR&quot; || valueID.schemeId != &quot;IRCS&quot;)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID == null || (valueID.schemeId != &quot;CFR&quot; &amp;&amp; valueID.schemeId != &quot;IRCS&quot;))"/>
             <column name="note" value="For EU vessels only query on CFR or IRCS"/>
             <column name="message"
                     value="The ValueID schemeID is invalid."/>
@@ -4828,7 +4828,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="351"/>
             <column name="br_id" value="FA-L01-00-0351"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode != &quot;FA_QUERY_TYPE&quot;"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.listId != &quot;FA_QUERY_TYPE&quot;"/>
             <column name="note" value="FA_Query TypeCode@listID must be FA_QUERY_TYPE."/>
             <column name="message" value="TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
@@ -4897,10 +4897,10 @@
             <column name="rule_id" value="356"/>
             <column name="br_id" value="FA-L01-00-0356"/>
             <column name="expression"
-                    value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(submittedDateTimeString)"/>
             <column name="note" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
             <column name="message"
-                    value="The date/time of sumission if the query must be a valid UTC date and in the correct format."/>
+                    value="The date/time of submission if the query must be a valid UTC date and in the correct format."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4997,7 +4997,7 @@
             <column name="rule_id" value="363"/>
             <column name="br_id" value="FA-L01-00-0363"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
             <column name="note" value="Time part may be omitted. In such case 00:00:00 is assumed."/>
             <column name="message"
                     value="Start date/time must be a valid UTC date in the correct format."/>
@@ -5780,7 +5780,7 @@
             <column name="rule_id" value="390"/>
             <column name="br_id" value="FA-L01-00-0390"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
             <column name="message" value="Response creation date/time must be a valid UTC date and in the correct."/>
             <column name="level" value="L01"/>
@@ -8665,7 +8665,7 @@
             <column name="rule_id" value="6"/>
             <column name="br_id" value="FA-L01-00-0006"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="Format must be date in UTC according to ISO8601"/>
             <column name="message" value="Invalid message creation date/time."/>
             <column name="level" value="L01"/>
@@ -8694,7 +8694,7 @@
             <column name="rule_id" value="26"/>
             <column name="br_id" value="FA-L01-00-0026"/>
             <column name="expression"
-                    value="acceptanceDateTime != null &amp;&amp; !isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
             <column name="note" value="Include the check if the date provided exists."/>
             <column name="message" value="Invalid acceptance date/time."/>
             <column name="level" value="L01"/>
