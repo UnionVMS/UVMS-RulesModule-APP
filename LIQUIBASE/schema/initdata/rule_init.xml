@@ -1221,7 +1221,7 @@
             <column name="rule_id" value="40"/>
             <column name="br_id" value="FA-L01-00-0040"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="Format must be date in UTC according to ISO8601."/>
             <column name="message" value="Invalid report creation date/time."/>
             <column name="level" value="L01"/>

@@ -100,7 +100,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -280,13 +279,13 @@ public class ActivityFactMapper {
 
         faReportDocumentFact.setSenderOrReceiver(senderReceiver);
 
+        String s = dateTimeAsString(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument));
+        faReportDocumentFact.setCreationDateTimeString(s);
+
         Date date = getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument));
         faReportDocumentFact.setCreationDateTime(date);
 
-        faReportDocumentFact.setCreationDateTime(getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, "creationDateTime");
-
-        faReportDocumentFact.setCreationDateTimeString(getDateXMLString(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
 
         faReportDocumentFact.setAcceptanceDateTime(getDate(faReportDocument.getAcceptanceDateTime()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ACCEPTANCE_DATE_TIME).storeInRepo(faReportDocumentFact, ACCEPTANCE_DATE_TIME_PROP);
@@ -526,7 +525,6 @@ public class ActivityFactMapper {
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
         fluxFaReportMessageFact.setCreationDateTime(date);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "creationDateTime");
-        fluxFaReportMessageFact.setCreationDateTimeString(getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage)));
 
         if (fluxfaReportMessage.getFAReportDocuments() != null) {
             fluxFaReportMessageFact.setFaReportDocuments(new ArrayList<>(fluxfaReportMessage.getFAReportDocuments()));
@@ -2710,17 +2708,6 @@ public class ActivityFactMapper {
         return codeTypes;
     }
 
-    public static String getUUID(List<IDType> ids) {
-        if (ids != null) {
-            for (IDType idType : ids) {
-                if (idType.getSchemeID().equalsIgnoreCase("UUID")) {
-                    return idType.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
     public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
 
@@ -2736,16 +2723,27 @@ public class ActivityFactMapper {
         return contactPersonList;
     }
 
+    public static String dateTimeAsString(DateTimeType dateTimeType){
+        String dateAsString = null;
+
+        if (dateTimeType != null) {
+            try {
+                if (dateTimeType.getDateTime() != null) {
+                    dateAsString = dateTimeType.getDateTime().toString();
+                }
+            } catch (Exception e) {
+                log.debug("Error while trying to parse dateTimeType", e);
+            }
+        }
+        return dateAsString;
+    }
+
     public static Date getDate(DateTimeType dateTimeType) {
         Date date = null;
         if (dateTimeType != null) {
             try {
                 if (dateTimeType.getDateTime() != null) {
                     date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                } else {
-                    String format = dateTimeType.getDateTimeString().getFormat();
-                    String value = dateTimeType.getDateTimeString().getValue();
-                    date = new SimpleDateFormat(format).parse(value);
                 }
             } catch (Exception e) {
                 log.debug("Error while trying to parse dateTimeType", e);
