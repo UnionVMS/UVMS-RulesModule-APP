@@ -523,6 +523,10 @@ public class ActivityFactMapper {
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
+
+        String dateXMLString = getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
+        fluxFaReportMessageFact.setCreationDateTimeString(dateXMLString);
+
         fluxFaReportMessageFact.setCreationDateTime(date);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "creationDateTime");
 
