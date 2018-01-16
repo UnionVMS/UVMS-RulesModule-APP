@@ -5781,7 +5781,7 @@
             <column name="rule_id" value="390"/>
             <column name="br_id" value="FA-L01-00-0390"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
             <column name="message" value="Response creation date/time must be a valid UTC date and in the correct."/>
             <column name="level" value="L01"/>
