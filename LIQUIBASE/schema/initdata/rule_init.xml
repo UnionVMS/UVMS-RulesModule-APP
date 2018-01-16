@@ -8695,7 +8695,7 @@
             <column name="rule_id" value="26"/>
             <column name="br_id" value="FA-L01-00-0026"/>
             <column name="expression"
-                    value="acceptanceDateTime != null &amp;&amp; !isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
             <column name="note" value="Include the check if the date provided exists."/>
             <column name="message" value="Invalid acceptance date/time."/>
             <column name="level" value="L01"/>
