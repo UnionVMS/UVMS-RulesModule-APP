@@ -4898,10 +4898,10 @@
             <column name="rule_id" value="356"/>
             <column name="br_id" value="FA-L01-00-0356"/>
             <column name="expression"
-                    value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(submittedDateTimeString)"/>
             <column name="note" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
             <column name="message"
-                    value="The date/time of sumission if the query must be a valid UTC date and in the correct format."/>
+                    value="The date/time of submission if the query must be a valid UTC date and in the correct format."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
