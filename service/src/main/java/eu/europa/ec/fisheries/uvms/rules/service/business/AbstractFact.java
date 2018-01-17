@@ -902,7 +902,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
             for (CodeType codeType : codeTypes) {
