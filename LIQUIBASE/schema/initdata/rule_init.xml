@@ -4692,7 +4692,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="139"/>
             <column name="br_id" value="FA-L01-00-0139"/>
-            <column name="expression" value="affectedQuantity != null &amp;&amp; isPositive(affectedQuantity.value)"/>
+            <column name="expression" value="affectedQuantity != null &amp;&amp; !isPositive(affectedQuantity.value)"/>
             <column name="note" value="Affected quantity must be greater than 0"/>
             <column name="message" value="Affected quantity must be a positive integer."/>
             <column name="level" value="L01"/>
