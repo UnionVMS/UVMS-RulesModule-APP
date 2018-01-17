@@ -171,18 +171,16 @@ public class RulesActivityServiceBean {
     }
 
     private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
-
         Map<ActivityTableType, List<IDType>> idsmap = new EnumMap<>(ActivityTableType.class);
+        idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, new ArrayList<IDType>());
         if (request == null) {
             return idsmap;
         }
-
         // FLUXReportDocument IDs
         FLUXReportDocument fluxReportDocument = request.getFLUXReportDocument();
         if (fluxReportDocument != null && CollectionUtils.isNotEmpty(fluxReportDocument.getIDS())) {
             idsmap.put(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
         }
-
         // FAReportDocument.RelatedFLUXReportDocument IDs and ReferencedID
         List<FAReportDocument> faReportDocuments = request.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
@@ -193,7 +191,7 @@ public class RulesActivityServiceBean {
                     idTypes.addAll(relatedFLUXReportDocument.getIDS());
                     idTypes.add(relatedFLUXReportDocument.getReferencedID());
                     idTypes.removeAll(Collections.singletonList(null));
-                    idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, idTypes);
+                    idsmap.get(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY).addAll(idTypes);
                 }
             }
         }

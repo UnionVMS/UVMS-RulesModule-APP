@@ -42,7 +42,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PACKAGING_UNIT_QUANTITY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PHYSICAL_STRUCTURED_ADDRESS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PLOT_IDENTIFICATION;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTCODE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.POSTAL_AREA;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REASON_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RECOVERY_MEASURE_CODE;
@@ -100,7 +100,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -280,13 +279,13 @@ public class ActivityFactMapper {
 
         faReportDocumentFact.setSenderOrReceiver(senderReceiver);
 
+        String s = dateTimeAsString(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument));
+        faReportDocumentFact.setCreationDateTimeString(s);
+
         Date date = getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument));
         faReportDocumentFact.setCreationDateTime(date);
 
-        faReportDocumentFact.setCreationDateTime(getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, "creationDateTime");
-
-        faReportDocumentFact.setCreationDateTimeString(getDateXMLString(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument)));
 
         faReportDocumentFact.setAcceptanceDateTime(getDate(faReportDocument.getAcceptanceDateTime()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ACCEPTANCE_DATE_TIME).storeInRepo(faReportDocumentFact, ACCEPTANCE_DATE_TIME_PROP);
@@ -524,9 +523,12 @@ public class ActivityFactMapper {
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
+
+        String dateXMLString = getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
+        fluxFaReportMessageFact.setCreationDateTimeString(dateXMLString);
+
         fluxFaReportMessageFact.setCreationDateTime(date);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "creationDateTime");
-        fluxFaReportMessageFact.setCreationDateTimeString(getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage)));
 
         if (fluxfaReportMessage.getFAReportDocuments() != null) {
             fluxFaReportMessageFact.setFaReportDocuments(new ArrayList<>(fluxfaReportMessage.getFAReportDocuments()));
@@ -646,8 +648,8 @@ public class ActivityFactMapper {
 
         StructuredAddressFact structuredAddressFact = new StructuredAddressFact();
 
-        structuredAddressFact.setPostcodeCode(structuredAddressPostcodeCodeValue(structuredAddress));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(POSTCODE_CODE).storeInRepo(structuredAddressFact, "postcodeCode");
+        structuredAddressFact.setPostalArea(structuredAddressPostalAreaValue(structuredAddress));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(POSTAL_AREA).storeInRepo(structuredAddressFact, "postalArea");
 
         structuredAddressFact.setCountryID(structuredAddressCountryIDValue(structuredAddress));
         xPathUtil.appendWithoutWrapping(partialXpath).append(COUNTRY_ID).storeInRepo(structuredAddressFact, "countryID");
@@ -1920,12 +1922,14 @@ public class ActivityFactMapper {
         if (fishingActivity != null) {
             faLandingFact.setRelatedFluxLocationTypeCodes(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faLandingFact, "relatedFluxLocationTypeCodes");
+
             if (fishingActivity.getSpecifiedFACatches() != null) {
                 faLandingFact.setSpecifiedFaCatches(new ArrayList<>(fishingActivity.getSpecifiedFACatches()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faLandingFact, "specifiedFaCatches");
             }
             faLandingFact.setFishingActivityCodeType(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faLandingFact, "fishingActivityCodeType");
+
             if (fishingActivity.getRelatedFLUXLocations() != null) {
                 faLandingFact.setRelatedFluxLocations(new ArrayList<>(fishingActivity.getRelatedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faLandingFact, "relatedFluxLocations");
@@ -2411,16 +2415,16 @@ public class ActivityFactMapper {
         return iD;
     }
 
-    public String structuredAddressPostcodeCodeValue(StructuredAddress structuredAddress) {
+    public String structuredAddressPostalAreaValue(StructuredAddress structuredAddress) {
 
         if (structuredAddress == null) {
             return null;
         }
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType postcodeCode = structuredAddress.getPostcodeCode();
-        if (postcodeCode == null) {
+        TextType postalArea = structuredAddress.getPostalArea();
+        if (postalArea == null) {
             return null;
         }
-        String value = postcodeCode.getValue();
+        String value = postalArea.getValue();
         if (value == null) {
             return null;
         }
@@ -2708,17 +2712,6 @@ public class ActivityFactMapper {
         return codeTypes;
     }
 
-    public static String getUUID(List<IDType> ids) {
-        if (ids != null) {
-            for (IDType idType : ids) {
-                if (idType.getSchemeID().equalsIgnoreCase("UUID")) {
-                    return idType.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
     public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
 
@@ -2734,16 +2727,27 @@ public class ActivityFactMapper {
         return contactPersonList;
     }
 
+    public static String dateTimeAsString(DateTimeType dateTimeType){
+        String dateAsString = null;
+
+        if (dateTimeType != null) {
+            try {
+                if (dateTimeType.getDateTime() != null) {
+                    dateAsString = dateTimeType.getDateTime().toString();
+                }
+            } catch (Exception e) {
+                log.debug("Error while trying to parse dateTimeType", e);
+            }
+        }
+        return dateAsString;
+    }
+
     public static Date getDate(DateTimeType dateTimeType) {
         Date date = null;
         if (dateTimeType != null) {
             try {
                 if (dateTimeType.getDateTime() != null) {
                     date = dateTimeType.getDateTime().toGregorianCalendar().getTime();
-                } else {
-                    String format = dateTimeType.getDateTimeString().getFormat();
-                    String value = dateTimeType.getDateTimeString().getValue();
-                    date = new SimpleDateFormat(format).parse(value);
                 }
             } catch (Exception e) {
                 log.debug("Error while trying to parse dateTimeType", e);
@@ -2756,12 +2760,8 @@ public class ActivityFactMapper {
     public static String getDateXMLString(DateTimeType dateTimeType) {
         String xmlDateString = null;
 
-        if (dateTimeType != null) {
-            if (dateTimeType.getDateTime() != null) {
-                xmlDateString = dateTimeType.getDateTime().toXMLFormat();
-            } else if (dateTimeType.getDateTimeString() != null) {
-                xmlDateString = dateTimeType.getDateTimeString().getValue();
-            }
+        if (dateTimeType != null && dateTimeType.getDateTime() != null) {
+            xmlDateString = dateTimeType.getDateTime().toString();
         }
 
         return xmlDateString;

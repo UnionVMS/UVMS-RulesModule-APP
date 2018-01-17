@@ -14,17 +14,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
@@ -36,6 +35,7 @@ import org.apache.commons.collections.CollectionUtils;
 @Singleton
 @Slf4j
 @Startup
+@DependsOn("FactRuleEvaluator")
 public class TemplateEngine {
 
     @EJB
@@ -50,22 +50,23 @@ public class TemplateEngine {
     @PostConstruct
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void initialize() {
-        final long initTime = System.currentTimeMillis();
-        log.info("[START] Initializing templates and rules... Started @ : [ "+new Date(initTime)+" ] ..");
-        ruleEvaluator.initializeRules(getAllTemplates());
-        log.info("[END] Finished Initializing templates and rules...");
-        log.info("[INFO] It took ["+ TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - initTime)+"] minutes for drools engine to be initialized!");
-        rulesStatusUpdaterBean.updateRulesStatus(ruleEvaluator.getFailedRules());
+        log.info("[START] Initializing templates and rules...");
+        try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            List<TemplateRuleMapDto> templatesAndRules = rulesDb.getAllFactTemplatesAndRules();
+            ruleEvaluator.initializeRules(templatesAndRules);
+            rulesStatusUpdaterBean.updateRulesStatus(ruleEvaluator.getFailedRules());
+            log.info("[END] It took "+ stopwatch + " to initialize the rules.");
+        } catch (RulesModelException e) {
+            log.error(e.getMessage(), e);
+        }
+
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void reInitialize() {
-        log.info("[START] Re-Initializing templates and rules..");
-        ruleEvaluator.reInitializeKieSystem();
         initialize();
-        log.info("[END] Re-Initialization of templates and rules..");
     }
-
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
@@ -76,22 +77,4 @@ public class TemplateEngine {
         ruleEvaluator.validateFact(facts);
         facts.addAll(ruleEvaluator.getExceptionsList());
     }
-
-
-    @PreDestroy
-    public void shutDown() {
-        log.info("[START] TemplateEngine shutting down. Going to destroy the Drools KnowledgeBase..");
-        ruleEvaluator.reInitializeKieSystem();
-        log.info("[END] Destroyed the Drools KnowledgeBase..");
-    }
-
-
-    private List<TemplateRuleMapDto> getAllTemplates() {
-        try {
-            return rulesDb.getAllFactTemplatesAndRules();
-        } catch (RulesModelException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
 }

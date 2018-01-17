@@ -13,20 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,35 +22,60 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * @autor padhyad
  * @author Gregory Rinaldi
  */
 @Slf4j
+@RunWith(MockitoJUnitRunner.class)
 public class FactRuleEvaluatorTest {
+
+    @Mock
+    private FactRuleEvaluator generator;
+
+    @InjectMocks
+    private RulesValidator rulesValidator;
+
+    @InjectMocks
+    private SalesRulesServiceBean salesRulesService;
+
+    @InjectMocks
+    private MDRCacheServiceBean mdrCacheRuleService;
 
     @Test
     public void testComputeRule() {
         List<TemplateRuleMapDto> templates = new ArrayList<>();
         templates.add(getTemplateRuleMapForFaReport());
         templates.add(getTemplateRuleMapForVesselTM());
-
         Collection<AbstractFact> facts = new ArrayList<>();
         facts.add(getFaReportDocumentFact());
         facts.add(getVesselTransportMeansFact());
-
         // First Validation
-        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
-
         // validate facts
         validateFacts(facts);
-
         // Second Validation
         facts.clear();
 
@@ -79,7 +92,6 @@ public class FactRuleEvaluatorTest {
         facts.add(getVesselTransportMeansFact());
 
         // First Validation
-        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
 
@@ -89,14 +101,6 @@ public class FactRuleEvaluatorTest {
         // Second Validation
         facts.clear();
 
-    }
-
-    @Test
-    public void testReInitializeKieSystem() {
-        FactRuleEvaluator generator = new FactRuleEvaluator();
-        generator.reInitializeKieSystem();
-        assertEquals(generator.getExceptionsList().size(), 0);
-        assertEquals(generator.getFailedRules().size(), 0);
     }
 
     @Test
@@ -122,7 +126,6 @@ public class FactRuleEvaluatorTest {
         fact.setTypeCode(RuleTestHelper.getCodeType(null, null));
         facts.add(fact);
 
-        FactRuleEvaluator generator = new FactRuleEvaluator();
         generator.initializeRules(templates);
         generator.validateFact(facts);
         assertFalse(facts.isEmpty());
@@ -242,7 +245,6 @@ public class FactRuleEvaluatorTest {
         ruleType.setNote(note);
         ruleType.setErrorType(type);
         ruleType.setMessage(errorMessage);
-
         return ruleType;
     }
 

@@ -22,25 +22,41 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * @author Gregory Rinaldi
  */
+@RunWith(MockitoJUnitRunner.class)
 public class FLUX_ReportDocumentRuleTest {
-
-    private FactRuleEvaluator generator = new FactRuleEvaluator();
 
     private TemplateType template = new TemplateType();
     private TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
     private RuleType ruleID = new RuleType();
     private RuleType ruleCreationDateTime = new RuleType();
     private RuleType ruleReferencedID = new RuleType();
+
+    @Mock
+    private FactRuleEvaluator generator;
+
+    @InjectMocks
+    private RulesValidator rulesValidator;
+
+    @InjectMocks
+    private SalesRulesServiceBean salesRulesService;
+
+    @InjectMocks
+    private MDRCacheServiceBean mdrCacheRuleService;
 
     @Before
     public void beforeClass() {
