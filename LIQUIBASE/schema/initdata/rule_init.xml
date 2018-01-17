@@ -5057,7 +5057,7 @@
             <column name="rule_id" value="367"/>
             <column name="br_id" value="FA-L01-00-0367"/>
             <column name="expression"
-                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueContainsAny(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;, 1)"/>
             <column name="note"
                     value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
             <column name="message"
