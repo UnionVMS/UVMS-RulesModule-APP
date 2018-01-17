@@ -4558,7 +4558,7 @@
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
             <column name="expression"
-                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+                    value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
             <column name="message"
                     value="Fishing License, Authorization or Permit ID is missing."/>
