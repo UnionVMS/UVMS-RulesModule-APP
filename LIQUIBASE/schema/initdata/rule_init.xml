@@ -8345,7 +8345,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10902"/>
             <column name="br_id" value="SALE-L03-00-0011"/>
-            <column name="expression" value="salesService.doesReportNotExistWithReferencedId($fact)"/>
+            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The referenced identification must be the one of a an existing sales report"/>
             <column name="level" value="L03"/>
@@ -8379,6 +8379,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1004"/>
             <column name="property_names" value="ids"/>
+            <column name="disabled" value="true"/> <!-- disabled until commission decides to disable this rule in case of a correction -->
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>
