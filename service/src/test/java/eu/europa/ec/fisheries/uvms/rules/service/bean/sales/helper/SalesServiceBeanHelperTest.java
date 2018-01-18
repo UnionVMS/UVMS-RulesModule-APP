@@ -6,7 +6,6 @@ import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesCache;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import org.junit.Test;
@@ -38,12 +37,8 @@ public class SalesServiceBeanHelperTest {
     @Mock
     RulesResponseConsumer consumer;
 
-    @Mock
-    SalesCache cache;
-
     @Test
     public void receiveMessageFromSales() throws Exception {
-
         mockStatic(JAXBMarshaller.class);
 
         TextMessage mockTextMessage = mock(TextMessage.class);
@@ -90,28 +85,12 @@ public class SalesServiceBeanHelperTest {
     }
 
     @Test
-    public void findReportWhenReportIsCached() throws Exception {
-
-        FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
-        Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.of(fluxSalesReportMessage);
-        doReturn(fluxSalesReportMessageOptional).when(cache).retrieveMessageFromCache("guid");
-
-
-        Optional<FLUXSalesReportMessage> returnedMessage = helper.findReport("guid");
-
-        verify(cache).retrieveMessageFromCache("guid");
-        verifyNoMoreInteractions(cache, consumer, producer);
-        assertSame(fluxSalesReportMessage, returnedMessage.get());
-    }
-
-    @Test
-    public void findReportWhenReportIsNotCached() throws Exception {
+    public void findReportWheSuccess() throws Exception {
         FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
         Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.absent();
 
         TextMessage mockTextMessage = mock(TextMessage.class);
         mockStatic(SalesModuleRequestMapper.class, JAXBMarshaller.class);
-        doReturn(fluxSalesReportMessageOptional).when(cache).retrieveMessageFromCache("guid");
         doReturn("FindReportByIdResponse").when(mockTextMessage).getText();
         doReturn(mockTextMessage).when(consumer).getMessage("correlationId", TextMessage.class);
         when(SalesModuleRequestMapper.createFindReportByIdRequest("guid")).thenReturn("FindReportByIdRequest");
@@ -121,11 +100,8 @@ public class SalesServiceBeanHelperTest {
         when(JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class))
                 .thenReturn(new FindReportByIdResponse().withReport("unmarshall this message content"));
 
-
         Optional<FLUXSalesReportMessage> returnedMessage = helper.findReport("guid");
 
-        verify(cache).retrieveMessageFromCache("guid");
-        verify(cache).cacheMessage("guid", fluxSalesReportMessage);
         verify(mockTextMessage).getText();
         verify(consumer).getMessage("correlationId", TextMessage.class);
         verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES);
@@ -134,7 +110,6 @@ public class SalesServiceBeanHelperTest {
         JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class);
         JAXBMarshaller.unmarshallString("FLUXSalesReportMessage", FLUXSalesReportMessage.class);
 
-        verifyNoMoreInteractions(cache, consumer, producer);
         assertSame(fluxSalesReportMessage, returnedMessage.get());
     }
 

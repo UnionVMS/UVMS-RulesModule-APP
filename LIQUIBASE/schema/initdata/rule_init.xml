@@ -4558,7 +4558,7 @@
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
             <column name="expression"
-                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+                    value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
             <column name="message"
                     value="Fishing License, Authorization or Permit ID is missing."/>
@@ -5057,7 +5057,7 @@
             <column name="rule_id" value="367"/>
             <column name="br_id" value="FA-L01-00-0367"/>
             <column name="expression"
-                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueContainsAny(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;, 1)"/>
             <column name="note"
                     value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
             <column name="message"
@@ -5356,7 +5356,7 @@
             <column name="rule_id" value="257"/>
             <column name="br_id" value="FA-L02-00-0257"/>
             <column name="expression"
-                    value="operationsQuantity == null &amp;&amp; valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;)"/>
+                    value="!valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;) &amp;&amp; operationsQuantity == null"/>
             <column name="note" value="If fishing operation (FA-L02-00-0255)"/>
             <column name="message"
                     value="Number of operations is missing for this fishing operation."/>
@@ -5364,7 +5364,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="19"/>
-            <column name="property_names" value="fishingGearRoleCodes"/>
+            <column name="property_names" value="operationsQuantity"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -6253,7 +6253,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
             <column name="template_id" value="21"/>
-            <column name="property_names" value="faReportDocumentRelatedReportIds"/>
+            <column name="property_names" value="specifiedFACatchSpeciesCodes,faReportDocumentRelatedReportIds"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -8345,7 +8345,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10902"/>
             <column name="br_id" value="SALE-L03-00-0011"/>
-            <column name="expression" value="salesService.doesReportNotExistWithReferencedId($fact)"/>
+            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The referenced identification must be the one of a an existing sales report"/>
             <column name="level" value="L03"/>
@@ -8379,6 +8379,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1004"/>
             <column name="property_names" value="ids"/>
+            <column name="disabled" value="true"/> <!-- disabled until commission decides to disable this rule in case of a correction -->
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>

@@ -455,10 +455,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
 
         assertTrue(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -467,10 +467,10 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
         fact.setReferencedID(new IdType("referencedID"));
 
-        doReturn(true).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
+        doReturn(true).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
 
         assertFalse(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_RESPONSE_REFERENCED_ID);
+        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -516,7 +516,6 @@ public class SalesRulesServiceBeanTest {
         verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_RESPONSE);
         verifyNoMoreInteractions(salesService);
     }
-
 
     @Test
     public void isIdNotUniqueWhenIdIsUnique() throws Exception {
@@ -625,10 +624,12 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(true).when(salesService).doesReportExistWithId("id");
+        doReturn(true).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_REPORT);
 
-        assertFalse(service.doesReportNotExistWithId(fact));
-        verify(salesService).doesReportExistWithId("id");
+        boolean result = service.doesReportNotExistWithId(fact);
+
+        assertFalse(result);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_REPORT);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -637,10 +638,12 @@ public class SalesRulesServiceBeanTest {
         SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
         fact.setIDS(Arrays.asList(new IdType("id")));
 
-        doReturn(false).when(salesService).doesReportExistWithId("id");
+        doReturn(false).when(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_REPORT);
 
-        assertTrue(service.doesReportNotExistWithId(fact));
-        verify(salesService).doesReportExistWithId("id");
+        boolean result = service.doesReportNotExistWithId(fact);
+
+        assertTrue(result);
+        verify(salesService).isIdNotUnique("id", SalesMessageIdType.SALES_REPORT);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -683,64 +686,6 @@ public class SalesRulesServiceBeanTest {
         fact.setIDS(Arrays.asList(new IdType("")));
 
         assertFalse(service.doesReportNotExistWithId(fact));
-        verifyNoMoreInteractions(salesService);
-    }
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenSalesFLUXReportDocumentDoesNotExist() throws Exception {
-        SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
-        fact.setReferencedID(new IdType("referencedID"));
-
-        doReturn(false).when(salesService).doesReportExistWithId("referencedID");
-
-        assertTrue(service.doesReportNotExistWithReferencedId(fact));
-        verify(salesService).doesReportExistWithId("referencedID");
-        verifyNoMoreInteractions(salesService);
-    }
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenSalesFLUXReportDocumentExists() throws Exception {
-        SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
-        fact.setReferencedID(new IdType("referencedID"));
-
-        doReturn(true).when(salesService).doesReportExistWithId("referencedID");
-
-        assertFalse(service.doesReportNotExistWithReferencedId(fact));
-        verify(salesService).doesReportExistWithId("referencedID");
-        verifyNoMoreInteractions(salesService);
-    }
-
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenSalesFLUXReportDocumentFactIsNull() throws Exception {
-        assertFalse(service.doesReportNotExistWithReferencedId(null));
-        verifyNoMoreInteractions(salesService);
-    }
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenReferencedIDInSalesFLUXReportDocumentFactIsNull() throws Exception {
-        SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
-        fact.setReferencedID(null);
-
-        assertFalse(service.doesReportNotExistWithReferencedId(fact));
-        verifyNoMoreInteractions(salesService);
-    }
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenValueInReferencedIDInSalesFLUXReportDocumentFactIsNull() throws Exception {
-        SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
-        fact.setReferencedID(new IdType(null));
-
-        assertFalse(service.doesReportNotExistWithReferencedId(fact));
-        verifyNoMoreInteractions(salesService);
-    }
-
-    @Test
-    public void doesReportNotExistWithReferencedIdWhenValueInReferencedIDInSalesFLUXReportDocumentFactIsBlank() throws Exception {
-        SalesFLUXReportDocumentFact fact = new SalesFLUXReportDocumentFact();
-        fact.setReferencedID(new IdType(""));
-
-        assertFalse(service.doesReportNotExistWithReferencedId(fact));
         verifyNoMoreInteractions(salesService);
     }
 
