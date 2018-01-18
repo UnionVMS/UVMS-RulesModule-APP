@@ -84,7 +84,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_REPORT);
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaReport(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         } catch(ActivityModelMarshallException e){
             log.error(e.getMessage(), e);
@@ -107,7 +107,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, request, extraValueMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         }catch(ActivityModelMarshallException e){
             log.error(e.getMessage(), e);
@@ -132,7 +132,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_RESPONSE);
-            fluxResponseMessage = messageService.generateFluxResponseMessage(validationResultDto, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaResponse(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         } catch(ActivityModelMarshallException e){
             log.error(e.getMessage(), e);

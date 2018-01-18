@@ -238,7 +238,7 @@ public class ActivityFactMapper {
     private static final String RELATED_VESSEL_TRANSPORT_MEANS_PROP = "relatedVesselTransportMeans";
     private static final String DESTINATION_VESSEL_STORAGE_CHARACTERISTIC_PROP = "destinationVesselStorageCharacteristic";
     private static final String SOURCE_VESSEL_STORAGE_CHARACTERISTIC_PROP = "sourceVesselStorageCharacteristic";
-    public static final String RELATED_REPORT_IDS_PROP = "relatedReportIDs";
+    private static final String RELATED_REPORT_IDS_PROP = "relatedReportIDs";
     private static final String TYPE_CODE_PROP = "typeCode";
     private static final String ROLE_CODES_PROP = "roleCodes";
     private static final String APPLICABLE_GEAR_CHARACTERISTICS_PROP = "applicableGearCharacteristics";
@@ -698,7 +698,7 @@ public class ActivityFactMapper {
         fishingGearFact.setTypeCode(mapToCodeType(fishingGear.getTypeCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fishingGearFact, TYPE_CODE_PROP);
 
-        fishingGearFact.setRoleCodes(mapToCodeType(fishingGear.getRoleCodes()));
+        fishingGearFact.setRoleCodes(mapToCodeTypes(fishingGear.getRoleCodes()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ROLE_CODE).storeInRepo(fishingGearFact, ROLE_CODES_PROP);
 
         if (fishingGear.getApplicableGearCharacteristics() != null) {
@@ -787,7 +787,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
 
         if (gearProblem.getRecoveryMeasureCodes() != null) {
-            gearProblemFact.setRecoveryMeasureCodes(mapToCodeType(gearProblem.getRecoveryMeasureCodes()));
+            gearProblemFact.setRecoveryMeasureCodes(mapToCodeTypes(gearProblem.getRecoveryMeasureCodes()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RECOVERY_MEASURE_CODE).storeInRepo(gearProblemFact, RECOVERY_MEASURE_CODE_PROP);
         }
 
@@ -867,7 +867,7 @@ public class ActivityFactMapper {
             faCatchFact.setTypeCode(mapToCodeType(faCatch.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, TYPE_CODE_PROP);
 
-            faCatchFact.setSizeDistributionClassCode(mapToCodeType(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
+            faCatchFact.setSizeDistributionClassCode(mapToCodeTypes(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
             xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_SIZE_DISTRIBUTION, CLASS_CODE).storeInRepo(faCatchFact, "sizeDistributionClassCode");
 
             faCatchFact.setUnitQuantity(mapQuantityTypeToMeasureType(faCatch.getUnitQuantity()));
@@ -931,7 +931,7 @@ public class ActivityFactMapper {
 
         VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = new VesselStorageCharacteristicsFact();
 
-        vesselStorageCharacteristicsFact.setTypeCodes(mapToCodeType(vesselStorageCharacteristic.getTypeCodes()));
+        vesselStorageCharacteristicsFact.setTypeCodes(mapToCodeTypes(vesselStorageCharacteristic.getTypeCodes()));
         xPathUtil.append(TYPE_CODE).storeInRepo(vesselStorageCharacteristicsFact, "typeCodes");
 
         return vesselStorageCharacteristicsFact;
@@ -1114,7 +1114,7 @@ public class ActivityFactMapper {
                 List<FishingGear> specifiedFishingGears = fishingActivity.getSpecifiedFishingGears();
                 List<CodeType> roleCodes = new ArrayList<>();
                 for (FishingGear fishingGear : specifiedFishingGears) {
-                    roleCodes.addAll(mapToCodeType(fishingGear.getRoleCodes()));
+                    roleCodes.addAll(mapToCodeTypes(fishingGear.getRoleCodes()));
                 }
                 faDepartureFact.setSpecifiedFishingGearRoleCodeTypes(roleCodes);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faDepartureFact, "specifiedFishingGearRoleCodeTypes");
@@ -1256,10 +1256,9 @@ public class ActivityFactMapper {
             }
 
             BigDecimal operatQuantity = fishingActivityOperationsQuantityValue(fishingActivity);
-            if (operatQuantity != null) {
-                faFishingOperationFact.setOperationsQuantity(operatQuantity.toString());
-                xPathUtil.appendWithoutWrapping(partialXpath).append(OPERATIONS_QUANTITY).storeInRepo(faFishingOperationFact, "operationsQuantity");
-            }
+            faFishingOperationFact.setOperationsQuantity(operatQuantity == null ? null : operatQuantity.toString());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(OPERATIONS_QUANTITY).storeInRepo(faFishingOperationFact, "operationsQuantity");
+
             faFishingOperationFact.setVesselRelatedActivityCode(mapToCodeType(fishingActivity.getVesselRelatedActivityCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, VESSEL_RELATED_ACTIVITY_CODE_PROP);
 
@@ -1268,6 +1267,9 @@ public class ActivityFactMapper {
                 faFishingOperationFact.setVesselTransportMeansContactParties(getContactPartiesFromVesselTransportMeans(vesselTransportMeans));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, SPECIFIED_CONTACT_PARTY).storeInRepo(faFishingOperationFact, "vesselTransportMeansContactParties");
             }
+
+            faFishingOperationFact.setFishingGearRoleCodes(getFishingGearRoleCodes(fishingActivity.getSpecifiedFishingGears()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
 
             List<FishingActivity> relatedFishingActivities = fishingActivity.getRelatedFishingActivities();
             if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
@@ -1279,7 +1281,8 @@ public class ActivityFactMapper {
                 int activityIndex = 1;
                 for (FishingActivity activity : relatedFishingActivities) {
                     faFishingOperationFact.setFishingGearRoleCodes(getFishingGearRoleCodes(activity.getSpecifiedFishingGears()));
-                    xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).appendWithIndex(VESSEL_RELATED_ACTIVITY_CODE, activityIndex).storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
+                    xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).appendWithIndex(VESSEL_RELATED_ACTIVITY_CODE, activityIndex)
+                            .storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
                 }
             }
         }
@@ -1521,7 +1524,7 @@ public class ActivityFactMapper {
 
                     for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                         if (CollectionUtils.isNotEmpty(contactParty.getRoleCodes())) {
-                            contactPartyRoleCodes.addAll(mapToCodeType(contactParty.getRoleCodes()));
+                            contactPartyRoleCodes.addAll(mapToCodeTypes(contactParty.getRoleCodes()));
                             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).appendWithIndex(SPECIFIED_CONTACT_PARTY, contactPartyIndex++).
                                     storeInRepo(faRelocationFact, "relatedVesselTransportMeansRoleCodes");
                         }
@@ -1542,18 +1545,8 @@ public class ActivityFactMapper {
         }
 
         if (fishingActivity.getSourceVesselStorageCharacteristic() != null) {
-            List<CodeType> typeCodes = new ArrayList<>();
-
-            int index = 1;
-
-            for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode : fishingActivity.getSourceVesselStorageCharacteristic().getTypeCodes()) {
-                typeCodes.add(mapToCodeType(typeCode));
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC).appendWithIndex(TYPE_CODE, index).storeInRepo(faRelocationFact, "sourceVesselStorageCharacteristicTypeCodes");
-
-                index++;
-            }
-
-            faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(typeCodes);
+            faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(mapToCodeTypes(fishingActivity.getSourceVesselStorageCharacteristic().getTypeCodes()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC, TYPE_CODE).storeInRepo(faRelocationFact, "sourceVesselStorageCharacteristicTypeCodes");
         }
 
         faRelocationFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
@@ -1572,7 +1565,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC).storeInRepo(faRelocationFact, SOURCE_VESSEL_STORAGE_CHARACTERISTIC_PROP);
 
         faRelocationFact.setFaReportDocumentRelatedReportIds(mapToIdType(faReportDocument.getRelatedReportIDs()));
-        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).append(RELATED_REPORT_ID).storeInRepo(faRelocationFact, RELATED_REPORT_IDS_PROP);
+        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).append(RELATED_REPORT_ID).storeInRepo(faRelocationFact, "faReportDocumentRelatedReportIds");
 
         return faRelocationFact;
     }
@@ -2115,12 +2108,9 @@ public class ActivityFactMapper {
         if (codeType == null) {
             return null;
         }
-
         eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType1 = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
-
         codeType1.setListId(codeType.getListID());
         codeType1.setValue(codeType.getValue());
-
         return codeType1;
     }
 
@@ -2128,12 +2118,9 @@ public class ActivityFactMapper {
         if (idType == null) {
             return null;
         }
-
         IdType idType1 = new IdType();
-
         idType1.setSchemeId(idType.getSchemeID());
         idType1.setValue(idType.getValue());
-
         return idType1;
     }
 
@@ -2151,16 +2138,14 @@ public class ActivityFactMapper {
         return idTypeList;
     }
 
-    public List<CodeType> mapToCodeType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
+    public List<CodeType> mapToCodeTypes(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
         if (codeTypes == null) {
             return emptyList();
         }
-
         List<CodeType> codeTypeArrayList = new ArrayList<>();
         for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType : codeTypes) {
             codeTypeArrayList.add(mapToCodeType(codeType));
         }
-
         return codeTypeArrayList;
     }
 
@@ -2705,7 +2690,7 @@ public class ActivityFactMapper {
             codeTypes = new ArrayList<>();
 
             for (ContactParty contactParty : contactPartyList) {
-                codeTypes.addAll(mapToCodeType(contactParty.getRoleCodes()));
+                codeTypes.addAll(mapToCodeTypes(contactParty.getRoleCodes()));
             }
         }
 
@@ -2855,7 +2840,7 @@ public class ActivityFactMapper {
 
         for (AAPProcess aapProcess : appliedAAPProcesses) {
             if (CollectionUtils.isNotEmpty(aapProcess.getTypeCodes())) {
-                codeTypes.addAll(mapToCodeType(aapProcess.getTypeCodes()));
+                codeTypes.addAll(mapToCodeTypes(aapProcess.getTypeCodes()));
             }
         }
         return codeTypes;
@@ -2921,7 +2906,7 @@ public class ActivityFactMapper {
         for (FishingGear fishingGear : fishingGears) {
 
             if (CollectionUtils.isNotEmpty(fishingGear.getRoleCodes())) {
-                codeTypes.addAll(mapToCodeType(fishingGear.getRoleCodes()));
+                codeTypes.addAll(mapToCodeTypes(fishingGear.getRoleCodes()));
             }
         }
         return codeTypes;
