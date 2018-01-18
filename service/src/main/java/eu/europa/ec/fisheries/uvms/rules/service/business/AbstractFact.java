@@ -368,8 +368,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.trace("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            return false;
+            log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -389,8 +389,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
-            return false;
+            log.debug("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -491,7 +491,11 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        for (String val : valuesToMatch) {
+        codeTypes.removeAll(Collections.singleton(null));
+        List<String> valueList = Arrays.asList(valuesToMatch);
+        valueList.removeAll(Collections.singleton(null));
+
+        for (String val : valueList) {
             for (CodeType IdType : codeTypes) {
                 if (!val.equals(IdType.getListId())) {
                     return true;
