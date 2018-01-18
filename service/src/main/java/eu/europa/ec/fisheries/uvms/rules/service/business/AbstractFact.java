@@ -922,7 +922,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) >= 0;
+        return value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {

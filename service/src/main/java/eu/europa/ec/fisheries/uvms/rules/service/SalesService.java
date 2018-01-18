@@ -11,8 +11,6 @@ public interface SalesService {
 
     boolean isCorrectionAndIsItemTypeTheSameAsInTheOriginal(FLUXSalesReportMessage fluxSalesReportMessage);
 
-    boolean doesReportExistWithId(String id);
-
     boolean isIdNotUnique(String id, SalesMessageIdType type);
 
     boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type);
