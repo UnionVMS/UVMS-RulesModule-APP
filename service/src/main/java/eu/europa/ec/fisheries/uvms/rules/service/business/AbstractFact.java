@@ -1436,6 +1436,9 @@ public abstract class AbstractFact {
         return null;
     }
 
+    public boolean stringEquals(String str1, String str2){
+        return StringUtils.equals(str1, str2);
+    }
     public String getValueForSchemeId(String schemeId, List<IdType> ids) {
         if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
             return null;
