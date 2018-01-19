@@ -379,12 +379,12 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     } else {
                         log.info("[WARN] Validation resulted in errors. Not going to send msg to Activity module..");
                     }
-                    fluxResponseMessageType = generateFluxResponseMessage(faReportValidationResult, fluxfaReportMessage);
+                    fluxResponseMessageType = generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
-                    log.info("[WARNING] Found already existing Validation(s) for message with GUID ["+logGuid+"]. Not going to process or send it to Business module!");
+                    log.info("[WARNING] Found already existing Validation(s) for message with GUID ["+logGuid+"]. \nNot going to process or send it to Business module!");
                     updateRequestMessageStatus(logGuid, validationMap.get(needToValidate));
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(needToValidate), fluxfaReportMessage);
+                    fluxResponseMessageType = generateFluxResponseMessageForFaReport(validationMap.get(needToValidate), fluxfaReportMessage);
                     log.info("[INFO] The Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -436,12 +436,12 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     } else {
                         log.info("[WARN] Validation resulted in errors. Not going to send msg to Activity module..");
                     }
-                    fluxResponseMessageType = generateFluxResponseMessage(faQueryValidationReport, faQueryMessage);
+                    fluxResponseMessageType = generateFluxResponseMessageForFaQuery(faQueryValidationReport, faQueryMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
                 } else {
                     log.info("[WARNING] Found already existing Validation(s) for message with GUID ["+logGuid+"]. Not going to process or send it to Activity module!");
                     updateRequestMessageStatus(logGuid, validationMap.get(needToValidate));
-                    fluxResponseMessageType = generateFluxResponseMessage(validationMap.get(needToValidate), faQueryMessage);
+                    fluxResponseMessageType = generateFluxResponseMessageForFaQuery(validationMap.get(needToValidate), faQueryMessage);
                     log.info("Validation of FLUXFAReport is complete and FluxResponse is generated");
                 }
                 validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType());
@@ -503,13 +503,13 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXResponseMessage fluxResponseMessage;
         switch(messageType){
             case FA_QUERY :
-                fluxResponseMessage = generateFluxResponseMessage(validationResultDto, message != null ? (FLUXFAReportMessage) message : null);
+                fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, message != null ? (FLUXFAQueryMessage) message : null);
                 break;
             case FA_REPORT :
-                fluxResponseMessage = generateFluxResponseMessage(validationResultDto, message != null ? (FLUXFAQueryMessage) message : null);
+                fluxResponseMessage = generateFluxResponseMessageForFaReport(validationResultDto, message != null ? (FLUXFAReportMessage) message : null);
                 break;
             case FA_RESPONSE :
-                fluxResponseMessage = generateFluxResponseMessage(validationResultDto, message != null ? (FLUXResponseMessage) message : null);
+                fluxResponseMessage = generateFluxResponseMessageForFaResponse(validationResultDto, message != null ? (FLUXResponseMessage) message : null);
                 break;
             default :
                 fluxResponseMessage = generateFluxResponseMessage(validationResultDto);
@@ -624,7 +624,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -664,7 +664,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -678,7 +678,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    public FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
 

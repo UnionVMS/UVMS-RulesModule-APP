@@ -153,6 +153,22 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="13"/>
+            <column name="br_id" value="FA-L03-00-0013"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;)
+ "/>
+            <column name="note" value="Only applicable if provided"/>
+            <column name="message" value="The identification must exist for a FLUXFAQueryMessage"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="2"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="14"/>
             <column name="br_id" value="FA-L00-00-0014"/>
@@ -446,7 +462,7 @@
             <column name="expression"
                     value="!verifyFLUXLocationIDValue(relatedFLUXLocations)"/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="note"
                     value="FLUXLocation ID.Check schemeID. If the RelatedFLUXLocation/TypeCode is AREA the schemeID of RelatedFLUXLocation/ID must be EFFORT_ZONE if the activity is an area exit declaration (FAReportDocument/TypeCode=DECLARATION)."/>
@@ -983,7 +999,7 @@
                     value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party.                                        It is expected to return the same validation results."/>
             <column name="message" value="Report ID already exists."/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="1"/>
             <column name="property_names" value="relatedFLUXReportDocumentIDs"/>
@@ -1205,7 +1221,7 @@
             <column name="rule_id" value="40"/>
             <column name="br_id" value="FA-L01-00-0040"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="Format must be date in UTC according to ISO8601."/>
             <column name="message" value="Invalid report creation date/time."/>
             <column name="level" value="L01"/>
@@ -2194,7 +2210,7 @@
             <column name="message"
                     value="The start date/time missing."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="delimitedPeriods,typeCode"/>
@@ -2209,7 +2225,7 @@
             <column name="message"
                     value="The end date/time missing."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="delimitedPeriods,typeCode"/>
@@ -2296,7 +2312,7 @@
             <column name="message"
                     value="Sub-activity information not allowed for this type of activity."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="0013-03-09 00:00:00.0"/>
             <column name="template_id" value="13"/>
             <column name="property_names" value="relatedFishingActivities"/>
@@ -3608,9 +3624,9 @@
 
         <insert tableName="rule">
             <column name="rule_id" value="440"/>
-            <column name="br_id" value="FA-L00-00-0440"/>
+            <column name="br_id" value="FA-L02-00-0440"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot;"/>
+                    value="speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; isNumeric(appliedAAPProcessConversionFactorNumber)"/>
             <column name="note"
                     value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
             <column name="message"
@@ -3622,6 +3638,7 @@
             <column name="property_names" value="appliedAAPProcessConversionFactorNumber,speciesCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="174"/>
             <column name="br_id" value="FA-L01-00-0174"/>
@@ -3637,6 +3654,20 @@
             <column name="disabled" value="false"/>
         </insert>
 
+         <insert tableName="rule">
+            <column name="rule_id" value="175"/>
+            <column name="br_id" value="FA-L03-00-0175"/>
+            <column name="expression"
+                    value="isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode)"/>
+            <column name="note" value="Mandatory if EU or national conversion factor not available."/>
+            <column name="message" value="Must be present if no conversion factor available for combination of FISH_PRESENTATION, FISH_PRESERVATION, Species and if applicable Area"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2018-01-08 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="appliedAAPProcessConversionFactorNumber,appliedAAPProcessTypeCodes,speciesCode,specifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
 
         <insert tableName="rule">
             <column name="rule_id" value="188"/>
@@ -4273,7 +4304,7 @@
             <column name="rule_id" value="371"/>
             <column name="br_id" value="FA-L02-00-0371"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; faQueryTypeCode != null &amp;&amp; (typeCode.listId != &quot;VESSELID&quot; &amp;&amp; faQueryTypeCode.value == &quot;VESSEL&quot; || typeCode.listId != &quot;TRIPID&quot; &amp;&amp; faQueryTypeCode.value == &quot;TRIP&quot;)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; faQueryTypeCode != null &amp;&amp; (typeCode.value != &quot;VESSELID&quot; &amp;&amp; faQueryTypeCode.value == &quot;VESSEL&quot; || typeCode.value != &quot;TRIPID&quot; &amp;&amp; faQueryTypeCode.value == &quot;TRIP&quot;)"/>
             <column name="note"
                     value="FA_QueryParameter TypeCode@listID must be VESSELID if  FA_Query.Type is VESSEL or must be value TRIPID if FA_QueryType is TRIP."/>
             <column name="message"
@@ -4377,7 +4408,7 @@
             <column name="rule_id" value="374"/>
             <column name="br_id" value="FA-L02-00-0374"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; valueID != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID.schemeId != &quot;CFR&quot; || valueID.schemeId != &quot;IRCS&quot;)"/>
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; (valueID == null || (valueID.schemeId != &quot;CFR&quot; &amp;&amp; valueID.schemeId != &quot;IRCS&quot;))"/>
             <column name="note" value="For EU vessels only query on CFR or IRCS"/>
             <column name="message"
                     value="The ValueID schemeID is invalid."/>
@@ -4517,7 +4548,7 @@
             <column name="note" value="FLUXCharacteristic ValueQuantity Must be greater than 0. "/>
             <column name="message" value="The value must be a positive integer value. "/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="28"/>
             <column name="property_names" value="fluxCharacteristicValueQuantity"/>
@@ -4527,7 +4558,7 @@
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
             <column name="expression"
-                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+                    value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
             <column name="message"
                     value="Fishing License, Authorization or Permit ID is missing."/>
@@ -4638,7 +4669,7 @@
             <column name="message"
                     value="Fishing License, Authorization or Permit ID has an invalid schemeID."/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="28"/>
             <column name="property_names" value="flapDocumentIdTypes"/>
@@ -4661,7 +4692,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="139"/>
             <column name="br_id" value="FA-L01-00-0139"/>
-            <column name="expression" value="affectedQuantity != null &amp;&amp; isPositive(affectedQuantity.value)"/>
+            <column name="expression" value="affectedQuantity != null &amp;&amp; !isPositive(affectedQuantity.value)"/>
             <column name="note" value="Affected quantity must be greater than 0"/>
             <column name="message" value="Affected quantity must be a positive integer."/>
             <column name="level" value="L01"/>
@@ -4797,7 +4828,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="351"/>
             <column name="br_id" value="FA-L01-00-0351"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode != &quot;FA_QUERY_TYPE&quot;"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.listId != &quot;FA_QUERY_TYPE&quot;"/>
             <column name="note" value="FA_Query TypeCode@listID must be FA_QUERY_TYPE."/>
             <column name="message" value="TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
@@ -4866,10 +4897,10 @@
             <column name="rule_id" value="356"/>
             <column name="br_id" value="FA-L01-00-0356"/>
             <column name="expression"
-                    value="submittedDateTime != null &amp;&amp; !isIsoDateStringValidFormat(submittedDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(submittedDateTimeString)"/>
             <column name="note" value="FA_Query SubmittedDateTime format must be date in UTC according to ISO8601."/>
             <column name="message"
-                    value="The date/time of sumission if the query must be a valid UTC date and in the correct format."/>
+                    value="The date/time of submission if the query must be a valid UTC date and in the correct format."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -4966,7 +4997,7 @@
             <column name="rule_id" value="363"/>
             <column name="br_id" value="FA-L01-00-0363"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(sdpStartDateTimeString)"/>
             <column name="note" value="Time part may be omitted. In such case 00:00:00 is assumed."/>
             <column name="message"
                     value="Start date/time must be a valid UTC date in the correct format."/>
@@ -5026,7 +5057,7 @@
             <column name="rule_id" value="367"/>
             <column name="br_id" value="FA-L01-00-0367"/>
             <column name="expression"
-                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; simpleFAQueryParameterTypeCodes.size &lt; 1 &amp;&amp; listIdNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;)"/>
+                    value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;CONSOLIDATED&quot;, 1)"/>
             <column name="note"
                     value="FA_Query SimpleFA_QueryParameter TypeCode at least one occurrence must be value CONSOLIDATED."/>
             <column name="message"
@@ -5325,7 +5356,7 @@
             <column name="rule_id" value="257"/>
             <column name="br_id" value="FA-L02-00-0257"/>
             <column name="expression"
-                    value="operationsQuantity == null &amp;&amp; valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;)"/>
+                    value="!valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;) &amp;&amp; operationsQuantity == null"/>
             <column name="note" value="If fishing operation (FA-L02-00-0255)"/>
             <column name="message"
                     value="Number of operations is missing for this fishing operation."/>
@@ -5333,7 +5364,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="19"/>
-            <column name="property_names" value="fishingGearRoleCodes"/>
+            <column name="property_names" value="operationsQuantity"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -5635,6 +5666,20 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
+            <column name="rule_id" value="382"/>
+            <column name="br_id" value="FA-L03-00-0382"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; !exchangeService.identificationExists(ids.get(0).value, &quot;FA_RESPONSE&quot;)"/>
+            <column name="note" value="The identification of the FLUX response Document must be unique and not already exist"/>
+            <column name="message" value="The identification of the FLUX response Document must be unique and not already exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2018-01-12 00:00:00.0"/>
+            <column name="template_id" value="16"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
             <column name="expression"
@@ -5651,7 +5696,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="384"/>
             <column name="br_id" value="FA-L01-00-0384"/>
-            <column name="expression" value="referencedID !=null &amp;&amp; validateFormat(referencedID)  "/>
+            <column name="expression" value="referencedID != null &amp;&amp; validateFormat(referencedID)  "/>
             <column name="note" value="referencedID -- Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Response referenced ID value is invalid."/>
             <column name="level" value="L01"/>
@@ -5661,6 +5706,21 @@
             <column name="property_names" value="referencedID"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="385"/>
+            <column name="br_id" value="FA-L03-00-0385"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;, &quot;FA_REPORT&quot;)"/>
+            <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+            <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on" valueDate="2018-01-11 00:00:00.0"/>
+            <column name="template_id" value="16"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="386"/>
             <column name="br_id" value="FA-L00-00-0386"/>
@@ -5720,7 +5780,7 @@
             <column name="rule_id" value="390"/>
             <column name="br_id" value="FA-L01-00-0390"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
             <column name="message" value="Response creation date/time must be a valid UTC date and in the correct."/>
             <column name="level" value="L01"/>
@@ -6193,7 +6253,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
             <column name="template_id" value="21"/>
-            <column name="property_names" value="faReportDocumentRelatedReportIds"/>
+            <column name="property_names" value="specifiedFACatchSpeciesCodes,faReportDocumentRelatedReportIds"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -8285,7 +8345,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10902"/>
             <column name="br_id" value="SALE-L03-00-0011"/>
-            <column name="expression" value="salesService.doesReportNotExistWithReferencedId($fact)"/>
+            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The referenced identification must be the one of a an existing sales report"/>
             <column name="level" value="L03"/>
@@ -8319,6 +8379,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1004"/>
             <column name="property_names" value="ids"/>
+            <column name="disabled" value="true"/> <!-- disabled until commission decides to disable this rule in case of a correction -->
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>
@@ -8605,7 +8666,7 @@
             <column name="rule_id" value="6"/>
             <column name="br_id" value="FA-L01-00-0006"/>
             <column name="expression"
-                    value="creationDateTime != null &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
             <column name="note" value="Format must be date in UTC according to ISO8601"/>
             <column name="message" value="Invalid message creation date/time."/>
             <column name="level" value="L01"/>
@@ -8634,7 +8695,7 @@
             <column name="rule_id" value="26"/>
             <column name="br_id" value="FA-L01-00-0026"/>
             <column name="expression"
-                    value="acceptanceDateTime != null &amp;&amp; !isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
+                    value="!isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
             <column name="note" value="Include the check if the date provided exists."/>
             <column name="message" value="Invalid acceptance date/time."/>
             <column name="level" value="L01"/>

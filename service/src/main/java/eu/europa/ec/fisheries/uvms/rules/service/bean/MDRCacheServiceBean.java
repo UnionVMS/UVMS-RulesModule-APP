@@ -10,22 +10,25 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Singleton
 @Slf4j
@@ -37,8 +40,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public void loadMDRCache() {
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
             List<ObjectRepresentation> values = cache.getEntry(acronymType);
-            MDRCacheHolder.getInstance().addToCache(acronymType, values); // FIXME after belgium tem has refactored there ref to cacheholder remove call
         }
+        MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME : "MDRCacheHolder" To be removed! and instead use directly MDRCacheRuleService as global in the drts
         log.debug(cache.getCache().stats().toString());
         log.info("MDRCache size: " + cache.getCache().asMap().size());
     }
@@ -213,8 +216,64 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 return false;
             }
         }
-
         return true;
+    }
+
+    @Override
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode) {
+        // clean lists from nulls
+        Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
+        Iterables.removeIf(appliedAAPProcessTypeCodes, Predicates.isNull());
+        // country column
+        String country = StringUtils.EMPTY;
+        if(CollectionUtils.isNotEmpty(specifiedFLUXLocations)){
+            for(FLUXLocation location : specifiedFLUXLocations){
+                final IDType locId = location.getID();
+                if(locId != null && ("TERRITORY".equals(locId.getSchemeID()) || "MANAGEMENT_AREA".equals(locId.getSchemeID()))){
+                    country = locId.getValue();
+                }
+            }
+        }
+        if(isPresentInMDRList("MEMBER_STATE", country)){
+            country = "XEU";
+        }
+        // presentation, state columns
+        String presentation = StringUtils.EMPTY;
+        String state = StringUtils.EMPTY;
+        if(CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)){
+            for(CodeType presPreserv : appliedAAPProcessTypeCodes){
+                if("FISH_PRESENTATION".equals(presPreserv.getListId())){
+                    presentation = presPreserv.getValue();
+                }
+                if("FISH_PRESERVATION".equals(presPreserv.getListId())){
+                    state = presPreserv.getValue();
+                }
+            }
+        }
+        List<ObjectRepresentation> finalList = null;
+        if(!(StringUtils.isBlank(country) || StringUtils.isBlank(presentation) || StringUtils.isBlank(state))){
+            List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+            List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "placesCode", country);
+            List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+            List<ObjectRepresentation> filtered_3_list = filterEntriesByColumn(filtered_2_list, "presentation", presentation);
+            finalList = filterEntriesByColumn(filtered_3_list, "state", state);
+        }
+        return CollectionUtils.isNotEmpty(finalList);
+    }
+
+    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnName, String columnValue){
+        if(CollectionUtils.isEmpty(entries) || StringUtils.isEmpty(columnValue) || StringUtils.isEmpty(columnName)){
+            return entries;
+        }
+        List<ObjectRepresentation> matchingList = new ArrayList<>();
+        for(ObjectRepresentation entry : entries){
+            for(ColumnDataType field : entry.getFields()){
+                if(field.getColumnName().equals(columnName) && field.getColumnValue().equals(columnValue)){
+                    matchingList.add(entry);
+                }
+            }
+        }
+        return matchingList;
     }
 
     /**

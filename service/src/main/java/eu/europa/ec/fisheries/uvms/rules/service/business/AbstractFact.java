@@ -114,7 +114,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -369,8 +368,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.trace("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            return false;
+            log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -390,8 +389,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
-            return false;
+            log.debug("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -492,7 +491,11 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        for (String val : valuesToMatch) {
+        codeTypes.removeAll(Collections.singleton(null));
+        List<String> valueList = Arrays.asList(valuesToMatch);
+        valueList.removeAll(Collections.singleton(null));
+
+        for (String val : valueList) {
             for (CodeType IdType : codeTypes) {
                 if (!val.equals(IdType.getListId())) {
                     return true;
@@ -903,7 +906,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
             for (CodeType codeType : codeTypes) {
@@ -920,7 +922,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) >= 0;
+        return value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
@@ -1009,9 +1011,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        for (NumericType type : list) {
-            if (type.getValue() == null) {
-                return true;
+        if(CollectionUtils.isNotEmpty(list)){
+            for (NumericType type : list) {
+                if (type.getValue() == null) {
+                    return true;
+                }
             }
         }
         return false;

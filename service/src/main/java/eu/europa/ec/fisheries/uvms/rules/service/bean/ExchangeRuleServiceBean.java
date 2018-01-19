@@ -10,15 +10,81 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.Singleton;
+import static eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils.marshallJaxBObjectToString;
+import static eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils.unMarshallMessage;
+import static eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue.EXCHANGE;
 
-import eu.europa.ec.fisheries.uvms.rules.service.ExchangeRuleService;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.Collections;
+
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogIdByTypeExistsRequest;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogIdByTypeExistsResponse;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogRefIdByTypeExistsRequest;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.LogRefIdByTypeExistsResponse;
+import eu.europa.ec.fisheries.schema.exchange.v1.TypeRefType;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 
 @Singleton
 @Slf4j
 public class ExchangeRuleServiceBean implements ExchangeRuleService {
 
+    @EJB
+    private RulesResponseConsumer consumer;
 
+    @EJB
+    private RulesMessageProducer producer;
 
+    @Override
+    public boolean identificationRefExists(String refGuid, String... typeRefType) {
+        Boolean faQueryIdentificationExists = false;
+        try {
+            LogRefIdByTypeExistsRequest existsRequest = new LogRefIdByTypeExistsRequest();
+            for (String refType : typeRefType){
+                existsRequest.getRefTypes().add(EnumUtils.getEnum(TypeRefType.class, refType));
+            }
+            existsRequest.getRefTypes().removeAll(Collections.singleton(null));
+            existsRequest.setRefGuid(refGuid);
+            existsRequest.setMethod(ExchangeModuleMethod.LOG_REF_ID_BY_TYPE_EXISTS);
+            String jaxBObjectToString = marshallJaxBObjectToString(existsRequest);
+            String jmsMessageID = producer.sendDataSourceMessage(jaxBObjectToString, EXCHANGE);
+            TextMessage message = consumer.getMessage(jmsMessageID, TextMessage.class);
+            String text = message.getText();
+            LogRefIdByTypeExistsResponse response = unMarshallMessage(text, LogRefIdByTypeExistsResponse.class);
+            faQueryIdentificationExists = response.getRefGuid() != null;
+
+        } catch (JAXBException | MessageException | JMSException e) {
+            log.error(e.getMessage(), e);
+        }
+        return faQueryIdentificationExists;
+    }
+
+    @Override
+    public boolean identificationExists(String messageGuid, String typeRefType) {
+        Boolean messageGuidIdentificationExists = false;
+        try {
+            LogIdByTypeExistsRequest existsRequest = new LogIdByTypeExistsRequest();
+            existsRequest.setRefType(EnumUtils.getEnum(TypeRefType.class, typeRefType));
+            existsRequest.setMessageGuid(messageGuid);
+            existsRequest.setMethod(ExchangeModuleMethod.LOG_ID_BY_TYPE_EXISTS);
+            String jaxBObjectToString = marshallJaxBObjectToString(existsRequest);
+            String jmsMessageID = producer.sendDataSourceMessage(jaxBObjectToString, EXCHANGE);
+            TextMessage message = consumer.getMessage(jmsMessageID, TextMessage.class);
+            String text = message.getText();
+            LogIdByTypeExistsResponse response = unMarshallMessage(text, LogIdByTypeExistsResponse.class);
+            messageGuidIdentificationExists = response.getMessageGuid() != null;
+
+        } catch (JAXBException | MessageException | JMSException e) {
+            log.error(e.getMessage(), e);
+        }
+        return messageGuidIdentificationExists;
+    }
 }

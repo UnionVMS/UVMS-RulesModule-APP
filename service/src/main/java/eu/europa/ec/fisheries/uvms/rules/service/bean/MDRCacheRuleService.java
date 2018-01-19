@@ -15,6 +15,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 @Local
 public interface MDRCacheRuleService {
@@ -44,5 +45,7 @@ public interface MDRCacheRuleService {
     String getValueForListId(String listId, List<CodeType> typeCodes);
 
     boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes);
+
+    boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode);
 
 }
