@@ -685,13 +685,16 @@ public class RulesServiceBean implements RulesService {
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
         final String assetGuid;
+        final String assetHistGuid;
         final String assetFlagState;
-        if (asset != null && asset.getAssetId() != null) {
+        if (asset != null && asset.getAssetId() != null && asset.getEventHistory() != null) {
             assetGuid = asset.getAssetId().getGuid();
+            assetHistGuid = asset.getEventHistory().getEventId();
             assetFlagState = asset.getCountryCode();
-            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
         } else {
+            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
             assetGuid = null;
+            assetHistGuid = null;
             assetFlagState = null;
         }
 
@@ -708,7 +711,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() {
-                return numberOfReportsLast24Hours(assetGuid, positionTime);
+                return numberOfReportsLast24Hours(assetHistGuid, positionTime);
             }
         });
         executor.execute(numberOfReportsLast24HoursTask);
@@ -716,7 +719,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
-                return sendToMovement(assetGuid, rawMovement, username);
+                return sendToMovement(assetHistGuid, rawMovement, username);
             }
         });
         executor.execute(sendToMovementTask);
@@ -835,7 +838,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private Integer numberOfReportsLast24Hours(String assetGuid, Date thisTime) {
+    private Integer numberOfReportsLast24Hours(String connectId, Date thisTime) {
         LOG.info("Fetching number of reports last 24 hours");
         Date auditTimestamp = new Date();
         Integer numberOfMovements = null;
@@ -853,7 +856,7 @@ public class RulesServiceBean implements RulesService {
         // Id
         eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria idCriteria = new eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria();
         idCriteria.setKey(eu.europa.ec.fisheries.schema.movement.search.v1.SearchKey.CONNECT_ID);
-        idCriteria.setValue(assetGuid);
+        idCriteria.setValue(connectId);
         query.getMovementSearchCriteria().add(idCriteria);
 
         try {
@@ -871,7 +874,7 @@ public class RulesServiceBean implements RulesService {
             } else if (result.size() != 1) {
                 LOG.warn("[ Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
                 return null;
-            } else if (!assetGuid.equals(result.get(0).getKey())) {
+            } else if (!connectId.equals(result.get(0).getKey())) {
                 LOG.warn("[ Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
                 return null;
             } else {
@@ -889,7 +892,7 @@ public class RulesServiceBean implements RulesService {
         return numberOfMovements;
     }
 
-    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement, String username) {
+    private MovementType sendToMovement(String connectId, RawMovementType rawMovement, String username) {
         LOG.info("Send the validated raw position to Movement");
 
         Date auditTimestamp = new Date();
@@ -897,7 +900,7 @@ public class RulesServiceBean implements RulesService {
         MovementType createdMovement = null;
         try {
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
-            movementBaseType.setConnectId(assetGuid);
+            movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
