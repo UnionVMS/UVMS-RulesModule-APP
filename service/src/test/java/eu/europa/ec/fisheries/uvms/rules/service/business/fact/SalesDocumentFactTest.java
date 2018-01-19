@@ -2,15 +2,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,7 +23,6 @@ public class SalesDocumentFactTest {
     @Before
     public void setUp() throws Exception {
         fact = new SalesDocumentFact();
-        addTestEntriesToMDRListTERRITORY_CURRENCY();
     }
 
     @Test
@@ -214,71 +209,4 @@ public class SalesDocumentFactTest {
         assertFalse(fact.hasTheTakeOverDocumentIdAnIncorrectFormat());
     }
 
-    @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenCurrencyIsNull() {
-        DateTime occurrence = DateTime.now();
-
-        fact.setCurrencyCode(null);
-        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
-        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
-
-        assertFalse(fact.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales());
-    }
-
-    @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenCountryIsNull() {
-        DateTime occurrence = DateTime.now();
-
-        fact.setCurrencyCode(new CodeType("EUR"));
-        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
-
-        assertFalse(fact.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales());
-    }
-
-    @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenOccurrenceIsNull() {
-        fact.setCurrencyCode(new CodeType("EUR"));
-        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
-        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(null)));
-
-        assertFalse(fact.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales());
-    }
-
-    @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenTrue() {
-        DateTime occurrence = DateTime.now();
-
-        fact.setCurrencyCode(new CodeType("EUR"));
-        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
-        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
-
-        assertTrue(fact.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales());
-    }
-
-    @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenFalse() {
-        DateTime occurrence = DateTime.now();
-
-        fact.setCurrencyCode(new CodeType("DKK"));
-        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
-        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
-
-        assertFalse(fact.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales());
-    }
-
-
-    private void addTestEntriesToMDRListTERRITORY_CURRENCY() {
-        ColumnDataType code = new ColumnDataType();
-        code.setColumnName("code");
-        code.setColumnValue("EUR");
-
-        ColumnDataType placesCode = new ColumnDataType();
-        placesCode.setColumnName("placesCode");
-        placesCode.setColumnValue("BEL");
-
-        ObjectRepresentation objectRepresentation = new ObjectRepresentation();
-        objectRepresentation.setFields(Arrays.asList(code, placesCode));
-
-        MDRCacheHolder.getInstance().addToCache(MDRAcronymType.TERRITORY_CURR, Arrays.asList(objectRepresentation));
-    }
 }

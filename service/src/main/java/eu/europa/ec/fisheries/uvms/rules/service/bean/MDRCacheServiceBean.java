@@ -15,12 +15,8 @@ import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -29,6 +25,12 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Singleton
 @Slf4j
@@ -39,7 +41,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     public void loadMDRCache() {
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
-            List<ObjectRepresentation> values = cache.getEntry(acronymType);
+            cache.getEntry(acronymType);
         }
         MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME : "MDRCacheHolder" To be removed! and instead use directly MDRCacheRuleService as global in the drts
         log.debug(cache.getCache().stats().toString());
@@ -345,4 +347,27 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }
         return null;
     }
+
+
+    @Override
+    public boolean isNotMostPreciseFAOArea(IdType id) {
+        List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
+                (id.getValue(), "terminalInd", "1", faoAreas);
+    }
+
+
+    @Override
+    public boolean isLocationNotInCountry(IdType id, IdType countryID) {
+        List<ObjectRepresentation> locations = cache.getEntry(MDRAcronymType.LOCATION);
+        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
+                id.getValue(), "placesCode", countryID.getValue(), locations);
+    }
+
+    @Override
+    public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
+        return cache.getEntry(mdrAcronym);
+    }
+
+
 }
