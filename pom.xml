@@ -9,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.21</version>
+    <version>3.0.22-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -251,7 +251,7 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>rules-3.0.21</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <profiles>
