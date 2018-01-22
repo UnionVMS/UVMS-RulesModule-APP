@@ -8073,7 +8073,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10603"/>
             <column name="br_id" value="SALE-L01-00-0453"/>
-            <column name="expression" value="hasReferencedIDInvalidFormat()"/>
+            <column name="expression" value="!isAuction() &amp;&amp; hasReferencedIDInvalidFormat()"/>
             <column name="note" value="Must be according to RFC4122 format for UUID."/>
             <column name="message" value="Check Format. Must be according to the specified schemeID."/>
             <column name="level" value="L01"/>
