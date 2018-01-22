@@ -1403,7 +1403,7 @@
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
