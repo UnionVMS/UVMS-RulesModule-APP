@@ -225,7 +225,7 @@ public class AbstractFactTest {
         additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
         ;
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
-        assertFalse(result);
+        assertTrue(result);
 
         additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);

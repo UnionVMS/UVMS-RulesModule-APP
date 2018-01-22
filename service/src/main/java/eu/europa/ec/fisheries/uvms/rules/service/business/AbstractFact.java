@@ -1394,7 +1394,9 @@ public abstract class AbstractFact {
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
         for (IdType idType : vesselIds) {
-            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            if ("CFR".equals(idType.getSchemeId())){
+                listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            }
         }
 
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
