@@ -906,7 +906,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
             for (CodeType codeType : codeTypes) {
@@ -1395,7 +1394,9 @@ public abstract class AbstractFact {
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
         for (IdType idType : vesselIds) {
-            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            if ("CFR".equals(idType.getSchemeId())){
+                listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            }
         }
 
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
@@ -1437,6 +1438,9 @@ public abstract class AbstractFact {
         return null;
     }
 
+    public boolean stringEquals(String str1, String str2){
+        return StringUtils.equals(str1, str2);
+    }
     public String getValueForSchemeId(String schemeId, List<IdType> ids) {
         if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
             return null;

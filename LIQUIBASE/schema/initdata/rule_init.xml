@@ -1403,7 +1403,7 @@
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
@@ -4300,22 +4300,7 @@
             <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="371"/>
-            <column name="br_id" value="FA-L02-00-0371"/>
-            <column name="expression"
-                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; faQueryTypeCode != null &amp;&amp; (typeCode.value != &quot;VESSELID&quot; &amp;&amp; faQueryTypeCode.value == &quot;VESSEL&quot; || typeCode.value != &quot;TRIPID&quot; &amp;&amp; faQueryTypeCode.value == &quot;TRIP&quot;)"/>
-            <column name="note"
-                    value="FA_QueryParameter TypeCode@listID must be VESSELID if  FA_Query.Type is VESSEL or must be value TRIPID if FA_QueryType is TRIP."/>
-            <column name="message"
-                    value="The value of the query parameter TypeCode is invalid."/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="2017-06-30 00:00:00.0"/>
-            <column name="template_id" value="15"/>
-            <column name="property_names" value="typeCode, faQueryTypeCode"/>
-            <column name="disabled" value="false"/>
-        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="372"/>
             <column name="br_id" value="FA-L02-00-0372"/>
@@ -5039,6 +5024,27 @@
             <column name="property_names" value="specifiedDelimitedPeriod"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="371"/>
+            <column name="br_id" value="FA-L02-00-0371"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; (stringEquals(typeCode.value, &quot;VESSEL&quot;) &amp;&amp; (valueContainsAny(simpleFAQueryParameterTypeCodes,&quot;VESSELID&quot;) || !valueContainsAny(simpleFAQueryParameterTypeCodes,&quot;TRIPID&quot;)))
+                    ||
+                    (stringEquals(typeCode.value, &quot;TRIP&quot;) &amp;&amp; (valueContainsAny(simpleFAQueryParameterTypeCodes,&quot;TRIPID&quot;) || !valueContainsAny(simpleFAQueryParameterTypeCodes,&quot;VESSELID&quot;)))"/>
+            <column name="note"
+                    value="FA_QueryParameter TypeCode@listID must be VESSELID if  FA_Query.Type is VESSEL or must be value TRIPID if FA_QueryType is TRIP."/>
+            <column name="message"
+                    value="The value of the query parameter TypeCode is invalid."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-06-30 00:00:00.0"/>
+            <column name="template_id" value="14"/>
+            <column name="property_names" value="typeCode, faQueryTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+
         <insert tableName="rule">
             <column name="rule_id" value="366"/>
             <column name="br_id" value="FA-L02-00-0366"/>
@@ -5356,7 +5362,7 @@
             <column name="rule_id" value="257"/>
             <column name="br_id" value="FA-L02-00-0257"/>
             <column name="expression"
-                    value="operationsQuantity == null &amp;&amp; valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;)"/>
+                    value="!valueContainsAny(fishingGearRoleCodes, &quot;DEPLOYED&quot;) &amp;&amp; operationsQuantity == null"/>
             <column name="note" value="If fishing operation (FA-L02-00-0255)"/>
             <column name="message"
                     value="Number of operations is missing for this fishing operation."/>
@@ -5364,7 +5370,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="19"/>
-            <column name="property_names" value="fishingGearRoleCodes"/>
+            <column name="property_names" value="operationsQuantity"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -6253,7 +6259,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
             <column name="template_id" value="21"/>
-            <column name="property_names" value="faReportDocumentRelatedReportIds"/>
+            <column name="property_names" value="specifiedFACatchSpeciesCodes,faReportDocumentRelatedReportIds"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
