@@ -808,7 +808,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
             }
         }
