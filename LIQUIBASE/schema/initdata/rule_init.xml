@@ -5854,8 +5854,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="393"/>
             <column name="br_id" value="FA-L01-00-0393"/>
-            <column name="expression"
-                    value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
             <column name="note" value="fluxPartyIds ListId must be FLUX_GP_PARTY."/>
             <column name="message" value="Respondent ID has an invalid schemeID."/>
             <column name="level" value="L01"/>
@@ -5863,8 +5862,9 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="16"/>
             <column name="property_names" value="fluxPartyIds"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="394"/>
             <column name="br_id" value="FA-L03-00-0394"/>
