@@ -223,9 +223,9 @@ public class AbstractFactTest {
         vesselIds = Arrays.asList(RuleTestHelper.getIdType("VSl1", "TESTVSL"));
         vesselCountryId = RuleTestHelper.getIdType("BEL", "TESTCOUNTRY");
         additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
-        ;
+
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
-        assertTrue(result);
+        assertFalse(result);
 
         additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
