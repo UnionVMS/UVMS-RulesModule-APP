@@ -1369,11 +1369,12 @@
             <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="62"/>
             <column name="br_id" value="FA-L03-00-0062"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp; !idListContainsValue(ids, registrationVesselCountryId.value, &quot;FLAG_STATE&quot;)"/>
+                    value="registrationVesselCountryId != null &amp;&amp; !isSameReportedVesselFlagState(registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="The vessel identification and registration location (flag state) must be consistent."/>
             <column name="message"
@@ -1385,6 +1386,7 @@
             <column name="property_names" value="ids, registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="63"/>
             <column name="br_id" value="FA-L03-00-0063"/>
