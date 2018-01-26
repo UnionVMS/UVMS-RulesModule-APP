@@ -9,6 +9,7 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
 import javax.annotation.PostConstruct;
@@ -17,11 +18,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.Queue;
 import javax.jms.Session;
 
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
@@ -55,7 +54,6 @@ public class RulesResponseConsumerBean implements RulesResponseConsumer, ConfigM
             LOG.error("[ No CorrelationID provided when listening to JMS message, aborting ]");
             throw new MessageException("No CorrelationID provided!");
         }
-
         Connection connection = null;
         try {
 

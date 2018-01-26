@@ -165,7 +165,7 @@ public class RulesMessageServiceBeanTest {
     @Test
     public void testGenerateFluxResponseMessage() {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
@@ -178,7 +178,7 @@ public class RulesMessageServiceBeanTest {
     @Test
     public void testGenerateFluxResponseMessageForFaQuery() {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), fluxfaQueryMessage);
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaQuery(getValidationResult(), fluxfaQueryMessage);
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
@@ -215,12 +215,12 @@ public class RulesMessageServiceBeanTest {
     @Test
     public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessage(getValidationResult(), getFluxFaReportMessage());
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());
         Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), Mockito.anyString(), Mockito.any(RawMsgType.class));
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
-        messageServiceBean.sendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
+        messageServiceBean.validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
     }
 
     @Test

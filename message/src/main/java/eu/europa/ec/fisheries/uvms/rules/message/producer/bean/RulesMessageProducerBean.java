@@ -26,6 +26,8 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import eu.europa.ec.fisheries.uvms.commons.message.api.Producer;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.SimpleAbstractProducer;
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;

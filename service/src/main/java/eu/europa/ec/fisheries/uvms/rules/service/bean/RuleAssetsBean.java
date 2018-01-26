@@ -78,7 +78,7 @@ public class RuleAssetsBean {
 
         AssetListQuery assetListQuery = createAssetListQuery(vessTranspMeans);
         if(CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
-            log.warn("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided! Check your XML!");
+            log.debug("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided! Check your XML!");
             return Collections.emptyList();
         }
 

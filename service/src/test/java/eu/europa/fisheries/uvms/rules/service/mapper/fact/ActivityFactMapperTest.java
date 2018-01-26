@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -32,7 +31,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
@@ -927,26 +925,6 @@ public class ActivityFactMapperTest {
         idType.setSchemeID(null);
         document.setIDS(singletonList(idType));
         assertTrue(isEmpty(ActivityFactMapper.getIds(document)));
-    }
-
-    @Test
-    public void testGetDateXMLStringNoDateTime() {
-        String dateString = "2016-08-01T03:48:23Z";
-        DateTimeType dateTimeType = new DateTimeType(null, new DateTimeType.DateTimeString(dateString, "YYYY-MM-DD'T'hh:mm:ss'Z'"));
-        String dateXMLString = ActivityFactMapper.getDateXMLString(dateTimeType);
-
-        assertTrue(dateString.equals(dateXMLString));
-    }
-
-    @Test
-    @SneakyThrows
-    public void testGetDateXMLStringWithDateTime() {
-        String dateString = "2016-08-01T03:48:23Z";
-        XMLGregorianCalendar xmlGregorianCalendar = XMLGregorianCalendarImpl.parse("2016-08-01T03:48:23Z");
-        DateTimeType dateTimeType = new DateTimeType(xmlGregorianCalendar, null);
-        String dateXMLString = ActivityFactMapper.getDateXMLString(dateTimeType);
-
-        assertTrue(dateString.equals(dateXMLString));
     }
 
 }

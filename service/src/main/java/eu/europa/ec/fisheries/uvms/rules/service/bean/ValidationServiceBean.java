@@ -149,7 +149,7 @@ public class ValidationServiceBean implements ValidationService {
      */
     @Override
     public List<SanityRuleType> getSanityRules() throws RulesServiceException, RulesFaultException {
-        LOG.info("Get all sanity rules invoked in service layer");
+        LOG.debug("Get all sanity rules invoked in service layer");
         try {
             List<SanityRuleType> sanityRuleList = rulesDomainModel.getSanityRuleList();
             return sanityRuleList;

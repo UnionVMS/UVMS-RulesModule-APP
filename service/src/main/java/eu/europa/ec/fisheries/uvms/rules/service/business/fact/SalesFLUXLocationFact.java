@@ -1,16 +1,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.schema.sales.FLUXCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.FLUXGeographicalCoordinateType;
+import eu.europa.ec.fisheries.schema.sales.SpecifiedPolygonType;
+import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import java.util.List;
-import java.util.Objects;
 
 public class SalesFLUXLocationFact extends SalesAbstractFact {
 
@@ -156,7 +160,7 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
     }
 
     @Override
-    public boolean isIdTypePresentInMDRList(IdType id) {
+    public boolean isIdTypePresentInMDRList(IdType id) {// FIXME D'ont use chacheholder will be removed use mdrService
         if (id != null) {
             if ("LOCATION".equals(id.getSchemeId())) {
                 List<String> locations = MDRCacheHolder.getInstance().getList(MDRAcronymType.LOCATION, "unloCode");

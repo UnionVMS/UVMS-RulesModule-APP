@@ -1,6 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.List;
+
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.CheckForUniqueIdResponse;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -10,17 +16,10 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesCache;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import org.apache.commons.lang.StringUtils;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.util.List;
 
 @Singleton
 public class SalesServiceBeanHelper {
@@ -30,10 +29,6 @@ public class SalesServiceBeanHelper {
 
     @EJB
     RulesResponseConsumer messageConsumer;
-
-    @EJB
-    SalesCache cache;
-
 
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
@@ -56,22 +51,9 @@ public class SalesServiceBeanHelper {
     }
 
     public Optional<FLUXSalesReportMessage> findReport(String guid) throws MessageException, SalesMarshallException, JMSException {
-        // If the report was retrieved earlier, we return the cached version
-        Optional<FLUXSalesReportMessage> cachedMessageOptional = cache.retrieveMessageFromCache(guid);
-        if (cachedMessageOptional.isPresent()) {
-            return cachedMessageOptional;
-        }
-
-        // Report not in cache, send message to sales and wait for a reply
         String findReportByIdRequest = SalesModuleRequestMapper.createFindReportByIdRequest(guid);
-
         String correlationId = sendMessageToSales(findReportByIdRequest);
-        Optional<FLUXSalesReportMessage> originalReport = receiveMessageFromSales(correlationId);
-
-        // Cache the result
-        cache.cacheMessage(guid, originalReport.orNull());
-
-        return originalReport;
+        return receiveMessageFromSales(correlationId);
     }
 
     public boolean areAnyOfTheseIdsNotUnique(List<String> id, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {

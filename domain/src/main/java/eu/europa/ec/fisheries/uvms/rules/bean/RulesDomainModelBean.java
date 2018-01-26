@@ -11,6 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
@@ -69,12 +76,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +181,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesModelException {
-        LOG.info("Create in Rules");
+        LOG.debug("Create in Rules");
         try {
             CustomRule entity = CustomRuleMapper.toCustomRuleEntity(customRule);
 
@@ -213,7 +214,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public CustomRuleType updateCustomRule(CustomRuleType customRule) throws RulesModelException {
-        LOG.info("Update custom rule in Rules");
+        LOG.debug("Update custom rule in Rules");
 
         if (customRule == null) {
             LOG.error("[ Custom Rule is null, returning Exception ]");
@@ -258,7 +259,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public CustomRuleType updateCustomRuleSubscription(UpdateSubscriptionType updateSubscriptionType) throws RulesModelException {
-        LOG.info("Update custom rule subscription in Rules");
+        LOG.debug("Update custom rule subscription in Rules");
 
         if (updateSubscriptionType == null) {
             LOG.error("[ Subscription is null, returning Exception ]");
@@ -430,7 +431,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public List<SanityRuleType> getSanityRuleList() throws RulesModelException {
-        LOG.info("Getting list of Sanity Rules (rule engine)");
+        LOG.debug("Getting list of Sanity Rules (rule engine)");
         try {
             List<SanityRuleType> list = new ArrayList<>();
             List<SanityRule> entityList = dao.getSanityRules();
