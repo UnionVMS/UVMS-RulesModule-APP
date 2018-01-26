@@ -808,7 +808,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
             }
         }
@@ -1394,7 +1394,9 @@ public abstract class AbstractFact {
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
         for (IdType idType : vesselIds) {
-            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            if ("CFR".equals(idType.getSchemeId())){
+                listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+            }
         }
 
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
