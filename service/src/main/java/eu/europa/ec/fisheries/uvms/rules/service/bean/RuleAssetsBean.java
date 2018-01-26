@@ -66,7 +66,7 @@ public class RuleAssetsBean {
 
     public List<IdTypeWithFlagState> getAssetList(Object message){
         FLUXFAReportMessage fluxFaRepMessage;
-            if(message instanceof FLUXFAReportMessage){
+        if(message instanceof FLUXFAReportMessage){
             fluxFaRepMessage = (FLUXFAReportMessage) message;
         } else {
             return Collections.emptyList();
