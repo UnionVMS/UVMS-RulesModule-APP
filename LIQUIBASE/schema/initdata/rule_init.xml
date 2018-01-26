@@ -773,7 +773,7 @@
             <column name="rule_id" value="83"/>
             <column name="br_id" value="FA-L01-00-0083"/>
             <column name="expression"
-                    value="countryID != null &amp;&amp; countryID.value != null &amp;&amp; countryID.value != &quot;IRL&quot; &amp;&amp; postalArea != null &amp;&amp; isEmpty(postcodeCode)"/>
+                    value="countryID != null &amp;&amp; countryID.value != null &amp;&amp; countryID.value != &quot;IRL&quot; &amp;&amp; isEmpty(postalArea)"/>
             <column name="note"
                     value="Specified Structured_Address postalArea must be non empty except if CountryID = IRL (Ireland)."/>
             <column name="message"
