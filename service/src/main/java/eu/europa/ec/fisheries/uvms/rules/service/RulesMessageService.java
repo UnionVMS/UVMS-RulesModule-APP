@@ -35,7 +35,9 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 @Local
 public interface RulesMessageService {
 
-    void evaluateFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+    void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+
+    void evaluateSendFaQueryRequest(SetFaQueryMessageRequest request);
 
     FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
@@ -63,5 +65,7 @@ public interface RulesMessageService {
 
     String getValidationsForRawMessageGuid(String guid, String type);
 
-    void evaluateFaQueryRequest(SetFaQueryMessageRequest request);
+    void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request);
+
+    void evaluateSendFaReportMessage(SetFLUXFAReportMessageRequest request);
 }

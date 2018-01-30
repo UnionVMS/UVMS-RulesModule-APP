@@ -101,6 +101,18 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <xsd:element name="SendFaQueryMessageRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
 			<xsd:element name="SetFLUXMDRSyncMessageRulesRequest">
 				<xsd:complexType>
 					<xsd:complexContent>
