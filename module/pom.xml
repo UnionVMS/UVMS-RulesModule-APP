@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>2.1.3-SNAPSHOT</version>
+        <version>3.0.22-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -19,9 +19,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
-                <version>2.7</version>
                 <configuration>
                     <modules>
+                        <ejbModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>rules-dbaccess-domain</artifactId>
+                        </ejbModule>
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>rules-message</artifactId>
@@ -48,6 +51,18 @@
     </build>
 
     <dependencies>
+    	 <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
+            <artifactId>rules-model</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rules-dbaccess-domain</artifactId>
+            <version>${project.parent.version}</version>
+            <type>ejb</type>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rules-message</artifactId>
@@ -63,9 +78,8 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
             <artifactId>rules-model</artifactId>
-            <version>${rules.model.version}</version>
-            <classifier>date</classifier>
-            <type>jar</type>
+            <version>${project.version}</version>
+            <type>ejb</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -77,7 +91,32 @@
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
-        </dependency>
+            <exclusions>
+            	<exclusion>
+            		<groupId>commons-logging</groupId>
+            		<artifactId>commons-logging</artifactId>
+            	</exclusion>
+				<exclusion>
+					<groupId>org.jboss.resteasy</groupId>
+					<artifactId>resteasy-jaxrs</artifactId>
+				</exclusion>
+				<exclusion>
+				    <groupId>net.sf.ehcache</groupId>
+  					<artifactId>ehcache</artifactId>				
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>net.sf.ehcache.internal</groupId>
+		    <artifactId>ehcache-core</artifactId>
+            <version>2.10.4</version>
+            <exclusions>
+            	<exclusion>
+            		 <groupId>org.slf4j</groupId>
+    				 <artifactId>slf4j-api</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>		
 
         <!-- TEST DEPENDENCIES -->
         <dependency>

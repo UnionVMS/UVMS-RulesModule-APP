@@ -54,7 +54,6 @@ import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalModelMapperException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
@@ -65,7 +64,7 @@ import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateExc
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.notifications.NotificationMessage;
+import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
@@ -80,9 +79,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.event.*;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -104,20 +101,20 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigInteger;
 import java.nio.file.AccessDeniedException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.*;
+
 
 @Stateless
 public class RulesServiceBean implements RulesService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
-
     static final double VICINITY_RADIUS = 0.05;
-
     static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
+    private final static Logger LOG = LoggerFactory.getLogger(RulesServiceBean.class);
 
     @EJB
     RulesResponseConsumer consumer;
@@ -125,35 +122,26 @@ public class RulesServiceBean implements RulesService {
     @EJB
     RulesMessageProducer producer;
 
-    @Inject
-    @AlarmReportEvent
-    private Event<NotificationMessage> alarmReportEvent;
-
-    @Inject
-    @TicketEvent
-    private Event<NotificationMessage> ticketEvent;
-
-    @Inject
-    @TicketUpdateEvent
-    private Event<NotificationMessage> ticketUpdateEvent;
-    
-    @Inject
-    @AlarmReportCountEvent
-    private Event<NotificationMessage> alarmReportCountEvent;
-
-    @Inject
-    @TicketCountEvent
-    private Event<NotificationMessage> ticketCountEvent;
-
     @EJB
     RulesValidator rulesValidator;
 
+    @Inject
+    @AlarmReportEvent
+    private Event<NotificationMessage> alarmReportEvent;
+    @Inject
+    @TicketEvent
+    private Event<NotificationMessage> ticketEvent;
+    @Inject
+    @TicketUpdateEvent
+    private Event<NotificationMessage> ticketUpdateEvent;
+    @Inject
+    @AlarmReportCountEvent
+    private Event<NotificationMessage> alarmReportCountEvent;
+    @Inject
+    @TicketCountEvent
+    private Event<NotificationMessage> ticketCountEvent;
     @EJB
-    ValidationService validationService;
-
-    @EJB(lookup = ServiceConstants.DB_ACCESS_RULES_DOMAIN_MODEL)
     private RulesDomainModel rulesDomainModel;
-
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
@@ -174,7 +162,6 @@ public class RulesServiceBean implements RulesService {
      * @param customRule
      * @throws RulesServiceException
      * @throws RulesFaultException
-     *
      */
     @Override
     public CustomRuleType createCustomRule(CustomRuleType customRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
@@ -187,9 +174,9 @@ public class RulesServiceBean implements RulesService {
             } else {
                 LOG.warn("User {} is not connected to any organisation!", customRule.getUpdatedBy());
             }
-            if(customRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (customRule.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(customRule.getUpdatedBy(), applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -199,7 +186,7 @@ public class RulesServiceBean implements RulesService {
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.CREATE, createdRule.getGuid(), null, customRule.getUpdatedBy());
             return createdRule;
 
-        } catch (RulesModelMapperException | MessageException  e) {
+        } catch (RulesModelMapperException | MessageException e) {
             throw new RulesServiceException(e.getMessage());
         } catch (eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
             throw new RulesServiceException(e.getMessage());
@@ -244,9 +231,9 @@ public class RulesServiceBean implements RulesService {
                 LOG.warn("User {} is not connected to any organisation!", oldCustomRule.getUpdatedBy());
             }
 
-            if(oldCustomRule.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (oldCustomRule.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(oldCustomRule.getUpdatedBy(), applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -296,7 +283,7 @@ public class RulesServiceBean implements RulesService {
 
             CustomRuleType updateCustomRule = rulesDomainModel.updateCustomRuleSubscription(updateSubscriptionType);
 
-            if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation()))  {
+            if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation())) {
                 // TODO: Don't log rule guid, log subscription guid?
                 sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_SUBSCRIPTION, AuditOperationEnum.CREATE, updateSubscriptionType.getRuleGuid(), updateSubscriptionType.getSubscription().getOwner() + "/" + updateSubscriptionType.getSubscription().getType(), username);
             } else if (SubscritionOperationType.REMOVE.equals(updateSubscriptionType.getOperation())) {
@@ -324,9 +311,9 @@ public class RulesServiceBean implements RulesService {
 
         try {
             CustomRuleType customRuleFromDb = getCustomRuleByGuid(guid);
-            if(customRuleFromDb.getAvailability().equals(AvailabilityType.GLOBAL)){
+            if (customRuleFromDb.getAvailability().equals(AvailabilityType.GLOBAL)) {
                 UserContext userContext = getFullUserContext(username, applicationName);
-                if(!hasFeature(userContext, featureName)){
+                if (!hasFeature(userContext, featureName)) {
                     throw new AccessDeniedException("Forbidden access");
                 }
             }
@@ -335,7 +322,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, deletedRule.getGuid(), null, username);
             return deletedRule;
-        } catch (RulesModelMapperException  e) {
+        } catch (RulesModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
@@ -429,6 +416,7 @@ public class RulesServiceBean implements RulesService {
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), ticket.getComment(), ticket.getUpdatedBy());
             return updatedTicket;
 
+
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -499,7 +487,7 @@ public class RulesServiceBean implements RulesService {
             TicketType ticket = rulesDomainModel.getTicketByAssetGuid(fact.getAssetGuid(), ruleName);
             if (ticket == null) {
                 createAssetNotSendingTicket(ruleName, fact);
-            } else if (ticket.getTicketCount() != null){
+            } else if (ticket.getTicketCount() != null) {
                 ticket.setTicketCount(ticket.getTicketCount() + 1);
                 updateTicketCount(ticket);
             } else {
@@ -697,13 +685,16 @@ public class RulesServiceBean implements RulesService {
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
         Integer numberOfReportsLast24Hours = null;
         final String assetGuid;
+        final String assetHistGuid;
         final String assetFlagState;
-        if (asset != null && asset.getAssetId() != null) {
+        if (asset != null && asset.getAssetId() != null && asset.getEventHistory() != null) {
             assetGuid = asset.getAssetId().getGuid();
+            assetHistGuid = asset.getEventHistory().getEventId();
             assetFlagState = asset.getCountryCode();
-            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
         } else {
+            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
             assetGuid = null;
+            assetHistGuid = null;
             assetFlagState = null;
         }
 
@@ -720,7 +711,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() {
-                return numberOfReportsLast24Hours(assetGuid, positionTime);
+                return numberOfReportsLast24Hours(assetHistGuid, positionTime);
             }
         });
         executor.execute(numberOfReportsLast24HoursTask);
@@ -728,7 +719,7 @@ public class RulesServiceBean implements RulesService {
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
-                return sendToMovement(assetGuid, rawMovement, username);
+                return sendToMovement(assetHistGuid, rawMovement, username);
             }
         });
         executor.execute(sendToMovementTask);
@@ -847,7 +838,7 @@ public class RulesServiceBean implements RulesService {
         }
     }
 
-    private Integer numberOfReportsLast24Hours(String assetGuid, Date thisTime) {
+    private Integer numberOfReportsLast24Hours(String connectId, Date thisTime) {
         LOG.info("Fetching number of reports last 24 hours");
         Date auditTimestamp = new Date();
         Integer numberOfMovements = null;
@@ -865,7 +856,7 @@ public class RulesServiceBean implements RulesService {
         // Id
         eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria idCriteria = new eu.europa.ec.fisheries.schema.movement.search.v1.ListCriteria();
         idCriteria.setKey(eu.europa.ec.fisheries.schema.movement.search.v1.SearchKey.CONNECT_ID);
-        idCriteria.setValue(assetGuid);
+        idCriteria.setValue(connectId);
         query.getMovementSearchCriteria().add(idCriteria);
 
         try {
@@ -883,7 +874,7 @@ public class RulesServiceBean implements RulesService {
             } else if (result.size() != 1) {
                 LOG.warn("[ Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
                 return null;
-            } else if (!assetGuid.equals(result.get(0).getKey())) {
+            } else if (!connectId.equals(result.get(0).getKey())) {
                 LOG.warn("[ Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
                 return null;
             } else {
@@ -901,7 +892,7 @@ public class RulesServiceBean implements RulesService {
         return numberOfMovements;
     }
 
-    private MovementType sendToMovement(String assetGuid, RawMovementType rawMovement, String username) {
+    private MovementType sendToMovement(String connectId, RawMovementType rawMovement, String username) {
         LOG.info("Send the validated raw position to Movement");
 
         Date auditTimestamp = new Date();
@@ -909,7 +900,7 @@ public class RulesServiceBean implements RulesService {
         MovementType createdMovement = null;
         try {
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
-            movementBaseType.setConnectId(assetGuid);
+            movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
@@ -950,7 +941,7 @@ public class RulesServiceBean implements RulesService {
             query.setPagination(pagination);
 
             String request = MovementModuleRequestMapper.mapToGetMovementListByQueryRequest(query);
-            String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
+            String messageId = rulesProducer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
             List<MovementType> movements = MovementModuleResponseMapper.mapToMovementListResponse(movementResponse);
             double centerX = rawMovement.getPosition().getLongitude();
@@ -1274,8 +1265,8 @@ public class RulesServiceBean implements RulesService {
 
         MobileTerminalType mobileTerminal = null;
 
-        for(MobileTerminalType mobileTerminalType : resultList){
-            if(mobileTerminalType.getConnectId()!=null){
+        for (MobileTerminalType mobileTerminalType : resultList) {
+            if (mobileTerminalType.getConnectId() != null) {
                 mobileTerminal = mobileTerminalType;
                 break;
             }
@@ -1295,8 +1286,7 @@ public class RulesServiceBean implements RulesService {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
-        }
-        catch (AuditModelMarshallException | MessageException e) {
+        } catch (AuditModelMarshallException | MessageException e) {
             LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
     }

@@ -1,0 +1,31 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesStructuredAddressFact;
+
+global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
+
+template "@{tname}"
+
+rule "Sales Structured Address @{tname} - @{brid}"
+
+when
+
+    $fact : SalesStructuredAddressFact(@{expression})
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError("@{type}", "@{rulemsg}", "@{brid}", "@{level}", "@{propertyNames}");
+end
+
+end template

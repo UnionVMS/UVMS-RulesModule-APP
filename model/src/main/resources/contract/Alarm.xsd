@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:alarm="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:movement="urn:movement.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:alarm.rules.schema.fisheries.ec.europa.eu:v1"
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <xsd:import namespace="urn:movement.rules.schema.fisheries.ec.europa.eu:v1" schemaLocation="Movement.xsd"/>
+
+    <xsd:complexType name="AlarmReportType">
+        <xsd:sequence>
+            <xsd:element name="pluginType" type="xsd:string"/>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="assetGuid" type="xsd:string"/>
+            <xsd:element name="status" type="alarm:AlarmStatusType"/>
+            <xsd:element name="openDate" type="xsd:string"/>
+            <xsd:element name="recipient" type="xsd:string"/>
+            <xsd:element name="alarmItem" type="alarm:AlarmItemType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="rawMovement" type="movement:RawMovementType"/>
+            <xsd:element name="inactivatePosition" type="xsd:boolean"/>
+            <xsd:element name="updated" type="xsd:string"/>
+            <xsd:element name="updatedBy" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AlarmItemType">
+        <xsd:sequence>
+            <xsd:element name="guid" type="xsd:string"/>
+            <xsd:element name="ruleGuid" type="xsd:string"/>
+            <xsd:element name="ruleName" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="AlarmStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OPEN"/>
+            <xsd:enumeration value="REJECTED"/>
+            <xsd:enumeration value="REPROCESSED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

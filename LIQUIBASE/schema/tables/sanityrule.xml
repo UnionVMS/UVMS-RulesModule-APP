@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="sanityrule-01">
+        <createTable tableName="sanityrule" remarks="Sanity rule table.">
+            <column name="sanityrule_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="sanityrule_pk"/>
+            </column>
+            <column name="sanityrule_name" type="varchar(100)" remarks="Name of rule (unique).">
+                <constraints nullable="false" unique="true" uniqueConstraintName="sanityrule_sanityrule_name_uk"/>
+            </column>
+            <column name="sanityrule_guid" type="varchar(100)" remarks="Guid of rule (unique).">
+                <constraints nullable="false" unique="true" uniqueConstraintName="sanityrule_sanityrule_guid_uk"/>
+            </column>
+            <column name="sanityrule_description" type="varchar(500)" remarks="Description."/>
+            <column name="sanityrule_expression" type="varchar(500)" remarks="The actual rule."/>
+            <column name="sanityrule_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sanityrule_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <rollback>
+            <dropTable tableName="sanityrule" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

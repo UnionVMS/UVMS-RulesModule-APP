@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="ticket-01">
+        
+        <createTable tableName="ticket" remarks="Ticket table.">
+            
+            <column name="ticket_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ticket_pk"/>
+            </column>
+            <column name="ticket_guid" type="varchar(40)" remarks="Ticket guid."/>
+            <column name="ticket_assetguid" type="varchar(100)" remarks="Asset guid"/>
+            <column name="ticket_ruleguid" type="varchar(100)" remarks="The guid of the rule."/>
+            <column name="ticket_rulename" type="varchar(100)" remarks="The name of the rule."/>
+            <column name="ticket_movementguid" type="varchar(100)" remarks="The guid of the movement."/>
+            <column name="ticket_status" type="varchar(20)" remarks="OPEN, PENDING or CLOSED."/>
+            <column name="ticket_recipient" type="varchar(20)" remarks="Recipient country code."/>
+            <column name="ticket_createddate" type="TIMESTAMP WITH TIME ZONE" remarks="When the ticket is created."/>
+            <column name="ticket_updattim" type="TIMESTAMP WITH TIME ZONE" remarks="Last updated date time.">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ticket_upuser" type="varchar(60)" remarks="Last update userid.">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="ticket" cascadeConstraints="true" />
+        </rollback>
+        
+    </changeSet>
+
+    <changeSet author="andtho" id="ticket-02">
+        <addColumn tableName="ticket">
+            <column name="ticket_mobileterminalguid" type="varchar(100)" remarks="Mobile terminal guid"/>
+            <column name="ticket_channelguid" type="varchar(100)" remarks="Channel guid"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="ticket" columnName="ticket_mobileterminalguid" />
+            <dropColumn tableName="ticket" columnName="ticket_channelguid" />
+        </rollback>
+
+    </changeSet>
+
+    <changeSet author="osdjup" id="ticket-03">
+        <addColumn tableName="ticket">
+            <column name="ticket_count" type="bigint" remarks="Counter for Asset not sending tickets"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="ticket" columnName="ticket_count" />
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

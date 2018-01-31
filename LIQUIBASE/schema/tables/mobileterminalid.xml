@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="andtho" id="rawmovemobileterminalid-01">
+        <createTable tableName="rawmovemobileterminalid" remarks="The mobileterminal connected to the movement.">
+            <column name="rawmovemobid_id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="rawmovemobid_pk"/>
+            </column>
+            <column name="rawmovemobid_type" type="VARCHAR(100)" remarks="Mobile terminal id type, e.g. DNID."/>
+            <column name="rawmovemobid_value" type="VARCHAR(100)" remarks="Mobile terminal id value."/>
+
+            <column name="rawmovemobid_rawmovemob_id" type="BIGINT" />
+        </createTable>
+
+        <addForeignKeyConstraint
+            constraintName="rawmovemobid_rawmovemob_fk"
+            baseTableName="rawmovemobileterminalid"
+            baseColumnNames="rawmovemobid_rawmovemob_id"
+            referencedTableName="rawmovemobileterminal"
+            referencedColumnNames="rawmovemob_id"
+        />
+
+        <rollback>
+            <dropTable tableName="rawmovemobileterminalid" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="rawmovemobid_rawmove_fk_inx-01" author="andtho">
+        <createIndex tableName="rawmovemobileterminalid" indexName="rawmovemobid_rawmove_fk_inx">
+            <column name="rawmovemobid_rawmovemob_id"></column>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

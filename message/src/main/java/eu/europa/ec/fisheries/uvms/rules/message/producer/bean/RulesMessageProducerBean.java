@@ -11,10 +11,27 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Observes;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import eu.europa.ec.fisheries.uvms.commons.message.api.Producer;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.SimpleAbstractProducer;
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigConstants;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
-import eu.europa.ec.fisheries.uvms.message.JMSUtils;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
@@ -26,23 +43,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.jms.*;
-import javax.naming.InitialContext;
-
 @Stateless
 public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMessageProducer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
-
     private Queue responseQueue;
     private Queue movementQueue;
     private Queue configQueue;
@@ -51,27 +55,25 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     private Queue exchangeQueue;
     private Queue userQueue;
     private Queue auditQueue;
-
-    @EJB
-    JMSConnectorBean connector;
+    private Queue activityQueue;
+    private Queue mdrEventQueue;
+    private Queue salesQueue;
+    private ConnectionFactory connectionFactory;
 
     @PostConstruct
     public void init() {
-        InitialContext ctx;
-        try {
-            ctx = new InitialContext();
-        } catch (Exception e) {
-            LOG.error("Failed to get InitialContext",e);
-            throw new RuntimeException(e);
-        }
-        responseQueue = JMSUtils.lookupQueue(ctx, MessageConstants.RULES_RESPONSE_QUEUE);
-        movementQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
-        configQueue = JMSUtils.lookupQueue(ctx, ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
-        assetQueue = JMSUtils.lookupQueue(ctx, MessageConstants.ASSET_MESSAGE_IN_QUEUE);
-        mobileTerminalQueue = JMSUtils.lookupQueue(ctx, MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE);
-        exchangeQueue = JMSUtils.lookupQueue(ctx, MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
-        userQueue = JMSUtils.lookupQueue(ctx, MessageConstants.USER_MESSAGE_IN_QUEUE);
-        auditQueue = JMSUtils.lookupQueue(ctx, MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
+    	connectionFactory = JMSUtils.lookupConnectionFactory();
+        responseQueue = JMSUtils.lookupQueue(MessageConstants.RULES_RESPONSE_QUEUE);
+        movementQueue = JMSUtils.lookupQueue(MessageConstants.MOVEMENT_MESSAGE_IN_QUEUE);
+        configQueue = JMSUtils.lookupQueue(ConfigConstants.CONFIG_MESSAGE_IN_QUEUE);
+        assetQueue = JMSUtils.lookupQueue(MessageConstants.ASSET_MESSAGE_IN_QUEUE);
+        mobileTerminalQueue = JMSUtils.lookupQueue(MessageConstants.MOBILE_TERMINAL_MESSAGE_IN_QUEUE);
+        exchangeQueue = JMSUtils.lookupQueue(MessageConstants.EXCHANGE_MESSAGE_IN_QUEUE);
+        userQueue = JMSUtils.lookupQueue(MessageConstants.USER_MESSAGE_IN_QUEUE);
+        auditQueue = JMSUtils.lookupQueue(MessageConstants.AUDIT_MESSAGE_IN_QUEUE);
+        activityQueue = JMSUtils.lookupQueue(MessageConstants.ACTIVITY_MESSAGE_IN_QUEUE);
+        mdrEventQueue = JMSUtils.lookupQueue(MessageConstants.MDR_EVENT);
+        salesQueue = JMSUtils.lookupQueue(MessageConstants.SALES_QUEUE);
     }
 
     private MessageProducer getProducer(Session session, Destination destination) throws JMSException {
@@ -86,8 +88,10 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         LOG.debug("Sending message to {}", queue.name());
 
+        Connection connection=null;
         try {
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             TextMessage message = session.createTextMessage();
             message.setJMSReplyTo(responseQueue);
             message.setText(text);
@@ -114,6 +118,15 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
                 case AUDIT:
                     getProducer(session, auditQueue).send(message);
                     break;
+                case ACTIVITY:
+                    getProducer(session, activityQueue).send(message);
+                    break;
+                case MDR_EVENT:
+                    getProducer(session, mdrEventQueue).send(message);
+                    break;
+                case SALES:
+                    getProducer(session, salesQueue).send(message);
+                    break;
                 default:
                     break;
             }
@@ -121,22 +134,28 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
-        try {
+        Connection connection=null;
+    	try {
             LOG.info("Sending message back to recipient from RulesModule with correlationId {} on queue: {}", message.getJMSMessageID(),
                     message.getJMSReplyTo());
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             TextMessage response = session.createTextMessage(text);
             response.setJMSCorrelationID(message.getJMSMessageID());
             MessageProducer producer = getProducer(session, message.getJMSReplyTo());
             producer.send(response);
         } catch (JMSException e) {
             LOG.error("[ Error when returning module rules request. ] {}", e.getMessage());
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
@@ -153,10 +172,12 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
 
     @Override
     public void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message) {
+    	Connection connection=null;
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
 
-            Session session = connector.getNewSession();
+            connection = connectionFactory.createConnection();
+            final Session session = JMSUtils.connectToQueue(connection);
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
             TextMessage response = session.createTextMessage(data);
             response.setJMSCorrelationID(message.getJmsMessage().getJMSMessageID());
@@ -164,7 +185,10 @@ public class RulesMessageProducerBean implements RulesMessageProducer, ConfigMes
             producer.send(response);
         } catch (RulesModelMarshallException | JMSException e) {
             LOG.error("Error when returning Error message to recipient");
+        } finally {
+        	JMSUtils.disconnectQueue(connection);
         }
     }
 
 }
+
