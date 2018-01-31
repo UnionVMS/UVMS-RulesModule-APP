@@ -29,9 +29,9 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -190,7 +190,7 @@ public class RulesMessageServiceBeanTest {
 
     @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
-        messageServiceBean.evaluateFLUXFAReportRequest(null);
+        messageServiceBean.evaluateReceiveFLUXFAReportRequest(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -202,7 +202,7 @@ public class RulesMessageServiceBeanTest {
         req.setType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
-        messageServiceBean.evaluateFLUXFAReportRequest(req);
+        messageServiceBean.evaluateReceiveFLUXFAReportRequest(req);
 
     }
 

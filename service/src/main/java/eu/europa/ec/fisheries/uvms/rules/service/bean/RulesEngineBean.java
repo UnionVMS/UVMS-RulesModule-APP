@@ -88,9 +88,7 @@ public class RulesEngineBean {
     }
 
     public Map<ExtraValueType, Object> generateExtraValueMap(BusinessObjectType businessObjectType, Object businessObject) {
-
         Map<ExtraValueType, Object> map = new HashMap<>();
-
         if (FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)) {
             Map<ActivityTableType, List<IdType>> nonUniqueIdsList = activityService.getNonUniqueIdsList(businessObject);
             map.put(ACTIVITY_NON_UNIQUE_IDS, nonUniqueIdsList);
@@ -101,7 +99,19 @@ public class RulesEngineBean {
             List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = rulesFishingGearBean.getAllFishingGearTypeCharacteristics();
             map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics);
         }
+        return map;
+    }
 
+    public Map<ExtraValueType, Object> generateExtraValueMapForOutgoingMessage(BusinessObjectType businessObjectType, Object businessObject) {
+        Map<ExtraValueType, Object> map = new HashMap<>();
+        if (FLUX_ACTIVITY_REQUEST_MSG.equals(businessObjectType)) {
+            Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesForTrips = activityService.getFishingActivitiesForTrips(businessObject);
+            map.put(ACTIVITY_WITH_TRIP_IDS, fishingActivitiesForTrips);
+            List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(businessObject);
+            map.put(ASSET_LIST, assetList);
+            List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = rulesFishingGearBean.getAllFishingGearTypeCharacteristics();
+            map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics);
+        }
         return map;
     }
 

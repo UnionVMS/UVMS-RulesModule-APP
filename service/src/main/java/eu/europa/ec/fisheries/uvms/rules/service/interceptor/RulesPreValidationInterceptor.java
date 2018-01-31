@@ -13,20 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.interceptor;
 
-import javax.ejb.EJB;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import javax.ejb.EJB;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RulesPreValidationInterceptor {
 
     @EJB
-    RulesMessageProducer producer;
+    private RulesMessageProducer producer;
 
     @EJB
     private RulesDomainModel rulesDomainModel;

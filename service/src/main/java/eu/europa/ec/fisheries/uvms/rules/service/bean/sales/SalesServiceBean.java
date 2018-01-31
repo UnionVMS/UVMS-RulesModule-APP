@@ -3,20 +3,19 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import java.util.Arrays;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
 import lombok.extern.slf4j.Slf4j;
 
 @Singleton
@@ -46,7 +45,7 @@ public class SalesServiceBean implements SalesService {
         try {
             Optional<FLUXSalesReportMessage> originalReport = helper.findReport(correctedReport.getFLUXReportDocument().getReferencedID().getValue());
             return originalReport.isPresent() && isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);
-        } catch (SalesMarshallException | JMSException | eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException e) {
+        } catch (SalesMarshallException | JMSException | MessageException e) {
             throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean", e);
         }
     }
