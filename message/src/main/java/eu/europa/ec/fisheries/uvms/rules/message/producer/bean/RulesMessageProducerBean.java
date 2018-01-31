@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.rules.message.producer.bean;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -22,12 +23,13 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.jms.JMSException;
-import org.apache.commons.lang3.StringUtils;
+import javax.jms.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,49 +38,41 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
+    private Queue rulesResponseQueue;
+    private Queue movementQueue;
+    private Queue configQueue;
+    private Queue assetQueue;
+    private Queue mobileTerminalQueue;
+    private Queue exchangeQueue;
+    private Queue userQueue;
+    private Queue auditQueue;
+    private Queue activityQueue;
+    private Queue mdrEventQueue;
+    private Queue salesQueue;
+
+    @PostConstruct
+    public void init() {
+        rulesResponseQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_RULES);
+        movementQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_MODULE_MOVEMENT);
+        configQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_CONFIG);
+        assetQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_ASSET_EVENT);
+        mobileTerminalQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_MOBILE_TERMINAL_EVENT);
+        exchangeQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_EXCHANGE_EVENT);
+        userQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_USM);
+        auditQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_AUDIT_EVENT);
+        activityQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_MODULE_ACTIVITY);
+        mdrEventQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_MDR_EVENT);
+        salesQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_SALES_EVENT);
+    }
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException  {
         LOG.debug("Sending message to {}", queue.name());
-        String replyQueue = MessageConstants.QUEUE_RULES;
-        String destination = null;
         try {
-            switch (queue) {
-                case MOVEMENT:
-                    destination = MessageConstants.QUEUE_MODULE_MOVEMENT;
-                    break;
-                case CONFIG:
-                    destination = MessageConstants.QUEUE_CONFIG;
-                    break;
-                case ASSET:
-                    destination = MessageConstants.QUEUE_ASSET_EVENT;
-                    break;
-                case MOBILE_TERMINAL:
-                    destination = MessageConstants.QUEUE_MOBILE_TERMINAL_EVENT;
-                    break;
-                case EXCHANGE:
-                    destination = MessageConstants.QUEUE_EXCHANGE_EVENT;
-                    break;
-                case USER:
-                    destination = MessageConstants.QUEUE_USM;
-                    break;
-                case AUDIT:
-                    destination = MessageConstants.QUEUE_AUDIT_EVENT;
-                    break;
-                case ACTIVITY:
-                    destination = MessageConstants.QUEUE_MODULE_ACTIVITY;
-                    break;
-                case MDR_EVENT:
-                    destination = MessageConstants.QUEUE_MDR_EVENT;
-                    break;
-                case SALES:
-                    destination = MessageConstants.QUEUE_SALES_EVENT;
-                    break;
-                default:
-                    break;
-            }
-            if(StringUtils.isNotEmpty(destination)){
-                return this.sendMessageToSpecificQueue(text, destination, replyQueue);
+            Queue destination = getDestinationQueue(queue);
+            if(destination != null){
+                return this.sendMessageToSpecificQueue(text, destination, rulesResponseQueue);
             }
             return null;
         } catch (Exception e) {
@@ -86,7 +80,6 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
             throw new MessageException("[ Error when sending message. ]", e);
         }
     }
-
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -108,6 +101,45 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         } catch (RulesModelMarshallException | JMSException e) {
             LOG.error("Error when returning Error message to recipient");
         }
+    }
+
+    private Queue getDestinationQueue(DataSourceQueue queue) {
+        Queue destination = null;
+        switch (queue) {
+            case MOVEMENT:
+                destination = movementQueue;
+                break;
+            case CONFIG:
+                destination = configQueue;
+                break;
+            case ASSET:
+                destination = assetQueue;
+                break;
+            case MOBILE_TERMINAL:
+                destination = mobileTerminalQueue;
+                break;
+            case EXCHANGE:
+                destination = exchangeQueue;
+                break;
+            case USER:
+                destination = userQueue;
+                break;
+            case AUDIT:
+                destination = auditQueue;
+                break;
+            case ACTIVITY:
+                destination = activityQueue;
+                break;
+            case MDR_EVENT:
+                destination = mdrEventQueue;
+                break;
+            case SALES:
+                destination = salesQueue;
+                break;
+            default:
+                break;
+        }
+        return destination;
     }
 
     @Override
