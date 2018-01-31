@@ -369,7 +369,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             }
         } catch (IllegalArgumentException e) {
             xPathUtil.clear();
-            log.error("No such Fishing activity type", e);
+            log.warn("No such Fishing activity type", e);
         }
         xPathUtil.clear();
         return abstractFact;
