@@ -33,11 +33,13 @@ public class BusinessObjectFactory {
     public static final AbstractGenerator getBusinessObjFactGenerator(BusinessObjectType businessObjectType) {
         if (businessObjectType != null) {
             switch (businessObjectType) {
-                case FLUX_ACTIVITY_REQUEST_MSG:
+                case RECEIVING_FA_REPORT_MSG:
+                case SENDING_FA_REPORT_MSG:
                     return new ActivityRequestFactGenerator();
-                case FLUX_ACTIVITY_RESPONSE_MSG:
+                case SENDING_FA_RESPONSE_MSG:
                     return new ActivityResponseFactGenerator();
-                case FLUX_ACTIVITY_QUERY_MSG:
+                case RECEIVING_FA_QUERY_MSG:
+                case SENDING_FA_QUERY_MSG:
                     return new ActivityQueryFactGenerator();
                 case FLUX_SALES_QUERY_MSG:
                     return new SalesQueryFactGenerator();

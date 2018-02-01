@@ -13,12 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -79,8 +81,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import javax.ejb.AccessTimeout;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.DependsOn;
@@ -123,13 +123,15 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 @Slf4j
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
-@AccessTimeout(value = 5, unit = TimeUnit.MINUTES)
 @DependsOn({"RulesConfigurationCache"})
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RulesMessageServiceBean implements RulesMessageService {
 
-    public static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
-    public static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
+    private static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
+    private static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
+    private static final String TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE = "[INFO] Triggering drools validation on message...";
+    private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
+    private static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
 
     @EJB
     private RulesMessageProducer producer;
@@ -158,7 +160,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @EJB
     private RulesActivityServiceBean activityServiceBean;
 
-    public static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
+    @EJB
+    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @Override
     @Interceptors(RulesPreValidationInterceptor.class)
@@ -360,10 +363,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 boolean needToValidate = validationIsToContinue(validationMap);
                 log.info("[INFO] Validation needs to continue : [[ " + needToValidate + " ]].");
                 if (needToValidate) {
-                    log.info("[INFO] Triggering drools validation on message...");
-                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
+                    log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
+                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
                     ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(needToValidate));
                     updateRequestMessageStatus(logGuid, faReportValidationResult);
@@ -377,7 +380,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                             log.info("[WARN] Request doesn't have permissions!");
                         }
                     } else {
-                        log.info("[WARN] Validation resulted in errors. Not going to send msg to Activity module..");
+                        log.info(VALIDATION_RESULTED_IN_ERRORS);
                     }
                     fluxResponseMessageType = generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
                     XPathRepository.INSTANCE.clear(faReportFacts);
@@ -415,10 +418,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 boolean needToValidate = validationIsToContinue(validationMap);
                 log.info("[INFO] Validation needs to continue : [[ " + needToValidate + " ]].");
                 if (needToValidate) {
-                    log.info("[INFO] Triggering drools validation on message...");
-                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMapForOutgoingMessage(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage);
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_REPORT_MSG, fluxfaReportMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(FLUX_ACTIVITY_REQUEST_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
+                    log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
+                    List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValueTypeObjectMap);
                     ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
                     updateValidationResultWithExisting(faReportValidationResult, validationMap.get(needToValidate));
                     if (faReportValidationResult != null && !faReportValidationResult.isError()) {
@@ -450,6 +453,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
+    @Interceptors(RulesPreValidationInterceptor.class)
+    @Lock(LockType.READ)
     public void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request) {
         String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
@@ -464,10 +469,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 boolean needToValidate = validationIsToContinue(validationMap);
                 log.info("[INFO] Validation needs to continue : [[ " + needToValidate + " ]].");
                 if (needToValidate) {
-                    log.info("[INFO] Triggering rule engine to do validation...");
-                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage);
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_QUERY_MSG, faQueryMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-                    List<AbstractFact> faQueryFacts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
+                    log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
+                    List<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
                     ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
                     updateValidationResultWithExisting(faQueryValidationReport, validationMap.get(needToValidate));
                     updateRequestMessageStatus(logGuid, faQueryValidationReport);
@@ -481,7 +486,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                             log.info("[WARN] Request doesn't have permission!");
                         }
                     } else {
-                        log.info("[WARN] Validation resulted in errors. Not going to send msg to Activity module..");
+                        log.info(VALIDATION_RESULTED_IN_ERRORS);
                     }
                     fluxResponseMessageType = generateFluxResponseMessageForFaQuery(faQueryValidationReport, faQueryMessage);
                     XPathRepository.INSTANCE.clear(faQueryFacts);
@@ -520,10 +525,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 boolean needToValidate = validationIsToContinue(validationMap);
                 log.info("[INFO] Validation needs to continue : [[ " + needToValidate + " ]].");
                 if (needToValidate) {
-                    log.info("[INFO] Triggering rule engine to do validation...");
-                    Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage);
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_QUERY_MSG, faQueryMessage);
                     extraValueTypeObjectMap.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-                    List<AbstractFact> faQueryFacts = rulesEngine.evaluate(FLUX_ACTIVITY_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
+                    log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
+                    List<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValueTypeObjectMap);
                     ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
                     updateValidationResultWithExisting(faQueryValidationReport, validationMap.get(needToValidate));
                     if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
@@ -879,25 +884,21 @@ public class RulesMessageServiceBean implements RulesMessageService {
             log.info("[START] Preparing FLUXResponseMessage to send back to Exchange module.");
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageType);
             String logGuid = request.getLogGuid();
-
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngine.generateExtraValueMap(FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType);
-            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessageType, extraValueTypeObjectMap);
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageType);
+            log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
+            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageType, extraValueTypeObjectMap);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
-
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
-
             //Create Response
             String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
             String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
-
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
             String messageGuid = logGuid;
             String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, messageGuid, nationCode, request.getOnValue(), status, destination, getExchangePluginType(pluginType));
             log.debug("Message to exchange {}", fluxFAReponseText);
-
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("[END] FLUXFAResponse successfully sent back to Exchange.");
