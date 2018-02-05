@@ -808,7 +808,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
             }
         }
@@ -1388,19 +1388,41 @@ public abstract class AbstractFact {
         return idValueArray;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {
-        if (CollectionUtils.isEmpty(additionalObjectList)) {
+    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+        if (CollectionUtils.isEmpty(assetList)) {
+            return false;
+        }
+
+        String vesselCountryIdValue = vesselCountryId.getValue();
+        for (IdTypeWithFlagState asset : assetList){
+            if (isSameFlagState(vesselCountryIdValue, asset)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Boolean isSameFlagState(String vesselCountryIdValue, IdTypeWithFlagState asset) {
+        if (asset != null){
+            String flagState = asset.getFlagState();
+            if (flagState != null && flagState.equals(vesselCountryIdValue)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+        if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
         for (IdType idType : vesselIds) {
-            if ("CFR".equals(idType.getSchemeId())){
-                listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
-            }
+            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
         }
 
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
-            if (!additionalObjectList.contains(elemFromListToBeMatched)) {
+            if (!assetList.contains(elemFromListToBeMatched)) {
                 return false;
             }
         }
