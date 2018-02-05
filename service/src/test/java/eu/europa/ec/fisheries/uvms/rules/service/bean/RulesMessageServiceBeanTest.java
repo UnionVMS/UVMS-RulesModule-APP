@@ -100,6 +100,9 @@ public class RulesMessageServiceBeanTest {
     @Mock
     RulesConfigurationCache ruleModuleCache;
 
+    @Mock
+    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
+
     private IDType idType;
 
     private CodeType codeType;
@@ -216,7 +219,7 @@ public class RulesMessageServiceBeanTest {
     public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());
-        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.FLUX_ACTIVITY_RESPONSE_MSG, fluxResponseMessage, null);
+        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, fluxResponseMessage, null);
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), Mockito.anyString(), Mockito.any(RawMsgType.class));
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");

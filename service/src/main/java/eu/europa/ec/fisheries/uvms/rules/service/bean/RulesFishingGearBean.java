@@ -17,15 +17,13 @@ public class RulesFishingGearBean {
     private RulesDao rulesDao;
 
     public List<FishingGearTypeCharacteristic> getAllFishingGearTypeCharacteristics() {
-        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = null;
-
+        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
         try {
             fishingGearTypeCharacteristics = rulesDao.getAllFishingGearTypeCharacteristics();
         } catch (DaoException e) {
             log.error("Error retrieving FishingGearTypeCharacteristics!", e);
             return new ArrayList<>();
         }
-
         return fishingGearTypeCharacteristics;
     }
 
