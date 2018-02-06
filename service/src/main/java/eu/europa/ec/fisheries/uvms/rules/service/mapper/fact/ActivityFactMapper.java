@@ -834,16 +834,17 @@ public class ActivityFactMapper {
             return emptyList();
         }
 
-        String partialXPath = xPathUtil.getValue();
+        String partialXPath1 = xPathUtil.getValue();
         int index = 1;
         for (FACatch faCatch : faCatches) {
 
+            String partialXPath = partialXPath1;
             FaCatchFact faCatchFact = new FaCatchFact();
 
             faCatchFact.setFishingActivityTypeCode(mapToCodeType(activity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityTypeCode");
 
-            partialXPath = xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
+            partialXPath = xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
             faCatchFact.setAppliedAAPProcess(faCatch.getAppliedAAPProcesses());
             xPathUtil.appendWithoutWrapping(partialXPath).append(APPLIED_AAP_PROCESS).storeInRepo(faCatchFact, "appliedAAPProcess");
