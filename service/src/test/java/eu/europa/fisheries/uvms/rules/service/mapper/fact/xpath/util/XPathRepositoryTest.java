@@ -373,7 +373,7 @@ public class XPathRepositoryTest {
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
-        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG);
+        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(BusinessObjectType.RECEIVING_FA_REPORT_MSG);
         generator.setBusinessObjectMessage(fluxMessage);
         factList.addAll(generator.generateAllFacts());
     }

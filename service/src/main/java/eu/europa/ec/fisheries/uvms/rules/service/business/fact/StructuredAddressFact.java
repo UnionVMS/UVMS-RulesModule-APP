@@ -19,15 +19,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 public class StructuredAddressFact extends AbstractFact {
 
     private String postcodeCode;
-
     private String postalArea;
-
     private String streetName;
-
     private String cityName;
-
     private IdType countryID;
-
     private String plotIdentification;
 
     public StructuredAddressFact() {

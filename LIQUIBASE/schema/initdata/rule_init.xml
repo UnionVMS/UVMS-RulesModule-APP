@@ -789,7 +789,7 @@
             <column name="rule_id" value="83"/>
             <column name="br_id" value="FA-L01-00-0083"/>
             <column name="expression"
-                    value="countryID != null &amp;&amp; countryID.value != null &amp;&amp; countryID.value != &quot;IRL&quot; &amp;&amp; postalArea != null &amp;&amp; isEmpty(postcodeCode)"/>
+                    value="countryID != null &amp;&amp; countryID.value != null &amp;&amp; countryID.value != &quot;IRL&quot; &amp;&amp; isEmpty(postalArea)"/>
             <column name="note"
                     value="Specified Structured_Address postalArea must be non empty except if CountryID = IRL (Ireland)."/>
             <column name="message"
@@ -1369,11 +1369,12 @@
             <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="62"/>
             <column name="br_id" value="FA-L03-00-0062"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp; !idListContainsValue(ids, registrationVesselCountryId.value, &quot;FLAG_STATE&quot;)"/>
+                    value="registrationVesselCountryId != null &amp;&amp; !isSameReportedVesselFlagState(registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="The vessel identification and registration location (flag state) must be consistent."/>
             <column name="message"
@@ -1385,6 +1386,7 @@
             <column name="property_names" value="ids, registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="63"/>
             <column name="br_id" value="FA-L03-00-0063"/>
@@ -3580,7 +3582,7 @@
             <column name="rule_id" value="157"/>
             <column name="br_id" value="FA-L02-00-0157"/>
             <column name="expression"
-                    value="speciesCode != null &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;SAL&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp; !valueContainsAll(faCatchFluxLocationId,&quot;27.3.d&quot;)) "/>
+                    value="fishingActivityTypeCode != null &amp;&amp; speciesCode != null &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;SAL&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp; !valueContainsAll(faCatchFluxLocationId,&quot;27.3.d&quot;)) "/>
             <column name="note" value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
@@ -3595,7 +3597,7 @@
             <column name="rule_id" value="410"/>
             <column name="br_id" value="FA-L02-00-0410"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
+                    value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
             <column name="note" value="Units (number of fish) must be provided for Bluefin tuna in GFCM"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Bluefin tuna in GFCM"/>
@@ -3610,7 +3612,7 @@
             <column name="rule_id" value="411"/>
             <column name="br_id" value="FA-L02-00-0411"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
+                    value="speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
             <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Swordfish in GFCM"/>
@@ -3673,7 +3675,7 @@
             <column name="rule_id" value="188"/>
             <column name="br_id" value="FA-L02-00-0188"/>
             <column name="expression"
-                    value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; listIdContainsAll(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
+                    value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; listIdContainsAll(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
             <column name="note"
                     value="AppliedAAP_Process.ResultAAP_Product UnitQuantity must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL."/>
             <column name="message"
@@ -3706,7 +3708,7 @@
             <column name="rule_id" value="186"/>
             <column name="br_id" value="FA-L02-00-0186"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
+                    value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
             <column name="note"
                     value="Units (number of fish) must be provided for landings/ transhipments of Bluefin tuna from GFCM area"/>
             <column name="message"
@@ -3722,7 +3724,7 @@
             <column name="rule_id" value="187"/>
             <column name="br_id" value="FA-L02-00-0187"/>
             <column name="expression"
-                    value="speciesCode != null  &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
+                    value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
             <column name="note"
                     value="Units (number of fish) must be provided for landings/ transhipments of Swordfish from GFCM area"/>
             <column name="message"
@@ -3738,7 +3740,7 @@
             <column name="rule_id" value="441"/>
             <column name="br_id" value="FA-L02-00-0441"/>
             <column name="expression"
-                    value="isEmpty(resultAAPProduct) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
+                    value="isEmpty(resultAAPProduct) &amp;&amp; fishingActivityTypeCode != null &amp;&amp;  (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
             <column name="note"
                     value="AppliedAAP_Process.ResultAAP_Product must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL"/>
             <column name="message"
@@ -4500,7 +4502,7 @@
             <column name="rule_id" value="336"/>
             <column name="br_id" value="FA-L02-00-0336"/>
             <column name="expression"
-                    value="fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
+                    value="fishingActivityTypeCode != null &amp;&amp;  fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
             <column name="note" value="If transhipment declaration (FA-L02-00-0330)"/>
             <column name="message"
                     value="FLUX Characteristic NB_CAGES_TOWED is missing."/>
@@ -4586,7 +4588,7 @@
             <column name="rule_id" value="342"/>
             <column name="br_id" value="FA-L02-00-0342"/>
             <column name="expression"
-                    value="fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; isEmpty(relatedVesselTransportMeans) "/>
+                    value="fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; isEmpty(relatedVesselTransportMeans) "/>
             <column name="note" value="RelatedVesselTransportMeans must be present for Notification of Transhipment. "/>
             <column name="message"
                     value="Related vessel information missing. "/>
@@ -4601,7 +4603,7 @@
             <column name="rule_id" value="343"/>
             <column name="br_id" value="FA-L02-00-0343"/>
             <column name="expression"
-                    value="fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes) &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;LOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(vesselTransportMeansRoleCodes ,&quot;DONOR&quot; )"/>
+                    value="fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes) &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;LOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(vesselTransportMeansRoleCodes ,&quot;DONOR&quot; )"/>
             <column name="note"
                     value="vesselTransportMeans RoleCode must be DONOR present for Notification of Transhipment."/>
             <column name="message"
@@ -4617,7 +4619,7 @@
             <column name="rule_id" value="344"/>
             <column name="br_id" value="FA-L02-00-0344"/>
             <column name="expression"
-                    value="fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !ifFLUXLocationForFACatchIsAREA(specifiedFACatches)"/>
+                    value="fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !ifFLUXLocationForFACatchIsAREA(specifiedFACatches)"/>
             <column name="note"
                     value="SpecifiedFA_Catch.FLUX_Location must be AREA if Fishing_Activity.TypeCode=TRANSHIPMENT and SpecifiedFA_Catch.TypeCode=LOADED."/>
             <column name="message"
@@ -5854,8 +5856,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="393"/>
             <column name="br_id" value="FA-L01-00-0393"/>
-            <column name="expression"
-                    value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
             <column name="note" value="fluxPartyIds ListId must be FLUX_GP_PARTY."/>
             <column name="message" value="Respondent ID has an invalid schemeID."/>
             <column name="level" value="L01"/>
@@ -5863,8 +5864,9 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="16"/>
             <column name="property_names" value="fluxPartyIds"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="394"/>
             <column name="br_id" value="FA-L03-00-0394"/>

@@ -20,7 +20,8 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 @Local
 public class ExchangeConsumer extends AbstractConsumer {
 
-    @Override public String getDestinationName() {
+    @Override
+    public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
     }
 }
