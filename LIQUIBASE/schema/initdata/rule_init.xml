@@ -6607,7 +6607,7 @@
             <column name="rule_id" value="10118"/>
             <column name="br_id" value="SALE-L01-00-0041"/>
             <column name="expression"
-                    value="!isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes)"/>
+                    value="!mdrService.isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -7015,7 +7015,7 @@
             <column name="rule_id" value="10152"/>
             <column name="br_id" value="SALE-L01-00-0185"/>
             <column name="expression"
-                    value="ID !=null &amp;&amp; &quot;FAO_AREA&quot;.equals(ID.getSchemeId()) &amp;&amp; ID.getValue() != null &amp;&amp; isNotMostPreciseFAOArea()"/>
+                    value="ID !=null &amp;&amp; &quot;FAO_AREA&quot;.equals(ID.getSchemeId()) &amp;&amp; ID.getValue() != null &amp;&amp; mdrService.isNotMostPreciseFAOArea(ID)"/>
             <column name="note" value=""/>
             <column name="message" value="If FAO_AREA code, the more precise area must be mentioned"/>
             <column name="level" value="L01"/>
@@ -7560,7 +7560,7 @@
             <column name="rule_id" value="10242"/>
             <column name="br_id" value="SALE-L02-00-0184"/>
             <column name="expression"
-                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; &quot;LOCATION&quot;.equals(ID.getSchemeId()) &amp;&amp; (isBlank(countryID) || isLocationNotInCountry())"/>
+                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; &quot;LOCATION&quot;.equals(ID.getSchemeId()) &amp;&amp; (isBlank(countryID) || mdrService.isLocationNotInCountry(ID, countryID))"/>
             <column name="note" value=""/>
             <column name="message" value="If LOCATION code, the place must be in the country"/>
             <column name="level" value="L02"/>
@@ -7984,7 +7984,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10507"/>
             <column name="br_id" value="SALE-L01-00-0431"/>
-            <column name="expression" value="typeCode != null &amp;&amp; isValueNotValid()"/>
+            <column name="expression" value="typeCode != null &amp;&amp; salesService.isSalesQueryParameterValueNotValid(typeCode, valueCode)"/>
             <column name="note" value=""/>
             <column name="message" value="If Type = FLAG/ROLE/PLACE, Check code of the value"/>
             <column name="level" value="L01"/>
@@ -8081,7 +8081,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10603"/>
             <column name="br_id" value="SALE-L01-00-0453"/>
-            <column name="expression" value="hasReferencedIDInvalidFormat()"/>
+            <column name="expression" value="!isAuction() &amp;&amp; hasReferencedIDInvalidFormat()"/>
             <column name="note" value="Must be according to RFC4122 format for UUID."/>
             <column name="message" value="Check Format. Must be according to the specified schemeID."/>
             <column name="level" value="L01"/>
@@ -8392,7 +8392,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>
             <column name="br_id" value="SALE-L03-00-0031"/>
-            <column name="expression" value="!isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales()"/>
+            <column name="expression" value="!salesService.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="It must be an official currency of the country at that date"/>
             <column name="level" value="L03"/>
