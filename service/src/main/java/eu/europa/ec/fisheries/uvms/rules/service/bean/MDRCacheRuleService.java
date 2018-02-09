@@ -10,12 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.Local;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+
+import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface MDRCacheRuleService {
@@ -48,4 +50,9 @@ public interface MDRCacheRuleService {
 
     boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode);
 
+    boolean isNotMostPreciseFAOArea(IdType id);
+
+    boolean isLocationNotInCountry(IdType id, IdType countryID);
+
+    List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 }
