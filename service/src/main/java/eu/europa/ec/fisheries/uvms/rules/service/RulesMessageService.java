@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import javax.ejb.Local;
@@ -38,6 +39,8 @@ public interface RulesMessageService {
     void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
     void evaluateSendFaQueryRequest(SetFaQueryMessageRequest request);
+
+    void evaluateSetFluxFaResponseRequest(SetFluxFaResponseMessageRequest request);
 
     FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
