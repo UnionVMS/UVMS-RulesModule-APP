@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
@@ -72,6 +73,16 @@ public class RulesModuleRequestMapper {
         SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_QUERY);
         request.setRequest(faQueryMessageStr);
+        request.setType(type);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String createRcvFluxFaResponseMessageRequest(PluginType type, String faResponseStr, String username,
+                                                        String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
+        SetFluxFaResponseMessageRequest request = new SetFluxFaResponseMessageRequest();
+        request.setMethod(RulesModuleMethod.RCV_FLUX_RESPONSE);
+        request.setRequest(faResponseStr);
         request.setType(type);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);

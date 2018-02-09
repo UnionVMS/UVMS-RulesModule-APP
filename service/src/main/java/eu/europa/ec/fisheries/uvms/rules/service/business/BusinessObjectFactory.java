@@ -37,6 +37,7 @@ public class BusinessObjectFactory {
                 case SENDING_FA_REPORT_MSG:
                     return new ActivityRequestFactGenerator();
                 case SENDING_FA_RESPONSE_MSG:
+                case RECEIVING_FA_RESPONSE_MSG:
                     return new ActivityResponseFactGenerator();
                 case RECEIVING_FA_QUERY_MSG:
                 case SENDING_FA_QUERY_MSG:

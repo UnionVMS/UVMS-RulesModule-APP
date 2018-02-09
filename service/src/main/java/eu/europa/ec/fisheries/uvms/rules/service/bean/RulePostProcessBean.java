@@ -55,53 +55,58 @@ public class RulePostProcessBean {
         try {
             boolean isError = false;
             boolean isWarning = false;
-            boolean isOk = false;
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             for (AbstractFact fact : facts) {
                 if (!fact.isOk()) {
                     for (RuleError error : fact.getErrors()) {
                         isError = true;
-                        ValidationMessageType validationMessage = getValidationMessageType(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), fact.getUniqueIds(), error.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), fact.getUniqueIds(), error.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                     for (RuleWarning warning : fact.getWarnings()) {
                         isWarning = true;
-                        ValidationMessageType validationMessage = getValidationMessageType(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), fact.getUniqueIds(), warning.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), fact.getUniqueIds(), warning.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                 }
             }
-            if (validationMessages.isEmpty()) {
-                isOk = true;
-            }
             saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
-            ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
 
             // TODO : Create alarm in future
-            return validationResultDto;
+            return createValidationResultDtoFromParams(isError, isWarning, validationMessages.isEmpty(), validationMessages);
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
 
-
-
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
-            boolean isError = false;
-            boolean isWarning = false;
-            List<ValidationMessageType> validationMessages = new ArrayList<>();
-            ValidationMessageType validationMessage = getValidationMessageType(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
-            validationMessages.add(validationMessage);
-            boolean isOk = validationMessages.isEmpty();
-
+            final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
+            List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
+                add(validationMessage);
+            }};
             saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
-            ValidationResultDto validationResultDto = getValidationResultDto(isError, isWarning, isOk, validationMessages);
-
             // TODO : Create alarm in future
-            return validationResultDto;
+            return createValidationResultDtoFromParams(false, false, validationMessages.isEmpty(), validationMessages);
+        } catch (RulesModelException e) {
+            log.error(e.getMessage(), e);
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleWarning warning, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+        try {
+            final ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(),
+                    warning.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
+            List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
+                add(validationMessage);
+            }};
+            saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
+            // TODO : Create alarm in future
+            return createValidationResultDtoFromParams(false, false, validationMessages.isEmpty(), validationMessages);
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
             throw new RulesServiceException(e.getMessage(), e);
@@ -119,7 +124,7 @@ public class RulePostProcessBean {
         }
     }
 
-    private ValidationResultDto getValidationResultDto(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
+    private ValidationResultDto createValidationResultDtoFromParams(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
         ValidationResultDto validationResultDto = new ValidationResultDto();
         validationResultDto.setIsError(isError);
         validationResultDto.setIsWarning(isWarning);
@@ -128,7 +133,7 @@ public class RulePostProcessBean {
         return validationResultDto;
     }
 
-    private ValidationMessageType getValidationMessageType(String ruleId, ErrorType warning2, String message, String level, List<String> uniqueIds, List<String> xpaths) {
+    private ValidationMessageType createValidationMessageFromParams(String ruleId, ErrorType warning2, String message, String level, List<String> uniqueIds, List<String> xpaths) {
         ValidationMessageType validationMessage = new ValidationMessageType();
         validationMessage.setBrId(ruleId);
         validationMessage.setErrorType(warning2);

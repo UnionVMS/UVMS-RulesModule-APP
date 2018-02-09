@@ -16,10 +16,10 @@ public class ServiceConstants {
     // Rule GUID for Asset not sending rule
     public static final String ASSET_NOT_SENDING_RULE = "Asset not sending";
 
-    public static final String DB_ACCESS_RULES_DOMAIN_MODEL = "java:global/rules-dbaccess-module/rules-dbaccess-domain/RulesDomainModel!eu.europa.ec.fisheries.remote.RulesDomainModel";
-
     public static final String INVALID_XML_RULE="FA-L00-00-0000";
-
     public static final String INVALID_XML_RULE_MESSAGE="Verify whether or not the message is valid XML and validates against the XSD schema.";
 
+
+    public static final String PERMISSION_DENIED_RULE="FA-L00-00-9999";
+    public static final String PERMISSION_DENIED_RULE_MESSAGE="PERMISSION: The querier is not allowed access to the requested data. No FLUXFAReportMessage containing the response will be sent.";
 }

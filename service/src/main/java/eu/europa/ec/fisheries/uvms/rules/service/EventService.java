@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.service;
 
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
+import eu.europa.ec.fisheries.uvms.rules.message.event.RcvFluxResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaQueryEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFluxFaQueryMessageReceivedEvent;
@@ -64,6 +65,9 @@ public interface EventService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     void sendFaReportMessageReceived(@Observes @SendFaReportEvent EventMessage message);
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    void setFluxFaResponseMessageReceived(@Observes @RcvFluxResponseEvent EventMessage message);
 
     void setFLUXMDRSyncRequestMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message);
 

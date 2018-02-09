@@ -31,35 +31,27 @@ public class ValidationResultDto {
     private boolean isOk;
 
     private List<ValidationMessageType> validationMessages = new ArrayList<>();
-
     public boolean isError() {
         return isError;
     }
-
     public void setIsError(boolean isError) {
         this.isError = isError;
     }
-
     public boolean isWarning() {
         return isWarning;
     }
-
     public void setIsWarning(boolean isWarning) {
         this.isWarning = isWarning;
     }
-
     public boolean isOk() {
         return isOk;
     }
-
     public void setIsOk(boolean isOk) {
         this.isOk = isOk;
     }
-
     public List<ValidationMessageType> getValidationMessages() {
         return validationMessages;
     }
-
     public void setValidationMessages(List<ValidationMessageType> validationMessages) {
         this.validationMessages = validationMessages;
     }
