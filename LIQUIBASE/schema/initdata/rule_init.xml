@@ -2690,7 +2690,7 @@
             <column name="rule_id" value="196"/>
             <column name="br_id" value="FA-L01-00-0196"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !listIdContainsAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
+                    value="typeCode != null &amp;&amp; listIdContainsAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
             <column name="note" value="Check attribute listID. Must be FLUX_LOCATION_TYPE"/>
             <column name="message" value="Location TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
