@@ -865,11 +865,11 @@ public abstract class AbstractFact {
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
-        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
     }
 
     public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
-        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
     }
 
     public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {

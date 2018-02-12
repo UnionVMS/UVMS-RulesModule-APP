@@ -4650,9 +4650,9 @@
             <column name="rule_id" value="448"/>
             <column name="br_id" value="FA-L02-00-0448"/>
             <column name="expression"
-                    value="!isEmpty(faCatchSpeciesCodes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes,&quot;BFT&quot;) &amp;&amp; valueIdTypeContainsAny(flapDocumentIdTypes, &quot;ICCAT_AUTHORIZATION&quot;)"/>
+                    value="!isEmpty(faCatchSpeciesCodes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes,&quot;BFT&quot;) &amp;&amp; !valueIdTypeContainsAny(flapDocumentIdTypes, &quot;ICCAT_AUTHORIZATION&quot;)"/>
             <column name="note"
-                    value="FLAPDocument ID Must be ICCAT_AUTHORIZATION if atleast one SpecifiedFA_Catch.SpeciesCode is BFT"/>
+                    value="FLAPDocument ID Must be ICCAT_AUTHORIZATION if at least one SpecifiedFA_Catch.SpeciesCode is BFT"/>
             <column name="message"
                     value="Fishing License, Authorization or Permit ID has an invalid schemeID."/>
             <column name="level" value="L02"/>
