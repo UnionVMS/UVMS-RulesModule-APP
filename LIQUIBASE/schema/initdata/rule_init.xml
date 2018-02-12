@@ -1510,7 +1510,7 @@
             <column name="rule_id" value="71"/>
             <column name="br_id" value="FA-L02-00-0071"/>
             <column name="expression"
-                    value="isFromFaReport &amp;&amp; listIdNotContains(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
+                    value="isFromFaReport &amp;&amp; valueContainsAny(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
             <column name="note"
                     value="Must be MASTER or AGENT if used in entity FA_ReportDocument.Specified Vessel_TransportMeans."/>
             <column name="message"
