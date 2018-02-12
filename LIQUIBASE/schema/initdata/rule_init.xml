@@ -2849,7 +2849,7 @@
             <column name="rule_id" value="208"/>
             <column name="br_id" value="FA-L01-00-0208"/>
             <column name="expression"
-                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null"/>
+                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value == null"/>
             <column name="note" value="SpecifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure must be a number"/>
             <column name="message"
                     value="Latitude value must be numeric."/>
