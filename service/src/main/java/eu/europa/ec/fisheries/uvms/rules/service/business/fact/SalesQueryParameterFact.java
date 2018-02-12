@@ -70,23 +70,6 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
         return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
     }
 
-    public boolean isValueNotValid(){
-        if (typeCode == null || valueCode == null){
-            return true;
-        }
-
-        switch (typeCode.getValue()){
-            case "ROLE":
-                return !isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue());
-            case "FLAG":
-                return !isPresentInMDRList("TERRITORY", valueCode.getValue());
-            case "PLACE":
-                return !isPresentInMDRList("LOCATION", valueCode.getValue());
-            default:
-                return true;
-        }
-    }
-
     public boolean hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat() {
         return valueID != null && !validateFormat(valueID.getValue(), AbstractFact.FORMATS.EU_SALES_ID_SPECIFIC.getFormatStr());
     }

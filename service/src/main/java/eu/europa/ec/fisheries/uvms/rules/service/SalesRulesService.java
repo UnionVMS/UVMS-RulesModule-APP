@@ -80,4 +80,12 @@ public interface SalesRulesService {
     boolean isDateNotInPast(SalesFLUXResponseDocumentFact fact);
 
     boolean isDateOfValidationAfterCreationDateOfResponse(SalesFLUXResponseDocumentFact fact);
+
+    boolean isSalesQueryParameterValueNotValid(CodeType typeCode, CodeType valueCode);
+
+    /**
+     * @return whether the currency used is this document is an official currency of the sales country at a certain date
+     * When one of these parameters (currency, country, occurrence) is missing, this method will return false.
+     */
+    boolean isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(SalesDocumentFact fact);
 }
