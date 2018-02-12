@@ -5015,7 +5015,7 @@
             <column name="rule_id" value="365"/>
             <column name="br_id" value="FA-L01-00-0365"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.endDateTime == null"/>
+                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
             <column name="note" value="Time part may be omitted. In such case 24:00:00 is assumed."/>
             <column name="message"
                     value="End date/time must be a valid UTC date in the correct format."/>
