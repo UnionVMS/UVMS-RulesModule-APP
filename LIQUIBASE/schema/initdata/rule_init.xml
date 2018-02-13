@@ -1511,7 +1511,7 @@
             <column name="rule_id" value="71"/>
             <column name="br_id" value="FA-L02-00-0071"/>
             <column name="expression"
-                    value="isFromFaReport &amp;&amp; listIdNotContains(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
+                    value="isFromFaReport &amp;&amp; valueContainsAny(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
             <column name="note"
                     value="Must be MASTER or AGENT if used in entity FA_ReportDocument.Specified Vessel_TransportMeans."/>
             <column name="message"
@@ -2690,7 +2690,7 @@
             <column name="rule_id" value="196"/>
             <column name="br_id" value="FA-L01-00-0196"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !listIdContainsAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
+                    value="typeCode != null &amp;&amp; listIdContainsAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
             <column name="note" value="Check attribute listID. Must be FLUX_LOCATION_TYPE"/>
             <column name="message" value="Location TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
@@ -2849,7 +2849,7 @@
             <column name="rule_id" value="208"/>
             <column name="br_id" value="FA-L01-00-0208"/>
             <column name="expression"
-                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null"/>
+                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value == null"/>
             <column name="note" value="SpecifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure must be a number"/>
             <column name="message"
                     value="Latitude value must be numeric."/>
@@ -4653,9 +4653,9 @@
             <column name="rule_id" value="448"/>
             <column name="br_id" value="FA-L02-00-0448"/>
             <column name="expression"
-                    value="!isEmpty(faCatchSpeciesCodes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes,&quot;BFT&quot;) &amp;&amp; valueIdTypeContainsAny(flapDocumentIdTypes, &quot;ICCAT_AUTHORIZATION&quot;)"/>
+                    value="!isEmpty(faCatchSpeciesCodes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes,&quot;BFT&quot;) &amp;&amp; !valueIdTypeContainsAny(flapDocumentIdTypes, &quot;ICCAT_AUTHORIZATION&quot;)"/>
             <column name="note"
-                    value="FLAPDocument ID Must be ICCAT_AUTHORIZATION if atleast one SpecifiedFA_Catch.SpeciesCode is BFT"/>
+                    value="FLAPDocument ID Must be ICCAT_AUTHORIZATION if at least one SpecifiedFA_Catch.SpeciesCode is BFT"/>
             <column name="message"
                     value="Fishing License, Authorization or Permit ID has an invalid schemeID."/>
             <column name="level" value="L02"/>
@@ -5018,7 +5018,7 @@
             <column name="rule_id" value="365"/>
             <column name="br_id" value="FA-L01-00-0365"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; specifiedDelimitedPeriod.endDateTime == null"/>
+                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
             <column name="note" value="Time part may be omitted. In such case 24:00:00 is assumed."/>
             <column name="message"
                     value="End date/time must be a valid UTC date in the correct format."/>
@@ -5846,9 +5846,9 @@
             <column name="rule_id" valueNumeric="368"/>
             <column name="br_id" value="FA-L02-00-0368"/>
             <column name="expression"
-                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
-            <column name="note" value="At least one occurrence if ResponseCode = OK"/>
-            <column name="message" value="Validation reults are missing."/>
+                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp; responseCode.value != &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
+            <column name="note" value="At least one occurrence if ResponseCode != OK"/>
+            <column name="message" value="Validation results are missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5930,8 +5930,8 @@
             <column name="rule_id" valueNumeric="554"/>
             <column name="br_id" value="FA-L02-00-0554"/>
             <column name="expression"
-                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)  "/>
-            <column name="note" value="At least one occurrence must be present if ResponseCode= OK."/>
+                    value="responseCode != null &amp;&amp; responseCode.value != null &amp;&amp; responseCode.value != &quot;OK&quot; &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)  "/>
+            <column name="note" value="At least one occurrence must be present if ResponseCode != OK."/>
             <column name="message" value="Quality analysis details are missing"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
