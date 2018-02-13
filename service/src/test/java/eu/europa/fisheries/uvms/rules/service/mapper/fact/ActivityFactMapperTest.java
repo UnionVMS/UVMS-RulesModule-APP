@@ -12,7 +12,6 @@ package eu.europa.fisheries.uvms.rules.service.mapper.fact;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
-import static java.util.Collections.singletonList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,16 +19,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import static java.util.Collections.singletonList;
 
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
@@ -66,6 +56,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageChar
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import javax.xml.datatype.DatatypeFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -453,7 +453,7 @@ public class ActivityFactMapperTest {
         fluxLocation.setID(idType);
         fluxLocation.setSpecifiedPhysicalFLUXGeographicalCoordinate(fluxGeographicalCoordinate);
 
-        FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(fluxLocation);
+        FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(fluxLocation, false);
 
         assertEquals(codeType.getValue(), fluxLocationFact.getTypeCode().getValue());
         assertNotNull(fluxLocationFact.getSpecifiedPhysicalFLUXGeographicalCoordinate());
@@ -735,7 +735,7 @@ public class ActivityFactMapperTest {
         final FaJointFishingOperationFact faJointFishingOperationFact = activityMapper.generateFactsForJointFishingOperation(null, null);
         final FaEntryToSeaFact faEntryToSeaFact = activityMapper.generateFactsForEntryIntoSea(null, null);
         final FaFishingOperationFact faFishingOperationFact = activityMapper.generateFactsForFishingOperation(null, null);
-        final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null);
+        final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
         final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
@@ -762,7 +762,7 @@ public class ActivityFactMapperTest {
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
-        final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null);
+        final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null, false);
         final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null);
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);

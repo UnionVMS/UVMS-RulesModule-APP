@@ -1544,28 +1544,30 @@ public abstract class AbstractFact {
         return StringUtils.EMPTY;
     }
 
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
-        boolean isMoreTheOneDeclaration = false;
-        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds)) {
-            return isMoreTheOneDeclaration;
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
+                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
+                                                         FishingActivityType faType) {
+        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
+            return false;
         }
+        boolean moreThenOneEncounter = false;
         for (IdType idType : specifiedFishingTripIds) {
             List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
             if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
                 continue;
             }
-            int declarationCounter = 0;
+            int matchedTrips = 0;
             for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
-                if (FishingActivityType.DEPARTURE.name().equals(fishTrpWIdent.getFaType())) {
-                    declarationCounter++;
+                if (faType.name().equals(fishTrpWIdent.getFaType())) {
+                    matchedTrips++;
                 }
             }
-            if (declarationCounter > 1) {
-                isMoreTheOneDeclaration = true;
+            if (matchedTrips > 1) {
+                moreThenOneEncounter = true;
                 break;
             }
         }
-        return isMoreTheOneDeclaration;
+        return moreThenOneEncounter;
     }
 
     /**

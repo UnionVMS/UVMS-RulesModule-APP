@@ -623,7 +623,8 @@
             <column name="rule_id" value="241"/>
             <column name="br_id" value="FA-L03-00-0241"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; purposeCode != 9 &amp;&amp;                            containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip)"/>
+                    value="faReportDocumentTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; purposeCode != 9 &amp;&amp;
+                    containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE)"/>
             <column name="note"
                     value="If departure declaration (FA-L02-00-0233). This does not apply for corrections."/>
             <column name="message" value="More than one departure was found for this trip."/>
@@ -2305,10 +2306,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="112"/>
             <column name="br_id" value="FA-L02-00-0112"/>
-            <column name="expression" value="isEmpty(relatedFishingActivities) &amp;&amp;
-            ((faReportDocumentTypeCode == &quot;DECLARATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;FISHING_OPERATION&quot;)) ||
-			(faReportDocumentTypeCode == &quot;DECLARATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;JOINT_FISHING_OPERATION&quot;)) ||
-			(faReportDocumentTypeCode == &quot;NOTIFICATION&quot; &amp;&amp; listIdContainsAll(relatedFishingActivityCodeTypes, &quot;AREA_ENTRY&quot;)))"/>
+            <column name="expression" value="!isSubActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
+                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;))
+                || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
             <column name="note"
                     value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
             <column name="message"
@@ -2953,14 +2953,14 @@
             <column name="rule_id" value="217"/>
             <column name="br_id" value="FA-L02-00-0217"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFLUXLocations) &amp;&amp; isEmpty(specifiedFluxLocationRFMOCodeList) "/>
+                    value="isSpecifiedFluxLocFromFaCatch &amp;&amp; (rfmo == null || isEmpty(rfmo.value))"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
-            <column name="template_id" value="8"/>
-            <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
+            <column name="template_id" value="10"/>
+            <column name="property_names" value="rfmo"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3011,28 +3011,28 @@
             <column name="rule_id" value="204"/>
             <column name="br_id" value="FA-L01-00-0204"/>
             <column name="expression"
-                    value="!isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; listIdContainsAll(relatedFluxLocationRFMOCodeList, &quot;RFMO&quot;)"/>
+                    value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code has an invalid schemeID."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
-            <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFluxLocationRFMOCodeList"/>
+            <column name="template_id" value="10"/>
+            <column name="property_names" value="rfmo"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="205"/>
             <column name="br_id" value="FA-L01-00-0205"/>
             <column name="expression"
-                    value="!isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;RFMO&quot; , relatedFluxLocationRFMOCodeList )"/>
+                    value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(&quot;RFMO&quot;, rfmo)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code value is invalid."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
-            <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFluxLocationRFMOCodeList"/>
+            <column name="template_id" value="10"/>
+            <column name="property_names" value="rfmo"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3952,7 +3952,10 @@
         <insert tableName="rule">
             <column name="rule_id" value="306"/>
             <column name="br_id" value="FA-L03-00-0306"/>
-            <column name="expression" value="containsMoreThenOneDeclarationPerTrip(fishingTripIds, faTypesPerTrip)"/>
+            <column name="expression" value="
+            faReportTypeCode != null &amp;&amp; faReportTypeCode.value == &quot;DECLARATION&quot; &amp;&amp;
+            faReportPurposeCode != null &amp;&amp; faReportPurposeCode.value == &quot;9&quot; &amp;&amp;
+            containsMoreThenOneDeclarationPerTrip(fishingTripIds, faTypesPerTrip, FishingActivityType.ARRIVAL)"/>
             <column name="note"
                     value="If departure declaration (FA-L02-00-0300). This does not apply for corrections."/>
             <column name="message" value="There can only be one arrival declaration in the trip."/>
