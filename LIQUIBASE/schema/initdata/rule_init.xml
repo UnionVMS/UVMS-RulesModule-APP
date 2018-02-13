@@ -5843,9 +5843,9 @@
             <column name="rule_id" valueNumeric="368"/>
             <column name="br_id" value="FA-L02-00-0368"/>
             <column name="expression"
-                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp;  responseCode.value == &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
-            <column name="note" value="At least one occurrence if ResponseCode = OK"/>
-            <column name="message" value="Validation reults are missing."/>
+                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp; responseCode.value != &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
+            <column name="note" value="At least one occurrence if ResponseCode <> OK"/>
+            <column name="message" value="Validation results are missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
@@ -5928,7 +5928,7 @@
             <column name="br_id" value="FA-L02-00-0554"/>
             <column name="expression"
                     value="responseCode != null &amp;&amp; responseCode.value != null &amp;&amp; responseCode.value != &quot;OK&quot; &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)  "/>
-            <column name="note" value="At least one occurrence must be present if ResponseCode= OK."/>
+            <column name="note" value="At least one occurrence must be present if ResponseCode <> OK."/>
             <column name="message" value="Quality analysis details are missing"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
