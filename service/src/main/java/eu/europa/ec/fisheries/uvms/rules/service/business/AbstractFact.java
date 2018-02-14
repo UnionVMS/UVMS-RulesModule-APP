@@ -180,12 +180,8 @@ public abstract class AbstractFact {
         if (valueToMatch == null || idType == null) {
             return false;
         }
-
-        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
-            return true;
-        }
-
-        return false;
+        String idValue = idType.getValue();
+        return idValue != null && idValue.startsWith(valueToMatch);
     }
 
     /**
@@ -222,10 +218,8 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
-
         idTypes = new ArrayList<>(idTypes);
         CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
-
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -764,7 +758,6 @@ public abstract class AbstractFact {
                 found++;
             }
         }
-
         return hits != found;
     }
 
@@ -1173,10 +1166,7 @@ public abstract class AbstractFact {
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if (CollectionUtils.isNotEmpty(values)) {
-            return values.contains(codeValue);
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
     /**
@@ -1238,23 +1228,19 @@ public abstract class AbstractFact {
     }
 
     public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
-
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getListId()))
                 return false;
         }
-
         return true;
     }
 
@@ -1266,25 +1252,19 @@ public abstract class AbstractFact {
      */
     @Deprecated
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
-
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
-
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
-
         for (IdType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
-
         return true;
     }
 
@@ -1298,16 +1278,13 @@ public abstract class AbstractFact {
         if (id == null) {
             return false;
         }
-
         String schemeId = id.getSchemeId();
         String value = id.getValue();
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, schemeId);
         if (anEnum == null) {
             log.error(THE_LIST + schemeId + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
-
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
         return codeListValues.contains(value);
     }
@@ -1319,20 +1296,14 @@ public abstract class AbstractFact {
      */
     @Deprecated
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
-        if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
-            return false;
-        }
-
-        return isPresentInMDRList(listName, idType.getSchemeId());
+        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId());
     }
 
     public boolean matchWithFluxTLExceptParties(List<IdType> idTypes, String... parties) {
         if (isEmpty(idTypes) || ArrayUtils.isEmpty(parties)) {
             return false;
         }
-
         List<String> partiesAllowedToSend = Arrays.asList(parties);
-
         for (IdType idType : idTypes) {
             String[] idTypeValueArray = getIdTypeValueArray(idType, ":");
 
@@ -1356,7 +1327,7 @@ public abstract class AbstractFact {
         return match;
     }
 
-    public boolean matchWithFluxTL(IdType idType) {
+    private boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
         if (idType != null) {
             String[] idValueArray = getIdTypeValueArray(idType, ":");
@@ -1365,7 +1336,6 @@ public abstract class AbstractFact {
                 match = StringUtils.equals(idValueArray[0], senderOrReceiver);
             }
         }
-
         return match;
     }
 
@@ -1373,9 +1343,7 @@ public abstract class AbstractFact {
         if (StringUtils.isBlank(separator)) {
             return null;
         }
-
         String[] idValueArray = null;
-
         if (idType != null && idType.getValue()!=null) {
             try {
                 idValueArray = idType.getValue().split(separator);
@@ -1384,7 +1352,6 @@ public abstract class AbstractFact {
                 return null;
             }
         }
-
         return idValueArray;
     }
 
@@ -1405,9 +1372,7 @@ public abstract class AbstractFact {
     private Boolean isSameFlagState(String vesselCountryIdValue, IdTypeWithFlagState asset) {
         if (asset != null){
             String flagState = asset.getFlagState();
-            if (flagState != null && flagState.equals(vesselCountryIdValue)){
-                return true;
-            }
+            return flagState != null && flagState.equals(vesselCountryIdValue);
         }
         return false;
     }
@@ -1420,62 +1385,50 @@ public abstract class AbstractFact {
         for (IdType idType : vesselIds) {
             listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
         }
-
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
             if (!assetList.contains(elemFromListToBeMatched)) {
                 return false;
             }
         }
-
         return true;
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
-        return isTypeCodeValuePresentInList(listName, Arrays.asList(typeCode));
+        return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode));
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
-
-        if (typeCodeValue == null) {
-            return false;
-        }
-
-        return isPresentInMDRList(listName, typeCodeValue);
+        return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue);
     }
 
     public String getValueForListId(String listId, List<CodeType> typeCodes) {
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
         }
-
         for (CodeType typeCode : typeCodes) {
             String typeCodeListId = typeCode.getListId();
-
             if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
                 return typeCode.getValue();
             }
         }
-
         return null;
     }
 
     public boolean stringEquals(String str1, String str2){
         return StringUtils.equals(str1, str2);
     }
+
     public String getValueForSchemeId(String schemeId, List<IdType> ids) {
         if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
             return null;
         }
-
         for (IdType id : ids) {
             String idsSchemeId = id.getSchemeId();
-
             if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
                 return id.getValue();
             }
         }
-
         return null;
     }
 
