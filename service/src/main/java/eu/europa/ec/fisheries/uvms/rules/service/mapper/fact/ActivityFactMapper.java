@@ -1908,36 +1908,35 @@ public class ActivityFactMapper {
         if (fluxResponseMessage.getFLUXResponseDocument() != null) {
             FLUXResponseDocument fluxResponseDocument = fluxResponseMessage.getFLUXResponseDocument();
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
             faResponseFact.setReferencedID(mapToSingleIdType(fluxResponseDocument.getReferencedID()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "ids");
             faResponseFact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "ids");
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
             faResponseFact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
             faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
 
             faResponseFact.setCreationDateTimeString(getDateXMLString(fluxResponseDocument.getCreationDateTime()));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
             faResponseFact.setRespondentFLUXParty(fluxResponseDocument.getRespondentFLUXParty());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
 
             if (fluxResponseDocument.getRespondentFLUXParty() != null) {
-                xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
                 faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
             }
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
             faResponseFact.setValidatorIDs(extractValidatorIdFromValidationResultDocument(fluxResponseDocument));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
             faResponseFact.setRelatedValidationResultDocuments(fluxResponseDocument.getRelatedValidationResultDocuments());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
 
         }
-
         return faResponseFact;
     }
 
