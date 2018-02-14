@@ -37,94 +37,15 @@ public class FaResponseFact extends AbstractFact {
     private List<IdType> validatorIDs;
     private FLUXParty respondentFLUXParty;
 
-    public IdType getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(IdType referencedID) {
-        this.referencedID = referencedID;
-    }
-
-    public FaResponseFact() {
-        setFactType();
-    }
-
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-
-    public CodeType getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(CodeType responseCode) {
-        this.responseCode = responseCode;
-    }
-
-    public Date getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(Date creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
-    public String getCreationDateTimeString() {
-        return creationDateTimeString;
-    }
-
-    public void setCreationDateTimeString(String creationDateTimeString) {
-        this.creationDateTimeString = creationDateTimeString;
-    }
-
-    public List<IdType> getFluxPartyIds() {
-        return fluxPartyIds;
-    }
-
-    public void setFluxPartyIds(List<IdType> fluxPartyIds) {
-        this.fluxPartyIds = fluxPartyIds;
-    }
-
-    public List<ValidationResultDocument> getRelatedValidationResultDocuments() {
-        return relatedValidationResultDocuments;
-    }
-
-    public void setRelatedValidationResultDocuments(List<ValidationResultDocument> relatedValidationResultDocuments) {
-        this.relatedValidationResultDocuments = relatedValidationResultDocuments;
-    }
-
-    public List<IdType> getValidatorIDs() {
-        return validatorIDs;
-    }
-
-    public void setValidatorIDs(List<IdType> validatorIDs) {
-        this.validatorIDs = validatorIDs;
-    }
-
-
-    public FLUXParty getRespondentFLUXParty() {
-        return respondentFLUXParty;
-    }
-
-    public void setRespondentFLUXParty(FLUXParty respondentFLUXParty) {
-        this.respondentFLUXParty = respondentFLUXParty;
-    }
-
     public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
         if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
-
         for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
             if (validationResultDocument.getValidatorID() == null) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -132,13 +53,11 @@ public class FaResponseFact extends AbstractFact {
         if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
-
         for (ValidationResultDocument validationResultDocument : relatedValidationResultDocuments) {
             if (CollectionUtils.isEmpty(validationResultDocument.getRelatedValidationQualityAnalysises())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -146,4 +65,63 @@ public class FaResponseFact extends AbstractFact {
     public void setFactType() {
         this.factType = FactType.FA_RESPONSE;
     }
+
+    public IdType getReferencedID() {
+        return referencedID;
+    }
+    public void setReferencedID(IdType referencedID) {
+        this.referencedID = referencedID;
+    }
+    public FaResponseFact() {
+        setFactType();
+    }
+    public List<IdType> getIds() {
+        return ids;
+    }
+    public void setIds(List<IdType> ids) {
+        this.ids = ids;
+    }
+    public CodeType getResponseCode() {
+        return responseCode;
+    }
+    public void setResponseCode(CodeType responseCode) {
+        this.responseCode = responseCode;
+    }
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+    public String getCreationDateTimeString() {
+        return creationDateTimeString;
+    }
+    public void setCreationDateTimeString(String creationDateTimeString) {
+        this.creationDateTimeString = creationDateTimeString;
+    }
+    public List<IdType> getFluxPartyIds() {
+        return fluxPartyIds;
+    }
+    public void setFluxPartyIds(List<IdType> fluxPartyIds) {
+        this.fluxPartyIds = fluxPartyIds;
+    }
+    public List<ValidationResultDocument> getRelatedValidationResultDocuments() {
+        return relatedValidationResultDocuments;
+    }
+    public void setRelatedValidationResultDocuments(List<ValidationResultDocument> relatedValidationResultDocuments) {
+        this.relatedValidationResultDocuments = relatedValidationResultDocuments;
+    }
+    public List<IdType> getValidatorIDs() {
+        return validatorIDs;
+    }
+    public void setValidatorIDs(List<IdType> validatorIDs) {
+        this.validatorIDs = validatorIDs;
+    }
+    public FLUXParty getRespondentFLUXParty() {
+        return respondentFLUXParty;
+    }
+    public void setRespondentFLUXParty(FLUXParty respondentFLUXParty) {
+        this.respondentFLUXParty = respondentFLUXParty;
+    }
+
 }

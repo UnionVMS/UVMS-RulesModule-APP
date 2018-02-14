@@ -56,7 +56,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMe
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
@@ -614,7 +613,7 @@ public class ActivityFactMapper {
         fishingGearFact.setTypeCode(mapToCodeType(fishingGear.getTypeCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fishingGearFact, TYPE_CODE_PROP);
 
-        fishingGearFact.setRoleCodes(mapToCodeTypes(fishingGear.getRoleCodes()));
+        fishingGearFact.setRoleCodes(mapToSpecifiedFlucLocationsCodeTypes(fishingGear.getRoleCodes()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ROLE_CODE).storeInRepo(fishingGearFact, ROLE_CODES_PROP);
 
         if (fishingGear.getApplicableGearCharacteristics() != null) {
@@ -703,7 +702,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(gearProblemFact, TYPE_CODE_PROP);
 
         if (gearProblem.getRecoveryMeasureCodes() != null) {
-            gearProblemFact.setRecoveryMeasureCodes(mapToCodeTypes(gearProblem.getRecoveryMeasureCodes()));
+            gearProblemFact.setRecoveryMeasureCodes(mapToSpecifiedFlucLocationsCodeTypes(gearProblem.getRecoveryMeasureCodes()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RECOVERY_MEASURE_CODE).storeInRepo(gearProblemFact, RECOVERY_MEASURE_CODE_PROP);
         }
 
@@ -784,7 +783,7 @@ public class ActivityFactMapper {
             faCatchFact.setTypeCode(mapToCodeType(faCatch.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, TYPE_CODE_PROP);
 
-            faCatchFact.setSizeDistributionClassCode(mapToCodeTypes(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
+            faCatchFact.setSizeDistributionClassCode(mapToSpecifiedFlucLocationsCodeTypes(faCatchesSpecifiedSizeDistributionClassCodes(faCatch)));
             xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_SIZE_DISTRIBUTION, CLASS_CODE).storeInRepo(faCatchFact, "sizeDistributionClassCode");
 
             faCatchFact.setUnitQuantity(mapQuantityTypeToMeasureType(faCatch.getUnitQuantity()));
@@ -848,7 +847,7 @@ public class ActivityFactMapper {
 
         VesselStorageCharacteristicsFact vesselStorageCharacteristicsFact = new VesselStorageCharacteristicsFact();
 
-        vesselStorageCharacteristicsFact.setTypeCodes(mapToCodeTypes(vesselStorageCharacteristic.getTypeCodes()));
+        vesselStorageCharacteristicsFact.setTypeCodes(mapToSpecifiedFlucLocationsCodeTypes(vesselStorageCharacteristic.getTypeCodes()));
         xPathUtil.append(TYPE_CODE).storeInRepo(vesselStorageCharacteristicsFact, "typeCodes");
 
         return vesselStorageCharacteristicsFact;
@@ -1036,7 +1035,7 @@ public class ActivityFactMapper {
                 List<FishingGear> specifiedFishingGears = fishingActivity.getSpecifiedFishingGears();
                 List<CodeType> roleCodes = new ArrayList<>();
                 for (FishingGear fishingGear : specifiedFishingGears) {
-                    roleCodes.addAll(mapToCodeTypes(fishingGear.getRoleCodes()));
+                    roleCodes.addAll(mapToSpecifiedFlucLocationsCodeTypes(fishingGear.getRoleCodes()));
                 }
                 faDepartureFact.setSpecifiedFishingGearRoleCodeTypes(roleCodes);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faDepartureFact, "specifiedFishingGearRoleCodeTypes");
@@ -1371,7 +1370,7 @@ public class ActivityFactMapper {
 
         final VesselStorageCharacteristic destinationVesselStorageCharacteristic = fishingActivity.getDestinationVesselStorageCharacteristic();
         if (destinationVesselStorageCharacteristic != null) {
-            faRelocationFact.setDestinationVesselStorageCharacteristicTypeCodes(mapToCodeTypes(destinationVesselStorageCharacteristic.getTypeCodes()));
+            faRelocationFact.setDestinationVesselStorageCharacteristicTypeCodes(mapToSpecifiedFlucLocationsCodeTypes(destinationVesselStorageCharacteristic.getTypeCodes()));
         }
         xPathUtil.appendWithoutWrapping(partialXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC, TYPE_CODE).storeInRepo(faRelocationFact, "destinationVesselStorageCharacteristicTypeCodes");
 
@@ -1403,7 +1402,7 @@ public class ActivityFactMapper {
         final VesselStorageCharacteristic sourceVesselStorageCharacteristic = fishingActivity.getSourceVesselStorageCharacteristic();
 
         if(sourceVesselStorageCharacteristic != null){
-            faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(mapToCodeTypes(sourceVesselStorageCharacteristic.getTypeCodes()));
+            faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(mapToSpecifiedFlucLocationsCodeTypes(sourceVesselStorageCharacteristic.getTypeCodes()));
         }
         xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC, TYPE_CODE).storeInRepo(faRelocationFact, "sourceVesselStorageCharacteristicTypeCodes");
 
@@ -1433,7 +1432,7 @@ public class ActivityFactMapper {
         if (CollectionUtils.isNotEmpty(vesselTransportMeans.getSpecifiedContactParties())) {
             for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                 if (CollectionUtils.isNotEmpty(contactParty.getRoleCodes())) {
-                    contactPartyRoleCodes.addAll(mapToCodeTypes(contactParty.getRoleCodes()));
+                    contactPartyRoleCodes.addAll(mapToSpecifiedFlucLocationsCodeTypes(contactParty.getRoleCodes()));
                 }
             }
         }
@@ -1461,7 +1460,7 @@ public class ActivityFactMapper {
 
 
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
-            faDiscardFact.setSpecifiedFACatchTypeCode(getFishingActivityFaCatchTypeCodes(Arrays.asList(fishingActivity)));
+            faDiscardFact.setSpecifiedFACatchTypeCode(getFishingActivityFaCatchTypeCodes(Collections.singletonList(fishingActivity)));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faDiscardFact, "specifiedFACatchTypeCode");
         }
 
@@ -1473,16 +1472,12 @@ public class ActivityFactMapper {
         return faDiscardFact;
     }
 
-    public List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
-
+    private List<CodeType> getFACatchesTypeCodes(List<FACatch> faCatches) {
         List<CodeType> codeTypes = null;
-
         if (faCatches != null) {
             codeTypes = new ArrayList<>();
-
             for (FACatch faCatch : faCatches) {
                 un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = faCatch.getTypeCode();
-
                 if (typeCode != null) {
                     CodeType codeType = new CodeType();
                     codeType.setListId(typeCode.getListID());
@@ -1491,7 +1486,6 @@ public class ActivityFactMapper {
                 }
             }
         }
-
         return codeTypes;
     }
 
@@ -1628,6 +1622,9 @@ public class ActivityFactMapper {
                 faTranshipmentFact.setSpecifiedFlCharSpecifiedLocatIDs(mapToLocationIds(specifiedFLUXCharacteristics));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faTranshipmentFact, "specifiedFlCharSpecifiedLocatIDs");
 
+                faTranshipmentFact.setSpecifiedFlCharSpecifiedLocatTypeCodes(mapToSpecifiedFluxLocationsCodeTypes(specifiedFLUXCharacteristics));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, SPECIFIED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faTranshipmentFact, "specifiedFlCharSpecifiedLocatTypeCodes");
+
                 faTranshipmentFact.setFluxCharacteristicTypeCodes(getApplicableFLUXCharacteristicsTypeCode(specifiedFLUXCharacteristics));
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faTranshipmentFact, "fluxCharacteristicTypeCodes");
             }
@@ -1641,6 +1638,14 @@ public class ActivityFactMapper {
         return faTranshipmentFact;
     }
 
+    private List<CodeType> mapToSpecifiedFluxLocationsCodeTypes(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
+        List<CodeType> specLocTypeCodes = new ArrayList<>();
+        for(FLUXCharacteristic fluxLoc : specifiedFLUXCharacteristics){
+            specLocTypeCodes.addAll(mapFluxLocationsToCodeTypes(fluxLoc.getSpecifiedFLUXLocations()));
+        }
+        return specLocTypeCodes;
+    }
+
     private List<IdType> mapToLocationIds(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
         List<IdType> idTypes = new ArrayList<>();
         for(FLUXCharacteristic flChar : specifiedFLUXCharacteristics){
@@ -1651,7 +1656,6 @@ public class ActivityFactMapper {
 
     private List<FLUXLocation> getFluxLocationsFromFaCatch(List<FACatch> specifiedFACatches) {
         List<FLUXLocation> faCatchFLUXLocations = null;
-
         for (FACatch faCatch : specifiedFACatches) {
             List<FLUXLocation> fluxLocations = faCatch.getSpecifiedFLUXLocations();
             if (CollectionUtils.isNotEmpty(fluxLocations)) {
@@ -1901,39 +1905,38 @@ public class ActivityFactMapper {
 
         String partialXpath = xPathUtil.getValue();
 
-        if (fluxResponseMessage != null && fluxResponseMessage.getFLUXResponseDocument() != null) {
+        if (fluxResponseMessage.getFLUXResponseDocument() != null) {
             FLUXResponseDocument fluxResponseDocument = fluxResponseMessage.getFLUXResponseDocument();
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
             faResponseFact.setReferencedID(mapToSingleIdType(fluxResponseDocument.getReferencedID()));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, ID).storeInRepo(faResponseFact, "ids");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "ids");
             faResponseFact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
             faResponseFact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
             faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
 
             faResponseFact.setCreationDateTimeString(getDateXMLString(fluxResponseDocument.getCreationDateTime()));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
             faResponseFact.setRespondentFLUXParty(fluxResponseDocument.getRespondentFLUXParty());
 
             if (fluxResponseDocument.getRespondentFLUXParty() != null) {
-                xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
                 faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
             }
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
             faResponseFact.setValidatorIDs(extractValidatorIdFromValidationResultDocument(fluxResponseDocument));
 
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_RESPONSE_MESSAGE, FLUX_RESPONSE_DOCUMENT, RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
             faResponseFact.setRelatedValidationResultDocuments(fluxResponseDocument.getRelatedValidationResultDocuments());
 
         }
-
 
         return faResponseFact;
     }
@@ -1948,7 +1951,6 @@ public class ActivityFactMapper {
                 }
             }
         }
-
         return idTypes;
     }
 
@@ -2025,7 +2027,7 @@ public class ActivityFactMapper {
         return idTypeList;
     }
 
-    private List<CodeType> mapToCodeTypes(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
+    private List<CodeType> mapToSpecifiedFlucLocationsCodeTypes(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
         if (codeTypes == null) {
             return emptyList();
         }
@@ -2073,19 +2075,6 @@ public class ActivityFactMapper {
         measureType1.setUnitCode(quantityType.getUnitCode());
 
         return measureType1;
-    }
-
-    public List<MeasureType> mapToQuantityTypeToMeasureType(List<QuantityType> quantityTypes) {
-        if (quantityTypes == null) {
-            return emptyList();
-        }
-
-        List<MeasureType> list = new ArrayList<>();
-        for (QuantityType quantityType : quantityTypes) {
-            list.add(mapQuantityTypeToMeasureType(quantityType));
-        }
-
-        return list;
     }
 
     private DateTimeType faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(FAReportDocument fAReportDocument) {
@@ -2457,7 +2446,7 @@ public class ActivityFactMapper {
         return categoryCode;
     }
 
-    public static List<NumericType> mapAAPProcessList(List<AAPProcess> aapProcesses) {
+    private static List<NumericType> mapAAPProcessList(List<AAPProcess> aapProcesses) {
         List<NumericType> numericTypeList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(aapProcesses)) {
             for (AAPProcess aapProcess : aapProcesses) {
@@ -2473,7 +2462,7 @@ public class ActivityFactMapper {
         return numericTypeList;
     }
 
-    public static List<IdType> mapFLUXLocationIDs(List<FLUXLocation> fluxLocations) {
+    private static List<IdType> mapFLUXLocationIDs(List<FLUXLocation> fluxLocations) {
         List<IdType> idTypeList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(fluxLocations)) {
             for (FLUXLocation fluxLocation : fluxLocations) {
@@ -2499,11 +2488,11 @@ public class ActivityFactMapper {
         return typeCodes;
     }
 
-    public static boolean isDatePresent(DateTimeType dateTimeType) {
+    private static boolean isDatePresent(DateTimeType dateTimeType) {
         return (dateTimeType != null);
     }
 
-    public List<MeasureType> mapDurationMeasure(List<DelimitedPeriod> delimitedPeriods) {
+    private List<MeasureType> mapDurationMeasure(List<DelimitedPeriod> delimitedPeriods) {
         List<MeasureType> measureTypes = null;
         if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
             measureTypes = new ArrayList<>();
@@ -2516,7 +2505,7 @@ public class ActivityFactMapper {
         return measureTypes;
     }
 
-    public static List<FishingTrip> mapRelatedFishingTrips(List<FishingActivity> relatedFishingActivities) {
+    private static List<FishingTrip> mapRelatedFishingTrips(List<FishingActivity> relatedFishingActivities) {
         List<FishingTrip> fishingTrips = null;
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
             fishingTrips = new ArrayList<>();
@@ -2529,7 +2518,7 @@ public class ActivityFactMapper {
         return fishingTrips;
     }
 
-    public static List<FLUXLocation> getFluxLocations(List<FishingActivity> relatedFishingActivities) {
+    private static List<FLUXLocation> getFluxLocations(List<FishingActivity> relatedFishingActivities) {
         List<FLUXLocation> fluxLocations = null;
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
             fluxLocations = new ArrayList<>();
@@ -2542,7 +2531,7 @@ public class ActivityFactMapper {
         return fluxLocations;
     }
 
-    public static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
+    private static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
         List<DelimitedPeriod> delimitedPeriod = null;
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
             delimitedPeriod = new ArrayList<>();
@@ -2555,7 +2544,7 @@ public class ActivityFactMapper {
         return delimitedPeriod;
     }
 
-    public List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
+    private List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
 
         if (!CollectionUtils.isEmpty(contactPartyList)) {
@@ -2563,14 +2552,14 @@ public class ActivityFactMapper {
             codeTypes = new ArrayList<>();
 
             for (ContactParty contactParty : contactPartyList) {
-                codeTypes.addAll(mapToCodeTypes(contactParty.getRoleCodes()));
+                codeTypes.addAll(mapToSpecifiedFlucLocationsCodeTypes(contactParty.getRoleCodes()));
             }
         }
 
         return codeTypes;
     }
 
-    public static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
+    private static List<ContactPerson> mapToContactPersonList(List<ContactParty> contactPartyList) {
         List<ContactPerson> contactPersonList = null;
         if (CollectionUtils.isNotEmpty(contactPartyList)) {
             contactPersonList = new ArrayList<>();
@@ -2640,7 +2629,7 @@ public class ActivityFactMapper {
      *
      * @param appliedAAPProcesses
      * @param methodToChoose
-     * @return
+     * @return measureTypes
      */
     private List<MeasureType> getMeasureTypeFromAAPProcess(List<AAPProcess> appliedAAPProcesses, String methodToChoose) {
         if (CollectionUtils.isEmpty(appliedAAPProcesses)) {
@@ -2709,7 +2698,7 @@ public class ActivityFactMapper {
 
         for (AAPProcess aapProcess : appliedAAPProcesses) {
             if (CollectionUtils.isNotEmpty(aapProcess.getTypeCodes())) {
-                codeTypes.addAll(mapToCodeTypes(aapProcess.getTypeCodes()));
+                codeTypes.addAll(mapToSpecifiedFlucLocationsCodeTypes(aapProcess.getTypeCodes()));
             }
         }
         return codeTypes;
@@ -2775,7 +2764,7 @@ public class ActivityFactMapper {
         for (FishingGear fishingGear : fishingGears) {
 
             if (CollectionUtils.isNotEmpty(fishingGear.getRoleCodes())) {
-                codeTypes.addAll(mapToCodeTypes(fishingGear.getRoleCodes()));
+                codeTypes.addAll(mapToSpecifiedFlucLocationsCodeTypes(fishingGear.getRoleCodes()));
             }
         }
         return codeTypes;

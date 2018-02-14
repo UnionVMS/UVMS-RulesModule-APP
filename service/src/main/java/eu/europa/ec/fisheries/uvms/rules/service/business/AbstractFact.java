@@ -1166,10 +1166,7 @@ public abstract class AbstractFact {
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if (CollectionUtils.isNotEmpty(values)) {
-            return values.contains(codeValue);
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
     /**

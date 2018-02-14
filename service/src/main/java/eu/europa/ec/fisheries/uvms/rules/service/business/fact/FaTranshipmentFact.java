@@ -31,19 +31,35 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 public class FaTranshipmentFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
+
     private CodeType faReportDocumentTypeCode;
+
     private List<FLUXLocation> relatedFLUXLocations;
-    private List<VesselTransportMeans> relatedVesselTransportMeans;
-    private List<FACatch> specifiedFACatches;
-    private List<CodeType> faCatchTypeCodes ;
-    private List<CodeType> fluxLocationTypeCodes;
-    private List<CodeType> vesselTransportMeansRoleCodes;
+
     private List<FLUXLocation> faCtchSpecifiedFLUXLocations;
+
+    private List<VesselTransportMeans> relatedVesselTransportMeans;
+
+    private List<FACatch> specifiedFACatches;
+
+    private List<CodeType> faCatchTypeCodes ;
+
+    private List<CodeType> fluxLocationTypeCodes;
+
+    private List<CodeType> vesselTransportMeansRoleCodes;
+
     private List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes;
+
     private List<CodeType> fluxCharacteristicTypeCodes;
+
     private List<CodeType> facatchSpeciesCode;
+
     private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
+
     private List<IdType> specifiedFlCharSpecifiedLocatIDs;
+
+    private List<CodeType> specifiedFlCharSpecifiedLocatTypeCodes;
+
 
     public FaTranshipmentFact() {
         setFactType();
@@ -193,5 +209,11 @@ public class FaTranshipmentFact extends AbstractFact {
     }
     public void setSpecifiedFlCharSpecifiedLocatIDs(List<IdType> specifiedFlCharSpecifiedLocatIDs) {
         this.specifiedFlCharSpecifiedLocatIDs = specifiedFlCharSpecifiedLocatIDs;
+    }
+    public List<CodeType> getSpecifiedFlCharSpecifiedLocatTypeCodes() {
+        return specifiedFlCharSpecifiedLocatTypeCodes;
+    }
+    public void setSpecifiedFlCharSpecifiedLocatTypeCodes(List<CodeType> specifiedFlCharSpecifiedLocatTypeCodes) {
+        this.specifiedFlCharSpecifiedLocatTypeCodes = specifiedFlCharSpecifiedLocatTypeCodes;
     }
 }

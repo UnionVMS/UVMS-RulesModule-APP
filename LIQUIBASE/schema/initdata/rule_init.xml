@@ -4118,7 +4118,7 @@
             <column name="expression"
                     value="!valueContainsAny(faCatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp;
                            (isEmpty(specifiedFLUXCharacteristics) || !valueNotContains(fluxCharacteristicTypeCodes, &quot;DESTINATION_LOCATION&quot;, 0) ||
-                            listIdNotContains(fluxLocationTypeCodes, &quot;LOCATION&quot;) ||
+                            !valueNotContains(specifiedFlCharSpecifiedLocatTypeCodes, &quot;LOCATION&quot;, 0) ||
                             schemeIdContainsAny(specifiedFlCharSpecifiedLocatIDs, &quot;LOCATION&quot;) )"/>
             <column name="note"
                     value="If the activity is a transhipment declaration and if SpecifiedFACatch/TypeCode = UNLOADED and RelatedVesselTransportMeans is present Then (1) SpecifiedFLUX_Characteristic/TypeCode must be DESTINATION_LOCATION and (2) SpecifiedFLUX_ Characteristic/SpecifiedFLUXLocation/TypeCode must be LOCATION and (3) SchemeID of SpecifiedFLUX_Characteristic/SpecifiedFLUX_Location/ID must be LOCATION"/>
