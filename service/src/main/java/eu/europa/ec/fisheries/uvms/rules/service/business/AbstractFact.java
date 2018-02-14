@@ -180,12 +180,8 @@ public abstract class AbstractFact {
         if (valueToMatch == null || idType == null) {
             return false;
         }
-
-        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
-            return true;
-        }
-
-        return false;
+        String idValue = idType.getValue();
+        return idValue != null && idValue.startsWith(valueToMatch);
     }
 
     /**
@@ -222,10 +218,8 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
-
         idTypes = new ArrayList<>(idTypes);
         CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
-
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -764,7 +758,6 @@ public abstract class AbstractFact {
                 found++;
             }
         }
-
         return hits != found;
     }
 
@@ -1463,19 +1456,17 @@ public abstract class AbstractFact {
     public boolean stringEquals(String str1, String str2){
         return StringUtils.equals(str1, str2);
     }
+
     public String getValueForSchemeId(String schemeId, List<IdType> ids) {
         if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
             return null;
         }
-
         for (IdType id : ids) {
             String idsSchemeId = id.getSchemeId();
-
             if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
                 return id.getValue();
             }
         }
-
         return null;
     }
 

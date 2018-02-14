@@ -11,16 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import javax.ejb.Stateless;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.AssetStatus;
@@ -36,6 +26,15 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.SubCriteria;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,16 +46,13 @@ public class ConfigResource {
     private final static Logger LOG = LoggerFactory.getLogger(ConfigResource.class);
 
     /**
-     *
      * @responseMessage 200 Get all config for custom rules
      * @responseMessage 500 No config fetched
-     *
      * @summary Get a map of all config for populating drop downs in custom rule
-     *
      */
     @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     @Path(value = "/")
     public ResponseDto getConfig() {
         try {
@@ -84,22 +80,18 @@ public class ConfigResource {
     }
 
     private Map<String, HashMap<String, ArrayList<String>>> getCriterias() {
-        Map<String, HashMap<String, ArrayList<String>>> map = new HashMap<String, HashMap<String, ArrayList<String>>>();
-
+        Map<String, HashMap<String, ArrayList<String>>> map = new HashMap<>();
         MainCriteria[] mainCriterias = MainCriteria.values();
-        for (int i = 0; i < mainCriterias.length; i++) {
-
-            HashMap<String, ArrayList<String>> subResult = new HashMap<String, ArrayList<String>>();
-
-            String mainCrit = mainCriterias[i].toString();
-
+        for (MainCriteria mainCriteria : mainCriterias) {
+            HashMap<String, ArrayList<String>> subResult = new HashMap<>();
+            String mainCrit = mainCriteria.toString();
             SubCriteria[] subCriterias = SubCriteria.values();
-            for (int j = 0; j < subCriterias.length; j++) {
-                if (subCriterias[j].getMainCriteria().equals(mainCriterias[i])) {
-                    getConditionsByCriteria(subCriterias[j]);
-                    subResult.put(subCriterias[j].toString(), getConditionsByCriteria(subCriterias[j]));
+            for (SubCriteria subCriteria : subCriterias) {
+                if (subCriteria.getMainCriteria().equals(mainCriteria)) {
+                    getConditionsByCriteria(subCriteria);
+                    subResult.put(subCriteria.toString(), getConditionsByCriteria(subCriteria));
                 }
-                if (!mainCriterias[i].equals(MainCriteria.ROOT)) {
+                if (!mainCriteria.equals(MainCriteria.ROOT)) {
                     map.put(mainCrit, subResult);
                 }
             }
@@ -220,16 +212,13 @@ public class ConfigResource {
     }
 
     /**
-     *
      * @responseMessage 200 Alarm statuses fetched
      * @responseMessage 500 No config fetched
-     *
      * @summary Get alarm statuses
-     *
      */
     @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     @Path(value = "/alarmstatus")
     public ResponseDto getAlarmStatuses() {
         try {
@@ -241,16 +230,13 @@ public class ConfigResource {
     }
 
     /**
-     *
      * @responseMessage 200 Ticket statuses fetched
      * @responseMessage 500 No config fetched
-     *
      * @summary Get ticket statuses
-     *
      */
     @GET
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     @Path(value = "/ticketstatus")
     public ResponseDto getTicketStatuses() {
         try {
