@@ -1905,8 +1905,9 @@ public class ActivityFactMapper {
 
         String partialXpath = xPathUtil.getValue();
 
-        if (fluxResponseMessage.getFLUXResponseDocument() != null) {
-            FLUXResponseDocument fluxResponseDocument = fluxResponseMessage.getFLUXResponseDocument();
+        final FLUXResponseDocument fluxResponseDocument1 = fluxResponseMessage.getFLUXResponseDocument();
+        if (fluxResponseDocument1 != null) {
+            FLUXResponseDocument fluxResponseDocument = fluxResponseDocument1;
 
             faResponseFact.setReferencedID(mapToSingleIdType(fluxResponseDocument.getReferencedID()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
@@ -2013,7 +2014,6 @@ public class ActivityFactMapper {
     }
 
     private static List<IdType> mapToIdType(List<IDType> idTypes) {
-
         List<IdType> idTypeList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(idTypes)) {
             for (IDType iDType : idTypes) {
