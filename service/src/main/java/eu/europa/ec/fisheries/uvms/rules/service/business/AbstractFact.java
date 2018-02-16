@@ -83,6 +83,10 @@ public abstract class AbstractFact {
 
     private Integer sequence = 0;
 
+    public boolean hasWarOrErr(){
+        return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);
+    }
+
     public AbstractFact() {
         this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
@@ -499,6 +503,10 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean codeTypeValueEquals(CodeType codeType, String valueToMatch){
+        return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
+    }
+
     /**
      * Checks if valuesToMatch strings are ALL present in list of measureTypes
      *
@@ -507,22 +515,19 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
-        return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
+        return listIdDoesNotContainAll(Collections.singletonList(codeType), valuesToMatch);
     }
 
 
     public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
         List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
-
         for (SalesPartyFact salesPartyFact : salesPartyTypes) {
             codeTypes.addAll(salesPartyFact.getRoleCodes());
         }
-
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         for (CodeType codeType : codeTypes) {
             String value = codeType.getValue();
 
@@ -530,7 +535,6 @@ public abstract class AbstractFact {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -823,17 +827,18 @@ public abstract class AbstractFact {
 
 
     private boolean isIntegerValue(BigDecimal bigDecimal) {
-        if (bigDecimal == null) {
-            return false;
-        }
-
-        if (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0);
     }
+
+    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
+        return isIntegerValue(bigDecimal) && (bigDecimal.signum() == 0 || bigDecimal.signum() == 1);
+    }
+
+
+    public boolean isGreaterThanZero(MeasureType value){
+        return isGreaterThanZero(Collections.singletonList(value));
+    }
+
 
     /**
      * This method will check if all values passed  to this method are greater than zero.
@@ -912,17 +917,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositive(BigDecimal value) {
-        if (value == null) {
-            return true;
-        }
-        return value.compareTo(BigDecimal.ZERO) > 0;
+        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
-        if (value == null) {
-            return true;
-        }
-        return !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
+        return value == null || !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
     }
 
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
@@ -1156,7 +1155,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isPresentInMDRList(String listName, String codeValue) {
@@ -1172,7 +1171,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
@@ -1202,7 +1201,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService@} instead.
      */
     @Deprecated
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
@@ -1248,7 +1247,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
@@ -1271,7 +1270,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isIdTypePresentInMDRList(IdType id) {
@@ -1292,7 +1291,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
@@ -1459,7 +1458,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public String getDataTypeForMDRList(String listName, String codeValue) {

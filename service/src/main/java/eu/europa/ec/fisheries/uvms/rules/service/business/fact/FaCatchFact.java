@@ -27,6 +27,7 @@ import java.util.List;
 public class FaCatchFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
+    private CodeType faReportDocumentTypeCode;
     private CodeType typeCode;
     private CodeType speciesCode;
     private MeasureType unitQuantity;
@@ -47,7 +48,7 @@ public class FaCatchFact extends AbstractFact {
     private List<FLUXLocation> specifiedFLUXLocations;
     private List<CodeType> specifiedFluxLocationRFMOCodeList;
     private List<AAPProcess> appliedAAPProcess;
-    List<FLUXLocation> destinationFLUXLocations;
+    private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
     private boolean isSubActivity = false;
 
@@ -255,5 +256,11 @@ public class FaCatchFact extends AbstractFact {
     }
 
 
+    public CodeType getFaReportDocumentTypeCode() {
+        return faReportDocumentTypeCode;
+    }
 
+    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
+        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
+    }
 }

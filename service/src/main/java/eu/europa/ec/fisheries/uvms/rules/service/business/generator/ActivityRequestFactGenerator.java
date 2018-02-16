@@ -42,13 +42,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -60,6 +53,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -138,7 +136,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS, SPECIFIED_STRUCTURED_ADDRESS);
-                addFactsForVesselTransportMeansStructuresAddress(facts, Arrays.asList(faReportDocument.getSpecifiedVesselTransportMeans()));
+                addFactsForVesselTransportMeansStructuresAddress(facts, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()));
 
                 index++;
             }
@@ -176,7 +174,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForVesselTransportMeansStructuresAddress(facts, activity.getRelatedVesselTransportMeans());
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity,isSubActivity));
+                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity,isSubActivity, faReportDocument.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForFaCatches(facts, activity.getSpecifiedFACatches());
