@@ -28,6 +28,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentF
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -58,7 +59,7 @@ public class RulesPostProcessBeanTest {
         fact.addWarningOrError("WARNING", "Test Warning", "br02", "L01", "null");
         fact.setOk(false);
 
-        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Arrays.asList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Collections.singletonList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
         assertTrue(validationResult.isError());
         assertTrue(validationResult.isWarning());
         assertFalse(validationResult.isOk());
@@ -85,7 +86,7 @@ public class RulesPostProcessBeanTest {
         AbstractFact fact = new FaReportDocumentFact();
         fact.setOk(true);
         RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", null);;
-        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBuinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
         assertFalse(validationResult.isError());
         assertFalse(validationResult.isWarning());
         assertFalse(validationResult.isOk());

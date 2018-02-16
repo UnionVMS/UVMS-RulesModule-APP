@@ -13,19 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_REPORT_MESSAGE;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 /**
  * @author padhyad
@@ -55,10 +54,10 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
             FAQuery faQuery = fluxfaQueryMessage.getFAQuery();
             if(faQuery != null){
 
-                xPathUtil.append(FLUXFA_REPORT_MESSAGE).append(FA_QUERY);
+                xPathUtil.append(FLUXFA_QUERY_MESSAGE).append(FA_QUERY);
                 factList.add(activityFactMapper.generateFactsForFaQuery(faQuery));
 
-                xPathUtil.append(FLUXFA_REPORT_MESSAGE).append(FA_QUERY);
+                xPathUtil.append(FLUXFA_QUERY_MESSAGE).append(FA_QUERY);
                 factList.addAll(activityFactMapper.generateFactsForFaQueryParameters(faQuery.getSimpleFAQueryParameters(), faQuery));
             }
         }

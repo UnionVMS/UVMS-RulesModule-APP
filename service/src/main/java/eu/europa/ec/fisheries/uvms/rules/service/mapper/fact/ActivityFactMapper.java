@@ -108,6 +108,7 @@ public class ActivityFactMapper {
 
     private static final String FLUX_LOCATION_TYPE_CODE_PROP = "fluxLocationTypeCode";
     private static final String RELATED_FISHING_ACTIVITIES_PROP = "relatedFishingActivities";
+    private static final String POST_OFFICE_BOX = "PostOfficeBox";
     /**
      * Additional objects - to be set before validation through generator.setAdditionalValidationObject(.., ..){..}
      **/
@@ -563,20 +564,23 @@ public class ActivityFactMapper {
 
         StructuredAddressFact structuredAddressFact = new StructuredAddressFact();
 
-        structuredAddressFact.setPostalArea(structuredAddressPostalAreaValue(structuredAddress));
+        structuredAddressFact.setPostalArea(getValueFromTextType(structuredAddress.getPostalArea()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(POSTAL_AREA).storeInRepo(structuredAddressFact, "postalArea");
 
         structuredAddressFact.setCountryID(structuredAddressCountryIDValue(structuredAddress));
         xPathUtil.appendWithoutWrapping(partialXpath).append(COUNTRY_ID).storeInRepo(structuredAddressFact, "countryID");
 
-        structuredAddressFact.setCityName(structuredAddressCityNameValue(structuredAddress));
+        structuredAddressFact.setCityName(getValueFromTextType(structuredAddress.getCityName()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(CITY_NAME).storeInRepo(structuredAddressFact, "cityName");
 
-        structuredAddressFact.setStreetName(structuredAddressStreetNameValue(structuredAddress));
+        structuredAddressFact.setStreetName(getValueFromTextType(structuredAddress.getStreetName()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(STREET_NAME).storeInRepo(structuredAddressFact, "streetName");
 
-        structuredAddressFact.setPlotIdentification(structuredAddressPlotIdentificationValue(structuredAddress));
+        structuredAddressFact.setPlotIdentification(getValueFromTextType(structuredAddress.getPlotIdentification()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(PLOT_IDENTIFICATION).storeInRepo(structuredAddressFact, "plotIdentification");
+
+        structuredAddressFact.setPostOfficeBox(getValueFromTextType(structuredAddress.getPostOfficeBox()));
+        xPathUtil.appendWithoutWrapping(partialXpath).append(POST_OFFICE_BOX).storeInRepo(structuredAddressFact, "postOfficeBox");
 
         return structuredAddressFact;
     }
@@ -734,7 +738,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity, boolean isSubActivity) {
+    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity, boolean isSubActivity, un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode) {
 
         if (activity == null) {
             return emptyList();
@@ -758,6 +762,9 @@ public class ActivityFactMapper {
 
             faCatchFact.setFishingActivityTypeCode(mapToCodeType(activity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityTypeCode");
+
+            faCatchFact.setFaReportDocumentTypeCode(mapToCodeType(typeCode));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).storeInRepo(faCatchFact, "faReportDocumentTypeCode");
 
             partialXPath = xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
@@ -953,7 +960,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public FluxCharacteristicsFact generateFactForFluxCharacteristic(FLUXCharacteristic fluxCharacteristic) {
+    public FluxCharacteristicsFact generateFactForFluxCharacteristic(FLUXCharacteristic fluxCharacteristic, String fluxCharacteristicType) {
         if (fluxCharacteristic == null) {
             xPathUtil.clear();
             return null;
@@ -961,6 +968,7 @@ public class ActivityFactMapper {
 
         final String partialXpath = xPathUtil.getValue();
         FluxCharacteristicsFact fluxCharacteristicsFact = new FluxCharacteristicsFact();
+        fluxCharacteristicsFact.setFluxCharacteristicType(fluxCharacteristicType);
 
         fluxCharacteristicsFact.setTypeCode(mapToCodeType(fluxCharacteristic.getTypeCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(fluxCharacteristicsFact, TYPE_CODE_PROP);
@@ -1000,7 +1008,7 @@ public class ActivityFactMapper {
         int index = 1;
         for (FLUXCharacteristic fLUXCharacteristic : fluxCharacteristic) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxCharacteristicType, index);
-            list.add(generateFactForFluxCharacteristic(fLUXCharacteristic));
+            list.add(generateFactForFluxCharacteristic(fLUXCharacteristic, fluxCharacteristicType));
         }
 
         return list;
@@ -1186,6 +1194,9 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(VESSEL_RELATED_ACTIVITY_CODE).storeInRepo(faFishingOperationFact, VESSEL_RELATED_ACTIVITY_CODE_PROP);
 
             List<VesselTransportMeans> vesselTransportMeans = fishingActivity.getRelatedVesselTransportMeans();
+            faFishingOperationFact.setVesselTransportMeans(vesselTransportMeans);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, SPECIFIED_CONTACT_PARTY).storeInRepo(faFishingOperationFact, "vesselTransportMeans");
+
             if (CollectionUtils.isNotEmpty(vesselTransportMeans)) {
                 faFishingOperationFact.setVesselTransportMeansContactParties(getContactPartiesFromVesselTransportMeans(vesselTransportMeans));
             }
@@ -1351,7 +1362,7 @@ public class ActivityFactMapper {
                         fluxLocationIds.add(mapToSingleIdType(fluxLocation.getID()));
                         destinationFluxLocations.add(fluxLocation);
                     }
-                    xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, faCatchIndex).append(DESTINATION_FLUX_LOCATION,TYPE_CODE).storeInRepo(faRelocationFact, "specifiedFACatchDestinationFluxLocationTypeCodes");
+                    xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, faCatchIndex).append(DESTINATION_FLUX_LOCATION, TYPE_CODE).storeInRepo(faRelocationFact, "specifiedFACatchDestinationFluxLocationTypeCodes");
                     xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, faCatchIndex).append(DESTINATION_FLUX_LOCATION, ID).storeInRepo(faRelocationFact, "specifiedFACatchDestinationFluxLocationIDs");
                 }
                 xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, faCatchIndex).append(DESTINATION_FLUX_LOCATION).storeInRepo(faRelocationFact, "destinationFLUXLocations");
@@ -1365,7 +1376,7 @@ public class ActivityFactMapper {
             faRelocationFact.setDestinationFLUXLocations(destinationFluxLocations);
         }
 
-        faRelocationFact.setRelatedFLUXLocationTypeCodes( mapFluxLocationsToCodeTypes(fishingActivity.getRelatedFLUXLocations()));
+        faRelocationFact.setRelatedFLUXLocationTypeCodes(mapFluxLocationsToCodeTypes(fishingActivity.getRelatedFLUXLocations()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faRelocationFact, "relatedFLUXLocationTypeCodes");
 
         final VesselStorageCharacteristic destinationVesselStorageCharacteristic = fishingActivity.getDestinationVesselStorageCharacteristic();
@@ -1401,7 +1412,7 @@ public class ActivityFactMapper {
 
         final VesselStorageCharacteristic sourceVesselStorageCharacteristic = fishingActivity.getSourceVesselStorageCharacteristic();
 
-        if(sourceVesselStorageCharacteristic != null){
+        if (sourceVesselStorageCharacteristic != null) {
             faRelocationFact.setSourceVesselStorageCharacteristicTypeCodes(mapToCodeTypes(sourceVesselStorageCharacteristic.getTypeCodes()));
         }
         xPathUtil.appendWithoutWrapping(partialXpath).append(SOURCE_VESSEL_STORAGE_CHARACTERISTIC, TYPE_CODE).storeInRepo(faRelocationFact, "sourceVesselStorageCharacteristicTypeCodes");
@@ -1640,7 +1651,7 @@ public class ActivityFactMapper {
 
     private List<CodeType> mapToSpecifiedFluxLocationsCodeTypes(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
         List<CodeType> specLocTypeCodes = new ArrayList<>();
-        for(FLUXCharacteristic fluxLoc : specifiedFLUXCharacteristics){
+        for (FLUXCharacteristic fluxLoc : specifiedFLUXCharacteristics) {
             specLocTypeCodes.addAll(mapFluxLocationsToCodeTypes(fluxLoc.getSpecifiedFLUXLocations()));
         }
         return specLocTypeCodes;
@@ -1648,7 +1659,7 @@ public class ActivityFactMapper {
 
     private List<IdType> mapToLocationIds(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
         List<IdType> idTypes = new ArrayList<>();
-        for(FLUXCharacteristic flChar : specifiedFLUXCharacteristics){
+        for (FLUXCharacteristic flChar : specifiedFLUXCharacteristics) {
             idTypes.addAll(mapFLUXLocationIDs(flChar.getSpecifiedFLUXLocations()));
         }
         return idTypes;
@@ -1706,7 +1717,7 @@ public class ActivityFactMapper {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faArrivalFact, "faReportTypeCode");
 
             FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
-            if(relatedFLUXReportDocument != null){
+            if (relatedFLUXReportDocument != null) {
                 faArrivalFact.setFaReportPurposeCode(mapToCodeType(relatedFLUXReportDocument.getPurposeCode()));
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(faArrivalFact, "faReportPurposeCode");
             }
@@ -2275,89 +2286,27 @@ public class ActivityFactMapper {
         return iD;
     }
 
-    public String structuredAddressPostalAreaValue(StructuredAddress structuredAddress) {
-
-        if (structuredAddress == null) {
-            return null;
-        }
-        TextType postalArea = structuredAddress.getPostalArea();
-        if (postalArea == null) {
-            return null;
-        }
-        String value = postalArea.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
     private IdType structuredAddressCountryIDValue(StructuredAddress structuredAddress) {
-
         if (structuredAddress == null) {
             return null;
         }
         IDType countryID = structuredAddress.getCountryID();
-
         if (countryID == null) {
             return null;
         }
-
         String value = countryID.getValue();
         String schemeID = countryID.getSchemeID();
-
         if (schemeID == null && value == null) {
             return null;
         }
-
         IdType idType = new IdType();
         idType.setSchemeId(schemeID);
         idType.setValue(value);
-
         return idType;
     }
 
-    private String structuredAddressCityNameValue(StructuredAddress structuredAddress) {
-
-        if (structuredAddress == null) {
-            return null;
-        }
-        TextType cityName = structuredAddress.getCityName();
-        if (cityName == null) {
-            return null;
-        }
-        String value = cityName.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
-    private String structuredAddressStreetNameValue(StructuredAddress structuredAddress) {
-
-        if (structuredAddress == null) {
-            return null;
-        }
-        TextType streetName = structuredAddress.getStreetName();
-        if (streetName == null) {
-            return null;
-        }
-        String value = streetName.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
-    private String structuredAddressPlotIdentificationValue(StructuredAddress structuredAddress) {
-
-        if (structuredAddress == null) {
-            return null;
-        }
-        TextType plotIdentification = structuredAddress.getPlotIdentification();
-        if (plotIdentification == null) {
-            return null;
-        }
-        return plotIdentification.getValue();
+    private String getValueFromTextType(TextType textType) {
+        return textType != null ? textType.getValue() : null;
     }
 
     private List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> faCatchesSpecifiedSizeDistributionClassCodes(FACatch fACatch) {
@@ -2477,9 +2426,9 @@ public class ActivityFactMapper {
         return idTypeList;
     }
 
-    private List<CodeType> mapFluxLocationsToCodeTypes(List<FLUXLocation> locations){
+    private List<CodeType> mapFluxLocationsToCodeTypes(List<FLUXLocation> locations) {
         List<CodeType> typeCodes = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(locations)){
+        if (CollectionUtils.isNotEmpty(locations)) {
             for (FLUXLocation fluxLocation : locations) {
                 typeCodes.add(mapToCodeType(fluxLocation.getTypeCode()));
             }
@@ -2863,33 +2812,43 @@ public class ActivityFactMapper {
     private void setxPathUtil(XPathStringWrapper xPathUtil1) {
         this.xPathUtil = xPathUtil1;
     }
+
     public void setAssetList(List<IdTypeWithFlagState> assetList) {
         this.assetList = assetList;
     }
+
     public List<IdTypeWithFlagState> getAssetList() {
         return assetList;
     }
+
     public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
         this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
     }
+
     public List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
         return fishingGearTypeCharacteristics;
     }
+
     public void setNonUniqueIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap) {
         this.nonUniqueIdsMap = nonUniqueIdsMap;
     }
+
     public Map<ActivityTableType, List<IdType>> getNonUniqueIdsMap() {
         return nonUniqueIdsMap;
     }
+
     public void setFishingActivitiesWithTripIds(Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds) {
         this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
+
     public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesWithTripIds() {
         return fishingActivitiesWithTripIds;
     }
+
     public void setSenderReceiver(String senderReceiver) {
         this.senderReceiver = senderReceiver;
     }
+
     public String getSenderReceiver() {
         return senderReceiver;
     }

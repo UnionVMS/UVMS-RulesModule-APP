@@ -23,7 +23,7 @@ public class RuleWarning {
 
 	protected String level;
 
-	protected List<String> xpaths;
+	private List<String> xpaths;
 
 	public RuleWarning(String ruleId, String message, String level, List<String> xpathsForProps) {
 		this.ruleId = ruleId;

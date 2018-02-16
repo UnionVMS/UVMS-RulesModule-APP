@@ -24,6 +24,8 @@ import java.util.*;
  */
 public class FluxCharacteristicsFact extends AbstractFact {
 
+    private String fluxCharacteristicType;
+
     private CodeType typeCode;
 
     private MeasureType valueMeasure;
@@ -101,5 +103,13 @@ public class FluxCharacteristicsFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FLUX_CHARACTERISTIC;
+    }
+
+    public String getFluxCharacteristicType() {
+        return fluxCharacteristicType;
+    }
+
+    public void setFluxCharacteristicType(String fluxCharacteristicType) {
+        this.fluxCharacteristicType = fluxCharacteristicType;
     }
 }
