@@ -12,7 +12,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -105,7 +104,7 @@ public class MdrCacheTest {
             System.out.println("Exception thrown as expected : " + ex.getMessage());
             assertNotNull(ex);
         }
-        assertNull(faCatchTypeEntries);
+        assertTrue(faCatchTypeEntries.isEmpty());
     }
 
 

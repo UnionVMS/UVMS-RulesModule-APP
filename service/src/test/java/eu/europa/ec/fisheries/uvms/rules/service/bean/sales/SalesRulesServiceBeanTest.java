@@ -8,7 +8,10 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -17,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +47,9 @@ public class SalesRulesServiceBeanTest {
 
     @Mock
     ActivityService activityService;
+
+    @Mock
+    private MDRCacheRuleService mdrService;
 
     @Before
     public void setUp() throws Exception {
@@ -725,5 +733,212 @@ public class SalesRulesServiceBeanTest {
     }
 
 
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsFlagAndValueCodeIsNotValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("INVALIDFLAG");
 
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("FLAG");
+
+        //mock
+        doReturn(false).when(mdrService).isPresentInMDRList("TERRITORY", "INVALIDFLAG");
+
+        //execute and verify
+        assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("TERRITORY", "INVALIDFLAG");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsFlagAndValueCodeIsValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("BEL");
+        valueCode.setListId("LOCATION");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("FLAG");
+
+        //mock
+        doReturn(true).when(mdrService).isPresentInMDRList("TERRITORY", "BEL");
+
+        //execute and verify
+        assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("TERRITORY", "BEL");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsRoleAndValueCodeIsNotValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("UNKNOWN");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("ROLE");
+
+        //mock
+        doReturn(false).when(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "UNKNOWN");
+
+        //execute and verify
+        assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "UNKNOWN");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsRoleAndValueCodeIsValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("FLAG");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("ROLE");
+
+        //mock
+        doReturn(true).when(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "FLAG");
+
+        //execute and verify
+        assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "FLAG");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsPlaceAndValueCodeIsNotValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("UNKNOWN");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("PLACE");
+
+        //mock
+        doReturn(false).when(mdrService).isPresentInMDRList("LOCATION", "UNKNOWN");
+
+        //execute and verify
+        assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("LOCATION", "UNKNOWN");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenTypeCodeIsPlaceAndValueCodeIsValid() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("BEOST");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("PLACE");
+
+        //mock
+        doReturn(true).when(mdrService).isPresentInMDRList("LOCATION", "BEOST");
+
+        //execute and verify
+        assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+        verify(mdrService).isPresentInMDRList("LOCATION", "BEOST");
+    }
+
+    @Test
+    public void isSalesQueryParameterValueNotValidWhenInvalidTypeCode() throws Exception {
+        //data set
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType valueCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        valueCode.setValue("BEL");
+
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType typeCode = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
+        typeCode.setValue("Please trigger the default case");
+
+        //execute and verify
+        assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenCurrencyIsNull() {
+        //data set
+        DateTime occurrence = DateTime.now();
+
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(null);
+        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+
+        //execute and verify
+        assertFalse(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verifyNoMoreInteractions(mdrService);
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenCountryIsNull() {
+        //data set
+        DateTime occurrence = DateTime.now();
+
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(new CodeType("EUR"));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+
+        //execute and verify
+        assertFalse(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verifyNoMoreInteractions(mdrService);
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenOccurrenceIsNull() {
+        //data set
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(new CodeType("EUR"));
+        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(null)));
+
+        //execute and verify
+        assertFalse(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verifyNoMoreInteractions(mdrService);
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenTrue() {
+        //data set
+        DateTime occurrence = DateTime.now();
+
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(new CodeType("EUR"));
+        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+
+        //mock
+        doReturn(getTestEntriesForMDRListTERRITORY_CURRENCY()).when(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+
+        //execute and verify
+        assertTrue(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verify(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenFalse() {
+        //data set
+        DateTime occurrence = DateTime.now();
+
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(new CodeType("DKK"));
+        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+
+        //mock
+        doReturn(getTestEntriesForMDRListTERRITORY_CURRENCY()).when(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+
+        //execute and verify
+        assertFalse(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verify(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+    }
+
+    private List<ObjectRepresentation> getTestEntriesForMDRListTERRITORY_CURRENCY() {
+        ColumnDataType code = new ColumnDataType();
+        code.setColumnName("code");
+        code.setColumnValue("EUR");
+
+        ColumnDataType placesCode = new ColumnDataType();
+        placesCode.setColumnName("placesCode");
+        placesCode.setColumnValue("BEL");
+
+        ObjectRepresentation objectRepresentation = new ObjectRepresentation();
+        objectRepresentation.setFields(Arrays.asList(code, placesCode));
+
+        return Arrays.asList(objectRepresentation);
+    }
 }

@@ -9,15 +9,15 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.message.consumer;
 
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import javax.ejb.Local;
 
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
+
 
 @Local
 public interface RulesResponseConsumer {
-
-    public <T> T getMessage(String correlationId, Class type) throws MessageException;
-
+    <T> T getMessage(String correlationId, Class type) throws MessageException;
 }

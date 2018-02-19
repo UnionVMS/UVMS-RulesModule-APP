@@ -29,88 +29,79 @@ public class FaArrivalFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
     private CodeType faReportTypeCode;
+    private CodeType faReportPurposeCode;
     private DateTimeType occurrenceDateTime;
     private CodeType reasonCode;
     private List<FLUXLocation> relatedFLUXLocations;
     private List<CodeType> fluxLocationTypeCodes;
     private List<CodeType> fishingGearRoleCodes;
     private List<IdType> fishingTripIds;
-
     private Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip;
 
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
 
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getFaReportTypeCode() {
-        return faReportTypeCode;
-    }
-
-    public void setFaReportTypeCode(CodeType faReportTypeCode) {
-        this.faReportTypeCode = faReportTypeCode;
-    }
-
-    public DateTimeType getOccurrenceDateTime() {
-        return occurrenceDateTime;
-    }
-
-    public void setOccurrenceDateTime(DateTimeType occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
-    }
-
-    public CodeType getReasonCode() {
-        return reasonCode;
-    }
-
-    public void setReasonCode(CodeType reasonCode) {
-        this.reasonCode = reasonCode;
-    }
-
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-
-    public List<CodeType> getFluxLocationTypeCodes() {
-        return fluxLocationTypeCodes;
-    }
-
-    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
-        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
-    }
-
-    public List<CodeType> getFishingGearRoleCodes() {
-        return fishingGearRoleCodes;
-    }
-
-    public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
-        this.fishingGearRoleCodes = fishingGearRoleCodes;
-    }
-
-    public List<IdType> getFishingTripIds() {
-        return fishingTripIds;
-    }
-
-    public void setFishingTripIds(List<IdType> fishingTripIds) {
-        this.fishingTripIds = fishingTripIds;
-    }
     @Override
     public void setFactType() {
         this.factType = FactType.FA_ARRIVAL;
     }
 
+    public CodeType getFishingActivityTypeCode() {
+        return fishingActivityTypeCode;
+    }
+    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
+        this.fishingActivityTypeCode = fishingActivityTypeCode;
+    }
+    public CodeType getFaReportTypeCode() {
+        return faReportTypeCode;
+    }
+    public void setFaReportTypeCode(CodeType faReportTypeCode) {
+        this.faReportTypeCode = faReportTypeCode;
+    }
+    public DateTimeType getOccurrenceDateTime() {
+        return occurrenceDateTime;
+    }
+    public void setOccurrenceDateTime(DateTimeType occurrenceDateTime) {
+        this.occurrenceDateTime = occurrenceDateTime;
+    }
+    public CodeType getReasonCode() {
+        return reasonCode;
+    }
+    public void setReasonCode(CodeType reasonCode) {
+        this.reasonCode = reasonCode;
+    }
+    public List<FLUXLocation> getRelatedFLUXLocations() {
+        return relatedFLUXLocations;
+    }
+    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
+        this.relatedFLUXLocations = relatedFLUXLocations;
+    }
+    public List<CodeType> getFluxLocationTypeCodes() {
+        return fluxLocationTypeCodes;
+    }
+    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
+        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
+    }
+    public List<CodeType> getFishingGearRoleCodes() {
+        return fishingGearRoleCodes;
+    }
+    public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
+        this.fishingGearRoleCodes = fishingGearRoleCodes;
+    }
+    public List<IdType> getFishingTripIds() {
+        return fishingTripIds;
+    }
+    public void setFishingTripIds(List<IdType> fishingTripIds) {
+        this.fishingTripIds = fishingTripIds;
+    }
     public Map<String, List<FishingActivityWithIdentifiers>> getFaTypesPerTrip() {
         return faTypesPerTrip;
     }
-
     public void setFaTypesPerTrip(Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
         this.faTypesPerTrip = faTypesPerTrip;
+    }
+    public CodeType getFaReportPurposeCode() {
+        return faReportPurposeCode;
+    }
+    public void setFaReportPurposeCode(CodeType faReportPurposeCode) {
+        this.faReportPurposeCode = faReportPurposeCode;
     }
 }

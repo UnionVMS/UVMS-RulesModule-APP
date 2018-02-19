@@ -22,9 +22,9 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIde
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetFishingActivitiesForTripResponse;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetNonUniqueIdsResponse;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
@@ -78,7 +78,7 @@ public class RulesActivityServiceBean {
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
             return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
-        } catch (MessageException | ActivityModelMapperException | JMSException | JAXBException e) {
+        } catch (ActivityModelMapperException | JMSException | JAXBException | MessageException e) {
             log.error("[ERROR] while trying to check subscription permissions..", e);
         }
         return false;
@@ -103,7 +103,7 @@ public class RulesActivityServiceBean {
             String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
             getNonUniqueIdsResponse = ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse(message, jmsCorrelationId);
-        } catch (MessageException | ActivityModelMapperException e) {
+        } catch (ActivityModelMapperException | MessageException e) {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
         }
 
@@ -133,7 +133,7 @@ public class RulesActivityServiceBean {
             String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
             response = ActivityModuleResponseMapper.mapToGetFishingActivitiesForTripResponse(message, jmsCorrelationId);
-        } catch (MessageException | ActivityModelMapperException e) {
+        } catch (ActivityModelMapperException | MessageException e) {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
         }
 
@@ -171,18 +171,16 @@ public class RulesActivityServiceBean {
     }
 
     private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
-
         Map<ActivityTableType, List<IDType>> idsmap = new EnumMap<>(ActivityTableType.class);
+        idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, new ArrayList<IDType>());
         if (request == null) {
             return idsmap;
         }
-
         // FLUXReportDocument IDs
         FLUXReportDocument fluxReportDocument = request.getFLUXReportDocument();
         if (fluxReportDocument != null && CollectionUtils.isNotEmpty(fluxReportDocument.getIDS())) {
             idsmap.put(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
         }
-
         // FAReportDocument.RelatedFLUXReportDocument IDs and ReferencedID
         List<FAReportDocument> faReportDocuments = request.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
@@ -193,7 +191,7 @@ public class RulesActivityServiceBean {
                     idTypes.addAll(relatedFLUXReportDocument.getIDS());
                     idTypes.add(relatedFLUXReportDocument.getReferencedID());
                     idTypes.removeAll(Collections.singletonList(null));
-                    idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, idTypes);
+                    idsmap.get(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY).addAll(idTypes);
                 }
             }
         }

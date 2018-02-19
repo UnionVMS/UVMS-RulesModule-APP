@@ -14,12 +14,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMapperException;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +57,7 @@ public abstract class AbstractConfigCache {
     protected void initializeCache() {
         if (cache == null) {
             cache = CacheBuilder.newBuilder()
-                    .maximumSize(1000)
+                    .maximumSize(100)
                     .expireAfterWrite(1, TimeUnit.HOURS)
                     .build(new CacheLoader<String, Map<String, String>>() {
                                @Override

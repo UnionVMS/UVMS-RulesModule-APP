@@ -12,7 +12,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.MessageConstants;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
@@ -21,9 +22,12 @@ import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovem
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
 import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.RcvFluxResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaQueryEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
@@ -50,12 +54,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-@MessageDriven(mappedName = MessageConstants.RULES_MESSAGE_IN_QUEUE, activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = MessageConstants.CONNECTION_TYPE),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "destinationJndiName", propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE),
-        @ActivationConfigProperty(propertyName = "connectionFactoryJndiName", propertyValue = MessageConstants.CONNECTION_FACTORY)
+@MessageDriven(mappedName = MessageConstants.QUEUE_MODULE_RULES, activationConfig = {
+        @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
+        @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
+        @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
 })
 public class RulesEventConsumerBean implements MessageListener {
 
@@ -63,90 +65,99 @@ public class RulesEventConsumerBean implements MessageListener {
 
     @Inject
     @SetMovementReportReceivedEvent
-    Event<EventMessage> setMovementReportRecievedEvent;
+    private Event<EventMessage> setMovementReportRecievedEvent;
 
     @Inject
     @GetTicketsByMovementsEvent
-    Event<EventMessage> getTicketsByMovementsEvent;
+    private Event<EventMessage> getTicketsByMovementsEvent;
 
     @Inject
     @CountTicketsByMovementsEvent
-    Event<EventMessage> countTicketByMovementsEvent;
+    private Event<EventMessage> countTicketByMovementsEvent;
 
     @Inject
     @GetCustomRuleReceivedEvent
-    Event<EventMessage> getCustomRuleRecievedEvent;
+    private Event<EventMessage> getCustomRuleRecievedEvent;
 
     @Inject
     @GetTicketsAndRulesByMovementsEvent
-    Event<EventMessage> getTicketsAndRulesByMovementsEvent;
+    private Event<EventMessage> getTicketsAndRulesByMovementsEvent;
 
     @Inject
     @ValidateMovementReportReceivedEvent
-    Event<EventMessage> validateMovementReportReceivedEvent;
+    private Event<EventMessage> validateMovementReportReceivedEvent;
 
     @Inject
     @PingReceivedEvent
-    Event<EventMessage> pingReceivedEvent;
+    private Event<EventMessage> pingReceivedEvent;
 
     @Inject
     @SetFLUXFAReportMessageReceivedEvent
-    Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
+    private Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
+
+    @Inject
+    @SendFaReportEvent
+    private Event<EventMessage> sendFLUXFAReportMessageReceivedEvent;
 
     @Inject
     @SetFluxFaQueryMessageReceivedEvent
-    Event<EventMessage> setFaQueryReceivedEvent;
+    private Event<EventMessage> setFaQueryReceivedEvent;
+
+    @Inject
+    @SendFaQueryEvent
+    private Event<EventMessage> sendFaQueryReceivedEvent;
+
+    @Inject
+    @RcvFluxResponseEvent
+    private Event<EventMessage> rcvFluxResponse;
 
     @Inject
     @SetFLUXMDRSyncMessageReceivedEvent
-    Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
+    private Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
 
     @Inject
     @GetFLUXMDRSyncMessageResponseEvent
-    Event<EventMessage> getFluxMdrSynchMessageResponse;
+    private Event<EventMessage> getFluxMdrSynchMessageResponse;
 
     @Inject
     @ReceiveSalesQueryEvent
-    Event<EventMessage> receiveSalesQueryEvent;
+    private Event<EventMessage> receiveSalesQueryEvent;
 
     @Inject
     @ReceiveSalesReportEvent
-    Event<EventMessage> receiveSalesReportEvent;
+    private Event<EventMessage> receiveSalesReportEvent;
 
     @Inject
     @ReceiveSalesResponseEvent
-    Event<EventMessage> receiveSalesResponseEvent;
+    private Event<EventMessage> receiveSalesResponseEvent;
 
     @Inject
     @SendSalesReportEvent
-    Event<EventMessage> sendSalesReportEvent;
+    private Event<EventMessage> sendSalesReportEvent;
 
     @Inject
     @SendSalesResponseEvent
-    Event<EventMessage> sendSalesResponseEvent;
+    private Event<EventMessage> sendSalesResponseEvent;
 
     @Inject
     @GetValidationResultsByRawGuid
-    Event<EventMessage> getValidationResultsByRawMsgGuid;
+    private Event<EventMessage> getValidationResultsByRawMsgGuid;
 
     @Inject
     @ErrorEvent
-    Event<EventMessage> errorEvent;
+    private Event<EventMessage> errorEvent;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message message) {
         String id = UUID.randomUUID().toString();
-        MDC.put(MessageConstants.MDC_IDENTIFIER, id);
-
+        MDC.put("clientName", id);
         LOG.info("Message received in rules");
-
         TextMessage textMessage = (TextMessage) message;
         try {
-
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
-
-            switch (request.getMethod()) {
+            RulesModuleMethod method = request.getMethod();
+            switch (method) {
                 case SET_MOVEMENT_REPORT:
                     setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
                     break;
@@ -168,8 +179,17 @@ public class RulesEventConsumerBean implements MessageListener {
                 case SET_FLUX_FA_REPORT :
                     setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
                     break;
+                case SEND_FLUX_FA_REPORT :
+                    sendFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
                 case SET_FLUX_FA_QUERY :
                     setFaQueryReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case SEND_FLUX_FA_QUERY :
+                    sendFaQueryReceivedEvent.fire(new EventMessage(textMessage));
+                    break;
+                case RCV_FLUX_RESPONSE:
+                    rcvFluxResponse.fire(new EventMessage(textMessage));
                     break;
                 case SET_FLUX_MDR_SYNC_REQUEST :
                     setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
@@ -195,22 +215,20 @@ public class RulesEventConsumerBean implements MessageListener {
                 case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
                     getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
                     break;
-
                 default:
-                    LOG.error("[ Request method '{}' is not implemented ]", request.getMethod().name());
-                    errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + request.getMethod().name())));
+                    LOG.error("[ Request method '{}' is not implemented ]", method.name());
+                    errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));
                     break;
             }
-            if (request.getMethod() == null) {
+            if (method == null) {
                 LOG.error("[ Request method is null ]");
                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
             }
-
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
             errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
         } finally {
-            MDC.remove(MessageConstants.MDC_IDENTIFIER);
+            MDC.remove("clientName");
         }
     }
 

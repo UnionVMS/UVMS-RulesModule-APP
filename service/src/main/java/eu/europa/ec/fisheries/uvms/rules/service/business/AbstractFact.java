@@ -114,7 +114,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -181,12 +180,8 @@ public abstract class AbstractFact {
         if (valueToMatch == null || idType == null) {
             return false;
         }
-
-        if (idType != null && idType.getValue() != null && idType.getValue().startsWith(valueToMatch)) {
-            return true;
-        }
-
-        return false;
+        String idValue = idType.getValue();
+        return idValue != null && idValue.startsWith(valueToMatch);
     }
 
     /**
@@ -223,10 +218,8 @@ public abstract class AbstractFact {
         if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
-
         idTypes = new ArrayList<>(idTypes);
         CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
-
         for (String val : values) {
             for (IdType IdType : idTypes) {
                 if (val.equals(IdType.getSchemeId())) {
@@ -369,8 +362,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.trace("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            return false;
+            log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -390,8 +383,8 @@ public abstract class AbstractFact {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
-            log.error("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
-            return false;
+            log.debug("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
+            return true;
         }
         return false;
     }
@@ -492,7 +485,11 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        for (String val : valuesToMatch) {
+        codeTypes.removeAll(Collections.singleton(null));
+        List<String> valueList = Arrays.asList(valuesToMatch);
+        valueList.removeAll(Collections.singleton(null));
+
+        for (String val : valueList) {
             for (CodeType IdType : codeTypes) {
                 if (!val.equals(IdType.getListId())) {
                     return true;
@@ -761,7 +758,6 @@ public abstract class AbstractFact {
                 found++;
             }
         }
-
         return hits != found;
     }
 
@@ -805,7 +801,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
             }
         }
@@ -862,11 +858,11 @@ public abstract class AbstractFact {
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
-        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
     }
 
     public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
-        return valueIdTypeContainsAny(Arrays.asList(idType), valuesToMatch);
+        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
     }
 
     public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
@@ -903,7 +899,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
             for (CodeType codeType : codeTypes) {
@@ -920,7 +915,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        return value.compareTo(BigDecimal.ZERO) >= 0;
+        return value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
@@ -1009,9 +1004,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        for (NumericType type : list) {
-            if (type.getValue() == null) {
-                return true;
+        if(CollectionUtils.isNotEmpty(list)){
+            for (NumericType type : list) {
+                if (type.getValue() == null) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1157,12 +1154,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Check if value passed is present in the MDR list speified
+     * Does some thing in old style.
      *
-     * @param listName  - MDR list name to be ckecked against
-     * @param codeValue - This value will be checked in MDR list
-     * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isPresentInMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
@@ -1170,18 +1166,15 @@ public abstract class AbstractFact {
             return false;
         }
         List<String> values = MDRCacheHolder.getInstance().getList(anEnum);
-        if (CollectionUtils.isNotEmpty(values)) {
-            return values.contains(codeValue);
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
     /**
-     * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
+     * Does some thing in old style.
      *
-     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
-     * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
@@ -1207,12 +1200,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This function checks that all the CodeType values passed to the function exist in MDR code list or not
+     * Does some thing in old style.
      *
-     * @param listName      - Values passed would be checked agaist this MDR list
-     * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
-     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
 
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
@@ -1236,127 +1228,82 @@ public abstract class AbstractFact {
     }
 
     public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
-
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getListId()))
                 return false;
         }
-
         return true;
     }
 
 
     /**
-     * This function checks that all the IdType values passed to the function exist in MDR code list or not
+     * Does some thing in old style.
      *
-     * @param listName      - Values passed would be checked agaist this MDR list
-     * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
-     * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
-
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
-
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
-
         for (IdType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue()))
                 return false;
         }
-
         return true;
     }
-
-    public boolean isIdTypePresentInMDRList(List<IdType> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
-            return false;
-        }
-
-
-        for (IdType idType : ids) {
-            if (isIdTypePresentInMDRList(idType) == false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 
     /**
-     * This function checks that the IdType exist in MDR code list or not.
-     * The MDR list is defined by the property schemeId from the IdType
+     * Does some thing in old style.
      *
-     * @param id - IdType that will be checked against ListName
-     * @return true when it exists
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public boolean isIdTypePresentInMDRList(IdType id) {
         if (id == null) {
             return false;
         }
-
         String schemeId = id.getSchemeId();
         String value = id.getValue();
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, schemeId);
         if (anEnum == null) {
             log.error(THE_LIST + schemeId + DOESN_T_EXIST_IN_MDR_MODULE);
             return false;
         }
-
         List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
         return codeListValues.contains(value);
     }
 
-    public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
-        if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
-            return false;
-        }
-
-        for (IdType idType : idTypes) {
-            if (!isSchemeIdPresentInMDRList(listName, idType)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
+    /**
+     * Does some thing in old style.
+     *
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     */
+    @Deprecated
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
-        if (idType == null || StringUtils.isBlank(idType.getSchemeId())) {
-            return false;
-        }
-
-        return isPresentInMDRList(listName, idType.getSchemeId());
+        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId());
     }
 
     public boolean matchWithFluxTLExceptParties(List<IdType> idTypes, String... parties) {
         if (isEmpty(idTypes) || ArrayUtils.isEmpty(parties)) {
             return false;
         }
-
         List<String> partiesAllowedToSend = Arrays.asList(parties);
-
         for (IdType idType : idTypes) {
             String[] idTypeValueArray = getIdTypeValueArray(idType, ":");
 
@@ -1380,7 +1327,7 @@ public abstract class AbstractFact {
         return match;
     }
 
-    public boolean matchWithFluxTL(IdType idType) {
+    private boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
         if (idType != null) {
             String[] idValueArray = getIdTypeValueArray(idType, ":");
@@ -1389,7 +1336,6 @@ public abstract class AbstractFact {
                 match = StringUtils.equals(idValueArray[0], senderOrReceiver);
             }
         }
-
         return match;
     }
 
@@ -1397,9 +1343,7 @@ public abstract class AbstractFact {
         if (StringUtils.isBlank(separator)) {
             return null;
         }
-
         String[] idValueArray = null;
-
         if (idType != null && idType.getValue()!=null) {
             try {
                 idValueArray = idType.getValue().split(separator);
@@ -1408,71 +1352,83 @@ public abstract class AbstractFact {
                 return null;
             }
         }
-
         return idValueArray;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> additionalObjectList) {
-        if (CollectionUtils.isEmpty(additionalObjectList)) {
+    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+        if (CollectionUtils.isEmpty(assetList)) {
+            return false;
+        }
+
+        String vesselCountryIdValue = vesselCountryId.getValue();
+        for (IdTypeWithFlagState asset : assetList){
+            if (isSameFlagState(vesselCountryIdValue, asset)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Boolean isSameFlagState(String vesselCountryIdValue, IdTypeWithFlagState asset) {
+        if (asset != null){
+            String flagState = asset.getFlagState();
+            return flagState != null && flagState.equals(vesselCountryIdValue);
+        }
+        return false;
+    }
+
+    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+        if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
         for (IdType idType : vesselIds) {
             listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
         }
-
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
-            if (!additionalObjectList.contains(elemFromListToBeMatched)) {
+            if (!assetList.contains(elemFromListToBeMatched)) {
                 return false;
             }
         }
-
         return true;
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
-        return isTypeCodeValuePresentInList(listName, Arrays.asList(typeCode));
+        return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode));
     }
 
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
-
-        if (typeCodeValue == null) {
-            return false;
-        }
-
-        return isPresentInMDRList(listName, typeCodeValue);
+        return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue);
     }
 
     public String getValueForListId(String listId, List<CodeType> typeCodes) {
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
         }
-
         for (CodeType typeCode : typeCodes) {
             String typeCodeListId = typeCode.getListId();
-
             if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
                 return typeCode.getValue();
             }
         }
-
         return null;
+    }
+
+    public boolean stringEquals(String str1, String str2){
+        return StringUtils.equals(str1, str2);
     }
 
     public String getValueForSchemeId(String schemeId, List<IdType> ids) {
         if (StringUtils.isBlank(schemeId) || CollectionUtils.isEmpty(ids)) {
             return null;
         }
-
         for (IdType id : ids) {
             String idsSchemeId = id.getSchemeId();
-
             if (StringUtils.isNotBlank(idsSchemeId) && idsSchemeId.equals(schemeId)) {
                 return id.getValue();
             }
         }
-
         return null;
     }
 
@@ -1501,12 +1457,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
+     * Does some thing in old style.
      *
-     * @param listName  MDR list name to be matched with
-     * @param codeValue value for CODE column to be matched with
-     * @return DATATYPE column value for the matching record
+     * @deprecated use {@link #MDRCacheRuleService()} instead.
      */
+    @Deprecated
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
@@ -1542,28 +1497,30 @@ public abstract class AbstractFact {
         return StringUtils.EMPTY;
     }
 
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
-        boolean isMoreTheOneDeclaration = false;
-        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds)) {
-            return isMoreTheOneDeclaration;
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
+                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
+                                                         FishingActivityType faType) {
+        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
+            return false;
         }
+        boolean moreThenOneEncounter = false;
         for (IdType idType : specifiedFishingTripIds) {
             List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
             if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
                 continue;
             }
-            int declarationCounter = 0;
+            int matchedTrips = 0;
             for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
-                if (FishingActivityType.DEPARTURE.name().equals(fishTrpWIdent.getFaType())) {
-                    declarationCounter++;
+                if (faType.name().equals(fishTrpWIdent.getFaType())) {
+                    matchedTrips++;
                 }
             }
-            if (declarationCounter > 1) {
-                isMoreTheOneDeclaration = true;
+            if (matchedTrips > 1) {
+                moreThenOneEncounter = true;
                 break;
             }
         }
-        return isMoreTheOneDeclaration;
+        return moreThenOneEncounter;
     }
 
     /**

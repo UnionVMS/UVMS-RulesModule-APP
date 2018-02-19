@@ -16,19 +16,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 
-/**
- * Created by padhyad on 4/21/2017.
- */
 public class StructuredAddressFact extends AbstractFact {
 
     private String postcodeCode;
-
+    private String postalArea;
     private String streetName;
-
     private String cityName;
-
     private IdType countryID;
-
     private String plotIdentification;
 
     public StructuredAddressFact() {
@@ -48,6 +42,14 @@ public class StructuredAddressFact extends AbstractFact {
         this.postcodeCode = postcodeCode;
     }
 
+    public String getPostalArea() {
+        return postalArea;
+    }
+
+    public void setPostalArea(String postalArea) {
+        this.postalArea = postalArea;
+    }
+
     public String getStreetName() {
         return streetName;
     }
@@ -64,20 +66,20 @@ public class StructuredAddressFact extends AbstractFact {
         this.cityName = cityName;
     }
 
-    public String getPlotIdentification() {
-        return plotIdentification;
-    }
-
-    public void setPlotIdentification(String plotIdentification) {
-        this.plotIdentification = plotIdentification;
-    }
-
     public IdType getCountryID() {
         return countryID;
     }
 
     public void setCountryID(IdType countryID) {
         this.countryID = countryID;
+    }
+
+    public String getPlotIdentification() {
+        return plotIdentification;
+    }
+
+    public void setPlotIdentification(String plotIdentification) {
+        this.plotIdentification = plotIdentification;
     }
 
     // TODO test
@@ -334,4 +336,5 @@ public class StructuredAddressFact extends AbstractFact {
 
         return valueIdTypeContainsAny(countryID, validCountries);
     }
+
 }

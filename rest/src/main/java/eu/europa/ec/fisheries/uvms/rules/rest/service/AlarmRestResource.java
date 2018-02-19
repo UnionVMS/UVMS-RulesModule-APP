@@ -48,10 +48,10 @@ public class AlarmRestResource {
     private final static Logger LOG = LoggerFactory.getLogger(AlarmRestResource.class);
 
     @EJB
-    RulesService rulesService;
+    private RulesService rulesService;
 
     @EJB
-    ValidationService validationService;
+    private ValidationService validationService;
 
     @Context
     private HttpServletRequest request;

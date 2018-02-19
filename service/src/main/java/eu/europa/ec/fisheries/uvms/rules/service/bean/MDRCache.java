@@ -11,27 +11,29 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+
 import static java.util.Collections.emptyList;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.jms.TextMessage;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.exception.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -58,13 +60,12 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-
     @PostConstruct
     public void init(){
         cache = CacheBuilder.newBuilder()
-                .maximumSize(150)
-                .expireAfterWrite(1, TimeUnit.HOURS)
                 .refreshAfterWrite(1, TimeUnit.HOURS)
+                .maximumSize(100)
+                .initialCapacity(80)
                 .recordStats()
                 .build(
                         new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
@@ -74,6 +75,7 @@ public class MDRCache {
                             }
                         }
                 );
+
         //loadAllMdrCache();
     }
 
@@ -101,24 +103,31 @@ public class MDRCache {
     }
 
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<ObjectRepresentation> result = emptyList();
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
+
+        long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
+        if (elapsed > 0.25){
+            log.info("Loading " + acronymType + " took " + stopwatch);
+        }
+
         return result;
     }
 
     @SneakyThrows
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
-        String s = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
-        TextMessage message = consumer.getMessage(s, TextMessage.class);
+        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
+        TextMessage message = consumer.getMessage(corrId, TextMessage.class);
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             return response.getDataSets();
 
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }

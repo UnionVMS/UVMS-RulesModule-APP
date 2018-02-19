@@ -54,6 +54,9 @@ public class RulesEngineBeanTest {
     @InjectMocks
     RulesEngineBean rulesEngineBean;
 
+    @InjectMocks
+    RulesExtraValuesMapGeneratorBean extraValueGenerator;
+
     @Mock
     MDRCacheServiceBean mdrCacheServiceBean;
 
@@ -91,7 +94,7 @@ public class RulesEngineBeanTest {
             }
         }).when(templateEngine).evaluateFacts(Mockito.anyList());
 
-        List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
+        List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage());
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);
         assertFalse(fact.isOk());
@@ -117,11 +120,8 @@ public class RulesEngineBeanTest {
 
     @Test
     public void testGenerateExtraValueMap(){
-
-        Map<ExtraValueType, Object> extraValueTypeObjectMap = rulesEngineBean.generateExtraValueMap(BusinessObjectType.FLUX_ACTIVITY_REQUEST_MSG, getFluxFaReportMessage());
-
+        Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage());
         assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_NON_UNIQUE_IDS)).size());
         assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_WITH_TRIP_IDS)).size());
-
     }
 }

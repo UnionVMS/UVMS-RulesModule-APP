@@ -23,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.ejb.EJB;
@@ -80,14 +82,14 @@ public class RulesPreProcessBean {
         Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
         ValidationResultDto validationResult;
         try {
-            validationResult = getValidationResultIfExist(getIds(fluxfaReportMessage.getFLUXReportDocument()));
+            validationResult = getValidationResultIfExist(getIdsFromFluxFaReportDocument(fluxfaReportMessage.getFLUXReportDocument()));
             if (validationResult != null && !validationResult.isOk()) {
                 isContinueValidation = false;
-            } else if (fluxfaReportMessage.getFAReportDocuments() != null) {
+            } else if (CollectionUtils.isNotEmpty(fluxfaReportMessage.getFAReportDocuments())) {
                 Iterator it = fluxfaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
                     FAReportDocument faReportDocument = (FAReportDocument) it.next();
-                    ValidationResultDto validationResultFa = getValidationResultIfExist(getIds(faReportDocument.getRelatedFLUXReportDocument()));
+                    ValidationResultDto validationResultFa = getValidationResultIfExist(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
                         it.remove();
                         addToValidationResult(validationResult, validationResultFa);
@@ -105,6 +107,21 @@ public class RulesPreProcessBean {
         return validationResultMap;
     }
 
+    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXResponseMessage fluxResponseMessage) throws RulesServiceException {
+        Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
+        ValidationResultDto validationResult;
+        try {
+            FLUXResponseDocument fluxRespDoc = fluxResponseMessage.getFLUXResponseDocument();
+            if (fluxRespDoc != null) {
+                validationResult = getValidationResultIfExist(mapToIdsStrList(fluxRespDoc.getIDS()));
+                validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
+            }
+        } catch (RulesModelException e) {
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+        return validationResultMap;
+    }
+
     private void addToValidationResult(ValidationResultDto globalValidationResult, ValidationResultDto validationResultFa) {
         if (globalValidationResult == null) {
             globalValidationResult = validationResultFa;
@@ -115,11 +132,14 @@ public class RulesPreProcessBean {
         globalValidationResult.getValidationMessages().addAll(validationResultFa.getValidationMessages());
     }
 
-    private List<String> getIds(FLUXReportDocument fluxReportDocument) {
+    private List<String> getIdsFromFluxFaReportDocument(FLUXReportDocument fluxReportDocument) {
         if (fluxReportDocument == null) {
             return Collections.emptyList();
         }
-        List<IDType> idTypes = fluxReportDocument.getIDS();
+        return mapToIdsStrList(fluxReportDocument.getIDS());
+    }
+
+    private List<String> mapToIdsStrList(List<IDType> idTypes) {
         List<String> ids = new ArrayList<>();
         for (IDType idType : idTypes) {
             ids.add(idType.getValue().concat("_").concat(idType.getSchemeID()));

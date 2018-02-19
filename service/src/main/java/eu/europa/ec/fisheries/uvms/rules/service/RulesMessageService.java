@@ -22,13 +22,13 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import javax.ejb.Local;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-
-import javax.ejb.Local;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -36,17 +36,21 @@ import javax.ejb.Local;
 @Local
 public interface RulesMessageService {
 
-    void evaluateFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+    void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
-    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
+    void evaluateSendFaQueryRequest(SetFaQueryMessageRequest request);
+
+    void evaluateSetFluxFaResponseRequest(SetFluxFaResponseMessageRequest request);
+
+    FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult);
 
-    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage);
+    FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage);
 
-    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
+    FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
 
-    void sendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType);
+    void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType);
 
     void mapAndSendFLUXMdrRequestToExchange(String request);
 
@@ -64,5 +68,7 @@ public interface RulesMessageService {
 
     String getValidationsForRawMessageGuid(String guid, String type);
 
-    void evaluateFaQueryRequest(SetFaQueryMessageRequest request);
+    void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request);
+
+    void evaluateSendFaReportMessage(SetFLUXFAReportMessageRequest request);
 }

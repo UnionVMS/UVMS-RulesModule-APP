@@ -8,10 +8,15 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -24,9 +29,11 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Singleton
 public class SalesRulesServiceBean implements SalesRulesService {
 
-
     @EJB
     SalesService salesService;
+
+    @EJB
+    private MDRCacheRuleService mdrService;
 
     @EJB
     ActivityService activityService;
@@ -70,10 +77,9 @@ public class SalesRulesServiceBean implements SalesRulesService {
         List<SalesDocumentType> includedSalesDocuments = fact.getSalesReports().get(0).getIncludedSalesDocuments();
         for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
             for (SalesEventType salesEventType : includedSalesDocument.getSpecifiedSalesEvents()) {
-                if (salesEventType.getOccurrenceDateTime() != null && salesEventType.getOccurrenceDateTime().getDateTime() != null) {
-                    if (isMoreThan48HoursLater(receptionDate, salesEventType.getOccurrenceDateTime().getDateTime())) {
-                        return true;
-                    }
+                if (salesEventType.getOccurrenceDateTime() != null && salesEventType.getOccurrenceDateTime().getDateTime() != null
+                        && isMoreThan48HoursLater(receptionDate, salesEventType.getOccurrenceDateTime().getDateTime())) {
+                    return true;
                 }
             }
         }
@@ -229,6 +235,39 @@ public class SalesRulesServiceBean implements SalesRulesService {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isSalesQueryParameterValueNotValid(CodeType typeCode, CodeType valueCode){
+        if (typeCode == null || valueCode == null){
+            return true;
+        }
+
+        switch (typeCode.getValue()){
+            case "ROLE":
+                return !mdrService.isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue());
+            case "FLAG":
+                return !mdrService.isPresentInMDRList("TERRITORY", valueCode.getValue());
+            case "PLACE":
+                return !mdrService.isPresentInMDRList("LOCATION", valueCode.getValue());
+            default:
+                return true;
+        }
+    }
+
+    @Override
+    public boolean isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(SalesDocumentFact fact) {
+        Optional<String> currency = fact.getCurrencyCodeIfExists();
+        Optional<String> country = fact.getCountryIfExists();
+        Optional<DateTime> occurrence = fact.getOccurrenceIfPresent();
+
+        if (currency.isPresent() && country.isPresent() && occurrence.isPresent()) {
+            List<ObjectRepresentation> territoriesAndTheirCurrencies = mdrService.getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+            return ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(currency.get(), "placesCode", country.get(), territoriesAndTheirCurrencies);
+            //TODO: take only the MDR lists that were active on the day of the occurrence into account
+        } else {
+            return false;
+        }
     }
 
 }
