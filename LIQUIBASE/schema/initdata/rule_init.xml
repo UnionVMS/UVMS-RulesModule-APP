@@ -1907,19 +1907,6 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10025"/>
-            <column name="br_id" value="SALE-L00-00-0064"/>
-            <column name="expression" value="totalSalesPrice == null"/>
-            <column name="note" value="Sales Price in AAPProduct must be present."/>
-            <column name="message" value="Sales Price in AAPProduct must be present."/>
-            <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="totalSalesPrice"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="10048"/>
             <column name="br_id" value="SALE-L00-00-0065"/>
             <column name="expression" value="isEmpty(originFLUXLocations)"/>
