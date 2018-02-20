@@ -8358,15 +8358,16 @@
         <insert tableName="rule">
             <column name="rule_id" value="10905"/>
             <column name="br_id" value="SALE-L03-00-0030"/>
-            <column name="expression" value="salesService.isIdNotUnique($fact)"/>
+            <column name="expression" value="salesService.isOriginalAndisIdNotUnique($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The reference must be unique"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
-            <column name="template_id" value="1004"/>
+            <column name="template_id" value="1000"/>
             <column name="property_names" value="ids"/>
-            <column name="disabled" value="true"/> <!-- disabled until commission decides to disable this rule in case of a correction -->
+            <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>
             <column name="br_id" value="SALE-L03-00-0031"/>
