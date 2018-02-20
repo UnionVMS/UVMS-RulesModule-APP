@@ -3145,7 +3145,7 @@
             <column name="rule_id" value="158"/>
             <column name="br_id" value="FA-L01-00-0158"/>
             <column name="expression"
-                    value="unitQuantity != null &amp;&amp; unitQuantity.value != null &amp;&amp; !isPositive(unitQuantity.value)"/>
+                    value="unitQuantity != null &amp;&amp; unitQuantity.value != null &amp;&amp; !isPositiveIntegerValue(unitQuantity.value)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="Units (number of fish) must be a positive integer."/>
             <column name="level" value="L01"/>
