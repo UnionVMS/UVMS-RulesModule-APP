@@ -2011,7 +2011,7 @@
             <column name="note" value="Start in Delimited Period must be present."/>
             <column name="message" value="Start in Delimited Period must be present."/>
             <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1028"/>
             <column name="property_names" value="startDateTime"/>
