@@ -844,7 +844,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val)) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0 || !isIntegerValue(val)) {
                 return false;
             }
         }
@@ -857,7 +857,10 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
-        return isIntegerValue(bigDecimal) && (bigDecimal.signum() == 0 || bigDecimal.signum() == 1);
+        if (bigDecimal == null || BigDecimal.ZERO.compareTo(bigDecimal) >= 0 || !isIntegerValue(bigDecimal)) {
+            return false;
+        }
+        return true;
     }
 
 
@@ -1142,6 +1145,7 @@ public abstract class AbstractFact {
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
+        JFO("^(19|20)[0-9][0-9]-\\d{3}"),
         //EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}"),
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),

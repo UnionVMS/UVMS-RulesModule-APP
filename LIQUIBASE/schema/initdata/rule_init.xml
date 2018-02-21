@@ -3149,7 +3149,7 @@
             <column name="rule_id" value="158"/>
             <column name="br_id" value="FA-L01-00-0158"/>
             <column name="expression"
-                    value="unitQuantity != null &amp;&amp; unitQuantity.value != null &amp;&amp; !isPositive(unitQuantity.value)"/>
+                    value="unitQuantity != null &amp;&amp; unitQuantity.value != null &amp;&amp; !isPositiveIntegerValue(unitQuantity.value)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="Units (number of fish) must be a positive integer."/>
             <column name="level" value="L01"/>
@@ -4697,7 +4697,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="139"/>
             <column name="br_id" value="FA-L01-00-0139"/>
-            <column name="expression" value="affectedQuantity != null &amp;&amp; !isPositive(affectedQuantity.value)"/>
+            <column name="expression" value="affectedQuantity != null &amp;&amp; affectedQuantity.value != null &amp;&amp; !isPositiveIntegerValue(affectedQuantity.value)"/>
             <column name="note" value="Affected quantity must be greater than 0"/>
             <column name="message" value="Affected quantity must be a positive integer."/>
             <column name="level" value="L01"/>
@@ -4833,7 +4833,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="351"/>
             <column name="br_id" value="FA-L01-00-0351"/>
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.listId != &quot;FA_QUERY_TYPE&quot;"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != &quot;FA_QUERY_TYPE&quot;"/>
             <column name="note" value="FA_Query TypeCode@listID must be FA_QUERY_TYPE."/>
             <column name="message" value="TypeCode has an invalid listID."/>
             <column name="level" value="L01"/>
