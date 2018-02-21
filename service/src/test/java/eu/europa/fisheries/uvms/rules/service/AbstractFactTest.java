@@ -15,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +41,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -100,6 +100,21 @@ public class AbstractFactTest {
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithNegative(){
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("-1")));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithPositive(){
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal("1")));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithNull(){
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(0)));
     }
 
     @Test

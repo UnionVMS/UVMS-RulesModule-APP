@@ -818,7 +818,7 @@ public abstract class AbstractFact {
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val)) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0 || !isIntegerValue(val)) {
                 return false;
             }
         }
@@ -831,7 +831,10 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
-        return isIntegerValue(bigDecimal) && (bigDecimal.signum() == 0 || bigDecimal.signum() == 1);
+        if (bigDecimal == null || BigDecimal.ZERO.compareTo(bigDecimal) >= 0 || !isIntegerValue(bigDecimal)) {
+            return false;
+        }
+        return true;
     }
 
 
