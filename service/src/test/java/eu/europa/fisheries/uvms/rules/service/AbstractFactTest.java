@@ -103,6 +103,18 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testValidFormatHappy(){
+        assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+        assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+    }
+
+    @Test
     public void testIsPositiveIntegerValueWithNegative(){
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal("-1")));
     }
