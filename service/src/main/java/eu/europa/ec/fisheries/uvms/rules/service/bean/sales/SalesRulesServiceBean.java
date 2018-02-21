@@ -273,9 +273,11 @@ public class SalesRulesServiceBean implements SalesRulesService {
     @Override
     public boolean isOriginalAndisIdNotUnique(SalesFLUXSalesReportMessageFact fact) {
         if (fact == null || isEmpty(fact.getSalesReports()) || fact.getSalesReports().get(0) == null
-                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments())
-                || fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0) == null
                 || fact.getFLUXReportDocument() == null || fact.getFLUXReportDocument().getPurpose() == null
+                || isBlank(fact.getFLUXReportDocument().getPurpose().getValue())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS())
+                || isBlank(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue())
                 ) {
             return false;
         }
