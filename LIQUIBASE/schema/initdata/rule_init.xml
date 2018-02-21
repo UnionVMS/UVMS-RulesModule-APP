@@ -4402,7 +4402,7 @@
             <column name="rule_id" value="373"/>
             <column name="br_id" value="FA-L02-00-0373"/>
             <column name="expression"
-                    value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; !mdrService.isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID.schemId))"/>
+                    value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp; !mdrService.isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID.schemeId))"/>
             <column name="note"
                     value="FA_QueryParameter ValueID must be value from the list FLUX_VESSEL_ID if CodeType is VESSELID"/>
             <column name="message"
@@ -4688,7 +4688,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="139"/>
             <column name="br_id" value="FA-L01-00-0139"/>
-            <column name="expression" value="affectedQuantity != null &amp;&amp; !isPositive(affectedQuantity.value)"/>
+            <column name="expression" value="affectedQuantity != null &amp;&amp; affectedQuantity.value != null &amp;&amp; !isPositiveIntegerValue(affectedQuantity.value)"/>
             <column name="note" value="Affected quantity must be greater than 0"/>
             <column name="message" value="Affected quantity must be a positive integer."/>
             <column name="level" value="L01"/>
