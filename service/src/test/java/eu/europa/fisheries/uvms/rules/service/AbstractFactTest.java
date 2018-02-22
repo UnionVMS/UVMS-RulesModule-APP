@@ -713,15 +713,12 @@ public class AbstractFactTest {
 
     @Test
     public void testIsNumeric() {
-
         NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-
-
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
         boolean result = fact.isNumeric(numericTypes);
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
