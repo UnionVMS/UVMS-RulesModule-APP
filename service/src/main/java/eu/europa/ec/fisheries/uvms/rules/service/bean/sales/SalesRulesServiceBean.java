@@ -271,7 +271,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
     }
 
     @Override
-    public boolean isOriginalAndisIdNotUnique(SalesFLUXSalesReportMessageFact fact) {
+    public boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact) {
         if (fact == null || isEmpty(fact.getSalesReports()) || fact.getSalesReports().get(0) == null
                 || fact.getFLUXReportDocument() == null || fact.getFLUXReportDocument().getPurpose() == null
                 || isBlank(fact.getFLUXReportDocument().getPurpose().getValue())
