@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -26,7 +25,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagSta
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import java.math.BigDecimal;
@@ -37,13 +35,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -782,6 +778,13 @@ public abstract class AbstractFact {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
+    /**
+     * Returns true when value is not found.
+     *
+     * @param codeTypes
+     * @param valuesToMatch
+     * @return
+     */
     public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -1504,32 +1507,6 @@ public abstract class AbstractFact {
             }
         }
         return StringUtils.EMPTY;
-    }
-
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
-                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
-                                                         FishingActivityType faType) {
-        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
-            return false;
-        }
-        boolean moreThenOneEncounter = false;
-        for (IdType idType : specifiedFishingTripIds) {
-            List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
-            if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
-                continue;
-            }
-            int matchedTrips = 0;
-            for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
-                if (faType.name().equals(fishTrpWIdent.getFaType())) {
-                    matchedTrips++;
-                }
-            }
-            if (matchedTrips > 1) {
-                moreThenOneEncounter = true;
-                break;
-            }
-        }
-        return moreThenOneEncounter;
     }
 
     /**

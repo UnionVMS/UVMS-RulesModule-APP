@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -239,14 +240,30 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_TRANSPORT_MEANS).storeInRepo(faReportDocumentFact, SPECIFIED_VESSEL_TRANSPORT_MEANS_PROP);
 
         faReportDocumentFact.setReferencedID(referencedIdFromRelatedFLUXReportDocument(faReportDocument));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact,
-                REFERENCED_ID_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact, REFERENCED_ID_PROP);
 
         List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
         if (CollectionUtils.isNotEmpty(specifiedFishingActivities)) {
             faReportDocumentFact.setSpecifiedFishingActivities(new ArrayList<>(specifiedFishingActivities));
             faReportDocumentFact.setSpecifiedFishingActivitiesTypes(mapFishingActivityTypes(specifiedFishingActivities));
             faReportDocumentFact.setSpecifiedAndRealtedFishActOccurrenceDateTimes(mapOccurrenceDateTimesFromFishingActivities(specifiedFishingActivities));
+
+            // Added for checking that only one DECLARATION of DEPARTURE/ARRIVAL exists in xml and Activity (FA-L03-00-0306, FA-L03-00-0241)
+            List<IdType> faSpecifiedFishingTripIds = new ArrayList<>();
+            for (FishingActivity specFishAct : specifiedFishingActivities) {
+                faSpecifiedFishingTripIds.addAll(mapToIdType(fishingActivitySpecifiedFishingTripIDS(specFishAct, faReportDocument)));
+            }
+            faReportDocumentFact.setFaSpecifiedFishingTripIds(faSpecifiedFishingTripIds);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP, ID).storeInRepo(faReportDocumentFact, "faSpecifiedFishingTripIds");
+
+            faReportDocumentFact.setFaTypesPerTrip(fishingActivitiesWithTripIds);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, TYPE_CODE).storeInRepo(faReportDocumentFact, "faTypesPerTrip");
+
+            faReportDocumentFact.setFishingActivitiesArrivalDeclarationList(mapToDefinedFishingActivitiesForFaTypeAndTripId(faReportDocument.getSpecifiedFishingActivities(), "ARRIVAL"));
+            xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(faReportDocumentFact, "fishingActivitiesArrivalDeclarationList");
+
+            faReportDocumentFact.setFishingActivitiesDepartureDeclarationList(mapToDefinedFishingActivitiesForFaTypeAndTripId(faReportDocument.getSpecifiedFishingActivities(), "DEPARTURE"));
+            xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(faReportDocumentFact, "fishingActivitiesDepartureDeclarationList");
         }
         // Even if specifiedFishingActivities is empty we still need to map the xpath, cause those properties have rules being applied to them,
         // and if the rule fails (ex. cause of the property being empty or null) then we still need to return the xpath to what failed.
@@ -2038,6 +2055,32 @@ public class ActivityFactMapper {
             }
         }
         return idTypeList;
+    }
+
+    private Map<String, Integer> mapToDefinedFishingActivitiesForFaTypeAndTripId(List<FishingActivity> fishingActList, String type) {
+        if (fishingActList == null) {
+            return MapUtils.EMPTY_MAP;
+        }
+        Map<String, Integer> tripMapInfo = new HashMap<>();
+        for (FishingActivity activity : fishingActList) {
+            FishingTrip specifiedFishingTrip = activity.getSpecifiedFishingTrip();
+            final un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = activity.getTypeCode();
+            if(typeCode != null && StringUtils.equals(typeCode.getValue(), type)){
+                List<IDType> tripIds = specifiedFishingTrip != null ?  specifiedFishingTrip.getIDS() : null;
+                if(CollectionUtils.isNotEmpty(tripIds)){
+                    for (IDType tripId : tripIds) {
+                        String trpIdStr = tripId.getValue();
+                        Integer nrOfArrivalsForThisTrip = tripMapInfo.get(trpIdStr);
+                        if (nrOfArrivalsForThisTrip != null) {
+                            tripMapInfo.put(trpIdStr, nrOfArrivalsForThisTrip + 1);
+                        } else {
+                            tripMapInfo.put(trpIdStr, 1);
+                        }
+                    }
+                }
+            }
+        }
+        return tripMapInfo;
     }
 
     private List<CodeType> mapToCodeTypes(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
