@@ -223,6 +223,8 @@
             <column name="property_names" value="faReportDocuments"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="290"/>
             <column name="br_id" value="FA-L02-00-0290"/>
@@ -239,6 +241,7 @@
             <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="291"/>
             <column name="br_id" value="FA-L00-00-0291"/>
@@ -410,6 +413,8 @@
             <column name="property_names" value="specifiedFLUXCharacteristicsTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="285"/>
             <column name="br_id" value="FA-L02-00-0285"/>
@@ -426,6 +431,7 @@
             <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="286"/>
             <column name="br_id" value="FA-L02-00-0286"/>
@@ -492,6 +498,8 @@
             <column name="property_names" value="specifiedFACatchesTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="233"/>
             <column name="br_id" value="FA-L02-00-0233"/>
@@ -508,6 +516,8 @@
             <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="234"/>
             <column name="br_id" value="FA-L00-00-0234"/>
@@ -551,6 +561,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="242"/>
             <column name="br_id" value="FA-L01-00-0242"/>
@@ -565,6 +576,7 @@
             <column name="property_names" value="relatedFLUXLocationTypeCodes"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
 
         <insert tableName="rule">
             <column name="rule_id" valueNumeric="237"/>
@@ -639,6 +651,8 @@
             <column name="property_names" value="faSpecifiedFishingTripIds"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="245"/>
             <column name="br_id" value="FA-L02-00-0245"/>
@@ -655,6 +669,8 @@
             <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
+
         <insert tableName="rule">
             <column name="rule_id" value="247"/>
             <column name="br_id" value="FA-L01-00-0247"/>
@@ -928,6 +944,8 @@
             <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
+
         <insert tableName="rule">
             <column name="rule_id" value="24"/>
             <column name="rule_id" value="24"/>
@@ -942,6 +960,7 @@
             <column name="property_names" value="relatedReportIDs"/>
             <column name="disabled" value="true"/> <!-- UNIONVMS-2865 -->
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="25"/>
             <column name="br_id" value="FA-L00-00-0025"/>
@@ -1392,6 +1411,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
+        <!-- removed since 1.2.2
         <insert tableName="rule">
             <column name="rule_id" value="63"/>
             <column name="br_id" value="FA-L03-00-0063"/>
@@ -1406,6 +1426,7 @@
             <column name="property_names" value="ids"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
@@ -1420,7 +1441,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="65"/>
@@ -1436,7 +1457,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="66"/>
@@ -1451,7 +1472,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="67"/>
@@ -2554,6 +2575,8 @@
             <column name="property_names" value="specifiedFaCatches"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- remoeved since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="310"/>
             <column name="br_id" value="FA-L02-00-0310"/>
@@ -2568,6 +2591,8 @@
             <column name="property_names" value="faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
+
         <insert tableName="rule">
             <column name="rule_id" value="313"/>
             <column name="br_id" value="FA-L02-00-0313"/>
@@ -2972,6 +2997,8 @@
             <column name="property_names" value="rfmo"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removes since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="500"/>
             <column name="br_id" value="FA-L00-00-0500"/>
@@ -2987,6 +3014,8 @@
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
             <column name="disabled" value="true"/>
         </insert>
+-->
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="501"/>
             <column name="br_id" value="FA-L00-00-0501"/>
@@ -3002,6 +3031,8 @@
             <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
             <column name="br_id" value="FA-L02-00-0218"/>
@@ -3692,6 +3723,7 @@
             <column name="disabled" value="false"/>
         </insert>
 
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="188"/>
             <column name="br_id" value="FA-L02-00-0188"/>
@@ -3709,6 +3741,9 @@
                     value="resultAAPProductUnitQuantity,typeCode,resultAAPProductPackagingTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
+
         <insert tableName="rule">
             <column name="rule_id" valueNumeric="184"/>
             <column name="br_id" value="FA-L02-00-0184"/>
@@ -3791,6 +3826,8 @@
             <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="127"/>
             <column name="br_id" value="FA-L00-00-0127"/>
@@ -3804,6 +3841,9 @@
             <column name="property_names" value="value"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
+        
         <insert tableName="rule">
             <column name="rule_id" value="128"/>
             <column name="br_id" value="FA-L00-00-0128"/>
@@ -3888,6 +3928,8 @@
             <column name="property_names" value="valueMeasure"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="300"/>
             <column name="br_id" value="FA-L02-00-0300"/>
@@ -3904,6 +3946,7 @@
             <column name="property_names" value="faReportTypeCode, fishingActivityTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="301"/>
             <column name="br_id" value="FA-L00-00-0301"/>
@@ -4152,6 +4195,8 @@
             <column name="property_names" value="fluxCharacteristicTypeCodes,fluxLocationTypeCodes,specifiedFlCharSpecifiedLocatIDs"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L00-00-0449"/>
@@ -4168,6 +4213,8 @@
             <column name="property_names" value="specifiedFLUXCharacteristics"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="4401"/>
             <column name="br_id" value="FA-L00-00-0440"/>
@@ -4449,6 +4496,8 @@
             <column name="property_names" value="faCatchTypeCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="330"/>
             <column name="br_id" value="FA-L02-00-0330"/>
@@ -4465,6 +4514,7 @@
             <column name="property_names" value="faReportDocumentTypeCode, fishingActivityTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="332"/>
             <column name="br_id" value="FA-L02-00-0332"/>
@@ -4540,6 +4590,8 @@
             <column name="property_names" value="fluxCharacteristicTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="337"/>
             <column name="br_id" value="FA-L02-00-0337"/>
@@ -4554,6 +4606,7 @@
             <column name="property_names" value="fluxCharacteristicValueQuantity"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
@@ -4583,6 +4636,8 @@
             <column name="property_names" value="flapDocumentIdTypes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="341"/>
             <column name="br_id" value="FA-L02-00-0341"/>
@@ -4597,6 +4652,7 @@
             <column name="property_names" value="flapDocumentIdTypes"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="342"/>
             <column name="br_id" value="FA-L02-00-0342"/>
@@ -4644,6 +4700,8 @@
             <column name="property_names" value="specifiedFACatches"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="345"/>
             <column name="br_id" value="FA-L02-00-0345"/>
@@ -4659,6 +4717,7 @@
             <column name="property_names" value="faCatchSpecifiedFLUXLocationsTypeCodes"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="448"/>
             <column name="br_id" value="FA-L02-00-0448"/>
@@ -5106,8 +5165,10 @@
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
             <column name="template_id" value="14"/>
             <column name="property_names" value="simpleFAQueryParameterTypeCodes"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
+
+        <!--
         <insert tableName="rule">
             <column name="rule_id" value="420"/>
             <column name="br_id" value="FA-L02-00-0420"/>
@@ -5122,6 +5183,7 @@
             <column name="property_names" value="faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="421"/>
             <column name="br_id" value="FA-L00-00-0421"/>
@@ -5265,6 +5327,8 @@
             <column name="property_names" value="relatedFishingActivities"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="431"/>
             <column name="br_id" value="FA-L02-00-0431"/>
@@ -5281,6 +5345,10 @@
             <column name="property_names" value="relatedFishingActivityFaCatch"/>
             <column name="disabled" value="true"/>
         </insert>
+
+        -->
+
+        <!-- removed sinsce 2.2
         <insert tableName="rule">
             <column name="rule_id" value="432"/>
             <column name="br_id" value="FA-L02-00-0432"/>
@@ -5297,6 +5365,8 @@
             <column name="property_names" value="relatedFishingActivityFaCatch"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="433"/>
             <column name="br_id" value="FA-L02-00-0433"/>
@@ -5313,6 +5383,8 @@
             <column name="property_names" value="relatedFishingActivityFaCatch"/>
             <column name="disabled" value="true"/>
         </insert>
+
+    -->
         <insert tableName="rule">
             <column name="rule_id" value="109"/>
             <column name="br_id" value="FA-L01-00-0109"/>
@@ -5345,6 +5417,8 @@
             <column name="property_names" value="fishingActivityIds"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="255"/>
             <column name="br_id" value="FA-L02-00-0255"/>
@@ -5361,6 +5435,7 @@
             <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="256"/>
             <column name="br_id" value="FA-L02-00-0256"/>
@@ -5478,6 +5553,8 @@
             <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="222"/>
             <column name="br_id" value="FA-L00-00-0222"/>
@@ -5491,6 +5568,7 @@
             <column name="property_names" value="values"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="223"/>
             <column name="br_id" value="FA-L00-00-0223"/>
@@ -5605,6 +5683,8 @@
             <column name="property_names" value="valueQuantity"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <!-- removed since 2.2
         <insert tableName="rule">
             <column name="rule_id" value="280"/>
             <column name="br_id" value="FA-L02-00-0280"/>
@@ -5619,6 +5699,7 @@
             <column name="property_names" value="faReportDocumentTypeCode"/>
             <column name="disabled" value="true"/>
         </insert>
+        -->
         <insert tableName="rule">
             <column name="rule_id" value="281"/>
             <column name="br_id" value="FA-L02-00-0281"/>
