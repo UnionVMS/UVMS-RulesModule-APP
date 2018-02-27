@@ -276,7 +276,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                     List<StructuredAddress> structuredAddresses = contactParty.getSpecifiedStructuredAddresses();
                     xPathUtil.appendWithoutWrapping(partialXpath2);
-                    activityFactMapper.generateFactsForStructureAddresses(structuredAddresses, SPECIFIED_STRUCTURED_ADDRESS);
+                    facts.addAll(activityFactMapper.generateFactsForStructureAddresses(structuredAddresses, SPECIFIED_STRUCTURED_ADDRESS));
                 }
             }
             index++;
@@ -392,6 +392,5 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
         xPathUtil.clear();
     }
-
 
 }

@@ -13,12 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import java.util.List;
+import java.util.Map;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
@@ -37,7 +36,6 @@ public class FaArrivalFact extends AbstractFact {
     private List<CodeType> fishingGearRoleCodes;
     private List<IdType> fishingTripIds;
     private Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip;
-
 
     @Override
     public void setFactType() {
