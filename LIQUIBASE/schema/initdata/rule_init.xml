@@ -6790,7 +6790,7 @@
             <column name="rule_id" value="10138"/>
             <column name="br_id" value="SALE-L01-00-0110"/>
             <column name="expression"
-                    value="(startDateTime == null || startDateTime.dateTime == null) || startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)"/>
+                    value="startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)"/>
             <column name="note" value=""/>
             <column name="message" value="Check format"/>
             <column name="level" value="L01"/>
@@ -8358,7 +8358,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10905"/>
             <column name="br_id" value="SALE-L03-00-0030"/>
-            <column name="expression" value="salesService.isOriginalAndisIdNotUnique($fact)"/>
+            <column name="expression" value="salesService.isOriginalAndIsIdNotUnique($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The reference must be unique"/>
             <column name="level" value="L03"/>

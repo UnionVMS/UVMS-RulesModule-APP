@@ -95,5 +95,5 @@ public interface SalesRulesService {
      * @param fact
      * @return whether the id of an original report is not unique, returns false when report is not original
      */
-    boolean isOriginalAndisIdNotUnique(SalesFLUXSalesReportMessageFact fact);
+    boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact);
 }

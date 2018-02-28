@@ -278,8 +278,8 @@ public class SalesReportFact extends SalesAbstractFact {
         List<AAPProductType> products = getProducts();
         List<AmountType> chargeAmounts = new ArrayList<>();
         for (AAPProductType product: products) {
-            if (product != null && product.getTotalSalesPrice() != null) {
-                if (isEmpty(product.getTotalSalesPrice().getChargeAmounts())) {
+            if (product != null) {
+                if (product.getTotalSalesPrice() == null || isEmpty(product.getTotalSalesPrice().getChargeAmounts())) {
                     chargeAmounts.add(null);
                 } else{
                     chargeAmounts.add(product.getTotalSalesPrice().getChargeAmounts().get(0));

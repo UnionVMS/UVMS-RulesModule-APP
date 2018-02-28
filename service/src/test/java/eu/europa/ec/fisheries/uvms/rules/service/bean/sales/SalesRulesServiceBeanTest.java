@@ -927,6 +927,81 @@ public class SalesRulesServiceBeanTest {
         verify(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
     }
 
+    @Test
+    public void isOriginalAndIsIdNotUniqueWhenReportIsOriginalAndIsUnique() {
+        SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
+
+        FLUXReportDocumentType fluxReportDocument = new FLUXReportDocumentType();
+        fluxReportDocument.setPurposeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("9"));
+
+        SalesDocumentType salesDocumentType = new SalesDocumentType();
+        salesDocumentType.getIDS().add(new IDType().withSchemeID("UUID").withValue("MY UUID"));
+
+        SalesReportType salesReportType = new SalesReportType();
+        salesReportType.getIncludedSalesDocuments().add(salesDocumentType);
+
+        fact.setFLUXReportDocument(fluxReportDocument);
+        fact.setSalesReports(Arrays.asList(salesReportType));
+
+        doReturn(false).when(salesService).isIdNotUnique("MY UUID", SalesMessageIdType.SALES_DOCUMENT);
+
+        boolean result = service.isOriginalAndIsIdNotUnique(fact);
+
+        assertFalse(result);
+        verify(salesService).isIdNotUnique("MY UUID", SalesMessageIdType.SALES_DOCUMENT);
+        verifyNoMoreInteractions(salesService);
+    }
+
+    @Test
+    public void isOriginalAndIsIdNotUniqueWhenReportIsOriginalAndIsNotUnique() {
+        SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
+
+        FLUXReportDocumentType fluxReportDocument = new FLUXReportDocumentType();
+        fluxReportDocument.setPurposeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("9"));
+
+        SalesDocumentType salesDocumentType = new SalesDocumentType();
+        salesDocumentType.getIDS().add(new IDType().withSchemeID("UUID").withValue("MY UUID"));
+
+        SalesReportType salesReportType = new SalesReportType();
+        salesReportType.getIncludedSalesDocuments().add(salesDocumentType);
+
+        fact.setFLUXReportDocument(fluxReportDocument);
+        fact.setSalesReports(Arrays.asList(salesReportType));
+
+        doReturn(true).when(salesService).isIdNotUnique("MY UUID", SalesMessageIdType.SALES_DOCUMENT);
+
+        boolean result = service.isOriginalAndIsIdNotUnique(fact);
+
+        assertTrue(result);
+
+        verify(salesService).isIdNotUnique("MY UUID", SalesMessageIdType.SALES_DOCUMENT);
+        verifyNoMoreInteractions(salesService);
+    }
+
+
+    @Test
+    public void isOriginalAndIsIdNotUniqueWhenReportIsNotOriginal() {
+        SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
+
+        FLUXReportDocumentType fluxReportDocument = new FLUXReportDocumentType();
+        fluxReportDocument.setPurposeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("5"));
+
+        SalesDocumentType salesDocumentType = new SalesDocumentType();
+        salesDocumentType.getIDS().add(new IDType().withSchemeID("UUID").withValue("MY UUID"));
+
+        SalesReportType salesReportType = new SalesReportType();
+        salesReportType.getIncludedSalesDocuments().add(salesDocumentType);
+
+        fact.setFLUXReportDocument(fluxReportDocument);
+        fact.setSalesReports(Arrays.asList(salesReportType));
+
+        boolean result = service.isOriginalAndIsIdNotUnique(fact);
+
+        assertFalse(result);
+
+        verifyNoMoreInteractions(salesService);
+    }
+
     private List<ObjectRepresentation> getTestEntriesForMDRListTERRITORY_CURRENCY() {
         ColumnDataType code = new ColumnDataType();
         code.setColumnName("code");
