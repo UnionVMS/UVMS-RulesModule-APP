@@ -309,7 +309,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             if (activity != null && activity.getTypeCode() != null && faReportDocument != null) {
                 FishingActivityType fishingActivityType = FishingActivityType.valueOf(activity.getTypeCode().getValue());
                 CodeType faRepTypeCode = faReportDocument.getTypeCode();
-                String faRepTypeCodeVal = faRepTypeCode.getValue() != null ? faRepTypeCode.getValue() : StringUtils.EMPTY;
+                String faRepTypeCodeVal = (faRepTypeCode!=null && faRepTypeCode.getValue() != null) ? faRepTypeCode.getValue() : StringUtils.EMPTY;
                 switch (fishingActivityType) {
                     case DEPARTURE:
                         abstractFact = activityFactMapper.generateFactsForFaDeparture(activity, faReportDocument);

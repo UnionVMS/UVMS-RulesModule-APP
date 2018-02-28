@@ -78,16 +78,16 @@ public class FaReportDocumentFact extends AbstractFact {
     // String = tripId, Integer = Departure declarations for this trip ID
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
 
-    public boolean containsMoreThenOneArrivalOrDeparture(FishingActivityType type){
+    public boolean containsMoreThenOneArrivalOrDeparture(FishingActivityType type) {
         Map<String, Integer> declarationList = new HashMap<>();
-        if(FishingActivityType.ARRIVAL.equals(type)){
+        if (FishingActivityType.ARRIVAL.equals(type)) {
             declarationList = fishingActivitiesArrivalDeclarationList;
-        } else if(FishingActivityType.DEPARTURE.equals(type))  {
+        } else if (FishingActivityType.DEPARTURE.equals(type)) {
             declarationList = fishingActivitiesDepartureDeclarationList;
         }
-        if(MapUtils.isNotEmpty(declarationList)){
-            for(Map.Entry<String, Integer> entry : declarationList.entrySet()){
-                if(entry.getValue() > 1){
+        if (MapUtils.isNotEmpty(declarationList)) {
+            for (Map.Entry<String, Integer> entry : declarationList.entrySet()) {
+                if (entry.getValue() > 1) {
                     return true;
                 }
             }
@@ -101,24 +101,13 @@ public class FaReportDocumentFact extends AbstractFact {
         if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
             return false;
         }
-        boolean moreThenOneEncounter = false;
         for (IdType idType : specifiedFishingTripIds) {
             List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
-            if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
-                continue;
-            }
-            int matchedTrips = 0;
-            for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
-                if (faType.name().equals(fishTrpWIdent.getFaType())) {
-                    matchedTrips++;
-                }
-            }
-            if (matchedTrips > 1) {
-                moreThenOneEncounter = true;
-                break;
+            if (fishingActivityWithIdentifiers != null) {
+                return true;
             }
         }
-        return moreThenOneEncounter;
+        return false;
     }
 
 
