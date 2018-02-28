@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +42,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -100,6 +101,33 @@ public class AbstractFactTest {
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
+    }
+
+    @Test
+    public void testValidFormatHappy(){
+        assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+        assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithNegative(){
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("-1")));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithPositive(){
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal("1")));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithNull(){
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(0)));
     }
 
     @Test
@@ -686,15 +714,12 @@ public class AbstractFactTest {
 
     @Test
     public void testIsNumeric() {
-
         NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-
-
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
         boolean result = fact.isNumeric(numericTypes);
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
@@ -1380,17 +1405,18 @@ public class AbstractFactTest {
     public void testContainsMoreThenOneDeclarationPerTrip() {
         List<IdType> specifiedFishingTripIds = new ArrayList<>();
         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip = new HashMap<>();
-        boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        FaReportDocumentFact repDocFact = new FaReportDocumentFact();
+        boolean result1 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result1);
 
         specifiedFishingTripIds.add(new IdType("id123", "someScheme"));
 
-        boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result2 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result2);
 
         faTypesPerTrip.put("", null);
 
-        boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result3 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result3);
 
         List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
@@ -1398,7 +1424,7 @@ public class AbstractFactTest {
         faTypesPerTrip.clear();
         faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
 
-        boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result4 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result4);
 
         List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
@@ -1407,7 +1433,7 @@ public class AbstractFactTest {
         id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
         id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
 
-        boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result5 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertTrue(result5);
     }
 

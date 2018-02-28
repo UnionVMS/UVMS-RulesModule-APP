@@ -9,6 +9,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import java.util.Collections;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
@@ -276,12 +277,15 @@ public class RuleTestHelper {
 
     public static VesselTransportMeans getVesselTransportMeans() {
         VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
-
         vesselTransportMeans.setRoleCode(getCodeTypeUNCEFACT("FA_VESSEL_ROLE", "PARTICIPATING_VESSEL"));
-
         return vesselTransportMeans;
     }
 
+    public static List<VesselTransportMeans> getListOfVesselTransportMeans() {
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+        vesselTransportMeans.setRoleCode(getCodeTypeUNCEFACT("FA_VESSEL_ROLE", "PARTICIPATING_VESSEL"));
+        return Collections.singletonList(vesselTransportMeans);
+    }
 
     public static ValidationResultDocument getValidationResultDocument() {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();

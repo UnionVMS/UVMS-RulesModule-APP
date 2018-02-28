@@ -92,7 +92,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearProblem;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
@@ -399,7 +398,7 @@ public class ActivityFactMapperTest {
         }});
         faActivity.setRelatedFLUXLocations(null);
 
-        FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity,false).get(0);
+        FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity,false, null).get(0);
 
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());
@@ -737,7 +736,7 @@ public class ActivityFactMapperTest {
         final FaFishingOperationFact faFishingOperationFact = activityMapper.generateFactsForFishingOperation(null, null);
         final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false);
+        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false, null);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null");
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
@@ -763,7 +762,7 @@ public class ActivityFactMapperTest {
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
         final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null, false);
-        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null);
+        final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null, "");
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
         final FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = activityMapper.generateFactsForNotificationOfTranshipment(null, null);
@@ -813,17 +812,6 @@ public class ActivityFactMapperTest {
 
     }
 
-    @Test
-    public void testStructuredAddressPostcodeCodeValue() {
-
-        StructuredAddress structuredAddress = new StructuredAddress();
-        TextType textType = new TextType();
-        textType.setValue("value");
-        structuredAddress.setPostalArea(textType);
-        String s = activityMapper.structuredAddressPostalAreaValue(structuredAddress);
-
-        assertEquals(codeType.getValue(), s);
-    }
 
     @Test
     public void testMapToMeasureType() {
@@ -852,7 +840,7 @@ public class ActivityFactMapperTest {
     @Test //FIXME
     public void testNullInsideObjects() {
         FishingActivity faAct = new FishingActivity();
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct,false);
+        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct,false, null);
 
         List<GearProblem> gearList = new ArrayList<GearProblem>() {{
             add(new GearProblem());

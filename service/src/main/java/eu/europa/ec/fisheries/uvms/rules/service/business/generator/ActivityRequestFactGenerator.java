@@ -42,13 +42,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -60,6 +53,11 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -138,7 +136,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 facts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS, SPECIFIED_STRUCTURED_ADDRESS);
-                addFactsForVesselTransportMeansStructuresAddress(facts, Arrays.asList(faReportDocument.getSpecifiedVesselTransportMeans()));
+                addFactsForVesselTransportMeansStructuresAddress(facts, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()));
 
                 index++;
             }
@@ -176,7 +174,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 addFactsForVesselTransportMeansStructuresAddress(facts, activity.getRelatedVesselTransportMeans());
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity,isSubActivity));
+                facts.addAll(activityFactMapper.generateFactsForFaCatch(activity,isSubActivity, faReportDocument.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForFaCatches(facts, activity.getSpecifiedFACatches());
@@ -278,7 +276,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 for (ContactParty contactParty : vesselTransportMeans.getSpecifiedContactParties()) {
                     List<StructuredAddress> structuredAddresses = contactParty.getSpecifiedStructuredAddresses();
                     xPathUtil.appendWithoutWrapping(partialXpath2);
-                    addFactsForStructuredAddress(facts, structuredAddresses, SPECIFIED_STRUCTURED_ADDRESS);
+                    facts.addAll(activityFactMapper.generateFactsForStructureAddresses(structuredAddresses, SPECIFIED_STRUCTURED_ADDRESS));
                 }
             }
             index++;
@@ -291,7 +289,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         int index = 1;
         for (FLUXLocation fluxLocation : fluxLocations) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index);
-            addFactsForStructuredAddress(facts, fluxLocation.getPostalStructuredAddresses(), POSTAL_STRUCTURED_ADDRESS);
+            facts.addAll(activityFactMapper.generateFactsForStructureAddresses(fluxLocation.getPostalStructuredAddresses(), POSTAL_STRUCTURED_ADDRESS));
 
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxLocationType, index).append(PHYSICAL_STRUCTURED_ADDRESS);
             facts.add(activityFactMapper.generateFactsForStructureAddress(fluxLocation.getPhysicalStructuredAddress()));
@@ -304,11 +302,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         xPathUtil.clear();
     }
 
-    private void addFactsForStructuredAddress(List<AbstractFact> facts, List<StructuredAddress> structuredAddresses, String adressType) {
-        if (CollectionUtils.isNotEmpty(structuredAddresses)) {
-            facts.addAll(activityFactMapper.generateFactsForStructureAddresses(structuredAddresses, adressType));
-        }
-    }
 
     private AbstractFact addAdditionalValidationFact(FishingActivity activity, FAReportDocument faReportDocument) {
         AbstractFact abstractFact = null;
@@ -399,6 +392,5 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
         xPathUtil.clear();
     }
-
 
 }

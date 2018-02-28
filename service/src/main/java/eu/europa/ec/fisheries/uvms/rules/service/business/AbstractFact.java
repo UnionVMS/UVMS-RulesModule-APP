@@ -13,6 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -21,31 +35,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -82,6 +76,10 @@ public abstract class AbstractFact {
     protected boolean ok = true;
 
     private Integer sequence = 0;
+
+    public boolean hasWarOrErr(){
+        return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);
+    }
 
     public AbstractFact() {
         this.uniqueIds = new ArrayList<>();
@@ -231,11 +229,8 @@ public abstract class AbstractFact {
     }
 
     public boolean isSchemeIdPresent(IdType idType) {
-        if (idType == null) {
-            return true;
-        }
+        return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
 
-        return StringUtils.isNotBlank(idType.getSchemeId());
     }
 
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
@@ -443,22 +438,28 @@ public abstract class AbstractFact {
     }
 
     public boolean validateFormat(String value, String format) {
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(format)) {
-            return false;
+        return !StringUtils.isEmpty(value) && !StringUtils.isEmpty(format) && value.matches(format);
+    }
+
+    public boolean isIsoDateStringValidFormat(List<String> datesToCheck) {
+        if (CollectionUtils.isEmpty(datesToCheck)) {
+            return true;
         }
-        return value.matches(format);
+        for (String date : datesToCheck) {
+            if (!isIsoDateStringValidFormat(date)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isIsoDateStringValidFormat(String value) {
-        if (StringUtils.isBlank(value)) {
-            return false;
-        }
+        return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
 
-        return value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
-        if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || idType.getSchemeId() != requiredSchemeId) {
+        if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || !idType.getSchemeId().equals(requiredSchemeId)) {
             return false;
         }
         try {
@@ -499,6 +500,22 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean codeTypeValueContainsOnly(List<CodeType> codeTypes, String valueToMatch){
+        if(CollectionUtils.isEmpty(codeTypes) || StringUtils.isEmpty(valueToMatch)){
+            return false;
+        }
+        for (CodeType codeType : codeTypes) {
+          if(!valueToMatch.equals(codeType.getValue())){
+              return false;
+          }
+        }
+        return true;
+    }
+
+    public boolean codeTypeValueEquals(CodeType codeType, String valueToMatch){
+        return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
+    }
+
     /**
      * Checks if valuesToMatch strings are ALL present in list of measureTypes
      *
@@ -507,22 +524,19 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean listIdDoesNotContainAll(CodeType codeType, String... valuesToMatch) {
-        return listIdDoesNotContainAll(Arrays.asList(codeType), valuesToMatch);
+        return listIdDoesNotContainAll(Collections.singletonList(codeType), valuesToMatch);
     }
 
 
     public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
         List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
-
         for (SalesPartyFact salesPartyFact : salesPartyTypes) {
             codeTypes.addAll(salesPartyFact.getRoleCodes());
         }
-
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         for (CodeType codeType : codeTypes) {
             String value = codeType.getValue();
 
@@ -530,7 +544,6 @@ public abstract class AbstractFact {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -765,6 +778,13 @@ public abstract class AbstractFact {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
+    /**
+     * Returns true when value is not found.
+     *
+     * @param codeTypes
+     * @param valuesToMatch
+     * @return
+     */
     public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
@@ -808,13 +828,26 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean isPositiveNumeric(List<NumericType> numericList) {
+        if (CollectionUtils.isEmpty(numericList)) {
+            return false;
+        }
+        for (NumericType type : numericList) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isPositiveInteger(List<MeasureType> value) {
         if (value == null) {
             return true;
         }
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > 0 || !isIntegerValue(val)) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0 || !isIntegerValue(val)) {
                 return false;
             }
         }
@@ -823,17 +856,21 @@ public abstract class AbstractFact {
 
 
     private boolean isIntegerValue(BigDecimal bigDecimal) {
-        if (bigDecimal == null) {
-            return false;
-        }
-
-        if (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0);
     }
+
+    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
+        if (bigDecimal == null || BigDecimal.ZERO.compareTo(bigDecimal) >= 0 || !isIntegerValue(bigDecimal)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public boolean isGreaterThanZero(MeasureType value){
+        return isGreaterThanZero(Collections.singletonList(value));
+    }
+
 
     /**
      * This method will check if all values passed  to this method are greater than zero.
@@ -869,7 +906,6 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
-
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
             for (IdType idType : idTypes) {
@@ -912,17 +948,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositive(BigDecimal value) {
-        if (value == null) {
-            return true;
-        }
-        return value.compareTo(BigDecimal.ZERO) > 0;
+        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public boolean isInRange(BigDecimal value, int min, int max) {
-        if (value == null) {
-            return true;
-        }
-        return !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
+        return value == null || !((value.compareTo(new BigDecimal(min)) > 0) && (value.compareTo(new BigDecimal(max)) < 0));
     }
 
     public boolean anyValueContainsAll(List<CodeType> codeTypes, String... valuesToMatch) {
@@ -986,10 +1016,7 @@ public abstract class AbstractFact {
      * @return true / false
      */
     public boolean containsEmptyStrings(List<String> stringsList) {
-        if (!isEmpty(stringsList)) {
-            return stringsList.contains(null) || stringsList.contains("");
-        }
-        return true;
+        return isEmpty(stringsList) || stringsList.contains(null) || stringsList.contains("");
     }
 
     public boolean containsOnlyEmptyStrings(List<String> stringsList) {
@@ -1004,14 +1031,15 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        if(CollectionUtils.isNotEmpty(list)){
-            for (NumericType type : list) {
-                if (type.getValue() == null) {
-                    return true;
-                }
+        if(CollectionUtils.isEmpty(list)){
+            return false;
+        }
+        for (NumericType type : list) {
+            if (type.getValue() == null) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean isEmpty(String str) {
@@ -1069,20 +1097,16 @@ public abstract class AbstractFact {
         if (isEmpty(sourceList)) {
             return true;
         }
-
         List<String> listIds = new ArrayList<>();
         for (CodeType codeType : sourceList) {
             if (codeType == null) {
                 continue;
             }
-
             if (listIds.contains(codeType.getListId())) {
                 return false;
             }
-
             listIds.add(codeType.getListId());
         }
-
         return true;
     }
 
@@ -1090,7 +1114,6 @@ public abstract class AbstractFact {
         if (isEmpty(sourceList)) {
             return true;
         }
-
         List<String> matchList = Arrays.asList(valuesToMatch);
         for (CodeType codeType : sourceList) {
             if (codeType == null) {
@@ -1101,7 +1124,6 @@ public abstract class AbstractFact {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -1126,6 +1148,7 @@ public abstract class AbstractFact {
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
+        JFO("^(19|20)[0-9][0-9]-\\d{3}"),
         //EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}"),
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC(".*-.*-[A-Za-z0-9\\-]{1,20}"),
@@ -1156,7 +1179,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isPresentInMDRList(String listName, String codeValue) {
@@ -1172,25 +1195,22 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (codeType == null || codeType.getValue() == null || codeType.getListId() == null) {
                 return false;
             }
-
             MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, codeType.getListId());
             if (anEnum == null) {
                 log.trace(THE_LIST + codeType.getListId() + DOESN_T_EXIST_IN_MDR_MODULE);
                 return false;
             }
-
             List<String> codeListValues = MDRCacheHolder.getInstance().getList(anEnum);
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
@@ -1202,11 +1222,10 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService@} instead.
      */
     @Deprecated
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
@@ -1217,13 +1236,11 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
-
         for (CodeType codeType : valuesToMatch) {
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -1248,7 +1265,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
@@ -1271,7 +1288,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isIdTypePresentInMDRList(IdType id) {
@@ -1292,7 +1309,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
@@ -1359,7 +1376,6 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
-
         String vesselCountryIdValue = vesselCountryId.getValue();
         for (IdTypeWithFlagState asset : assetList){
             if (isSameFlagState(vesselCountryIdValue, asset)) {
@@ -1436,7 +1452,6 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(fluxLocations) || StringUtils.isBlank(value)) {
             return false;
         }
-
         for (FLUXLocation fluxLocation : fluxLocations) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
 
@@ -1444,7 +1459,6 @@ public abstract class AbstractFact {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -1459,7 +1473,7 @@ public abstract class AbstractFact {
     /**
      * Does some thing in old style.
      *
-     * @deprecated use {@link #MDRCacheRuleService()} instead.
+     * @deprecated use {@see eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService} instead.
      */
     @Deprecated
     public String getDataTypeForMDRList(String listName, String codeValue) {
@@ -1468,8 +1482,6 @@ public abstract class AbstractFact {
             log.error(THE_LIST + listName + DOESN_T_EXIST_IN_MDR_MODULE);
             return StringUtils.EMPTY;
         }
-
-
         List<ObjectRepresentation> representations = MDRCacheHolder.getInstance().getObjectRepresentationList(anEnum);
         boolean valueFound = false;
         if (CollectionUtils.isNotEmpty(representations)) {
@@ -1497,32 +1509,6 @@ public abstract class AbstractFact {
         return StringUtils.EMPTY;
     }
 
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
-                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
-                                                         FishingActivityType faType) {
-        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
-            return false;
-        }
-        boolean moreThenOneEncounter = false;
-        for (IdType idType : specifiedFishingTripIds) {
-            List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
-            if (CollectionUtils.isEmpty(fishingActivityWithIdentifiers)) {
-                continue;
-            }
-            int matchedTrips = 0;
-            for (FishingActivityWithIdentifiers fishTrpWIdent : fishingActivityWithIdentifiers) {
-                if (faType.name().equals(fishTrpWIdent.getFaType())) {
-                    matchedTrips++;
-                }
-            }
-            if (matchedTrips > 1) {
-                moreThenOneEncounter = true;
-                break;
-            }
-        }
-        return moreThenOneEncounter;
-    }
-
     /**
      * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
      *
@@ -1536,53 +1522,42 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(specifiedFACatches) || speciesCode == null || typeCode == null) {
             return false;
         }
-
-
         for (FACatch faCatch : specifiedFACatches) {
             if (faCatch.getSpeciesCode() != null && faCatch.getTypeCode() != null && speciesCode.equals(faCatch.getSpeciesCode().getValue()) && typeCode.equals(faCatch.getTypeCode().getValue())) {
                 return true;
             }
         }
-
         return false;
     }
 
     public List<String> retrieveGearCharacteristicTypeCodeValues(List<GearCharacteristic> gearCharacteristics, String listId) {
         if (isEmpty(gearCharacteristics) || StringUtils.isBlank(listId)) {
-            return ListUtils.EMPTY_LIST;
+            return Collections.emptyList();
         }
-
         List<String> gearCharacteristicTypeCodeValues = new ArrayList<>();
-
         for (GearCharacteristic applicableGearCharacteristic : gearCharacteristics) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType applicableGearCharacteristicTypeCode = applicableGearCharacteristic.getTypeCode();
-
             String fishingGearCharacteristicCode = null;
             try {
                 if (!listId.equals(applicableGearCharacteristicTypeCode.getListID())) {
                     continue;
                 }
-
                 fishingGearCharacteristicCode = applicableGearCharacteristic.getTypeCode().getValue();
             } catch (NullPointerException npe) {
                 fishingGearCharacteristicCode = null;
             }
-
             if (StringUtils.isNotBlank(fishingGearCharacteristicCode)) {
                 gearCharacteristicTypeCodeValues.add(fishingGearCharacteristicCode);
             }
         }
-
         return gearCharacteristicTypeCodeValues;
     }
 
     public List<String> retrieveFishingGearCharacteristicCodes(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics, CodeType fishingGearTypeCode, boolean mandatory) {
         if (isEmpty(fishingGearTypeCharacteristics) || fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue())) {
-            return ListUtils.EMPTY_LIST;
+            return Collections.emptyList();
         }
-
         List<String> fishingGearCharacteristicCodes = new ArrayList<>();
-
         for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
             String typeCode = fishingGearTypeCharacteristic.getId().getFishingGearTypeCode();
 
@@ -1591,7 +1566,6 @@ public abstract class AbstractFact {
                 fishingGearCharacteristicCodes.add(characteristicCode);
             }
         }
-
         return fishingGearCharacteristicCodes;
     }
 
