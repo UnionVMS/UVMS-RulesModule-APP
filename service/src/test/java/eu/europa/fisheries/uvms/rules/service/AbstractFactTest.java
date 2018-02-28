@@ -45,6 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -104,7 +105,7 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidFormatHappy(){
+    public void testValidFormatHappy() {
         assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
@@ -116,17 +117,17 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsPositiveIntegerValueWithNegative(){
+    public void testIsPositiveIntegerValueWithNegative() {
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal("-1")));
     }
 
     @Test
-    public void testIsPositiveIntegerValueWithPositive(){
+    public void testIsPositiveIntegerValueWithPositive() {
         assertTrue(fact.isPositiveIntegerValue(new BigDecimal("1")));
     }
 
     @Test
-    public void testIsPositiveIntegerValueWithNull(){
+    public void testIsPositiveIntegerValueWithNull() {
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal(0)));
     }
 
@@ -1810,6 +1811,30 @@ public class AbstractFactTest {
     public void testValueStartsWithSingleIdTypeNoneCorrect() {
         IdType idType = RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA");
         assertFalse(fact.valueStartsWith(idType, "27.3.d"));
+    }
+
+    @Test
+    public void testMdrAcronymsMatchMDRAcronymTypeDeclared() {
+        List<String> list = Arrays.asList("PROD_USAGE",
+                "FA_FISHERY", "GFCM_GSA", "SALE_BR", "FA_REASON_DISCARD", "TARGET_SPECIES_GROUP", "FA_GEAR_PROBLEM", "FLUX_GP_MSG_ID", "FISH_SIZE_CATEGORY", "FA_BFT_SIZE_CATEGORY", "FLUX_FA_REPORT_TYPE",
+                "FLUX_SALES_QUERY_PARAM_ROLE", "FLUX_LOCATION_TYPE", "GEAR_TYPE", "WEIGHT_MEANS", "VESSEL_ACTIVITY", "FA_QUERY_TYPE",
+                "TERRITORY_CURR", "FLUX_GP_PURPOSE", "FA_VESSEL_ROLE", "FLUX_SALES_PARTY_ROLE", "MEMBER_STATE", "FA_BR", "FISHING_TRIP_TYPE", "CONVERSION_FACTOR",
+                "FA_REASON_ENTRY", "FLUX_FA_TYPE", "FARM", "EFFORT_ZONE", "TERRITORY", "GENDER", "FISH_FRESHNESS", "FA_REASON_ARRIVAL",
+                "FA_CHARACTERISTIC", "FA_CATCH_TYPE", "FAO_AREA", "FLUX_VESSEL_ID_TYPE", "FISH_PRESENTATION", "FLUX_UNIT", "FLUX_CONTACT_ROLE", "FISH_PRESERVATION", "FLUX_SALES_PARTY_ID_TYPE",
+                "FLUX_SALES_TYPE", "STAT_RECTANGLE", "FLAP_ID_TYPE", "FA_QUERY_PARAMETER", "FA_BR_DEF", "FA_GEAR_RECOVERY", "FISH_PACKAGING", "VESSEL_STORAGE_TYPE",
+                "FA_GEAR_CHARACTERISTIC", "SALE_BR_DEF", "FLUX_FA_FMC", "FAO_SPECIES", "GFCM_STAT_RECTANGLE", "FLUX_GP_RESPONSE",
+                "FLUX_GP_VALIDATION_TYPE", "FLUX_LOCATION_CHARACTERISTIC", "LOCATION", "FA_GEAR_ROLE", "FLUX_GP_PARTY", "FA_BAIT_TYPE", "FA_REASON_DEPARTURE", "RFMO", "FLUX_GP_VALIDATION_LEVEL",
+                "FLUX_SALES_QUERY_PARAM", "ICES_STAT_RECTANGLE", "FISH_SIZE_CLASS", "FLUX_PROCESS_TYPE");
+        List<String> finalList = new ArrayList<>();
+        for (String val : list) {
+            try {
+                MDRAcronymType.fromValue(val);
+            } catch (IllegalArgumentException ex) {
+                System.out.println("\n" + val + "(" + "\"" + val + "\"" + ")");
+                finalList.add(val);
+            }
+        }
+        assertTrue(CollectionUtils.isEmpty(finalList));
     }
 
 }
