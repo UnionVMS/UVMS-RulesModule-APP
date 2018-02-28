@@ -1838,21 +1838,7 @@
             <column name="property_names" value="specifiedSalesBatches"/>
             <column name="disabled" value="false"/>
         </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10227"/>
-            <column name="br_id" value="SALE-L02-00-0091"/>
-            <column name="expression"
-                    value="doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote()"/>
-            <column name="note" value="For SN"/>
-            <column name="message"
-                    value="Mandatory for the sales document when products are withdrawn from the market"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1003"/>
-            <column name="property_names" value="totalSalesPrice, totalSalesPrice.charge"/>
-            <column name="disabled" value="false"/>
-        </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="10019"/>
             <column name="br_id" value="SALE-L00-00-0040"/>
@@ -1929,19 +1915,6 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1008"/>
             <column name="property_names" value="specifiedSizeDistribution"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
-            <column name="rule_id" value="10025"/>
-            <column name="br_id" value="SALE-L00-00-0064"/>
-            <column name="expression" value="totalSalesPrice == null"/>
-            <column name="note" value="Sales Price in AAPProduct must be present."/>
-            <column name="message" value="Sales Price in AAPProduct must be present."/>
-            <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="1008"/>
-            <column name="property_names" value="totalSalesPrice"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -2063,7 +2036,7 @@
             <column name="note" value="Start in Delimited Period must be present."/>
             <column name="message" value="Start in Delimited Period must be present."/>
             <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1028"/>
             <column name="property_names" value="startDateTime"/>
@@ -2197,7 +2170,7 @@
             <column name="note" value="CityName in StructuredAddress must be present"/>
             <column name="message" value="CityName in StructuredAddress must be present"/>
             <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1021"/>
             <column name="property_names" value="cityName"/>
@@ -2210,7 +2183,7 @@
             <column name="note" value="Country in StructuredAddress must be present"/>
             <column name="message" value="Country in StructuredAddress must be present"/>
             <column name="level" value="L00"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1021"/>
             <column name="property_names" value="countryName"/>
@@ -6925,7 +6898,7 @@
             <column name="rule_id" value="10138"/>
             <column name="br_id" value="SALE-L01-00-0110"/>
             <column name="expression"
-                    value="(startDateTime == null || startDateTime.dateTime == null) || startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)"/>
+                    value="startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)"/>
             <column name="note" value=""/>
             <column name="message" value="Check format"/>
             <column name="level" value="L01"/>
@@ -7733,7 +7706,7 @@
             <column name="note" value=""/>
             <column name="message" value="Should be the same value"/>
             <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1019"/>
             <column name="property_names" value="physicalStructuredAddress, countryID"/>
@@ -8493,15 +8466,16 @@
         <insert tableName="rule">
             <column name="rule_id" value="10905"/>
             <column name="br_id" value="SALE-L03-00-0030"/>
-            <column name="expression" value="salesService.isIdNotUnique($fact)"/>
+            <column name="expression" value="salesService.isOriginalAndIsIdNotUnique($fact)"/>
             <column name="note" value=""/>
             <column name="message" value="The reference must be unique"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
-            <column name="template_id" value="1004"/>
+            <column name="template_id" value="1000"/>
             <column name="property_names" value="ids"/>
-            <column name="disabled" value="true"/> <!-- disabled until commission decides to disable this rule in case of a correction -->
+            <column name="disabled" value="false"/>
         </insert>
+
         <insert tableName="rule">
             <column name="rule_id" value="10906"/>
             <column name="br_id" value="SALE-L03-00-0031"/>
