@@ -4278,7 +4278,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="122"/>
             <column name="br_id" value="FA-L01-00-0122"/>
-            <column name="expression" value="listIdNotContains(roleCodes, &quot;FA_GEAR_ROLE&quot;)"/>
+            <column name="expression" value="!isEmpty(roleCodes) &amp;&amp; listIdNotContains(roleCodes, &quot;FA_GEAR_ROLE&quot;)"/>
             <column name="note" value="Attribute listId of the roleCode must be FA_GEAR_ROLE"/>
             <column name="message" value="Fishing gear RoleCode has an invalid listID."/>
             <column name="level" value="L01"/>
