@@ -2372,7 +2372,7 @@
             <column name="br_id" value="FA-L02-00-0095"/>
             <column name="expression"
                     value="!isSubActivity &amp;&amp; !isDateProvided &amp;&amp;
-                    (validateDelimitedPeriod(delimitedPeriods, true, true) &amp;&amp; anyRelatedActivityIsMissingBothDates()))"/>
+                    (validateDelimitedPeriod(delimitedPeriods, true, true) &amp;&amp; anyRelatedActivityIsMissingBothDates())"/>
             <column name="note" value="check presence"/>
             <column name="message"
                     value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
