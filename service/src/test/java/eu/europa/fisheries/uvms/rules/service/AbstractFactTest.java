@@ -118,17 +118,22 @@ public class AbstractFactTest {
 
     @Test
     public void testIsPositiveIntegerValueWithNegative() {
-        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("-1")));
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(-1)));
+    }
+
+    @Test
+    public void testFailsForFloat() {
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(1.5)));
     }
 
     @Test
     public void testIsPositiveIntegerValueWithPositive() {
-        assertTrue(fact.isPositiveIntegerValue(new BigDecimal("1")));
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal(1)));
     }
 
     @Test
-    public void testIsPositiveIntegerValueWithNull() {
-        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(0)));
+    public void testIsPositiveIntegerValueWithZero() {
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal(0)));
     }
 
     @Test

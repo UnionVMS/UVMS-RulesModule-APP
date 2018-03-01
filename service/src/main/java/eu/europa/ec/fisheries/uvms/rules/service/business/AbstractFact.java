@@ -626,7 +626,7 @@ public abstract class AbstractFact {
     }
 
     public boolean validateDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
-        if (delimitedPeriods == null || delimitedPeriods.isEmpty()) {
+        if (CollectionUtils.isEmpty(delimitedPeriods)) {
             return true;
         }
         for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
@@ -698,7 +698,7 @@ public abstract class AbstractFact {
 
     public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
         if (CollectionUtils.isEmpty(dateList)) {
-            return true;
+            return false;
         }
         int listSize = dateList.size();
         for (int i = 0; i < listSize; i++) {
@@ -807,7 +807,6 @@ public abstract class AbstractFact {
         if (value == null) {
             return -1;
         }
-
         int i = value.subtract(value.setScale(0, RoundingMode.FLOOR)).movePointRight(value.scale()).intValue();
         return Integer.toString(i).length();
     }
@@ -843,12 +842,11 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositiveInteger(List<MeasureType> value) {
-        if (value == null) {
+        if (CollectionUtils.isEmpty(value)) {
             return true;
         }
         for (MeasureType type : value) {
-            BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0 || !isIntegerValue(val)) {
+            if (!isPositiveIntegerValue(type.getValue())) {
                 return false;
             }
         }
@@ -861,10 +859,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
-        if (bigDecimal == null || BigDecimal.ZERO.compareTo(bigDecimal) >= 0 || !isIntegerValue(bigDecimal)) {
-            return false;
-        }
-        return true;
+        return bigDecimal != null && bigDecimal.signum() != -1 && isIntegerValue(bigDecimal);
     }
 
     public boolean isGreaterThanZero(MeasureType value){
