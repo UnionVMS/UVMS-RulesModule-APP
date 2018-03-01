@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 
@@ -88,4 +89,11 @@ public interface SalesRulesService {
      * When one of these parameters (currency, country, occurrence) is missing, this method will return false.
      */
     boolean isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(SalesDocumentFact fact);
+
+    /**
+     * Checks if the id of an original report is not unique
+     * @param fact
+     * @return whether the id of an original report is not unique, returns false when report is not original
+     */
+    boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact);
 }

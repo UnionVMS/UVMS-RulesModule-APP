@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Singleton
 public class SalesRulesServiceBean implements SalesRulesService {
@@ -268,6 +268,26 @@ public class SalesRulesServiceBean implements SalesRulesService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact) {
+        if (fact == null || isEmpty(fact.getSalesReports()) || fact.getSalesReports().get(0) == null
+                || fact.getFLUXReportDocument() == null || fact.getFLUXReportDocument().getPurposeCode() == null
+                || isBlank(fact.getFLUXReportDocument().getPurposeCode().getValue())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS())
+                || isBlank(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue())
+                ) {
+            return false;
+        }
+
+        // If the report is not an original, return false
+        if (!fact.getFLUXReportDocument().getPurposeCode().getValue().equals("9")) {
+            return false;
+        }
+
+        return salesService.isIdNotUnique(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue(), SalesMessageIdType.SALES_DOCUMENT);
     }
 
 }

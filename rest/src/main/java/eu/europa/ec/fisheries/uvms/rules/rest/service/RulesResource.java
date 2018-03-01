@@ -21,7 +21,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -155,7 +154,8 @@ public class RulesResource {
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
 
-    @EJB
+/* For test purposes only! For now the loadMdr() method doesn't work cause the whole Mdr registry is more then 150 MB!
+@EJB
     private MDRCache cache;
 
     @GET
@@ -164,5 +164,5 @@ public class RulesResource {
     public Response loadMdr() {
         cache.init();
         return Response.ok().build();
-    }
+    }*/
 }
