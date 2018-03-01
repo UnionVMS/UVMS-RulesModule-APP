@@ -803,7 +803,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="4"/>
-            <column name="property_names" value="countryID, postalArea"/>
+            <column name="property_names" value="postalArea"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -818,7 +818,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="4"/>
-            <column name="property_names" value="countryID, postalArea"/>
+            <column name="property_names" value="postalArea"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3381,7 +3381,7 @@
             <column name="rule_id" value="173"/>
             <column name="br_id" value="FA-L01-00-0173"/>
             <column name="expression"
-                    value="!mdrService.isCodeTypePresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
+                    value="!mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
             <column name="note" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
