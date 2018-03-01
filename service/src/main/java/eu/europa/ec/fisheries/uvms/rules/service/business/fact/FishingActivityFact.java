@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
@@ -57,8 +58,6 @@ public class FishingActivityFact extends AbstractFact {
 
     private List<DelimitedPeriod> delimitedPeriods;
 
-    private List<DelimitedPeriod> relatedDelimitedPeriods;
-
     private List<FLUXLocation> relatedFLUXLocations;
 
     private List<FLUXLocation> relatedActivityFluxLocations;
@@ -78,6 +77,18 @@ public class FishingActivityFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FISHING_ACTIVITY;
+    }
+
+    public boolean anyRelatedActivityIsMissingBothDates(){
+        if(CollectionUtils.isEmpty(relatedFishingActivities)){
+            return true;
+        }
+        for (FishingActivity relFishingActivity : relatedFishingActivities) {
+            if(relFishingActivity.getOccurrenceDateTime() == null && validateDelimitedPeriod(relFishingActivity.getSpecifiedDelimitedPeriods(),true,true)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setIsSubActivity(boolean isSubActivity) {
@@ -211,14 +222,6 @@ public class FishingActivityFact extends AbstractFact {
 
     public void setVesselRelatedActivityCode(CodeType vesselRelatedActivityCode) {
         this.vesselRelatedActivityCode = vesselRelatedActivityCode;
-    }
-
-    public List<DelimitedPeriod> getRelatedDelimitedPeriods() {
-        return relatedDelimitedPeriods;
-    }
-
-    public void setRelatedDelimitedPeriods(List<DelimitedPeriod> relatedDelimitedPeriods) {
-        this.relatedDelimitedPeriods = relatedDelimitedPeriods;
     }
 
     public List<MeasureType> getDurationMeasure() {
