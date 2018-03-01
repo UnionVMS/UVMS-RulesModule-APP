@@ -4427,7 +4427,7 @@
             <column name="br_id" value="FA-L02-00-0373"/>
             <column name="expression"
                     value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp;
-                    !mdrService.isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID))"/>
+                    !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID))"/>
             <column name="note"
                     value="FA_QueryParameter ValueID must be value from the list FLUX_VESSEL_ID if CodeType is VESSELID"/>
             <column name="message"
