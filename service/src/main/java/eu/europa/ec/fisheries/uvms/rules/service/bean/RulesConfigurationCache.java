@@ -10,9 +10,9 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import javax.annotation.PostConstruct;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConfigSettingsBean;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -24,27 +24,21 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 @Startup
 @Slf4j
-public class RulesConfigurationCache extends AbstractConfigCache {
+public class RulesConfigurationCache extends AbstractConfigSettingsBean {
 
     @EJB
-    private RulesResponseConsumer consumer;
+    private RulesResponseConsumerBean consumer;
 
     @EJB
-    private RulesMessageProducer producer;
-
-
-    @PostConstruct
-    public void initializeBeam(){
-        initializeCache();
-    }
+    private RulesMessageProducerBean producer;
 
     @Override
-    protected RulesResponseConsumer getConsumer() {
+    protected RulesResponseConsumerBean getConsumer() {
         return consumer;
     }
 
     @Override
-    protected RulesMessageProducer getProducer() {
+    protected RulesMessageProducerBean getProducer() {
         return producer;
     }
 
