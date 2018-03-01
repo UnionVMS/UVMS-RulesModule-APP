@@ -803,7 +803,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="4"/>
-            <column name="property_names" value="countryID, postalArea"/>
+            <column name="property_names" value="postalArea"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -818,7 +818,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="4"/>
-            <column name="property_names" value="countryID, postalArea"/>
+            <column name="property_names" value="postalArea"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3384,7 +3384,7 @@
             <column name="rule_id" value="173"/>
             <column name="br_id" value="FA-L01-00-0173"/>
             <column name="expression"
-                    value="!mdrService.isCodeTypePresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
+                    value="!mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
             <column name="note" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
@@ -4281,7 +4281,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="122"/>
             <column name="br_id" value="FA-L01-00-0122"/>
-            <column name="expression" value="listIdNotContains(roleCodes, &quot;FA_GEAR_ROLE&quot;)"/>
+            <column name="expression" value="!isEmpty(roleCodes) &amp;&amp; listIdNotContains(roleCodes, &quot;FA_GEAR_ROLE&quot;)"/>
             <column name="note" value="Attribute listId of the roleCode must be FA_GEAR_ROLE"/>
             <column name="message" value="Fishing gear RoleCode has an invalid listID."/>
             <column name="level" value="L01"/>
@@ -4430,7 +4430,7 @@
             <column name="br_id" value="FA-L02-00-0373"/>
             <column name="expression"
                     value="valueID != null &amp;&amp; typeCode != null &amp;&amp; typeCode.value == &quot;VESSELID&quot; &amp;&amp;
-                    !mdrService.isIdTypePresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID))"/>
+                    !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, Arrays.asList(valueID))"/>
             <column name="note"
                     value="FA_QueryParameter ValueID must be value from the list FLUX_VESSEL_ID if CodeType is VESSELID"/>
             <column name="message"
