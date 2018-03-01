@@ -1426,7 +1426,7 @@ public class AbstractFactTest {
         faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
 
         boolean result4 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
-        assertFalse(result4);
+        assertTrue(result4);
 
         List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
 
