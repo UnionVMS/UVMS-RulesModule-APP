@@ -1201,8 +1201,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveGearCharacteristicTypeCodeValues() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1211,8 +1212,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1221,8 +1223,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
         assertFalse(fishingGearCharacteristicCodes.contains("HE"));
         assertFalse(fishingGearCharacteristicCodes.contains("GM"));
         assertFalse(fishingGearCharacteristicCodes.contains("ME"));

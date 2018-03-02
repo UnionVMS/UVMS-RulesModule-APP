@@ -895,7 +895,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     private void setFluxResponseDocumentRejectionReason(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
-        if (faReportValidationResult.isError() || faReportValidationResult.isWarning()) {
+        if (faReportValidationResult.isError()) {
             TextType rejectionReason = new TextType();
             rejectionReason.setValue("VALIDATION");
             fluxResponseDocument.setRejectionReason(rejectionReason); // Set rejection reason

@@ -13,6 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -23,21 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -54,7 +52,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
@@ -1523,45 +1520,6 @@ public abstract class AbstractFact {
             }
         }
         return false;
-    }
-
-    public List<String> retrieveGearCharacteristicTypeCodeValues(List<GearCharacteristic> gearCharacteristics, String listId) {
-        if (isEmpty(gearCharacteristics) || StringUtils.isBlank(listId)) {
-            return Collections.emptyList();
-        }
-        List<String> gearCharacteristicTypeCodeValues = new ArrayList<>();
-        for (GearCharacteristic applicableGearCharacteristic : gearCharacteristics) {
-            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType applicableGearCharacteristicTypeCode = applicableGearCharacteristic.getTypeCode();
-            String fishingGearCharacteristicCode = null;
-            try {
-                if (!listId.equals(applicableGearCharacteristicTypeCode.getListID())) {
-                    continue;
-                }
-                fishingGearCharacteristicCode = applicableGearCharacteristic.getTypeCode().getValue();
-            } catch (NullPointerException npe) {
-                fishingGearCharacteristicCode = null;
-            }
-            if (StringUtils.isNotBlank(fishingGearCharacteristicCode)) {
-                gearCharacteristicTypeCodeValues.add(fishingGearCharacteristicCode);
-            }
-        }
-        return gearCharacteristicTypeCodeValues;
-    }
-
-    public List<String> retrieveFishingGearCharacteristicCodes(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics, CodeType fishingGearTypeCode, boolean mandatory) {
-        if (isEmpty(fishingGearTypeCharacteristics) || fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue())) {
-            return Collections.emptyList();
-        }
-        List<String> fishingGearCharacteristicCodes = new ArrayList<>();
-        for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
-            String typeCode = fishingGearTypeCharacteristic.getId().getFishingGearTypeCode();
-
-            if (mandatory == fishingGearTypeCharacteristic.getMandatory() && typeCode.equals(fishingGearTypeCode.getValue())) {
-                String characteristicCode = fishingGearTypeCharacteristic.getId().getFishingGearCharacteristicCode();
-                fishingGearCharacteristicCodes.add(characteristicCode);
-            }
-        }
-        return fishingGearCharacteristicCodes;
     }
 
     public String getSenderOrReceiver() {
