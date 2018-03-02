@@ -37,12 +37,12 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="PTB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="PTB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="PTB"/>
@@ -52,7 +52,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTB"/>
@@ -62,12 +62,12 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBN"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBN"/>
@@ -77,17 +77,17 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBN"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBS"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBS"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TBS"/>
@@ -97,7 +97,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TB"/>
@@ -107,7 +107,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="TB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="SX"/>
@@ -137,7 +137,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTT"/>
@@ -147,7 +147,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="OTT"/>
@@ -282,7 +282,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GNS"/>
@@ -312,7 +312,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GND"/>
@@ -342,7 +342,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GNC"/>
@@ -372,7 +372,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GTN"/>
@@ -402,7 +402,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GTR"/>
@@ -432,7 +432,7 @@
         <insert tableName="fishinggeartypecharacteristic">
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
-            <column name="mandatory" valueBoolean="true"/>
+            <column name="mandatory" valueBoolean="false"/>
         </insert>
 
         <insert tableName="fishinggeartypecharacteristic">
