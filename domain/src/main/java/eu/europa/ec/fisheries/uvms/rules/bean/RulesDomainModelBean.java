@@ -85,13 +85,13 @@ public class RulesDomainModelBean implements RulesDomainModel {
     private final static Logger LOG = LoggerFactory.getLogger(RulesDomainModelBean.class);
 
     @EJB
-    RulesDao dao;
+    private RulesDao rulesDao;
 
     @Override
     public List<TemplateRuleMapDto> getAllFactTemplatesAndRules() throws RulesModelException {
         List<TemplateRuleMapDto> templateRuleList = new ArrayList<>();
         try {
-            List<Template> factTemplates = dao.getAllFactTemplates();
+            List<Template> factTemplates = rulesDao.getAllFactTemplates();
             for (Template factTemplate : factTemplates) {
                 TemplateType template = TemplateMapper.INSTANCE.mapToFactTemplateType(factTemplate);
                 List<RuleType> rules = RuleMapper.INSTANCE.mapToAllFactRuleType(factTemplate.getFactRules());
@@ -110,7 +110,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Transactional(Transactional.TxType.REQUIRED)
     public void updateFailedRules(List<String> failedBrId) throws RulesModelException {
         try {
-            dao.updatedFailedRules(failedBrId);
+            rulesDao.updatedFailedRules(failedBrId);
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
         }
@@ -130,7 +130,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
                         }
                     }
                 }
-                dao.saveValidationMessages(Collections.singletonList(rawMessage));
+                rulesDao.saveValidationMessages(Collections.singletonList(rawMessage));
             }
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
@@ -140,7 +140,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Override
     public List<ValidationMessageType> getValidationMessagesById(List<String> ids) throws RulesModelException {
         try {
-            List<ValidationMessage> validationMessages = dao.getValidationMessagesById(ids);
+            List<ValidationMessage> validationMessages = rulesDao.getValidationMessagesById(ids);
             return RawMessageMapper.INSTANCE.mapToValidationMessageTypes(validationMessages);
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
@@ -150,7 +150,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Override
     public List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException {
         try {
-            List<ValidationMessage> validationMessages = dao.getValidationMessagesByRawMsgGuid(rawMsgGuid, type);
+            List<ValidationMessage> validationMessages = rulesDao.getValidationMessagesByRawMsgGuid(rawMsgGuid, type);
             return RawMessageMapper.INSTANCE.mapToValidationMessageTypes(validationMessages);
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
@@ -160,7 +160,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Override
     public RuleStatusType checkRuleStatus() throws RulesModelException {
         try {
-            return dao.checkRuleStatus();
+            return rulesDao.checkRuleStatus();
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
         }
@@ -172,8 +172,8 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             RuleStatus ruleStatus = new RuleStatus();
             ruleStatus.setRuleStatus(ruleStatusType);
-            dao.deleteRuleStatus();
-            dao.createRuleStatus(ruleStatus);
+            rulesDao.deleteRuleStatus();
+            rulesDao.createRuleStatus(ruleStatus);
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
         }
@@ -193,7 +193,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             subscriptionEntities.add(creatorSubscription);
             entity.getRuleSubscriptionList().addAll(subscriptionEntities);
 
-            dao.createCustomRule(entity);
+            rulesDao.createCustomRule(entity);
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when creating CustomRule ] {}", e.getMessage());
@@ -204,7 +204,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Override
     public CustomRuleType getByGuid(String guid) throws RulesModelException {
         try {
-            CustomRule entity = dao.getCustomRuleByGuid(guid);
+            CustomRule entity = rulesDao.getCustomRuleByGuid(guid);
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when getting CustomRule by GUID ] {}", e.getMessage());
@@ -230,7 +230,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             CustomRule newEntity = CustomRuleMapper.toCustomRuleEntity(customRule);
 
-            CustomRule oldEntity = dao.getCustomRuleByGuid(customRule.getGuid());
+            CustomRule oldEntity = rulesDao.getCustomRuleByGuid(customRule.getGuid());
 
             // Copy last triggered if entities are equal
             if (oldEntity.equals(newEntity)) {
@@ -244,12 +244,12 @@ public class RulesDomainModelBean implements RulesDomainModel {
             // Copy subscription list (ignore if provided)
             List<RuleSubscription> subscriptions = oldEntity.getRuleSubscriptionList();
             for (RuleSubscription subscription : subscriptions) {
-                dao.detachSubscription(subscription);
+                rulesDao.detachSubscription(subscription);
                 newEntity.getRuleSubscriptionList().add(subscription);
                 subscription.setCustomRule(newEntity);
             }
 
-            newEntity = dao.createCustomRule(newEntity);
+            newEntity = rulesDao.createCustomRule(newEntity);
             return CustomRuleMapper.toCustomRuleType(newEntity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when updating custom rule. ] {}", e.getMessage());
@@ -272,7 +272,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         }
 
         try {
-            CustomRule customRuleEntity = dao.getCustomRuleByGuid(updateSubscriptionType.getRuleGuid());
+            CustomRule customRuleEntity = rulesDao.getCustomRuleByGuid(updateSubscriptionType.getRuleGuid());
 
             if (SubscritionOperationType.ADD.equals(updateSubscriptionType.getOperation())) {
                 RuleSubscription ruleSubscription = new RuleSubscription();
@@ -287,7 +287,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 for (RuleSubscription subscription : subscriptions) {
                     if (subscription.getOwner().equals(updateSubscriptionType.getSubscription().getOwner()) && subscription.getType().equals(updateSubscriptionType.getSubscription().getType().name())) {
                         customRuleEntity.getRuleSubscriptionList().remove(subscription);
-                        dao.removeSubscription(subscription);
+                        rulesDao.removeSubscription(subscription);
                         break;
                     }
                 }
@@ -303,7 +303,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     @Override
     public CustomRuleType deleteCustomRule(String guid) throws RulesModelException {
         try {
-            CustomRule entity = dao.getCustomRuleByGuid(guid);
+            CustomRule entity = rulesDao.getCustomRuleByGuid(guid);
             entity.setArchived(true);
             entity.setActive(false);
             entity.setEndDate(DateUtils.nowUTC().toGregorianCalendar().getTime());
@@ -324,9 +324,9 @@ public class RulesDomainModelBean implements RulesDomainModel {
         }
 
         try {
-            CustomRule entity = dao.getCustomRuleByGuid(ruleGuid);
+            CustomRule entity = rulesDao.getCustomRuleByGuid(ruleGuid);
             entity.setTriggered(DateUtils.nowUTC().toGregorianCalendar().getTime());
-            dao.updateCustomRule(entity);
+            rulesDao.updateCustomRule(entity);
 
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
@@ -345,13 +345,13 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 LOG.error("[ Ticket is null, can not update status ]");
                 throw new InputArgumentException("Ticket is null", null);
             }
-            Ticket entity = dao.getTicketByGuid(ticket.getGuid());
+            Ticket entity = rulesDao.getTicketByGuid(ticket.getGuid());
 
             entity.setStatus(ticket.getStatus().name());
             entity.setUpdated(DateUtils.nowUTC().toGregorianCalendar().getTime());
             entity.setUpdatedBy(ticket.getUpdatedBy());
 
-            dao.updateTicket(entity);
+            rulesDao.updateTicket(entity);
 
             return TicketMapper.toTicketType(entity);
         } catch (DaoException | DaoMappingException e) {
@@ -369,13 +369,13 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 LOG.error("[ Ticket is null, can not update status ]");
                 throw new InputArgumentException("Ticket is null", null);
             }
-            Ticket entity = dao.getTicketByGuid(ticket.getGuid());
+            Ticket entity = rulesDao.getTicketByGuid(ticket.getGuid());
 
             entity.setTicketCount(ticket.getTicketCount());
             entity.setUpdated(DateUtils.nowUTC().toGregorianCalendar().getTime());
             entity.setUpdatedBy(ticket.getUpdatedBy());
 
-            dao.updateTicket(entity);
+            rulesDao.updateTicket(entity);
 
             return TicketMapper.toTicketType(entity);
         } catch (DaoException | DaoMappingException e) {
@@ -389,7 +389,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("Update alarm status in Rules");
 
         try {
-            AlarmReport entity = dao.getAlarmReportByGuid(alarmReportType.getGuid());
+            AlarmReport entity = rulesDao.getAlarmReportByGuid(alarmReportType.getGuid());
             if (entity == null) {
                 LOG.error("[ Alarm is null, can not update status ]");
                 throw new InputArgumentException("Alarm is null", null);
@@ -402,7 +402,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 entity.getRawMovement().setActive(!alarmReportType.isInactivatePosition());
             }
 
-            dao.updateAlarm(entity);
+            rulesDao.updateAlarm(entity);
 
             return AlarmMapper.toAlarmReportType(entity);
         } catch (DaoException | DaoMappingException e) {
@@ -416,7 +416,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("Getting list of Custom Rules that are active and not archived (rule engine)");
         try {
             List<CustomRuleType> list = new ArrayList<>();
-            List<CustomRule> entityList = dao.getRunnableCustomRuleList();
+            List<CustomRule> entityList = rulesDao.getRunnableCustomRuleList();
 
             for (CustomRule entity : entityList) {
                 list.add(CustomRuleMapper.toCustomRuleType(entity));
@@ -434,7 +434,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.debug("Getting list of Sanity Rules (rule engine)");
         try {
             List<SanityRuleType> list = new ArrayList<>();
-            List<SanityRule> entityList = dao.getSanityRules();
+            List<SanityRule> entityList = rulesDao.getSanityRules();
 
             for (SanityRule entity : entityList) {
                 list.add(SanityRuleMapper.toSanityRuleType(entity));
@@ -452,7 +452,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("Getting list of Custom Rules by user");
         try {
             List<CustomRuleType> list = new ArrayList<>();
-            List<CustomRule> entityList = dao.getCustomRulesByUser(updatedBy);
+            List<CustomRule> entityList = rulesDao.getCustomRulesByUser(updatedBy);
 
             for (CustomRule entity : entityList) {
                 list.add(CustomRuleMapper.toCustomRuleType(entity));
@@ -491,8 +491,8 @@ public class RulesDomainModelBean implements RulesDomainModel {
             String sql = CustomRuleSearchFieldMapper.createSelectSearchSql(searchKeyValues, query.isDynamic());
             String countSql = CustomRuleSearchFieldMapper.createCountSearchSql(searchKeyValues, query.isDynamic());
 
-            Long numberMatches = dao.getCustomRuleListSearchCount(countSql, searchKeyValues);
-            List<CustomRule> customRuleEntityList = dao.getCustomRuleListPaginated(page, listSize, sql, searchKeyValues);
+            Long numberMatches = rulesDao.getCustomRuleListSearchCount(countSql, searchKeyValues);
+            List<CustomRule> customRuleEntityList = rulesDao.getCustomRuleListPaginated(page, listSize, sql, searchKeyValues);
 
             for (CustomRule entity : customRuleEntityList) {
                 customRuleList.add(CustomRuleMapper.toCustomRuleType(entity));
@@ -523,7 +523,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             if (alarmReportType.getRawMovement() != null) {
                 movementGuid = alarmReportType.getRawMovement().getGuid();
             }
-            AlarmReport alarmReportEntity = dao.getOpenAlarmReportByMovementGuid(movementGuid);
+            AlarmReport alarmReportEntity = rulesDao.getOpenAlarmReportByMovementGuid(movementGuid);
 
             if (alarmReportEntity == null) {
                 alarmReportEntity = new AlarmReport();
@@ -543,7 +543,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 entity.getRawMovement().setActive(!alarmReportType.isInactivatePosition());
             }
 
-            AlarmReport createdReport = dao.createAlarmReport(entity);
+            AlarmReport createdReport = rulesDao.createAlarmReport(entity);
             return AlarmMapper.toAlarmReportType(createdReport);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when creating alarm report. ] {}", e.getMessage());
@@ -559,7 +559,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             Ticket ticket = TicketMapper.toTicketEntity(ticketType);
             ticket.setTicketCount(1L);
-            Ticket createdTicket = dao.createTicket(ticket);
+            Ticket createdTicket = rulesDao.createTicket(ticket);
             return TicketMapper.toTicketType(createdTicket);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when creating ticket. ] {}", e.getMessage());
@@ -593,8 +593,8 @@ public class RulesDomainModelBean implements RulesDomainModel {
             String sql = AlarmSearchFieldMapper.createSelectSearchSql(searchKeyValues, query.isDynamic());
             String countSql = AlarmSearchFieldMapper.createCountSearchSql(searchKeyValues, query.isDynamic());
 
-            Long numberMatches = dao.getAlarmListSearchCount(countSql, searchKeyValues);
-            List<AlarmReport> alarmEntityList = dao.getAlarmListPaginated(page, listSize, sql, searchKeyValues);
+            Long numberMatches = rulesDao.getAlarmListSearchCount(countSql, searchKeyValues);
+            List<AlarmReport> alarmEntityList = rulesDao.getAlarmListPaginated(page, listSize, sql, searchKeyValues);
 
             for (AlarmReport entity : alarmEntityList) {
                 alarmList.add(AlarmMapper.toAlarmReportType(entity));
@@ -640,18 +640,18 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
 
-            List<String> validRuleGuids = dao.getCustomRulesForTicketsByUser(loggedInUser);
+            List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(loggedInUser);
 
             String sql = TicketSearchFieldMapper.createSelectSearchSql(searchKeyValues, validRuleGuids, true);
 
-            List<Ticket> tickets = dao.getTicketList(sql, searchKeyValues);
+            List<Ticket> tickets = rulesDao.getTicketList(sql, searchKeyValues);
 
             for (Ticket ticket : tickets) {
                 ticket.setStatus(status.name());
                 ticket.setUpdated(DateUtils.nowUTC().toGregorianCalendar().getTime());
                 ticket.setUpdatedBy(loggedInUser);
 
-                dao.updateTicket(ticket);
+                rulesDao.updateTicket(ticket);
             }
 
             List<TicketType> ticketList = new ArrayList<>();
@@ -689,7 +689,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
 
-            List<String> validRuleGuids = dao.getCustomRulesForTicketsByUser(loggedInUser);
+            List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(loggedInUser);
 
             // If no valid guids, return empty ticket list
 //            if (validRuleGuids.isEmpty()) {
@@ -702,8 +702,8 @@ public class RulesDomainModelBean implements RulesDomainModel {
             String sql = TicketSearchFieldMapper.createSelectSearchSql(searchKeyValues, validRuleGuids, true);
             String countSql = TicketSearchFieldMapper.createCountSearchSql(searchKeyValues, validRuleGuids, true);
 
-            Long numberMatches = dao.getTicketListSearchCount(countSql, searchKeyValues);
-            List<Ticket> ticketEntityList = dao.getTicketListPaginated(page, listSize, sql, searchKeyValues);
+            Long numberMatches = rulesDao.getTicketListSearchCount(countSql, searchKeyValues);
+            List<Ticket> ticketEntityList = rulesDao.getTicketListPaginated(page, listSize, sql, searchKeyValues);
 
             for (Ticket entity : ticketEntityList) {
                 ticketList.add(TicketMapper.toTicketType(entity));
@@ -739,7 +739,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             TicketListResponseDto response = new TicketListResponseDto();
             List<TicketType> ticketList = new ArrayList<>();
 
-            List<Ticket> ticketEntityList = dao.getTicketsByMovements(movements);
+            List<Ticket> ticketEntityList = rulesDao.getTicketsByMovements(movements);
 
             for (Ticket entity : ticketEntityList) {
                 ticketList.add(TicketMapper.toTicketType(entity));
@@ -765,7 +765,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             throw new InputArgumentException("Movements list is empty");
         }
         try {
-            long count = dao.countTicketListByMovements(movements);
+            long count = rulesDao.countTicketListByMovements(movements);
             return count;
         } catch (DaoException e) {
             LOG.error("[ Error when counting tickets by movements ] {} ", e.getMessage());
@@ -779,7 +779,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             List<PreviousReportType> previousReports = new ArrayList<>();
 
-            List<PreviousReport> entityList = dao.getPreviousReportList();
+            List<PreviousReport> entityList = rulesDao.getPreviousReportList();
 
             for (PreviousReport entity : entityList) {
                 previousReports.add(PreviousReportMapper.toPreviousReportType(entity));
@@ -796,7 +796,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public PreviousReportType getPreviousReportByAssetGuid(String assetGuid) throws RulesModelException {
         LOG.info("Get previous report by asset GUID");
         try {
-            PreviousReport entity = dao.getPreviousReportByAssetGuid(assetGuid);
+            PreviousReport entity = rulesDao.getPreviousReportByAssetGuid(assetGuid);
             return PreviousReportMapper.toPreviousReportType(entity);
         } catch (DaoMappingException e) {
             LOG.error("[ Error when getting previous report by asset guid. ] {}", e.getMessage());
@@ -808,7 +808,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public TicketType getTicketByAssetGuid(String assetGuid, String ruleGuid) throws RulesModelException {
         LOG.info("Getting ticket by asset guid:{}", assetGuid);
         try {
-            Ticket ticketEntity = dao.getTicketByAssetAndRule(assetGuid, ruleGuid);
+            Ticket ticketEntity = rulesDao.getTicketByAssetAndRule(assetGuid, ruleGuid);
             return TicketMapper.toTicketType(ticketEntity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when getting list. ] {}", e.getMessage());
@@ -820,7 +820,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public AlarmReportType getAlarmReportByAssetAndRule(String assetGuid, String ruleGuid) throws RulesModelException {
         LOG.info("Getting alarm report by asset guid:{}", assetGuid);
         try {
-            AlarmReport alarmReportEntity = dao.getAlarmReportByAssetAndRule(assetGuid, ruleGuid);
+            AlarmReport alarmReportEntity = rulesDao.getAlarmReportByAssetAndRule(assetGuid, ruleGuid);
             return AlarmMapper.toAlarmReportType(alarmReportEntity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when getting list. ] {}", e.getMessage());
@@ -832,13 +832,13 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public void upsertPreviousReport(PreviousReportType previousReport) throws RulesModelException {
         LOG.info("Upserting previous report");
         try {
-            PreviousReport entity = dao.getPreviousReportByAssetGuid(previousReport.getAssetGuid());
+            PreviousReport entity = rulesDao.getPreviousReportByAssetGuid(previousReport.getAssetGuid());
             if (entity == null) {
                 entity = PreviousReportMapper.toPreviousReportEntity(previousReport);
             } else {
                 entity = PreviousReportMapper.toPreviousReportEntity(entity, previousReport);
             }
-            dao.updatePreviousReport(entity);
+            rulesDao.updatePreviousReport(entity);
         } catch (DaoException | DaoMappingException e) {
             throw new RulesModelException("[ Error when upserting previous report. ]", e);
         }
@@ -848,7 +848,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesModelException {
         LOG.info("Getting alarm report by guid");
         try {
-            return AlarmMapper.toAlarmReportType(dao.getAlarmReportByGuid(guid));
+            return AlarmMapper.toAlarmReportType(rulesDao.getAlarmReportByGuid(guid));
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when getting alarm report by GUID. ] {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
@@ -859,7 +859,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public TicketType getTicketByGuid(String guid) throws RulesModelException {
         LOG.info("Getting ticket by guid");
         try {
-            Ticket ticketEntity = dao.getTicketByGuid(guid);
+            Ticket ticketEntity = rulesDao.getTicketByGuid(guid);
             return TicketMapper.toTicketType(ticketEntity);
         } catch (DaoException | DaoMappingException e) {
             LOG.error("[ Error when getting ticket by GUID. ] {}", e.getMessage());
@@ -871,7 +871,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public long getNumberOfOpenAlarms() throws RulesModelException {
         LOG.info("Counting open alarms");
         try {
-            long alarmCount = dao.getNumberOfOpenAlarms();
+            long alarmCount = rulesDao.getNumberOfOpenAlarms();
             return alarmCount;
         } catch (DaoException e) {
             LOG.error("[ Error when counting open alarms. ] {}", e.getMessage());
@@ -883,9 +883,9 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public long getNumberOfOpenTickets(String userName) throws RulesModelException {
         LOG.info("Counting open tickets");
         try {
-            List<String> validRuleGuids = dao.getCustomRulesForTicketsByUser(userName);
+            List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(userName);
             if (!validRuleGuids.isEmpty()) {
-                return dao.getNumberOfOpenTickets(validRuleGuids);
+                return rulesDao.getNumberOfOpenTickets(validRuleGuids);
             }
             return 0;
         } catch (DaoException e) {
@@ -898,7 +898,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public long getNumberOfAssetsNotSending() throws RulesModelException {
         LOG.info("Counting assets not sending");
         try {
-            return dao.getNumberOfTicketsByRuleGuid(UvmsConstants.ASSET_NOT_SENDING_RULE);
+            return rulesDao.getNumberOfTicketsByRuleGuid(UvmsConstants.ASSET_NOT_SENDING_RULE);
         } catch (DaoException e) {
             LOG.error("[ Error when counting open alarms. ] {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
@@ -912,9 +912,9 @@ public class RulesDomainModelBean implements RulesDomainModel {
         List<TicketAndRuleType> ticketsAndRules = new ArrayList<>();
         try {
             // TODO: This can be done more efficiently with some join stuff
-            List<Ticket> tickets = dao.getTicketsByMovements(movementGuids);
+            List<Ticket> tickets = rulesDao.getTicketsByMovements(movementGuids);
             for (Ticket ticket : tickets) {
-                CustomRule rule = dao.getCustomRuleByGuid(ticket.getRuleGuid());
+                CustomRule rule = rulesDao.getCustomRuleByGuid(ticket.getRuleGuid());
 
                 TicketType ticketType = TicketMapper.toTicketType(ticket);
                 CustomRuleType ruleType = CustomRuleMapper.toCustomRuleType(rule);

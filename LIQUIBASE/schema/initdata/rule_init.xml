@@ -3384,7 +3384,7 @@
             <column name="rule_id" value="173"/>
             <column name="br_id" value="FA-L01-00-0173"/>
             <column name="expression"
-                    value="!mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes)"/>
+                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(appliedAAPProcessTypeCodes)"/>
             <column name="note" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
@@ -3398,7 +3398,6 @@
             <column name="property_names" value="appliedAAPProcessTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
-
         <insert tableName="rule">
             <column name="rule_id" value="219"/>
             <column name="br_id" value="FA-L02-00-0219"/>
@@ -4313,7 +4312,7 @@
             <column name="rule_id" value="123"/>
             <column name="br_id" value="FA-L02-00-0123"/>
             <column name="expression"
-                    value="fishingActivity == true &amp;&amp; !isRequiredGearCharacteristicsPresent(typeCode)"/>
+                    value="fishingActivity &amp;&amp; isEmpty(applicableGearCharacteristics) &amp;&amp; isRequiredGearCharacteristicsPresent(typeCode)"/>
             <column name="note" value="None or not all required gear characteristics are present in the list"/>
             <column name="message" value="ApplicableGearCharacteristic missing"/>
             <column name="level" value="L02"/>
