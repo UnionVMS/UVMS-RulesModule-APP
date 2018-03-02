@@ -4312,7 +4312,7 @@
             <column name="rule_id" value="123"/>
             <column name="br_id" value="FA-L02-00-0123"/>
             <column name="expression"
-                    value="fishingActivity &amp;&amp; isEmpty(applicableGearCharacteristics) &amp;&amp; isRequiredGearCharacteristicsPresent(typeCode)"/>
+                    value="fishingActivity &amp;&amp; !isRequiredGearCharacteristicsPresent(typeCode)"/>
             <column name="note" value="None or not all required gear characteristics are present in the list"/>
             <column name="message" value="ApplicableGearCharacteristic missing"/>
             <column name="level" value="L02"/>
