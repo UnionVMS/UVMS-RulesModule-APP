@@ -73,7 +73,7 @@ public class TemplateEngine {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 final String errorMessageForBrId = cacheService.getErrorMessageForBrId(ruleType.getBrId());
                 if(StringUtils.isNotEmpty(errorMessageForBrId)){
-                    ruleType.setMessage(errorMessageForBrId);
+                    ruleType.setMessage(errorMessageForBrId.replaceAll("\"", "&quot;"));
                 }
             }
         }
