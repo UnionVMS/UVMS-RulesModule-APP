@@ -39,7 +39,7 @@
                         </jarModule>
                         <webModule>
                             <groupId>${project.groupId}</groupId>
-                            <context-root>${project.parent.artifactId}</context-root>
+                            <context-root>${context.root}${project.parent.artifactId}</context-root>
                             <artifactId>rules-rest</artifactId>
                         </webModule>
                     </modules>
