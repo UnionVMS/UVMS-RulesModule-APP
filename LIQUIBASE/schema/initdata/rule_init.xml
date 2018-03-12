@@ -1203,7 +1203,8 @@
             <column name="rule_id" value="46"/>
             <column name="br_id" value="FA-L00-00-0046"/>
             <column name="expression"
-                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)                                              &amp;&amp; specifiedVesselTransportMeans == null"/>
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)
+                          &amp;&amp; specifiedVesselTransportMeans == null"/>
             <column name="note" value="If purposeCode 9 or 5, this entity is mandatory"/>
             <column name="message" value="Reporting vessel information missing."/>
             <column name="level" value="L00"/>

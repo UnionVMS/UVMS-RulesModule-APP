@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
+import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import java.util.Collection;
 import javax.annotation.Resource;
 import javax.ejb.EJB;

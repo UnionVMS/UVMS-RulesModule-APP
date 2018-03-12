@@ -60,10 +60,11 @@ public class RulesModuleRequestMapper {
     }
 
     public static String createSendFLUXFAReportMessageRequest(String fluxFAReportMessage, String username, String logId, String fluxDataFlow,
-                                                              String senderOrReceiver, String onValue) throws RulesModelMapperException {
+                                                              String senderOrReceiver, String onValue, boolean isEmpty) throws RulesModelMapperException {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SEND_FLUX_FA_REPORT);
         request.setRequest(fluxFAReportMessage);
+        request.setIsEmptyReport(isEmpty);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
