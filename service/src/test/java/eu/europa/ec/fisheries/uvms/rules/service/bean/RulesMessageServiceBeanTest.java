@@ -35,6 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;

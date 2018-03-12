@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import java.util.Map;
 import javax.jms.Destination;
 import javax.jms.Queue;

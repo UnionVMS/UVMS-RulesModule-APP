@@ -8,11 +8,9 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.config;
 
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConfigSettingsBean;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -29,17 +27,9 @@ public class RulesConfigurationCache extends AbstractConfigSettingsBean {
     @EJB
     private RulesResponseConsumerBean consumer;
 
-    @EJB
-    private RulesMessageProducerBean producer;
-
     @Override
     protected RulesResponseConsumerBean getConsumer() {
         return consumer;
-    }
-
-    @Override
-    protected RulesMessageProducerBean getProducer() {
-        return producer;
     }
 
     @Override
