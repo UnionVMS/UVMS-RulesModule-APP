@@ -25,6 +25,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -110,6 +111,26 @@ public class FaReportDocumentFact extends AbstractFact {
         return false;
     }
 
+
+    public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
+        if (CollectionUtils.isEmpty(dateList)) {
+            return false;
+        }
+        int listSize = dateList.size();
+        for (int i = 0; i < listSize; i++) {
+            Date comparisonDate = dateList.get(i);
+            for (int j = i + 1; j < listSize; j++) {
+                if (isSameDay(comparisonDate, dateList.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameDay(Date date1, Date date2) {
+        return DateUtils.isSameDay(date1, date2);
+    }
 
     public FaReportDocumentFact() {
         setFactType();
