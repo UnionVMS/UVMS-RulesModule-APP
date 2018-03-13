@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Check RulesConfigurationCache class in rules module as an example on how to use this abstract class.
  */
-public abstract class AbstractConfigSettingsBean extends AbstractProducer {
+public abstract class AbstractConfigSettingsBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConsumer.class);
 
@@ -67,6 +67,7 @@ public abstract class AbstractConfigSettingsBean extends AbstractProducer {
     protected AbstractConfigSettingsBean() {
         configQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_CONFIG);
         if (cache == null) {
+            LOGGER.info("[START] Loading settings for module : [" + getModuleName() + "].");
             cache = CacheBuilder.newBuilder()
                     .maximumSize(100)
                     .expireAfterWrite(1, TimeUnit.HOURS)
@@ -77,7 +78,7 @@ public abstract class AbstractConfigSettingsBean extends AbstractProducer {
                                }
                            }
                     );
-            LOGGER.info("[INFO] Finished loading settings for module : [" + getModuleName() + "].");
+            LOGGER.info("[END] Finished loading settings for module : [" + getModuleName() + "].");
         }
     }
 
@@ -145,7 +146,7 @@ public abstract class AbstractConfigSettingsBean extends AbstractProducer {
      */
     private List<SettingType> getSettingTypes(String moduleName) throws MessageException {
         try {
-            String jmsMessageID = this.sendMessageToSpecificQueue(ModuleRequestMapper.toPullSettingsRequest(moduleName), getConfigQueue(), getConsumer().getDestination());
+            String jmsMessageID = getProducer().sendMessageToSpecificQueue(ModuleRequestMapper.toPullSettingsRequest(moduleName), getConfigQueue(), getConsumer().getDestination());
             TextMessage message = getConsumer().getMessage(jmsMessageID, TextMessage.class);
             return ModuleResponseMapper.getSettingsFromPullSettingsResponse(message);
         } catch (JMSException | ModelMapperException e) {
@@ -161,13 +162,5 @@ public abstract class AbstractConfigSettingsBean extends AbstractProducer {
         return configQueue;
     }
 
-    @Override
-    /**
-     * No need for destination for the type of usage in need here.
-     * We just need the "sendMessageToSpecificQueue(...)" functionality of AbstractProducer.
-     */
-    public String getDestinationName() {
-        return StringUtils.EMPTY;
-    }
-
+    abstract AbstractProducer getProducer();
 }

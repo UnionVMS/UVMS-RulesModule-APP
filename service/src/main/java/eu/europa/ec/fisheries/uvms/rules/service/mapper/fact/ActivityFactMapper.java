@@ -660,25 +660,27 @@ public class ActivityFactMapper {
             return null;
         }
 
+        final String partialXpath = xPathUtil.getValue();
+
         GearCharacteristicsFact gearCharacteristicsFact = new GearCharacteristicsFact();
 
         gearCharacteristicsFact.setTypeCode(mapToCodeType(gearCharacteristic.getTypeCode()));
-        xPathUtil.append(TYPE_CODE).storeInRepo(gearCharacteristicsFact, TYPE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(gearCharacteristicsFact, TYPE_CODE_PROP);
 
         gearCharacteristicsFact.setValue(gearCharacteristic.getValue());
-        xPathUtil.append(VALUE).storeInRepo(gearCharacteristicsFact, VALUE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE).storeInRepo(gearCharacteristicsFact, VALUE_PROP);
 
         gearCharacteristicsFact.setValueIndicator(gearCharacteristic.getValueIndicator());
-        xPathUtil.append(VALUE_INDICATOR).storeInRepo(gearCharacteristicsFact, VALUE_INDICATOR_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_INDICATOR).storeInRepo(gearCharacteristicsFact, VALUE_INDICATOR_PROP);
 
         gearCharacteristicsFact.setValueMeasure(mapToMeasureType(gearCharacteristic.getValueMeasure()));
-        xPathUtil.append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
 
         gearCharacteristicsFact.setValueCode(mapToCodeType(gearCharacteristic.getValueCode()));
-        xPathUtil.append(VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
 
         gearCharacteristicsFact.setValueQuantity(mapQuantityTypeToMeasureType(gearCharacteristic.getValueQuantity()));
-        xPathUtil.append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
 
         return gearCharacteristicsFact;
     }
@@ -993,10 +995,8 @@ public class ActivityFactMapper {
         fluxCharacteristicsFact.setValueCode(mapToCodeType(fluxCharacteristic.getValueCode()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_CODE).storeInRepo(fluxCharacteristicsFact, VALUE_CODE_PROP);
 
-        if (fluxCharacteristic.getValues() != null) {
-            fluxCharacteristicsFact.setValues(fluxCharacteristic.getValues());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE).storeInRepo(fluxCharacteristicsFact, "values");
-        }
+        fluxCharacteristicsFact.setValues(fluxCharacteristic.getValues());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE).storeInRepo(fluxCharacteristicsFact, "values");
 
         fluxCharacteristicsFact.setValueQuantity(fluxCharacteristic.getValueQuantity());
         xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_QUANTITY).storeInRepo(fluxCharacteristicsFact, VALUE_QUANTITY_PROP);
@@ -1009,16 +1009,13 @@ public class ActivityFactMapper {
         if (fluxCharacteristic == null) {
             return emptyList();
         }
-
         String partialXpath = xPathUtil.getValue();
-
         List<FluxCharacteristicsFact> list = new ArrayList<>();
         int index = 1;
         for (FLUXCharacteristic fLUXCharacteristic : fluxCharacteristic) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(fluxCharacteristicType, index);
             list.add(generateFactForFluxCharacteristic(fLUXCharacteristic, fluxCharacteristicType));
         }
-
         return list;
     }
 
@@ -1409,7 +1406,7 @@ public class ActivityFactMapper {
                 xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, vessTrspMeansIndex).append(ROLE_CODE).storeInRepo(faRelocationFact, "relatedVesselTransportMeansRoleCodes");
 
                 faRelocationFact.setRelatedVesselTransportMeansContactPartyRoleCodes(mapToContactPartyRoleCodes(vesselTransportMeans));
-                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, vessTrspMeansIndex).append(SPECIFIED_CONTACT_PARTY, ROLE_CODE).storeInRepo(faRelocationFact, "relatedVesselTransportMeansRoleCodes");
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, vessTrspMeansIndex).append(SPECIFIED_CONTACT_PARTY, ROLE_CODE).storeInRepo(faRelocationFact, "relatedVesselTransportMeansContactPartyRoleCodes");
 
                 faRelocationFact.setRelatedVesselTransportMeansNames(vesselTransportMeans.getNames());
                 xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, vessTrspMeansIndex).append("Name").storeInRepo(faRelocationFact, "relatedVesselTransportMeansNames");
@@ -1566,7 +1563,7 @@ public class ActivityFactMapper {
                 for (FLUXCharacteristic characteristic : specifiedFLUXCharacteristics) {
                     if (characteristic != null) {
                         codeTypes.add(mapToCodeType(characteristic.getTypeCode()));
-                        if(characteristic.getValueDateTime() != null && characteristic.getValueDateTime().getDateTime() != null){
+                        if (characteristic.getValueDateTime() != null && characteristic.getValueDateTime().getDateTime() != null) {
                             dates.add(characteristic.getValueDateTime().getDateTime().toString());
                         } else {
                             dates.add("NOT_VALID_DATE_ELEMENT");
@@ -1652,7 +1649,7 @@ public class ActivityFactMapper {
     }
 
     private List<CodeType> mapToSpecifiedFluxLocationsCodeTypes(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
-        if(CollectionUtils.isEmpty(specifiedFLUXCharacteristics)){
+        if (CollectionUtils.isEmpty(specifiedFLUXCharacteristics)) {
             return Collections.emptyList();
         }
         List<CodeType> specLocTypeCodes = new ArrayList<>();
@@ -1663,7 +1660,7 @@ public class ActivityFactMapper {
     }
 
     private List<IdType> mapToLocationIds(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
-        if(CollectionUtils.isEmpty(specifiedFLUXCharacteristics)){
+        if (CollectionUtils.isEmpty(specifiedFLUXCharacteristics)) {
             return Collections.emptyList();
         }
         List<IdType> idTypes = new ArrayList<>();
@@ -1674,7 +1671,7 @@ public class ActivityFactMapper {
     }
 
     private List<FLUXLocation> getFluxLocationsFromFaCatch(List<FACatch> specifiedFACatches) {
-        if(CollectionUtils.isEmpty(specifiedFACatches)){
+        if (CollectionUtils.isEmpty(specifiedFACatches)) {
             return Collections.emptyList();
         }
         List<FLUXLocation> faCatchFLUXLocations = null;
@@ -2056,9 +2053,9 @@ public class ActivityFactMapper {
         for (FishingActivity activity : fishingActList) {
             FishingTrip specifiedFishingTrip = activity.getSpecifiedFishingTrip();
             final un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = activity.getTypeCode();
-            if(typeCode != null && StringUtils.equals(typeCode.getValue(), type)){
-                List<IDType> tripIds = specifiedFishingTrip != null ?  specifiedFishingTrip.getIDS() : null;
-                if(CollectionUtils.isNotEmpty(tripIds)){
+            if (typeCode != null && StringUtils.equals(typeCode.getValue(), type)) {
+                List<IDType> tripIds = specifiedFishingTrip != null ? specifiedFishingTrip.getIDS() : null;
+                if (CollectionUtils.isNotEmpty(tripIds)) {
                     for (IDType tripId : tripIds) {
                         String trpIdStr = tripId.getValue();
                         Integer nrOfArrivalsForThisTrip = tripMapInfo.get(trpIdStr);

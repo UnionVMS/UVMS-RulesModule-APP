@@ -91,6 +91,20 @@ public class FishingActivityFact extends AbstractFact {
         return false;
     }
 
+    public boolean existsAtLeastOneValid(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
+        if (CollectionUtils.isEmpty(delimitedPeriods)) {
+            return false;
+        }
+        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+            if ((start && end && (delimitedPeriod.getStartDateTime() != null || delimitedPeriod.getEndDateTime() != null))
+                    || (start && !end && delimitedPeriod.getStartDateTime() != null)
+                    || (end && !start && delimitedPeriod.getEndDateTime() != null)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setIsSubActivity(boolean isSubActivity) {
         this.isSubActivity = isSubActivity;
     }
