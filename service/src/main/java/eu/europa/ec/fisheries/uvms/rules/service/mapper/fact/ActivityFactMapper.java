@@ -660,25 +660,27 @@ public class ActivityFactMapper {
             return null;
         }
 
+        final String partialXpath = xPathUtil.getValue();
+
         GearCharacteristicsFact gearCharacteristicsFact = new GearCharacteristicsFact();
 
         gearCharacteristicsFact.setTypeCode(mapToCodeType(gearCharacteristic.getTypeCode()));
-        xPathUtil.append(TYPE_CODE).storeInRepo(gearCharacteristicsFact, TYPE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(gearCharacteristicsFact, TYPE_CODE_PROP);
 
         gearCharacteristicsFact.setValue(gearCharacteristic.getValue());
-        xPathUtil.append(VALUE).storeInRepo(gearCharacteristicsFact, VALUE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE).storeInRepo(gearCharacteristicsFact, VALUE_PROP);
 
         gearCharacteristicsFact.setValueIndicator(gearCharacteristic.getValueIndicator());
-        xPathUtil.append(VALUE_INDICATOR).storeInRepo(gearCharacteristicsFact, VALUE_INDICATOR_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_INDICATOR).storeInRepo(gearCharacteristicsFact, VALUE_INDICATOR_PROP);
 
         gearCharacteristicsFact.setValueMeasure(mapToMeasureType(gearCharacteristic.getValueMeasure()));
-        xPathUtil.append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_MEASURE).storeInRepo(gearCharacteristicsFact, VALUE_MEASURE_PROP);
 
         gearCharacteristicsFact.setValueCode(mapToCodeType(gearCharacteristic.getValueCode()));
-        xPathUtil.append(VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_CODE).storeInRepo(gearCharacteristicsFact, VALUE_CODE_PROP);
 
         gearCharacteristicsFact.setValueQuantity(mapQuantityTypeToMeasureType(gearCharacteristic.getValueQuantity()));
-        xPathUtil.append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
 
         return gearCharacteristicsFact;
     }
