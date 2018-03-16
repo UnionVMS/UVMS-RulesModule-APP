@@ -13,6 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -26,16 +37,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -483,12 +484,12 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        codeTypes.removeAll(Collections.singleton(null));
+        ImmutableList<CodeType> codeTypeImmutableList = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
         List<String> valueList = Arrays.asList(valuesToMatch);
-        valueList.removeAll(Collections.singleton(null));
+        ImmutableList<String> stringImmutableList = ImmutableList.copyOf(Iterables.filter(valueList, Predicates.notNull()));
 
-        for (String val : valueList) {
-            for (CodeType IdType : codeTypes) {
+        for (String val : stringImmutableList) {
+            for (CodeType IdType : codeTypeImmutableList) {
                 if (!val.equals(IdType.getListId())) {
                     return true;
                 }
@@ -501,7 +502,8 @@ public abstract class AbstractFact {
         if(CollectionUtils.isEmpty(codeTypes) || StringUtils.isEmpty(valueToMatch)){
             return false;
         }
-        for (CodeType codeType : codeTypes) {
+        ImmutableList<CodeType> valueList = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
+        for (CodeType codeType : valueList) {
           if(!valueToMatch.equals(codeType.getValue())){
               return false;
           }
@@ -795,7 +797,8 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
@@ -808,7 +811,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(numericList)) {
             return false;
         }
-        for (NumericType type : numericList) {
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
                 return false;
@@ -821,7 +825,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(value)) {
             return true;
         }
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             if (!isPositiveIntegerValue(type.getValue())) {
                 return false;
             }
@@ -854,7 +859,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(values)) {
             return false;
         }
-        for (MeasureType type : values) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(values, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
                 return false;
@@ -977,7 +983,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isEmpty(List<?> list) {
-        return CollectionUtils.isEmpty(list);
+        return CollectionUtils.isEmpty(ImmutableList.copyOf(Iterables.filter(list, Predicates.notNull())));
     }
 
     /**
@@ -992,7 +998,8 @@ public abstract class AbstractFact {
 
     public boolean containsOnlyEmptyStrings(List<String> stringsList) {
         if (!isEmpty(stringsList)) {
-            for (String str : stringsList) {
+            ImmutableList<String> valueList = ImmutableList.copyOf(Iterables.filter(stringsList, Predicates.notNull()));
+            for (String str : valueList) {
                 if (StringUtils.isNotEmpty(str)) {
                     return false;
                 }
@@ -1005,7 +1012,8 @@ public abstract class AbstractFact {
         if(CollectionUtils.isEmpty(list)){
             return false;
         }
-        for (NumericType type : list) {
+        ImmutableList<NumericType> valueList = ImmutableList.copyOf(Iterables.filter(list, Predicates.notNull()));
+        for (NumericType type : valueList) {
             if (type.getValue() == null) {
                 return false;
             }
