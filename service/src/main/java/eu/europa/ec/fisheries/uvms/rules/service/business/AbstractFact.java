@@ -17,10 +17,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
@@ -964,10 +966,9 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
-     *
+     * This method return true if the list contains at least one or more SpecifiedFLUXLocations list.
      * @param faCatches
-     * @return false/true
+     * @return true | false
      */
     public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
@@ -980,8 +981,49 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
-    public boolean isEmpty(List<?> list) {
-        return CollectionUtils.isEmpty(list);
+    /**
+     * This method returns true if the collection is null or is empty.
+	 * @param collection
+	 * @return true | false
+     */
+    public static boolean isEmpty( Collection<?> collection ){
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * This method returns true of the map is null or is empty.
+     * @param map
+     * @return true | false
+     */
+    public static boolean isEmpty( Map<?, ?> map ){
+        return map == null || map.isEmpty();
+    }
+
+    /**
+     * This method returns true if the objet is null.
+     * @param object
+     * @return true | false
+     */
+    public static boolean isEmpty( Object object ){
+        return object == null;
+    }
+
+    /**
+     * This method returns true if the input array is null or its length is zero.
+     * @param array
+     * @return true | false
+     */
+    public static boolean isEmpty( Object[] array ){
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * This method returns true if the input string is null or its length is zero.
+     * @param string
+     * @return true | false
+     */
+    public static boolean isEmpty( String string ){
+        return string == null || string.trim().length() == 0;
     }
 
     /**
@@ -1006,7 +1048,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        if(CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)){
             return false;
         }
         for (NumericType type : list) {
@@ -1015,10 +1057,6 @@ public abstract class AbstractFact {
             }
         }
         return true;
-    }
-
-    public boolean isEmpty(String str) {
-        return StringUtils.isEmpty(str);
     }
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
