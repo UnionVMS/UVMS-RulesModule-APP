@@ -484,12 +484,12 @@ public abstract class AbstractFact {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-        ImmutableList<CodeType> codeTypeImmutableList = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
+        codeTypes.removeAll(Collections.singleton(null));
         List<String> valueList = Arrays.asList(valuesToMatch);
-        ImmutableList<String> stringImmutableList = ImmutableList.copyOf(Iterables.filter(valueList, Predicates.notNull()));
+        valueList.removeAll(Collections.singleton(null));
 
-        for (String val : stringImmutableList) {
-            for (CodeType IdType : codeTypeImmutableList) {
+        for (String val : valueList) {
+            for (CodeType IdType : codeTypes) {
                 if (!val.equals(IdType.getListId())) {
                     return true;
                 }
@@ -502,8 +502,7 @@ public abstract class AbstractFact {
         if(CollectionUtils.isEmpty(codeTypes) || StringUtils.isEmpty(valueToMatch)){
             return false;
         }
-        ImmutableList<CodeType> valueList = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
-        for (CodeType codeType : valueList) {
+        for (CodeType codeType : codeTypes) {
           if(!valueToMatch.equals(codeType.getValue())){
               return false;
           }
@@ -797,8 +796,7 @@ public abstract class AbstractFact {
         if (value == null) {
             return true;
         }
-        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
-        for (MeasureType type : removeNull) {
+        for (MeasureType type : value) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
@@ -983,7 +981,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isEmpty(List<?> list) {
-        return CollectionUtils.isEmpty(ImmutableList.copyOf(Iterables.filter(list, Predicates.notNull())));
+        return CollectionUtils.isEmpty(list);
     }
 
     /**
@@ -998,8 +996,7 @@ public abstract class AbstractFact {
 
     public boolean containsOnlyEmptyStrings(List<String> stringsList) {
         if (!isEmpty(stringsList)) {
-            ImmutableList<String> valueList = ImmutableList.copyOf(Iterables.filter(stringsList, Predicates.notNull()));
-            for (String str : valueList) {
+            for (String str : stringsList) {
                 if (StringUtils.isNotEmpty(str)) {
                     return false;
                 }
@@ -1012,8 +1009,7 @@ public abstract class AbstractFact {
         if(CollectionUtils.isEmpty(list)){
             return false;
         }
-        ImmutableList<NumericType> valueList = ImmutableList.copyOf(Iterables.filter(list, Predicates.notNull()));
-        for (NumericType type : valueList) {
+        for (NumericType type : list) {
             if (type.getValue() == null) {
                 return false;
             }
