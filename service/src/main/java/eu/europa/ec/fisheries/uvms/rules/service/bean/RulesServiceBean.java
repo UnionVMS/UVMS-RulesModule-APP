@@ -672,7 +672,7 @@ public class RulesServiceBean implements RulesService {
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
-            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
+            auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
@@ -715,7 +715,7 @@ public class RulesServiceBean implements RulesService {
     private MovementFact collectMovementData(MobileTerminalType mobileTerminal, Asset asset, final RawMovementType rawMovement, final String username) throws MessageException, RulesModelMapperException, ExecutionException, InterruptedException, RulesServiceException {
         int threadNum = 5;
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);
-        Integer numberOfReportsLast24Hours = null;
+        Integer numberOfReportsLast24Hours;
         final String assetGuid;
         final String assetHistGuid;
         final String assetFlagState;
