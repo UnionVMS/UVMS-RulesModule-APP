@@ -1302,11 +1302,12 @@ public class AbstractFactTest {
 
     @Test
     public void testDateComparison() {
+        FaReportDocumentFact faRepFact = new FaReportDocumentFact();
         Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
         Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains1 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        final boolean contains1 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
         System.out.println("List contains sameDate [true]: " + contains1);
         assertTrue(contains1);
 
@@ -1314,7 +1315,7 @@ public class AbstractFactTest {
         date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 12).getTime();
         date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains2 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        final boolean contains2 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
         System.out.println("List contains sameDate [false]: " + contains2);
         assertFalse(contains2);
 

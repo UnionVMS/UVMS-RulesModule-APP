@@ -22,4 +22,7 @@ public class ServiceConstants {
 
     public static final String PERMISSION_DENIED_RULE="FA-L00-00-9999";
     public static final String PERMISSION_DENIED_RULE_MESSAGE="PERMISSION: The querier is not allowed access to the requested data. No FLUXFAReportMessage containing the response will be sent.";
+
+    public static final String EMPTY_REPORT_RULE="FA-L03-00-9998";
+    public static final String EMPTY_REPORT_RULE_MESSAGE="UNAVAILABLE: The requested data is not available. No FLUXFAReportMessage containing the response will be sent.";
 }

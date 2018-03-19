@@ -1203,7 +1203,8 @@
             <column name="rule_id" value="46"/>
             <column name="br_id" value="FA-L00-00-0046"/>
             <column name="expression"
-                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)                                              &amp;&amp; specifiedVesselTransportMeans == null"/>
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)
+                          &amp;&amp; specifiedVesselTransportMeans == null"/>
             <column name="note" value="If purposeCode 9 or 5, this entity is mandatory"/>
             <column name="message" value="Reporting vessel information missing."/>
             <column name="level" value="L00"/>
@@ -1219,7 +1220,7 @@
             <column name="expression" value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)
                           &amp;&amp; !listSizeIs(specifiedFishingActivities, 1) &amp;&amp; (isEmpty(specifiedFishingActivities) ||
                           listContainsEitherThen(specifiedFishingActivitiesTypes, &quot;JOINT_FISHING_OPERATION&quot;, &quot;FISHING_OPERATION&quot;) ||
-                          containsSameDayMoreTheOnce(specifiedAndRealtedFishActOccurrenceDateTimes))"/>
+                          !containsSameDayMoreTheOnce(specifiedAndRealtedFishActOccurrenceDateTimes))"/>
             <column name="note"
                     value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations
                     (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
@@ -1228,7 +1229,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="1"/>
-            <column name="property_names" value="specifiedFishingActivities,purposeCode"/>
+            <column name="property_names" value="specifiedFishingActivities"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -2371,8 +2372,7 @@
             <column name="rule_id" value="95"/>
             <column name="br_id" value="FA-L02-00-0095"/>
             <column name="expression"
-                    value="!isSubActivity &amp;&amp; !isDateProvided &amp;&amp;
-                    (validateDelimitedPeriod(delimitedPeriods, true, true) &amp;&amp; anyRelatedActivityIsMissingBothDates())"/>
+                    value="!isSubActivity &amp;&amp; !isDateProvided &amp;&amp; !existsAtLeastOneValid(delimitedPeriods, true, true) &amp;&amp; anyRelatedActivityIsMissingBothDates()"/>
             <column name="note" value="check presence"/>
             <column name="message"
                     value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
@@ -5640,7 +5640,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-17 00:00:00.0"/>
             <column name="template_id" value="11"/>
-            <column name="property_names" value="valueMesaure"/>
+            <column name="property_names" value="valueMeasure"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">

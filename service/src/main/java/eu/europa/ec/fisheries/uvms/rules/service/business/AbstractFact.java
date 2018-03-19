@@ -43,7 +43,6 @@ import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
@@ -627,7 +626,7 @@ public abstract class AbstractFact {
             return true;
         }
         for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-            if ((start && end && delimitedPeriod.getStartDateTime() == null && delimitedPeriod.getEndDateTime() == null)
+            if ((start && end && (delimitedPeriod.getStartDateTime() == null || delimitedPeriod.getEndDateTime() == null))
                     || (start && !end && delimitedPeriod.getStartDateTime() == null)
                     || (end && !start && delimitedPeriod.getEndDateTime() == null)) {
                 return true;
@@ -691,26 +690,6 @@ public abstract class AbstractFact {
             notInPast = !creationDateUTC.toDate().before(now.toDate());
         }
         return notInPast;
-    }
-
-    public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
-        if (CollectionUtils.isEmpty(dateList)) {
-            return false;
-        }
-        int listSize = dateList.size();
-        for (int i = 0; i < listSize; i++) {
-            Date comparisonDate = dateList.get(i);
-            for (int j = i + 1; j < listSize; j++) {
-                if (isSameDay(comparisonDate, dateList.get(j))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isSameDay(Date date1, Date date2) {
-        return DateUtils.isSameDay(date1, date2);
     }
 
     public List<RuleWarning> getWarnings() {
