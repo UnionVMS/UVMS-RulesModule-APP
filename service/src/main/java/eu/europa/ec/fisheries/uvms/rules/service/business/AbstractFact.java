@@ -13,6 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -26,16 +39,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -808,7 +811,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(numericList)) {
             return false;
         }
-        for (NumericType type : numericList) {
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
                 return false;
@@ -821,7 +825,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(value)) {
             return true;
         }
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             if (!isPositiveIntegerValue(type.getValue())) {
                 return false;
             }
@@ -854,7 +859,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(values)) {
             return false;
         }
-        for (MeasureType type : values) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(values, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
                 return false;
@@ -960,10 +966,9 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Checks if FaCatch list contains at least one or more SpecifiedFLUXLocations list  .
-     *
+     * This method return true if the list contains at least one or more SpecifiedFLUXLocations list.
      * @param faCatches
-     * @return false/true
+     * @return true | false
      */
     public boolean validateFluxLocationsForFaCatch(List<FACatch> faCatches) {
         boolean isValid = true;
@@ -976,8 +981,49 @@ public abstract class AbstractFact {
         return !isValid;
     }
 
-    public boolean isEmpty(List<?> list) {
-        return CollectionUtils.isEmpty(list);
+    /**
+     * This method returns true if the collection is null or is empty.
+	 * @param collection
+	 * @return true | false
+     */
+    public static boolean isEmpty( Collection<?> collection ){
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * This method returns true of the map is null or is empty.
+     * @param map
+     * @return true | false
+     */
+    public static boolean isEmpty( Map<?, ?> map ){
+        return map == null || map.isEmpty();
+    }
+
+    /**
+     * This method returns true if the objet is null.
+     * @param object
+     * @return true | false
+     */
+    public static boolean isEmpty( Object object ){
+        return object == null;
+    }
+
+    /**
+     * This method returns true if the input array is null or its length is zero.
+     * @param array
+     * @return true | false
+     */
+    public static boolean isEmpty( Object[] array ){
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * This method returns true if the input string is null or its length is zero.
+     * @param string
+     * @return true | false
+     */
+    public static boolean isEmpty( String string ){
+        return string == null || string.trim().length() == 0;
     }
 
     /**
@@ -1002,7 +1048,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isNumeric(List<NumericType> list) {
-        if(CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)){
             return false;
         }
         for (NumericType type : list) {
@@ -1011,10 +1057,6 @@ public abstract class AbstractFact {
             }
         }
         return true;
-    }
-
-    public boolean isEmpty(String str) {
-        return StringUtils.isEmpty(str);
     }
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {

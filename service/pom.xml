@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.23-SNAPSHOT</version>
+        <version>3.0.24-SNAPSHOT</version>
     </parent>
 
     <!-- PROPERTIES USED FOR LOGBACK -->
@@ -182,6 +182,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.subscription</groupId>
             <artifactId>subscription-model</artifactId>
             <version>${subscription.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.pragmatists</groupId>
+            <artifactId>JUnitParams</artifactId>
+            <version>1.0.4</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
