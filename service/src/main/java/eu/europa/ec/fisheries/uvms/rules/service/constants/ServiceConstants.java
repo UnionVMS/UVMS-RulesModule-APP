@@ -17,7 +17,7 @@ public class ServiceConstants {
     public static final String ASSET_NOT_SENDING_RULE = "Asset not sending";
 
     public static final String INVALID_XML_RULE="FA-L00-00-0000";
-    public static final String INVALID_XML_RULE_MESSAGE="Verify whether or not the message is valid XML and validates against the XSD schema.";
+    public static final String INVALID_XML_RULE_MESSAGE="An invalid XML message has been received.";
 
 
     public static final String PERMISSION_DENIED_RULE="FA-L00-00-9999";
