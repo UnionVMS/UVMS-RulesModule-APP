@@ -3199,7 +3199,7 @@
             <column name="rule_id" value="161"/>
             <column name="br_id" value="FA-L01-00-0161"/>
             <column name="expression"
-                    value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value)&gt;= 2"/>
+                    value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value) &gt; 2"/>
             <column name="note" value="Value must be with maximum 2 decimals."/>
             <column name="message" value="Not more than 2 decimals should be provided for the weight of this catch."/>
             <column name="level" value="L01"/>

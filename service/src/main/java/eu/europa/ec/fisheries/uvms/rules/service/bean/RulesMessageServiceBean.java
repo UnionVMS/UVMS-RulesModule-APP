@@ -786,24 +786,24 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
             IDType identification = new IDType();
             identification.setValue(validationMessage.getBrId());
+            identification.setSchemeID("FA_BR");
             analysis.setID(identification);
 
             CodeType level = new CodeType();
             level.setValue(validationMessage.getLevel());
+            level.setListID("FLUX_GP_VALIDATION_LEVEL");
             analysis.setLevelCode(level);
 
             eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = codeTypeMapper.mapErrorType(validationMessage.getErrorType());
 
-            if (errorType != null) {
-                CodeType type = new CodeType();
-                type.setValue(errorType.name());
-                analysis.setTypeCode(type);
-            } else {
-                throw new DatatypeConfigurationException("UNABLE TO MAP ERROR CODES");
-            }
+            CodeType type = new CodeType();
+            type.setValue(errorType.name());
+            type.setListID("FLUX_GP_VALIDATION_TYPE");
+            analysis.setTypeCode(type);
 
             TextType text = new TextType();
             text.setValue(validationMessage.getMessage());
+            text.setLanguageID("GBR");
             analysis.getResults().add(text);
 
             List<String> xpaths = validationMessage.getXpaths();
@@ -811,6 +811,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 for (String xpath : xpaths) {
                     TextType referenceItem = new TextType();
                     referenceItem.setValue(xpath);
+                    referenceItem.setLanguageID("XPATH");
                     analysis.getReferencedItems().add(referenceItem);
                 }
             }
