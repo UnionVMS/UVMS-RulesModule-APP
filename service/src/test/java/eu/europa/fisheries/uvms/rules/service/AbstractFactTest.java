@@ -17,20 +17,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
@@ -43,11 +32,26 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagSta
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -56,11 +60,14 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class AbstractFactTest {
@@ -1845,6 +1852,37 @@ public class AbstractFactTest {
     public void testValueStartsWithSingleIdTypeNoneCorrect() {
         IdType idType = RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA");
         assertFalse(fact.valueStartsWith(idType, "27.3.d"));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testIsEmptyCollectionsReflective(){
+        FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
+                IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
+        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        generator.setBusinessObjectMessage(message);
+        for (AbstractFact abstractFact : generator.generateAllFacts()) {
+            if(abstractFact instanceof FaReportDocumentFact){
+                FaReportDocumentFact repDoc = (FaReportDocumentFact) abstractFact;
+                assertTrue(fact.isEmpty(repDoc.getIds()));
+                assertTrue(fact.isEmpty(repDoc.getRelatedReportIDs()));
+                assertTrue(fact.isEmpty(repDoc.getRelatedFLUXReportDocumentIDs()));
+                assertFalse(fact.isEmpty(repDoc.getFaSpecifiedFishingTripIds()));
+            } else if(abstractFact instanceof VesselTransportMeansFact){
+                VesselTransportMeansFact vessFact = (VesselTransportMeansFact) abstractFact;
+                assertTrue(fact.isEmpty(vessFact.getSpecifiedContactPersons()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactPartyRoleCodes()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactParties()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactPartyRoleCodes()));
+            }
+        }
+
+        FAReportDocument doc = new FAReportDocument();
+        assertTrue(fact.isEmpty(Collections.singleton(doc)));
+
+        // Case a passed List has a Field which is a List which has only Objects which are empty.
+        doc.getRelatedReportIDs().add(new IDType());
+        assertTrue(fact.isEmpty(Collections.singleton(doc)));
     }
 
     @Test
