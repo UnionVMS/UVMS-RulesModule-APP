@@ -74,12 +74,13 @@ public class RulesActivityServiceBean {
         try {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             String jmsCorrelationId = producer.sendDataSourceMessage(requestStr, DataSourceQueue.ACTIVITY);
-            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
+            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class, 20000L);
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
             return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
         } catch (ActivityModelMapperException | JMSException | JAXBException | MessageException e) {
-            log.error("[ERROR] while trying to check subscription permissions..", e);
+            log.error("[ERROR] while trying to check subscription permissions (Is [[[- Subscriptions -]]] module Deployed?).." +
+                    "Going to assume the request doesn't have permissions!!", e);
         }
         return false;
     }
