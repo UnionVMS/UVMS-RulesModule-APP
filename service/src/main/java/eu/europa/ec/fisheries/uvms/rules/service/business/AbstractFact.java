@@ -13,19 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -39,9 +26,24 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -986,9 +988,58 @@ public abstract class AbstractFact {
 	 * @param collection
 	 * @return true | false
      */
-    public static boolean isEmpty( Collection<?> collection ){
-        return collection == null || collection.isEmpty();
+    public boolean isEmpty(Collection<?> collection){
+        if(CollectionUtils.isEmpty(collection)){
+            return true;
+        }
+        final Object object = collection.toArray()[0];
+        boolean hasOnlyEmptyElements = true;
+        if(object instanceof CodeType){
+            for (CodeType code : (List<CodeType>) collection)
+                if (StringUtils.isNotEmpty(code.getValue())) {
+                    hasOnlyEmptyElements = false;
+                }
+        } else if(object instanceof IdType){
+            for (IdType id : (List<IdType>) collection)
+                if (StringUtils.isNotEmpty(id.getValue())) {
+                    hasOnlyEmptyElements = false;
+                }
+        } else {
+            for (Object obj :  collection)
+                if (!allFieldsAreNullOrEmptyList(obj)){
+                    hasOnlyEmptyElements = false;
+                }
+        }
+        return hasOnlyEmptyElements;
     }
+
+    private boolean allFieldsAreNullOrEmptyList(Object obj) {
+        if(obj == null){
+            return true;
+        }
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            if(!Modifier.isStatic(field.getModifiers())){
+                final Object fieldsObj;
+                try {
+                    field.setAccessible(true);
+                    fieldsObj = field.get(obj);
+                } catch (IllegalAccessException e) {
+                    log.warn("[WARN] Couldn't access field (even forcing accessible to true) {}", field);
+                    return false;
+                }
+                if (fieldsObj instanceof List) {
+                    final List listField = (List) fieldsObj;
+                    if(CollectionUtils.isNotEmpty(listField) && !isEmpty(listField)){
+                        return false;
+                    }
+                } else if(fieldsObj != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     /**
      * This method returns true of the map is null or is empty.
@@ -996,7 +1047,7 @@ public abstract class AbstractFact {
      * @return true | false
      */
     public static boolean isEmpty( Map<?, ?> map ){
-        return map == null || map.isEmpty();
+        return MapUtils.isEmpty(map);
     }
 
     /**
