@@ -1095,7 +1095,7 @@ public class AbstractFactTest {
         List<CodeType> uniqueValues = Arrays.asList(codeTypeA, codeTypeB, codeTypeC);
 
         boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
-        assertFalse(listIsUnique);
+        assertTrue(listIsUnique);
     }
 
     @Test

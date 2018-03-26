@@ -108,7 +108,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValueMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request, "on@val");
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
