@@ -1014,6 +1014,9 @@ public abstract class AbstractFact {
     }
 
     private boolean allFieldsAreNullOrEmptyList(Object obj) {
+        if(obj == null){
+            return true;
+        }
         for (Field field : obj.getClass().getDeclaredFields()) {
             if(!Modifier.isStatic(field.getModifiers())){
                 final Object fieldsObj;
