@@ -1100,18 +1100,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsPositiveInteger(){
-        BigDecimal bigDecimal = new BigDecimal("10");
-        final boolean isInteger = !(bigDecimal.toPlainString().indexOf(".") > 1);
-
-        BigDecimal bigDecimal2 = new BigDecimal("10.0");
-        final boolean isInteger2 = !(bigDecimal2.toPlainString().indexOf(".") > 1);
-
-
-        System.out.println("");
-    }
-
-    @Test
     public void testIsListEmptyOrAllListIdsUniqueWhenListIsEmpty() throws Exception {
         List<CodeType> uniqueValues = Collections.emptyList();
 
