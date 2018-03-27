@@ -156,6 +156,7 @@ public class AbstractFactTest {
     @Test
     public void testFailsForFloat() {
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal(1.5)));
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("1.00")));
     }
 
     @Test
@@ -1096,6 +1097,18 @@ public class AbstractFactTest {
 
         boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
         assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsPositiveInteger(){
+        BigDecimal bigDecimal = new BigDecimal("10");
+        final boolean isInteger = !(bigDecimal.toPlainString().indexOf(".") > 1);
+
+        BigDecimal bigDecimal2 = new BigDecimal("10.0");
+        final boolean isInteger2 = !(bigDecimal2.toPlainString().indexOf(".") > 1);
+
+
+        System.out.println("");
     }
 
     @Test

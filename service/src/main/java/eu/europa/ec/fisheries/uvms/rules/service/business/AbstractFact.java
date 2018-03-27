@@ -838,7 +838,8 @@ public abstract class AbstractFact {
 
 
     private boolean isIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0);
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0)
+                && !(bigDecimal.toPlainString().indexOf(".") > 0);
     }
 
     public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {

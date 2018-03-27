@@ -509,7 +509,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                             }
                         } else { // Request doesn't have permissions
                             log.info("[WARN] Request doesn't have permission! It won't be transmitted to Activity Module!");
-                            updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
+                            updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.FAILED);
                             sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue);
                             needToSendToExchange = false;
                         }
@@ -685,7 +685,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return false;
     }
 
-    private void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage message, Rule9998Or9999ErrorType type, String onValue) {
+    private void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -699,8 +699,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), RawMsgType.FA_REPORT);
         validationResultDto.setIsError(true);
         validationResultDto.setIsOk(false);
-        FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, message, onValue);
-        fillFluxTLOnValue(fluxResponseMessage, request.getOnValue());
+        FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
         validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true);
     }
@@ -935,7 +934,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
         setFluxResponseDocumentIDs(fluxResponseDocument);
         setFluxResponseCreationDate(fluxResponseDocument);
         setFluxResponseDocumentResponseCode(faReportValidationResult, fluxResponseDocument);
-        setFluxResponseDocumentRejectionReason(faReportValidationResult, fluxResponseDocument);
+        // INFO : From IMPL DOC 2.2 This tag (RejectionReason) will not be there! Requested by DG MAre
+        //setFluxResponseDocumentRejectionReason(faReportValidationResult, fluxResponseDocument);
         setFluxResponseDocumentRelatedValidationResultDocuments(faReportValidationResult, fluxResponseDocument);
         setFluxReportDocumentRespondentFluxParty(fluxResponseDocument);
     }
@@ -1035,9 +1035,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
             String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
+            String onValue = request.getOnValue();
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, request.getOnValue(), status, destination, getExchangePluginType(pluginType));
+            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid,
+                    nationCode, onValue, status, destination, getExchangePluginType(pluginType));
             log.debug("Message to exchange {}", fluxFAReponseText);
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);

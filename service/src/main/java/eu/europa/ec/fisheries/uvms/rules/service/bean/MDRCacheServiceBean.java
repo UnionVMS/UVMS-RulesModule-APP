@@ -55,9 +55,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     public String getErrorMessageForBrId(String brId){
         if(MapUtils.isEmpty(errorMessages)){
-            log.info("[START] Loading maps for ValidationMessages.");
+            log.info("[START] Loading MDR message types for ValidationMessages.");
             createCacheForFailureMessages();
-            log.info("[END] Loading maps for ValidationMessages.");
+            log.info("[END] Loading MDR message types for ValidationMessages.");
         }
         return errorMessages.get(brId);
     }
