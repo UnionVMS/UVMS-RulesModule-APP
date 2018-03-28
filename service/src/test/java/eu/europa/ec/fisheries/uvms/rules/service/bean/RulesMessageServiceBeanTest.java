@@ -175,7 +175,6 @@ public class RulesMessageServiceBeanTest {
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
     }
@@ -188,7 +187,6 @@ public class RulesMessageServiceBeanTest {
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
     }

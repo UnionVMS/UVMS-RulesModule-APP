@@ -156,6 +156,7 @@ public class AbstractFactTest {
     @Test
     public void testFailsForFloat() {
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal(1.5)));
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("1.00")));
     }
 
     @Test
