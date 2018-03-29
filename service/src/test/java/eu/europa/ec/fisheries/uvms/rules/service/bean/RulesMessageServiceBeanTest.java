@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -174,7 +175,6 @@ public class RulesMessageServiceBeanTest {
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
     }
@@ -182,12 +182,11 @@ public class RulesMessageServiceBeanTest {
     @Test
     public void testGenerateFluxResponseMessageForFaQuery() {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaQuery(getValidationResult(), fluxfaQueryMessage);
+        FLUXResponseMessage fluxResponseMessage = messageServiceBean.generateFluxResponseMessageForFaQuery(getValidationResult(), fluxfaQueryMessage, "onValue");
         assertNotNull(fluxResponseMessage);
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRejectionReason());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
         assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
     }
@@ -224,7 +223,7 @@ public class RulesMessageServiceBeanTest {
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), Mockito.anyString(), Mockito.any(RawMsgType.class));
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
-        messageServiceBean.validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX);
+        messageServiceBean.validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
     }
 
     @Test
@@ -233,7 +232,7 @@ public class RulesMessageServiceBeanTest {
         validationMessageType.setBrId("SALE-L01-00-0011");
 
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
+        validationResultDto.setValidationMessages(Collections.singletonList(validationMessageType));
 
 
         boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);

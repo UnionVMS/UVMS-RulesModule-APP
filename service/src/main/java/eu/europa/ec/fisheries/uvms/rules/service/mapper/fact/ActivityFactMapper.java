@@ -1574,13 +1574,11 @@ public class ActivityFactMapper {
                     }
                 }
                 faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicValueDateTimes(dates);
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
-
                 faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicsTypeCodes(codeTypes);
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicsTypeCodes");
-
             }
         }
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicsTypeCodes");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
         if (faReportDocument != null) {
             faNotificationOfArrivalFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "faReportDocumentTypeCode");

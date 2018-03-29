@@ -20,4 +20,5 @@ import javax.ejb.Local;
 @Local
 public interface RulesResponseConsumer {
     <T> T getMessage(String correlationId, Class type) throws MessageException;
+    <T> T getMessage(String correlationId, Class type, Long timeoutInMillis) throws MessageException;
 }
