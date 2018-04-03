@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.context.MappedDiagnosticContext;
 import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
@@ -154,6 +155,7 @@ public class RulesEventConsumerBean implements MessageListener {
         MDC.put("clientName", id);
         LOG.info("Message received in rules");
         TextMessage textMessage = (TextMessage) message;
+        MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();

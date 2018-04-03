@@ -99,8 +99,8 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
-            this.sendModuleResponseMessage(message.getJmsMessage(), data, "Rules");
-        } catch (RulesModelMarshallException | JMSException e) {
+            this.sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
+        } catch (RulesModelMarshallException | JMSException | MessageException e) {
             LOG.error("Error when returning Error message to recipient");
         }
     }

@@ -146,6 +146,7 @@ public class SalesRulesServiceBeanTest {
 
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hBefore() throws Exception {
+        //data set
         String fishingTripID = "MLT-TRP-20160630000001";
 
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
@@ -159,24 +160,37 @@ public class SalesRulesServiceBeanTest {
                 .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue("MLT-TRP-20160630000002")))
                 .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1));
 
-        FishingActivitySummary fishingActivity = new FishingActivitySummary();
-        fishingActivity.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar()));
+
+        FishingActivitySummary fishingActivitySummary1 = new FishingActivitySummary();
+        fishingActivitySummary1.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.parse("2018-01-02T13:00:12.36531Z").toGregorianCalendar()));
+        fishingActivitySummary1.setActivityType("ARRIVAL");
+
+        FishingActivitySummary fishingActivitySummary2 = new FishingActivitySummary();
+        fishingActivitySummary2.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar()));
+        fishingActivitySummary2.setActivityType("LANDING");
 
         FishingTripResponse fishingTripResponse = new FishingTripResponse();
-        fishingTripResponse.getFishingActivityLists().add(fishingActivity);
+        fishingTripResponse.getFishingActivityLists().add(fishingActivitySummary1);
+        fishingTripResponse.getFishingActivityLists().add(fishingActivitySummary2);
 
         Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
-        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(salesReportType));
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
+
+        //mock
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
+
+        //execute
+
         assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
     public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hAfter() throws Exception {
+        //data set
         String fishingTripID = "MLT-TRP-20160630000001";
 
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
@@ -190,20 +204,29 @@ public class SalesRulesServiceBeanTest {
                 .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1))
                 .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
 
-        FishingActivitySummary fishingActivity = new FishingActivitySummary();
-        fishingActivity.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.now().toGregorianCalendar()));
+        FishingActivitySummary fishingActivitySummary1 = new FishingActivitySummary();
+        fishingActivitySummary1.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.parse("2018-01-02T13:00:12.36531Z").toGregorianCalendar()));
+        fishingActivitySummary1.setActivityType("ARRIVAL");
+
+        FishingActivitySummary fishingActivitySummary2 = new FishingActivitySummary();
+        fishingActivitySummary2.setAcceptedDateTime(new XMLGregorianCalendarImpl(DateTime.parse("2018-01-03T13:00:12.36531Z").toGregorianCalendar()));
+        fishingActivitySummary2.setActivityType("LANDING");
 
         FishingTripResponse fishingTripResponse = new FishingTripResponse();
-        fishingTripResponse.getFishingActivityLists().add(fishingActivity);
+        fishingTripResponse.getFishingActivityLists().add(fishingActivitySummary1);
+        fishingTripResponse.getFishingActivityLists().add(fishingActivitySummary2);
 
         Optional<FishingTripResponse> fishingTripResponse1 = Optional.of(fishingTripResponse);
-
-        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         SalesReportType salesReportType = new SalesReportType()
                 .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(salesReportType));
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now().plusHours(49))));
+
+        //mock
+        doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
+
+        //execute
         assertTrue(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
