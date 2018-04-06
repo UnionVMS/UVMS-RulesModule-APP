@@ -8,11 +8,12 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.config;
 
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import javax.annotation.PostConstruct;
+
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConfigSettingsBean;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -24,32 +25,24 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 @Startup
 @Slf4j
-public class RulesConfigurationCache extends AbstractConfigCache {
+public class RulesConfigurationCache extends AbstractConfigSettingsBean {
 
     @EJB
-    private RulesResponseConsumer consumer;
-
-    @EJB
-    private RulesMessageProducer producer;
-
-
-    @PostConstruct
-    public void initializeBeam(){
-        initializeCache();
-    }
+    private RulesResponseConsumerBean consumer;
 
     @Override
-    protected RulesResponseConsumer getConsumer() {
+    protected RulesResponseConsumerBean getConsumer() {
         return consumer;
-    }
-
-    @Override
-    protected RulesMessageProducer getProducer() {
-        return producer;
     }
 
     @Override
     protected String getModuleName() {
         return "rules";
     }
+
+    @Override
+    public String getDestinationName() {
+        return MessageConstants.QUEUE_RULES;
+    }
+
 }

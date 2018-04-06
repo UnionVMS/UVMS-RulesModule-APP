@@ -10,12 +10,34 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,23 +49,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -52,15 +60,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-/**
- * @author Gregory Rinaldi
- */
 public class AbstractFactTest {
 
     private AbstractFact fact = new FaArrivalFact();
@@ -78,6 +87,16 @@ public class AbstractFactTest {
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
         MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, RuleTestHelper.getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC());
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testEmpty(){
+        List list = null;
+        assertTrue(fact.isEmpty(list));
+        assertTrue(fact.isEmpty(""));
+        assertTrue(fact.isEmpty(new HashMap<>()));
+        assertTrue(fact.isEmpty(new ArrayList<>()));
+        assertFalse(fact.isEmpty(new TextType()));
     }
 
     @Test
@@ -100,6 +119,54 @@ public class AbstractFactTest {
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
+    }
+
+    @Test
+    public void testValidFormatHappy() {
+        assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+        assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
+        assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
+
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithNegative() {
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(-1)));
+    }
+
+    @Test
+    public void testNumberOfDecimals(){
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("0.001")), equalTo(3));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("0.21")), equalTo(2));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("0.1")), equalTo(1));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("1.000")), equalTo(0));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("1.00")), equalTo(0));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("1.0")), equalTo(0));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("1")), equalTo(0));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("990")), equalTo(0));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("10.1")), equalTo(1));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("10.01")), equalTo(2));
+        assertThat(fact.getNumberOfDecimalPlaces(new BigDecimal("10.001")), equalTo(3));
+    }
+
+    @Test
+    public void testFailsForFloat() {
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal(1.5)));
+        assertFalse(fact.isPositiveIntegerValue(new BigDecimal("1.00")));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithPositive() {
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal(1)));
+    }
+
+    @Test
+    public void testIsPositiveIntegerValueWithZero() {
+        assertTrue(fact.isPositiveIntegerValue(new BigDecimal(0)));
     }
 
     @Test
@@ -686,15 +753,12 @@ public class AbstractFactTest {
 
     @Test
     public void testIsNumeric() {
-
         NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-
-
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
         boolean result = fact.isNumeric(numericTypes);
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
@@ -1032,7 +1096,7 @@ public class AbstractFactTest {
         List<CodeType> uniqueValues = Arrays.asList(codeTypeA, codeTypeB, codeTypeC);
 
         boolean listIsUnique = fact.isListEmptyOrAllListIdsUnique(uniqueValues);
-        assertFalse(listIsUnique);
+        assertTrue(listIsUnique);
     }
 
     @Test
@@ -1170,8 +1234,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveGearCharacteristicTypeCodeValues() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1180,8 +1245,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1190,8 +1256,9 @@ public class AbstractFactTest {
 
     @Test
     public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
+        FishingGearFact fishingGearFact = new FishingGearFact();
         CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
         assertFalse(fishingGearCharacteristicCodes.contains("HE"));
         assertFalse(fishingGearCharacteristicCodes.contains("GM"));
         assertFalse(fishingGearCharacteristicCodes.contains("ME"));
@@ -1268,11 +1335,12 @@ public class AbstractFactTest {
 
     @Test
     public void testDateComparison() {
+        FaReportDocumentFact faRepFact = new FaReportDocumentFact();
         Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
         Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains1 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        final boolean contains1 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
         System.out.println("List contains sameDate [true]: " + contains1);
         assertTrue(contains1);
 
@@ -1280,7 +1348,7 @@ public class AbstractFactTest {
         date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 12).getTime();
         date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
         date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains2 = fact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
+        final boolean contains2 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
         System.out.println("List contains sameDate [false]: " + contains2);
         assertFalse(contains2);
 
@@ -1380,17 +1448,18 @@ public class AbstractFactTest {
     public void testContainsMoreThenOneDeclarationPerTrip() {
         List<IdType> specifiedFishingTripIds = new ArrayList<>();
         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip = new HashMap<>();
-        boolean result1 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        FaReportDocumentFact repDocFact = new FaReportDocumentFact();
+        boolean result1 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result1);
 
         specifiedFishingTripIds.add(new IdType("id123", "someScheme"));
 
-        boolean result2 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result2 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result2);
 
         faTypesPerTrip.put("", null);
 
-        boolean result3 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result3 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertFalse(result3);
 
         List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = new ArrayList<>();
@@ -1398,8 +1467,8 @@ public class AbstractFactTest {
         faTypesPerTrip.clear();
         faTypesPerTrip.put("id123", fishingActivityWithIdentifiers);
 
-        boolean result4 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
-        assertFalse(result4);
+        boolean result4 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        assertTrue(result4);
 
         List<FishingActivityWithIdentifiers> id123 = faTypesPerTrip.get("id123");
 
@@ -1407,7 +1476,7 @@ public class AbstractFactTest {
         id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
         id123.add(new FishingActivityWithIdentifiers("", "", "DEPARTURE"));
 
-        boolean result5 = fact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
+        boolean result5 = repDocFact.containsMoreThenOneDeclarationPerTrip(specifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE);
         assertTrue(result5);
     }
 
@@ -1784,6 +1853,61 @@ public class AbstractFactTest {
     public void testValueStartsWithSingleIdTypeNoneCorrect() {
         IdType idType = RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA");
         assertFalse(fact.valueStartsWith(idType, "27.3.d"));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testIsEmptyCollectionsReflective(){
+        FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
+                IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
+        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        generator.setBusinessObjectMessage(message);
+        for (AbstractFact abstractFact : generator.generateAllFacts()) {
+            if(abstractFact instanceof FaReportDocumentFact){
+                FaReportDocumentFact repDoc = (FaReportDocumentFact) abstractFact;
+                assertTrue(fact.isEmpty(repDoc.getIds()));
+                assertTrue(fact.isEmpty(repDoc.getRelatedReportIDs()));
+                assertTrue(fact.isEmpty(repDoc.getRelatedFLUXReportDocumentIDs()));
+                assertFalse(fact.isEmpty(repDoc.getFaSpecifiedFishingTripIds()));
+            } else if(abstractFact instanceof VesselTransportMeansFact){
+                VesselTransportMeansFact vessFact = (VesselTransportMeansFact) abstractFact;
+                assertTrue(fact.isEmpty(vessFact.getSpecifiedContactPersons()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactPartyRoleCodes()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactParties()));
+                assertFalse(fact.isEmpty(vessFact.getSpecifiedContactPartyRoleCodes()));
+            }
+        }
+
+        FAReportDocument doc = new FAReportDocument();
+        assertTrue(fact.isEmpty(Collections.singleton(doc)));
+
+        // Case a passed List has a Field which is a List which has only Objects which are empty.
+        doc.getRelatedReportIDs().add(new IDType());
+        assertTrue(fact.isEmpty(Collections.singleton(doc)));
+    }
+
+    @Test
+    public void testMdrAcronymsMatchMDRAcronymTypeDeclared() {
+        List<String> list = Arrays.asList("PROD_USAGE",
+                "FA_FISHERY", "GFCM_GSA", "SALE_BR", "FA_REASON_DISCARD", "TARGET_SPECIES_GROUP", "FA_GEAR_PROBLEM", "FLUX_GP_MSG_ID", "FISH_SIZE_CATEGORY", "FA_BFT_SIZE_CATEGORY", "FLUX_FA_REPORT_TYPE",
+                "FLUX_SALES_QUERY_PARAM_ROLE", "FLUX_LOCATION_TYPE", "GEAR_TYPE", "WEIGHT_MEANS", "VESSEL_ACTIVITY", "FA_QUERY_TYPE",
+                "TERRITORY_CURR", "FLUX_GP_PURPOSE", "FA_VESSEL_ROLE", "FLUX_SALES_PARTY_ROLE", "MEMBER_STATE", "FA_BR", "FISHING_TRIP_TYPE", "CONVERSION_FACTOR",
+                "FA_REASON_ENTRY", "FLUX_FA_TYPE", "FARM", "EFFORT_ZONE", "TERRITORY", "GENDER", "FISH_FRESHNESS", "FA_REASON_ARRIVAL",
+                "FA_CHARACTERISTIC", "FA_CATCH_TYPE", "FAO_AREA", "FLUX_VESSEL_ID_TYPE", "FISH_PRESENTATION", "FLUX_UNIT", "FLUX_CONTACT_ROLE", "FISH_PRESERVATION", "FLUX_SALES_PARTY_ID_TYPE",
+                "FLUX_SALES_TYPE", "STAT_RECTANGLE", "FLAP_ID_TYPE", "FA_QUERY_PARAMETER", "FA_BR_DEF", "FA_GEAR_RECOVERY", "FISH_PACKAGING", "VESSEL_STORAGE_TYPE",
+                "FA_GEAR_CHARACTERISTIC", "SALE_BR_DEF", "FLUX_FA_FMC", "FAO_SPECIES", "GFCM_STAT_RECTANGLE", "FLUX_GP_RESPONSE",
+                "FLUX_GP_VALIDATION_TYPE", "FLUX_LOCATION_CHARACTERISTIC", "LOCATION", "FA_GEAR_ROLE", "FLUX_GP_PARTY", "FA_BAIT_TYPE", "FA_REASON_DEPARTURE", "RFMO", "FLUX_GP_VALIDATION_LEVEL",
+                "FLUX_SALES_QUERY_PARAM", "ICES_STAT_RECTANGLE", "FISH_SIZE_CLASS", "FLUX_PROCESS_TYPE");
+        List<String> finalList = new ArrayList<>();
+        for (String val : list) {
+            try {
+                MDRAcronymType.fromValue(val);
+            } catch (IllegalArgumentException ex) {
+                System.out.println("\n" + val + "(" + "\"" + val + "\"" + ")");
+                finalList.add(val);
+            }
+        }
+        assertTrue(CollectionUtils.isEmpty(finalList));
     }
 
 }

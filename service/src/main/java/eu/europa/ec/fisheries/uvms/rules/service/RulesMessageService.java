@@ -46,11 +46,11 @@ public interface RulesMessageService {
 
     FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult);
 
-    FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage);
+    FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue);
 
     FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
 
-    void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType);
+    void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType, boolean guidProvided);
 
     void mapAndSendFLUXMdrRequestToExchange(String request);
 

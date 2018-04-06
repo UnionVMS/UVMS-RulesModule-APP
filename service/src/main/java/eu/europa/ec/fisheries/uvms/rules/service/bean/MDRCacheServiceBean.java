@@ -17,8 +17,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
@@ -26,18 +34,14 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @Singleton
 @Slf4j
 public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
 
     @EJB
     private MDRCache cache;
+
+    private Map<String, String> errorMessages;
 
     public void loadMDRCache() {
         for (MDRAcronymType acronymType : MDRAcronymType.values()) {
@@ -47,6 +51,46 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         log.debug(cache.getCache().stats().toString());
         log.info("MDRCache size: " + cache.getCache().asMap().size());
     }
+
+    @Override
+    public String getErrorMessageForBrId(String brId){
+        if(MapUtils.isEmpty(errorMessages)){
+            log.info("[START] Loading MDR message types for ValidationMessages.");
+            createCacheForFailureMessages();
+            log.info("[END] Loading MDR message types for ValidationMessages.");
+        }
+        return errorMessages.get(brId);
+    }
+
+
+    /**
+     * This function mapps all the error messages to the ones defined in MDR;
+     *
+     */
+    private void createCacheForFailureMessages() {
+        errorMessages = new HashMap<>();
+        final List<ObjectRepresentation> objRapprList = new ArrayList<ObjectRepresentation>(){{
+            addAll(cache.getEntry(MDRAcronymType.FA_BR_DEF));
+            addAll(cache.getEntry(MDRAcronymType.SALE_BR_DEF));
+        }};
+        final String MESSAGE_COLUMN = "messageIfFailing";
+        final String BR_ID_COLUMN = "code";
+        for (ObjectRepresentation objectRepr : objRapprList) {
+            String brId = null;
+            String errorMessage = null;
+            for (ColumnDataType field : objectRepr.getFields()) {
+                final String columnName = field.getColumnName();
+                if(MESSAGE_COLUMN.equals(columnName)){
+                    errorMessage = field.getColumnValue();
+                }
+                if(BR_ID_COLUMN.equals(columnName)){
+                    brId = field.getColumnValue();
+                }
+            }
+            errorMessages.put(brId,errorMessage);
+        }
+    }
+
 
     /**
      * Check if value passed is present in the MDR list speified

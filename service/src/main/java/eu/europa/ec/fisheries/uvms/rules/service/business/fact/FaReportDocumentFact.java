@@ -14,12 +14,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -66,6 +72,65 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private List<IdType> nonUniqueIdsList;
 
+    private List<IdType> faSpecifiedFishingTripIds;
+    private Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip;
+    // String = tripId, Integer = Arrival declarations for this trip ID
+    private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
+    // String = tripId, Integer = Departure declarations for this trip ID
+    private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
+
+    public boolean containsMoreThenOneArrivalOrDeparture(FishingActivityType type) {
+        Map<String, Integer> declarationList = new HashMap<>();
+        if (FishingActivityType.ARRIVAL.equals(type)) {
+            declarationList = fishingActivitiesArrivalDeclarationList;
+        } else if (FishingActivityType.DEPARTURE.equals(type)) {
+            declarationList = fishingActivitiesDepartureDeclarationList;
+        }
+        if (MapUtils.isNotEmpty(declarationList)) {
+            for (Map.Entry<String, Integer> entry : declarationList.entrySet()) {
+                if (entry.getValue() > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
+                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
+                                                         FishingActivityType faType) {
+        if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
+            return false;
+        }
+        for (IdType idType : specifiedFishingTripIds) {
+            List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
+            if (fishingActivityWithIdentifiers != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
+        if (CollectionUtils.isEmpty(dateList)) {
+            return false;
+        }
+        int listSize = dateList.size();
+        for (int i = 0; i < listSize; i++) {
+            Date comparisonDate = dateList.get(i);
+            for (int j = i + 1; j < listSize; j++) {
+                if (isSameDay(comparisonDate, dateList.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameDay(Date date1, Date date2) {
+        return DateUtils.isSameDay(date1, date2);
+    }
 
     public FaReportDocumentFact() {
         setFactType();
@@ -218,6 +283,34 @@ public class FaReportDocumentFact extends AbstractFact {
 
     public void setSpecifiedFishingActivitiesTypes(List<String> specifiedFishingActivitiesTypes) {
         this.specifiedFishingActivitiesTypes = specifiedFishingActivitiesTypes;
+    }
+
+    public List<IdType> getFaSpecifiedFishingTripIds() {
+        return faSpecifiedFishingTripIds;
+    }
+
+    public void setFaSpecifiedFishingTripIds(List<IdType> faSpecifiedFishingTripIds) {
+        this.faSpecifiedFishingTripIds = faSpecifiedFishingTripIds;
+    }
+
+    public void setFaTypesPerTrip(Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
+        this.faTypesPerTrip = faTypesPerTrip;
+    }
+
+    public Map<String, List<FishingActivityWithIdentifiers>> getFaTypesPerTrip() {
+        return faTypesPerTrip;
+    }
+
+    public void setFishingActivitiesArrivalDeclarationList(Map<String, Integer> fishingActivitiesArrivalDeclarationList) {
+        this.fishingActivitiesArrivalDeclarationList = fishingActivitiesArrivalDeclarationList;
+    }
+
+    public Map<String, Integer> getFishingActivitiesDepartureDeclarationList() {
+        return fishingActivitiesDepartureDeclarationList;
+    }
+
+    public void setFishingActivitiesDepartureDeclarationList(Map<String, Integer> fishingActivitiesDepartureDeclarationList) {
+        this.fishingActivitiesDepartureDeclarationList = fishingActivitiesDepartureDeclarationList;
     }
 }
 

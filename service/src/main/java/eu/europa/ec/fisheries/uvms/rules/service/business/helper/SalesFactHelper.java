@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -27,6 +26,10 @@ public class SalesFactHelper {
         validCategories = Arrays.asList("1", "2", "3", "4", "4a", "4b", "4c", "6", "7", "7a", "7b", "8", "N/A");
     }
 
+    private SalesFactHelper() {
+        // hide public constructor
+    }
+
     public static boolean doesSetContainAnyValue(List<String> values, Set set) {
         for (String value : values) {
             if (set.contains(value)) {
@@ -36,9 +39,13 @@ public class SalesFactHelper {
         return false;
     }
 
+    /**
+     * Returns true when the country id is valid, false when its not.
+     * If the country id is null, true will be returned.
+     */
     public static boolean isCountryIdValid(IdType idType) {
-        if (idType == null || StringUtils.isBlank(idType.getValue()) || idType.getValue().length() != 3) {
-            return false;
+        if (idType == null) {
+            return true;
         }
 
         return validCountries.contains(idType.getValue());
@@ -68,12 +75,12 @@ public class SalesFactHelper {
         return false;
     }
 
-    public static HashSet<String> getValidCountries() {
+    public static Set<String> getValidCountries() {
         return validCountries;
     }
 
 
-    public static HashSet<String> getValidCurrencies() {
+    public static Set<String> getValidCurrencies() {
         return validCurrencies;
     }
 

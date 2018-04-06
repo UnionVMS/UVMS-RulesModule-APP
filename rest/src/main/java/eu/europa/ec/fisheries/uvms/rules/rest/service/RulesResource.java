@@ -16,12 +16,10 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -81,8 +79,8 @@ public class RulesResource {
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
-    public Response evaluate(FLUXFAReportMessage request) throws ServiceException {
-        FLUXResponseMessage fluxResponseMessage=null;
+    public Response evaluate(FLUXFAReportMessage request) {
+        FLUXResponseMessage fluxResponseMessage = null;
         try {
             Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request);
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValueTypeObjectMap);
@@ -90,10 +88,9 @@ public class RulesResource {
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_REPORT);
             fluxResponseMessage = messageService.generateFluxResponseMessageForFaReport(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
-        } catch(ActivityModelMarshallException e){
+        } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
-
-        }catch (RulesServiceException |  RulesValidationException e) {
+        } catch (RulesServiceException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
@@ -104,20 +101,19 @@ public class RulesResource {
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfaquerymessage")
-    public Response evaluate(FLUXFAQueryMessage request) throws ServiceException {
-        FLUXResponseMessage fluxResponseMessage=null;
+    public Response evaluate(FLUXFAQueryMessage request) {
+        FLUXResponseMessage fluxResponseMessage = null;
         try {
             Map<ExtraValueType, Object> extraValueMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_QUERY_MSG, request);
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValueMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request);
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request, "on@val");
             XPathRepository.INSTANCE.clear(facts);
-        }catch(ActivityModelMarshallException e){
+        } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
 
-        }
-        catch (RulesServiceException | RulesValidationException e) {
+        } catch (RulesServiceException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
@@ -125,22 +121,21 @@ public class RulesResource {
     }
 
 
-
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfaResponsemessage")
-    public Response evaluate(FLUXResponseMessage request) throws ServiceException {
-        FLUXResponseMessage fluxResponseMessage=null;
+    public Response evaluate(FLUXResponseMessage request) {
+        FLUXResponseMessage fluxResponseMessage = null;
         try {
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_RESPONSE);
             fluxResponseMessage = messageService.generateFluxResponseMessageForFaResponse(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
-        } catch(ActivityModelMarshallException e){
+        } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
-        } catch (RulesServiceException |  RulesValidationException e) {
+        } catch (RulesServiceException | RulesValidationException e) {
             log.error(e.getMessage(), e);
             return Response.ok(e.getMessage()).build();
         }
@@ -155,7 +150,8 @@ public class RulesResource {
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
 
-    @EJB
+/* For test purposes only! For now the loadMdr() method doesn't work cause the whole Mdr registry is more then 150 MB!
+@EJB
     private MDRCache cache;
 
     @GET
@@ -164,5 +160,5 @@ public class RulesResource {
     public Response loadMdr() {
         cache.init();
         return Response.ok().build();
-    }
+    }*/
 }

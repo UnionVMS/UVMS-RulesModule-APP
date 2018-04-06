@@ -15,13 +15,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
-
-import java.util.List;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 /**
  * @author padhyad
@@ -45,7 +45,9 @@ public class FaFishingOperationFact extends AbstractFact {
 
     private List<CodeType> relatedFishingActivityTypeCodes;
 
-    private List<ContactParty>  vesselTransportMeansContactParties;
+    private List<ContactParty> vesselTransportMeansContactParties;
+
+    private List<VesselTransportMeans> vesselTransportMeans;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -144,23 +146,35 @@ public class FaFishingOperationFact extends AbstractFact {
     }
 
     // FA-L00-00-0079
-    public boolean verifyContactPartyRule(List<ContactParty> contactParties) {
-        if (CollectionUtils.isEmpty(contactParties)) {
-            return true;
-        }
-
-        for (ContactParty contactParty : contactParties) {
-            List<StructuredAddress> structuredAddresses=contactParty.getSpecifiedStructuredAddresses();
-            List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> roleCodeTypes = contactParty.getRoleCodes();
-            if (CollectionUtils.isNotEmpty(roleCodeTypes)) {
-                 for(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode: roleCodeTypes){
-                     if("PAIR_FISHING_PARTNER".equals(roleCode.getValue()) && CollectionUtils.isEmpty(structuredAddresses)){
-                              return false;
-                     }
-                 }
+    public boolean verifyContactPartyRule(List<VesselTransportMeans> vesselTransportMeans) {
+        outerloop :
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            final un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode = vesselTransportMean.getRoleCode();
+            if (roleCode != null && StringUtils.equals(roleCode.getValue(), "PAIR_FISHING_PARTNER")) {
+                // Condition1. PAIR_FISHING_PARTNER so at least one of the SpecifiedContactParties must have a SpecifiedStructuredAddress;
+                final List<ContactParty> specifiedContactParties = vesselTransportMean.getSpecifiedContactParties();
+                if (CollectionUtils.isEmpty(specifiedContactParties)) {
+                    return true;
+                }
+                for (ContactParty specifiedContactParty : specifiedContactParties) {
+                    if (CollectionUtils.isNotEmpty(specifiedContactParty.getSpecifiedStructuredAddresses())) {
+                        // Means that for this vesselTransportMean a non empty SpecifiedStructuredAddress was found.
+                        continue outerloop;
+                    }
+                }
+                // If we arrived here means that Condition1 wasn't met so the rule fails;
+                return true;
             }
         }
-       return true;
+        return false;
 
+    }
+
+    public List<VesselTransportMeans> getVesselTransportMeans() {
+        return vesselTransportMeans;
+    }
+
+    public void setVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans) {
+        this.vesselTransportMeans = vesselTransportMeans;
     }
 }

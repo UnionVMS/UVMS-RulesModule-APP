@@ -57,7 +57,7 @@ public class RulePostProcessBean {
             boolean isWarning = false;
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             for (AbstractFact fact : facts) {
-                if (!fact.isOk()) {
+                if (fact.hasWarOrErr()) {
                     for (RuleError error : fact.getErrors()) {
                         isError = true;
                         ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), fact.getUniqueIds(), error.getXpaths());
@@ -81,7 +81,7 @@ public class RulePostProcessBean {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
             List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
@@ -97,7 +97,7 @@ public class RulePostProcessBean {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBuinessRules(RuleWarning warning, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleWarning warning, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(),
                     warning.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());

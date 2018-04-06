@@ -90,7 +90,7 @@ public class SalesFactHelperTest {
     @Test
     public void testIfCountryIdIsValidWhenValueIsNull() throws Exception {
         boolean isValid = SalesFactHelper.isCountryIdValid(null);
-        assertFalse(isValid);
+        assertTrue(isValid);
     }
 
     @Test

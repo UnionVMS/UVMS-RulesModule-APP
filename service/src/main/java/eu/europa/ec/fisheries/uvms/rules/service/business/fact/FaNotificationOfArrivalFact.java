@@ -48,7 +48,7 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
 
-    private List<Date> specifiedFLUXCharacteristicValueDateTimes;
+    private List<String> specifiedFLUXCharacteristicValueDateTimes;
 
     public FaNotificationOfArrivalFact() {
         setFactType();
@@ -139,11 +139,11 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.specifiedFLUXCharacteristicsTypeCodes = specifiedFLUXCharacteristicsTypeCodes;
     }
 
-    public List<Date> getSpecifiedFLUXCharacteristicValueDateTimes() {
+    public List<String> getSpecifiedFLUXCharacteristicValueDateTimes() {
         return specifiedFLUXCharacteristicValueDateTimes;
     }
 
-    public void setSpecifiedFLUXCharacteristicValueDateTimes(List<Date> specifiedFLUXCharacteristicValueDateTimes) {
+    public void setSpecifiedFLUXCharacteristicValueDateTimes(List<String> specifiedFLUXCharacteristicValueDateTimes) {
         this.specifiedFLUXCharacteristicValueDateTimes = specifiedFLUXCharacteristicValueDateTimes;
     }
 }

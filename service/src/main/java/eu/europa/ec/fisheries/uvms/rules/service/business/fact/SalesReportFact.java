@@ -74,29 +74,6 @@ public class SalesReportFact extends SalesAbstractFact {
         return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments);
     }
 
-    public boolean doesNotHaveATotalSalesPriceWhileProductsAreWithdrawnFromTheMarketForSalesNote() {
-        try {
-            if (!isItemTypeEqualTo("SN")) {
-                return false;
-            }
-
-            SalesDocumentFact salesDocument = includedSalesDocuments.get(0);
-            SalesPriceType totalSalesPrice = salesDocument.getTotalSalesPrice();
-
-            boolean totalSalesPriceIsNull = totalSalesPrice == null
-                    || isEmpty(totalSalesPrice.getChargeAmounts())
-                    || totalSalesPrice.getChargeAmounts().get(0) == null
-                    || totalSalesPrice.getChargeAmounts().get(0).getValue() == null;
-
-            boolean allProductsHaveAZeroPrice = doAllProductHaveAZeroPrice(salesDocument);
-
-            return totalSalesPriceIsNull && allProductsHaveAZeroPrice;
-        } catch (NullPointerException | IndexOutOfBoundsException ex) {
-            log.error("Could not evaluate that the report has a total sales price, if the report is a sales note and products are withdrawn from the market", ex);
-            return false;
-        }
-    }
-
     private boolean doAllProductHaveAZeroPrice(SalesDocumentFact salesDocument) {
         List<BigDecimal> prices = getPriceOfEveryProduct(salesDocument.getSpecifiedSalesBatches());
 
@@ -301,8 +278,8 @@ public class SalesReportFact extends SalesAbstractFact {
         List<AAPProductType> products = getProducts();
         List<AmountType> chargeAmounts = new ArrayList<>();
         for (AAPProductType product: products) {
-            if (product != null && product.getTotalSalesPrice() != null) {
-                if (isEmpty(product.getTotalSalesPrice().getChargeAmounts())) {
+            if (product != null) {
+                if (product.getTotalSalesPrice() == null || isEmpty(product.getTotalSalesPrice().getChargeAmounts())) {
                     chargeAmounts.add(null);
                 } else{
                     chargeAmounts.add(product.getTotalSalesPrice().getChargeAmounts().get(0));

@@ -24,6 +24,7 @@ public class StructuredAddressFact extends AbstractFact {
     private String cityName;
     private IdType countryID;
     private String plotIdentification;
+    private String postOfficeBox;
 
     public StructuredAddressFact() {
         setFactType();
@@ -80,6 +81,14 @@ public class StructuredAddressFact extends AbstractFact {
 
     public void setPlotIdentification(String plotIdentification) {
         this.plotIdentification = plotIdentification;
+    }
+
+    public String getPostOfficeBox() {
+        return postOfficeBox;
+    }
+
+    public void setPostOfficeBox(String postOfficeBox) {
+        this.postOfficeBox = postOfficeBox;
     }
 
     // TODO test

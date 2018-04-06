@@ -4,6 +4,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
@@ -14,6 +15,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -24,9 +26,10 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Singleton
+@Slf4j
 public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
@@ -115,11 +118,14 @@ public class SalesRulesServiceBean implements SalesRulesService {
             }
 
             FishingTripResponse fishingTrip = fishingTripResponse.get();
+            Optional<DateTime> dateTimeFromLandingActivity = findAcceptanceDateOfLanding(fishingTrip);
+            if (!dateTimeFromLandingActivity.isPresent()) {
+                return false;
+            }
 
             DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
-            DateTime dateTimeFromLandingActivity = new DateTime(fishingTrip.getFishingActivityLists().get(0).getAcceptedDateTime().toGregorianCalendar());
 
-            return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity);
+            return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity.get());
         } catch (NullPointerException | IndexOutOfBoundsException ex) {
             // if anything is not filled in, this rule cannot be evaluated properly
             return false;
@@ -269,5 +275,35 @@ public class SalesRulesServiceBean implements SalesRulesService {
             return false;
         }
     }
+
+    @Override
+    public boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact) {
+        if (fact == null || isEmpty(fact.getSalesReports()) || fact.getSalesReports().get(0) == null
+                || fact.getFLUXReportDocument() == null || fact.getFLUXReportDocument().getPurposeCode() == null
+                || isBlank(fact.getFLUXReportDocument().getPurposeCode().getValue())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments())
+                || isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS())
+                || isBlank(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue())
+                ) {
+            return false;
+        }
+
+        // If the report is not an original, return false
+        if (!fact.getFLUXReportDocument().getPurposeCode().getValue().equals("9")) {
+            return false;
+        }
+
+        return salesService.isIdNotUnique(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue(), SalesMessageIdType.SALES_DOCUMENT);
+    }
+
+    private Optional<DateTime> findAcceptanceDateOfLanding(FishingTripResponse fishingTrip) {
+        for (FishingActivitySummary activitySummary : fishingTrip.getFishingActivityLists()) {
+            if (activitySummary.getActivityType().equals("LANDING")) {
+                return Optional.of(new DateTime(activitySummary.getAcceptedDateTime().toGregorianCalendar()));
+            }
+        }
+        return Optional.absent();
+    }
+
 
 }

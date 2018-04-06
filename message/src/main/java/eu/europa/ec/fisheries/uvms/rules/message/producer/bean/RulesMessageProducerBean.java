@@ -24,6 +24,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import javax.annotation.PostConstruct;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@LocalBean
 public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer, ConfigMessageProducer {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
@@ -97,8 +99,8 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
-            this.sendModuleResponseMessage(message.getJmsMessage(), data, "Rules");
-        } catch (RulesModelMarshallException | JMSException e) {
+            this.sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
+        } catch (RulesModelMarshallException | JMSException | MessageException e) {
             LOG.error("Error when returning Error message to recipient");
         }
     }

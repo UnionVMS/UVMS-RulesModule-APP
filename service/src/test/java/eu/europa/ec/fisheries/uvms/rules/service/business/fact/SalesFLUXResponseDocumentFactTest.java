@@ -1,48 +1,47 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
+import java.util.ArrayList;
+import java.util.Arrays;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 import org.mapstruct.ap.internal.util.Collections;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class SalesFLUXResponseDocumentFactTest {
 
     SalesFLUXResponseDocumentFact fact;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         fact = new SalesFLUXResponseDocumentFact();
     }
 
     @Test
-    public void anyValidationResultDocumentsWithEmptyValidationQualityAnalysesWhenValid() throws Exception {
+    public void anyValidationResultDocumentsWithEmptyValidationQualityAnalysesWhenValid() {
         ValidationResultDocumentType validationResultDocumentType = new ValidationResultDocumentType()
                 .withRelatedValidationQualityAnalysises(new ValidationQualityAnalysisType());
         fact.setRelatedValidationResultDocuments(Arrays.asList(validationResultDocumentType));
 
-        assertFalse(fact.anyValidationResultDocumentsWithEmptyValidationQualityAnalyses());
+        assertTrue(fact.anyValidationResultDocumentsWithEmptyValidationQualityAnalyses());
     }
 
     @Test
-    public void anyValidationResultDocumentsWithEmptyValidationQualityAnalysesWhenInvalid() throws Exception {
+    public void anyValidationResultDocumentsWithEmptyValidationQualityAnalysesWhenInvalid() {
         fact.setRelatedValidationResultDocuments(Collections.<ValidationResultDocumentType>newArrayList());
 
         assertTrue(fact.anyValidationResultDocumentsWithEmptyValidationQualityAnalyses());
     }
 
     @Test
-    public void anyValidationQualityAnalysisWithoutReferencedTextItemsWhenItContainsReferencedItems() throws Exception {
+    public void anyValidationQualityAnalysisWithoutReferencedTextItemsWhenItContainsReferencedItems() {
         ValidationResultDocumentType validationResultDocumentType = new ValidationResultDocumentType()
                 .withRelatedValidationQualityAnalysises(
                         new ValidationQualityAnalysisType()
@@ -54,15 +53,13 @@ public class SalesFLUXResponseDocumentFactTest {
     }
 
     @Test
-    public void anyValidationQualityAnalysisWithoutReferencedTextItemsWhenItDoesNotContainReferencedItems() throws Exception {
+    public void anyValidationQualityAnalysisWithoutReferencedTextItemsWhenItDoesNotContainReferencedItems() {
         ValidationResultDocumentType validationResultDocumentType = new ValidationResultDocumentType()
                 .withRelatedValidationQualityAnalysises(
                         new ValidationQualityAnalysisType()
                                 .withReferencedItems(Collections.<TextType>newArrayList()));
         fact.setRelatedValidationResultDocuments(Arrays.asList(validationResultDocumentType));
-
-
-        assertTrue(fact.anyValidationQualityAnalysisWithoutReferencedTextItems());
+        assertFalse(fact.anyValidationQualityAnalysisWithoutReferencedTextItems());
     }
 
     @Test

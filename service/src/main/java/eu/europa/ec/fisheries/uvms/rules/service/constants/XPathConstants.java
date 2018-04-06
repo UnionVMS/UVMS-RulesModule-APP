@@ -20,6 +20,7 @@ import lombok.*;
 public class XPathConstants {
 
     public static final String FLUXFA_REPORT_MESSAGE = "FLUXFAReportMessage";
+    public static final String FLUXFA_QUERY_MESSAGE = "FLUXFAQueryMessage";
     public static final String FA_REPORT_DOCUMENT = "FAReportDocument";
     public static final String SPECIFIED_FISHING_ACTIVITY = "SpecifiedFishingActivity";
     public static final String FLUX_REPORT_DOCUMENT = "FLUXReportDocument";
