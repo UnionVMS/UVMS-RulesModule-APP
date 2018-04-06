@@ -33,6 +33,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -173,6 +174,12 @@ public class FactRuleEvaluator {
 
             ksession.fireAllRules();
             ksession.dispose();
+
+        } catch (RuntimeException e) {
+            String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
+            log.error(errorMessage);
+            throw new RulesServiceTechnicalException(errorMessage, e);
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             Collection<?> objects = null;
