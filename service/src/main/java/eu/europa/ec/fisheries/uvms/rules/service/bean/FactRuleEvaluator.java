@@ -43,7 +43,6 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Results;
-import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
@@ -122,13 +121,10 @@ public class FactRuleEvaluator {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private Collection<KiePackage> createAllPackages(Map<String, String> drlsAndRules) {
-        Collection<KiePackage> compiledPackages = new ArrayList<>();
+    private void createAllPackages(Map<String, String> drlsAndRules) {
         KieContainer container = null;
-
         String drl = rulesValidator.getSanityRuleDrlFile();
         KieFileSystem kieFileSystem = KieServices.Factory.get().newKieFileSystem();
-
         String sruletemplateName = "SanityRules";
         drlsAndRules.put(drl, sruletemplateName);
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
@@ -146,9 +142,8 @@ public class FactRuleEvaluator {
             container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
         }
         if (container != null) {
-        	compiledPackages = container.getKieBase().getKiePackages();
+        	 container.getKieBase().getKiePackages();
         }
-        return compiledPackages;
     }
 
     public void validateFact(Collection<AbstractFact> facts) {

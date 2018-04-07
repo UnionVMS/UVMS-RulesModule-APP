@@ -673,29 +673,23 @@ public class RulesServiceBean implements RulesService {
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
-            auditLog("Time to validate sanity:", auditTimestamp);
+            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
-                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
+                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
 
-            //    if (movementFact != null){
-            //        LOG.info("Validating movement from Movement Module");
-            //        rulesValidator.evaluate(movementFact);
-//
-  //                  auditLog("Rules total time:", auditTotalTimestamp);
+                LOG.info("Validating movement from Movement Module");
+                rulesValidator.evaluate(movementFact);
 
-                    // Tell Exchange that a movement was persisted in Movement
-                    sendBackToExchange("sddsds", rawMovement, MovementRefTypeType.MOVEMENT, username);
-               }
-                else {
-                    sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
-                }
+                auditLog("Rules total time:", auditTotalTimestamp);
 
-          //  } else {
+                // Tell Exchange that a movement was persisted in Movement
+                sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT, username);
+            } else {
                 // Tell Exchange that the report caused an alarm
-            //sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
-           // }
-        } catch (InterruptedException | ExecutionException |MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException  e) {
+                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
+            }
+        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -739,44 +733,38 @@ public class RulesServiceBean implements RulesService {
 
         final Date positionTime = rawMovement.getPositionTime();
 
-        /*FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
+        FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
             @Override
             public Long call() {
-        //        return timeDiffAndPersistMovement(rawMovement.getSource(), assetGuid, assetFlagState, positionTime);
-        //    }
+                return timeDiffAndPersistMovement(rawMovement.getSource(), assetGuid, assetFlagState, positionTime);
+            }
         });
-        //executor.execute(timeDiffAndPersistMovementTask);
+        executor.execute(timeDiffAndPersistMovementTask);
 
-        //FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
+        FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() {
-        //        return numberOfReportsLast24Hours(assetHistGuid, positionTime);
-        //    }
+                return numberOfReportsLast24Hours(assetHistGuid, positionTime);
+            }
         });
-        //executor.execute(numberOfReportsLast24HoursTask);
+        executor.execute(numberOfReportsLast24HoursTask);
 
-        */
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
                 return sendToMovement(assetHistGuid, rawMovement, username);
             }
         });
-
-
         executor.execute(sendToMovementTask);
 
-        /*
         FutureTask<List<AssetGroup>> assetGroupTask = new FutureTask<>(new Callable<List<AssetGroup>>() {
             @Override
             public List<AssetGroup> call() {
                 return getAssetGroup(assetGuid);
             }
         });
-
         executor.execute(assetGroupTask);
-  */
-        /*
+
         FutureTask<List<String>> vicinityOfTask = new FutureTask<>(new Callable<List<String>>() {
             @Override
             public List<String> call() {
@@ -784,7 +772,7 @@ public class RulesServiceBean implements RulesService {
             }
         });
         executor.execute(vicinityOfTask);
-*/
+
         // Get channel guid
         String channelGuid = "";
         if (mobileTerminal != null) {
@@ -800,22 +788,21 @@ public class RulesServiceBean implements RulesService {
         // Get data from parallel tasks
         try {
             Date auditParallelTimestamp = new Date();
-            //Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
-            //List<AssetGroup> assetGroups = assetGroupTask.get();
-           // numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
-           MovementType createdMovement = sendToMovementTask.get();
-           // List<String> vicinityOf = vicinityOfTask.get();
+            Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
+            List<AssetGroup> assetGroups = assetGroupTask.get();
+            numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
+            MovementType createdMovement = sendToMovementTask.get();
+            List<String> vicinityOf = vicinityOfTask.get();
             auditLog("Total time for parallel tasks:", auditParallelTimestamp);
 
-            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, null, null, null, channelGuid, null);
+            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid, vicinityOf);
             LOG.debug("movementFact:{}", movementFact);
 
             executor.shutdown();
             return movementFact;
         } catch (RulesServiceException | NullPointerException e) {
             executor.shutdown();
-            return null;
-            //throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
+            throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
         }
     }
 
