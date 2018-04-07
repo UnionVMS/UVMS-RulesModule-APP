@@ -10,20 +10,23 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -44,10 +47,23 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     private Map<String, String> errorMessages;
 
     public void loadMDRCache() {
-        for (MDRAcronymType acronymType : MDRAcronymType.values()) {
-            cache.getEntry(acronymType);
+
+        try {
+            ExecutorService executorService = Executors.newFixedThreadPool(5);
+            List<Callable<List<ObjectRepresentation>>> myCallableList = new ArrayList<>();
+            for (final MDRAcronymType type : MDRAcronymType.values()){
+                myCallableList.add(new Callable<List<ObjectRepresentation>>() {
+                    @Override
+                    public List<ObjectRepresentation> call() {
+                        return cache.getEntry(type);
+                    }
+                });
+            }
+            executorService.invokeAll(myCallableList);
+            executorService.shutdown();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
         }
-        MDRCacheHolder.getInstance().setCache(cache.getCache()); // FIXME : "MDRCacheHolder" To be removed! and instead use directly MDRCacheRuleService as global in the drts
         log.debug(cache.getCache().stats().toString());
         log.info("MDRCache size: " + cache.getCache().asMap().size());
     }
@@ -55,13 +71,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     public String getErrorMessageForBrId(String brId){
         if(MapUtils.isEmpty(errorMessages)){
-            log.info("[START] Loading MDR message types for ValidationMessages.");
             createCacheForFailureMessages();
-            log.info("[END] Loading MDR message types for ValidationMessages.");
         }
         return errorMessages.get(brId);
     }
-
 
     /**
      * This function mapps all the error messages to the ones defined in MDR;

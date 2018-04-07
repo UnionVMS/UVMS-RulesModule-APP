@@ -28,6 +28,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import lombok.SneakyThrows;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -39,6 +40,7 @@ import org.mockito.junit.MockitoRule;
  * Created by padhyad on 7/17/2017.
  */
 
+@Ignore
 public class RulesPreValidationInterceptorTest {
 
     @Rule

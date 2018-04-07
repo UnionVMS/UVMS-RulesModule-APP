@@ -13,6 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -21,10 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.
@@ -129,10 +129,10 @@ public class FishingGearFact extends AbstractFact {
         }
         List<String> fishingGearCharacteristicCodes = new ArrayList<>();
         for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
-            String typeCode = fishingGearTypeCharacteristic.getId().getFishingGearTypeCode();
+            String typeCode = fishingGearTypeCharacteristic.getFishingGearTypeCode();
 
             if (mandatory == fishingGearTypeCharacteristic.getMandatory() && typeCode.equals(fishingGearTypeCode.getValue())) {
-                String characteristicCode = fishingGearTypeCharacteristic.getId().getFishingGearCharacteristicCode();
+                String characteristicCode = fishingGearTypeCharacteristic.getFishingGearCharacteristicCode();
                 fishingGearCharacteristicCodes.add(characteristicCode);
             }
         }

@@ -13,13 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import org.apache.commons.collections.*;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+import java.util.List;
 
-import java.util.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 /**
  * @author padhyad
@@ -179,7 +180,6 @@ public class FaJointFishingOperationFact extends AbstractFact {
         return true;
     }
 
-
     /**
      * This will check if every FACatch in FishingActivity has atleast one with typeCode value ALLOCATED_TO_QUOTA if FACatchSpecies is BFT
      *
@@ -187,12 +187,9 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
      */
     public boolean verifyAtLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList) {
-
         if (CollectionUtils.isEmpty(fishingActivityList)) {
             return true;
         }
-
-
         for (FishingActivity fishingActivity : fishingActivityList) {
             if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
                 for (FACatch faCatch : fishingActivity.getSpecifiedFACatches()) {
@@ -202,57 +199,7 @@ public class FaJointFishingOperationFact extends AbstractFact {
                 }
             }
         }
-
         return true;
     }
-
-
-    /**
-     * Based on validationCondition value, specific attribute would be validated for FLUXDestination. This method do validation for FACatches with BFT species
-     *
-     * @param faCatchList
-     * @param validationCondition
-     * @return
-     */
-    public boolean vallidationForDestinationFLUXLocation(List<FACatch> faCatchList, String validationCondition) {
-        if (CollectionUtils.isEmpty(faCatchList)) {
-            return false;
-        }
-
-        for (FACatch faCatch : faCatchList) {
-
-            if (faCatch.getSpeciesCode() != null && "BFT".equals(faCatch.getSpeciesCode().getValue())) {
-                List<FLUXLocation> destinationFLUXLocations = faCatch.getDestinationFLUXLocations();
-                if (CollectionUtils.isEmpty(destinationFLUXLocations)) {
-                    return false;
-                }
-
-                for (FLUXLocation fluxLocation : destinationFLUXLocations) {
-
-                    switch (validationCondition) {
-                        case "TYPECODE":
-                            if (fluxLocation.getTypeCode() == null) {
-                                return false;
-                            }
-                            break;
-                        case "LOCATION":
-                            if (fluxLocation.getTypeCode() == null || !"LOCATION".equals(fluxLocation.getTypeCode().getValue())) {
-                                return false;
-                            }
-                            break;
-                        case "ID":
-                            IDType idType = fluxLocation.getID();
-                            if (idType == null || !"FARM".equals(idType.getSchemeID()) || !isPresentInMDRList("FARM", idType.getValue())) {
-                                return false;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
 
 }

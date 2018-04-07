@@ -10,14 +10,8 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static javax.ejb.ConcurrencyManagementType.BEAN;
-
 import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 
 import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +21,10 @@ import org.apache.commons.lang3.StringUtils;
  * Created by kovian, gregrinaldi on 30/05/2017.
  */
 @Slf4j
-@Singleton
-@Startup
-@ConcurrencyManagement(BEAN)
-@DependsOn(value = {"RulesSchedulerServiceBean"})
+//@Singleton
+//@Startup
+//@ConcurrencyManagement(BEAN)
+//@DependsOn(value = {"RulesSchedulerServiceBean"})
 public class RulesSchedulerInitializer {
 
     private static final String DEFAULT_SCHED_CONFIGURATION = "0 1 20 * *";

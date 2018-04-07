@@ -32,6 +32,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
@@ -125,6 +126,7 @@ public class BusinessObjectFactoryTest {
     }
 
     @Test(expected = NullPointerException.class)
+    @Ignore
     @SneakyThrows
     public void testSetAdditionalValidation_ActivityQueryFactGenerator() {
         ActivityQueryFactGenerator activityQueryFactGenerator = new ActivityQueryFactGenerator();
