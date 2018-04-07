@@ -11,6 +11,23 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -120,22 +137,6 @@ import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContext;
 import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -675,20 +676,26 @@ public class RulesServiceBean implements RulesService {
             auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
-                MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
+                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
 
-                LOG.info("Validating movement from Movement Module");
-                rulesValidator.evaluate(movementFact);
+            //    if (movementFact != null){
+            //        LOG.info("Validating movement from Movement Module");
+            //        rulesValidator.evaluate(movementFact);
+//
+  //                  auditLog("Rules total time:", auditTotalTimestamp);
 
-                auditLog("Rules total time:", auditTotalTimestamp);
+                    // Tell Exchange that a movement was persisted in Movement
+                    sendBackToExchange("sddsds", rawMovement, MovementRefTypeType.MOVEMENT, username);
+               }
+                else {
+                    sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
+                }
 
-                // Tell Exchange that a movement was persisted in Movement
-                sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT, username);
-            } else {
+          //  } else {
                 // Tell Exchange that the report caused an alarm
-                sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
-            }
-        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
+            //sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
+           // }
+        } catch (InterruptedException | ExecutionException |MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException  e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -732,38 +739,44 @@ public class RulesServiceBean implements RulesService {
 
         final Date positionTime = rawMovement.getPositionTime();
 
-        FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
+        /*FutureTask<Long> timeDiffAndPersistMovementTask = new FutureTask<>(new Callable<Long>() {
             @Override
             public Long call() {
-                return timeDiffAndPersistMovement(rawMovement.getSource(), assetGuid, assetFlagState, positionTime);
-            }
+        //        return timeDiffAndPersistMovement(rawMovement.getSource(), assetGuid, assetFlagState, positionTime);
+        //    }
         });
-        executor.execute(timeDiffAndPersistMovementTask);
+        //executor.execute(timeDiffAndPersistMovementTask);
 
-        FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
+        //FutureTask<Integer> numberOfReportsLast24HoursTask = new FutureTask<>(new Callable<Integer>() {
             @Override
             public Integer call() {
-                return numberOfReportsLast24Hours(assetHistGuid, positionTime);
-            }
+        //        return numberOfReportsLast24Hours(assetHistGuid, positionTime);
+        //    }
         });
-        executor.execute(numberOfReportsLast24HoursTask);
+        //executor.execute(numberOfReportsLast24HoursTask);
 
+        */
         FutureTask<MovementType> sendToMovementTask = new FutureTask<>(new Callable<MovementType>() {
             @Override
             public MovementType call() {
                 return sendToMovement(assetHistGuid, rawMovement, username);
             }
         });
+
+
         executor.execute(sendToMovementTask);
 
+        /*
         FutureTask<List<AssetGroup>> assetGroupTask = new FutureTask<>(new Callable<List<AssetGroup>>() {
             @Override
             public List<AssetGroup> call() {
                 return getAssetGroup(assetGuid);
             }
         });
-        executor.execute(assetGroupTask);
 
+        executor.execute(assetGroupTask);
+  */
+        /*
         FutureTask<List<String>> vicinityOfTask = new FutureTask<>(new Callable<List<String>>() {
             @Override
             public List<String> call() {
@@ -771,7 +784,7 @@ public class RulesServiceBean implements RulesService {
             }
         });
         executor.execute(vicinityOfTask);
-
+*/
         // Get channel guid
         String channelGuid = "";
         if (mobileTerminal != null) {
@@ -787,21 +800,22 @@ public class RulesServiceBean implements RulesService {
         // Get data from parallel tasks
         try {
             Date auditParallelTimestamp = new Date();
-            Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
-            List<AssetGroup> assetGroups = assetGroupTask.get();
-            numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
-            MovementType createdMovement = sendToMovementTask.get();
-            List<String> vicinityOf = vicinityOfTask.get();
+            //Long timeDiffInSeconds = timeDiffAndPersistMovementTask.get();
+            //List<AssetGroup> assetGroups = assetGroupTask.get();
+           // numberOfReportsLast24Hours = numberOfReportsLast24HoursTask.get();
+           MovementType createdMovement = sendToMovementTask.get();
+           // List<String> vicinityOf = vicinityOfTask.get();
             auditLog("Total time for parallel tasks:", auditParallelTimestamp);
 
-            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, assetGroups, timeDiffInSeconds, numberOfReportsLast24Hours, channelGuid, vicinityOf);
+            MovementFact movementFact = MovementFactMapper.mapMovementFact(createdMovement, mobileTerminal, asset, comChannelType, null, null, null, channelGuid, null);
             LOG.debug("movementFact:{}", movementFact);
 
             executor.shutdown();
             return movementFact;
         } catch (RulesServiceException | NullPointerException e) {
             executor.shutdown();
-            throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
+            return null;
+            //throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
         }
     }
 

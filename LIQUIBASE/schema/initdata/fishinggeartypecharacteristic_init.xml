@@ -5,492 +5,590 @@
 
     <changeSet author="dordevdr (generated)" id="1503412383114-3">
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="1"/>
             <column name="fishing_gear_type_code" value="SV"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="2"/>
             <column name="fishing_gear_type_code" value="SV"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="3"/>
             <column name="fishing_gear_type_code" value="OTM"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="4"/>
             <column name="fishing_gear_type_code" value="OTM"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="5"/>
             <column name="fishing_gear_type_code" value="PTM"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="6"/>
             <column name="fishing_gear_type_code" value="PTM"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="7"/>
             <column name="fishing_gear_type_code" value="PTB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="8"/>
             <column name="fishing_gear_type_code" value="PTB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="9"/>
             <column name="fishing_gear_type_code" value="PTB"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="10"/>
             <column name="fishing_gear_type_code" value="OTB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="11"/>
             <column name="fishing_gear_type_code" value="OTB"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="12"/>
             <column name="fishing_gear_type_code" value="OTB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="13"/>
             <column name="fishing_gear_type_code" value="TBN"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="14"/>
             <column name="fishing_gear_type_code" value="TBN"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="15"/>
             <column name="fishing_gear_type_code" value="TBN"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="16"/>
             <column name="fishing_gear_type_code" value="TBS"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="17"/>
             <column name="fishing_gear_type_code" value="TBS"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="18"/>
             <column name="fishing_gear_type_code" value="TBS"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="19"/>
             <column name="fishing_gear_type_code" value="TB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="20"/>
             <column name="fishing_gear_type_code" value="TB"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="21"/>
             <column name="fishing_gear_type_code" value="TB"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="22"/>
             <column name="fishing_gear_type_code" value="SX"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="23"/>
             <column name="fishing_gear_type_code" value="SX"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="24"/>
             <column name="fishing_gear_type_code" value="TBB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="25"/>
             <column name="fishing_gear_type_code" value="TBB"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="26"/>
             <column name="fishing_gear_type_code" value="TBB"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="27"/>
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="28"/>
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="29"/>
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="MT"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="30"/>
             <column name="fishing_gear_type_code" value="OTT"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="31"/>
             <column name="fishing_gear_type_code" value="SDN"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="32"/>
             <column name="fishing_gear_type_code" value="SDN"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="33"/>
             <column name="fishing_gear_type_code" value="SPR"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="34"/>
             <column name="fishing_gear_type_code" value="SPR"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="35"/>
             <column name="fishing_gear_type_code" value="SSC"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="36"/>
             <column name="fishing_gear_type_code" value="SSC"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="37"/>
             <column name="fishing_gear_type_code" value="PS"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="38"/>
             <column name="fishing_gear_type_code" value="PS"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="39"/>
             <column name="fishing_gear_type_code" value="PS"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="40"/>
             <column name="fishing_gear_type_code" value="PS1"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="41"/>
             <column name="fishing_gear_type_code" value="PS1"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="42"/>
             <column name="fishing_gear_type_code" value="PS1"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="43"/>
             <column name="fishing_gear_type_code" value="PS2"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="44"/>
             <column name="fishing_gear_type_code" value="PS2"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="45"/>
             <column name="fishing_gear_type_code" value="PS2"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="46"/>
             <column name="fishing_gear_type_code" value="LA"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="47"/>
             <column name="fishing_gear_type_code" value="LA"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="48"/>
             <column name="fishing_gear_type_code" value="LA"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="49"/>
             <column name="fishing_gear_type_code" value="DRB"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="50"/>
             <column name="fishing_gear_type_code" value="DRB"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="51"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="52"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="53"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="54"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="55"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="56"/>
             <column name="fishing_gear_type_code" value="GN"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="57"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="58"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="59"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="60"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="70"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="71"/>
             <column name="fishing_gear_type_code" value="GNS"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="72"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="73"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="74"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="75"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="76"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="77"/>
             <column name="fishing_gear_type_code" value="GND"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="78"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="79"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="80"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="81"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="82"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="83"/>
             <column name="fishing_gear_type_code" value="GNC"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="84"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="85"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="86"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="87"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="88"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="89"/>
             <column name="fishing_gear_type_code" value="GTN"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="90"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="ME"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="91"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="GM"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="92"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="HE"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="93"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="NL"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="94"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="NN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="95"/>
             <column name="fishing_gear_type_code" value="GTR"/>
             <column name="fishing_gear_characteristic_code" value="QG"/>
             <column name="mandatory" valueBoolean="false"/>
         </insert>
 
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="96"/>
             <column name="fishing_gear_type_code" value="LHP"/>
             <column name="fishing_gear_characteristic_code" value="NI"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="97"/>
             <column name="fishing_gear_type_code" value="FPO"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="98"/>
             <column name="fishing_gear_type_code" value="LHP"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="99"/>
             <column name="fishing_gear_type_code" value="LHM"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="100"/>
             <column name="fishing_gear_type_code" value="LHM"/>
             <column name="fishing_gear_characteristic_code" value="NI"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="101"/>
             <column name="fishing_gear_type_code" value="LLS"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="102"/>
             <column name="fishing_gear_type_code" value="LLS"/>
             <column name="fishing_gear_characteristic_code" value="NI"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="103"/>
             <column name="fishing_gear_type_code" value="LLD"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="104"/>
             <column name="fishing_gear_type_code" value="LLD"/>
             <column name="fishing_gear_characteristic_code" value="NI"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="105"/>
             <column name="fishing_gear_type_code" value="LL"/>
             <column name="fishing_gear_characteristic_code" value="GN"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="106"/>
             <column name="fishing_gear_type_code" value="LL"/>
             <column name="fishing_gear_characteristic_code" value="NI"/>
             <column name="mandatory" valueBoolean="true"/>
         </insert>
         <insert tableName="fishinggeartypecharacteristic">
+            <column name="id" value="107"/>
             <column name="fishing_gear_type_code" value="RG"/>
             <column name="fishing_gear_characteristic_code" value="GD"/>
             <column name="mandatory" valueBoolean="false"/>

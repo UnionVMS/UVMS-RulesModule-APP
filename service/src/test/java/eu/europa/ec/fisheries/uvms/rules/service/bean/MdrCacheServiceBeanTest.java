@@ -13,28 +13,24 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.MDRCacheHolder;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -49,14 +45,6 @@ public class MdrCacheServiceBeanTest {
 
     @Mock
     MDRCache cache;
-
-    @Test
-    @Ignore
-    public void testLoadMDRCache() {
-        doReturn(RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES()).when(cache).getEntry(Mockito.any(MDRAcronymType.class));
-        mdrCacheServiceBean.loadMDRCache();
-        assertNotNull(MDRCacheHolder.getInstance().getList(MDRAcronymType.GEAR_TYPE));
-    }
 
     @Test
     public void isNotMostPreciseFAOAreaWhenTrue() {

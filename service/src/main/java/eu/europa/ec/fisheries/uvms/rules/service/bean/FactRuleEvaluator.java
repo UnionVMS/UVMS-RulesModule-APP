@@ -42,7 +42,7 @@ import org.drools.template.parser.TemplateDataListener;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Message;
+import org.kie.api.builder.Results;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -126,7 +126,6 @@ public class FactRuleEvaluator {
         Collection<KiePackage> compiledPackages = new ArrayList<>();
         KieContainer container = null;
 
-        List<String> systemPackagesPaths =  new ArrayList<>();
         String drl = rulesValidator.getSanityRuleDrlFile();
         KieFileSystem kieFileSystem = KieServices.Factory.get().newKieFileSystem();
 
@@ -135,22 +134,17 @@ public class FactRuleEvaluator {
         for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
             String rule = ruleEntrySet.getKey();
             String templateName = ruleEntrySet.getValue();
-            StringBuilder ruleName = new StringBuilder("src/main/resources/rule/");
-            String systemPackage = ruleName.append(templateName).append(".drl").toString();
-            systemPackagesPaths.add(systemPackage);
+            String systemPackage = "src/main/resources/rule/" + templateName + ".drl";
             kieFileSystem.write(systemPackage, rule);
-            KieBuilder kieBuilder = KieServices.Factory.get().newKieBuilder(kieFileSystem).buildAll();
-            if (kieBuilder.getResults().hasMessages(Message.Level.ERROR)) {
-                log.error("Rule failed to build {} ", templateName);
-                kieFileSystem.delete(ruleName.toString(), rule);
-                failedRules.add(templateName);
-            }
         }
-
+        KieBuilder kieBuilder = KieServices.Factory.get().newKieBuilder(kieFileSystem).buildAll();
+        Results results = kieBuilder.getResults();
+        if (results != null && CollectionUtils.isNotEmpty(results.getMessages())){
+            throw new RuntimeException("COMPILATION ERROR IN RULES. PLEASE ADAPT THE FAILING EXPRESSIONS AND TRY AGAIN");
+        }
         if (drlsAndRules.size() > 0){
             container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
         }
-
         if (container != null) {
         	compiledPackages = container.getKieBase().getKiePackages();
         }
@@ -162,32 +156,31 @@ public class FactRuleEvaluator {
         try {
             KieContainer container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
             ksession = container.newKieSession();
-
             ksession.setGlobal("salesService", salesRulesService);
             ksession.setGlobal("mdrService", mdrCacheRuleService);
             ksession.setGlobal("exchangeService", exchangeRuleService);
-
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
-
             ksession.fireAllRules();
             ksession.dispose();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.trace("EXCEPTION IN EVALUATION OF RULE");
             Collection<?> objects = null;
             if (ksession != null) {
                 objects = ksession.getObjects();
             }
             if (CollectionUtils.isNotEmpty(objects)) {
                 Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
-                AbstractFact next = failedFacts.iterator().next();
-                String message = e.getMessage();
-                String brId = message.substring(message.indexOf('/') + 1, message.indexOf(".drl"));
-                next.addWarningOrError("WARNING", message, brId, "L099", StringUtils.EMPTY);
-                next.setOk(false);
-                facts.remove(next); // remove fact with exception and re-validate the other facts
-                exceptionsList.add(next);
+                if (CollectionUtils.isNotEmpty(failedFacts)){
+                    for (AbstractFact failedFact : failedFacts) {
+                        String message = e.getMessage();
+                        failedFact.addWarningOrError("WARNING", message, StringUtils.EMPTY, "L099", StringUtils.EMPTY);
+                        failedFact.setOk(false);
+                        facts.remove(failedFact); // remove fact with exception and re-validate the other facts
+                        exceptionsList.add(failedFact);
+                    }
+                }
                 validateFact(facts);
             }
         }

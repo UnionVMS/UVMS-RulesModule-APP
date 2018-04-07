@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import com.google.common.base.Stopwatch;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.EJB;
@@ -29,6 +20,16 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Stopwatch;
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,25 +55,23 @@ public class TemplateEngine {
     @PostConstruct
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void initialize() {
-        log.info("[START] Initializing templates and rules...");
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             List<TemplateRuleMapDto> templatesAndRules = rulesDb.getAllFactTemplatesAndRules();
             refreshRulesValidationMessages(templatesAndRules);
+            log.info("[START] Initializing templates and rules...");
             ruleEvaluator.initializeRules(templatesAndRules);
-            rulesStatusUpdaterBean.updateRulesStatus(ruleEvaluator.getFailedRules());
             log.info("[END] It took "+ stopwatch + " to initialize the rules.");
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
         }
-
     }
 
     private void refreshRulesValidationMessages(List<TemplateRuleMapDto> templatesAndRules) {
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 final String errorMessageForBrId = cacheService.getErrorMessageForBrId(ruleType.getBrId());
-                if(StringUtils.isNotEmpty(errorMessageForBrId)){
+                if (StringUtils.isNotEmpty(errorMessageForBrId)){
                     ruleType.setMessage(errorMessageForBrId.replaceAll("\"", "&quot;"));
                 }
             }

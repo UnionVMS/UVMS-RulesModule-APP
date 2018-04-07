@@ -12,6 +12,15 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static java.util.Collections.singleton;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleResponseMapper;
@@ -29,14 +38,6 @@ import eu.europa.ec.fisheries.wsdl.asset.types.AssetListPagination;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
 import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
 import eu.europa.ec.fisheries.wsdl.user.types.UserFault;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -74,13 +75,11 @@ public class RuleAssetsBean {
         if (CollectionUtils.isEmpty(vessTranspMeans)) {
             return Collections.emptyList();
         }
-
         AssetListQuery assetListQuery = createAssetListQuery(vessTranspMeans);
         if(CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
             log.debug("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided! Check your XML!");
             return Collections.emptyList();
         }
-
         List<Asset> assetsRespList = new ArrayList<>();
         try {
             String request = AssetModuleRequestMapper.createAssetListModuleRequest(assetListQuery);
