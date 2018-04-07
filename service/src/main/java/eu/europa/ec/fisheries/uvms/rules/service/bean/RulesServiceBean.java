@@ -673,7 +673,7 @@ public class RulesServiceBean implements RulesService {
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
-            auditLog("Time to validate sanity:", auditTimestamp);
+            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
