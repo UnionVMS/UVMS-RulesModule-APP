@@ -24,9 +24,28 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
@@ -81,25 +100,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationI
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jms.TextMessage;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -172,7 +172,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
         log.info("Received ReceiveSalesQueryRequest request message");
         try {
@@ -209,14 +209,14 @@ public class RulesMessageServiceBean implements RulesMessageService {
             }
             updateRequestMessageStatusInExchange(logGuid, validationResult);
         } catch (SalesMarshallException | RulesValidationException | MessageException e) {
-            throw new RulesServiceTechnicalException("Couldn't validate sales query", e);
+            throw new RulesServiceException("Couldn't validate sales query", e);
         }
     }
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
         log.info("Received ReceiveSalesReportRequest request message");
         try {
@@ -245,7 +245,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //update log status
             updateRequestMessageStatusInExchange(logGuid, validationResult);
         } catch (SalesMarshallException | RulesValidationException | MessageException e) {
-            throw new RulesServiceTechnicalException("Couldn't validate sales report", e);
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 
@@ -273,7 +273,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
         log.info("Received ReceiveSalesResponseRequest request message");
         try {
@@ -301,7 +301,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
         log.info("Received SendSalesResponseRequest request message");
         try {
@@ -330,7 +330,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
         } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
-            throw new RulesServiceTechnicalException("Couldn't validate sales response", e);
+            throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
 
@@ -338,7 +338,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)
-    @Interceptors(RulesPreValidationInterceptor.class)
+   // @Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
         log.info("Receive SendSalesReportRequest request message");
         try {
@@ -362,13 +362,13 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
         } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
-            throw new RulesServiceTechnicalException("Couldn't validate sales report", e);
+            throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
 
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     @Lock(LockType.READ)
     public void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
@@ -478,7 +478,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     @Lock(LockType.READ)
     public void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request) {
         String requestStr = request.getRequest();

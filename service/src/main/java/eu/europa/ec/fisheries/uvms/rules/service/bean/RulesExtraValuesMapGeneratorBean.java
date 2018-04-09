@@ -16,14 +16,15 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.AC
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -58,22 +59,22 @@ public class RulesExtraValuesMapGeneratorBean {
                 map.put(ACTIVITY_NON_UNIQUE_IDS, activityService.getNonUniqueIdsList(businessObject));
                 map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
                 map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
-                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics());
+                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics()); // FIXME @Greg cache
                 break;
             case SENDING_FA_REPORT_MSG:
                 map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
                 map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
-                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics());
+                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics());  //FIXME @Greg cache
                 break;
             case RECEIVING_FA_QUERY_MSG:
-                log.info("[INFO] No need for ExtraValuesMap for this type of Message!");
+                log.debug("[INFO] No need for ExtraValuesMap for this type of Message!");
                 break;
             case SENDING_FA_QUERY_MSG:
-                log.info("[INFO] No need for ExtraValuesMap for this type of Message!");
+                log.debug("[INFO] No need for ExtraValuesMap for this type of Message!");
                 break;
         }
         stopWatch.stop();
-        log.info(END_IT_TOOK + stopWatch.getTime(TimeUnit.SECONDS) + SECONDS_TO_GENERATE_THE_MAP);
+        log.debug(END_IT_TOOK + stopWatch.getTime(TimeUnit.SECONDS) + SECONDS_TO_GENERATE_THE_MAP);
         return map;
 
     }

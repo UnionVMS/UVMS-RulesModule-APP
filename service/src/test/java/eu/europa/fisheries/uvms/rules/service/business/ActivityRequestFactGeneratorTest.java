@@ -43,7 +43,7 @@ public class ActivityRequestFactGeneratorTest {
         idTypeWithFlagState = new IdTypeWithFlagState();
         idTypeWithFlagState.setFlagState("FLAG");
         map.put(ASSET_LIST, singletonList(idTypeWithFlagState));
-        setInternalState(generator, "extraValueMap", map);
+        generator.setExtraValueMap(map);
     }
 
     @Test

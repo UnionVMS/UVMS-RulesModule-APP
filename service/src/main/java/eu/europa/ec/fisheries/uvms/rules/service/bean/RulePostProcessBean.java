@@ -13,6 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
@@ -26,13 +34,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -84,23 +85,6 @@ public class RulePostProcessBean {
     public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
-            List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
-                add(validationMessage);
-            }};
-            saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
-            // TODO : Create alarm in future
-            return createValidationResultDtoFromParams(false, false, validationMessages.isEmpty(), validationMessages);
-        } catch (RulesModelException e) {
-            log.error(e.getMessage(), e);
-            throw new RulesServiceException(e.getMessage(), e);
-        }
-    }
-
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleWarning warning, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
-        try {
-            final ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(),
-                    warning.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
             List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
                 add(validationMessage);
             }};

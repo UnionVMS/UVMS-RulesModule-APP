@@ -20,8 +20,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 
-import java.util.List;
-
 /**
  * @author padhyad
  * @author Gregory Rinaldi
@@ -29,7 +27,7 @@ import java.util.List;
  */
 public abstract class AbstractGenerator<T> {
 
-    protected Map<ExtraValueType, Object> extraValueMap;
+    public Map<ExtraValueType, Object> extraValueMap;
 
     public abstract List<AbstractFact> generateAllFacts();
 
