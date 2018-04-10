@@ -4223,7 +4223,7 @@
             <column name="rule_id" value="232"/>
             <column name="br_id" value="FA-L01-00-0232"/>
             <column name="expression"
-                    value="!isEmpty(typeCodes) &amp;&amp; !isTypeCodeValuePresentInList(&quot;VESSEL_STORAGE_TYPE&quot;, typeCodes)"/>
+                    value="!isEmpty(typeCodes) &amp;&amp; !mdrService.isTypeCodeValuePresentInList(&quot;VESSEL_STORAGE_TYPE&quot;, typeCodes)"/>
             <column name="note" value="TypeCode(s) must be present in the listID attribute named VESSEL_STORAGE_TYPE"/>
             <column name="message"
                     value="The value of vessel storage characteristics TypeCode is invalid."/>
@@ -5519,7 +5519,7 @@
             <column name="rule_id" value="221"/>
             <column name="br_id" value="FA-L01-00-0221"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; !isTypeCodeValuePresentInList(typeCode.listId, typeCode)"/>
+                    value="typeCode != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(typeCode.listId, typeCode)"/>
             <column name="note" value="TypeCode must be present in the list specified in the TypeCode's listId"/>
             <column name="message" value="The value of the FLUX characteristic TypeCode is invalid."/>
             <column name="level" value="L01"/>
@@ -5766,7 +5766,7 @@
             <column name="rule_id" value="382"/>
             <column name="br_id" value="FA-L03-00-0382"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !exchangeService.identificationExists(ids.get(0).value, &quot;FA_RESPONSE&quot;)"/>
+                    value="!isEmpty(ids) &amp;&amp; exchangeService.identificationExists(ids.get(0).value, &quot;FA_RESPONSE&quot;)"/>
             <column name="note" value="The identification of the FLUX response Document must be unique and not already exist"/>
             <column name="message" value="The identification of the FLUX response Document must be unique and not already exist"/>
             <column name="level" value="L03"/>

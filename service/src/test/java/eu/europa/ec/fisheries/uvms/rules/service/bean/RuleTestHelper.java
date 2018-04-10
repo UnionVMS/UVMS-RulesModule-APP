@@ -1,29 +1,30 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristicId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import java.util.Collections;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * Created by sanera on 10/05/2017.
- */
 public class RuleTestHelper {
 
     public static RuleType createRuleType(String expression, String brId, String note, ErrorType type, String errorMessage) {
@@ -34,7 +35,6 @@ public class RuleTestHelper {
         ruleType.setErrorType(type);
         ruleType.setMessage(errorMessage);
         ruleType.setLevel("LevelName");
-
         return ruleType;
     }
 
@@ -42,7 +42,6 @@ public class RuleTestHelper {
         CodeType codeType = new CodeType();
         codeType.setValue(value);
         codeType.setListId(listId);
-
         return codeType;
     }
 
@@ -75,114 +74,6 @@ public class RuleTestHelper {
         return textType;
     }
 
-    public static List<ObjectRepresentation> getObjectRepresentationForFA_CATCH() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentation("code", "ONBOARD", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "KEPT_IN_NET", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "TAKEN_ONBOARD", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "RELEASED", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "DISCARDED", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "DEMINIMIS", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "UNLOADED", "string"));
-
-        return objectRepresentations;
-    }
-
-
-    public static List<ObjectRepresentation> getObjectRepresentationForGEAR_TYPE_CODES() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentation("code", "PS1", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "LA", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "SB", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "SDN", "string"));
-        objectRepresentations.add(getObjectRepresentation("code", "PTB", "string"));
-
-        return objectRepresentations;
-    }
-
-    public static List<ObjectRepresentation> getObjectRepresentationForGEAR_CHARACTERISTIC() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
-        objectRepresentations.add(getObjectRepresentation("code", "KEPT_IN_NET", "string"));
-
-
-        return objectRepresentations;
-    }
-
-    public static List<ObjectRepresentation> getObjectRepresentationForLOCATION() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
-        objectRepresentations.add(getObjectRepresentation("code", "BEOST", "string"));
-
-
-        return objectRepresentations;
-    }
-
-    public static List<ObjectRepresentation> getObjectRepresentationForTERRITORY() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
-        objectRepresentations.add(getObjectRepresentation("code", "BEL", "string"));
-
-
-        return objectRepresentations;
-    }
-
-    public static List<ObjectRepresentation> getObjectRepresentationForFLUX_SALES_QUERY_PARAM_ROLE() {
-
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentationForGearCharacteristic());
-        objectRepresentations.add(getObjectRepresentation("code", "FLAG", "string"));
-
-
-        return objectRepresentations;
-    }
-
-    public static ObjectRepresentation getObjectRepresentationForGearCharacteristic() {
-
-        List<ColumnDataType> columnDataTypes = new ArrayList<>();
-
-        columnDataTypes.add(new ColumnDataType("code", "ME", "String"));
-        columnDataTypes.add(new ColumnDataType("dataType", "MEASURE", "String"));
-
-        return new ObjectRepresentation(columnDataTypes);
-    }
-
-    public static ObjectRepresentation getObjectRepresentation(String columnName, String columnValue, String columnDataType) {
-
-        List<ColumnDataType> columnDataTypes = new ArrayList<>();
-
-        columnDataTypes.add(new ColumnDataType(columnName, columnValue, columnDataType));
-
-        return new ObjectRepresentation(columnDataTypes);
-    }
-
-
-    public static ColumnDataType getColumnDataType(String columnName, String columnValue, String columnDataType) {
-        return new ColumnDataType(columnName, columnValue, columnDataType);
-    }
-
-    public static List<ObjectRepresentation> getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC() {
-        List<ObjectRepresentation> objectRepresentations = new ArrayList<>();
-
-        objectRepresentations.add(getObjectRepresentation("code", "OTR", "String"));
-        objectRepresentations.add(getObjectRepresentation("code", "OSS", "String"));
-        objectRepresentations.add(getObjectRepresentation("code", "NCC", "String"));
-        objectRepresentations.add(getObjectRepresentation("code", "OHL", "String"));
-
-        return objectRepresentations;
-    }
-
     public static List<FLUXLocation> createFluxLocationsWithPositionValue() {
         List<FLUXLocation> fluxLocations = new ArrayList<>(2);
         FLUXLocation fluxLocation = createFluxLocationWithTypeCodeValue("POSITION");
@@ -191,7 +82,6 @@ public class RuleTestHelper {
         fluxLocations.add(fluxLocation);
         fluxLocation = createFluxLocationWithTypeCodeValue("TEST");
         fluxLocations.add(fluxLocation);
-
         return fluxLocations;
     }
 
@@ -202,7 +92,6 @@ public class RuleTestHelper {
         codeType.setValue(typeCodeValue);
         fluxLocation.setTypeCode(codeType);
         fluxLocation.setID(getIdTypeUNCEFACT("", "FARM"));
-
         return fluxLocation;
     }
 
@@ -212,6 +101,7 @@ public class RuleTestHelper {
         faCatch.setSpeciesCode(getCodeTypeUNCEFACT(speciesCode, ""));
         return faCatch;
     }
+
     public static List<FACatch> getFACatchList() {
         List<FACatch> faCatches = new ArrayList<>(2);
         FACatch faCatch = new FACatch();
@@ -240,17 +130,13 @@ public class RuleTestHelper {
         fluxLocations.add(createFluxLocationWithTypeCodeValue("AREA"));
         loadedBFT.setSpecifiedFLUXLocations(fluxLocations);
         faCatches.add(loadedBFT);
-
-
         return faCatches;
     }
-
 
     public static un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType getCodeTypeUNCEFACT(String value, String listId) {
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setListID(listId);
         codeType.setValue(value);
-
         return codeType;
     }
 
@@ -267,10 +153,9 @@ public class RuleTestHelper {
         return flapDocument;
     }
 
-
     public static FishingActivity getFishingActivity() {
         FishingActivity fishingActivity = new FishingActivity();
-        fishingActivity.setRelatedVesselTransportMeans(Arrays.asList(getVesselTransportMeans()));
+        fishingActivity.setRelatedVesselTransportMeans(Collections.singletonList(getVesselTransportMeans()));
         fishingActivity.setSpecifiedFACatches(getFACatchList());
         return fishingActivity;
     }
@@ -290,22 +175,7 @@ public class RuleTestHelper {
     public static ValidationResultDocument getValidationResultDocument() {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
         validationResultDocument.setValidatorID(getIdTypeUNCEFACT("value", "SchemeId"));
-
         return validationResultDocument;
-
-
-    }
-
-    public static FLUXCharacteristic getFLUXCharacteristic() {
-        FLUXCharacteristic fluxCharacteristic = new FLUXCharacteristic();
-        fluxCharacteristic.setTypeCode(getCodeTypeUNCEFACT("DESTINATION_LOCATION", ""));
-
-        List<FLUXLocation> fluxLocations = new ArrayList<>();
-        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "LOCATION")));
-        fluxLocations.add(getFLUXLocation(getCodeTypeUNCEFACT("LOCATION", ""), getIdTypeUNCEFACT("", "FARM")));
-
-        fluxCharacteristic.setSpecifiedFLUXLocations(fluxLocations);
-        return fluxCharacteristic;
     }
 
     public static FLUXLocation getFLUXLocation(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode, IDType id) {
@@ -313,16 +183,6 @@ public class RuleTestHelper {
         fluxLocation.setTypeCode(typeCode);
         fluxLocation.setID(id);
         return fluxLocation;
-    }
-
-    public static VesselTransportMeans getVesselTransportMeans(String schemeId, String value) {
-        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
-        IDType id = new IDType();
-        id.setSchemeID(schemeId);
-        id.setValue(value);
-        vesselTransportMeans.setIDS(Arrays.asList(id));
-
-        return vesselTransportMeans;
     }
 
     public static List<GearCharacteristic> getGearCharacteristics() {
@@ -361,33 +221,24 @@ public class RuleTestHelper {
     public static List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
         List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = new ArrayList<>();
         List<GearCharacteristic> gearCharacteristics = getGearCharacteristics();
-
         for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
             FishingGearTypeCharacteristic fishingGearTypeCharacteristic = new FishingGearTypeCharacteristic();
-            FishingGearTypeCharacteristicId fishingGearTypeCharacteristicId = new FishingGearTypeCharacteristicId();
-            fishingGearTypeCharacteristicId.setFishingGearTypeCode("PS");
-            fishingGearTypeCharacteristicId.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
-            fishingGearTypeCharacteristic.setId(fishingGearTypeCharacteristicId);
             fishingGearTypeCharacteristic.setMandatory(true);
-
+            fishingGearTypeCharacteristic.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
+            fishingGearTypeCharacteristic.setFishingGearTypeCode("PS");
             fishingGearTypeCharacteristics.add(fishingGearTypeCharacteristic);
         }
-
         return fishingGearTypeCharacteristics;
     }
 
     public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
         ContactParty contactParty = new ContactParty();
-        contactParty.setRoleCodes(Arrays.asList(roleCode));
-        contactParty.setSpecifiedStructuredAddresses(Arrays.asList(structuredAddress));
+        contactParty.setRoleCodes(Collections.singletonList(roleCode));
+        contactParty.setSpecifiedStructuredAddresses(Collections.singletonList(structuredAddress));
         return contactParty;
     }
 
     public static StructuredAddress getStructuredAddress(){
-        StructuredAddress structuredAddress = new StructuredAddress();
-
-        return structuredAddress;
+        return new StructuredAddress();
     }
-
-
 }
