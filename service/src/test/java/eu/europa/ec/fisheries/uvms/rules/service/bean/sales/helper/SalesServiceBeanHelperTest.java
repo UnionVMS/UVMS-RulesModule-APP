@@ -43,7 +43,7 @@ public class SalesServiceBeanHelperTest {
 
         TextMessage mockTextMessage = mock(TextMessage.class);
         doReturn("unmarshall this message").when(mockTextMessage).getText();
-        doReturn(mockTextMessage).when(consumer).getMessage("correlationID", TextMessage.class);
+        doReturn(mockTextMessage).when(consumer).getMessage("correlationID", TextMessage.class, 30000L);
         when(JAXBMarshaller.unmarshallString("unmarshall this message content", FLUXSalesReportMessage.class))
                 .thenReturn(new FLUXSalesReportMessage());
         when(JAXBMarshaller.unmarshallString("unmarshall this message", FindReportByIdResponse.class))
@@ -51,7 +51,7 @@ public class SalesServiceBeanHelperTest {
 
         helper.receiveMessageFromSales("correlationID");
 
-        verify(consumer).getMessage("correlationID", TextMessage.class);
+        verify(consumer).getMessage("correlationID", TextMessage.class, 30000L);
         verify(mockTextMessage).getText();
 
         verifyStatic();
@@ -92,7 +92,7 @@ public class SalesServiceBeanHelperTest {
         TextMessage mockTextMessage = mock(TextMessage.class);
         mockStatic(SalesModuleRequestMapper.class, JAXBMarshaller.class);
         doReturn("FindReportByIdResponse").when(mockTextMessage).getText();
-        doReturn(mockTextMessage).when(consumer).getMessage("correlationId", TextMessage.class);
+        doReturn(mockTextMessage).when(consumer).getMessage("correlationId", TextMessage.class, 30000L);
         when(SalesModuleRequestMapper.createFindReportByIdRequest("guid")).thenReturn("FindReportByIdRequest");
         when(producer.sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES)).thenReturn("correlationId");
         when(JAXBMarshaller.unmarshallString("unmarshall this message content", FLUXSalesReportMessage.class))
@@ -103,7 +103,7 @@ public class SalesServiceBeanHelperTest {
         Optional<FLUXSalesReportMessage> returnedMessage = helper.findReport("guid");
 
         verify(mockTextMessage).getText();
-        verify(consumer).getMessage("correlationId", TextMessage.class);
+        verify(consumer).getMessage("correlationId", TextMessage.class, 30000L);
         verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES);
 
         verifyStatic();

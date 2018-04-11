@@ -18,8 +18,11 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
+@Slf4j
 @Singleton
 public class SalesServiceBeanHelper {
 
@@ -30,8 +33,9 @@ public class SalesServiceBeanHelper {
     private RulesResponseConsumer messageConsumer;
 
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
+        log.info("Received FLUXSalesReportMessage response message from Sales module");
         return unmarshal(receivedMessageAsString);
     }
 
@@ -50,6 +54,7 @@ public class SalesServiceBeanHelper {
     }
 
     public Optional<FLUXSalesReportMessage> findReport(String guid) throws MessageException, SalesMarshallException, JMSException {
+        log.info("Send FLUXSalesReportMessage request message to Sales module");
         String findReportByIdRequest = SalesModuleRequestMapper.createFindReportByIdRequest(guid);
         String correlationId = sendMessageToSales(findReportByIdRequest);
         return receiveMessageFromSales(correlationId);
@@ -57,10 +62,11 @@ public class SalesServiceBeanHelper {
 
     public boolean areAnyOfTheseIdsNotUnique(List<String> id, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
         String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(id, type);
+        log.info("Send CheckForUniqueIdRequest request message to Sales module");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class);
-
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 30000L);
+        log.info("Received CheckForUniqueIdResponse response message from Sales module");
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
         return !response.isUnique();
     }

@@ -25,16 +25,9 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jms.TextMessage;
@@ -101,6 +94,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
@@ -176,8 +170,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @Override
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
+        log.info("Received ReceiveSalesQueryRequest request message");
         try {
             //get sales query message
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
@@ -217,8 +214,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
+        log.info("Received ReceiveSalesReportRequest request message");
         try {
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
@@ -271,8 +271,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
+        log.info("Received ReceiveSalesResponseRequest request message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -296,8 +299,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
+        log.info("Received SendSalesResponseRequest request message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -330,8 +336,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
    // @Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
+        log.info("Receive SendSalesReportRequest request message");
         try {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();

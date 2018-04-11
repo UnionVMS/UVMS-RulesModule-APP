@@ -16,7 +16,7 @@ import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.schema.sales.SalesReportType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import java.util.Arrays;
 import java.util.List;
@@ -294,7 +294,7 @@ public class SalesServiceBeanTest {
         List<String> ids = Arrays.asList("abc");
 
         doThrow(MessageException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
-        exception.expect(RulesServiceException.class);
+        exception.expect(RulesServiceTechnicalException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
         service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
@@ -306,7 +306,7 @@ public class SalesServiceBeanTest {
         List<String> ids = Arrays.asList("abc");
 
         doThrow(JMSException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
-        exception.expect(RulesServiceException.class);
+        exception.expect(RulesServiceTechnicalException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
         service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
@@ -318,7 +318,7 @@ public class SalesServiceBeanTest {
         List<String> ids = Arrays.asList("abc");
 
         doThrow(SalesMarshallException.class).when(helper).areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);
-        exception.expect(RulesServiceException.class);
+        exception.expect(RulesServiceTechnicalException.class);
         exception.expectMessage("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean");
 
         service.areAnyOfTheseIdsNotUnique(ids, SalesMessageIdType.SALES_QUERY);

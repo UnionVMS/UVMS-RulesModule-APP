@@ -9,7 +9,7 @@ import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +46,7 @@ public class SalesServiceBean implements SalesService {
             Optional<FLUXSalesReportMessage> originalReport = helper.findReport(correctedReport.getFLUXReportDocument().getReferencedID().getValue());
             return originalReport.isPresent() && isTypeCodeBetweenReportsNotEqual(originalReport.get(), correctedReport);
         } catch (SalesMarshallException | JMSException | MessageException e) {
-            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean", e);
+            throw new RulesServiceTechnicalException("Something went wrong while sending/receiving of a sales request in isCorrectionAndIsItemTypeTheSameAsInTheOriginal in SalesServiceBean", e);
         }
     }
 
@@ -69,7 +69,7 @@ public class SalesServiceBean implements SalesService {
         try {
             return helper.areAnyOfTheseIdsNotUnique(ids, type);
         } catch (MessageException | JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
+            throw new RulesServiceTechnicalException("Something went wrong while sending/receiving of a sales request in areAnyOfTheseIdsNotUnique in SalesServiceBean", e);
         }
     }
 

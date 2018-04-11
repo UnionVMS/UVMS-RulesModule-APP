@@ -74,6 +74,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import java.util.List;
 import javax.ejb.EJB;
@@ -358,51 +359,56 @@ public class RulesEventServiceBean implements EventService {
 
     @Override
     public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message) {
+        LOG.info("Received ReceiveSalesQueryEvent");
         try {
             ReceiveSalesQueryRequest receiveSalesQueryRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesQueryRequest.class);
             messageService.receiveSalesQueryRequest(receiveSalesQueryRequest);
         } catch (JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Couldn't read ReceiveSalesQueryRequest.", e);
+            throw new RulesServiceTechnicalException("Couldn't read ReceiveSalesQueryRequest.", e);
         }
     }
 
     @Override
     public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message) {
+        LOG.info("Received ReceiveSalesReportEvent");
         try {
             ReceiveSalesReportRequest receiveSalesReportRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesReportRequest.class);
             messageService.receiveSalesReportRequest(receiveSalesReportRequest);
         } catch (JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Couldn't read ReceiveSalesReportRequest.", e);
+            throw new RulesServiceTechnicalException("Couldn't read ReceiveSalesReportRequest.", e);
         }
     }
 
     @Override
     public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message) {
+        LOG.info("Received ReceiveSalesResponseEvent");
         try {
             ReceiveSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesResponseRequest.class);
             messageService.receiveSalesResponseRequest(rulesRequest);
         } catch (JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Couldn't read ReceiveSalesResponseRequest.", e);
+            throw new RulesServiceTechnicalException("Couldn't read ReceiveSalesResponseRequest.", e);
         }
     }
 
     @Override
     public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message) {
+        LOG.info("Received SendSalesReportEvent");
         try {
             SendSalesReportRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), SendSalesReportRequest.class);
             messageService.sendSalesReportRequest(rulesRequest);
         } catch (JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Couldn't read SendSalesReportRequest.", e);
+            throw new RulesServiceTechnicalException("Couldn't read SendSalesReportRequest.", e);
         }
     }
 
     @Override
     public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message) {
+        LOG.info("Received SendSalesResponseEvent");
         try {
             SendSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), SendSalesResponseRequest.class);
             messageService.sendSalesResponseRequest(rulesRequest);
         } catch (JMSException | SalesMarshallException e) {
-            throw new RulesServiceException("Couldn't read SendSalesResponseRequest.", e);
+            throw new RulesServiceTechnicalException("Couldn't read SendSalesResponseRequest.", e);
         }
     }
 
