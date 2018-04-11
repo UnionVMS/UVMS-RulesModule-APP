@@ -360,7 +360,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     //@Interceptors(RulesPreValidationInterceptor.class)
-    @Lock(LockType.READ)
+    @Lock(LockType.WRITE)
     public void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
@@ -418,6 +418,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
+        log.info("[END] Finished evaluating FLUXFAReportMessage with GUID [[ " + logGuid + " ]].");
     }
 
     @Override

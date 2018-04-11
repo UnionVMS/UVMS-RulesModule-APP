@@ -74,7 +74,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         try {
             Queue destination = getDestinationQueue(queue);
             if(destination != null){
-                return this.sendMessageToSpecificQueue(text, destination, rulesResponseQueue);
+                return sendMessageToSpecificQueue(text, destination, rulesResponseQueue);
             }
             return null;
         } catch (Exception e) {
