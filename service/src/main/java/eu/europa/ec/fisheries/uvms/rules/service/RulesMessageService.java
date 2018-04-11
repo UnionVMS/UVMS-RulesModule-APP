@@ -26,6 +26,8 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageReq
 import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import javax.ejb.Local;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -36,6 +38,7 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 @Local
 public interface RulesMessageService {
 
+    @Lock(LockType.WRITE)
     void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
     void evaluateSendFaQueryRequest(SetFaQueryMessageRequest request);
