@@ -24,8 +24,28 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
@@ -74,38 +94,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jms.TextMessage;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -176,8 +170,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
+        log.info("Received ReceiveSalesQueryRequest request message");
         try {
             //get sales query message
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
@@ -217,8 +214,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
+        log.info("Received ReceiveSalesReportRequest request message");
         try {
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
@@ -271,8 +271,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
+        log.info("Received ReceiveSalesResponseRequest request message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -296,8 +299,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
+        log.info("Received SendSalesResponseRequest request message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -330,8 +336,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.WRITE)
+   // @Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
+        log.info("Receive SendSalesReportRequest request message");
         try {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
@@ -359,7 +368,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     @Lock(LockType.READ)
     public void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
@@ -469,7 +478,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
 
     @Override
-    @Interceptors(RulesPreValidationInterceptor.class)
+    //@Interceptors(RulesPreValidationInterceptor.class)
     @Lock(LockType.READ)
     public void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request) {
         String requestStr = request.getRequest();

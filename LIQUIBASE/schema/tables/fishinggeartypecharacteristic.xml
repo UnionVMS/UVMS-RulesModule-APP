@@ -5,6 +5,9 @@
 
     <changeSet author="dordevdr (generated)" id="1503410826849-11">
         <createTable tableName="fishinggeartypecharacteristic">
+            <column name="id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="fishinggeartypecharacteristic_pk" />
+            </column>
             <column name="fishing_gear_type_code" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
@@ -15,17 +18,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <rollback>
-            <dropTable tableName="fishinggeartypecharacteristic" cascadeConstraints="true" />
-        </rollback>
     </changeSet>
 
-    <changeSet author="dordevdr (generated)" id="1503410826849-37">
-        <addPrimaryKey columnNames="fishing_gear_type_code, fishing_gear_characteristic_code" constraintName="fishinggeartypecharacteristic_pkey" tableName="fishinggeartypecharacteristic"/>
-    </changeSet>
-
-    <!--<changeSet author="dordevdr (generated)" id="1503413892103-1">
-        <createSequence sequenceName="fish_gear_type_char_seq"/>
-    </changeSet>-->
 </databaseChangeLog>

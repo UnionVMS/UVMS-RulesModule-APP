@@ -149,11 +149,10 @@ public class RulesEventConsumerBean implements MessageListener {
     private Event<EventMessage> errorEvent;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message message) {
         String id = UUID.randomUUID().toString();
         MDC.put("clientName", id);
-        LOG.info("Message received in rules");
+        LOG.info("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
@@ -231,6 +230,15 @@ public class RulesEventConsumerBean implements MessageListener {
             errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
         } finally {
             MDC.remove("clientName");
+        }
+    }
+
+    private int getTimesRedelivered(Message message) {
+        try {
+            return (message.getIntProperty("JMSXDeliveryCount") - 1);
+
+        } catch (Exception e) {
+            return 0;
         }
     }
 

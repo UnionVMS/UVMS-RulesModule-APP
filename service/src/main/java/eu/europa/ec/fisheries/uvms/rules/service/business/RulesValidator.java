@@ -59,7 +59,7 @@ public class RulesValidator {
 
     @Lock(LockType.WRITE)
     public String getSanityRuleDrlFile() {
-        LOG.info("Updating sanity rules");
+        LOG.debug("Updating sanity rules");
         try {
             // Fetch sanity rules from DB
             List<SanityRuleType> sanityRules = validationService.getSanityRules();

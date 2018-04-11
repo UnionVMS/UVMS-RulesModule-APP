@@ -13,9 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -80,37 +81,6 @@ public class FaTranshipmentFact extends AbstractFact {
             }
         }
         return true;
-    }
-
-    /**
-     * This method will check Rule for SpecifiedFLUXCharacteristic. Rule will be checked for passed fluxLocationSchemeId
-     * @param specifiedFLUXCharacteristics
-     * @param fluxLocationSchemeId
-     * @return
-     * @throws Exception
-     */
-    public boolean checkRuleForSpecifiedFLUXCharacteristic(List<FLUXCharacteristic> specifiedFLUXCharacteristics,String fluxLocationSchemeId) throws Exception {
-        if(fluxLocationSchemeId ==null){
-            log.error("Please provide value for fluxLocationSchemeId");
-            throw new Exception("Please provide value for fluxLocationSchemeId");
-        }
-        if(CollectionUtils.isEmpty(specifiedFLUXCharacteristics)) {
-            return false;
-        }
-        for(FLUXCharacteristic fluxCharacteristic : specifiedFLUXCharacteristics){
-            if(fluxCharacteristic.getTypeCode()!=null && fluxCharacteristic.getTypeCode().getValue().equals("DESTINATION_LOCATION")){
-                List<FLUXLocation> fluxLocations=  fluxCharacteristic.getSpecifiedFLUXLocations();
-                if(CollectionUtils.isNotEmpty(fluxLocations)){
-                    for(FLUXLocation fluxLocation : fluxLocations){
-                        if(fluxLocation.getTypeCode() !=null && "LOCATION".equals(fluxLocation.getTypeCode().getValue()) && fluxLocation.getID()!=null &&
-                                fluxLocationSchemeId.equals(fluxLocation.getID().getSchemeID()) && isPresentInMDRList(fluxLocationSchemeId,fluxLocation.getID().getValue())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override

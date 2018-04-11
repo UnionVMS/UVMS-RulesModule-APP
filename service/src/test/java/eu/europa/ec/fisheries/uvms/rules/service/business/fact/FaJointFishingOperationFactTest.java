@@ -9,14 +9,13 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
 /**
  * Created by sanera on 26/07/2017.
@@ -47,6 +46,7 @@ public class FaJointFishingOperationFactTest {
         assertTrue(result);
     }
 
+    /*
     @Test
     public void testVallidationForDestinationFLUXLocation_typecode(){
         boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"TYPECODE");
@@ -64,4 +64,5 @@ public class FaJointFishingOperationFactTest {
         boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"ID");
         assertFalse(result);
     }
+    */
 }

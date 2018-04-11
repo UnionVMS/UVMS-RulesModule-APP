@@ -13,6 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
@@ -20,13 +28,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGene
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -62,6 +63,7 @@ public class RulesEngineBean {
         facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
         log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
+        log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
         return facts;
     }
 
