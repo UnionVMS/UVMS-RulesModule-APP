@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SalesServiceBean implements SalesService {
 
     @EJB
-    SalesServiceBeanHelper helper;
+    private SalesServiceBeanHelper helper;
 
     @Override
     public boolean isCorrectionAndIsItemTypeTheSameAsInTheOriginal(FLUXSalesReportMessage correctedReport) {

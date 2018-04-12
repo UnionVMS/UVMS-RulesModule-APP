@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
+import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService;
@@ -23,26 +24,29 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Singleton
-@Slf4j
 public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
-    SalesService salesService;
+    private SalesService salesService;
 
     @EJB
     private MDRCacheRuleService mdrService;
 
     @EJB
-    ActivityService activityService;
+    private ActivityService activityService;
+
+    @EJB
+    private AssetService assetService;
 
     @Inject
-    MapperFacade mapper;
+    private MapperFacade mapper;
 
     @Override
     public boolean isCorrectionAndIsItemTypeTheSameAsInTheOriginal(SalesFLUXSalesReportMessageFact fluxSalesReportMessageFact) {
@@ -294,6 +298,43 @@ public class SalesRulesServiceBean implements SalesRulesService {
         }
 
         return salesService.isIdNotUnique(fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getIDS().get(0).getValue(), SalesMessageIdType.SALES_DOCUMENT);
+    }
+
+    @Override
+    public boolean isCFRInFleetUnderFlagStateOnLandingDate(SalesFishingActivityFact fact) {
+        try {
+
+            List<IDType> ids = fact.getRelatedVesselTransportMeans().get(0).getIDS();
+
+            Optional<String> cfr = findCfrFromIdTypes(ids);
+
+            // vessel country
+            String flagState = fact.getRelatedVesselTransportMeans().get(0)
+                    .getRegistrationVesselCountry().getID().getValue();
+
+            // get landing date from sales document or get it from activity module?
+            DateTime landingDate = fact.getSpecifiedDelimitedPeriods().get(0).getStartDateTime().getDateTime();
+
+            if (!cfr.isPresent() || isBlank(cfr.get())
+                    || isBlank(flagState) || landingDate == null) {
+                // not enough data available to evaluate this rule
+                return false;
+            }
+
+            return !assetService.isCFRInFleetUnderFlagStateOnLandingDate(cfr.get(), flagState, landingDate);
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
+    private Optional<String> findCfrFromIdTypes(List<IDType> ids) {
+        for (IDType id : ids) {
+            if (id.getSchemeID().equals("CFR")) {
+                return Optional.of(id.getValue());
+            }
+        }
+
+        return Optional.absent();
     }
 
     private Optional<DateTime> findAcceptanceDateOfLanding(FishingTripResponse fishingTrip) {
