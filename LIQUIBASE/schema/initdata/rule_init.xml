@@ -8550,6 +8550,18 @@
             <column name="template_id" value="1000"/>
             <column name="property_names" value="Creation, Occurrence"/>
         </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10915"/>
+            <column name="br_id" value="SALE-L03-00-0130"/>
+            <column name="expression" value="salesService.isCFRInFleetUnderFlagStateOnLandingDate($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="If CFR, the vessel should be in the EU fleet under the flag state at landing date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="RelatedVesselTransportMeans, SpecifiedDelimitedPeriods"/>
+        </insert>
     </changeSet>
     <!---->
     <changeSet id="rule-sales-query-level-3" author="thovri">

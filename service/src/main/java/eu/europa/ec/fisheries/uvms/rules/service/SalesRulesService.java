@@ -96,4 +96,11 @@ public interface SalesRulesService {
      * @return whether the id of an original report is not unique, returns false when report is not original
      */
     boolean isOriginalAndIsIdNotUnique(SalesFLUXSalesReportMessageFact fact);
+
+    /**
+     * Checks if the CFR of the ship in a sales note is in Fleet on the landing date
+     * @param fact
+     * @return
+     */
+    boolean isCFRInFleetUnderFlagStateOnLandingDate(SalesFishingActivityFact fact);
 }
