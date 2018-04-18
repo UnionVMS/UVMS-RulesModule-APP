@@ -6871,7 +6871,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10133"/>
             <column name="br_id" value="SALE-L01-00-0082"/>
-            <column name="expression" value="isInvalidCategoryCode()"/>
+            <column name="expression" value="categoryCode != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(categoryCode.getListId(), categoryCode)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>

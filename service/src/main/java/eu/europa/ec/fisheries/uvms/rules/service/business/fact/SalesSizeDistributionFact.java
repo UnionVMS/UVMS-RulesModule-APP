@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,9 +47,4 @@ public class SalesSizeDistributionFact extends SalesAbstractFact {
     }
 
 
-    public boolean isInvalidCategoryCode() {
-        String[] validCategories = SalesFactHelper.getValidCategories();
-
-        return valueContainsAny(categoryCode, validCategories);
-    }
 }
