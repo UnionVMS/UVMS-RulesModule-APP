@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -81,7 +82,7 @@ public class MdrCacheTest {
     @SneakyThrows
     public void testGetListFromCache() {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
-        when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
+        when(consumer.getMessage(anyString(), eq(TextMessage.class), anyLong())).thenReturn(textMessage);
 
         mdrCache.init();
         List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
