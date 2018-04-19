@@ -12,11 +12,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.*;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +70,7 @@ public class MDRCache {
                 );
     }
 
+    @Lock(LockType.READ)
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<ObjectRepresentation> result = emptyList();
@@ -90,11 +90,11 @@ public class MDRCache {
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
-        TextMessage message = consumer.getMessage(corrId, TextMessage.class);
+        long timeoutMillis = 3 * 60 * 1000;
+        TextMessage message = consumer.getMessage(corrId, TextMessage.class, timeoutMillis);
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             return response.getDataSets();
-
         }
         return new ArrayList<>();
     }

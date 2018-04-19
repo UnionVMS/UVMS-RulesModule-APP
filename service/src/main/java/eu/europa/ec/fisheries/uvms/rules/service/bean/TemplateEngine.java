@@ -68,6 +68,7 @@ public class TemplateEngine {
     }
 
     private void refreshRulesValidationMessages(List<TemplateRuleMapDto> templatesAndRules) {
+        cacheService.loadCacheForFailureMessages();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 final String errorMessageForBrId = cacheService.getErrorMessageForBrId(ruleType.getBrId());

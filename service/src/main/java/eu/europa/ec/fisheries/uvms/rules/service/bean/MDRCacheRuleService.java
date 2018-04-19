@@ -22,6 +22,8 @@ import java.util.List;
 @Local
 public interface MDRCacheRuleService {
 
+    void loadCacheForFailureMessages();
+
     String getErrorMessageForBrId(String brId);
 
     boolean isPresentInMDRList(String listName, String codeValue);
