@@ -9,10 +9,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -335,4 +332,14 @@ public class SalesDocumentFact extends SalesAbstractFact {
             return Optional.absent();
         }
     }
+
+    // This is here because of a bug.
+    // Calling the isEmpty() method of AbstractFact
+    // from the expression of rule SALE-L01-00-0036
+    // we get an index out of bounds exception.
+    // For some reason, adding this fixes the problem
+    public boolean isEmpty(Collection collection) {
+        return super.isEmpty(collection);
+    }
+
 }
