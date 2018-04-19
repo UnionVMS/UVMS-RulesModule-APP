@@ -338,6 +338,7 @@ public class SalesDocumentFact extends SalesAbstractFact {
     // from the expression of rule SALE-L01-00-0036
     // we get an index out of bounds exception.
     // For some reason, adding this fixes the problem
+    @Override
     public boolean isEmpty(Collection collection) {
         return super.isEmpty(collection);
     }
