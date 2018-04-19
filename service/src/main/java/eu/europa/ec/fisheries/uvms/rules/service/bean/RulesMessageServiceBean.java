@@ -13,60 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jms.TextMessage;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.Report;
-import eu.europa.ec.fisheries.schema.sales.SalesIdType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
@@ -94,9 +47,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
@@ -118,6 +69,24 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Created by padhyad, kovian on 5/9/2017.
@@ -250,15 +219,13 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResultDto validationResult) throws SalesMarshallException {
-        String requestForSales;
         if (shouldUseFluxOn(validationResult)) {
-            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
+            return salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
                     receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.FLUXTL_ON);
         } else {
-            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult,
+            return salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult,
                     receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.GUID);
         }
-        return requestForSales;
     }
 
     protected boolean shouldUseFluxOn(ValidationResultDto validationResult) {
