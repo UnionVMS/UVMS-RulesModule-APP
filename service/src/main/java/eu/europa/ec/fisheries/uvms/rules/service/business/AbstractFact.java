@@ -1083,13 +1083,13 @@ public abstract class AbstractFact {
     public boolean isListEmptyOrBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {
         compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
 
-        return (sourceList != null && sourceList.isEmpty()) || (sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems);
+        return sourceList != null && (sourceList.isEmpty() || (sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems));
     }
 
     public boolean isListNotEmptyAndBetweenNumberOfItems(List sourceList, int minNumberOfItems, int maxNumberOfItems) {
         compareMinimumToMaximum(minNumberOfItems, maxNumberOfItems);
 
-        return (sourceList != null && !sourceList.isEmpty()) && sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems;
+        return sourceList != null && (!sourceList.isEmpty()) && sourceList.size() <= maxNumberOfItems && sourceList.size() >= minNumberOfItems;
     }
 
     private void compareMinimumToMaximum(int minNumberOfItems, int maxNumberOfItems) {
