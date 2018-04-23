@@ -983,7 +983,13 @@ public abstract class AbstractFact {
                 if (StringUtils.isNotEmpty(id.getValue())) {
                     hasOnlyEmptyElements = false;
                 }
-        } else {
+        } else if (object instanceof TextType){
+            for (TextType id : (List<TextType>) collection)
+                if (StringUtils.isNotEmpty(id.getValue())) {
+                    hasOnlyEmptyElements = false;
+                }
+        }
+        else {
             for (Object obj :  collection)
                 if (!allFieldsAreNullOrEmptyList(obj)){
                     hasOnlyEmptyElements = false;
