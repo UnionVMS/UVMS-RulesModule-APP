@@ -1,13 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
 import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesPartyFact extends SalesAbstractFact {
 
@@ -91,11 +91,12 @@ public class SalesPartyFact extends SalesAbstractFact {
                 Objects.equals(countryID, that.countryID) &&
                 Objects.equals(roleCodes, that.roleCodes) &&
                 Objects.equals(specifiedStructuredAddresses, that.specifiedStructuredAddresses) &&
-                Objects.equals(specifiedFLUXOrganization, that.specifiedFLUXOrganization);
+                Objects.equals(specifiedFLUXOrganization, that.specifiedFLUXOrganization) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, typeCode, countryID, roleCodes, specifiedStructuredAddresses, specifiedFLUXOrganization);
+        return Objects.hash(id, name, typeCode, countryID, roleCodes, specifiedStructuredAddresses, specifiedFLUXOrganization, creationDateOfMessage);
     }
 }

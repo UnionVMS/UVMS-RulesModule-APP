@@ -27,12 +27,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Slf4j
@@ -79,6 +81,7 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
             SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
             fact.setSource(Source.QUERY);
             fact.setSenderOrReceiver(((String) extraValueMap.get(SENDER_RECEIVER)));
+            fact.setCreationDateOfMessage((DateTime) extraValueMap.get(CREATION_DATE_OF_MESSAGE));
             facts.add(fact);
 
             for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {

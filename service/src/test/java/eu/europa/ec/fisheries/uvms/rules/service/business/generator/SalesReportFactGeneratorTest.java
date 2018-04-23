@@ -12,6 +12,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -76,9 +78,11 @@ public class SalesReportFactGeneratorTest {
         // data set
         Report report = helper.generateFullFLUXSalesReportMessage();
         report.getAuctionSale().setSalesCategory(SalesCategoryType.VARIOUS_SUPPLY);
+        DateTime creationDateOfMessage = DateTime.now();
 
         Map<ExtraValueType, Object> extraValues = new HashMap<>();
         extraValues.put(SENDER_RECEIVER, "BEL");
+        extraValues.put(CREATION_DATE_OF_MESSAGE, creationDateOfMessage);
 
         salesReportFactGenerator.setBusinessObjectMessage(report);
         salesReportFactGenerator.setExtraValueMap(extraValues);
@@ -96,6 +100,7 @@ public class SalesReportFactGeneratorTest {
 
         for (AbstractFact fact : allFacts) {
             assertEquals("BEL", fact.getSenderOrReceiver());
+            assertEquals(creationDateOfMessage, fact.getCreationDateOfMessage());
         }
     }
 

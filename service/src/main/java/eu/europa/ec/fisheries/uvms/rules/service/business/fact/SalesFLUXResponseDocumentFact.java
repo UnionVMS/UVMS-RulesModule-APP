@@ -110,12 +110,13 @@ public class SalesFLUXResponseDocumentFact extends SalesAbstractFact implements 
                 Objects.equals(rejectionReason, that.rejectionReason) &&
                 Objects.equals(typeCode, that.typeCode) &&
                 Objects.equals(relatedValidationResultDocuments, that.relatedValidationResultDocuments) &&
-                Objects.equals(respondentFLUXParty, that.respondentFLUXParty);
+                Objects.equals(respondentFLUXParty, that.respondentFLUXParty) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty);
+        return Objects.hash(ids, referencedID, creationDateTime, responseCode, remarks, rejectionReason, typeCode, relatedValidationResultDocuments, respondentFLUXParty, creationDateOfMessage);
     }
 
     public boolean anyValidationResultDocumentsWithEmptyValidationQualityAnalyses(){

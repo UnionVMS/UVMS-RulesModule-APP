@@ -5,7 +5,6 @@ import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 import java.util.Objects;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
 public class SalesAuctionSaleFact extends SalesAbstractFact {
 
@@ -39,11 +38,12 @@ public class SalesAuctionSaleFact extends SalesAbstractFact {
         if (!(o instanceof SalesAuctionSaleFact)) return false;
         SalesAuctionSaleFact that = (SalesAuctionSaleFact) o;
         return Objects.equals(countryCode, that.countryCode) &&
-                salesCategory == that.salesCategory;
+                salesCategory == that.salesCategory &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countryCode, salesCategory);
+        return Objects.hash(countryCode, salesCategory, creationDateOfMessage);
     }
 }

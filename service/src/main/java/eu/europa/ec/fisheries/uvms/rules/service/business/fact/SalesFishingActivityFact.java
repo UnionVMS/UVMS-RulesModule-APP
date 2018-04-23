@@ -230,12 +230,13 @@ public class SalesFishingActivityFact extends SalesAbstractFact {
                 Objects.equals(specifiedFLAPDocuments, that.specifiedFLAPDocuments) &&
                 Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods) &&
                 Objects.equals(specifiedFishingTrip, that.specifiedFishingTrip) &&
-                Objects.equals(relatedVesselTransportMeans, that.relatedVesselTransportMeans);
+                Objects.equals(relatedVesselTransportMeans, that.relatedVesselTransportMeans) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans);
+        return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans, creationDateOfMessage);
     }
 
     public boolean isRelatedFLUXLocationsEmptyOrTypeLocation() {

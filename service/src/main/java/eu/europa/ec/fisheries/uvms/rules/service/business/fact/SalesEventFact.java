@@ -1,13 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesEventFact extends SalesAbstractFact {
 
@@ -61,12 +61,13 @@ public class SalesEventFact extends SalesAbstractFact {
         return Objects.equals(occurrenceDateTime, that.occurrenceDateTime) &&
                 Objects.equals(sellerName, that.sellerName) &&
                 Objects.equals(buyerName, that.buyerName) &&
-                Objects.equals(relatedSalesBatches, that.relatedSalesBatches);
+                Objects.equals(relatedSalesBatches, that.relatedSalesBatches) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches);
+        return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches, creationDateOfMessage);
     }
 
 }

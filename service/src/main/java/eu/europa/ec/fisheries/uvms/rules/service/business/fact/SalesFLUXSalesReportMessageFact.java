@@ -40,11 +40,12 @@ public class SalesFLUXSalesReportMessageFact extends SalesAbstractFact {
         if (!(o instanceof SalesFLUXSalesReportMessageFact)) return false;
         SalesFLUXSalesReportMessageFact that = (SalesFLUXSalesReportMessageFact) o;
         return Objects.equals(fluxReportDocument, that.fluxReportDocument) &&
-                Objects.equals(salesReports, that.salesReports);
+                Objects.equals(salesReports, that.salesReports) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluxReportDocument, salesReports);
+        return Objects.hash(fluxReportDocument, salesReports, creationDateOfMessage);
     }
 }

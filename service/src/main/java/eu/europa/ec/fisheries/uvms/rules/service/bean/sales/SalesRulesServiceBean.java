@@ -16,7 +16,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -24,7 +23,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -273,8 +271,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
         if (currency.isPresent() && country.isPresent() && occurrence.isPresent()) {
             List<ObjectRepresentation> territoriesAndTheirCurrencies = mdrService.getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
-            return ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(currency.get(), "placesCode", country.get(), territoriesAndTheirCurrencies);
-            //TODO: take only the MDR lists that were active on the day of the occurrence into account
+            return ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(currency.get(), "placesCode", country.get(), territoriesAndTheirCurrencies, fact.getCreationDateOfMessage());
         } else {
             return false;
         }

@@ -1,14 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.FACatchType;
 import eu.europa.ec.fisheries.schema.sales.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import lombok.ToString;
+
+import java.util.List;
+import java.util.Objects;
 
 @ToString
 public class SalesAAPProcessFact extends SalesAbstractFact {
@@ -64,12 +64,13 @@ public class SalesAAPProcessFact extends SalesAbstractFact {
                 Objects.equals(conversionFactorNumeric, that.conversionFactorNumeric) &&
                 Objects.equals(usedFACatches, that.usedFACatches) &&
                 Objects.equals(resultAAPProducts, that.resultAAPProducts) &&
-                Objects.equals(source, that.source);
+                Objects.equals(source, that.source) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts, source);
+        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts, source, creationDateOfMessage);
     }
 
 }

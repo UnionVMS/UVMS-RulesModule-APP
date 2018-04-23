@@ -38,12 +38,13 @@ public class SalesSizeDistributionFact extends SalesAbstractFact {
         if (!(o instanceof SalesSizeDistributionFact)) return false;
         SalesSizeDistributionFact that = (SalesSizeDistributionFact) o;
         return Objects.equals(categoryCode, that.categoryCode) &&
-                Objects.equals(classCodes, that.classCodes);
+                Objects.equals(classCodes, that.classCodes) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryCode, classCodes);
+        return Objects.hash(categoryCode, classCodes, creationDateOfMessage);
     }
 
 

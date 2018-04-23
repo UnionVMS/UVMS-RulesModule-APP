@@ -1,10 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.Objects;
 
 public class SalesFLUXSalesQueryMessageFact extends SalesAbstractFact {
 
@@ -28,11 +28,12 @@ public class SalesFLUXSalesQueryMessageFact extends SalesAbstractFact {
         if (this == o) return true;
         if (!(o instanceof SalesFLUXSalesQueryMessageFact)) return false;
         SalesFLUXSalesQueryMessageFact that = (SalesFLUXSalesQueryMessageFact) o;
-        return Objects.equals(salesQuery, that.salesQuery);
+        return Objects.equals(salesQuery, that.salesQuery) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(salesQuery);
+        return Objects.hash(salesQuery, creationDateOfMessage);
     }
 }

@@ -13,32 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.PatternSyntaxException;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +34,13 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 @ToString
@@ -73,7 +60,10 @@ public abstract class AbstractFact {
 
     protected boolean ok = true;
 
+    protected DateTime creationDateOfMessage;
+
     private Integer sequence = 0;
+
 
     public boolean hasWarOrErr(){
         return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);
@@ -1402,5 +1392,13 @@ public abstract class AbstractFact {
 
     public void setSenderOrReceiver(String senderOrReceiver) {
         this.senderOrReceiver = senderOrReceiver;
+    }
+
+    public DateTime getCreationDateOfMessage() {
+        return creationDateOfMessage;
+    }
+
+    public void setCreationDateOfMessage(DateTime creationDateOfMessage) {
+        this.creationDateOfMessage = creationDateOfMessage;
     }
 }

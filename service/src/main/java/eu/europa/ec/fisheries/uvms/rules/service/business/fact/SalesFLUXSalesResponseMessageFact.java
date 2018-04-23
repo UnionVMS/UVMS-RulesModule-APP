@@ -1,12 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.FLUXResponseDocumentType;
 import eu.europa.ec.fisheries.schema.sales.SalesReportType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesFLUXSalesResponseMessageFact extends SalesAbstractFact {
 
@@ -42,11 +42,12 @@ public class SalesFLUXSalesResponseMessageFact extends SalesAbstractFact {
         if (!(o instanceof SalesFLUXSalesResponseMessageFact)) return false;
         SalesFLUXSalesResponseMessageFact that = (SalesFLUXSalesResponseMessageFact) o;
         return Objects.equals(fluxResponseDocument, that.fluxResponseDocument) &&
-                Objects.equals(salesReports, that.salesReports);
+                Objects.equals(salesReports, that.salesReports) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluxResponseDocument, salesReports);
+        return Objects.hash(fluxResponseDocument, salesReports, creationDateOfMessage);
     }
 }
