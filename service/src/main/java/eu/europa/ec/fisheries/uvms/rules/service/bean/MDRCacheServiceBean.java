@@ -10,8 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,13 +24,9 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -44,10 +44,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private MDRCache cache;
 
+    @EJB
+    private AsyncMdrCacheLoader ayncMdrCacheLoader;
+
     private Map<String, String> errorMessages;
 
-    public void loadMDRCache() {
+    @PostConstruct
+    public void loadCacheOnStartup(){
+        log.info("[START] Going to load MDR cache Asynchronously..");
+        ayncMdrCacheLoader.loadCache();
+        log.info("[END] MDR cache is being loaded Asynchronously..");
+    }
 
+    public void loadMDRCache() {
         try {
             ExecutorService executorService = Executors.newFixedThreadPool(5);
             List<Callable<List<ObjectRepresentation>>> myCallableList = new ArrayList<>();
