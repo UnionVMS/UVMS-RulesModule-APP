@@ -63,7 +63,7 @@ public abstract class AbstractFact {
 
     protected FactType factType;
 
-    String senderOrReceiver;
+    protected String senderOrReceiver;
 
     protected List<RuleWarning> warnings;
 

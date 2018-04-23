@@ -5617,7 +5617,7 @@
             <column name="rule_id" value="228"/>
             <column name="br_id" value="FA-L00-00-0228"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; (valueQuantity == null || valueQuantity.value == null)"/>
             <column name="note" value="Data type must be QUANTITY"/>
             <column name="message" value="Expected quantity value missing."/>
             <column name="level" value="L00"/>
