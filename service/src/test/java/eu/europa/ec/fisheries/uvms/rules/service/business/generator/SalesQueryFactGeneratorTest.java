@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,8 +60,11 @@ public class SalesQueryFactGeneratorTest {
                 .withTypeCode(new CodeType().withValue("My codeType"))
                 .withSimpleSalesQueryParameters(new SalesQueryParameterType());
 
+        DateTime creationDateOfMessage = DateTime.now();
+
         Map<ExtraValueType, Object> extraValues = new HashMap<>();
         extraValues.put(SENDER_RECEIVER, "BEL");
+        extraValues.put(CREATION_DATE_OF_MESSAGE, creationDateOfMessage);
 
         fluxSalesQueryMessage.setSalesQuery(query);
 
@@ -81,6 +85,7 @@ public class SalesQueryFactGeneratorTest {
 
         for (AbstractFact fact : allFacts) {
             assertEquals("BEL", fact.getSenderOrReceiver());
+            assertEquals(creationDateOfMessage, fact.getCreationDateOfMessage());
         }
     }
 

@@ -7,15 +7,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import java.util.List;
 import java.util.Objects;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.schema.sales.ContactPersonType;
-import eu.europa.ec.fisheries.schema.sales.EmailCommunicationType;
-import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
-import eu.europa.ec.fisheries.schema.sales.TelecommunicationCommunicationType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.UniversalCommunicationType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 public class SalesContactPartyFact extends SalesAbstractFact {
 
     private List<IdType> ids;
@@ -158,11 +149,12 @@ public class SalesContactPartyFact extends SalesAbstractFact {
                 Objects.equals(telephoneTelecommunicationCommunications, that.telephoneTelecommunicationCommunications) &&
                 Objects.equals(faxTelecommunicationCommunications, that.faxTelecommunicationCommunications) &&
                 Objects.equals(uriEmailCommunications, that.uriEmailCommunications) &&
-                Objects.equals(specifiedUniversalCommunications, that.specifiedUniversalCommunications);
+                Objects.equals(specifiedUniversalCommunications, that.specifiedUniversalCommunications) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, name, descriptions, nationalityCountryIDs, languageCodes, residenceCountryID, roleCodes, specifiedStructuredAddresses, specifiedContactPersons, telephoneTelecommunicationCommunications, faxTelecommunicationCommunications, uriEmailCommunications, specifiedUniversalCommunications);
+        return Objects.hash(ids, name, descriptions, nationalityCountryIDs, languageCodes, residenceCountryID, roleCodes, specifiedStructuredAddresses, specifiedContactPersons, telephoneTelecommunicationCommunications, faxTelecommunicationCommunications, uriEmailCommunications, specifiedUniversalCommunications, creationDateOfMessage);
     }
 }

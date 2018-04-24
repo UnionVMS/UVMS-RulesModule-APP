@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -917,12 +918,14 @@ public class SalesRulesServiceBeanTest {
     @Test
     public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenTrue() {
         //data set
-        DateTime occurrence = DateTime.now();
+        DateTime occurrence = new DateTime(2018, 4, 3, 7, 0, 0);
+        DateTime creationDate = new DateTime(2018, 4, 3, 10, 5, 3);
 
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setCurrencyCode(new CodeType("EUR"));
         fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
         fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+        fact.setCreationDateOfMessage(creationDate);
 
         //mock
         doReturn(getTestEntriesForMDRListTERRITORY_CURRENCY()).when(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
@@ -933,14 +936,36 @@ public class SalesRulesServiceBeanTest {
     }
 
     @Test
-    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenFalse() {
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenItWasNeverTheUsedCurrency() {
         //data set
-        DateTime occurrence = DateTime.now();
+        DateTime occurrence = new DateTime(2018, 4, 3, 7, 0, 0);
+        DateTime creationDate = new DateTime(2018, 4, 3, 10, 5, 3);
 
         SalesDocumentFact fact = new SalesDocumentFact();
         fact.setCurrencyCode(new CodeType("DKK"));
         fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
         fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+        fact.setCreationDateOfMessage(creationDate);
+
+        //mock
+        doReturn(getTestEntriesForMDRListTERRITORY_CURRENCY()).when(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+
+        //execute and verify
+        assertFalse(service.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales(fact));
+        verify(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
+    }
+
+    @Test
+    public void isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSalesWhenItIsNoLongerTheUsedCurrency() {
+        //data set
+        DateTime occurrence = new DateTime(2020, 4, 3, 7, 0, 0);
+        DateTime creationDate = new DateTime(2020, 4, 3, 10, 5, 3);
+
+        SalesDocumentFact fact = new SalesDocumentFact();
+        fact.setCurrencyCode(new CodeType("DKK"));
+        fact.setSpecifiedFLUXLocations(Arrays.asList(new FLUXLocationType().withCountryID(new IDType().withValue("BEL"))));
+        fact.setSpecifiedSalesEvents(Arrays.asList(new SalesEventType().withOccurrenceDateTime(new DateTimeType().withDateTime(occurrence))));
+        fact.setCreationDateOfMessage(creationDate);
 
         //mock
         doReturn(getTestEntriesForMDRListTERRITORY_CURRENCY()).when(mdrService).getObjectRepresentationList(MDRAcronymType.TERRITORY_CURR);
@@ -1034,8 +1059,16 @@ public class SalesRulesServiceBeanTest {
         placesCode.setColumnName("placesCode");
         placesCode.setColumnValue("BEL");
 
+        ColumnDataType startDate = new ColumnDataType();
+        startDate.setColumnName("startDate");
+        startDate.setColumnValue(new DateTime(2018, 1, 1, 0, 0,0, 0, DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss.SSS"));
+
+        ColumnDataType endDate = new ColumnDataType();
+        endDate.setColumnName("endDate");
+        endDate.setColumnValue(new DateTime(2019, 1, 1, 0, 0,0, 0, DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss.SSS"));
+
         ObjectRepresentation objectRepresentation = new ObjectRepresentation();
-        objectRepresentation.setFields(Arrays.asList(code, placesCode));
+        objectRepresentation.setFields(Arrays.asList(code, placesCode, startDate, endDate));
 
         return Arrays.asList(objectRepresentation);
     }

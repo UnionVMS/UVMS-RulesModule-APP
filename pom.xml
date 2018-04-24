@@ -43,7 +43,7 @@
         <mdr.model.version>1.0.2</mdr.model.version>
         <subscription.model.version>1.3</subscription.model.version>
 
-        <asset.model.version>4.0.4</asset.model.version>
+        <asset.model.version>4.0.12-SNAPSHOT</asset.model.version>
         <audit.model.version>4.0.4</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>1.0.10</sales.model.version>

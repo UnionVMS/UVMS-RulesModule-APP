@@ -13,60 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-import javax.ejb.*;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.jms.TextMessage;
-import javax.xml.XMLConstants;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.Report;
-import eu.europa.ec.fisheries.schema.sales.SalesIdType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
@@ -94,9 +48,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.interceptor.RulesPreValidationInterceptor;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
@@ -118,6 +70,23 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.ejb.*;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Created by padhyad, kovian on 5/9/2017.
@@ -186,6 +155,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesQueryRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesQueryRequest.getPluginType());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesQueryMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_QUERY_MSG, salesQueryMessage, extraValues);
@@ -229,6 +199,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesReportRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesReportRequest.getPluginType());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
@@ -250,15 +221,13 @@ public class RulesMessageServiceBean implements RulesMessageService {
     }
 
     private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResultDto validationResult) throws SalesMarshallException {
-        String requestForSales;
         if (shouldUseFluxOn(validationResult)) {
-            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
+            return salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
                     receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.FLUXTL_ON);
         } else {
-            requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult,
+            return salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getMessageGuid(), validationResult,
                     receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.GUID);
         }
-        return requestForSales;
     }
 
     protected boolean shouldUseFluxOn(ValidationResultDto validationResult) {
@@ -285,6 +254,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
@@ -297,6 +267,47 @@ public class RulesMessageServiceBean implements RulesMessageService {
             throw new RulesServiceException("Couldn't retrieve the FLUX local nation code from the settings", e);
         }
     }
+
+
+    private Optional<DateTime> getCreationDate(FLUXSalesQueryMessage salesQueryMessage) {
+        if (salesQueryMessage != null && salesQueryMessage.getSalesQuery() != null
+                && salesQueryMessage.getSalesQuery().getSubmittedDateTime() != null
+                && salesQueryMessage.getSalesQuery().getSubmittedDateTime().getDateTime() != null) {
+            return Optional.of(salesQueryMessage.getSalesQuery().getSubmittedDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(Report salesReportMessage) {
+        if (salesReportMessage != null) {
+            return getCreationDate(salesReportMessage.getFLUXSalesReportMessage());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(FLUXSalesReportMessage salesReportMessage) {
+        if (salesReportMessage != null
+                && salesReportMessage.getFLUXReportDocument() != null
+                && salesReportMessage.getFLUXReportDocument().getCreationDateTime() != null
+                && salesReportMessage.getFLUXReportDocument().getCreationDateTime().getDateTime() != null) {
+            return Optional.of(salesReportMessage.getFLUXReportDocument().getCreationDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(FLUXSalesResponseMessage salesResponseMessage) {
+        if (salesResponseMessage != null && salesResponseMessage.getFLUXResponseDocument() != null
+                && salesResponseMessage.getFLUXResponseDocument().getCreationDateTime() != null
+                && salesResponseMessage.getFLUXResponseDocument().getCreationDateTime().getDateTime() != null) {
+            return Optional.of(salesResponseMessage.getFLUXResponseDocument().getCreationDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
@@ -314,6 +325,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
@@ -347,8 +359,14 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String logGuid = rulesRequest.getLogGuid();
             FLUXSalesReportMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
 
+            //create map with extra values
+            Map<ExtraValueType, Object> extraValues = new HashMap<>();
+            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
+            extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
+
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
@@ -361,7 +379,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }

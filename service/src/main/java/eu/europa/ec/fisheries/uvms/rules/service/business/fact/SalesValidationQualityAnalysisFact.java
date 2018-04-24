@@ -1,11 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesValidationQualityAnalysisFact extends SalesAbstractFact {
 
@@ -79,11 +79,12 @@ public class SalesValidationQualityAnalysisFact extends SalesAbstractFact {
                 Objects.equals(results, that.results) &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(description, that.description) &&
-                Objects.equals(referencedItems, that.referencedItems);
+                Objects.equals(referencedItems, that.referencedItems) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(levelCode, typeCode, results, id, description, referencedItems);
+        return Objects.hash(levelCode, typeCode, results, id, description, referencedItems, creationDateOfMessage);
     }
 }

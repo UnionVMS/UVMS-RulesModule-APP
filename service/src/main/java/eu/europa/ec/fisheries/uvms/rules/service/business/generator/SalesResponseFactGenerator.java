@@ -26,14 +26,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
@@ -80,6 +80,7 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
             fact.setSource(Source.RESPONSE);
             fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
             fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
+            fact.setCreationDateOfMessage((DateTime) extraValueMap.get(CREATION_DATE_OF_MESSAGE));
             facts.add(fact);
 
             for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {

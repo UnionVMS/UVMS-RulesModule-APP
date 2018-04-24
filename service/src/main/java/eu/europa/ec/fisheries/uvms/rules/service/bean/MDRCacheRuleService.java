@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
@@ -26,23 +27,47 @@ public interface MDRCacheRuleService {
 
     String getErrorMessageForBrId(String brId);
 
+    @Deprecated
     boolean isPresentInMDRList(String listName, String codeValue);
 
+    boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes);
 
+    boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode);
 
+    boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch);
 
+    boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch);
+
+    boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
     boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch);
 
+    @Deprecated
     boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch);
 
+    boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isIdTypePresentInMDRList(List<IdType> ids);
 
+    boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime creationDateOfMessage);
+
+    @Deprecated
     boolean isIdTypePresentInMDRList(IdType id);
+
+    boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage);
 
     boolean isSchemeIdPresentInMDRList(String listName, IdType idType);
 
@@ -54,9 +79,9 @@ public interface MDRCacheRuleService {
 
     boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode);
 
-    boolean isNotMostPreciseFAOArea(IdType id);
+    boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage);
 
-    boolean isLocationNotInCountry(IdType id, IdType countryID);
+    boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage);
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 }
