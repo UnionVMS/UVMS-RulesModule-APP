@@ -357,16 +357,16 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
-            FLUXSalesReportMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
+            Report report = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
-            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(report).or(DateTime.now()));
 
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, report, extraValues);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
