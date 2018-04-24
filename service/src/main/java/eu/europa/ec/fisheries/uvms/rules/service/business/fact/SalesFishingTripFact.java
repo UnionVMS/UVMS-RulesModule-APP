@@ -1,11 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesFishingTripFact extends SalesAbstractFact {
 
@@ -49,11 +49,12 @@ public class SalesFishingTripFact extends SalesAbstractFact {
         SalesFishingTripFact that = (SalesFishingTripFact) o;
         return Objects.equals(ids, that.ids) &&
                 Objects.equals(typeCode, that.typeCode) &&
-                Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods);
+                Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, typeCode, specifiedDelimitedPeriods);
+        return Objects.hash(ids, typeCode, specifiedDelimitedPeriods, creationDateOfMessage);
     }
 }

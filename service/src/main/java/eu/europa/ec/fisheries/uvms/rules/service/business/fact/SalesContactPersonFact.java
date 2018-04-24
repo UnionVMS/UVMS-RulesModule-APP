@@ -4,8 +4,6 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -171,11 +169,12 @@ public class SalesContactPersonFact extends SalesAbstractFact {
                 Objects.equals(faxTelecommunicationCommunication, that.faxTelecommunicationCommunication) &&
                 Objects.equals(emailURIEmailCommunication, that.emailURIEmailCommunication) &&
                 Objects.equals(websiteURIWebsiteCommunication, that.websiteURIWebsiteCommunication) &&
-                Objects.equals(specifiedUniversalCommunications, that.specifiedUniversalCommunications);
+                Objects.equals(specifiedUniversalCommunications, that.specifiedUniversalCommunications) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, givenName, middleName, familyNamePrefix, familyName, nameSuffix, genderCode, alias, birthDateTime, birthplaceName, telephoneTelecommunicationCommunication, faxTelecommunicationCommunication, emailURIEmailCommunication, websiteURIWebsiteCommunication, specifiedUniversalCommunications);
+        return Objects.hash(title, givenName, middleName, familyNamePrefix, familyName, nameSuffix, genderCode, alias, birthDateTime, birthplaceName, telephoneTelecommunicationCommunication, faxTelecommunicationCommunication, emailURIEmailCommunication, websiteURIWebsiteCommunication, specifiedUniversalCommunications, creationDateOfMessage);
     }
 }

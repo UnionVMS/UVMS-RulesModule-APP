@@ -1,12 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesPriceFact extends SalesAbstractFact {
 
@@ -30,12 +30,13 @@ public class SalesPriceFact extends SalesAbstractFact {
         if (this == o) return true;
         if (!(o instanceof SalesPriceFact)) return false;
         SalesPriceFact that = (SalesPriceFact) o;
-        return Objects.equals(chargeAmounts, that.chargeAmounts);
+        return Objects.equals(chargeAmounts, that.chargeAmounts) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chargeAmounts);
+        return Objects.hash(chargeAmounts, creationDateOfMessage);
     }
 
     public boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {

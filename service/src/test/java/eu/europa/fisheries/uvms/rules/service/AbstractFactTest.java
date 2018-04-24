@@ -10,41 +10,12 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -61,14 +32,17 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 public class AbstractFactTest {
 
@@ -1044,10 +1018,22 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testIsListNotEmptyAndBetweenNumberOfItemsWhenListIsNull() throws Exception {
+        boolean listNotEmptyAndBetweenNumberOfItems = fact.isListNotEmptyAndBetweenNumberOfItems(null, 1, 1);
+        assertFalse(listNotEmptyAndBetweenNumberOfItems);
+    }
+
+    @Test
     public void testIsListEmptyOrAllValuesUniqueWhenListContainsUniqueValues() throws Exception {
         List<CodeType> uniqueValues = Arrays.asList(new CodeType("a"), new CodeType("b"), new CodeType("c"));
 
         boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(uniqueValues);
+        assertTrue(listIsUnique);
+    }
+
+    @Test
+    public void testIsListEmptyOrAllValuesUniqueWhenListIsNull() throws Exception {
+        boolean listIsUnique = fact.isListEmptyOrAllValuesUnique(null);
         assertTrue(listIsUnique);
     }
 
@@ -1184,7 +1170,7 @@ public class AbstractFactTest {
         CodeType codeType = new CodeType("THIS_IS_SPARTA");
         codeType.setListId("FLUX_SALES_TYPE");
 
-        assertTrue(codeType != null && !fact.isCodeTypeValidFormat("FLUX_SALES_TYPE", codeType));
+        assertFalse(fact.isCodeTypeValidFormat("FLUX_SALES_TYPE", codeType));
     }
 
 

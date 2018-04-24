@@ -10,17 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -32,10 +22,18 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Singleton
 @Slf4j
@@ -77,7 +75,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     /**
-     * This function mapps all the error messages to the ones defined in MDR;
+     * This function maps all the error messages to the ones defined in MDR;
      *
      */
     private void createCacheForFailureMessages() {
@@ -105,6 +103,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
 
+    @Deprecated
+    @Override
+    public boolean isPresentInMDRList(String listName, String codeValue) {
+        return isPresentInMDRList(listName, codeValue, DateTime.now());
+    }
+
     /**
      * Check if value passed is present in the MDR list speified
      *
@@ -112,32 +116,44 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param codeValue - This value will be checked in MDR list
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
-    public boolean isPresentInMDRList(String listName, String codeValue) {
+    @Override
+    public boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage) {
         MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (mdrAcronymType == null) {
             return false;
         }
-        List<String> values = getValues(mdrAcronymType);
+        List<String> values = getValues(mdrAcronymType, creationDateOfMessage);
         return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
-    private List<String> getList(List<ObjectRepresentation> entry) {
+    private List<String> getList(List<ObjectRepresentation> entry, DateTime date) {
         List<String> codeColumnValues = new ArrayList<>();
-        if (CollectionUtils.isEmpty(entry))
+        if (CollectionUtils.isEmpty(entry)) {
             return Collections.emptyList();
+        }
         for (ObjectRepresentation representation : entry) {
             List<ColumnDataType> columnDataTypes = representation.getFields();
             if (CollectionUtils.isEmpty(columnDataTypes)) {
                 continue;
             }
-            for (ColumnDataType nameVal : columnDataTypes) {
-                if ("code".equals(nameVal.getColumnName())) {
-                    codeColumnValues.add(nameVal.getColumnValue());
-                }
+            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn("code", representation);
+            Optional<String> startDate = ObjectRepresentationHelper.getValueOfColumn("startDate", representation);
+            Optional<String> endDate = ObjectRepresentationHelper.getValueOfColumn("endDate", representation);
+            if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
+                    && date.isAfter(ObjectRepresentationHelper.parseDate(startDate.get()))
+                    && date.isBefore(ObjectRepresentationHelper.parseDate(endDate.get()))) {
+                codeColumnValues.add(code.get());
             }
         }
         return codeColumnValues;
     }
+
+    @Deprecated
+    @Override
+    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
+        return isCodeTypePresentInMDRList(valuesToMatch, DateTime.now());
+    }
+
 
     /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
@@ -145,7 +161,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
      */
-    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
+    @Override
+    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
         if (CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
@@ -157,7 +174,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             if (anEnum == null) {
                 return false;
             }
-            List<String> codeListValues = getValues(anEnum);
+            List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
             }
@@ -165,9 +182,15 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
-    private List<String> getValues(MDRAcronymType anEnum) {
+    private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        return getList(entry);
+        return getList(entry, date);
+    }
+
+    @Override
+    @Deprecated
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
+        return isIdTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
 
     /**
@@ -177,12 +200,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param valuesToMatch - IdType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
+    @Override
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime creationDateOfMessage) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum);
+        List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -193,6 +217,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
+    @Deprecated
+    @Override
+    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+        return isCodeTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
+    }
+
     /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list or not
      *
@@ -200,12 +230,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param valuesToMatch - CodeType list--Values from each instance will be checked agaist ListName
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
-    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+    @Override
+    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum);
+        List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -222,7 +253,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum);
+        List<String> codeListValues = getValues(anEnum, DateTime.now());
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -233,16 +264,29 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
+    @Override
+    @Deprecated
     public boolean isIdTypePresentInMDRList(List<IdType> ids) {
+        return isIdTypePresentInMDRList(ids, DateTime.now());
+    }
+
+    @Override
+    public boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime creationDateOfMessage) {
         if (CollectionUtils.isEmpty(ids)) {
             return false;
         }
         for (IdType idType : ids) {
-            if (!isIdTypePresentInMDRList(idType)) {
+            if (!isIdTypePresentInMDRList(idType, creationDateOfMessage)) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    @Deprecated
+    public boolean isIdTypePresentInMDRList(IdType id) {
+        return isIdTypePresentInMDRList(id, DateTime.now());
     }
 
     /**
@@ -252,7 +296,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param id - IdType that will be checked against ListName
      * @return true when it exists
      */
-    public boolean isIdTypePresentInMDRList(IdType id) {
+    @Override
+    public boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage) {
         if (id == null) {
             return false;
         }
@@ -262,10 +307,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum);
+        List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
         return codeListValues.contains(value);
     }
 
+    @Override
     public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
         if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
             return false;
@@ -382,15 +428,30 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return CollectionUtils.isEmpty(list);
     }
 
+    @Deprecated
+    @Override
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
-        return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode));
+        return isTypeCodeValuePresentInList(listName, typeCode, DateTime.now());
     }
 
+    @Override
+    public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode, DateTime creationDateOfMessage) {
+        return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode), creationDateOfMessage);
+    }
+
+    @Deprecated
+    @Override
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
-        String typeCodeValue = getValueForListId(listName, typeCodes);
-        return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue);
+        return isTypeCodeValuePresentInList(listName, typeCodes, DateTime.now());
     }
 
+    @Override
+    public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage) {
+        String typeCodeValue = getValueForListId(listName, typeCodes);
+        return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue, creationDateOfMessage);
+    }
+
+    @Override
     public String getValueForListId(String listId, List<CodeType> typeCodes) {
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
@@ -405,20 +466,18 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return null;
     }
 
-
     @Override
-    public boolean isNotMostPreciseFAOArea(IdType id) {
+    public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
-                (id.getValue(), "terminalInd", "1", faoAreas);
+                (id.getValue(), "terminalInd", "1", faoAreas, creationDateOfMessage);
     }
 
-
     @Override
-    public boolean isLocationNotInCountry(IdType id, IdType countryID) {
+    public boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> locations = cache.getEntry(MDRAcronymType.LOCATION);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
-                id.getValue(), "placesCode", countryID.getValue(), locations);
+                id.getValue(), "placesCode", countryID.getValue(), locations, creationDateOfMessage);
     }
 
     @Override

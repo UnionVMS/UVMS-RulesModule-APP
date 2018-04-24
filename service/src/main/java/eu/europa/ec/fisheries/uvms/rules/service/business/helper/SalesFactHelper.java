@@ -4,26 +4,19 @@ import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by MATBUL on 21/06/2017.
- */
 public class SalesFactHelper {
 
     static HashSet<String> validCountries = new HashSet<>();
-
-    static List<String> validCategories;
 
     static HashSet<String> validCurrencies = new HashSet<>();
 
     static {
         fillValidCountries();
         fillValidCurrencies();
-        validCategories = Arrays.asList("1", "2", "3", "4", "4a", "4b", "4c", "6", "7", "7a", "7b", "8", "N/A");
     }
 
     private SalesFactHelper() {
@@ -51,10 +44,6 @@ public class SalesFactHelper {
         return validCountries.contains(idType.getValue());
     }
 
-    public static String[] getValidCategories() {
-        return (String[]) validCategories.toArray();
-    }
-
     public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {
         for (AmountType amountType : amountTypes) {
             if (amountType != null && amountType.getValue() != null && amountType.getValue().compareTo(BigDecimal.ZERO) < 0) {
@@ -75,18 +64,11 @@ public class SalesFactHelper {
         return false;
     }
 
-    public static Set<String> getValidCountries() {
-        return validCountries;
-    }
-
-
     public static Set<String> getValidCurrencies() {
         return validCurrencies;
     }
 
-
     private static void fillValidCountries() {
-
         validCountries.add("ABW");
         validCountries.add("AFG");
         validCountries.add("AGO");

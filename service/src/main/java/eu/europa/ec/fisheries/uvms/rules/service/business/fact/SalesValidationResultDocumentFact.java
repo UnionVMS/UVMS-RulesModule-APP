@@ -1,12 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.List;
+import java.util.Objects;
 
 public class SalesValidationResultDocumentFact extends SalesAbstractFact {
 
@@ -50,11 +50,12 @@ public class SalesValidationResultDocumentFact extends SalesAbstractFact {
         SalesValidationResultDocumentFact that = (SalesValidationResultDocumentFact) o;
         return Objects.equals(validatorID, that.validatorID) &&
                 Objects.equals(creationDateTime, that.creationDateTime) &&
-                Objects.equals(relatedValidationQualityAnalysises, that.relatedValidationQualityAnalysises);
+                Objects.equals(relatedValidationQualityAnalysises, that.relatedValidationQualityAnalysises) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(validatorID, creationDateTime, relatedValidationQualityAnalysises);
+        return Objects.hash(validatorID, creationDateTime, relatedValidationQualityAnalysises, creationDateOfMessage);
     }
 }

@@ -1,10 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.Objects;
 
 public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
 
@@ -58,11 +58,12 @@ public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
         return Objects.equals(longitudeMeasure, that.longitudeMeasure) &&
                 Objects.equals(latitudeMeasure, that.latitudeMeasure) &&
                 Objects.equals(altitudeMeasure, that.altitudeMeasure) &&
-                Objects.equals(systemID, that.systemID);
+                Objects.equals(systemID, that.systemID) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(longitudeMeasure, latitudeMeasure, altitudeMeasure, systemID);
+        return Objects.hash(longitudeMeasure, latitudeMeasure, altitudeMeasure, systemID, creationDateOfMessage);
     }
 }

@@ -1,7 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
@@ -41,11 +39,12 @@ public class SalesReportWrapperFact extends SalesAbstractFact {
         if (!(o instanceof SalesReportWrapperFact)) return false;
         SalesReportWrapperFact that = (SalesReportWrapperFact) o;
         return Objects.equals(fluxSalesReportMessage, that.fluxSalesReportMessage) &&
-                Objects.equals(auctionSale, that.auctionSale);
+                Objects.equals(auctionSale, that.auctionSale) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluxSalesReportMessage, auctionSale);
+        return Objects.hash(fluxSalesReportMessage, auctionSale, creationDateOfMessage);
     }
 }

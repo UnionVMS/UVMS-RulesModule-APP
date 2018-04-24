@@ -66,12 +66,13 @@ public class SalesReportFact extends SalesAbstractFact {
         return Objects.equals(id, that.id) &&
                 Objects.equals(itemTypeCode, that.itemTypeCode) &&
                 Objects.equals(includedSalesDocuments, that.includedSalesDocuments) &&
-                Objects.equals(includedValidationResultDocuments, that.includedValidationResultDocuments);
+                Objects.equals(includedValidationResultDocuments, that.includedValidationResultDocuments) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments);
+        return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments, creationDateOfMessage);
     }
 
     private boolean doAllProductHaveAZeroPrice(SalesDocumentFact salesDocument) {

@@ -150,12 +150,13 @@ public class SalesAAPProductFact extends SalesAbstractFact {
                 Objects.equals(totalSalesPrice, that.totalSalesPrice) &&
                 Objects.equals(specifiedSizeDistribution, that.specifiedSizeDistribution) &&
                 Objects.equals(originFLUXLocations, that.originFLUXLocations) &&
-                Objects.equals(originFishingActivity, that.originFishingActivity);
+                Objects.equals(originFishingActivity, that.originFishingActivity) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(speciesCode, unitQuantity, weightMeasure, weighingMeansCode, usageCode, packagingUnitQuantity, packagingTypeCode, packagingUnitAverageWeightMeasure, appliedAAPProcesses, totalSalesPrice, specifiedSizeDistribution, originFLUXLocations, originFishingActivity);
+        return Objects.hash(speciesCode, unitQuantity, weightMeasure, weighingMeansCode, usageCode, packagingUnitQuantity, packagingTypeCode, packagingUnitAverageWeightMeasure, appliedAAPProcesses, totalSalesPrice, specifiedSizeDistribution, originFLUXLocations, originFishingActivity, creationDateOfMessage);
     }
 
     public boolean isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption(){

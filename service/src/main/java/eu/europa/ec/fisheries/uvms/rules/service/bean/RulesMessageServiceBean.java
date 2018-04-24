@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
@@ -83,8 +84,7 @@ import java.net.URL;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.*;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -155,6 +155,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesQueryRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesQueryRequest.getPluginType());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesQueryMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_QUERY_MSG, salesQueryMessage, extraValues);
@@ -198,6 +199,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, receiveSalesReportRequest.getSender());
             extraValues.put(ORIGINATING_PLUGIN, receiveSalesReportRequest.getPluginType());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
@@ -252,6 +254,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
@@ -264,6 +267,47 @@ public class RulesMessageServiceBean implements RulesMessageService {
             throw new RulesServiceException("Couldn't retrieve the FLUX local nation code from the settings", e);
         }
     }
+
+
+    private Optional<DateTime> getCreationDate(FLUXSalesQueryMessage salesQueryMessage) {
+        if (salesQueryMessage != null && salesQueryMessage.getSalesQuery() != null
+                && salesQueryMessage.getSalesQuery().getSubmittedDateTime() != null
+                && salesQueryMessage.getSalesQuery().getSubmittedDateTime().getDateTime() != null) {
+            return Optional.of(salesQueryMessage.getSalesQuery().getSubmittedDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(Report salesReportMessage) {
+        if (salesReportMessage != null) {
+            return getCreationDate(salesReportMessage.getFLUXSalesReportMessage());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(FLUXSalesReportMessage salesReportMessage) {
+        if (salesReportMessage != null
+                && salesReportMessage.getFLUXReportDocument() != null
+                && salesReportMessage.getFLUXReportDocument().getCreationDateTime() != null
+                && salesReportMessage.getFLUXReportDocument().getCreationDateTime().getDateTime() != null) {
+            return Optional.of(salesReportMessage.getFLUXReportDocument().getCreationDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Optional<DateTime> getCreationDate(FLUXSalesResponseMessage salesResponseMessage) {
+        if (salesResponseMessage != null && salesResponseMessage.getFLUXResponseDocument() != null
+                && salesResponseMessage.getFLUXResponseDocument().getCreationDateTime() != null
+                && salesResponseMessage.getFLUXResponseDocument().getCreationDateTime().getDateTime() != null) {
+            return Optional.of(salesResponseMessage.getFLUXResponseDocument().getCreationDateTime().getDateTime());
+        } else {
+            return Optional.absent();
+        }
+    }
+
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
@@ -281,6 +325,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             Map<ExtraValueType, Object> extraValues = new HashMap<>();
             extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
 
             //validate
             List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
@@ -314,8 +359,14 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String logGuid = rulesRequest.getLogGuid();
             FLUXSalesReportMessage salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, FLUXSalesReportMessage.class);
 
+            //create map with extra values
+            Map<ExtraValueType, Object> extraValues = new HashMap<>();
+            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue("flux_local_nation_code"));
+            extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
+            extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
+
             //validate
-            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage);
+            List<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
@@ -328,7 +379,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException e) {
+        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }

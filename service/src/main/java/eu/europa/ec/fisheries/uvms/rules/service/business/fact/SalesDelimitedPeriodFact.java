@@ -1,11 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+
+import java.util.Objects;
 
 public class SalesDelimitedPeriodFact extends SalesAbstractFact {
 
@@ -50,11 +50,12 @@ public class SalesDelimitedPeriodFact extends SalesAbstractFact {
         SalesDelimitedPeriodFact that = (SalesDelimitedPeriodFact) o;
         return Objects.equals(startDateTime, that.startDateTime) &&
                 Objects.equals(endDateTime, that.endDateTime) &&
-                Objects.equals(durationMeasure, that.durationMeasure);
+                Objects.equals(durationMeasure, that.durationMeasure) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDateTime, endDateTime, durationMeasure);
+        return Objects.hash(startDateTime, endDateTime, durationMeasure, creationDateOfMessage);
     }
 }
