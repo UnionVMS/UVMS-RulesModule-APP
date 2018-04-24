@@ -8080,7 +8080,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10507"/>
             <column name="br_id" value="SALE-L01-00-0431"/>
-            <column name="expression" value="typeCode != null &amp;&amp; salesService.isSalesQueryParameterValueNotValid(typeCode, valueCode, creationDateOfMessage)"/>
+            <column name="expression" value="typeCode != null &amp;&amp; salesService.isSalesQueryParameterValueNotValid(typeCode, valueCode)"/>
             <column name="note" value=""/>
             <column name="message" value="If Type = FLAG/ROLE/PLACE, Check code of the value"/>
             <column name="level" value="L01"/>
