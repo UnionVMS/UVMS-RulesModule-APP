@@ -5575,8 +5575,8 @@
             <column name="rule_id" value="225"/>
             <column name="br_id" value="FA-L00-00-0225"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null"/>
-            <column name="note" value="Data type must be INDICATOR"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; (valueQuantity == null || valueQuantity.value == null)"/>
+            <column name="note" value="If UN_DATA_TYPE for the characteristic is INDICATOR, ValueIndicator must be present and have a value."/>
             <column name="message" value="Expected indicator type missing."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
