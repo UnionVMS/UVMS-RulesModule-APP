@@ -20,9 +20,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-
+import javax.annotation.PostConstruct;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -39,6 +37,8 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 @Singleton
 @Slf4j
 public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
@@ -46,7 +46,17 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private MDRCache cache;
 
+    @EJB
+    private AsyncMdrCacheLoader ayncMdrCacheLoader;
+
     private Map<String, String> errorMessages;
+
+    @PostConstruct
+    public void loadCacheOnStartup(){
+        log.info("[START] Going to load MDR cache Asynchronously..");
+        ayncMdrCacheLoader.loadCache();
+        log.info("[END] MDR cache is being loaded Asynchronously..");
+    }
 
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.WRITE)

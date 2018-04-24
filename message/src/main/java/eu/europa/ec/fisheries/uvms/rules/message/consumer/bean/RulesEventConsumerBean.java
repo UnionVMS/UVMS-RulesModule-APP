@@ -44,8 +44,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import java.util.UUID;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.Message;
@@ -236,7 +234,6 @@ public class RulesEventConsumerBean implements MessageListener {
     private int getTimesRedelivered(Message message) {
         try {
             return (message.getIntProperty("JMSXDeliveryCount") - 1);
-
         } catch (Exception e) {
             return 0;
         }
