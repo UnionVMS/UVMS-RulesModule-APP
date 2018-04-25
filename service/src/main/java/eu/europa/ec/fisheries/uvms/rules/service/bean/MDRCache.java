@@ -56,7 +56,7 @@ public class MDRCache {
     @PostConstruct
     public void init(){
         cache = CacheBuilder.newBuilder()
-                .refreshAfterWrite(1, TimeUnit.HOURS)
+                .refreshAfterWrite(24, TimeUnit.HOURS)
                 .maximumSize(100)
                 .initialCapacity(80)
                 .recordStats()
@@ -90,7 +90,7 @@ public class MDRCache {
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
-        long timeoutMillis = 3 * 60 * 1000;
+        long timeoutMillis = 30 * 60 * 1000;
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, timeoutMillis);
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);

@@ -39,6 +39,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
@@ -60,7 +61,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         log.info("[END] MDR cache is being loaded Asynchronously..");
     }
 
-    @AccessTimeout(value = 180, unit = SECONDS)
+    @AccessTimeout(value = 30, unit = MINUTES)
     @Lock(LockType.WRITE)
     public void loadMDRCache() {
 
@@ -83,7 +84,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
             // Blocks until all tasks have completed execution after a shutdown request, or the timeout occurs,
             // or the current thread is interrupted, whichever happens first.
-            executorService.awaitTermination(180, TimeUnit.SECONDS);
+            executorService.awaitTermination(30, TimeUnit.MINUTES);
 
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
@@ -103,7 +104,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * This function maps all the error messages to the ones defined in MDR;
      *
      */
-    private void createCacheForFailureMessages() {
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.READ)
+    public void loadCacheForFailureMessages() {
         if (!MapUtils.isEmpty(errorMessages)) {
             return;
         }
@@ -218,7 +221,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
-    private List<String> getValues(MDRAcronymType anEnum) {
+    private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
         return getList(entry, date);
     }
@@ -261,7 +264,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     @Lock(LockType.READ)
     @AccessTimeout(value = 180, unit = SECONDS)
-
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
         return isCodeTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
@@ -537,11 +539,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return null;
     }
 
-
     @Override
     @Lock(LockType.READ)
     @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isNotMostPreciseFAOArea(IdType id) {
+    public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
                 (id.getValue(), "terminalInd", "1", faoAreas, creationDateOfMessage);
