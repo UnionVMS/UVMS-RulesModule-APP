@@ -8165,7 +8165,7 @@
             <column name="br_id" value="SALE-L01-00-0452"/>
             <column name="expression"
                     value="referencedID != null
-                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId(), creationDateOfMessage, creationDateOfMessage)"/>
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId(), creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check attribute schemeID. Must be in the FLUX_GP_MSG_ID list"/>
             <column name="level" value="L01"/>
