@@ -8173,7 +8173,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="referencedID"/>
-            <column name="disabled" value="true"/>
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="10603"/>
