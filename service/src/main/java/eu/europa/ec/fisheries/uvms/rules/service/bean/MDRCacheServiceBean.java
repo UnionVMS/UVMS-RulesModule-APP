@@ -10,6 +10,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -28,12 +39,8 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 @Slf4j
@@ -42,23 +49,43 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private MDRCache cache;
 
+    @EJB
+    private AsyncMdrCacheLoader ayncMdrCacheLoader;
+
     private Map<String, String> errorMessages;
 
+    @PostConstruct
+    public void loadCacheOnStartup(){
+        log.info("[START] Going to load MDR cache Asynchronously..");
+        ayncMdrCacheLoader.loadCache();
+        log.info("[END] MDR cache is being loaded Asynchronously..");
+    }
+
+    @AccessTimeout(value = 30, unit = MINUTES)
+    @Lock(LockType.WRITE)
     public void loadMDRCache() {
 
         try {
             ExecutorService executorService = Executors.newFixedThreadPool(5);
             List<Callable<List<ObjectRepresentation>>> myCallableList = new ArrayList<>();
             for (final MDRAcronymType type : MDRAcronymType.values()){
-                myCallableList.add(new Callable<List<ObjectRepresentation>>() {
-                    @Override
-                    public List<ObjectRepresentation> call() {
-                        return cache.getEntry(type);
-                    }
-                });
+                if ((type != MDRAcronymType.FA_BR_DEF)
+                        && (type != MDRAcronymType.SALE_BR_DEF)) {
+                    myCallableList.add(new Callable<List<ObjectRepresentation>>() {
+                        @Override
+                        public List<ObjectRepresentation> call() {
+                            return cache.getEntry(type);
+                        }
+                    });
+                }
             }
             executorService.invokeAll(myCallableList);
             executorService.shutdown();
+
+            // Blocks until all tasks have completed execution after a shutdown request, or the timeout occurs,
+            // or the current thread is interrupted, whichever happens first.
+            executorService.awaitTermination(30, TimeUnit.MINUTES);
+
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
@@ -67,10 +94,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.READ)
     public String getErrorMessageForBrId(String brId){
-        if(MapUtils.isEmpty(errorMessages)){
-            createCacheForFailureMessages();
-        }
         return errorMessages.get(brId);
     }
 
@@ -78,7 +104,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * This function maps all the error messages to the ones defined in MDR;
      *
      */
-    private void createCacheForFailureMessages() {
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.READ)
+    public void loadCacheForFailureMessages() {
+        if (!MapUtils.isEmpty(errorMessages)) {
+            return;
+        }
         errorMessages = new HashMap<>();
         final List<ObjectRepresentation> objRapprList = new ArrayList<ObjectRepresentation>(){{
             addAll(cache.getEntry(MDRAcronymType.FA_BR_DEF));
@@ -105,6 +136,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Deprecated
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isPresentInMDRList(String listName, String codeValue) {
         return isPresentInMDRList(listName, codeValue, DateTime.now());
     }
@@ -117,6 +150,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage) {
         MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (mdrAcronymType == null) {
@@ -150,6 +185,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Deprecated
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
         return isCodeTypePresentInMDRList(valuesToMatch, DateTime.now());
     }
@@ -162,6 +199,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
      */
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
         if (CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
@@ -189,6 +228,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     @Deprecated
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
         return isIdTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
@@ -201,6 +242,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime creationDateOfMessage) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
@@ -219,6 +262,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Deprecated
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
         return isCodeTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
@@ -231,6 +276,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
@@ -248,6 +295,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
@@ -266,11 +315,15 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     @Deprecated
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(List<IdType> ids) {
         return isIdTypePresentInMDRList(ids, DateTime.now());
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime creationDateOfMessage) {
         if (CollectionUtils.isEmpty(ids)) {
             return false;
@@ -285,6 +338,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     @Deprecated
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(IdType id) {
         return isIdTypePresentInMDRList(id, DateTime.now());
     }
@@ -297,6 +352,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return true when it exists
      */
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage) {
         if (id == null) {
             return false;
@@ -312,6 +369,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
         if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
             return false;
@@ -325,6 +384,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode) {
         // clean lists from nulls
         Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
@@ -388,6 +449,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param codeValue value for CODE column to be matched with
      * @return DATATYPE column value for the matching record
      */
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
@@ -420,6 +483,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return StringUtils.EMPTY;
     }
 
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
         return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId());
     }
@@ -430,6 +495,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Deprecated
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
         return isTypeCodeValuePresentInList(listName, typeCode, DateTime.now());
     }
@@ -441,17 +508,23 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Deprecated
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
         return isTypeCodeValuePresentInList(listName, typeCodes, DateTime.now());
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
         return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue, creationDateOfMessage);
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public String getValueForListId(String listId, List<CodeType> typeCodes) {
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
@@ -467,13 +540,18 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
                 (id.getValue(), "terminalInd", "1", faoAreas, creationDateOfMessage);
     }
 
+
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> locations = cache.getEntry(MDRAcronymType.LOCATION);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
@@ -481,6 +559,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
         return cache.getEntry(mdrAcronym);
     }

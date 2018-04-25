@@ -574,7 +574,7 @@ public abstract class AbstractFact {
     }
 
     /**
-     * This method will return false if any codeType do not have matching value from the list valuesToBe matched
+     * This method will return false if any codeType does not have matching value from the list valuesToBe matched
      *
      * @param codeTypes
      * @param valuesToMatch
@@ -585,9 +585,8 @@ public abstract class AbstractFact {
             return false;
         }
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
-
         for (CodeType codeType : codeTypes) {
-            if (codeType == null || codeType.getValue() == null || !valuesToBeFound.contains(codeType.getValue())) {
+            if (codeType == null || StringUtils.isEmpty(codeType.getValue()) || !valuesToBeFound.contains(codeType.getValue())) {
                 return false;
             }
         }

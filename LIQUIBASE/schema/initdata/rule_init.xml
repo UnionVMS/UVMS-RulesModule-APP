@@ -335,13 +335,11 @@
             <column name="rule_id" value="297"/>
             <column name="br_id" value="FA-L02-00-0297"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFACatches) &amp;&amp; !isEmpty(specifiedFACatchTypeCodes) &amp;&amp; valueContainsAny(specifiedFACatchTypeCodes, &quot;ONBOARD&quot;)"/>
+                    value="!isEmpty(specifiedFACatches) &amp;&amp; (isEmpty(specifiedFACatchTypeCodes) || valueContainsAny(specifiedFACatchTypeCodes, &quot;ONBOARD&quot;))"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
-            <column name="note"
-                    value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
-            <column name="message"
-                    value="Mandatory catch TypeCode missing."/>
+            <column name="note" value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
+            <column name="message" value="Mandatory catch TypeCode missing."/>
             <column name="template_id" value="24"/>
             <column name="property_names"
                     value="specifiedFACatchTypeCodes"/>
@@ -582,9 +580,9 @@
             <column name="rule_id" valueNumeric="237"/>
             <column name="br_id" value="FA-L01-00-0237"/>
             <column name="expression"
-                    value="!isEmpty(relatedFLUXLocationTypeCodes) &amp;&amp; valueContainsAny(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
+                    value="isEmpty(relatedFLUXLocationTypeCodes) || valueContainsAny(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;, &quot;LOCATION&quot; )"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233)"/>
-            <column name="message" value="Location TypeCode value is invalid."/>
+            <column name="message" value="If the activity is a departure declaration at least one RelatedFLUX Location/TypeCode must be LOCATION or POSITION "/>
             <column name="level" value="L01"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -625,7 +623,7 @@
             <column name="rule_id" value="240"/>
             <column name="br_id" value="FA-L02-00-0240"/>
             <column name="expression"
-                    value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; fishingActivityTypeCode.value == &quot;DEPARTURE&quot; &amp;&amp; !isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="!isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="TypeCode of the catches is invalid."/>
             <column name="level" value="L02"/>
@@ -1432,22 +1430,6 @@
         </insert>
         -->
         <insert tableName="rule">
-            <column name="rule_id" value="64"/>
-            <column name="br_id" value="FA-L03-00-0064"/>
-            <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
-            <column name="note"
-                    value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
-            <column name="message"
-                    value="Vessel ID CFR is provioded but the vessel is not regsitered in EU."/>
-            <column name="level" value="L03"/>
-            <column name="error_type" value="WARNING"/>
-            <column name="rule_created_on"/>
-            <column name="template_id" value="3"/>
-            <column name="property_names" value="registrationVesselCountryId"/>
-            <column name="disabled" value="false"/>
-        </insert>
-        <insert tableName="rule">
             <column name="rule_id" value="65"/>
             <column name="br_id" value="FA-L03-00-0065"/>
             <column name="expression"
@@ -1471,6 +1453,22 @@
             <column name="note" value="If a register is available."/>
             <column name="message"
                     value="Vessel ID IRCS and external marking are provided, but the vessel is not regsitered on a list non-EU vessels."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="64"/>
+            <column name="br_id" value="FA-L03-00-0064"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+            <column name="note"
+                    value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
+            <column name="message"
+                    value="Vessel ID CFR is provioded but the vessel is not regsitered in EU."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
@@ -4295,7 +4293,7 @@
             <column name="rule_id" value="134"/>
             <column name="br_id" value="FA-L01-00-0134"/>
             <column name="expression"
-                    value="isEmpty(roleCodes) || !mdrService.isCodeTypePresentInMDRList(roleCodes)"/>
+                    value="!isEmpty(roleCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(roleCodes)"/>
             <column name="note"
                     value="Check code. Must be existing in the list specified in attribute listID."/>
             <column name="message"
