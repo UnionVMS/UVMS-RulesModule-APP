@@ -3850,7 +3850,7 @@
             <column name="rule_id" value="130"/>
             <column name="br_id" value="FA-L00-00-0130"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; isEmpty(valueCode)"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; isBlank(valueCode)"/>
             <column name="note" value="valueCode must be present. "/>
             <column name="message" value="Expected code value missing. "/>
             <column name="level" value="L00"/>
@@ -3864,7 +3864,7 @@
             <column name="rule_id" value="131"/>
             <column name="br_id" value="FA-L00-00-0131"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;TEXT&quot; &amp;&amp; value == null "/>
+                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isBlank(value)"/>
             <column name="note" value="value must be present. "/>
             <column name="message" value="Expected text value missing. "/>
             <column name="level" value="L00"/>
@@ -3878,7 +3878,7 @@
             <column name="rule_id" value="132"/>
             <column name="br_id" value="FA-L00-00-0132"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null "/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; isBlank(valueQuantity)"/>
             <column name="note" value="valueQuantity must be present. "/>
             <column name="message" value="Expected quantity value missing. "/>
             <column name="level" value="L00"/>
