@@ -8568,6 +8568,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1013"/>
             <column name="property_names" value="RelatedVesselTransportMeans, SpecifiedDelimitedPeriods"/>
+            <column name="disabled" value="true"/>
         </insert>
     </changeSet>
     <!---->
