@@ -3850,7 +3850,7 @@
             <column name="rule_id" value="130"/>
             <column name="br_id" value="FA-L00-00-0130"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null "/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; isEmpty(valueCode)"/>
             <column name="note" value="valueCode must be present. "/>
             <column name="message" value="Expected code value missing. "/>
             <column name="level" value="L00"/>

@@ -413,7 +413,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public List<CustomRuleType> getRunnableCustomRuleList() throws RulesModelException {
-        LOG.info("Getting list of Custom Rules that are active and not archived (rule engine)");
+        LOG.debug("Getting list of Custom Rules that are active and not archived (rule engine)");
         try {
             List<CustomRuleType> list = new ArrayList<>();
             List<CustomRule> entityList = rulesDao.getRunnableCustomRuleList();
