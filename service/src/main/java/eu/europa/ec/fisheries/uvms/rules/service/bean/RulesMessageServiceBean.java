@@ -140,7 +140,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
         log.info("Received ReceiveSalesQueryRequest request message");
@@ -185,7 +185,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
         log.info("Received ReceiveSalesReportRequest request message");
@@ -230,6 +230,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
         }
     }
 
+    @AccessTimeout(value = 180, unit = SECONDS)
+    @Lock(LockType.READ)
     protected boolean shouldUseFluxOn(ValidationResultDto validationResult) {
         for (ValidationMessageType validationMessage : validationResult.getValidationMessages()) {
             if (RULES_TO_USE_ON_VALUE.contains(validationMessage.getBrId())) {
@@ -241,7 +243,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
         log.info("Received ReceiveSalesResponseRequest request message");
@@ -311,7 +313,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
         log.info("Received SendSalesResponseRequest request message");
@@ -349,7 +351,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
    // @Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
         log.info("Receive SendSalesReportRequest request message");
