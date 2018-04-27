@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -49,12 +48,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     private Map<String, String> errorMessages;
 
-    @PostConstruct
+/*    @PostConstruct
     public void loadCacheOnStartup(){
         log.info("[START] Going to load MDR cache Asynchronously..");
         ayncMdrCacheLoader.loadCache();
         log.info("[END] MDR cache is being loaded Asynchronously..");
-    }
+    }*/
 
     public void loadMDRCache() {
         try {
