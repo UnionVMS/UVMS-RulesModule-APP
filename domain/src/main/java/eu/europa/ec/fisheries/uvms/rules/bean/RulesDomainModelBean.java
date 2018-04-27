@@ -196,7 +196,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             rulesDao.createCustomRule(entity);
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when creating CustomRule ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when creating CustomRule ] {}", e.getMessage());
             throw new RulesModelException("Error when creating CustomRule", e);
         }
     }
@@ -207,7 +207,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             CustomRule entity = rulesDao.getCustomRuleByGuid(guid);
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting CustomRule by GUID ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting CustomRule by GUID ] {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
@@ -252,7 +252,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             newEntity = rulesDao.createCustomRule(newEntity);
             return CustomRuleMapper.toCustomRuleType(newEntity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating custom rule. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating custom rule {}", e.getMessage());
             throw new RulesModelException("[ Error when updating custom rule. ]", e);
         }
     }
@@ -295,7 +295,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return CustomRuleMapper.toCustomRuleType(customRuleEntity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating custom rule. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating custom rule {}", e.getMessage());
             throw new RulesModelException("[ Error when updating custom rule. ]", e);
         }
     }
@@ -309,14 +309,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
             entity.setEndDate(DateUtils.nowUTC().toGregorianCalendar().getTime());
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting CustomRule by GUID ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting CustomRule by GUID ] {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public CustomRuleType updateLastTriggeredCustomRule(String ruleGuid) throws RulesModelException {
-        LOG.info("Update custom rule in Rules");
+        LOG.info("[INFO] Update custom rule in Rules");
 
         if (ruleGuid == null) {
             LOG.error("[ GUID of Custom Rule is null, returning Exception. ]");
@@ -330,7 +330,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return CustomRuleMapper.toCustomRuleType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating last triggered on rule {}. ] {}", ruleGuid, e.getMessage());
+            LOG.error("[ERROR] Error when updating last triggered on rule {} {}", ruleGuid, e.getMessage());
             throw new RulesModelException("[ Error when updating last triggered on rule " + ruleGuid + ". ]", e);
         }
     }
@@ -338,7 +338,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public TicketType setTicketStatus(TicketType ticket) throws RulesModelException {
-        LOG.info("Update ticket status in Rules");
+        LOG.info("[INFO] Update ticket status in Rules");
 
         try {
             if (ticket == null || ticket.getGuid() == null) {
@@ -355,14 +355,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return TicketMapper.toTicketType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating ticket status. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating ticket status {}", e.getMessage());
             throw new RulesModelException("[ Error when updating ticket status. ]", e);
         }
     }
 
     @Override
     public TicketType updateTicketCount(TicketType ticket) throws RulesModelException {
-        LOG.info("Update ticket count in Rules");
+        LOG.info("[INFO] Update ticket count in Rules");
 
         try {
             if (ticket == null || ticket.getGuid() == null) {
@@ -379,14 +379,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return TicketMapper.toTicketType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating ticket status. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating ticket status {}", e.getMessage());
             throw new RulesModelException("[ Error when updating ticket status. ]", e);
         }
     }
 
     @Override
     public AlarmReportType setAlarmStatus(AlarmReportType alarmReportType) throws RulesModelException {
-        LOG.info("Update alarm status in Rules");
+        LOG.info("[INFO] Update alarm status in Rules");
 
         try {
             AlarmReport entity = rulesDao.getAlarmReportByGuid(alarmReportType.getGuid());
@@ -406,7 +406,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return AlarmMapper.toAlarmReportType(entity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating {}", e.getMessage());
             throw new RulesModelException("[ Error when updating. ]", e);
         }
     }
@@ -424,7 +424,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             return list;
 
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting runnable custom rules. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting runnable custom rules {}", e.getMessage());
             throw new RulesModelException("[ Error when getting runnable custom rules. ]", e);
         }
     }
@@ -442,14 +442,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
             return list;
 
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting sanity rules. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting sanity rules {}", e.getMessage());
             throw new RulesModelException("[ Error when getting sanity rules. ]", e);
         }
     }
 
     @Override
     public List<CustomRuleType> getCustomRulesByUser(String updatedBy) throws RulesModelException {
-        LOG.info("Getting list of Custom Rules by user");
+        LOG.info("[INFO] Getting list of Custom Rules by user");
         try {
             List<CustomRuleType> list = new ArrayList<>();
             List<CustomRule> entityList = rulesDao.getCustomRulesByUser(updatedBy);
@@ -460,14 +460,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
             return list;
 
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting custom rules by user. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting custom rules by user {}", e.getMessage());
             throw new RulesModelException("[ Error when getting custom rules by user. ]", e);
         }
     }
 
     @Override
     public CustomRuleListResponseDto getCustomRuleListByQuery(CustomRuleQuery query) throws RulesModelException {
-        LOG.info("Get list of custom rule from query.");
+        LOG.info("[INFO] Get list of custom rule from query.");
 
         if (query == null) {
             throw new InputArgumentException("Custom rule list query is null");
@@ -509,7 +509,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return response;
         } catch (DaoMappingException | DaoException e) {
-            LOG.error("[ Error when getting custom rule list by query ] {} ", e.getMessage());
+            LOG.error("[ERROR] Error when getting custom rule list by query ] {} ", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
@@ -517,7 +517,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     // Triggered by rule engine
     @Override
     public AlarmReportType createAlarmReport(AlarmReportType alarmReportType) throws RulesModelException {
-        LOG.info("Rule Engine creating Alarm Report");
+        LOG.info("[INFO] Rule Engine creating Alarm Report");
         try {
             String movementGuid = null;
             if (alarmReportType.getRawMovement() != null) {
@@ -546,7 +546,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
             AlarmReport createdReport = rulesDao.createAlarmReport(entity);
             return AlarmMapper.toAlarmReportType(createdReport);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when creating alarm report. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when creating alarm report {}", e.getMessage());
             throw new RulesModelException("[ Error when creating alarm report. ]", e);
         }
 
@@ -555,21 +555,21 @@ public class RulesDomainModelBean implements RulesDomainModel {
     // Triggered by rule engine
     @Override
     public TicketType createTicket(TicketType ticketType) throws RulesModelException {
-        LOG.info("Rule Engine creating Ticket");
+        LOG.info("[INFO] Rule Engine creating Ticket");
         try {
             Ticket ticket = TicketMapper.toTicketEntity(ticketType);
             ticket.setTicketCount(1L);
             Ticket createdTicket = rulesDao.createTicket(ticket);
             return TicketMapper.toTicketType(createdTicket);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when creating ticket. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when creating ticket {}", e.getMessage());
             throw new RulesModelException("[ Error when creating ticket. ]", e);
         }
     }
 
     @Override
     public AlarmListResponseDto getAlarmListByQuery(AlarmQuery query) throws RulesModelException {
-        LOG.info("Get list of alarms from query.");
+        LOG.info("[INFO] Get list of alarms from query.");
 
         if (query == null) {
             throw new InputArgumentException("Alarm list query is null");
@@ -611,15 +611,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
             return response;
         } catch (DaoMappingException | DaoException e) {
-            LOG.error("[ Error when getting alarm list by query ] {} ", e.getMessage());
+            LOG.error("[ERROR] Error when getting alarm list by query ] {} ", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public List<TicketType> updateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesModelException {
-        LOG.info("Update ticket status by query");
-
+        LOG.info("[INFO] Update ticket status by query");
         try {
             if (loggedInUser == null) {
                 LOG.error("[ LoggedInUser is null, can not update status ]");
@@ -637,15 +636,10 @@ public class RulesDomainModelBean implements RulesDomainModel {
                 LOG.error("[ No search criteria in query, can not update status ]");
                 throw new InputArgumentException("No search criteria in ticket list query");
             }
-
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
-
             List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(loggedInUser);
-
             String sql = TicketSearchFieldMapper.createSelectSearchSql(searchKeyValues, validRuleGuids, true);
-
             List<Ticket> tickets = rulesDao.getTicketList(sql, searchKeyValues);
-
             for (Ticket ticket : tickets) {
                 ticket.setStatus(status.name());
                 ticket.setUpdated(DateUtils.nowUTC().toGregorianCalendar().getTime());
@@ -653,22 +647,20 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
                 rulesDao.updateTicket(ticket);
             }
-
             List<TicketType> ticketList = new ArrayList<>();
             for (Ticket ticket : tickets) {
                 ticketList.add(TicketMapper.toTicketType(ticket));
             }
-
             return ticketList;
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when updating ticket status. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when updating ticket status {}", e.getMessage());
             throw new RulesModelException("[ Error when updating ticket status. ]", e);
         }
     }
 
     @Override
     public TicketListResponseDto getTicketListByQuery(String loggedInUser, TicketQuery query) throws RulesModelException {
-        LOG.info("Get list of tickets from query.");
+        LOG.info("[INFO] Get list of tickets from query.");
 
         if (query == null) {
             throw new InputArgumentException("Ticket list query is null");
@@ -683,12 +675,8 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             TicketListResponseDto response = new TicketListResponseDto();
             List<TicketType> ticketList = new ArrayList<>();
-
-            Integer page = query.getPagination().getPage();
             Integer listSize = query.getPagination().getListSize();
-
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
-
             List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(loggedInUser);
 
             // If no valid guids, return empty ticket list
@@ -698,37 +686,30 @@ public class RulesDomainModelBean implements RulesDomainModel {
 //                response.setTicketList(ticketList);
 //                return response;
 //            }
-
             String sql = TicketSearchFieldMapper.createSelectSearchSql(searchKeyValues, validRuleGuids, true);
             String countSql = TicketSearchFieldMapper.createCountSearchSql(searchKeyValues, validRuleGuids, true);
-
             Long numberMatches = rulesDao.getTicketListSearchCount(countSql, searchKeyValues);
-            List<Ticket> ticketEntityList = rulesDao.getTicketListPaginated(page, listSize, sql, searchKeyValues);
-
+            List<Ticket> ticketEntityList = rulesDao.getTicketListPaginated(query.getPagination().getPage(), listSize, sql, searchKeyValues);
             for (Ticket entity : ticketEntityList) {
                 ticketList.add(TicketMapper.toTicketType(entity));
             }
-
             int numberOfPages = (int) (numberMatches / listSize);
             if (numberMatches % listSize != 0) {
                 numberOfPages += 1;
             }
-
             response.setTotalNumberOfPages(numberOfPages);
             response.setCurrentPage(query.getPagination().getPage());
             response.setTicketList(ticketList);
-
             return response;
         } catch (DaoMappingException | DaoException e) {
-            LOG.error("[ Error when getting ticket list by query ] {} ", e.getMessage());
+            LOG.error("[ERROR] Error when getting ticket list by query ] {} ", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public TicketListResponseDto getTicketListByMovements(List<String> movements) throws RulesModelException {
-        LOG.info("Get tickets by movements.");
-
+        LOG.info("[INFO] Get tickets by movements.");
         if (movements == null) {
             throw new InputArgumentException("Movements list is null");
         }
@@ -738,26 +719,21 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             TicketListResponseDto response = new TicketListResponseDto();
             List<TicketType> ticketList = new ArrayList<>();
-
             List<Ticket> ticketEntityList = rulesDao.getTicketsByMovements(movements);
-
             for (Ticket entity : ticketEntityList) {
                 ticketList.add(TicketMapper.toTicketType(entity));
             }
-
             response.setTicketList(ticketList);
-
             return response;
         } catch (DaoMappingException | DaoException e) {
-            LOG.error("[ Error when getting tickets by movements ] {} ", e.getMessage());
+            LOG.error("[ERROR] Error when getting tickets by movements ] {} ", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public long countTicketListByMovements(List<String> movements) throws RulesModelException {
-        LOG.info("Count tickets by movements.");
-
+        LOG.info("[INFO] Count tickets by movements.");
         if (movements == null) {
             throw new InputArgumentException("Movements list is null");
         }
@@ -765,72 +741,68 @@ public class RulesDomainModelBean implements RulesDomainModel {
             throw new InputArgumentException("Movements list is empty");
         }
         try {
-            long count = rulesDao.countTicketListByMovements(movements);
-            return count;
+            return rulesDao.countTicketListByMovements(movements);
         } catch (DaoException e) {
-            LOG.error("[ Error when counting tickets by movements ] {} ", e.getMessage());
+            LOG.error("[ERROR] Error when counting tickets by movements ] {} ", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public List<PreviousReportType> getPreviousReports() throws RulesModelException {
-        LOG.info("Getting list of previous reports");
+        LOG.info("[INFO] Getting list of previous reports");
         try {
             List<PreviousReportType> previousReports = new ArrayList<>();
-
             List<PreviousReport> entityList = rulesDao.getPreviousReportList();
-
             for (PreviousReport entity : entityList) {
                 previousReports.add(PreviousReportMapper.toPreviousReportType(entity));
             }
             return previousReports;
-
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting list. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting list {}", e.getMessage());
             throw new RulesModelException("[ Error when getting list. ]", e);
         }
     }
 
     @Override
     public PreviousReportType getPreviousReportByAssetGuid(String assetGuid) throws RulesModelException {
-        LOG.info("Get previous report by asset GUID");
+        LOG.info("[INFO] Get previous report by asset GUID");
         try {
             PreviousReport entity = rulesDao.getPreviousReportByAssetGuid(assetGuid);
             return PreviousReportMapper.toPreviousReportType(entity);
         } catch (DaoMappingException e) {
-            LOG.error("[ Error when getting previous report by asset guid. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting previous report by asset guid {}", e.getMessage());
             throw new RulesModelException("[ Error when getting previous report by asset guid. ]", e);
         }
     }
 
     @Override
     public TicketType getTicketByAssetGuid(String assetGuid, String ruleGuid) throws RulesModelException {
-        LOG.info("Getting ticket by asset guid:{}", assetGuid);
+        LOG.info("[INFO] Getting ticket by asset guid:{}", assetGuid);
         try {
             Ticket ticketEntity = rulesDao.getTicketByAssetAndRule(assetGuid, ruleGuid);
             return TicketMapper.toTicketType(ticketEntity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting list. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting list {}", e.getMessage());
             throw new RulesModelException("[ Error when getting list. ]", e);
         }
     }
 
     @Override
     public AlarmReportType getAlarmReportByAssetAndRule(String assetGuid, String ruleGuid) throws RulesModelException {
-        LOG.info("Getting alarm report by asset guid:{}", assetGuid);
+        LOG.info("[INFO] Getting alarm report by asset guid:{}", assetGuid);
         try {
             AlarmReport alarmReportEntity = rulesDao.getAlarmReportByAssetAndRule(assetGuid, ruleGuid);
             return AlarmMapper.toAlarmReportType(alarmReportEntity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting list. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting list {}", e.getMessage());
             throw new RulesModelException("[ Error when getting list. ]", e);
         }
     }
 
     @Override
     public void upsertPreviousReport(PreviousReportType previousReport) throws RulesModelException {
-        LOG.info("Upserting previous report");
+        LOG.info("[INFO] Upserting previous report");
         try {
             PreviousReport entity = rulesDao.getPreviousReportByAssetGuid(previousReport.getAssetGuid());
             if (entity == null) {
@@ -846,42 +818,41 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
     @Override
     public AlarmReportType getAlarmReportByGuid(String guid) throws RulesModelException {
-        LOG.info("Getting alarm report by guid");
+        LOG.info("[INFO] Getting alarm report by guid");
         try {
             return AlarmMapper.toAlarmReportType(rulesDao.getAlarmReportByGuid(guid));
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting alarm report by GUID. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting alarm report by GUID {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public TicketType getTicketByGuid(String guid) throws RulesModelException {
-        LOG.info("Getting ticket by guid");
+        LOG.info("[INFO] Getting ticket by guid");
         try {
             Ticket ticketEntity = rulesDao.getTicketByGuid(guid);
             return TicketMapper.toTicketType(ticketEntity);
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting ticket by GUID. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting ticket by GUID {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public long getNumberOfOpenAlarms() throws RulesModelException {
-        LOG.info("Counting open alarms");
+        LOG.info("[INFO] Counting open alarms");
         try {
-            long alarmCount = rulesDao.getNumberOfOpenAlarms();
-            return alarmCount;
+            return rulesDao.getNumberOfOpenAlarms();
         } catch (DaoException e) {
-            LOG.error("[ Error when counting open alarms. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when counting open alarms {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public long getNumberOfOpenTickets(String userName) throws RulesModelException {
-        LOG.info("Counting open tickets");
+        LOG.info("[INFO] Counting open tickets");
         try {
             List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(userName);
             if (!validRuleGuids.isEmpty()) {
@@ -889,46 +860,41 @@ public class RulesDomainModelBean implements RulesDomainModel {
             }
             return 0;
         } catch (DaoException e) {
-            LOG.error("[ Error when counting open tickets. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when counting open tickets {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public long getNumberOfAssetsNotSending() throws RulesModelException {
-        LOG.info("Counting assets not sending");
+        LOG.info("[INFO] Counting assets not sending");
         try {
             return rulesDao.getNumberOfTicketsByRuleGuid(UvmsConstants.ASSET_NOT_SENDING_RULE);
         } catch (DaoException e) {
-            LOG.error("[ Error when counting open alarms. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when counting open alarms {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);
         }
     }
 
     @Override
     public List<TicketAndRuleType> getTicketsAndRulesByMovements(List<String> movementGuids) throws RulesModelException {
-        LOG.info("Get Tickets and Rules by movements");
-
+        LOG.info("[INFO] Get Tickets and Rules by movements");
         List<TicketAndRuleType> ticketsAndRules = new ArrayList<>();
         try {
             // TODO: This can be done more efficiently with some join stuff
             List<Ticket> tickets = rulesDao.getTicketsByMovements(movementGuids);
             for (Ticket ticket : tickets) {
                 CustomRule rule = rulesDao.getCustomRuleByGuid(ticket.getRuleGuid());
-
                 TicketType ticketType = TicketMapper.toTicketType(ticket);
                 CustomRuleType ruleType = CustomRuleMapper.toCustomRuleType(rule);
-
                 TicketAndRuleType ticketsAndRule = new TicketAndRuleType();
                 ticketsAndRule.setTicket(ticketType);
                 ticketsAndRule.setRule(ruleType);
-
                 ticketsAndRules.add(ticketsAndRule);
             }
             return ticketsAndRules;
-
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ Error when getting list. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when getting list {}", e.getMessage());
             throw new RulesModelException("[ Error when getting list. ]", e);
         }
     }

@@ -27,12 +27,10 @@ public class PreviousReportMapper {
 
     private final static Logger LOG = LoggerFactory.getLogger(PreviousReportMapper.class);
 
-    public static PreviousReportType toPreviousReportType(PreviousReportType previousReportType, PreviousReport previousReportEntity)
-            throws DaoMappingException {
+    private static PreviousReportType toPreviousReportType(PreviousReportType previousReportType, PreviousReport previousReportEntity) throws DaoMappingException {
         try {
             previousReportType.setAssetGuid(previousReportEntity.getAssetGuid());
             previousReportType.setPositionTime(previousReportEntity.getPositionTime());
-
             return previousReportType;
         } catch (Exception e) {
             LOG.error("[ Error when mapping to model. ] {}", e.getMessage());
