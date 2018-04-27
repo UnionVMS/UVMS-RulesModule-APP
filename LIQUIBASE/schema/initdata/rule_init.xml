@@ -3183,7 +3183,7 @@
             <column name="rule_id" value="160"/>
             <column name="br_id" value="FA-L01-00-0160"/>
             <column name="expression"
-                    value="weightMeasure != null &amp;&amp; weightMeasure.unitCode != &quot;KGM&quot;"/>
+                    value="weightMeasure != null &amp;&amp; weightMeasure.unitCode != null &amp;&amp; weightMeasure.unitCode != &quot;KGM&quot;"/>
             <column name="note" value="Attribute UnitCode must be KGM (kilograms)"/>
             <column name="message" value="Unit of weight for this catch must be expressed in kilograms."/>
             <column name="level" value="L01"/>
