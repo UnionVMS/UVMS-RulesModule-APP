@@ -1409,7 +1409,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids, registrationVesselCountryId"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -1433,7 +1433,7 @@
             <column name="rule_id" value="65"/>
             <column name="br_id" value="FA-L03-00-0065"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="If ICCAT, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
@@ -1449,7 +1449,7 @@
             <column name="rule_id" value="66"/>
             <column name="br_id" value="FA-L03-00-0066"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note" value="If a register is available."/>
             <column name="message"
                     value="Vessel ID IRCS and external marking are provided, but the vessel is not regsitered on a list non-EU vessels."/>
@@ -3185,7 +3185,7 @@
             <column name="expression"
                     value="weightMeasure != null &amp;&amp; weightMeasure.unitCode != null &amp;&amp; weightMeasure.unitCode != &quot;KGM&quot;"/>
             <column name="note" value="Attribute UnitCode must be KGM (kilograms)"/>
-            <column name="message" value="Unit of weight for this catch must be expressen in kilograms."/>
+            <column name="message" value="Unit of weight for this catch must be expressed in kilograms."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
