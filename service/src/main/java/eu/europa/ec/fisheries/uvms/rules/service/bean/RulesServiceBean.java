@@ -715,7 +715,7 @@ public class RulesServiceBean implements RulesService {
             assetHistGuid = asset.getEventHistory().getEventId();
             assetFlagState = asset.getCountryCode();
         } else {
-            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
+            LOG.warn("[WARN] Asset was null for {} ", rawMovement.getAssetId());
             assetGuid = null;
             assetHistGuid = null;
             assetFlagState = null;
@@ -857,7 +857,7 @@ public class RulesServiceBean implements RulesService {
         try {
             rulesDomainModel.upsertPreviousReport(thisReport);
         } catch (RulesModelException e) {
-            LOG.error("[ Error persisting report. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error persisting report. ] {}", e.getMessage());
         }
     }
 
@@ -916,24 +916,21 @@ public class RulesServiceBean implements RulesService {
     }
 
     private MovementType sendToMovement(String connectId, RawMovementType rawMovement, String username) {
-        LOG.info("[INFO] Send the validated raw position to Movement");
-
+        LOG.info("[INFO] Send the validated raw position to Movement..");
         Date auditTimestamp = new Date();
-
         MovementType createdMovement = null;
         try {
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
             movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
-
+            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class, 10000L);
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
-            LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
+            LOG.error("[ERROR] Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..");
         } catch (MovementDuplicateException e) {
-            LOG.error("[ Error when getting movement from Movement, tried to create duplicate movement ]");
+            LOG.error("[ERROR] Error when getting movementResponse from Movement, tried to create duplicate movement..");
         }
 
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
@@ -1175,7 +1172,7 @@ public class RulesServiceBean implements RulesService {
                     break;
                 case LES:
                 default:
-                    LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
+                    LOG.error("[ERROR] Unhandled Mobile Terminal id: {} ]", id.getType());
                     break;
             }
         }
@@ -1233,7 +1230,7 @@ public class RulesServiceBean implements RulesService {
                     // IRIDIUM
                 case LES:
                 default:
-                    LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
+                    LOG.error("[ERROR] Unhandled Mobile Terminal id: {} ]", id.getType());
                     break;
             }
         }
@@ -1310,7 +1307,7 @@ public class RulesServiceBean implements RulesService {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         } catch (AuditModelMarshallException | MessageException e) {
-            LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when sending message to Audit. ] {}", e.getMessage());
         }
     }
 
