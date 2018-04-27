@@ -18,7 +18,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 
 @Stateless
 @Local
-public class ExchangeConsumer extends AbstractConsumer {
+public class RulesINQueueConsumer extends AbstractConsumer {
 
     @Override
     public String getDestinationName() {
