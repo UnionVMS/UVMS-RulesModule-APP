@@ -1341,6 +1341,18 @@ public abstract class AbstractFact {
         return textType == null || StringUtils.isBlank(textType.getValue());
     }
 
+    public boolean isBlank(MeasureType measureType) {
+        return measureType == null || measureType.getValue() == null;
+    }
+
+    public boolean isBlank(TextType textType) {
+        return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public boolean isBlank(eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType) {
+        return codeType == null || StringUtils.isBlank(codeType.getValue());
+    }
+
     public boolean isBlank(IdType id) {
         return id == null || StringUtils.isBlank(id.getValue());
     }
