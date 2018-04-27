@@ -666,16 +666,13 @@ public class RulesServiceBean implements RulesService {
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
-            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
+            auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
-
                 LOG.info("[INFO] Validating movement from Movement Module");
                 rulesValidator.evaluate(movementFact);
-
                 auditLog("Rules total time:", auditTotalTimestamp);
-
                 // Tell Exchange that a movement was persisted in Movement
                 sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT, username);
             } else {
@@ -1304,7 +1301,7 @@ public class RulesServiceBean implements RulesService {
     private Date auditLog(String msg, Date lastTimestamp) {
         Date newTimestamp = new Date();
         long duration = newTimestamp.getTime() - lastTimestamp.getTime();
-        LOG.debug("--> AUDIT - {} {} ms", msg, duration);
+        LOG.debug("[INFO] --> AUDIT - {} {} ms", msg, duration);
         return newTimestamp;
     }
 
