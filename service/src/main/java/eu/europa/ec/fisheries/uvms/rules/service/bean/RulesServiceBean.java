@@ -275,9 +275,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.UPDATE, customRule.getGuid(), null, oldCustomRule.getUpdatedBy());
             return customRule;
-        } catch (RulesModelMapperException | MessageException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (RulesModelException e) {
+        } catch (RulesModelMapperException | MessageException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException | RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -355,9 +353,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, deletedRule.getGuid(), null, username);
             return deletedRule;
-        } catch (RulesModelMapperException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (RulesModelException e) {
+        } catch (RulesModelMapperException | RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -419,8 +415,6 @@ public class RulesServiceBean implements RulesService {
             GetTicketsAndRulesByMovementsResponse response = new GetTicketsAndRulesByMovementsResponse();
             response.getTicketsAndRules().addAll(ticketsAndRulesByMovements);
             return response;
-        } catch (RulesFaultException ex) {
-            throw new RulesServiceException(ex.getMessage());
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -902,13 +896,13 @@ public class RulesServiceBean implements RulesService {
             List<MovementType> movements;
 
             if (result == null || result.isEmpty()) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: No result found");
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports : No result found");
                 return null;
             } else if (result.size() != 1) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
                 return null;
             } else if (!connectId.equals(result.get(0).getKey())) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
                 return null;
             } else {
                 movements = result.get(0).getMovements();
@@ -917,7 +911,7 @@ public class RulesServiceBean implements RulesService {
             numberOfMovements = movements != null ? movements.size() : 0;
         } catch (Exception e) {
             // If something goes wrong, continue with the other validation
-            LOG.warn("[ Error when fetching sum of previous movement reports:{} ]", e.getMessage());
+            LOG.warn("[ERROR] Error when fetching sum of previous movement reports:{} ]", e.getMessage());
         }
 
         auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
@@ -1311,7 +1305,7 @@ public class RulesServiceBean implements RulesService {
     private Date auditLog(String msg, Date lastTimestamp) {
         Date newTimestamp = new Date();
         long duration = newTimestamp.getTime() - lastTimestamp.getTime();
-        LOG.info("--> AUDIT - {} {}ms", msg, duration);
+        LOG.debug("--> AUDIT - {} {} ms", msg, duration);
         return newTimestamp;
     }
 
