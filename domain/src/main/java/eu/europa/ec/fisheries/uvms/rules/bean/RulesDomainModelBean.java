@@ -217,12 +217,12 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.debug("Update custom rule in Rules");
 
         if (customRule == null) {
-            LOG.error("[ Custom Rule is null, returning Exception ]");
+            LOG.error("[ERROR] Custom Rule is null, returning Exception ]");
             throw new InputArgumentException("Custom Rule is null", null);
         }
 
         if (customRule.getGuid() == null) {
-            LOG.error("[ GUID of Custom Rule is null, returning Exception. ]");
+            LOG.error("[ERROR] GUID of Custom Rule is null, returning Exception. ]");
             throw new InputArgumentException("GUID of Custom Rule is null", null);
         }
 
@@ -262,12 +262,12 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.debug("Update custom rule subscription in Rules");
 
         if (updateSubscriptionType == null) {
-            LOG.error("[ Subscription is null, returning Exception ]");
+            LOG.error("[ERROR] Subscription is null, returning Exception ]");
             throw new InputArgumentException("Subscription is null", null);
         }
 
         if (updateSubscriptionType.getRuleGuid() == null) {
-            LOG.error("[ Custom Rule GUID for Subscription is null, returning Exception. ]");
+            LOG.error("[ERROR] Custom Rule GUID for Subscription is null, returning Exception. ]");
             throw new InputArgumentException("Custom Rule GUID for Subscription is null", null);
         }
 
@@ -319,7 +319,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("[INFO] Update custom rule in Rules");
 
         if (ruleGuid == null) {
-            LOG.error("[ GUID of Custom Rule is null, returning Exception. ]");
+            LOG.error("[ERROR] GUID of Custom Rule is null, returning Exception. ]");
             throw new InputArgumentException("GUID of Custom Rule is null", null);
         }
 
@@ -342,7 +342,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
         try {
             if (ticket == null || ticket.getGuid() == null) {
-                LOG.error("[ Ticket is null, can not update status ]");
+                LOG.error("[ERROR] Ticket is null, can not update status ]");
                 throw new InputArgumentException("Ticket is null", null);
             }
             Ticket entity = rulesDao.getTicketByGuid(ticket.getGuid());
@@ -366,7 +366,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
 
         try {
             if (ticket == null || ticket.getGuid() == null) {
-                LOG.error("[ Ticket is null, can not update status ]");
+                LOG.error("[ERROR] Ticket is null, can not update status ]");
                 throw new InputArgumentException("Ticket is null", null);
             }
             Ticket entity = rulesDao.getTicketByGuid(ticket.getGuid());
@@ -391,7 +391,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         try {
             AlarmReport entity = rulesDao.getAlarmReportByGuid(alarmReportType.getGuid());
             if (entity == null) {
-                LOG.error("[ Alarm is null, can not update status ]");
+                LOG.error("[ERROR] Alarm is null, can not update status ]");
                 throw new InputArgumentException("Alarm is null", null);
             }
 
@@ -621,19 +621,19 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("[INFO] Update ticket status by query");
         try {
             if (loggedInUser == null) {
-                LOG.error("[ LoggedInUser is null, can not update status ]");
+                LOG.error("[ERROR] LoggedInUser is null, can not update status ]");
                 throw new InputArgumentException("LoggedInUser is null", null);
             }
             if (status == null) {
-                LOG.error("[ Status is null, can not update status ]");
+                LOG.error("[ERROR] Status is null, can not update status ]");
                 throw new InputArgumentException("Status is null", null);
             }
             if (query == null) {
-                LOG.error("[ Status is null, can not update status ]");
+                LOG.error("[ERROR] Status is null, can not update status ]");
                 throw new InputArgumentException("Status is null", null);
             }
             if (query.getTicketSearchCriteria() == null) {
-                LOG.error("[ No search criteria in query, can not update status ]");
+                LOG.error("[ERROR] No search criteria in query, can not update status ]");
                 throw new InputArgumentException("No search criteria in ticket list query");
             }
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
