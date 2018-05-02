@@ -158,7 +158,7 @@ public class RulesEventConsumerBean implements MessageListener {
         try {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
-            LOG.error("Request message method: " + method.value());
+            LOG.info("Request message method: " + method.value());
             switch (method) {
                 case SET_MOVEMENT_REPORT:
                     setMovementReportRecievedEvent.fire(new EventMessage(textMessage));

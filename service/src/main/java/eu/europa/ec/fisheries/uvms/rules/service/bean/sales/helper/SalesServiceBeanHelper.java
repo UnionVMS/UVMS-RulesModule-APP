@@ -66,14 +66,15 @@ public class SalesServiceBeanHelper {
     }
 
     @Lock(LockType.READ)
-    public boolean areAnyOfTheseIdsNotUnique(List<String> id, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
-        String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(id, type);
-        log.info("Send CheckForUniqueIdRequest request message to Sales module");
+    public boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
+        String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(ids, type);
+        log.info("Send CheckForUniqueIdRequest message to Sales module");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 30000L);
-        log.info("Received CheckForUniqueIdResponse response message from Sales module");
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 60000L);
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
+        String id = (ids.isEmpty()) ? "0" : ids.get(0);
+        log.info("Received CheckForUniqueIdResponse message. IsUniqueSales: " + response.isUnique() + " ID: " + id + " type: " + type.value());
         return !response.isUnique();
     }
 }
