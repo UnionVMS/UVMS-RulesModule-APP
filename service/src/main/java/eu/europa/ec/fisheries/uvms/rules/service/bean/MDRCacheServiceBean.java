@@ -29,6 +29,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -51,12 +53,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     private Map<String, EnrichedBRMessage> errorMessages;
 
-    @PostConstruct
+/*    @PostConstruct
     public void loadCacheOnStartup(){
         log.info("[START] Going to load MDR cache Asynchronously..");
         ayncMdrCacheLoader.loadCache();
         log.info("[END] MDR cache is being loaded Asynchronously..");
-    }
+    }*/
 
     public void loadMDRCache() {
         try {

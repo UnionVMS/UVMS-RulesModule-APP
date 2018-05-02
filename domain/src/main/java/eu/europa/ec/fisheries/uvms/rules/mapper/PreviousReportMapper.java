@@ -27,31 +27,27 @@ public class PreviousReportMapper {
 
     private final static Logger LOG = LoggerFactory.getLogger(PreviousReportMapper.class);
 
-    public static PreviousReportType toPreviousReportType(PreviousReportType previousReportType, PreviousReport previousReportEntity)
-            throws DaoMappingException {
+    private static PreviousReportType toPreviousReportType(PreviousReportType previousReportType, PreviousReport previousReportEntity) throws DaoMappingException {
         try {
             previousReportType.setAssetGuid(previousReportEntity.getAssetGuid());
             previousReportType.setPositionTime(previousReportEntity.getPositionTime());
-
             return previousReportType;
         } catch (Exception e) {
-            LOG.error("[ Error when mapping to model. ] {}", e.getMessage());
-            throw new DaoMappingException("[ Error when mapping to model. ]", e);
+            LOG.error("[ERROR} Error when mapping to model {}", e.getMessage());
+            throw new DaoMappingException("[ERROR] Error when mapping to model.", e);
         }
     }
 
-    public static PreviousReport toPreviousReportEntity(PreviousReport previousReportEntity, PreviousReportType previousReportType)
-            throws DaoMappingException {
+    public static PreviousReport toPreviousReportEntity(PreviousReport previousReportEntity, PreviousReportType previousReportType) throws DaoMappingException {
         try {
             previousReportEntity.setAssetGuid(previousReportType.getAssetGuid());
             previousReportEntity.setPositionTime(previousReportType.getPositionTime());
             previousReportEntity.setUpdated(DateUtils.nowUTC().toGregorianCalendar().getTime());
             previousReportEntity.setUpdatedBy("UVMS");
-
             return previousReportEntity;
         } catch (Exception e) {
-            LOG.error("[ Error when mapping to entity. ] {}", e.getMessage());
-            throw new DaoMappingException("[ Error when mapping to entity. ]", e);
+            LOG.error("[ERROR} Error when mapping to entity. ] {}", e.getMessage());
+            throw new DaoMappingException("[ERROR] Error when mapping to entity. ]", e);
         }
     }
 

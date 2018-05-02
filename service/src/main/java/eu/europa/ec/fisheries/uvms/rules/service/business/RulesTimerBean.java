@@ -35,16 +35,17 @@ public class RulesTimerBean {
     private final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
 
     @EJB
-    RulesService rulesService;
+    private RulesService rulesService;
 
     @EJB
-    ValidationService validationService;
+    private ValidationService validationService;
 
     @EJB
-    RulesValidator rulesValidator;
+    private RulesValidator rulesValidator;
 
-    ScheduledFuture comm;
-    ScheduledFuture changes;
+    private ScheduledFuture comm;
+
+    private ScheduledFuture changes;
 
     @PostConstruct
     public void postConstruct() {
@@ -52,7 +53,6 @@ public class RulesTimerBean {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
         CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
         comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
-
         CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
         changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
     }

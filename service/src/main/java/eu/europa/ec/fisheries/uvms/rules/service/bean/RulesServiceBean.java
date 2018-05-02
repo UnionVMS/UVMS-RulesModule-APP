@@ -202,7 +202,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType createCustomRule(CustomRuleType customRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
-        LOG.info("Create invoked in service layer");
+        LOG.info("[INFO] Create invoked in service layer");
         try {
             // Get organisation of user
             String organisationName = getOrganisationName(customRule.getUpdatedBy());
@@ -237,7 +237,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType getCustomRuleByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException {
-        LOG.info("Get Custom Rule by guid invoked in service layer");
+        LOG.info("[INFO] Get Custom Rule by guid invoked in service layer");
         try {
             CustomRuleType customRule = rulesDomainModel.getByGuid(guid);
             return customRule;
@@ -254,7 +254,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
-        LOG.info("Update custom rule invoked in service layer");
+        LOG.info("[INFO] Update custom rule invoked in service layer");
         try {
             // Get organisation of user
             String organisationName = getOrganisationName(oldCustomRule.getUpdatedBy());
@@ -275,9 +275,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.UPDATE, customRule.getGuid(), null, oldCustomRule.getUpdatedBy());
             return customRule;
-        } catch (RulesModelMapperException | MessageException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (RulesModelException e) {
+        } catch (RulesModelMapperException | MessageException | eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException | RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -290,7 +288,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType updateCustomRule(CustomRuleType oldCustomRule) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update custom rule invoked in service layer by timer");
+        LOG.info("[INFO] Update custom rule invoked in service layer by timer");
         try {
             CustomRuleType updatedCustomRule = rulesDomainModel.updateCustomRule(oldCustomRule);
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.UPDATE, updatedCustomRule.getGuid(), null, oldCustomRule.getUpdatedBy());
@@ -307,7 +305,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType updateSubscription(UpdateSubscriptionType updateSubscriptionType, String username) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update subscription invoked in service layer");
+        LOG.info("[INFO] Update subscription invoked in service layer");
         try {
             boolean validRequest = updateSubscriptionType.getSubscription().getType() != null && updateSubscriptionType.getSubscription().getOwner() != null;
             if (!validRequest) {
@@ -337,7 +335,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public CustomRuleType deleteCustomRule(String guid, String username, String featureName, String applicationName) throws RulesServiceException, RulesFaultException, AccessDeniedException {
-        LOG.info("Deleting custom rule by guid: {}.", guid);
+        LOG.info("[INFO] Deleting custom rule by guid: {}.", guid);
         if (guid == null) {
             throw new InputArgumentException("No custom rule to remove");
         }
@@ -355,9 +353,7 @@ public class RulesServiceBean implements RulesService {
             rulesValidator.updateCustomRules();
             sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE, AuditOperationEnum.DELETE, deletedRule.getGuid(), null, username);
             return deletedRule;
-        } catch (RulesModelMapperException e) {
-            throw new RulesServiceException(e.getMessage());
-        } catch (RulesModelException e) {
+        } catch (RulesModelMapperException | RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
     }
@@ -370,7 +366,7 @@ public class RulesServiceBean implements RulesService {
      */
     @Override
     public GetAlarmListByQueryResponse getAlarmList(AlarmQuery query) throws RulesServiceException, RulesFaultException {
-        LOG.info("Get alarm list invoked in service layer");
+        LOG.info("[INFO] Get alarm list invoked in service layer");
         try {
             AlarmListResponseDto alarmList = rulesDomainModel.getAlarmListByQuery(query);
             GetAlarmListByQueryResponse response = new GetAlarmListByQueryResponse();
@@ -385,7 +381,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public GetTicketListByQueryResponse getTicketList(String loggedInUser, TicketQuery query) throws RulesServiceException, RulesFaultException {
-        LOG.info("Get ticket list invoked in service layer");
+        LOG.info("[INFO] Get ticket list invoked in service layer");
         try {
             TicketListResponseDto ticketList = rulesDomainModel.getTicketListByQuery(loggedInUser, query);
             GetTicketListByQueryResponse response = new GetTicketListByQueryResponse();
@@ -400,7 +396,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public GetTicketListByMovementsResponse getTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException {
-        LOG.info("Get tickets by movements invoked in service layer");
+        LOG.info("[INFO] Get tickets by movements invoked in service layer");
         try {
             TicketListResponseDto ticketListByMovements = rulesDomainModel.getTicketListByMovements(movements);
             GetTicketListByMovementsResponse response = new GetTicketListByMovementsResponse();
@@ -413,14 +409,12 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException {
-        LOG.info("Get tickets and rules by movements invoked in service layer");
+        LOG.info("[INFO] Get tickets and rules by movements invoked in service layer");
         try {
             List<TicketAndRuleType> ticketsAndRulesByMovements = rulesDomainModel.getTicketsAndRulesByMovements(movements);
             GetTicketsAndRulesByMovementsResponse response = new GetTicketsAndRulesByMovementsResponse();
             response.getTicketsAndRules().addAll(ticketsAndRulesByMovements);
             return response;
-        } catch (RulesFaultException ex) {
-            throw new RulesServiceException(ex.getMessage());
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -428,7 +422,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public long countTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException {
-        LOG.info("Get number of tickets by movements invoked in service layer");
+        LOG.info("[INFO] Get number of tickets by movements invoked in service layer");
         try {
             long countTicketListByMovements = rulesDomainModel.countTicketListByMovements(movements);
             return countTicketListByMovements;
@@ -439,7 +433,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public TicketType updateTicketStatus(TicketType ticket) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update ticket status invoked in service layer");
+        LOG.info("[INFO] Update ticket status invoked in service layer");
         try {
             TicketType updatedTicket = rulesDomainModel.setTicketStatus(ticket);
             // Notify long-polling clients of the update
@@ -457,7 +451,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public List<TicketType> updateTicketStatusByQuery(String loggedInUser, TicketQuery query, TicketStatusType status) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update all ticket status invoked in service layer");
+        LOG.info("[INFO] Update all ticket status invoked in service layer");
         try {
             List<TicketType> updatedTickets = rulesDomainModel.updateTicketStatusByQuery(loggedInUser, query, status);
             // Notify long-polling clients of the update
@@ -485,7 +479,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public AlarmReportType updateAlarmStatus(AlarmReportType alarm) throws RulesServiceException, RulesFaultException {
-        LOG.info("Update alarm status invoked in service layer");
+        LOG.info("[INFO] Update alarm status invoked in service layer");
         try {
             AlarmReportType updatedAlarm = rulesDomainModel.setAlarmStatus(alarm);
             // Notify long-polling clients of the change
@@ -502,10 +496,9 @@ public class RulesServiceBean implements RulesService {
     // Triggered by RulesTimerBean
     @Override
     public List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException {
-        LOG.info("Get previous movement reports invoked in service layer");
+        LOG.info("[INFO] Get previous movement reports invoked in service layer");
         try {
-            List<PreviousReportType> previousReports = rulesDomainModel.getPreviousReports();
-            return previousReports;
+            return rulesDomainModel.getPreviousReports();
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -514,7 +507,7 @@ public class RulesServiceBean implements RulesService {
     // Triggered by timer rule
     @Override
     public void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException {
-        LOG.info("Timer rule triggered invoked in service layer");
+        LOG.info("[INFO] Timer rule triggered invoked in service layer");
         try {
             // Check if ticket already is created for this asset
             TicketType ticket = rulesDomainModel.getTicketByAssetGuid(fact.getAssetGuid(), ruleName);
@@ -551,7 +544,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public TicketType updateTicketCount(TicketType ticket) throws RulesServiceException {
-        LOG.info("Update ticket count invoked in service layer");
+        LOG.info("[INFO] Update ticket count invoked in service layer");
         try {
             TicketType updatedTicket = rulesDomainModel.updateTicketCount(ticket);
             // Notify long-polling clients of the update
@@ -587,7 +580,7 @@ public class RulesServiceBean implements RulesService {
 
     @Override
     public String reprocessAlarm(List<String> alarmGuids, String username) throws RulesServiceException {
-        LOG.info("Reprocess alarms invoked in service layer");
+        LOG.info("[INFO] Reprocess alarms invoked in service layer");
         try {
             AlarmQuery query = mapToOpenAlarmQuery(alarmGuids);
             AlarmListResponseDto alarms = rulesDomainModel.getAlarmListByQuery(query);
@@ -673,16 +666,13 @@ public class RulesServiceBean implements RulesService {
             LOG.debug("rawMovementFact:{}", rawMovementFact);
 
             rulesValidator.evaluate(rawMovementFact);
-            auditTimestamp = auditLog("Time to validate sanity:", auditTimestamp);
+            auditLog("Time to validate sanity:", auditTimestamp);
 
             if (rawMovementFact.isOk()) {
                 MovementFact movementFact = collectMovementData(mobileTerminal, asset, rawMovement, username);
-
-                LOG.info("Validating movement from Movement Module");
+                LOG.info("[INFO] Validating movement from Movement Module");
                 rulesValidator.evaluate(movementFact);
-
                 auditLog("Rules total time:", auditTotalTimestamp);
-
                 // Tell Exchange that a movement was persisted in Movement
                 sendBackToExchange(movementFact.getMovementGuid(), rawMovement, MovementRefTypeType.MOVEMENT, username);
             } else {
@@ -725,7 +715,7 @@ public class RulesServiceBean implements RulesService {
             assetHistGuid = asset.getEventHistory().getEventId();
             assetFlagState = asset.getCountryCode();
         } else {
-            LOG.warn("[ Asset was null for {} ]", rawMovement.getAssetId());
+            LOG.warn("[WARN] Asset was null for {} ", rawMovement.getAssetId());
             assetGuid = null;
             assetHistGuid = null;
             assetFlagState = null;
@@ -846,7 +836,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Long timeDiffFromLastCommunication(String assetGuid, Date thisTime) {
-        LOG.info("Fetching time difference to previous movement report");
+        LOG.info("[INFO] Fetching time difference to previous movement report");
         Long timeDiff = null;
         try {
             PreviousReportType previousReport = rulesDomainModel.getPreviousReportByAssetGuid(assetGuid);
@@ -854,7 +844,7 @@ public class RulesServiceBean implements RulesService {
             timeDiff = thisTime.getTime() - previousTime.getTime();
         } catch (Exception e) {
             // If something goes wrong, continue with the other validation
-            LOG.warn("[ Error when fetching time difference of previous movement reports ]");
+            LOG.warn("[WARN] Error when fetching time difference of previous movement reports..");
         }
         return timeDiff;
     }
@@ -867,12 +857,12 @@ public class RulesServiceBean implements RulesService {
         try {
             rulesDomainModel.upsertPreviousReport(thisReport);
         } catch (RulesModelException e) {
-            LOG.error("[ Error persisting report. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error persisting report. ] {}", e.getMessage());
         }
     }
 
     private Integer numberOfReportsLast24Hours(String connectId, Date thisTime) {
-        LOG.info("Fetching number of reports last 24 hours");
+        LOG.info("[INFO] Fetching number of reports last 24 hours");
         Date auditTimestamp = new Date();
         Integer numberOfMovements = null;
         MovementQuery query = new MovementQuery();
@@ -902,13 +892,13 @@ public class RulesServiceBean implements RulesService {
             List<MovementType> movements;
 
             if (result == null || result.isEmpty()) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: No result found");
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports : No result found");
                 return null;
             } else if (result.size() != 1) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports: Duplicate assets found ({})", result.size());
                 return null;
             } else if (!connectId.equals(result.get(0).getKey())) {
-                LOG.warn("[ Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
+                LOG.warn("[WARN] Error when fetching sum of previous movement reports: Wrong asset found ({})", result.get(0).getKey());
                 return null;
             } else {
                 movements = result.get(0).getMovements();
@@ -917,7 +907,7 @@ public class RulesServiceBean implements RulesService {
             numberOfMovements = movements != null ? movements.size() : 0;
         } catch (Exception e) {
             // If something goes wrong, continue with the other validation
-            LOG.warn("[ Error when fetching sum of previous movement reports:{} ]", e.getMessage());
+            LOG.warn("[ERROR] Error when fetching sum of previous movement reports:{} ]", e.getMessage());
         }
 
         auditLog("Time to fetch number of reports last 24 hours:", auditTimestamp);
@@ -926,24 +916,21 @@ public class RulesServiceBean implements RulesService {
     }
 
     private MovementType sendToMovement(String connectId, RawMovementType rawMovement, String username) {
-        LOG.info("Send the validated raw position to Movement");
-
+        LOG.info("[INFO] Send the validated raw position to Movement..");
         Date auditTimestamp = new Date();
-
         MovementType createdMovement = null;
         try {
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
             movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class);
-
+            TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class, 10000L);
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
-            LOG.error("[ Error when getting movement from Movement , movementResponse from JMS Queue is null ]");
+            LOG.error("[ERROR] Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..");
         } catch (MovementDuplicateException e) {
-            LOG.error("[ Error when getting movement from Movement, tried to create duplicate movement ]");
+            LOG.error("[ERROR] Error when getting movementResponse from Movement, tried to create duplicate movement..");
         }
 
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
@@ -1004,7 +991,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private List<AssetGroup> getAssetGroup(String assetGuid) {
-        LOG.info("Fetch asset groups from Asset");
+        LOG.info("[INFO] Fetch asset groups from Asset");
 
         Date auditTimestamp = new Date();
 
@@ -1027,7 +1014,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private void sendBackToExchange(String guid, RawMovementType rawMovement, MovementRefTypeType status, String username) throws RulesModelMarshallException, MessageException {
-        LOG.info("Sending back processed movement to exchange");
+        LOG.info("[INFO] Sending back processed movement to exchange");
 
         // Map response
         MovementRefType movementRef = new MovementRefType();
@@ -1048,7 +1035,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Asset getAssetByConnectId(String connectId) throws AssetModelMapperException, MessageException {
-        LOG.info("Fetch asset by connectId '{}'", connectId);
+        LOG.info("[INFO] Fetch asset by connectId '{}'", connectId);
 
         AssetListQuery query = new AssetListQuery();
         AssetListCriteria criteria = new AssetListCriteria();
@@ -1076,7 +1063,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private Asset getAssetByCfrIrcs(AssetId assetId) {
-        LOG.info("Fetch asset by assetId");
+        LOG.info("[INFO] Fetch asset by assetId");
 
         Asset asset = null;
         try {
@@ -1148,7 +1135,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     private MobileTerminalType getMobileTerminalByRawMovement(RawMovementType rawMovement) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
-        LOG.info("Fetch mobile terminal");
+        LOG.info("[INFO] Fetch mobile terminal");
         MobileTerminalListQuery query = new MobileTerminalListQuery();
 
         // If no mobile terminal information exists, don't look for one
@@ -1185,7 +1172,7 @@ public class RulesServiceBean implements RulesService {
                     break;
                 case LES:
                 default:
-                    LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
+                    LOG.error("[ERROR] Unhandled Mobile Terminal id: {} ]", id.getType());
                     break;
             }
         }
@@ -1243,7 +1230,7 @@ public class RulesServiceBean implements RulesService {
                     // IRIDIUM
                 case LES:
                 default:
-                    LOG.error("[ Unhandled Mobile Terminal id: {} ]", id.getType());
+                    LOG.error("[ERROR] Unhandled Mobile Terminal id: {} ]", id.getType());
                     break;
             }
         }
@@ -1311,7 +1298,7 @@ public class RulesServiceBean implements RulesService {
     private Date auditLog(String msg, Date lastTimestamp) {
         Date newTimestamp = new Date();
         long duration = newTimestamp.getTime() - lastTimestamp.getTime();
-        LOG.info("--> AUDIT - {} {}ms", msg, duration);
+        LOG.debug("[INFO] --> AUDIT - {} {} ms", msg, duration);
         return newTimestamp;
     }
 
@@ -1320,7 +1307,7 @@ public class RulesServiceBean implements RulesService {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
             producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         } catch (AuditModelMarshallException | MessageException e) {
-            LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());
+            LOG.error("[ERROR] Error when sending message to Audit. ] {}", e.getMessage());
         }
     }
 

@@ -24,6 +24,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -107,6 +108,33 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.ejb.AccessTimeout;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -428,10 +456,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(reportGUID));
             }
         } catch (SAXException | RulesModelMarshallException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!", e);
+            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
-            throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
@@ -474,10 +501,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 }
             }
         } catch (SAXException | RulesModelMarshallException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!", e);
+            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
-            throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
@@ -560,10 +586,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 }
             }
         } catch (SAXException | RulesModelMarshallException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFAQueryMessage received message! It is malformed!", e);
+            log.error("[ERROR] Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
-            throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.error("[ERROR] Error during validation of the received FLUXFAQueryMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
@@ -606,10 +631,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 }
             }
         } catch (SAXException | RulesModelMarshallException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFaQueryMessage received message! It is malformed!", e);
+            log.error("[ERROR] Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
-            throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.error("[ERROR] Error during validation of the received FLUXFaQueryMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
@@ -1076,10 +1100,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
     public String getValidationsForRawMessageGuid(String guid, String type) {
         try {
             ValidationMessageTypeResponse validationsResponse = rulePostProcessBean.getValidationResultsFromRawMsgGuid(guid, type);
-
             if (validationsResponse != null){
                 List<ValidationMessageType> validationsListResponse = validationsResponse.getValidationsListResponse();
-
                 for (ValidationMessageType validationMessageType : validationsListResponse) {
                     if (validationMessageType != null){
                         String brId = validationMessageType.getBrId();
