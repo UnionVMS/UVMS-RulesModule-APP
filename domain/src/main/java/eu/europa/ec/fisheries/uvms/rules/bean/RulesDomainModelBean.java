@@ -148,7 +148,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
     }
 
     @Override
-    public List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException {
+    public List<ValidationMessageType>  getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException {
         try {
             List<ValidationMessage> validationMessages = rulesDao.getValidationMessagesByRawMsgGuid(rawMsgGuid, type);
             return RawMessageMapper.INSTANCE.mapToValidationMessageTypes(validationMessages);

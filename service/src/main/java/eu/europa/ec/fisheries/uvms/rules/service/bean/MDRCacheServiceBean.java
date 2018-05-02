@@ -10,12 +10,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +21,14 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -47,7 +49,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private AsyncMdrCacheLoader ayncMdrCacheLoader;
 
-    private Map<String, String> errorMessages;
+    private Map<String, EnrichedBRMessage> errorMessages;
 
     @PostConstruct
     public void loadCacheOnStartup(){
@@ -78,7 +80,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    public String getErrorMessageForBrId(String brId){
+    public EnrichedBRMessage getErrorMessageForBrId(String brId){
         if(MapUtils.isEmpty(errorMessages)){
             createCacheForFailureMessages();
         }
@@ -97,9 +99,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }};
         final String MESSAGE_COLUMN = "messageIfFailing";
         final String BR_ID_COLUMN = "code";
+        final String BR_NOTE_COLUMN = "note";
+
         for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
+            String note = null;
+
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if(MESSAGE_COLUMN.equals(columnName)){
@@ -108,8 +114,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 if(BR_ID_COLUMN.equals(columnName)){
                     brId = field.getColumnValue();
                 }
+                if(BR_NOTE_COLUMN.equals(columnName)){
+                    note = field.getColumnValue();
+                }
             }
-            errorMessages.put(brId,errorMessage);
+            errorMessages.put(brId,new EnrichedBRMessage(note, errorMessage));
         }
     }
 
