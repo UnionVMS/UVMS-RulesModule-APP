@@ -28,6 +28,34 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SE
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import javax.ejb.AccessTimeout;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
@@ -69,6 +97,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesMessageFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
@@ -141,6 +170,9 @@ public class RulesMessageServiceBean implements RulesMessageService {
     private static final String TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE = "[INFO] Triggering drools validation on message...";
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
     private static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
+
+    @EJB
+    private MDRCacheRuleService mdrCacheService;
 
     @EJB
     private RulesMessageProducer producer;
@@ -1068,13 +1100,27 @@ public class RulesMessageServiceBean implements RulesMessageService {
     public String getValidationsForRawMessageGuid(String guid, String type) {
         try {
             ValidationMessageTypeResponse validationsResponse = rulePostProcessBean.getValidationResultsFromRawMsgGuid(guid, type);
-            return JAXBMarshaller.marshallJaxBObjectToString(validationsResponse);
+            if (validationsResponse != null){
+                List<ValidationMessageType> validationsListResponse = validationsResponse.getValidationsListResponse();
+                for (ValidationMessageType validationMessageType : validationsListResponse) {
+                    if (validationMessageType != null){
+                        String brId = validationMessageType.getBrId();
+                        EnrichedBRMessage errorMessageForBrId = mdrCacheService.getErrorMessageForBrId(brId);
+                        if (errorMessageForBrId != null){
+                            validationMessageType.setExpression(errorMessageForBrId.getExpression());
+                            validationMessageType.setMessage(errorMessageForBrId.getMessage());
+                            validationMessageType.setNote(errorMessageForBrId.getNote());
+                            validationMessageType.setEntity(errorMessageForBrId.getTemplateEntityName());
+                        }
+                    }
+                }
+                return JAXBMarshaller.marshallJaxBObjectToString(validationsResponse);
+            }
         } catch (RulesModelException | RulesModelMarshallException e) {
             log.error("Error while getting List<ValidationMessageType> with rawMessage GUID!", e);
         }
         return StringUtils.EMPTY;
     }
-
 
     /*
      * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest

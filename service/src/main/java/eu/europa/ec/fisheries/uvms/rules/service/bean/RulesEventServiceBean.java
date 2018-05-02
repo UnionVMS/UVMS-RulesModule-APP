@@ -12,6 +12,17 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetCustomRuleRequest;
@@ -373,7 +384,6 @@ public class RulesEventServiceBean implements EventService {
             throw new RulesServiceTechnicalException("[ERROR] Couldn't read SendSalesResponseRequest.", e);
         }
     }
-
 
     @Override
     public void getValidationResultsByRawGuid(@Observes @GetValidationResultsByRawGuid EventMessage message) {
