@@ -5575,7 +5575,7 @@
             <column name="rule_id" value="225"/>
             <column name="br_id" value="FA-L00-00-0225"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; (valueIndicator == null || valueIndicator.value == null)"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null)"/>
             <column name="note" value="If UN_DATA_TYPE for the characteristic is INDICATOR, ValueIndicator must be present and have a value."/>
             <column name="message" value="Expected indicator type missing."/>
             <column name="level" value="L00"/>
@@ -5958,7 +5958,7 @@
             <column name="rule_id" value="394"/>
             <column name="br_id" value="FA-L03-00-0394"/>
             <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; !matchWithFluxTL(fluxPartyIds)"/>
-            <column name="note" value="The party sending must be allowed to send the message."/>
+            <column name="note" value="The party sending the response must be the same as the one from the FR value of the FLUX TL envelope. Only the part before the first colon is to be considered: Eg. ABC:something => only ABC refres to the party for the purpose of this rule."/>
             <column name="message" value="Respondent ID is not consistent with FLUX TL envelope parameters."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
