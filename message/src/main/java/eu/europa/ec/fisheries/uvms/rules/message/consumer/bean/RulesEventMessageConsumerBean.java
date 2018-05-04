@@ -190,8 +190,8 @@ public class RulesEventMessageConsumerBean implements MessageListener {
 
                 /** @deprecated
                  * This code has moved to RulesDefaultSelectorEventConsumer.
-                 *  If you use the latest version of Exchange and Rules, this code will not be called anymore.
-                 *  For the parties that still use an older version of Exchange and Rules, this code is kept.
+                 *  If you use the latest version of Exchange and Sales, this code will not be called anymore.
+                 *  For the parties that still use an older version of Exchange and Sales, this code is kept.
                  *  Please upgrade as soon as possible. We'll remove this code in a next release.
                  */
                 case RECEIVE_SALES_RESPONSE:
