@@ -83,7 +83,7 @@ public class RulesResource {
     public Response evaluate(FLUXFAReportMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request);
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request, "XEU");
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_REPORT);
@@ -105,7 +105,7 @@ public class RulesResource {
     public Response evaluate(FLUXFAQueryMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            Map<ExtraValueType, Object> extraValueMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_QUERY_MSG, request);
+            Map<ExtraValueType, Object> extraValueMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_QUERY_MSG, request, "XEU");
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValueMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
