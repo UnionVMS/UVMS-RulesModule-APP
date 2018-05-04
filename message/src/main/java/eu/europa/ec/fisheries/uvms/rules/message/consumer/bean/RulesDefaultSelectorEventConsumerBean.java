@@ -78,7 +78,7 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
     @Override
     public void onMessage(Message message) {
         MDC.remove("requestId");
-        LOG.info("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {

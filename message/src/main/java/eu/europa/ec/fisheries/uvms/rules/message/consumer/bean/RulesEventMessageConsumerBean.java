@@ -137,7 +137,7 @@ public class RulesEventMessageConsumerBean implements MessageListener {
         String id = UUID.randomUUID().toString();
         MDC.put("clientName", id);
         MDC.remove("requestId");
-        LOG.info("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
