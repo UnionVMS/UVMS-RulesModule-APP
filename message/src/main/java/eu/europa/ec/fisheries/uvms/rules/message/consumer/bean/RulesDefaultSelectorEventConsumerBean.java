@@ -33,6 +33,10 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+/**
+ * Message driven bean that receives all messages that
+ * have a message selector, for which no other MDB has been defined.
+ */
 @MessageDriven(mappedName = MessageConstants.QUEUE_MODULE_RULES, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -46,62 +50,6 @@ import javax.jms.TextMessage;
 public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesDefaultSelectorEventConsumerBean.class);
-
-    @Inject
-    @SetMovementReportReceivedEvent
-    private Event<EventMessage> setMovementReportRecievedEvent;
-
-    @Inject
-    @GetTicketsByMovementsEvent
-    private Event<EventMessage> getTicketsByMovementsEvent;
-
-    @Inject
-    @CountTicketsByMovementsEvent
-    private Event<EventMessage> countTicketByMovementsEvent;
-
-    @Inject
-    @GetCustomRuleReceivedEvent
-    private Event<EventMessage> getCustomRuleRecievedEvent;
-
-    @Inject
-    @GetTicketsAndRulesByMovementsEvent
-    private Event<EventMessage> getTicketsAndRulesByMovementsEvent;
-
-    @Inject
-    @ValidateMovementReportReceivedEvent
-    private Event<EventMessage> validateMovementReportReceivedEvent;
-
-    @Inject
-    @PingReceivedEvent
-    private Event<EventMessage> pingReceivedEvent;
-
-    @Inject
-    @SetFLUXFAReportMessageReceivedEvent
-    private Event<EventMessage> setFLUXFAReportMessageReceivedEvent;
-
-    @Inject
-    @SendFaReportEvent
-    private Event<EventMessage> sendFLUXFAReportMessageReceivedEvent;
-
-    @Inject
-    @SetFluxFaQueryMessageReceivedEvent
-    private Event<EventMessage> setFaQueryReceivedEvent;
-
-    @Inject
-    @SendFaQueryEvent
-    private Event<EventMessage> sendFaQueryReceivedEvent;
-
-    @Inject
-    @RcvFluxResponseEvent
-    private Event<EventMessage> rcvFluxResponse;
-
-    @Inject
-    @SetFLUXMDRSyncMessageReceivedEvent
-    private Event<EventMessage> setFLUXMDRSyncMessageReceivedEvent;
-
-    @Inject
-    @GetFLUXMDRSyncMessageResponseEvent
-    private Event<EventMessage> getFluxMdrSynchMessageResponse;
 
     @Inject
     @ReceiveSalesQueryEvent
@@ -124,17 +72,13 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
     private Event<EventMessage> sendSalesResponseEvent;
 
     @Inject
-    @GetValidationResultsByRawGuid
-    private Event<EventMessage> getValidationResultsByRawMsgGuid;
-
-    @Inject
     @ErrorEvent
     private Event<EventMessage> errorEvent;
 
     @Override
     public void onMessage(Message message) {
         MDC.remove("requestId");
-        LOG.info("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
@@ -142,45 +86,6 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
             RulesModuleMethod method = request.getMethod();
             LOG.info("Request message method: " + method.value());
             switch (method) {
-                case SET_MOVEMENT_REPORT:
-                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case PING:
-                    pingReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case GET_CUSTOM_RULE:
-                    getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case GET_TICKETS_BY_MOVEMENTS:
-                    getTicketsByMovementsEvent.fire(new EventMessage(textMessage));
-                    break;
-                case COUNT_TICKETS_BY_MOVEMENTS:
-                    countTicketByMovementsEvent.fire(new EventMessage(textMessage));
-                    break;
-                case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
-                    getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_FA_REPORT :
-                    setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SEND_FLUX_FA_REPORT :
-                    sendFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_FA_QUERY :
-                    setFaQueryReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SEND_FLUX_FA_QUERY :
-                    sendFaQueryReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case RCV_FLUX_RESPONSE:
-                    rcvFluxResponse.fire(new EventMessage(textMessage));
-                    break;
-                case SET_FLUX_MDR_SYNC_REQUEST :
-                    setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
-                    break;
-                case GET_FLUX_MDR_SYNC_RESPONSE :
-                    getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
-                    break;
                 case RECEIVE_SALES_QUERY:
                     receiveSalesQueryEvent.fire(new EventMessage(textMessage));
                     break;
@@ -195,9 +100,6 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
                     break;
                 case SEND_SALES_RESPONSE:
                     sendSalesResponseEvent.fire(new EventMessage(textMessage));
-                    break;
-                case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
-                    getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());
