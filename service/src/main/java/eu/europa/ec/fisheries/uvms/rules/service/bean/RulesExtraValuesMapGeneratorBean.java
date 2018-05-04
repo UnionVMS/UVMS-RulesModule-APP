@@ -15,6 +15,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.AC
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -49,11 +50,12 @@ public class RulesExtraValuesMapGeneratorBean {
 
     private StopWatch stopWatch = new StopWatch();
 
-    public Map<ExtraValueType, Object> generateExtraValueMap(BusinessObjectType businessObjectType, Object businessObject) {
+    public Map<ExtraValueType, Object> generateExtraValueMap(BusinessObjectType businessObjectType, Object businessObject, final String senderReceiver) {
         log.info(INFO_GOING_TO_GENERATE_EXRAVALUE_MAP_FOR + businessObjectType + BUSINESS_OBJECCT_TYPE);
         stopWatch.reset();
         stopWatch.start();
-        Map<ExtraValueType, Object> map = new HashMap<>();
+        Map<ExtraValueType, Object> map = new HashMap<ExtraValueType, Object>(){{put(SENDER_RECEIVER, senderReceiver);}};
+
         switch (businessObjectType) {
             case RECEIVING_FA_REPORT_MSG:
                 map.put(ACTIVITY_NON_UNIQUE_IDS, activityService.getNonUniqueIdsList(businessObject));

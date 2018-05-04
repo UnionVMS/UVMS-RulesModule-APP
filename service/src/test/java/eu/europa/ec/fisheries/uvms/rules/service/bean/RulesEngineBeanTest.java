@@ -120,7 +120,7 @@ public class RulesEngineBeanTest {
 
     @Test
     public void testGenerateExtraValueMap(){
-        Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage());
+        Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage(), "XEU");
         assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_NON_UNIQUE_IDS)).size());
         assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_WITH_TRIP_IDS)).size());
     }
