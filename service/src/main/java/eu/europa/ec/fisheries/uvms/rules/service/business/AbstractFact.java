@@ -50,7 +50,7 @@ public abstract class AbstractFact {
 
     protected FactType factType;
 
-    String senderOrReceiver;
+    protected String senderOrReceiver;
 
     protected List<RuleWarning> warnings;
 
@@ -973,7 +973,13 @@ public abstract class AbstractFact {
                 if (StringUtils.isNotEmpty(id.getValue())) {
                     hasOnlyEmptyElements = false;
                 }
-        } else {
+        } else if (object instanceof TextType){
+            for (TextType id : (List<TextType>) collection)
+                if (StringUtils.isNotEmpty(id.getValue())) {
+                    hasOnlyEmptyElements = false;
+                }
+        }
+        else {
             for (Object obj :  collection)
                 if (!allFieldsAreNullOrEmptyList(obj)){
                     hasOnlyEmptyElements = false;
@@ -1194,7 +1200,7 @@ public abstract class AbstractFact {
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
         ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z"),
-        FLUXTL_ON("[a-zA-Z0-9]{20}");
+        FLUXTL_ON("[a-zA-Z]{3}[a-zA-Z0-9]{17}");
 
         String formatStr;
 
@@ -1323,6 +1329,18 @@ public abstract class AbstractFact {
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {
         return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public boolean isBlank(MeasureType measureType) {
+        return measureType == null || measureType.getValue() == null;
+    }
+
+    public boolean isBlank(TextType textType) {
+        return textType == null || StringUtils.isBlank(textType.getValue());
+    }
+
+    public boolean isBlank(eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType) {
+        return codeType == null || StringUtils.isBlank(codeType.getValue());
     }
 
     public boolean isBlank(IdType id) {

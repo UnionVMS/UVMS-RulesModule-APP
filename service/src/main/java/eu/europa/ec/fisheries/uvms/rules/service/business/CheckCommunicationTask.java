@@ -28,9 +28,9 @@ public class CheckCommunicationTask implements Runnable {
 
     private final static Logger LOG = LoggerFactory.getLogger(CheckCommunicationTask.class);
 
-    RulesService rulesService;
+    private RulesService rulesService;
 
-    public CheckCommunicationTask(RulesService rulesService) {
+    CheckCommunicationTask(RulesService rulesService) {
         this.rulesService = rulesService;
     }
 
@@ -41,9 +41,8 @@ public class CheckCommunicationTask implements Runnable {
         try {
             previousReports = rulesService.getPreviousMovementReports();
         } catch (RulesServiceException | RulesFaultException e) {
-            LOG.warn("No previous movement report found");
+            LOG.warn("[WARN] No previous movement report found");
         }
-
         try {
             // Map to fact, adding 2h to deadline
             for (PreviousReportType previousReport : previousReports) {
@@ -57,8 +56,7 @@ public class CheckCommunicationTask implements Runnable {
                 fact.setDeadline(threshold);
 
                 if (fact.getDeadline().getTime() <= new Date().getTime()) {
-                    LOG.info("\t==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getAssetGuid());
-
+                    LOG.info("\t[INFO] ==> Executing RULE '" + ServiceConstants.ASSET_NOT_SENDING_RULE + "', deadline:" + fact.getDeadline() + ", assetGuid:" + fact.getAssetGuid());
                     String ruleName = ServiceConstants.ASSET_NOT_SENDING_RULE;
                     rulesService.timerRuleTriggered(ruleName, fact);
                 }

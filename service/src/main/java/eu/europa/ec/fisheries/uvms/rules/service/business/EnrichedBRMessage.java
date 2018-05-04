@@ -8,20 +8,20 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
+import lombok.Data;
 
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
+@Data
+public class EnrichedBRMessage {
 
-@Stateless
-@Local
-public class ExchangeConsumer extends AbstractConsumer {
+    private String templateEntityName;
+    private String note;
+    private String expression;
+    private String message;
 
-    @Override
-    public String getDestinationName() {
-        return MessageConstants.QUEUE_RULES;
+    public EnrichedBRMessage(String note, String message) {
+        this.note = note;
+        this.message = message;
     }
 }

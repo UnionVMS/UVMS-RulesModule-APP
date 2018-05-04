@@ -623,7 +623,7 @@
             <column name="rule_id" value="240"/>
             <column name="br_id" value="FA-L02-00-0240"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFACatchCodeTypes) &amp;&amp; !codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="!codeTypeValueContainsMatch(specifiedFACatchCodeTypes, &quot;ONBOARD&quot;)"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="TypeCode of the catches is invalid."/>
             <column name="level" value="L02"/>
@@ -1409,7 +1409,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids, registrationVesselCountryId"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -1433,7 +1433,7 @@
             <column name="rule_id" value="65"/>
             <column name="br_id" value="FA-L03-00-0065"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note"
                     value="If ICCAT, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
@@ -1449,7 +1449,7 @@
             <column name="rule_id" value="66"/>
             <column name="br_id" value="FA-L03-00-0066"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
             <column name="note" value="If a register is available."/>
             <column name="message"
                     value="Vessel ID IRCS and external marking are provided, but the vessel is not regsitered on a list non-EU vessels."/>
@@ -3185,7 +3185,7 @@
             <column name="expression"
                     value="weightMeasure != null &amp;&amp; weightMeasure.unitCode != null &amp;&amp; weightMeasure.unitCode != &quot;KGM&quot;"/>
             <column name="note" value="Attribute UnitCode must be KGM (kilograms)"/>
-            <column name="message" value="Unit of weight for this catch must be expressen in kilograms."/>
+            <column name="message" value="Unit of weight for this catch must be expressed in kilograms."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
@@ -3850,7 +3850,7 @@
             <column name="rule_id" value="130"/>
             <column name="br_id" value="FA-L00-00-0130"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null "/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; isBlank(valueCode)"/>
             <column name="note" value="valueCode must be present. "/>
             <column name="message" value="Expected code value missing. "/>
             <column name="level" value="L00"/>
@@ -3864,7 +3864,7 @@
             <column name="rule_id" value="131"/>
             <column name="br_id" value="FA-L00-00-0131"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;TEXT&quot; &amp;&amp; value == null "/>
+                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isBlank(value)"/>
             <column name="note" value="value must be present. "/>
             <column name="message" value="Expected text value missing. "/>
             <column name="level" value="L00"/>
@@ -3878,7 +3878,7 @@
             <column name="rule_id" value="132"/>
             <column name="br_id" value="FA-L00-00-0132"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null "/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; isBlank(valueQuantity)"/>
             <column name="note" value="valueQuantity must be present. "/>
             <column name="message" value="Expected quantity value missing. "/>
             <column name="level" value="L00"/>
@@ -5575,8 +5575,8 @@
             <column name="rule_id" value="225"/>
             <column name="br_id" value="FA-L00-00-0225"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null"/>
-            <column name="note" value="Data type must be INDICATOR"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null || isEmpty(valueIndicator.indicatorString.value))"/>
+            <column name="note" value="If UN_DATA_TYPE for the characteristic is INDICATOR, ValueIndicator must be present and have a value."/>
             <column name="message" value="Expected indicator type missing."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
@@ -5617,7 +5617,7 @@
             <column name="rule_id" value="228"/>
             <column name="br_id" value="FA-L00-00-0228"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; valueQuantity == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; (valueQuantity == null || valueQuantity.value == null)"/>
             <column name="note" value="Data type must be QUANTITY"/>
             <column name="message" value="Expected quantity value missing."/>
             <column name="level" value="L00"/>
@@ -5958,7 +5958,7 @@
             <column name="rule_id" value="394"/>
             <column name="br_id" value="FA-L03-00-0394"/>
             <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; !matchWithFluxTL(fluxPartyIds)"/>
-            <column name="note" value="The party sending must be allowed to send the message."/>
+            <column name="note" value="The party sending the response must be the same as the one from the FR value of the FLUX TL envelope. Only the part before the first colon is to be considered: Eg. ABC:something => only ABC refres to the party for the purpose of this rule."/>
             <column name="message" value="Respondent ID is not consistent with FLUX TL envelope parameters."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>

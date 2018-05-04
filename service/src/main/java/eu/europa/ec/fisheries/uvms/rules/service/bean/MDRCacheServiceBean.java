@@ -11,6 +11,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.ejb.*;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +31,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -49,22 +62,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private MDRCache cache;
 
-    @EJB
-    private AsyncMdrCacheLoader ayncMdrCacheLoader;
-
-    private Map<String, String> errorMessages;
-
-    @PostConstruct
-    public void loadCacheOnStartup(){
-        log.info("[START] Going to load MDR cache Asynchronously..");
-        ayncMdrCacheLoader.loadCache();
-        log.info("[END] MDR cache is being loaded Asynchronously..");
-    }
+    private Map<String, EnrichedBRMessage> errorMessages;
 
     @AccessTimeout(value = 30, unit = MINUTES)
     @Lock(LockType.WRITE)
     public void loadMDRCache() {
-
         try {
             ExecutorService executorService = Executors.newFixedThreadPool(5);
             List<Callable<List<ObjectRepresentation>>> myCallableList = new ArrayList<>();
@@ -96,7 +98,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     @AccessTimeout(value = 180, unit = SECONDS)
     @Lock(LockType.READ)
-    public String getErrorMessageForBrId(String brId){
+    public EnrichedBRMessage getErrorMessageForBrId(String brId){
         return errorMessages.get(brId);
     }
 
@@ -117,9 +119,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }};
         final String MESSAGE_COLUMN = "messageIfFailing";
         final String BR_ID_COLUMN = "code";
+        final String BR_NOTE_COLUMN = "note";
+
         for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
+            String note = null;
+
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if(MESSAGE_COLUMN.equals(columnName)){
@@ -128,8 +134,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 if(BR_ID_COLUMN.equals(columnName)){
                     brId = field.getColumnValue();
                 }
+                if(BR_NOTE_COLUMN.equals(columnName)){
+                    note = field.getColumnValue();
+                }
             }
-            errorMessages.put(brId,errorMessage);
+            errorMessages.put(brId,new EnrichedBRMessage(note, errorMessage));
         }
     }
 

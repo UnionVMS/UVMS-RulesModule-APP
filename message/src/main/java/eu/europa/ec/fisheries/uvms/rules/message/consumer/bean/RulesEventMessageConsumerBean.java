@@ -59,9 +59,9 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL")
 })
-public class RulesEventConsumerBean implements MessageListener {
+public class RulesEventMessageConsumerBean implements MessageListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesEventConsumerBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(RulesEventMessageConsumerBean.class);
 
     @Inject
     @SetMovementReportReceivedEvent
