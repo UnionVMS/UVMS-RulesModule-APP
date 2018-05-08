@@ -27,14 +27,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Slf4j
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
@@ -101,6 +101,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         fact.setSource(Source.REPORT);
         fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
         fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
+        fact.setCreationDateOfMessage((DateTime) extraValueMap.get(CREATION_DATE_OF_MESSAGE));
 
         if (report.getAuctionSale() != null) {
             fact.setSalesCategoryType(report.getAuctionSale().getSalesCategory());

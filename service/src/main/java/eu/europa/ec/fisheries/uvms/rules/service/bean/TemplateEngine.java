@@ -14,12 +14,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +29,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 @Slf4j
@@ -69,6 +66,7 @@ public class TemplateEngine {
     }
 
     private void refreshRulesValidationMessages(List<TemplateRuleMapDto> templatesAndRules) {
+        cacheService.loadCacheForFailureMessages();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());
@@ -84,11 +82,15 @@ public class TemplateEngine {
         }
     }
 
+    @Lock(LockType.WRITE)
+    @AccessTimeout(value = 180, unit = SECONDS)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void reInitialize() {
         initialize();
     }
 
+    @Lock(LockType.WRITE)
+    @AccessTimeout(value = 180, unit = SECONDS)
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
         if (CollectionUtils.isEmpty(facts)) {

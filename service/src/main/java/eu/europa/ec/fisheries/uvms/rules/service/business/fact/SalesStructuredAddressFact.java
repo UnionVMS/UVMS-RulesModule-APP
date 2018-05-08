@@ -1,11 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
+
+import java.util.Objects;
 
 public class SalesStructuredAddressFact extends SalesAbstractFact {
 
@@ -189,12 +189,13 @@ public class SalesStructuredAddressFact extends SalesAbstractFact {
                 Objects.equals(staircaseNumber, that.staircaseNumber) &&
                 Objects.equals(floorIdentification, that.floorIdentification) &&
                 Objects.equals(roomIdentification, that.roomIdentification) &&
-                Objects.equals(postalArea, that.postalArea);
+                Objects.equals(postalArea, that.postalArea) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea);
+        return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea, creationDateOfMessage);
     }
 
 

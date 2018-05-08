@@ -43,6 +43,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import javax.ejb.EJB;
+
 /**
  * Created by padhyad on 6/7/2017.
  */
@@ -65,6 +67,9 @@ public class TemplateEngineBeanTest {
 
     @Mock
     RulesStatusUpdater rulesStatusUpdaterBean;
+
+    @Mock
+    private MDRCacheRuleService cacheService;
 
     @Test(expected = RulesValidationException.class)
     public void testEvaluateEmptyFacts() throws RulesValidationException {
@@ -115,6 +120,7 @@ public class TemplateEngineBeanTest {
     @Test
     public void testInitialize() {
         try {
+            Mockito.doNothing().when(cacheService).loadCacheForFailureMessages();
             Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
             Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
             templateEngine.initialize();

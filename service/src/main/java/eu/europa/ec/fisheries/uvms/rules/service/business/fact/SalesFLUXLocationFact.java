@@ -154,11 +154,12 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
                 Objects.equals(postalStructuredAddresses, that.postalStructuredAddresses) &&
                 Objects.equals(physicalStructuredAddress, that.physicalStructuredAddress) &&
                 Objects.equals(boundarySpecifiedPolygons, that.boundarySpecifiedPolygons) &&
-                Objects.equals(applicableFLUXCharacteristics, that.applicableFLUXCharacteristics);
+                Objects.equals(applicableFLUXCharacteristics, that.applicableFLUXCharacteristics) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeCode, countryID, id, geopoliticalRegionCode, names, sovereignRightsCountryID, jurisdictionCountryID, regionalFisheriesManagementOrganizationCode, specifiedPhysicalFLUXGeographicalCoordinate, postalStructuredAddresses, physicalStructuredAddress, boundarySpecifiedPolygons, applicableFLUXCharacteristics);
+        return Objects.hash(typeCode, countryID, id, geopoliticalRegionCode, names, sovereignRightsCountryID, jurisdictionCountryID, regionalFisheriesManagementOrganizationCode, specifiedPhysicalFLUXGeographicalCoordinate, postalStructuredAddresses, physicalStructuredAddress, boundarySpecifiedPolygons, applicableFLUXCharacteristics, creationDateOfMessage);
     }
 }

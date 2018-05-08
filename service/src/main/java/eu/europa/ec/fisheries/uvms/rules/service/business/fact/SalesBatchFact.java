@@ -1,8 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.List;
-import java.util.Objects;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AAPProductType;
 import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
@@ -53,11 +50,12 @@ public class SalesBatchFact extends SalesAbstractFact {
         SalesBatchFact that = (SalesBatchFact) o;
         return Objects.equals(ids, that.ids) &&
                 Objects.equals(specifiedAAPProducts, that.specifiedAAPProducts) &&
-                Objects.equals(totalSalesPrice, that.totalSalesPrice);
+                Objects.equals(totalSalesPrice, that.totalSalesPrice) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, specifiedAAPProducts, totalSalesPrice);
+        return Objects.hash(ids, specifiedAAPProducts, totalSalesPrice, creationDateOfMessage);
     }
 }

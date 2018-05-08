@@ -93,11 +93,12 @@ public class SalesFLUXReportDocumentFact extends SalesAbstractFact implements Fa
                 Objects.equals(purposeCode, that.purposeCode) &&
                 Objects.equals(purpose, that.purpose) &&
                 Objects.equals(typeCode, that.typeCode) &&
-                Objects.equals(ownerFLUXParty, that.ownerFLUXParty);
+                Objects.equals(ownerFLUXParty, that.ownerFLUXParty) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, referencedID, creationDateTime, purposeCode, purpose, typeCode, ownerFLUXParty);
+        return Objects.hash(ids, referencedID, creationDateTime, purposeCode, purpose, typeCode, ownerFLUXParty, creationDateOfMessage);
     }
 }

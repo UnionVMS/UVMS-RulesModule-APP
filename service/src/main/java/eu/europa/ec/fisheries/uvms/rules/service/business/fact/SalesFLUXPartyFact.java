@@ -39,11 +39,12 @@ public class SalesFLUXPartyFact extends SalesAbstractFact {
         if (!(o instanceof SalesFLUXPartyFact)) return false;
         SalesFLUXPartyFact that = (SalesFLUXPartyFact) o;
         return Objects.equals(ids, that.ids) &&
-                Objects.equals(names, that.names);
+                Objects.equals(names, that.names) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, names);
+        return Objects.hash(ids, names, creationDateOfMessage);
     }
 }

@@ -15,6 +15,8 @@ import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -32,6 +34,7 @@ public class SalesServiceBeanHelper {
     @EJB
     private RulesResponseConsumer messageConsumer;
 
+    @Lock(LockType.READ)
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
@@ -39,11 +42,12 @@ public class SalesServiceBeanHelper {
         return unmarshal(receivedMessageAsString);
     }
 
+    @Lock(LockType.READ)
     protected String sendMessageToSales(String request) throws MessageException {
         return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES);
     }
 
-
+    @Lock(LockType.READ)
     protected Optional<FLUXSalesReportMessage> unmarshal(String message) throws SalesMarshallException {
         FindReportByIdResponse findReportByIdResponse = JAXBMarshaller.unmarshallString(message, FindReportByIdResponse.class);
         if (StringUtils.isNotBlank(findReportByIdResponse.getReport())) {
@@ -53,6 +57,7 @@ public class SalesServiceBeanHelper {
         }
     }
 
+    @Lock(LockType.READ)
     public Optional<FLUXSalesReportMessage> findReport(String guid) throws MessageException, SalesMarshallException, JMSException {
         log.info("Send FLUXSalesReportMessage request message to Sales module");
         String findReportByIdRequest = SalesModuleRequestMapper.createFindReportByIdRequest(guid);
@@ -60,14 +65,16 @@ public class SalesServiceBeanHelper {
         return receiveMessageFromSales(correlationId);
     }
 
-    public boolean areAnyOfTheseIdsNotUnique(List<String> id, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
-        String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(id, type);
-        log.info("Send CheckForUniqueIdRequest request message to Sales module");
+    @Lock(LockType.READ)
+    public boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
+        String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(ids, type);
+        log.info("Send CheckForUniqueIdRequest message to Sales module");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 30000L);
-        log.info("Received CheckForUniqueIdResponse response message from Sales module");
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 60000L);
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
+        String id = (ids.isEmpty()) ? "0" : ids.get(0);
+        log.info("Received CheckForUniqueIdResponse message. IsUniqueSales: " + response.isUnique() + " ID: " + id + " type: " + type.value());
         return !response.isUnique();
     }
 }

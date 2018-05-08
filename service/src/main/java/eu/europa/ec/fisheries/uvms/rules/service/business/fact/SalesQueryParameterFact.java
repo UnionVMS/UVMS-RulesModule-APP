@@ -62,12 +62,13 @@ public class SalesQueryParameterFact extends SalesAbstractFact {
         return Objects.equals(typeCode, that.typeCode) &&
                 Objects.equals(valueCode, that.valueCode) &&
                 Objects.equals(valueDateTime, that.valueDateTime) &&
-                Objects.equals(valueID, that.valueID);
+                Objects.equals(valueID, that.valueID) &&
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeCode, valueCode, valueDateTime, valueID);
+        return Objects.hash(typeCode, valueCode, valueDateTime, valueID, creationDateOfMessage);
     }
 
     public boolean hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat() {
