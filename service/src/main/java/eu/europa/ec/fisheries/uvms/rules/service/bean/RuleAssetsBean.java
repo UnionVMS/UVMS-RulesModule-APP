@@ -61,7 +61,7 @@ public class RuleAssetsBean {
     @EJB
     private RulesMessageProducer producer;
 
-    private List<String> supportedIds = Arrays.asList("IRCS","CFR","EXT_MARK","NAME");
+    private List<String> supportedIds = Arrays.asList("IRCS","CFR","EXT_MARK","NAME", "ICCAT");
 
 
     public List<IdTypeWithFlagState> getAssetList(Object message){
@@ -129,6 +129,10 @@ public class RuleAssetsBean {
             String name = asset.getName();
             if(StringUtils.isNotEmpty(name)){
                 assetTypes.add(new IdTypeWithFlagState("NAME", name, countryCode));
+            }
+            String iccat = asset.getIccat();
+            if(StringUtils.isNotEmpty(iccat)){
+                assetTypes.add(new IdTypeWithFlagState("ICCAT", iccat, countryCode));
             }
         }
         return assetTypes;
