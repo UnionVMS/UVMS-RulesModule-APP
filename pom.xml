@@ -42,12 +42,7 @@
         <activity.model.version>1.0.7</activity.model.version>
         <mdr.model.version>1.0.2</mdr.model.version>
         <subscription.model.version>1.3</subscription.model.version>
-
-<<<<<<< HEAD
         <asset.model.version>4.0.11</asset.model.version>
-=======
-        <asset.model.version>4.0.4</asset.model.version>
->>>>>>> 79b6500720f75e5a61ca7c0b321aa9cc587ab55b
         <audit.model.version>4.0.4</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>1.0.10</sales.model.version>
