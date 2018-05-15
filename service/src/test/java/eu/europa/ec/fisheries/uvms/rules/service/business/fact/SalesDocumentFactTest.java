@@ -92,23 +92,6 @@ public class SalesDocumentFactTest {
     }
 
     @Test
-    public void isInvalidCurrencyCodeWhenValid() throws Exception {
-        fact.setCurrencyCode(new CodeType("EUR"));
-        boolean validCurrencyCode = fact.isInvalidCurrencyCode();
-
-        assertFalse(validCurrencyCode);
-    }
-
-    @Test
-    public void isInvalidCurrencyCodeWhenInvalid() throws Exception {
-        fact.setCurrencyCode(new CodeType("Gimme gimme gimme"));
-        boolean validCurrencyCode = fact.isInvalidCurrencyCode();
-
-        assertTrue(validCurrencyCode);
-    }
-
-
-    @Test
     public void equalsAndHashCode() {
         EqualsVerifier.forClass(SalesDocumentFact.class)
                 .suppress(Warning.STRICT_INHERITANCE)
