@@ -158,10 +158,6 @@ public class SalesDocumentFact extends SalesAbstractFact {
     }
 
 
-    public boolean isInvalidCurrencyCode() {
-        return !SalesFactHelper.doesSetContainAnyValue(Arrays.asList(currencyCode.getValue()), SalesFactHelper.getValidCurrencies());
-    }
-
     public boolean isInvalidSalesNoteID() {
         return !validateFormat(salesNoteIDs.get(0).getValue(), FORMATS.EU_SALES_SALES_NOTE_ID.getFormatStr());
     }

@@ -133,9 +133,6 @@ public class SalesFLUXLocationFact extends SalesAbstractFact {
         this.applicableFLUXCharacteristics = applicableFLUXCharacteristics;
     }
 
-    public boolean isCountryIdValid() {
-        return SalesFactHelper.isCountryIdValid(countryID);
-    }
 
     @Override
     public boolean equals(Object o) {
