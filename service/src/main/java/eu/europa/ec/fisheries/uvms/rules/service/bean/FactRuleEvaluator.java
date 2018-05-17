@@ -68,7 +68,7 @@ public class FactRuleEvaluator {
     private List<AbstractFact> exceptionsList = new ArrayList<>();
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void initializeRules(Collection<TemplateRuleMapDto> templates) {
+    void initializeRules(Collection<TemplateRuleMapDto> templates) {
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
@@ -147,7 +147,7 @@ public class FactRuleEvaluator {
         }
     }
 
-    public void validateFact(Collection<AbstractFact> facts) {
+    void validateFacts(Collection<AbstractFact> facts) {
         KieSession ksession = null;
         try {
             KieContainer container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
@@ -183,7 +183,7 @@ public class FactRuleEvaluator {
                         exceptionsList.add(failedFact);
                     }
                 }
-                validateFact(facts);
+                validateFacts(facts);
             }
         }
     }

@@ -52,7 +52,7 @@ public class TemplateEngine {
 
     @PostConstruct
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void initialize() {
+    void initialize() {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             List<TemplateRuleMapDto> templatesAndRules = rulesDb.getAllFactTemplatesAndRules();
@@ -92,12 +92,12 @@ public class TemplateEngine {
     @Lock(LockType.WRITE)
     @AccessTimeout(value = 180, unit = SECONDS)
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
+    void evaluateFacts(List<AbstractFact> facts) throws RulesValidationException {
         if (CollectionUtils.isEmpty(facts)) {
             throw new RulesValidationException("No facts available for validation");
         }
         ruleEvaluator.setExceptionsList(new ArrayList<AbstractFact>());
-        ruleEvaluator.validateFact(facts);
+        ruleEvaluator.validateFacts(facts);
         facts.addAll(ruleEvaluator.getExceptionsList());
     }
 }
