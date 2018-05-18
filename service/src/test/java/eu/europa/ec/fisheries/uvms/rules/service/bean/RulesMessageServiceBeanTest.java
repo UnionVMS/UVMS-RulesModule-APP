@@ -13,6 +13,24 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
@@ -24,7 +42,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -45,24 +63,15 @@ import org.mockito.junit.MockitoRule;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 6/7/2017.
@@ -88,6 +97,9 @@ public class RulesMessageServiceBeanTest {
 
     @Mock
     RulePostProcessBean rulePostprocessBean;
+
+    @Mock
+    RulePostProcessBean rulesPreProcessBean;
 
     @Mock
     RulesConfigurationCache ruleModuleCache;
@@ -183,7 +195,7 @@ public class RulesMessageServiceBeanTest {
 
     @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
-        messageServiceBean.evaluateReceiveFLUXFAReportRequest(null);
+        messageServiceBean.evaluateIncomingFLUXFAReport(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -195,7 +207,7 @@ public class RulesMessageServiceBeanTest {
         req.setType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
-        messageServiceBean.evaluateReceiveFLUXFAReportRequest(req);
+        messageServiceBean.evaluateIncomingFLUXFAReport(req);
 
     }
 
@@ -246,9 +258,9 @@ public class RulesMessageServiceBeanTest {
 
     private ValidationResultDto getValidationResult() {
         ValidationResultDto faReportValidationResult = new ValidationResultDto();
-        faReportValidationResult.setIsError(true);
-        faReportValidationResult.setIsOk(false);
-        faReportValidationResult.setIsWarning(false);
+        faReportValidationResult.setError(true);
+        faReportValidationResult.setOk(false);
+        faReportValidationResult.setWarning(false);
 
         ValidationMessageType validationMessageType = new ValidationMessageType();
         validationMessageType.setBrId("brid1");
@@ -275,5 +287,4 @@ public class RulesMessageServiceBeanTest {
         msg.setFAReportDocuments(singletonList(doc));
         return msg;
     }
-
 }

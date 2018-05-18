@@ -21,7 +21,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CountTicketsByMovementsRequest;
@@ -86,15 +85,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +131,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
-                LOG.error("[ERROR] Error, Set Movement Report invoked but it is not the intended method, caller is trying : " + baseRequest.getMethod().name());
+                LOG.error("[ERROR] Error, Set Movement Report invoked but it is not the intended method, caller is trying {}", baseRequest.getMethod().name());
             }
             SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
             rulesService.setMovementReportReceived(request.getRequest(), request.getType().name(), baseRequest.getUsername());
@@ -239,7 +229,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             LOG.info("\n\n[INFO] Got SetFLUXFAReportMessageReceived (@SetFLUXFAReportMessageReceivedEvent) inside rules");
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            messageService.evaluateReceiveFLUXFAReportRequest(request);
+            messageService.evaluateIncomingFLUXFAReport(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -253,7 +243,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             LOG.info("\n\n[INFO] Got SetFLUXFAReportMessageRequest (@SendFaReportEvent) inside rules..");
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            messageService.evaluateSendFaReportMessage(request);
+            messageService.evaluateOutgoingFaReport(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -267,7 +257,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             LOG.info("\n\n[INFO] Got SetFluxFaQueryMessageReceivedEvent (@SetFluxFaQueryMessageReceivedEvent) inside rules..");
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
-            messageService.evaluateReceiveFaQueryRequest(request);
+            messageService.evaluateIncomingFAQuery(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -281,7 +271,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             LOG.info("\n\n[INFO] Got SetFluxFaQueryMessageReceivedEvent (@SendFaQueryEvent) inside rules..");
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
-            messageService.evaluateSendFaQueryRequest(request);
+            messageService.evaluateOutgoingFAQuery(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {

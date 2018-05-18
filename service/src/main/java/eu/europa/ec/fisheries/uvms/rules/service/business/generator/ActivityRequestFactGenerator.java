@@ -42,6 +42,12 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -53,11 +59,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +67,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
@@ -122,26 +124,34 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
     @Override
     public List<AbstractFact> generateAllFacts() {
         List<AbstractFact> facts = new ArrayList<>();
-        facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
             facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments));
             int index = 1;
             for (FAReportDocument faReportDocument : faReportDocuments) {
 
+                List<AbstractFact> currentFAReportFacts = new ArrayList<>();
+
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-                facts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
+                currentFAReportFacts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
-                facts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
+                currentFAReportFacts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-                addFactsForVesselTransportMeansStructuresAddress(facts, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
+                addFactsForVesselTransportMeansStructuresAddress(currentFAReportFacts, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
 
+                FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
+
+                if (relatedFLUXReportDocument != null){
+                    setUniqueIDs(relatedFLUXReportDocument.getIDS(), currentFAReportFacts);
+                }
+
+                facts.addAll(currentFAReportFacts);
                 index++;
             }
         }
-        facts.removeAll(Collections.singleton(null));
+        facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         return facts;
     }
 
@@ -165,6 +175,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 }
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                activityFactMapper.generateFactForFishingActivity(activity, faReportDocument,isSubActivity);
                 facts.add(activityFactMapper.generateFactForFishingActivity(activity, faReportDocument,isSubActivity));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
