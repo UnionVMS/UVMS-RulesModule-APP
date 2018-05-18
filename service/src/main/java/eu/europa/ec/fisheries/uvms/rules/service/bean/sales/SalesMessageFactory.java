@@ -1,19 +1,19 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.SalesIdType;
-import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
-import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.sales.model.mapper.ValidationQualityAnalysisMapper;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.schema.sales.SalesIdType;
+import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.sales.model.mapper.ValidationQualityAnalysisMapper;
 
 @Stateless
 public class SalesMessageFactory {

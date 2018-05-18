@@ -27,7 +27,7 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
@@ -55,6 +55,7 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 @Slf4j
 public class RulesResource {
 
+    private static final String SS_OO_MME_GUID = "ss-oo-mme-guid";
     @EJB
     private RulesMessageService messageService;
 
@@ -86,7 +87,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request, "XEU");
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
-            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_REPORT);
+            ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, SS_OO_MME_GUID, RawMsgType.FA_REPORT);
             fluxResponseMessage = messageService.generateFluxResponseMessageForFaReport(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
@@ -150,16 +151,4 @@ public class RulesResource {
         templateEngine.reInitialize();
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
-
-/* For test purposes only! For now the loadMdr() method doesn't work cause the whole Mdr registry is more then 150 MB!
-@EJB
-    private MDRCache cache;
-
-    @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/loadmdr")
-    public Response loadMdr() {
-        cache.init();
-        return Response.ok().build();
-    }*/
 }

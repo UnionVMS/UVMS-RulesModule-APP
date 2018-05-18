@@ -13,11 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,11 +40,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.*;
-
 /**
  * Created by padhyad on 5/8/2017.
  */
@@ -46,15 +51,15 @@ public class RulesPreProcessBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
-    public ValidationResultDto getValidationResultIfExist(List<String> ids) throws RulesModelException {
+    public ValidationResultDto loadValidationResults(List<String> ids) throws RulesModelException {
         List<ValidationMessageType> validationMessages = rulesDomainModel.getValidationMessagesById(ids);
         ValidationResultDto validationResultDto = new ValidationResultDto();
         if (CollectionUtils.isEmpty(validationMessages)) {
-            validationResultDto.setIsOk(true);
+            validationResultDto.setOk(true);
         } else {
             for (ValidationMessageType validationMessageType : validationMessages) {
-                validationResultDto.setIsError(validationMessageType.getErrorType().equals(ErrorType.ERROR));
-                validationResultDto.setIsWarning(!validationMessageType.getErrorType().equals(ErrorType.ERROR));
+                validationResultDto.setError(validationMessageType.getErrorType().equals(ErrorType.ERROR));
+                validationResultDto.setWarning(!validationMessageType.getErrorType().equals(ErrorType.ERROR));
             }
             validationResultDto.setValidationMessages(validationMessages);
         }
@@ -68,7 +73,7 @@ public class RulesPreProcessBean {
             FAQuery faQuery = faQueryMessage.getFAQuery();
             if (faQuery != null) {
                 IDType idType = faQuery.getID();
-                validationResult = getValidationResultIfExist(idType != null ? Collections.singletonList(idType.getValue()) : Collections.<String>emptyList());
+                validationResult = loadValidationResults(idType != null ? Collections.singletonList(idType.getValue()) : Collections.<String>emptyList());
                 validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
             }
         } catch (RulesModelException e) {
@@ -77,27 +82,33 @@ public class RulesPreProcessBean {
         return validationResultMap;
     }
 
-    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAReportMessage fluxfaReportMessage) throws RulesServiceException {
+    /**
+     *
+     * @param fluxFaReportMessage
+     * @return
+     * @throws RulesServiceException
+     */
+    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAReportMessage fluxFaReportMessage) throws RulesServiceException {
         boolean isContinueValidation = true;
         Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
         ValidationResultDto validationResult;
         try {
-            validationResult = getValidationResultIfExist(getIdsFromFluxFaReportDocument(fluxfaReportMessage.getFLUXReportDocument()));
+            validationResult = loadValidationResults(getFLUXReportDocumentIDs(fluxFaReportMessage));
             if (validationResult != null && !validationResult.isOk()) {
                 isContinueValidation = false;
-            } else if (CollectionUtils.isNotEmpty(fluxfaReportMessage.getFAReportDocuments())) {
-                Iterator it = fluxfaReportMessage.getFAReportDocuments().iterator();
+            } else if (CollectionUtils.isNotEmpty(fluxFaReportMessage.getFAReportDocuments())) {
+                Iterator it = fluxFaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
                     FAReportDocument faReportDocument = (FAReportDocument) it.next();
-                    ValidationResultDto validationResultFa = getValidationResultIfExist(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
+                    ValidationResultDto validationResultFa = loadValidationResults(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
                         it.remove();
                         addToValidationResult(validationResult, validationResultFa);
                     }
                 }
-                if (fluxfaReportMessage.getFAReportDocuments().isEmpty()) {
+              if (fluxFaReportMessage.getFAReportDocuments().isEmpty()) {
                     isContinueValidation = false;
-                }
+              }
             }
             validationResultMap.put(isContinueValidation, validationResult);
 
@@ -107,13 +118,20 @@ public class RulesPreProcessBean {
         return validationResultMap;
     }
 
+    private List<String> getIdsFromFluxFaReportDocument(FLUXReportDocument fluxReportDocument) {
+        if (fluxReportDocument == null) {
+            return Collections.emptyList();
+        }
+        return mapToIdsStrList(fluxReportDocument.getIDS());
+    }
+
     public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXResponseMessage fluxResponseMessage) throws RulesServiceException {
         Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
         ValidationResultDto validationResult;
         try {
             FLUXResponseDocument fluxRespDoc = fluxResponseMessage.getFLUXResponseDocument();
             if (fluxRespDoc != null) {
-                validationResult = getValidationResultIfExist(mapToIdsStrList(fluxRespDoc.getIDS()));
+                validationResult = loadValidationResults(mapToIdsStrList(fluxRespDoc.getIDS()));
                 validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
             }
         } catch (RulesModelException e) {
@@ -126,17 +144,32 @@ public class RulesPreProcessBean {
         if (globalValidationResult == null) {
             globalValidationResult = validationResultFa;
         }
-        globalValidationResult.setIsError(globalValidationResult.isError() || validationResultFa.isError());
-        globalValidationResult.setIsWarning(globalValidationResult.isWarning() || validationResultFa.isWarning());
-        globalValidationResult.setIsOk(globalValidationResult.isOk() || validationResultFa.isOk());
+        globalValidationResult.setError(globalValidationResult.isError() || validationResultFa.isError());
+        globalValidationResult.setWarning(globalValidationResult.isWarning() || validationResultFa.isWarning());
+        globalValidationResult.setOk(globalValidationResult.isOk() || validationResultFa.isOk());
         globalValidationResult.getValidationMessages().addAll(validationResultFa.getValidationMessages());
     }
 
-    private List<String> getIdsFromFluxFaReportDocument(FLUXReportDocument fluxReportDocument) {
-        if (fluxReportDocument == null) {
-            return Collections.emptyList();
+    private List<String> getFLUXReportDocumentIDs(FLUXFAReportMessage fluxfaReportMessage) {
+        List<IDType> collectedIDs = new ArrayList<>();
+        List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
+        if (CollectionUtils.isNotEmpty(faReportDocuments)){
+            for (FAReportDocument faReportDocument : faReportDocuments){
+                FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
+                List<IDType> fluxReportDocumentIDS = relatedFLUXReportDocument.getIDS();
+                addIDs(collectedIDs, fluxReportDocumentIDS);
+            }
         }
-        return mapToIdsStrList(fluxReportDocument.getIDS());
+        FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
+        List<IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
+        addIDs(collectedIDs, fluxReportDocumentIDS);
+        return mapToIdsStrList(collectedIDs);
+    }
+
+    private void addIDs(List<IDType> collectedIDIdTypes, List<IDType> fluxReportDocumentIDS) {
+        if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
+            collectedIDIdTypes.addAll(fluxReportDocumentIDS);
+        }
     }
 
     private List<String> mapToIdsStrList(List<IDType> idTypes) {
