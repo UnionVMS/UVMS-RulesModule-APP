@@ -64,7 +64,7 @@ public class FLUX_FA_ReportMessageTest {
 
         // Validation
         validator.initializeRules(templates);
-        validator.validateFact(facts);
+        validator.validateFacts(facts);
 
         // validate facts
         for (AbstractFact abstractFact : facts) {
