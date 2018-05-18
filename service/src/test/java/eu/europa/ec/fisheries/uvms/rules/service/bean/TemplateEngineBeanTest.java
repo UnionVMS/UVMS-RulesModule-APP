@@ -82,7 +82,7 @@ public class TemplateEngineBeanTest {
             public Void answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
-                for (AbstractFact obj : (ArrayList<AbstractFact>) facts) {
+                for (AbstractFact obj : (List<AbstractFact>) facts) {
                     obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
