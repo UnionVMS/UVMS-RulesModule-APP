@@ -13,19 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
@@ -46,6 +33,10 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Results;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.*;
 
 @Slf4j
 @Singleton
@@ -183,7 +174,9 @@ public class FactRuleEvaluator {
                         exceptionsList.add(failedFact);
                     }
                 }
-                validateFacts(facts);
+                if(CollectionUtils.isNotEmpty(facts)){ // Avoid looping if the last fact launched an Exception
+                    validateFacts(facts);
+                }
             }
         }
     }
