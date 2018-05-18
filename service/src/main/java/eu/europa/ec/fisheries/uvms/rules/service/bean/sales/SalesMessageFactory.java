@@ -18,11 +18,11 @@ import eu.europa.ec.fisheries.uvms.sales.model.mapper.ValidationQualityAnalysisM
 @Stateless
 public class SalesMessageFactory {
 
-    private static final String FLUX_GP_VALIDATION_TYPE_ERR = "ERR";
-    private static final String FLUX_GP_VALIDATION_TYPE_WAR = "WAR";
-    private static final String FLUX_GP_RESPONSE_NOK = "NOK";
-    private static final String FLUX_GP_RESPONSE_WOK = "WOK";
-    private static final String FLUX_GP_RESPONSE_OK = "OK";
+    public static final String FLUX_GP_VALIDATION_TYPE_ERR = "ERR";
+    public static final String FLUX_GP_VALIDATION_TYPE_WAR = "WAR";
+    public static final String FLUX_GP_RESPONSE_NOK = "NOK";
+    public static final String FLUX_GP_RESPONSE_WOK = "WOK";
+    public static final String FLUX_GP_RESPONSE_OK = "OK";
 
     public String createSalesQueryRequest(String request, ValidationResultDto validationResult, String pluginType) throws SalesMarshallException {
         List<ValidationQualityAnalysisType> validationQualityAnalysis = mapToValidationQualityAnalysis(validationResult);
@@ -43,7 +43,7 @@ public class SalesMessageFactory {
     }
 
 
-    List<ValidationQualityAnalysisType> mapToValidationQualityAnalysis(ValidationResultDto validationResult) {
+    protected List<ValidationQualityAnalysisType> mapToValidationQualityAnalysis(ValidationResultDto validationResult) {
         List<ValidationQualityAnalysisType> validationQualityAnalysisTypes = new ArrayList<>();
         if (isNotEmpty(validationResult.getValidationMessages())) {
             for (ValidationMessageType validationMessageType : validationResult.getValidationMessages()) {
@@ -57,7 +57,7 @@ public class SalesMessageFactory {
         return validationQualityAnalysisTypes;
     }
 
-    String getErrorType(ErrorType errorType) {
+    protected String getErrorType(ErrorType errorType) {
         switch (errorType) {
             case ERROR: return FLUX_GP_VALIDATION_TYPE_ERR;
             case WARNING: return FLUX_GP_VALIDATION_TYPE_WAR;
@@ -65,7 +65,7 @@ public class SalesMessageFactory {
         }
     }
 
-    String getMessageStatus(ValidationResultDto validationResultDto) {
+    protected String getMessageStatus(ValidationResultDto validationResultDto) {
         if (validationResultDto.isError()) {
             return FLUX_GP_RESPONSE_NOK;
         } else if (validationResultDto.isWarning()) {
