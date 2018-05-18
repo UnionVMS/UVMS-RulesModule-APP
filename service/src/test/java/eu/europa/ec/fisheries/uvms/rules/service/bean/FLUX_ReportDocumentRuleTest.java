@@ -90,7 +90,7 @@ public class FLUX_ReportDocumentRuleTest {
         AbstractFact fact = new FaReportDocumentFact();
         ((FaReportDocumentFact) fact).setCreationDateTime(new Date());
 
-        generator.validateFact(Collections.singletonList(fact));
+        generator.validateFacts(Collections.singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());
@@ -118,7 +118,7 @@ public class FLUX_ReportDocumentRuleTest {
         idTypes.add(idType);
         ((FaReportDocumentFact) fact).setIds(idTypes);
 
-        generator.validateFact(Collections.singletonList(fact));
+        generator.validateFacts(Collections.singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());

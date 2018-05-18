@@ -682,7 +682,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 log.info("[INFO] Validation needs to continue : [[ " + needToValidate + " ]].");
                 if (needToValidate) {
                     log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
-                    List<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new HashMap<ExtraValueType, Object>());
+                    Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_RESPONSE_MSG, null, request.getSenderOrReceiver());
+                    List<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, extraValueTypeObjectMap);
                     ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
                     updateValidationResultWithExisting(fluxResponseValidResults, validationMap.get(true));
                     updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
@@ -1095,16 +1096,20 @@ public class RulesMessageServiceBean implements RulesMessageService {
             if(!correctGuidProvided){
                 fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
             }
+
+            // Get fluxNationCode (Eg. XEU) from Config Module.
+            String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+            String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
+
             String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageObj);
             String logGuid = request.getLogGuid();
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj,request.getSenderOrReceiver());
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, fluxNationCode);
             log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
             List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValueTypeObjectMap);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
-            String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
-            String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "XEU";
+
             String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
             String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
             String onValue = request.getOnValue();
