@@ -130,24 +130,24 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
             int index = 1;
             for (FAReportDocument faReportDocument : faReportDocuments) {
 
-                List<AbstractFact> currentFAReportFacts = new ArrayList<>();
+                List<AbstractFact> factsByReport = new ArrayList<>();
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-                currentFAReportFacts.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
+                factsByReport.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
-                currentFAReportFacts.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
+                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-                addFactsForVesselTransportMeansStructuresAddress(currentFAReportFacts, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
+                addFactsForVesselTransportMeansStructuresAddress(factsByReport, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
 
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
                 if (relatedFLUXReportDocument != null){
-                    setUniqueIDs(relatedFLUXReportDocument.getIDS(), currentFAReportFacts);
+                    setUniqueIDs(relatedFLUXReportDocument.getIDS(), factsByReport);
                 }
 
-                facts.addAll(currentFAReportFacts);
+                facts.addAll(factsByReport);
                 index++;
             }
         }
@@ -175,7 +175,6 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 }
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                activityFactMapper.generateFactForFishingActivity(activity, faReportDocument,isSubActivity);
                 facts.add(activityFactMapper.generateFactForFishingActivity(activity, faReportDocument,isSubActivity));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
