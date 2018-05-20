@@ -10,9 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.*;
-import javax.annotation.PostConstruct;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import javax.ejb.AccessTimeout;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,15 +27,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.PostConstruct;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
@@ -39,8 +36,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -51,9 +46,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 @Slf4j

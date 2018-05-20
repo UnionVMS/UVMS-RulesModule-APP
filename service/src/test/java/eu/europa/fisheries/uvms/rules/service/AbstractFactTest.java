@@ -10,12 +10,41 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -32,17 +61,14 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
 
 public class AbstractFactTest {
 
@@ -1877,13 +1903,13 @@ public class AbstractFactTest {
     @Test
     public void testMdrAcronymsMatchMDRAcronymTypeDeclared() {
         List<String> list = Arrays.asList("PROD_USAGE",
-                "FA_FISHERY", "GFCM_GSA", "SALE_BR", "FA_REASON_DISCARD", "TARGET_SPECIES_GROUP", "FA_GEAR_PROBLEM", "FLUX_GP_MSG_ID", "FISH_SIZE_CATEGORY", "FA_BFT_SIZE_CATEGORY", "FLUX_FA_REPORT_TYPE",
+                "FA_FISHERY", "GFCM_GSA", "FA_REASON_DISCARD", "TARGET_SPECIES_GROUP", "FA_GEAR_PROBLEM", "FLUX_GP_MSG_ID", "FISH_SIZE_CATEGORY", "FA_BFT_SIZE_CATEGORY", "FLUX_FA_REPORT_TYPE",
                 "FLUX_SALES_QUERY_PARAM_ROLE", "FLUX_LOCATION_TYPE", "GEAR_TYPE", "WEIGHT_MEANS", "VESSEL_ACTIVITY", "FA_QUERY_TYPE",
-                "TERRITORY_CURR", "FLUX_GP_PURPOSE", "FA_VESSEL_ROLE", "FLUX_SALES_PARTY_ROLE", "MEMBER_STATE", "FA_BR", "FISHING_TRIP_TYPE", "CONVERSION_FACTOR",
+                "TERRITORY_CURR", "FLUX_GP_PURPOSE", "FA_VESSEL_ROLE", "FLUX_SALES_PARTY_ROLE", "MEMBER_STATE", "FISHING_TRIP_TYPE", "CONVERSION_FACTOR",
                 "FA_REASON_ENTRY", "FLUX_FA_TYPE", "FARM", "EFFORT_ZONE", "TERRITORY", "GENDER", "FISH_FRESHNESS", "FA_REASON_ARRIVAL",
                 "FA_CHARACTERISTIC", "FA_CATCH_TYPE", "FAO_AREA", "FLUX_VESSEL_ID_TYPE", "FISH_PRESENTATION", "FLUX_UNIT", "FLUX_CONTACT_ROLE", "FISH_PRESERVATION", "FLUX_SALES_PARTY_ID_TYPE",
-                "FLUX_SALES_TYPE", "STAT_RECTANGLE", "FLAP_ID_TYPE", "FA_QUERY_PARAMETER", "FA_BR_DEF", "FA_GEAR_RECOVERY", "FISH_PACKAGING", "VESSEL_STORAGE_TYPE",
-                "FA_GEAR_CHARACTERISTIC", "SALE_BR_DEF", "FLUX_FA_FMC", "FAO_SPECIES", "GFCM_STAT_RECTANGLE", "FLUX_GP_RESPONSE",
+                "FLUX_SALES_TYPE", "STAT_RECTANGLE", "FLAP_ID_TYPE", "FA_QUERY_PARAMETER", "FA_GEAR_RECOVERY", "FISH_PACKAGING", "VESSEL_STORAGE_TYPE",
+                "FA_GEAR_CHARACTERISTIC", "FLUX_FA_FMC", "FAO_SPECIES", "GFCM_STAT_RECTANGLE", "FLUX_GP_RESPONSE",
                 "FLUX_GP_VALIDATION_TYPE", "FLUX_LOCATION_CHARACTERISTIC", "LOCATION", "FA_GEAR_ROLE", "FLUX_GP_PARTY", "FA_BAIT_TYPE", "FA_REASON_DEPARTURE", "RFMO", "FLUX_GP_VALIDATION_LEVEL",
                 "FLUX_SALES_QUERY_PARAM", "ICES_STAT_RECTANGLE", "FISH_SIZE_CLASS", "FLUX_PROCESS_TYPE");
         List<String> finalList = new ArrayList<>();

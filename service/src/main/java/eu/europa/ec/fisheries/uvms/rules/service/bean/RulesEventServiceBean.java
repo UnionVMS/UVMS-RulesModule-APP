@@ -102,6 +102,9 @@ public class RulesEventServiceBean implements EventService {
     private Event<EventMessage> errorEvent;
 
     @EJB
+    private GetValidationResultService getValidationResultService;
+
+    @EJB
     private RulesMessageProducer rulesProducer;
 
     @EJB
@@ -380,7 +383,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             TextMessage jmsRequestMessage = message.getJmsMessage();
             GetValidationsByRawMsgGuidRequest rulesRequest = JAXBMarshaller.unmarshallTextMessage(jmsRequestMessage, SendSalesResponseRequest.class);
-            String validationsForRawMessageGuid = messageService.getValidationsForRawMessageGuid(rulesRequest.getGuid(), rulesRequest.getType());
+            String validationsForRawMessageGuid = getValidationResultService.getValidationsForRawMessageUUID(rulesRequest.getGuid(), rulesRequest.getType());
             rulesProducer.sendModuleResponseMessage(jmsRequestMessage, validationsForRawMessageGuid);
         } catch (RulesModelMarshallException | MessageException e) {
             log.error("[ERROR] Error while trying to send Response to a GetValidationResultsByRawGuid to the Requestor Module..", e);
