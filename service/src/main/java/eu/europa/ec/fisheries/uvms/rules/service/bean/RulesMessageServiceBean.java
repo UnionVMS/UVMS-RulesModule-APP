@@ -39,6 +39,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBException;
@@ -72,7 +73,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
@@ -93,14 +93,10 @@ import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesMessageFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
@@ -196,7 +192,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
             String logGuid = receiveSalesQueryRequest.getLogGuid();
 
-            FLUXSalesQueryMessage salesQueryMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
+            FLUXSalesQueryMessage salesQueryMessage = JAXBUtils.unMarshallMessage(salesQueryMessageAsString, FLUXSalesQueryMessage.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -225,7 +221,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 sendToSales(requestForSales);
             }
             updateRequestMessageStatusInExchange(logGuid, validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+        } catch (SalesMarshallException | RulesValidationException | MessageException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales query", e);
         }
     }
@@ -240,7 +236,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
             String logGuid = receiveSalesReportRequest.getLogGuid();
-            Report salesReportMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
+            Report salesReportMessage = JAXBUtils.unMarshallMessage(salesReportMessageAsString, Report.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -262,7 +258,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             }
             //update log status
             updateRequestMessageStatusInExchange(logGuid, validationResult);
-        } catch (SalesMarshallException | RulesValidationException | MessageException e) {
+        } catch (SalesMarshallException | RulesValidationException | MessageException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
@@ -298,7 +294,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
-            FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
+            FLUXSalesResponseMessage salesResponseMessage = JAXBUtils.unMarshallMessage(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -310,7 +306,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
 
             updateRequestMessageStatusInExchange(logGuid, validationResult);
-        } catch (SalesMarshallException | RulesValidationException e) {
+        } catch (RulesValidationException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
         } catch (ConfigServiceException e) {
             throw new RulesServiceException("Couldn't retrieve the FLUX local nation code from the settings", e);
@@ -367,7 +363,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
-            FLUXSalesResponseMessage salesResponseMessage = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
+            FLUXSalesResponseMessage salesResponseMessage = JAXBUtils.unMarshallMessage(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -389,7 +385,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
+        } catch (ExchangeModelMarshallException | MessageException | RulesValidationException | ConfigServiceException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
         }
     }
@@ -405,7 +401,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
-            Report report = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(salesReportMessageAsString, Report.class);
+            Report report = JAXBUtils.unMarshallMessage(salesReportMessageAsString, Report.class);
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -427,11 +423,10 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
             sendToExchange(requestForExchange);
-        } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
+        } catch (ExchangeModelMarshallException | MessageException | RulesValidationException | ConfigServiceException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
     }
-
 
     @Override
     @Lock(LockType.WRITE)
@@ -442,7 +437,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             // Validate xsd schema
-            fluxfaReportMessage = extractFluxFaReportMessage(requestStr);
+            fluxfaReportMessage = unMarshallFluxFaReportMessage(requestStr);
             if (fluxfaReportMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
@@ -499,7 +494,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             // Validate xsd schema
-            fluxfaReportMessage = extractFluxFaReportMessage(requestStr);
+            fluxfaReportMessage = unMarshallFluxFaReportMessage(requestStr);
             if (fluxfaReportMessage != null) {
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxfaReportMessage);
                 boolean needToValidate = continueValidation(validationMap);
@@ -546,8 +541,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         log.info("[INFO] Going to evaluate FAQuery with GUID [[ " + logGuid + " ]].");
         FLUXFAQueryMessage faQueryMessage = null;
         try {
-            // Validate xsd schema
-            faQueryMessage = extractFaQueryMessage(requestStr);
+            faQueryMessage = unMarshallFaQueryMessage(requestStr);
             if (faQueryMessage != null) {
                 FLUXResponseMessage fluxResponseMessageType;
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(faQueryMessage);
@@ -629,7 +623,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXFAQueryMessage faQueryMessage = null;
         try {
             // Validate xsd schema
-            faQueryMessage = extractFaQueryMessage(requestStr);
+            faQueryMessage = unMarshallFaQueryMessage(requestStr);
             if (faQueryMessage != null) {
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(faQueryMessage);
                 boolean needToValidate = continueValidation(validationMap);
@@ -674,7 +668,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXResponseMessage fluxResponseMessage;
         try {
             // Validate xsd schema
-            fluxResponseMessage = extractFluxResponseMessage(requestStr);
+            fluxResponseMessage = unMarshallFluxResponseMessage(requestStr);
             if (fluxResponseMessage != null) {
                 Map<Boolean, ValidationResultDto> validationMap = rulesPreProcessBean.checkDuplicateIdInRequest(fluxResponseMessage);
                 boolean needToValidate = continueValidation(validationMap);
@@ -719,7 +713,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 }
             }
         } catch (IllegalArgumentException exception){
-            log.warn("[WARN] The given UUID is not in a correct format {}", uuidString);
+            log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);
         }
         return uuidIsCorrect;
     }
@@ -731,19 +725,19 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return resultDto;
     }
 
-    private FLUXFAReportMessage extractFluxFaReportMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, getSchemaForXsd(FLUXFAREPORT_MESSAGE_3P1_XSD));
+    private FLUXFAReportMessage unMarshallFluxFaReportMessage(String request) throws SAXException, JAXBException {
+        return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
     }
 
-    private FLUXFAQueryMessage extractFaQueryMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, getSchemaForXsd(FLUXFAQUERY_MESSAGE_3P0_XSD));
+    private FLUXFAQueryMessage unMarshallFaQueryMessage(String request) throws SAXException, JAXBException {
+        return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
     }
 
-    private FLUXResponseMessage extractFluxResponseMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, getSchemaForXsd(FLUXFARESPONSE_MESSAGE_6P0_XSD));
+    private FLUXResponseMessage unMarshallFluxResponseMessage(String request) throws SAXException, JAXBException {
+        return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
     }
 
-    private Schema getSchemaForXsd(String xsdLocation) throws SAXException {
+    private Schema loadXSDSchema(String xsdLocation) throws SAXException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         URL resource = getClass().getClassLoader().getResource(xsdLocation);
         if (resource != null) {
@@ -1094,8 +1088,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, username, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC);
             final String corrId = producer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = activityConsumer.getMessage(corrId, TextMessage.class);
-            return JAXBMarshaller.unmarshallTextMessage(message, SetFLUXFAReportMessageRequest.class);
-        } catch (ActivityModelMarshallException | MessageException | RulesModelMarshallException e) {
+            return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
+        } catch (ActivityModelMarshallException | MessageException | JAXBException | JMSException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
@@ -1120,7 +1114,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
-            String fluxResponse = JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessageObj);
+            String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj);
             String logGuid = request.getLogGuid();
             Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, fluxNationCode);
             log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
@@ -1140,38 +1134,12 @@ public class RulesMessageServiceBean implements RulesMessageService {
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
             log.info("[END] FLUXFAResponse successfully sent back to Exchange.");
-        } catch (RulesModelMarshallException e) {
+        } catch (JAXBException e) {
             log.error(e.getMessage(), e);
             sendFLUXResponseMessageOnException(e.getMessage(), null, request, fluxResponseMessageObj);
         } catch (ExchangeModelMarshallException | MessageException | RulesValidationException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String getValidationsForRawMessageGuid(String guid, String type) {
-        try {
-            ValidationMessageTypeResponse validationsResponse = rulePostProcessBean.getValidationResultsFromRawMsgGuid(guid, type);
-            if (validationsResponse != null){
-                List<ValidationMessageType> validationsListResponse = validationsResponse.getValidationsListResponse();
-                for (ValidationMessageType validationMessageType : validationsListResponse) {
-                    if (validationMessageType != null){
-                        String brId = validationMessageType.getBrId();
-                        EnrichedBRMessage errorMessageForBrId = mdrCacheService.getErrorMessageForBrId(brId);
-                        if (errorMessageForBrId != null){
-                            validationMessageType.setExpression(errorMessageForBrId.getExpression());
-                            validationMessageType.setMessage(errorMessageForBrId.getMessage());
-                            validationMessageType.setNote(errorMessageForBrId.getNote());
-                            validationMessageType.setEntity(errorMessageForBrId.getTemplateEntityName());
-                        }
-                    }
-                }
-                return JAXBMarshaller.marshallJaxBObjectToString(validationsResponse);
-            }
-        } catch (RulesModelException | RulesModelMarshallException e) {
-            log.error("Error while getting List<ValidationMessageType> with rawMessage GUID!", e);
-        }
-        return StringUtils.EMPTY;
     }
 
     /*

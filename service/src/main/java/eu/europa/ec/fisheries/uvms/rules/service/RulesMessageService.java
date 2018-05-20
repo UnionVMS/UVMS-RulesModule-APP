@@ -69,8 +69,6 @@ public interface RulesMessageService {
 
     void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
-    String getValidationsForRawMessageGuid(String guid, String type);
-
     void evaluateIncomingFAQuery(SetFaQueryMessageRequest request);
 
     void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request);

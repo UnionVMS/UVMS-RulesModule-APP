@@ -26,7 +26,6 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -121,9 +120,4 @@ public class RulePostProcessBean {
         return validationMessage;
     }
 
-    public ValidationMessageTypeResponse getValidationResultsFromRawMsgGuid(String guid, String type) throws RulesModelException {
-        ValidationMessageTypeResponse response = new ValidationMessageTypeResponse();
-        response.getValidationsListResponse().addAll(rulesDomainModel.getValidationMessagesByRawMsgGuid(guid, type));
-        return response;
-    }
 }
