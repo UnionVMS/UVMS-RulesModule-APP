@@ -59,7 +59,7 @@ public class MDRCache {
     @PostConstruct
     public void init(){
         cache = CacheBuilder.newBuilder()
-                //.refreshAfterWrite(24, TimeUnit.HOURS)
+                .refreshAfterWrite(24, TimeUnit.HOURS)
                 .maximumSize(100)
                 .initialCapacity(80)
                 //.recordStats()
