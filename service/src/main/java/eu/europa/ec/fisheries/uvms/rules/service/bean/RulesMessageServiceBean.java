@@ -189,7 +189,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
-        log.info("Received ReceiveSalesQueryRequest request message");
+        log.info("Received ReceiveSalesQueryRequest message");
         try {
             //get sales query message
             String salesQueryMessageAsString = receiveSalesQueryRequest.getRequest();
@@ -217,10 +217,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     requestForSales = salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesQueryRequest.getMessageGuid(),
                             validationResult, receiveSalesQueryRequest.getPluginType(), receiveSalesQueryRequest.getSender(), SalesIdType.GUID);
                 }
-
+                log.info("Send RespondToInvalidMessageRequest message to Sales");
                 sendToSales(requestForSales);
             } else {
                 String requestForSales = salesMessageFactory.createSalesQueryRequest(receiveSalesQueryRequest.getRequest(), validationResult, receiveSalesQueryRequest.getPluginType());
+                log.info("Send SalesQueryRequest message to Sales");
                 sendToSales(requestForSales);
             }
             updateRequestMessageStatusInExchange(logGuid, validationResult);
@@ -234,7 +235,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
-        log.info("Received ReceiveSalesReportRequest request message");
+        log.info("Received ReceiveSalesReportRequest message");
         try {
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
@@ -254,9 +255,11 @@ public class RulesMessageServiceBean implements RulesMessageService {
             //send to sales
             if (validationResult.isError()) {
                 String requestForSales = createInvalidSalesResponseMessage(receiveSalesReportRequest, validationResult);
+                log.info("Send RespondToInvalidMessageRequest message to Sales");
                 sendToSales(requestForSales);
             } else {
                 String requestForSales = salesMessageFactory.createSalesReportRequest(receiveSalesReportRequest.getRequest(), validationResult, receiveSalesReportRequest.getPluginType());
+                log.info("Send SalesReportRequest message to Sales");
                 sendToSales(requestForSales);
             }
             //update log status
@@ -292,7 +295,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
-        log.info("Received ReceiveSalesResponseRequest request message");
+        log.info("Received ReceiveSalesResponseRequest message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -362,7 +365,6 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Lock(LockType.READ)
     //@Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
-        log.info("Received SendSalesResponseRequest request message");
         try {
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
@@ -388,6 +390,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     rulesRequest.getDateSent(),
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
+
+            log.info("Send SendSalesResponseRequest message to Exchange");
             sendToExchange(requestForExchange);
         } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
@@ -400,7 +404,6 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @Lock(LockType.READ)
    // @Interceptors(RulesPreValidationInterceptor.class)
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {
-        log.info("Receive SendSalesReportRequest request message");
         try {
             //get sales report message
             String salesReportMessageAsString = rulesRequest.getRequest();
@@ -426,6 +429,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     rulesRequest.getDateSent(),
                     validationStatus,
                     rulesRequest.getPluginToSendResponseThrough());
+
+            log.info("Send SendSalesReportRequest message to Exchange");
             sendToExchange(requestForExchange);
         } catch (ExchangeModelMarshallException | MessageException | SalesMarshallException | RulesValidationException | ConfigServiceException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);

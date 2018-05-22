@@ -83,8 +83,10 @@ public class RuleAssetsBean {
         List<Asset> assetsRespList = new ArrayList<>();
         try {
             String request = AssetModuleRequestMapper.createAssetListModuleRequest(assetListQuery);
+            log.debug("Send AssetListModuleRequest message to Asset");
             String correlationId = producer.sendDataSourceMessage(request, DataSourceQueue.ASSET);
             TextMessage response = consumer.getMessage(correlationId, TextMessage.class);
+            log.debug("Received response message");
             if (response != null && !isUserFault(response)) {
                 assetsRespList = AssetModuleResponseMapper.mapToAssetListFromResponse(response, correlationId);
             } else {

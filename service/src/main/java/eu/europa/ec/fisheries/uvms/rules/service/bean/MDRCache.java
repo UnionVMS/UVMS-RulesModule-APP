@@ -89,9 +89,11 @@ public class MDRCache {
     @SneakyThrows
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
+        log.info("Send MdrGetCodeListRequest message to MDR. Acronym: " + acronym.name());
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         long timeoutMillis = 30 * 60 * 1000;
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, timeoutMillis);
+        log.info("Received response message");
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             return response.getDataSets();
