@@ -23,26 +23,6 @@ public class SalesFactHelper {
         // hide public constructor
     }
 
-    public static boolean doesSetContainAnyValue(List<String> values, Set set) {
-        for (String value : values) {
-            if (set.contains(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns true when the country id is valid, false when its not.
-     * If the country id is null, true will be returned.
-     */
-    public static boolean isCountryIdValid(IdType idType) {
-        if (idType == null) {
-            return true;
-        }
-
-        return validCountries.contains(idType.getValue());
-    }
 
     public static boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {
         for (AmountType amountType : amountTypes) {
@@ -62,10 +42,6 @@ public class SalesFactHelper {
         }
 
         return false;
-    }
-
-    public static Set<String> getValidCurrencies() {
-        return validCurrencies;
     }
 
     private static void fillValidCountries() {

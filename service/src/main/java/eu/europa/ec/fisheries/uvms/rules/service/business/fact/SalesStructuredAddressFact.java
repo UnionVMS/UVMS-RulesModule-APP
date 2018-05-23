@@ -197,9 +197,4 @@ public class SalesStructuredAddressFact extends SalesAbstractFact {
     public int hashCode() {
         return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea, creationDateOfMessage);
     }
-
-
-    public boolean isCountryIdValid() {
-        return SalesFactHelper.isCountryIdValid(countryID);
-    }
 }
