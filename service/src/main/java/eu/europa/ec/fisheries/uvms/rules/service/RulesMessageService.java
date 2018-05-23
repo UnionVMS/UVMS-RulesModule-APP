@@ -55,7 +55,7 @@ public interface RulesMessageService {
 
     void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType, boolean guidProvided);
 
-    void mapAndSendFLUXMdrRequestToExchange(String request);
+    void mapAndSendFLUXMdrRequestToExchange(String request, String fr);
 
     void mapAndSendFLUXMdrResponseToMdrModule(String request);
 
