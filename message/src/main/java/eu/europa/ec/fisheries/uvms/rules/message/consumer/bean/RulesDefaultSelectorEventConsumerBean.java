@@ -41,7 +41,7 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"), // default: 10
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"), // default: 10
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "1000"), // default: 1000
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "10"), // default: 5
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"), // default: 10
