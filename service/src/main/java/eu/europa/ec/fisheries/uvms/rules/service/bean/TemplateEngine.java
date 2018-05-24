@@ -13,12 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import javax.ejb.AccessTimeout;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
@@ -27,14 +36,13 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 @Slf4j
@@ -106,7 +114,7 @@ public class TemplateEngine {
         facts.addAll(ruleEvaluator.getExceptionsList());
     }
 
-    private void checkRulesAreLoaded(int retries) {
+    public List<RuleError> checkRulesAreLoaded(int retries) {
         AbstractFact faRepFact = getMockedFact();
         ruleEvaluator.validateFacts(Collections.singletonList(faRepFact));
         if (CollectionUtils.isEmpty(faRepFact.getErrors())) { // Means rules were not loaded, otherwise we'd have errors here.
@@ -119,6 +127,8 @@ public class TemplateEngine {
                 log.error("[ERROR] [ERROR] [ERROR] I have retried 5 times to reload rules and it didn't work!!! Critical Situation!!");
             }
         }
+
+        return faRepFact.getErrors();
     }
 
     private AbstractFact getMockedFact() {
