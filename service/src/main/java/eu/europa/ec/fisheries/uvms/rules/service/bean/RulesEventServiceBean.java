@@ -303,7 +303,7 @@ public class RulesEventServiceBean implements EventService {
 	         LOG.debug("[INFO]RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
 	         SetFLUXMDRSyncMessageRulesRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesRequest.class);
 	         LOG.debug("[INFO]SetFLUXMDRSyncMessageRequest Marshall was successful");
-             messageService.mapAndSendFLUXMdrRequestToExchange(request.getRequest());
+             messageService.mapAndSendFLUXMdrRequestToExchange(request.getRequest(), request.getFr());
     	 } catch (RulesModelMarshallException e) {
              LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
          }

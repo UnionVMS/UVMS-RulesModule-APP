@@ -1149,16 +1149,15 @@ public class RulesMessageServiceBean implements RulesMessageService {
      * @see eu.europa.ec.fisheries.uvms.rules.service.RulesService#mapAndSendFLUXMdrRequestToExchange(java.lang.String)
      */
     @Override
-    public void mapAndSendFLUXMdrRequestToExchange(String request) {
+    public void mapAndSendFLUXMdrRequestToExchange(String request, String fr) {
         String exchangerStrReq;
         try {
-            exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
+            exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY, fr);
             if (StringUtils.isNotEmpty(exchangerStrReq)) {
                 producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
             } else {
                 log.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
             }
-
         } catch (ExchangeModelMarshallException e) {
             log.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : " + e.getMessage());
         } catch (MessageException e) {
