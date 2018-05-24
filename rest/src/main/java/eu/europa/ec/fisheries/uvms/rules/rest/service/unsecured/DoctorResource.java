@@ -46,6 +46,7 @@ public class DoctorResource {
     private static final String RULES_LOADED = "rules_loaded";
     private static final String APPLICATION_VERSION = "application.version";
     private static final String APPLICATION_STATUS = "application.status";
+    private static final String APPLICATION_NAME = "application.name";
 
     @EJB
     private MDRCache mdrCache;
@@ -81,7 +82,7 @@ public class DoctorResource {
         else {
             properties.put(APPLICATION_STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        metrics.put("rules", properties);
+        metrics.put(propertiesBean.getProperty(APPLICATION_NAME), properties);
         return Response.ok(properties).build();
     }
 }
