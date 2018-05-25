@@ -13,11 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,12 +39,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by padhyad on 6/7/2017.
@@ -55,7 +58,7 @@ public class RulesPreProcessBeanTest {
     public void testGetValidationResultNotExist() throws RulesModelException {
         Mockito.doReturn(Collections.emptyList()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        ValidationResultDto validationResultDto = rulesPreProcessBean.getValidationResultIfExist(Arrays.asList("123", "456"));
+        ValidationResultDto validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
         assertTrue(validationResultDto.isOk());
     }
 
@@ -63,7 +66,7 @@ public class RulesPreProcessBeanTest {
     public void testGetValidationResultExist() throws RulesModelException {
         Mockito.doReturn(getMockValidationMessage()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        ValidationResultDto validationResultDto = rulesPreProcessBean.getValidationResultIfExist(Arrays.asList("123", "456"));
+        ValidationResultDto validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
         assertTrue(validationResultDto.isError());
         assertEquals(1, validationResultDto.getValidationMessages().size());
     }

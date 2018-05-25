@@ -12,10 +12,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +62,7 @@ public class MDRCache {
                 .refreshAfterWrite(24, TimeUnit.HOURS)
                 .maximumSize(100)
                 .initialCapacity(80)
-                .recordStats()
+                //.recordStats()
                 .build(
                         new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
                             @Override

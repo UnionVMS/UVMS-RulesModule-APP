@@ -13,9 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import java.io.Serializable;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +25,13 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Set;
+
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by padhyad on 5/3/2017.
@@ -63,7 +66,13 @@ public class RawMessage implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rawMessage", cascade = CascadeType.ALL)
     private Set<ValidationMessage> validationMessages;
 
-
+    @PrePersist
+    public void prePersist(){
+        if (StringUtils.isNotEmpty(rawMessage)){
+            rawMessage = rawMessage.replaceAll("<\\?xml(.+?)\\?>", "")
+                    .replaceAll("(?s)<!--.*?-->", "").trim();
+        }
+    }
     public Long getId() {
         return id;
     }

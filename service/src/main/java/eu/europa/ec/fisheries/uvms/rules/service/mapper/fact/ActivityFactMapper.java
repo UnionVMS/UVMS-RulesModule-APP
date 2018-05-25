@@ -22,7 +22,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CLASS_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CONVERSION_FACTOR_NUMERIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COUNTRY_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DURATION_MEASURE;
@@ -143,6 +142,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddress
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -192,6 +192,8 @@ public class ActivityFactMapper {
     private static final String FLUX_LOCATION_TYPE_CODE_PROP = "fluxLocationTypeCode";
     private static final String RELATED_FISHING_ACTIVITIES_PROP = "relatedFishingActivities";
     private static final String POST_OFFICE_BOX = "PostOfficeBox";
+    private static final String FISHING_ACTIVITY_TYPE_CODE = "fishingActivityTypeCode";
+    private static final String CREATION_DATE_TIME = "creationDateTime";
     /**
      * Additional objects - to be set before validation through generator.setAdditionalValidationObject(.., ..){..}
      **/
@@ -201,9 +203,9 @@ public class ActivityFactMapper {
 
     private XPathStringWrapper xPathUtil;
 
-    private static Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
-    private static String senderReceiver = null;
-    private static Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds = new HashMap<>();
+    private Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
+    private String senderReceiver = null;
+    private Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds = new HashMap<>();
 
     private static final String VALUE_PROP = "value";
     private static final String VALUE_INDICATOR_PROP = "valueIndicator";
@@ -218,7 +220,8 @@ public class ActivityFactMapper {
     private static final String RELATED_FLUX_REPORT_DOCUMENT_I_DS_PROP = "relatedFLUXReportDocumentIDs";
     private static final String RELATED_FLUX_REPORT_DOCUMENT_REFERENCED_ID_PROP = "relatedFLUXReportDocumentReferencedID";
     private static final String UNIQUE_IDS_PROP = "uniqueIds";
-    private static final String OWNER_FLUX_PARTY_IDS_PROP = "ownerFluxPartyIds";
+    private static final String OWNER_FLUX_PARTY_IDS = "ownerFluxPartyIds";
+    private static final String OWNER_FLUX_PARTY_IDS_PROP = OWNER_FLUX_PARTY_IDS;
     private static final String IDS_PROP = "ids";
     private static final String ACCEPTANCE_DATE_TIME_PROP = "acceptanceDateTime";
     private static final String VESSEL_RELATED_ACTIVITY_CODE_PROP = "vesselRelatedActivityCode";
@@ -245,7 +248,8 @@ public class ActivityFactMapper {
     private static final String SPECIFIED_FLUX_LOCATION_PROP = "specifiedFluxLocations";
     private static final String RECOVERY_MEASURE_CODE_PROP = "recoveryMeasureCodes";
     private static final String REASON_CODE_PROP = "reasonCode";
-    private static final String FA_REPORT_DOCUMENT_TYPE_CODE_PROP = "faReportDocumentTypeCode";
+    private static final String FA_REPORT_DOCUMENT_TYPE_CODE = "faReportDocumentTypeCode";
+    private static final String FA_REPORT_DOCUMENT_TYPE_CODE_PROP = FA_REPORT_DOCUMENT_TYPE_CODE;
     private static final String RELATED_FLUX_LOCATIONS_PROP = "relatedFLUXLocations";
     private static final String FISHERY_TYPE_CODE_PROP = "fisheryTypeCode";
     private static final String SPECIES_TARGET_CODE_PROP = "speciesTargetCode";
@@ -284,7 +288,7 @@ public class ActivityFactMapper {
         Date date = getDate(faReportDocumentsRelatedFLUXReportDocumentCreationDateTime(faReportDocument));
         faReportDocumentFact.setCreationDateTime(date);
 
-        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, "creationDateTime");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(faReportDocumentFact, CREATION_DATE_TIME);
 
         faReportDocumentFact.setAcceptanceDateTime(getDate(faReportDocument.getAcceptanceDateTime()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ACCEPTANCE_DATE_TIME).storeInRepo(faReportDocumentFact, ACCEPTANCE_DATE_TIME_PROP);
@@ -297,13 +301,12 @@ public class ActivityFactMapper {
         faReportDocumentFact.setOwnerFluxPartyIds(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentOwnerFLUXPartyIDS(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(faReportDocumentFact, OWNER_FLUX_PARTY_IDS_PROP);
 
-        faReportDocumentFact.setUniqueIds(getIds(faReportDocument.getRelatedFLUXReportDocument()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, UNIQUE_IDS_PROP);
 
         faReportDocumentFact.setRelatedFLUXReportDocumentReferencedID(mapToSingleIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact, RELATED_FLUX_REPORT_DOCUMENT_REFERENCED_ID_PROP);
 
-        faReportDocumentFact.setRelatedFLUXReportDocumentIDs(mapToIdType(mapfaReportDocumentsRelatedFLUXReportDocumentIDSToIdTypes(faReportDocument)));
+        faReportDocumentFact.setRelatedFLUXReportDocumentIDs(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentIDS(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, RELATED_FLUX_REPORT_DOCUMENT_I_DS_PROP);
 
         faReportDocumentFact.setPurposeCode(mapToCodeType(faReportDocumentsRelatedFLUXReportDocumentPurposeCode(faReportDocument)));
@@ -419,7 +422,6 @@ public class ActivityFactMapper {
         String partialXpath = xPathUtil.getValue();
 
         FishingActivityFact fishingActivityFact = getFishingActivityCoreFact(fishingActivity, partialXpath);
-
         fishingActivityFact.setIsSubActivity(isSubActivity);
 
         if (faReportDocument != null) {
@@ -534,7 +536,7 @@ public class ActivityFactMapper {
         fluxFaReportMessageFact.setCreationDateTimeString(dateXMLString);
 
         fluxFaReportMessageFact.setCreationDateTime(date);
-        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "creationDateTime");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, CREATION_DATE_TIME);
 
         if (fluxfaReportMessage.getFAReportDocuments() != null) {
             fluxFaReportMessageFact.setFaReportDocuments(new ArrayList<>(fluxfaReportMessage.getFAReportDocuments()));
@@ -548,7 +550,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(fluxFaReportMessageFact, REFERENCED_ID_PROP);
 
         fluxFaReportMessageFact.setOwnerFluxPartyIds(mapToIdType(fluxfaReportMessageFLUXReportDocumentOwnerFLUXPartyIDS(fluxfaReportMessage)));
-        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(fluxFaReportMessageFact, "ownerFluxPartyIds");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(fluxFaReportMessageFact, OWNER_FLUX_PARTY_IDS);
 
         fluxFaReportMessageFact.setUniqueIds(getIds(fluxfaReportMessage.getFLUXReportDocument()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, ID).storeInRepo(fluxFaReportMessageFact, "uniqueIds");
@@ -562,6 +564,22 @@ public class ActivityFactMapper {
         }
 
         return fluxFaReportMessageFact;
+    }
+
+    public static List<String> getIds(FLUXReportDocument fluxReportDocument) {
+        if (fluxReportDocument == null) {
+            return emptyList();
+        }
+        List<IDType> idTypes = fluxReportDocument.getIDS();
+        List<String> ids = new ArrayList<>();
+        for (IDType idType : idTypes) {
+            String value = idType.getValue();
+            String schemeID = idType.getSchemeID();
+            if (value != null && schemeID != null) {
+                ids.add(value.concat("_").concat(schemeID));
+            }
+        }
+        return ids;
     }
 
     public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, boolean isCommingFromFaReportDocument) {
@@ -853,10 +871,10 @@ public class ActivityFactMapper {
             FaCatchFact faCatchFact = new FaCatchFact();
 
             faCatchFact.setFishingActivityTypeCode(mapToCodeType(activity.getTypeCode()));
-            xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityTypeCode");
+            xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, FISHING_ACTIVITY_TYPE_CODE);
 
             faCatchFact.setFaReportDocumentTypeCode(mapToCodeType(typeCode));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).storeInRepo(faCatchFact, "faReportDocumentTypeCode");
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).storeInRepo(faCatchFact, FA_REPORT_DOCUMENT_TYPE_CODE);
 
             partialXPath = xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
 
@@ -1663,7 +1681,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
         if (faReportDocument != null) {
             faNotificationOfArrivalFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "faReportDocumentTypeCode");
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, FA_REPORT_DOCUMENT_TYPE_CODE);
         }
 
         return faNotificationOfArrivalFact;
@@ -1803,15 +1821,13 @@ public class ActivityFactMapper {
             faArrivalFact.setOccurrenceDateTime(fishingActivity.getOccurrenceDateTime());
             xPathUtil.appendWithoutWrapping(partialXpath).append(OCCURRENCE_DATE_TIME).storeInRepo(faArrivalFact, OCCURRENCE_DATE_TIME_PROP);
         }
-        if (faReportDocument != null) {
-            faArrivalFact.setFaReportTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faArrivalFact, "faReportTypeCode");
+        faArrivalFact.setFaReportTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
+        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faArrivalFact, "faReportTypeCode");
 
-            FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
-            if (relatedFLUXReportDocument != null) {
-                faArrivalFact.setFaReportPurposeCode(mapToCodeType(relatedFLUXReportDocument.getPurposeCode()));
-                xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(faArrivalFact, "faReportPurposeCode");
-            }
+        FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
+        if (relatedFLUXReportDocument != null) {
+            faArrivalFact.setFaReportPurposeCode(mapToCodeType(relatedFLUXReportDocument.getPurposeCode()));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(faArrivalFact, "faReportPurposeCode");
         }
 
         return faArrivalFact;
@@ -2021,7 +2037,7 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
 
             faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(CREATION_DATE_TIME).storeInRepo(faResponseFact, "creationDateTime");
+            xPathUtil.appendWithoutWrapping(partialXpath).append(XPathConstants.CREATION_DATE_TIME).storeInRepo(faResponseFact, CREATION_DATE_TIME);
 
             faResponseFact.setCreationDateTimeString(getDateXMLString(fluxResponseDocument.getCreationDateTime()));
 
@@ -2272,22 +2288,6 @@ public class ActivityFactMapper {
         return referencedID;
     }
 
-    private List<IDType> mapfaReportDocumentsRelatedFLUXReportDocumentIDSToIdTypes(FAReportDocument fAReportDocument) {
-
-        if (fAReportDocument == null) {
-            return emptyList();
-        }
-        FLUXReportDocument relatedFLUXReportDocument = fAReportDocument.getRelatedFLUXReportDocument();
-        if (relatedFLUXReportDocument == null) {
-            return emptyList();
-        }
-        List<IDType> iDS = relatedFLUXReportDocument.getIDS();
-        if (iDS == null) {
-            return emptyList();
-        }
-        return iDS;
-    }
-
     private un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportDocumentsRelatedFLUXReportDocumentPurposeCode(FAReportDocument fAReportDocument) {
 
         if (fAReportDocument == null) {
@@ -2475,26 +2475,6 @@ public class ActivityFactMapper {
         return iDS;
     }
 
-    private String fluxResponseMessageFLUXResponseDocumentReferencedIDValue(FLUXResponseMessage fLUXResponseMessage) {
-
-        if (fLUXResponseMessage == null) {
-            return null;
-        }
-        FLUXResponseDocument fLUXResponseDocument = fLUXResponseMessage.getFLUXResponseDocument();
-        if (fLUXResponseDocument == null) {
-            return null;
-        }
-        IDType referencedID = fLUXResponseDocument.getReferencedID();
-        if (referencedID == null) {
-            return null;
-        }
-        String value = referencedID.getValue();
-        if (value == null) {
-            return null;
-        }
-        return value;
-    }
-
     private un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faCatchSpecifiedSizeDistributionCategoryCode(FACatch fACatch) {
 
         if (fACatch == null) {
@@ -2596,31 +2576,14 @@ public class ActivityFactMapper {
         return fluxLocations;
     }
 
-    private static List<DelimitedPeriod> getDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
-        List<DelimitedPeriod> delimitedPeriod = null;
-        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
-            delimitedPeriod = new ArrayList<>();
-            for (FishingActivity activity : relatedFishingActivities) {
-                if (activity.getSpecifiedDelimitedPeriods() != null) {
-                    delimitedPeriod.addAll(activity.getSpecifiedDelimitedPeriods());
-                }
-            }
-        }
-        return delimitedPeriod;
-    }
-
     private List<CodeType> mapFromContactPartyToCodeType(List<ContactParty> contactPartyList) {
         List<CodeType> codeTypes = null;
-
         if (!CollectionUtils.isEmpty(contactPartyList)) {
-
             codeTypes = new ArrayList<>();
-
             for (ContactParty contactParty : contactPartyList) {
                 codeTypes.addAll(mapToCodeTypes(contactParty.getRoleCodes()));
             }
         }
-
         return codeTypes;
     }
 
@@ -2910,22 +2873,6 @@ public class ActivityFactMapper {
         }
     }
 
-    public static List<String> getIds(FLUXReportDocument fluxReportDocument) {
-        if (fluxReportDocument == null) {
-            return emptyList();
-        }
-        List<IDType> idTypes = fluxReportDocument.getIDS();
-        List<String> ids = new ArrayList<>();
-        for (IDType idType : idTypes) {
-            String value = idType.getValue();
-            String schemeID = idType.getSchemeID();
-            if (value != null && schemeID != null) {
-                ids.add(value.concat("_").concat(schemeID));
-            }
-        }
-        return ids;
-    }
-
     private void setxPathUtil(XPathStringWrapper xPathUtil1) {
         this.xPathUtil = xPathUtil1;
     }
@@ -2962,8 +2909,8 @@ public class ActivityFactMapper {
         return fishingActivitiesWithTripIds;
     }
 
-    public void setSenderReceiver(String senderReceiver) {
-        this.senderReceiver = senderReceiver;
+    public void setSenderReceiver(String value) {
+        senderReceiver = value;
     }
 
     public String getSenderReceiver() {

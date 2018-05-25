@@ -56,7 +56,7 @@ public class FLUXSalesReportMessageRuleTest {
         SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
         fact.setFLUXReportDocument(null);
 
-        validator.validateFact(Collections.<AbstractFact>singletonList(fact));
+        validator.validateFacts(Collections.<AbstractFact>singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());
@@ -80,7 +80,7 @@ public class FLUXSalesReportMessageRuleTest {
         SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
         fact.setFLUXReportDocument(new FLUXReportDocumentType());
 
-        validator.validateFact(Collections.<AbstractFact>singletonList(fact));
+        validator.validateFacts(Collections.<AbstractFact>singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());

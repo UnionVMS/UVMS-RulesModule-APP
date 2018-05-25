@@ -68,7 +68,7 @@ public class FaCatchEntityRuleTest {
 
         // Validation
         generator.initializeRules(templates);
-        generator.validateFact(facts);
+        generator.validateFacts(facts);
 
         // validate facts
         for (AbstractFact abstractFact : facts) {

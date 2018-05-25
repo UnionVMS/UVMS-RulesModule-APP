@@ -74,6 +74,9 @@ public class RulesExtraValuesMapGeneratorBean {
             case SENDING_FA_QUERY_MSG:
                 log.debug("[INFO] No need for ExtraValuesMap for this type of Message!");
                 break;
+            case RECEIVING_FA_RESPONSE_MSG:
+                log.debug("[INFO] No need for ExtraValuesMap for this type of Message!");
+                break;
         }
         stopWatch.stop();
         log.debug(END_IT_TOOK + stopWatch.getTime(TimeUnit.SECONDS) + SECONDS_TO_GENERATE_THE_MAP);
