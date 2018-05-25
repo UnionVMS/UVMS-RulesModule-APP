@@ -60,6 +60,9 @@ public class RulesPreProcessBean {
             for (ValidationMessageType validationMessageType : validationMessages) {
                 validationResultDto.setError(validationMessageType.getErrorType().equals(ErrorType.ERROR));
                 validationResultDto.setWarning(!validationMessageType.getErrorType().equals(ErrorType.ERROR));
+                if(validationResultDto.isError()){
+                    break;
+                }
             }
             validationResultDto.setValidationMessages(validationMessages);
         }
