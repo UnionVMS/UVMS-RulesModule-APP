@@ -13,6 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import javax.ejb.Local;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
@@ -23,11 +27,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import javax.ejb.Local;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -39,9 +39,9 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 public interface RulesMessageService {
 
     @Lock(LockType.WRITE)
-    void evaluateReceiveFLUXFAReportRequest(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
+    void evaluateIncomingFLUXFAReport(SetFLUXFAReportMessageRequest request) throws RulesModelMarshallException;
 
-    void evaluateSendFaQueryRequest(SetFaQueryMessageRequest request);
+    void evaluateOutgoingFAQuery(SetFaQueryMessageRequest request);
 
     void evaluateSetFluxFaResponseRequest(SetFluxFaResponseMessageRequest request);
 
@@ -55,7 +55,7 @@ public interface RulesMessageService {
 
     void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageType, RulesBaseRequest request, PluginType pluginType, boolean guidProvided);
 
-    void mapAndSendFLUXMdrRequestToExchange(String request);
+    void mapAndSendFLUXMdrRequestToExchange(String request, String fr);
 
     void mapAndSendFLUXMdrResponseToMdrModule(String request);
 
@@ -69,9 +69,7 @@ public interface RulesMessageService {
 
     void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest);
 
-    String getValidationsForRawMessageGuid(String guid, String type);
+    void evaluateIncomingFAQuery(SetFaQueryMessageRequest request);
 
-    void evaluateReceiveFaQueryRequest(SetFaQueryMessageRequest request);
-
-    void evaluateSendFaReportMessage(SetFLUXFAReportMessageRequest request);
+    void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request);
 }

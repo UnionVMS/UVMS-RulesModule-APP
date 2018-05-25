@@ -43,8 +43,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-
 /**
  * Created by padhyad on 6/7/2017.
  */
@@ -84,14 +82,14 @@ public class TemplateEngineBeanTest {
             public Void answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 Object facts = args[0];
-                for (AbstractFact obj : (ArrayList<AbstractFact>) facts) {
+                for (AbstractFact obj : (List<AbstractFact>) facts) {
                     obj.addWarningOrError("ERROR", "Error code", "br01", "L01", "null");
                     obj.setOk(false);
                 }
                 System.out.println("called with arguments: " + Arrays.toString(args));
                 return null;
             }
-        }).when(ruleEvaluator).validateFact(Mockito.anyList());
+        }).when(ruleEvaluator).validateFacts(Mockito.anyList());
 
         List<AbstractFact> facts = new ArrayList<>();
         ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();

@@ -5805,7 +5805,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="385"/>
             <column name="br_id" value="FA-L03-00-0385"/>
-            <column name="expression" value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;, &quot;FA_REPORT&quot;)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; stringEquals(&quot;UUID&quot;, referencedID.schemeId) &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;, &quot;FA_REPORT&quot;)"/>
             <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
             <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
             <column name="level" value="L03"/>

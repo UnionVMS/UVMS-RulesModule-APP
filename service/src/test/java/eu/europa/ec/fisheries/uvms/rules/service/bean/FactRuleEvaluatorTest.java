@@ -73,7 +73,7 @@ public class FactRuleEvaluatorTest {
         facts.add(getVesselTransportMeansFact());
         // First Validation
         generator.initializeRules(templates);
-        generator.validateFact(facts);
+        generator.validateFacts(facts);
         // validate facts
         validateFacts(facts);
         // Second Validation
@@ -93,7 +93,7 @@ public class FactRuleEvaluatorTest {
 
         // First Validation
         generator.initializeRules(templates);
-        generator.validateFact(facts);
+        generator.validateFacts(facts);
 
         // validate facts
         validateFacts(facts);
@@ -127,7 +127,7 @@ public class FactRuleEvaluatorTest {
         facts.add(fact);
 
         generator.initializeRules(templates);
-        generator.validateFact(facts);
+        generator.validateFacts(facts);
         assertFalse(facts.isEmpty());
     }
 

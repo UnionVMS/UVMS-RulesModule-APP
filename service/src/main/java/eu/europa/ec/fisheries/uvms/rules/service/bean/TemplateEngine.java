@@ -13,9 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import javax.ejb.AccessTimeout;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Stopwatch;
@@ -25,17 +36,18 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @Singleton
 @Slf4j
 @Startup
-@DependsOn({"FactRuleEvaluator","MDRCacheServiceBean"})
+@DependsOn({"FactRuleEvaluator", "MDRCacheServiceBean"})
 public class TemplateEngine {
 
     @EJB
@@ -59,7 +71,7 @@ public class TemplateEngine {
             refreshRulesValidationMessages(templatesAndRules);
             log.info("[START] Initializing templates and rules...");
             ruleEvaluator.initializeRules(templatesAndRules);
-            log.info("[END] It took "+ stopwatch + " to initialize the rules.");
+            log.info("[END] It took " + stopwatch + " to initialize the rules.");
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
         }
@@ -70,9 +82,9 @@ public class TemplateEngine {
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());
-                if (enrichedBRMessage != null){
+                if (enrichedBRMessage != null) {
                     String errorMessageForBrId = enrichedBRMessage.getMessage();
-                    if (StringUtils.isNotEmpty(errorMessageForBrId)){
+                    if (StringUtils.isNotEmpty(errorMessageForBrId)) {
                         ruleType.setMessage(errorMessageForBrId.replaceAll("\"", "&quot;"));
                         enrichedBRMessage.setTemplateEntityName(templatesAndRule.getTemplateType().getType().name());
                         enrichedBRMessage.setExpression(ruleType.getExpression());
@@ -96,8 +108,34 @@ public class TemplateEngine {
         if (CollectionUtils.isEmpty(facts)) {
             throw new RulesValidationException("No facts available for validation");
         }
+        checkRulesAreLoaded(0);
         ruleEvaluator.setExceptionsList(new ArrayList<AbstractFact>());
-        ruleEvaluator.validateFact(facts);
+        ruleEvaluator.validateFacts(facts);
         facts.addAll(ruleEvaluator.getExceptionsList());
+    }
+
+    public List<RuleError> checkRulesAreLoaded(int retries) {
+        AbstractFact faRepFact = getMockedFact();
+        ruleEvaluator.validateFacts(Collections.singletonList(faRepFact));
+        if (CollectionUtils.isEmpty(faRepFact.getErrors())) { // Means rules were not loaded, otherwise we'd have errors here.
+            if (retries < 5) {
+                initialize();
+                retries++;
+                checkRulesAreLoaded(retries);
+                log.warn("[WARN] Reloaded rules cause for some reason they weren't!! [WARN]");
+            } else {
+                log.error("[ERROR] [ERROR] [ERROR] I have retried 5 times to reload rules and it didn't work!!! Critical Situation!!");
+            }
+        }
+
+        return faRepFact.getErrors();
+    }
+
+    private AbstractFact getMockedFact() {
+        FishingTripFact fishingTripFact = new FishingTripFact();
+        fishingTripFact.setIds(new ArrayList<IdType>());
+        fishingTripFact.setFactType();
+        fishingTripFact.setUniqueIds(new ArrayList<String>());
+        return fishingTripFact;
     }
 }

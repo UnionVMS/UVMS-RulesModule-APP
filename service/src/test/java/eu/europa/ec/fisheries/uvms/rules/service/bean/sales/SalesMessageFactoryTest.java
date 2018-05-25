@@ -1,17 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SalesMessageFactoryTest {
 
@@ -25,32 +25,32 @@ public class SalesMessageFactoryTest {
     @Test
     public void getMessageStatusWhenErrorsAndWarnings() throws Exception {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setIsError(true);
-        validationResultDto.setIsWarning(true);
+        validationResultDto.setError(true);
+        validationResultDto.setWarning(true);
         assertEquals("NOK", salesMessageFactory.getMessageStatus(validationResultDto));
     }
 
     @Test
     public void getMessageStatusWhenErrors() throws Exception {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setIsError(true);
-        validationResultDto.setIsWarning(false);
+        validationResultDto.setError(true);
+        validationResultDto.setWarning(false);
         assertEquals("NOK", salesMessageFactory.getMessageStatus(validationResultDto));
     }
 
     @Test
     public void getMessageStatuspWhenWarnings() throws Exception {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setIsError(false);
-        validationResultDto.setIsWarning(true);
+        validationResultDto.setError(false);
+        validationResultDto.setWarning(true);
         assertEquals("WOK", salesMessageFactory.getMessageStatus(validationResultDto));
     }
 
     @Test
     public void getMessageStatusWhenOK() throws Exception {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setIsError(false);
-        validationResultDto.setIsWarning(false);
+        validationResultDto.setError(false);
+        validationResultDto.setWarning(false);
         assertEquals("OK", salesMessageFactory.getMessageStatus(validationResultDto));
     }
 

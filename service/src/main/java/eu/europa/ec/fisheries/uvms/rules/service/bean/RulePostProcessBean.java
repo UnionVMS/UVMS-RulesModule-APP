@@ -26,10 +26,8 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
@@ -37,9 +35,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
-/**
- * Created by padhyad on 5/4/2017.
- */
 @Stateless
 @LocalBean
 @Slf4j
@@ -48,25 +43,23 @@ public class RulePostProcessBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
-    @EJB
-    private RulesMessageService messageService;
-
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
         try {
             boolean isError = false;
             boolean isWarning = false;
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             for (AbstractFact fact : facts) {
                 if (fact.hasWarOrErr()) {
+                    List<String> uniqueIds = fact.getUniqueIds();
                     for (RuleError error : fact.getErrors()) {
                         isError = true;
-                        ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), fact.getUniqueIds(), error.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), uniqueIds, error.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                     for (RuleWarning warning : fact.getWarnings()) {
                         isWarning = true;
-                        ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), fact.getUniqueIds(), warning.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), uniqueIds, warning.getXpaths());
                         validationMessages.add(validationMessage);
                     }
                 }
@@ -85,9 +78,8 @@ public class RulePostProcessBean {
     public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
-            List<ValidationMessageType> validationMessages = new ArrayList<ValidationMessageType>(){{
-                add(validationMessage);
-            }};
+            List<ValidationMessageType> validationMessages = new ArrayList<>();
+            validationMessages.add(validationMessage);
             saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
             // TODO : Create alarm in future
             return createValidationResultDtoFromParams(false, false, validationMessages.isEmpty(), validationMessages);
@@ -110,9 +102,9 @@ public class RulePostProcessBean {
 
     private ValidationResultDto createValidationResultDtoFromParams(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
         ValidationResultDto validationResultDto = new ValidationResultDto();
-        validationResultDto.setIsError(isError);
-        validationResultDto.setIsWarning(isWarning);
-        validationResultDto.setIsOk((isOk));
+        validationResultDto.setError(isError);
+        validationResultDto.setWarning(isWarning);
+        validationResultDto.setOk((isOk));
         validationResultDto.setValidationMessages(validationMessages);
         return validationResultDto;
     }
@@ -128,9 +120,4 @@ public class RulePostProcessBean {
         return validationMessage;
     }
 
-    public ValidationMessageTypeResponse getValidationResultsFromRawMsgGuid(String guid, String type) throws RulesModelException {
-        ValidationMessageTypeResponse response = new ValidationMessageTypeResponse();
-        response.getValidationsListResponse().addAll(rulesDomainModel.getValidationMessagesByRawMsgGuid(guid, type));
-        return response;
-    }
 }

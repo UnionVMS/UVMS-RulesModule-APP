@@ -61,7 +61,7 @@ public class FaLandingEntityRuleTest {
         templates.add(templateRuleMapDto);
         // Validation
         generator.initializeRules(templates);
-        generator.validateFact(facts);
+        generator.validateFacts(facts);
         // validate facts
         for (AbstractFact abstractFact : facts) {
             assertTrue(abstractFact.getErrors().isEmpty());
