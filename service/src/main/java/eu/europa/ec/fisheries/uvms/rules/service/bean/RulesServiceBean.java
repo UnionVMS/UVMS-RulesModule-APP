@@ -182,8 +182,10 @@ public class RulesServiceBean implements RulesService {
 
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
+        LOG.debug("Send GetContactDetailsRequest message to User");
         String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
         TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+        LOG.debug("Received response message");
         GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
 
         if (userResponse != null && userResponse.getContactDetails() != null) {
@@ -821,8 +823,10 @@ public class RulesServiceBean implements RulesService {
         TextMessage response;
         try {
             String settingsRequest = ModuleRequestMapper.toListSettingsRequest("asset");
+            LOG.debug("Send ListSettingsRequest message to Config");
             String messageId = producer.sendDataSourceMessage(settingsRequest, DataSourceQueue.CONFIG);
             response = consumer.getMessage(messageId, TextMessage.class);
+            LOG.debug("Received response message");
             SettingsListResponse settings = eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller.unmarshallTextMessage(response, SettingsListResponse.class);
             for (SettingType setting : settings.getSettings()) {
                 if (setting.getKey().equals("asset.default.flagstate")) {
@@ -884,8 +888,10 @@ public class RulesServiceBean implements RulesService {
 
         try {
             String request = MovementModuleRequestMapper.mapToGetMovementMapByQueryRequest(query);
+            LOG.debug("Send GetMovementMapByQueryRequest message to Movement");
             String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+            LOG.debug("Received response message");
 
             List<MovementMapResponseType> result = MovementModuleResponseMapper.mapToMovementMapResponse(response);
 
@@ -923,8 +929,10 @@ public class RulesServiceBean implements RulesService {
             MovementBaseType movementBaseType = MovementBaseTypeMapper.mapRawMovementFact(rawMovement);
             movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
+            LOG.debug("Send CreateMovementRequest message to Movement");
             String messageId = producer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class, 10000L);
+            LOG.debug("Received response message");
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
             createdMovement = createMovementResponse.getMovement();
         } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
@@ -1000,8 +1008,10 @@ public class RulesServiceBean implements RulesService {
         List<AssetGroup> assetGroups = null;
         try {
             String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(assetGuid);
+            LOG.debug("Send GetAssetGroupListByAssetGuidRequest message to Asset");
             getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
             getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+            LOG.debug("Received response message");
 
             assetGroups = AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
         } catch (AssetModelMapperException | MessageException e) {
@@ -1054,8 +1064,10 @@ public class RulesServiceBean implements RulesService {
         query.setPagination(pagination);
 
         String getAssetRequest = AssetModuleRequestMapper.createAssetListModuleRequest(query);
+        LOG.debug("Send AssetListModuleRequest message to Asset");
         String getAssetMessageId = producer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
         TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+        LOG.debug("Received response message");
 
         List<Asset> resultList = AssetModuleResponseMapper.mapToAssetListFromResponse(getAssetResponse, getAssetMessageId);
 
@@ -1128,8 +1140,10 @@ public class RulesServiceBean implements RulesService {
 
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
         String getAssetListRequest = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
+        LOG.debug("Send GetAssetModuleRequest message to Asset");
         String getAssetMessageId = producer.sendDataSourceMessage(getAssetListRequest, DataSourceQueue.ASSET);
         TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+        LOG.debug("Received response message");
 
         return AssetModuleResponseMapper.mapToAssetFromResponse(getAssetResponse, getAssetMessageId);
     }
@@ -1196,8 +1210,10 @@ public class RulesServiceBean implements RulesService {
         query.setPagination(pagination);
 
         String getMobileTerminalListRequest = MobileTerminalModuleRequestMapper.createMobileTerminalListRequest(query);
+        LOG.debug("Send MobileTerminalListRequest message to Mobile terminal");
         String getMobileTerminalMessageId = producer.sendDataSourceMessage(getMobileTerminalListRequest, DataSourceQueue.MOBILE_TERMINAL);
         TextMessage getMobileTerminalResponse = consumer.getMessage(getMobileTerminalMessageId, TextMessage.class);
+        LOG.debug("Received response message");
 
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
 
@@ -1277,9 +1293,11 @@ public class RulesServiceBean implements RulesService {
         query.setPagination(pagination);
 
         String request = MobileTerminalModuleRequestMapper.createMobileTerminalListRequest(query);
+        LOG.debug("Send MobileTerminalListRequest message to Mobile terminal");
         String messageId = producer.sendDataSourceMessage(request, DataSourceQueue.MOBILE_TERMINAL);
 
         TextMessage getMobileTerminalResponse = consumer.getMessage(messageId, TextMessage.class);
+        LOG.debug("Received response message");
 
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
 
@@ -1323,7 +1341,7 @@ public class RulesServiceBean implements RulesService {
             String messageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
             LOG.debug("JMS message with ID: {} is sent to USM.", messageId);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-
+            LOG.debug("Received response message");
             if (response != null) {
                 GetUserContextResponse userContextResponse = JAXBMarshaller.unmarshallTextMessage(response, GetUserContextResponse.class);
                 LOG.debug("Response concerning message with ID: {} is received.", messageId);

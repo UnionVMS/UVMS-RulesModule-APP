@@ -26,7 +26,7 @@ public class ActivityServiceBean implements ActivityService {
         try {
             trip = helper.findTrip(fishingTripID);
         } catch (MessageException | ActivityModelMarshallException | JMSException | SalesMarshallException e) {
-            log.error("Couldn't query FA for fishing trip with id " + fishingTripID, e);
+            log.warn("Couldn't query FA for fishing trip with id " + fishingTripID, e);
         }
 
         return trip;

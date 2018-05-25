@@ -36,8 +36,4 @@ public class SalesVesselCountryFact extends SalesAbstractFact {
     public int hashCode() {
         return Objects.hash(id, creationDateOfMessage);
     }
-
-    public boolean isIdValid() {
-        return SalesFactHelper.isCountryIdValid(getID());
-    }
 }

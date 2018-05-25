@@ -37,8 +37,8 @@ public class SalesServiceBeanHelper {
     @Lock(LockType.READ)
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
+        log.info("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
-        log.info("Received FLUXSalesReportMessage response message from Sales module");
         return unmarshal(receivedMessageAsString);
     }
 
@@ -59,8 +59,8 @@ public class SalesServiceBeanHelper {
 
     @Lock(LockType.READ)
     public Optional<FLUXSalesReportMessage> findReport(String guid) throws MessageException, SalesMarshallException, JMSException {
-        log.info("Send FLUXSalesReportMessage request message to Sales module");
         String findReportByIdRequest = SalesModuleRequestMapper.createFindReportByIdRequest(guid);
+        log.info("Send FLUXSalesReportMessage message to Sales");
         String correlationId = sendMessageToSales(findReportByIdRequest);
         return receiveMessageFromSales(correlationId);
     }
@@ -68,13 +68,12 @@ public class SalesServiceBeanHelper {
     @Lock(LockType.READ)
     public boolean areAnyOfTheseIdsNotUnique(List<String> ids, SalesMessageIdType type) throws SalesMarshallException, MessageException, JMSException {
         String checkForUniqueIdRequest = SalesModuleRequestMapper.createCheckForUniqueIdRequest(ids, type);
-        log.info("Send CheckForUniqueIdRequest message to Sales module");
+        log.info("Send CheckForUniqueIdRequest message to Sales");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 60000L);
+        log.info("Received response message");
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
-        String id = (ids.isEmpty()) ? "0" : ids.get(0);
-        log.info("Received CheckForUniqueIdResponse message. IsUniqueSales: " + response.isUnique() + " ID: " + id + " type: " + type.value());
         return !response.isUnique();
     }
 }
