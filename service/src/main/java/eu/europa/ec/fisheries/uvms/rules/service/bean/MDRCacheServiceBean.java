@@ -18,11 +18,7 @@ import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -220,6 +216,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             }
         }
         return true;
+    }
+
+    @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime creationDateOfMessage) {
+        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), creationDateOfMessage);
     }
 
     private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
