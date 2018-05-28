@@ -15,13 +15,13 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-@ApplicationPath("/doctor")
+@ApplicationPath("/health")
 public class RestActivator extends Application  {
 
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new HashSet<>();
-        resources.add(DoctorResource.class);
+        resources.add(HealthResource.class);
         return resources;
     }
 

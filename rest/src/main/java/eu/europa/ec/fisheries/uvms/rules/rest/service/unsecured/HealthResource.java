@@ -21,7 +21,6 @@
 package eu.europa.ec.fisheries.uvms.rules.rest.service.unsecured;
 
 import javax.ejb.EJB;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -40,12 +39,11 @@ import org.apache.commons.collections.CollectionUtils;
 
 @Slf4j
 @Path("/")
-public class DoctorResource {
+public class HealthResource {
 
     private static final String MDR_CACHE_LOADED = "mdr_cache_loaded";
     private static final String RULES_LOADED = "rules_loaded";
     private static final String APPLICATION_VERSION = "application.version";
-    private static final String APPLICATION_STATUS = "application.status";
     private static final String APPLICATION_NAME = "application.name";
 
     @EJB
@@ -59,30 +57,36 @@ public class DoctorResource {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getDoctor() {
-        Boolean healthy = true;
+    public Response getHealth() {
+        Response response;
         Map<String, Object> properties = new HashMap<>();
-        Map<String, Map<String, Object>> metrics = new HashMap<>();
-        long size = mdrCache.getCache().size();
-        boolean check = size > 10;
-        properties.put(MDR_CACHE_LOADED, check);
-        if (!check){
-            healthy = false;
-        }
-        List<RuleError> ruleErrors = templateEngine.checkRulesAreLoaded(5);
-        check = CollectionUtils.isNotEmpty(ruleErrors);
-        properties.put(RULES_LOADED, check);
-        if (!check){
-            healthy = false;
-        }
+        Map<String, Map<String, Object>> map = new HashMap<>();
+
+        boolean mdrCacheLoaded = isMdrCacheLoaded();
+        boolean rulesCacheLoaded = isRulesCacheLoaded();
+
+        properties.put(MDR_CACHE_LOADED, mdrCacheLoaded);
+        properties.put(RULES_LOADED, rulesCacheLoaded);
         properties.put(APPLICATION_VERSION, propertiesBean.getProperty(APPLICATION_VERSION));
-        if (healthy){
-            properties.put(APPLICATION_STATUS, HttpServletResponse.SC_ACCEPTED);
+
+        map.put(propertiesBean.getProperty(APPLICATION_NAME), properties);
+
+        if (rulesCacheLoaded && mdrCacheLoaded){
+            response = Response.ok(map).build();
         }
         else {
-            properties.put(APPLICATION_STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(map).build();
         }
-        metrics.put(propertiesBean.getProperty(APPLICATION_NAME), properties);
-        return Response.ok(properties).build();
+        return response;
+    }
+
+    private boolean isRulesCacheLoaded() {
+        List<RuleError> ruleErrors = templateEngine.checkRulesAreLoaded(5);
+        return CollectionUtils.isNotEmpty(ruleErrors);
+    }
+
+    private boolean isMdrCacheLoaded() {
+        long size = mdrCache.getCache().size();
+        return size > 10;
     }
 }
