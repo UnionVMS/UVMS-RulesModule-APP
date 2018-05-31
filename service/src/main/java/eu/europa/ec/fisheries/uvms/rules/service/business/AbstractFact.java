@@ -788,9 +788,10 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositive(List<MeasureType> value) {
-        if (value == null) {
-            return true;
+        if (CollectionUtils.isEmpty(value)) {
+            return false;
         }
+        value.removeAll(Collections.singleton(null));
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
@@ -971,6 +972,9 @@ public abstract class AbstractFact {
 	 * @return true | false
      */
     public boolean isEmpty(Collection<?> collection){
+        if(collection != null){
+            collection.removeAll(Collections.singleton(null));
+        }
         if(CollectionUtils.isEmpty(collection)){
             return true;
         }
@@ -1034,7 +1038,7 @@ public abstract class AbstractFact {
      * @param map
      * @return true | false
      */
-    public static boolean isEmpty( Map<?, ?> map ){
+    public boolean isEmpty( Map<?, ?> map ){
         return MapUtils.isEmpty(map);
     }
 
@@ -1043,7 +1047,10 @@ public abstract class AbstractFact {
      * @param object
      * @return true | false
      */
-    public static boolean isEmpty( Object object ){
+    public boolean isEmpty( Object object ){
+        if(object instanceof Collection){
+            return isEmpty((Collection)object);
+        }
         return object == null;
     }
 
@@ -1052,7 +1059,7 @@ public abstract class AbstractFact {
      * @param array
      * @return true | false
      */
-    public static boolean isEmpty( Object[] array ){
+    public boolean isEmpty( Object[] array ){
         return array == null || array.length == 0;
     }
 
@@ -1061,7 +1068,7 @@ public abstract class AbstractFact {
      * @param string
      * @return true | false
      */
-    public static boolean isEmpty( String string ){
+    public boolean isEmpty( String string ){
         return string == null || string.trim().length() == 0;
     }
 
