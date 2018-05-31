@@ -26,4 +26,19 @@
         </rollback>
     </changeSet>
 
+    <changeSet author="stihft" id="addIndexOnTableRawassetidlistAndColumnRawassetidlist_rawmoveasset_id">
+        <createIndex
+                indexName="rawassetidlist_i_1"
+                tableName="rawassetidlist">
+            <column name="rawassetidlist_rawmoveasset_id" type="bigint"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex
+                    indexName="rawassetidlist_i_1"
+                    tableName="rawassetidlist"/>
+        </rollback>
+    </changeSet>
+
+
 </databaseChangeLog>
