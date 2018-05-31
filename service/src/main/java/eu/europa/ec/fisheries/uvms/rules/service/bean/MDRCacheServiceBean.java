@@ -144,21 +144,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     @Lock(LockType.READ)
     @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime creationDateOfMessage) {
-        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), creationDateOfMessage);
+    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime validityDate) {
+        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), validityDate);
     }
 
     private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
         return getList(entry, date);
-    }
-
-    @Override
-    @Deprecated
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-        return isIdTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
 
     /**
@@ -346,11 +338,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return matchingList;
     }
 
-    private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
-        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
-        return getList(entry, date);
-    }
-
     /**
      * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
      *
@@ -391,10 +378,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return StringUtils.EMPTY;
     }
 
-    private boolean isSchemeIdPresentInMDRList(String listName, IdType idType, DateTime creationDateOfMessage) {
-        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId(), creationDateOfMessage);
-    }
-
     @Override
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode, DateTime creationDateOfMessage) {
         return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode), creationDateOfMessage);
@@ -406,6 +389,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
         return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue, creationDateOfMessage);
+    }
+
+    private boolean isSchemeIdPresentInMDRList(String listName, IdType idType, DateTime creationDateOfMessage) {
+        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId(), creationDateOfMessage);
     }
 
     private List<String> getList(List<ObjectRepresentation> entry, DateTime date) {
