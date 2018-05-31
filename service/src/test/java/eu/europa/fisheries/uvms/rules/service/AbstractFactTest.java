@@ -68,7 +68,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class AbstractFactTest {
 
@@ -90,9 +89,7 @@ public class AbstractFactTest {
         List list = null;
         assertTrue(fact.isEmpty(list));
         assertTrue(fact.isEmpty(""));
-        assertTrue(fact.isEmpty(new HashMap<>()));
         assertTrue(fact.isEmpty(new ArrayList<>()));
-        assertFalse(fact.isEmpty(new TextType()));
     }
 
     @Test
