@@ -82,7 +82,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
  * @author Andi Kovi
  */
 @Slf4j
-public class ActivityRequestFactGenerator extends AbstractGenerator {
+public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     private FLUXFAReportMessage fluxfaReportMessage;
 
@@ -90,7 +90,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private ActivityFactMapper activityFactMapper;
 
-    public ActivityRequestFactGenerator() {
+    public ActivityFaReportFactGenerator() {
         xPathUtil = new XPathStringWrapper();
         activityFactMapper = new ActivityFactMapper(xPathUtil);
     }
@@ -144,7 +144,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
                 if (relatedFLUXReportDocument != null){
-                    setUniqueIDs(relatedFLUXReportDocument.getIDS(), factsByReport);
+                    populateUniqueIDsAndFaReportDocumentDate(relatedFLUXReportDocument, factsByReport);
                 }
 
                 facts.addAll(factsByReport);

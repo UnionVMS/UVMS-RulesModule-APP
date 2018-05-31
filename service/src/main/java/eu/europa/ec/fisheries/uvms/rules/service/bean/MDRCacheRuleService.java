@@ -28,57 +28,29 @@ public interface MDRCacheRuleService {
 
     EnrichedBRMessage getErrorMessageForBrId(String brId);
 
-    @Deprecated
-    boolean isPresentInMDRList(String listName, String codeValue);
-
     boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage);
-
-    @Deprecated
-    boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes);
 
     boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage);
 
-    @Deprecated
-    boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode);
-
     boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode, DateTime creationDateOfMessage);
-
-    @Deprecated
-    boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch);
 
     boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
-    @Deprecated
-    boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch);
-
     boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
-    boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch);
-
-    @Deprecated
-    boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch);
+    boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
     boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime creationDateOfMessage);
 
-    @Deprecated
-    boolean isIdTypePresentInMDRList(List<IdType> ids);
-
     boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime creationDateOfMessage);
-
-    @Deprecated
-    boolean isIdTypePresentInMDRList(IdType id);
 
     boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage);
 
-    boolean isSchemeIdPresentInMDRList(String listName, IdType idType);
-
     String getDataTypeForMDRList(String listName, String codeValue);
 
-    String getValueForListId(String listId, List<CodeType> typeCodes);
+    boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes, DateTime creationDateOfMessage);
 
-    boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes);
-
-    boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode);
+    boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime creationDateOfMessage);
 
     boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage);
 

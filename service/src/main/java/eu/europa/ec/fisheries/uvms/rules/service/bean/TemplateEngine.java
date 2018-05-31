@@ -115,9 +115,9 @@ public class TemplateEngine {
     }
 
     public List<RuleError> checkRulesAreLoaded(int retries) {
-        AbstractFact faRepFact = getMockedFact();
-        ruleEvaluator.validateFacts(Collections.singletonList(faRepFact));
-        if (CollectionUtils.isEmpty(faRepFact.getErrors())) { // Means rules were not loaded, otherwise we'd have errors here.
+        AbstractFact fishTripFact = getMockedFact();
+        ruleEvaluator.validateFacts(Collections.singletonList(fishTripFact));
+        if (CollectionUtils.isEmpty(fishTripFact.getErrors())) { // Means rules were not loaded, otherwise we'd have errors here.
             if (retries < 5) {
                 initialize();
                 retries++;
@@ -128,7 +128,7 @@ public class TemplateEngine {
             }
         }
 
-        return faRepFact.getErrors();
+        return fishTripFact.getErrors();
     }
 
     private AbstractFact getMockedFact() {
