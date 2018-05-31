@@ -16,18 +16,6 @@ import static org.junit.Assert.assertTrue;
 public class SalesFactHelperTest {
 
     @Test
-    public void setContainsAnyValueWhenValueIsFound() throws Exception {
-        boolean valid = SalesFactHelper.doesSetContainAnyValue(Arrays.asList("EUR"), SalesFactHelper.getValidCurrencies());
-        assertTrue(valid);
-    }
-
-    @Test
-    public void setContainsAnyValueWhenValueIsNotFound() throws Exception {
-        boolean valid = SalesFactHelper.doesSetContainAnyValue(Arrays.asList("AAAAAAAAAAAAAAAAAAAAAAAAA"), SalesFactHelper.getValidCurrencies());
-        assertFalse(valid);
-    }
-
-    @Test
     public void testAllValuesGreaterOrEqualToZeroWhenValuesAreGreaterOrEqualToZero() throws Exception {
         boolean allValuesGreaterOrEqualToZero = SalesFactHelper.allValuesGreaterOrEqualToZero(Arrays.asList(new AmountType().withValue(BigDecimal.ONE), new AmountType().withValue(BigDecimal.TEN), new AmountType().withValue(BigDecimal.ZERO)));
         assertTrue(allValuesGreaterOrEqualToZero);
@@ -67,39 +55,6 @@ public class SalesFactHelperTest {
     public void testAnyValueEqualToZeroWhenValueIsNull() throws Exception {
         boolean valueEqualToZero = SalesFactHelper.anyValueEqualToZero(Arrays.asList(new AmountType().withValue(null)));
         assertTrue(valueEqualToZero);
-    }
-
-    @Test
-    public void testIfCountryIdIsValidWhenValueIsValid() throws Exception {
-        IdType idType = new IdType();
-        idType.setValue("BEL");
-
-        boolean isValid = SalesFactHelper.isCountryIdValid(idType);
-        assertTrue(isValid);
-    }
-
-    @Test
-    public void testIfCountryIdIsValidWhenValueIsInvalid() throws Exception {
-        IdType idType = new IdType();
-        idType.setValue("LEB");
-
-        boolean isValid = SalesFactHelper.isCountryIdValid(idType);
-        assertFalse(isValid);
-    }
-
-    @Test
-    public void testIfCountryIdIsValidWhenValueIsNull() throws Exception {
-        boolean isValid = SalesFactHelper.isCountryIdValid(null);
-        assertTrue(isValid);
-    }
-
-    @Test
-    public void testIfCountryIdIsValidWhenIdTypeValueIsNull() throws Exception {
-        IdType idType = new IdType();
-        idType.setValue("");
-
-        boolean isValid = SalesFactHelper.isCountryIdValid(idType);
-        assertFalse(isValid);
     }
 
 }

@@ -36,6 +36,8 @@ public interface MDRCacheRuleService {
 
     boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
+    boolean isCodeTypePresentInMDRList(CodeType valuesToMatch, DateTime creationDateOfMessage);
+
     boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage);
 
     boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage);

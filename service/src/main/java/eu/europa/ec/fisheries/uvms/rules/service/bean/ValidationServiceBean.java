@@ -256,8 +256,10 @@ public class ValidationServiceBean implements ValidationService {
                     try {
                         // Find current email address
                         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(subscription.getOwner());
+                        LOG.debug("Send GetContactDetailsRequest message to User");
                         String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
                         TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+                        LOG.debug("Received response message");
                         GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
                         String emailAddress = userResponse.getContactDetails().getEMail();
                         sendToEmail(emailAddress, ruleName, fact);
@@ -287,8 +289,10 @@ public class ValidationServiceBean implements ValidationService {
             //XMLGregorianCalendar date = RulesUtil.dateToXmlGregorian(new Date());
 
             String userRequest = UserModuleRequestMapper.mapToFindOrganisationsRequest(endpoint);
+            LOG.debug("Send FindOrganisationsRequest message to User");
             String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
             TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
+            LOG.debug("Received response message");
             FindOrganisationsResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, FindOrganisationsResponse.class);
 
             List<RecipientInfoType> recipientInfoList = new ArrayList<>();
@@ -312,8 +316,10 @@ public class ValidationServiceBean implements ValidationService {
                         continue;
                     }
                     String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, new Date(), ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
+                    LOG.debug("Send SendMovementToPluginRequest message to Exchange");
                     String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
                     TextMessage response = consumer.getMessage(messageId, TextMessage.class);
+                    LOG.debug("Received response message");
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
                     // TODO: Do something with the response??? Or don't send response from Exchange
@@ -332,8 +338,10 @@ public class ValidationServiceBean implements ValidationService {
         ArrayList<PluginType> types = new ArrayList<>();
         types.add(pluginType);
         String serviceListRequest = ExchangeModuleRequestMapper.createGetServiceListRequest(types);
+        LOG.debug("Send GetServiceListRequest message to Exchange");
         String serviceListRequestId = producer.sendDataSourceMessage(serviceListRequest, DataSourceQueue.EXCHANGE);
         TextMessage serviceListResponse = consumer.getMessage(serviceListRequestId, TextMessage.class);
+        LOG.debug("Received response message");
         return ExchangeDataSourceResponseMapper.mapToServiceTypeListFromModuleResponse(serviceListResponse, serviceListRequestId);
     }
 

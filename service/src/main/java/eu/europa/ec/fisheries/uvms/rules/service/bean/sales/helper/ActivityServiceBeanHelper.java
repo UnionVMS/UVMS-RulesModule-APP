@@ -5,10 +5,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ListValueTypeFilter;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.SearchFilter;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.SingleValueTypeFilter;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -21,11 +18,14 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
+@Slf4j
 @Singleton
 public class ActivityServiceBeanHelper {
 
@@ -40,6 +40,7 @@ public class ActivityServiceBeanHelper {
 
     protected Optional<FishingTripResponse> receiveMessageFromActivity(String correlationId) throws MessageException, JMSException, SalesMarshallException {
         TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
+        log.debug("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
     }
@@ -66,8 +67,8 @@ public class ActivityServiceBeanHelper {
                 new ListValueTypeFilter(SearchFilter.ACTIVITY_TYPE, Arrays.asList("LANDING")));
 
         String request = activityMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
+        log.debug("Send FishingTripRequest message to Activity");
         String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY);
-
         return receiveMessageFromActivity(correlationId);
     }
 }

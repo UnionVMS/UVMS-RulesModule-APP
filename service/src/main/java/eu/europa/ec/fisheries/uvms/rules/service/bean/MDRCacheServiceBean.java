@@ -141,6 +141,25 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
+    @Override
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime creationDateOfMessage) {
+        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), creationDateOfMessage);
+    }
+
+    private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
+        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
+        return getList(entry, date);
+    }
+
+    @Override
+    @Deprecated
+    @Lock(LockType.READ)
+    @AccessTimeout(value = 180, unit = SECONDS)
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
+        return isIdTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
+    }
 
     /**
      * This function checks that all the IdType values passed to the function exist in MDR code list or not

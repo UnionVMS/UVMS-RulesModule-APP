@@ -73,8 +73,10 @@ public class RulesActivityServiceBean {
     public boolean checkSubscriptionPermissions(String request, MessageType type) {
         try {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
+            log.debug("Send MapToSubscriptionRequest to Activity");
             String jmsCorrelationId = producer.sendDataSourceMessage(requestStr, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class, 20000L);
+            log.debug("Received response message");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
             return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
@@ -101,8 +103,10 @@ public class RulesActivityServiceBean {
                 log.warn("No IDs were found to issue request for in method RulesActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
                 return nonUniqueIdsMap;
             }
+            log.debug("Send GetNonUniqueIdsRequest message to Activity");
             String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
+            log.debug("Received response message");
             getNonUniqueIdsResponse = ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse(message, jmsCorrelationId);
         } catch (ActivityModelMapperException | MessageException e) {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
@@ -131,8 +135,10 @@ public class RulesActivityServiceBean {
                 log.warn("The request resulted empty in method RulesActivityServiceBean.getFishingActivitiesForTrips(..){...}. Empty list will be returned");
                 return MapUtils.EMPTY_MAP;
             }
+            log.debug("Send GetFishingActivitiesForTripRequest message to Activity");
             String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
             TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
+            log.debug("Received response message");
             response = ActivityModuleResponseMapper.mapToGetFishingActivitiesForTripResponse(message, jmsCorrelationId);
         } catch (ActivityModelMapperException | MessageException e) {
             log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);

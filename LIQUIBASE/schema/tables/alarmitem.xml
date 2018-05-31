@@ -37,4 +37,18 @@
         
     </changeSet>
 
+    <changeSet author="stihft" id="addIndexOnTableAlarmitemAndColumnAlarmitem_alarmrep_id">
+        <createIndex
+                indexName="alarmitem_i_1"
+                tableName="alarmitem">
+            <column name="alarmitem_alarmrep_id" type="bigint"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex
+                    indexName="alarmitem_i_1"
+                    tableName="alarmitem"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>

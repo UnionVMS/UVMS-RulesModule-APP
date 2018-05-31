@@ -82,10 +82,6 @@ public class AbstractFactTest {
 
     @Before
     public void before() {
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, RuleTestHelper.getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC());
         MockitoAnnotations.initMocks(this);
     }
 
@@ -126,11 +122,19 @@ public class AbstractFactTest {
         assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
-
         assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
+    }
 
+    @Test
+    public void testUUIDShouldPass() {
+        assertTrue(fact.validateFormat("c56a4180-65aa-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
+    }
+
+    @Test
+    public void testUUIDShouldFail() {
+        assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
     }
 
     @Test
@@ -1753,7 +1757,6 @@ public class AbstractFactTest {
 
         assertTrue(fact.isIsoDateStringValidFormat(isoDateStringWithMillis));
     }
-
     @Test
     public void validateFormatIsoDateStringNoMillis() {
         String isoDateStringNoMillis = "2016-08-01T03:48:23Z";
