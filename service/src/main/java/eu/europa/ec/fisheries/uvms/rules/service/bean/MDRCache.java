@@ -10,24 +10,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -36,11 +29,27 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
+import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.*;
+
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 /**
- * @author Gregory Rinaldi
+ * @author Gregory Rinaldi, Andi Kovi
  */
 @Singleton
 @Startup
@@ -56,21 +65,83 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
+    // This variable will store the Date last time this @cache was refreshed.
+    private Date cacheRefreshDate;
+
+    // This is the date that the last entity in mdr (module) was refreshed.
+    private Date mdrRefreshDate;
+
+    // This will avoid 70 date comparisons, otherwise unavoidable..
+    private boolean cacheDateChanged;
+
     @PostConstruct
-    public void init(){
+    public void init() {
         cache = CacheBuilder.newBuilder()
-                .refreshAfterWrite(24, TimeUnit.HOURS)
+                .refreshAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(100)
                 .initialCapacity(80)
-                //.recordStats()
-                .build(
-                        new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
-                            @Override
-                            public List<ObjectRepresentation> load(MDRAcronymType acronymType) throws Exception {
-                                return mdrCodeListByAcronymType(acronymType);
-                            }
-                        }
+                .build(new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
+
+                           @Override
+                           public List<ObjectRepresentation> load(MDRAcronymType acronymType) {
+                               cacheRefreshDate = mdrRefreshDate;
+                               return mdrCodeListByAcronymType(acronymType);
+                           }
+
+                           @Override
+                           public ListenableFuture<List<ObjectRepresentation>> reload(final MDRAcronymType key, List<ObjectRepresentation> prevObjRappres) throws ExecutionException, InterruptedException {
+                               if (CollectionUtils.isEmpty(prevObjRappres) || cacheDateChanged) { // We also check for emptiness.
+                                   ListenableFutureTask<List<ObjectRepresentation>> task = ListenableFutureTask.create(new Callable<List<ObjectRepresentation>>() {
+                                       public List<ObjectRepresentation> call() {
+                                           return mdrCodeListByAcronymType(key);
+                                       }
+                                   });
+                                   Executors.newSingleThreadExecutor().execute(task);
+                                   task.get(); // Otherwise it creates problems with the upper calling code...
+                                   return task; // Wierd but this doesnt work : return Futures.immediateFuture(load(key));
+                               } else {
+                                   return Futures.immediateFuture(prevObjRappres);
+                               }
+                           }
+                       }
                 );
+    }
+
+    @AccessTimeout(value = 10, unit = MINUTES)
+    @Lock(LockType.WRITE)
+    public void loadAllMdrCodeLists() {
+        try {
+            populateMdrCacheDateAndCheckIfRefreshDateChanged();
+            ExecutorService executorService = Executors.newFixedThreadPool(5);
+            List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
+            for (final MDRAcronymType type : MDRAcronymType.values()) {
+                callableList.add(new Callable<List<ObjectRepresentation>>() {
+                    @Override
+                    public List<ObjectRepresentation> call() {
+                        return getEntry(type);
+                    }
+                });
+            }
+            List<Future<List<ObjectRepresentation>>> futuresList = new ArrayList<>();
+            for (Callable<List<ObjectRepresentation>> callable : callableList) {
+                futuresList.add(executorService.submit(callable));
+            }
+            executorService.invokeAll(callableList);
+            executorService.shutdown();
+            // To make sure that the method loadAllMdrCodeLists() as a whole has executed all the Collables before exiting.
+            // awaitTermination doesn't stop as expected so wee need to call get() of Future here to make it wait for each task to finish!
+            for (Future<List<ObjectRepresentation>> future : futuresList) {
+                future.get();
+            }
+            if (cacheDateChanged) {
+                log.info("[INFO] MDR Cache Refresh was Needed and done already! Last time MDRs (CodeLists) were refreshed : [ " + mdrRefreshDate + " ]..");
+                cacheRefreshDate = new Date(mdrRefreshDate.getTime());
+                log.debug(cache.stats().toString());
+                log.info("MDRCache size: " + cache.size());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     @Lock(LockType.READ)
@@ -80,28 +151,66 @@ public class MDRCache {
         if (acronymType != null) {
             result = cache.getUnchecked(acronymType);
         }
-
         long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
-        if (elapsed > 0.25){
+        if (elapsed > 0.5) {
             log.info("Loading " + acronymType + " took " + stopwatch);
         }
-
         return result;
     }
 
     @SneakyThrows
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
-        log.debug("Send MdrGetCodeListRequest message to MDR. Acronym: " + acronym.name());
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
-        long timeoutMillis = 30 * 60 * 1000;
-        TextMessage message = consumer.getMessage(corrId, TextMessage.class, timeoutMillis);
-        log.debug("Received response message");
+        TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             return response.getDataSets();
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Checks if the refresh date from mdr module has changed.
+     * If it has changed sets cacheDateChanged=true; and refreshed the mdrRefreshDate with the new date.
+     */
+    private void populateMdrCacheDateAndCheckIfRefreshDateChanged() {
+        cacheDateChanged = false;
+        // TODO : optimize for : if at least 5 minutes have passed...
+        try {
+            Date mdrDate = getLastTimeMdrWasRefreshedFromMdrModule();
+            if (mdrRefreshDate == null || !mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
+                mdrRefreshDate = mdrDate;
+                cacheDateChanged = true;
+            }
+        } catch (MessageException e) {
+            log.error("[ERROR] Couldn't populate MDR Refresh date.. MDR Module is deployed?");
+        }
+    }
+
+    /**
+     * Calls MDR module to get the latest date the MDR lists werisPresentInMDRListe refreshed.
+     *
+     * @return
+     * @throws MessageException
+     */
+    private Date getLastTimeMdrWasRefreshedFromMdrModule() throws MessageException {
+        try {
+            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 30000L);
+            if (message != null) {
+                MdrGetLastRefreshDateResponse response = JAXBUtils.unMarshallMessage(message.getText(), MdrGetLastRefreshDateResponse.class);
+                return response.getLastRefreshDate() != null ? DateUtils.xmlGregorianCalendarToDate(response.getLastRefreshDate()) : null;
+            }
+            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
+        } catch (MdrModelMarshallException | JAXBException | JMSException e) {
+            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
+        }
+    }
+
+    private static long getDifferenceBetweenDates(Date firstDate, Date secondDate, TimeUnit timeUnit) {
+        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+        return TimeUnit.DAYS.convert(diffInMillies, timeUnit);
     }
 
 }

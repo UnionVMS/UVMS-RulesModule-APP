@@ -40,7 +40,6 @@ public class ObjectRepresentationHelper {
                 foundObjectRepresentationsIterator.remove();
             }
         }
-
         return foundObjectRepresentations;
     }
 

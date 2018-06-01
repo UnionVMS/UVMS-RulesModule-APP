@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -767,11 +768,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("FLAG");
 
         //mock
-        doReturn(false).when(mdrService).isPresentInMDRList("TERRITORY", "INVALIDFLAG");
+        doReturn(false).when(mdrService).isPresentInMDRList(eq("TERRITORY"), eq("INVALIDFLAG"), Mockito.any(DateTime.class));
 
         //execute and verify
         assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("TERRITORY", "INVALIDFLAG");
+        verify(mdrService).isPresentInMDRList(eq("TERRITORY"), eq("INVALIDFLAG"), Mockito.any(DateTime.class));
     }
 
     @Test
@@ -785,11 +786,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("FLAG");
 
         //mock
-        doReturn(true).when(mdrService).isPresentInMDRList("TERRITORY", "BEL");
+        when(mdrService.isPresentInMDRList(eq("TERRITORY"), eq("BEL"), Mockito.any(DateTime.class))).thenReturn(true);
 
         //execute and verify
         assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("TERRITORY", "BEL");
+        verify(mdrService).isPresentInMDRList(eq("TERRITORY"), eq("BEL"), Mockito.any(DateTime.class));
     }
 
     @Test
@@ -802,11 +803,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("ROLE");
 
         //mock
-        doReturn(false).when(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "UNKNOWN");
+        doReturn(false).when(mdrService).isPresentInMDRList(eq("FLUX_SALES_QUERY_PARAM_ROLE"), eq("UNKNOWN"), Mockito.any(DateTime.class));
 
         //execute and verify
         assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "UNKNOWN");
+        verify(mdrService).isPresentInMDRList(eq("FLUX_SALES_QUERY_PARAM_ROLE"), eq("UNKNOWN"), Mockito.any(DateTime.class));
     }
 
     @Test
@@ -819,11 +820,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("ROLE");
 
         //mock
-        doReturn(true).when(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "FLAG");
+        doReturn(true).when(mdrService).isPresentInMDRList(eq("FLUX_SALES_QUERY_PARAM_ROLE"), eq("FLAG"), Mockito.any(DateTime.class));
 
         //execute and verify
         assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", "FLAG");
+        verify(mdrService).isPresentInMDRList(eq("FLUX_SALES_QUERY_PARAM_ROLE"), eq("FLAG"), Mockito.any(DateTime.class));
     }
 
     @Test
@@ -836,11 +837,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("PLACE");
 
         //mock
-        doReturn(false).when(mdrService).isPresentInMDRList("LOCATION", "UNKNOWN");
+        doReturn(false).when(mdrService).isPresentInMDRList(eq("LOCATION"), eq("UNKNOWN"), Mockito.any(DateTime.class));
 
         //execute and verify
         assertTrue(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("LOCATION", "UNKNOWN");
+        verify(mdrService).isPresentInMDRList(eq("LOCATION"), eq("UNKNOWN") , Mockito.any(DateTime.class));
     }
 
     @Test
@@ -853,11 +854,11 @@ public class SalesRulesServiceBeanTest {
         typeCode.setValue("PLACE");
 
         //mock
-        doReturn(true).when(mdrService).isPresentInMDRList("LOCATION", "BEOST");
+        doReturn(true).when(mdrService).isPresentInMDRList(eq("LOCATION"), eq("BEOST"), Mockito.any(DateTime.class));
 
         //execute and verify
         assertFalse(service.isSalesQueryParameterValueNotValid(typeCode, valueCode));
-        verify(mdrService).isPresentInMDRList("LOCATION", "BEOST");
+        verify(mdrService).isPresentInMDRList(eq("LOCATION"), eq("BEOST"), Mockito.any(DateTime.class));
     }
 
     @Test
