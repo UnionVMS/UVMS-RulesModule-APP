@@ -45,7 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -1882,7 +1882,7 @@ public class AbstractFactTest {
     public void testIsEmptyCollectionsReflective(){
         FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
                 IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(message);
         for (AbstractFact abstractFact : generator.generateAllFacts()) {
             if(abstractFact instanceof FaReportDocumentFact){

@@ -25,7 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -65,7 +65,7 @@ public class BusinessObjectFactoryTest {
     @Test
     @SneakyThrows
     public void testAllFishingActivityTypeFromGenerator(){
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(loadTestData(testXmlPath));
         List<AbstractFact> facts = generator.generateAllFacts();
 

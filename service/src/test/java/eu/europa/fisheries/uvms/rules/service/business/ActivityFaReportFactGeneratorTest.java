@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ActivityRequestFactGeneratorTest {
+public class ActivityFaReportFactGeneratorTest {
 
-    private ActivityRequestFactGenerator generator;
+    private ActivityFaReportFactGenerator generator;
 
     private ActivityFactMapper mapper = new ActivityFactMapper(new XPathStringWrapper());
 
@@ -37,7 +37,7 @@ public class ActivityRequestFactGeneratorTest {
 
     @Before
     public void before(){
-        generator = new ActivityRequestFactGenerator();
+        generator = new ActivityFaReportFactGenerator();
         setInternalState(generator, "activityFactMapper", mapper);
         Map<ExtraValueType, Object> map = new HashMap<>();
         idTypeWithFlagState = new IdTypeWithFlagState();
