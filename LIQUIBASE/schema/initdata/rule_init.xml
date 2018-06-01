@@ -1261,7 +1261,7 @@
             <column name="rule_id" value="45"/>
             <column name="br_id" value="FA-L03-00-0045"/>
             <column name="expression"
-                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; !matchWithFluxTLExceptParties(ownerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;)"/>
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; !valueContainsAll(ownerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
             <column name="note" value="The party sending must be allowed to send the message"/>
             <column name="message"
                     value="Report Owner ID not consistent with FLUX TL envelope parameters."/>
