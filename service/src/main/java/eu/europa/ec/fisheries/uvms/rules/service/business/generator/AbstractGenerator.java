@@ -13,15 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
@@ -56,14 +57,23 @@ public abstract class AbstractGenerator<T> {
     /**
      * This method is setting unique UUIDs to a list of facts
      * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
-     * @param ids
+     * @param fluxRepDoc
      * @param facts
      */
-    void setUniqueIDs(List<IDType> ids, List<AbstractFact> facts) {
-        List<String> strIDs = getIds(ids);
+    void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
+        List<String> strIDs = getIds(fluxRepDoc.getIDS());
+        DateTimeType creationDateTime = fluxRepDoc.getCreationDateTime();
+        DateTime reportDateTime = null;
+        if(creationDateTime != null){
+            Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+            if(repDat != null){
+                reportDateTime = new DateTime(repDat);
+            }
+        }
         facts.removeAll(Collections.singleton(null));
         for (AbstractFact fact : facts) {
             fact.setUniqueIds(strIDs);
+            fact.setCreationDateOfMessage(reportDateTime);
         }
     }
 
