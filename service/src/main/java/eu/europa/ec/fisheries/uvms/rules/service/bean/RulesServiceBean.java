@@ -634,7 +634,7 @@ public class RulesServiceBean implements RulesService {
     }
 
     @Override
-    public void setMovementReportReceived(final RawMovementType rawMovement, String pluginType, String username) throws RulesServiceException {
+    public RawMovementFact setMovementReportReceived(final RawMovementType rawMovement, String pluginType, String username) throws RulesServiceException {
         try {
             Date auditTimestamp = new Date();
             Date auditTotalTimestamp = new Date();
@@ -681,6 +681,7 @@ public class RulesServiceBean implements RulesService {
                 // Tell Exchange that the report caused an alarm
                 sendBackToExchange(null, rawMovement, MovementRefTypeType.ALARM, username);
             }
+            return rawMovementFact;
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelMapperException | InterruptedException | ExecutionException e) {
             throw new RulesServiceException(e.getMessage());
         }

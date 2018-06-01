@@ -27,6 +27,7 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 
 import javax.ejb.Local;
@@ -145,7 +146,7 @@ public interface RulesService {
 
     String reprocessAlarm(List<String> alarms, String username) throws RulesServiceException, RulesFaultException;
 
-    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
+    RawMovementFact setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm
