@@ -763,6 +763,17 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testValueContainsAll_1() {
+
+        IdType idType1 = RuleTestHelper.getIdType("value1", "XEU");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "XFA");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.valueContainsAll(idTypes, "XEU","XFA");
+        assertTrue(result);
+    }
+
+    @Test
     public void testIsNumeric() {
         NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
@@ -1776,6 +1787,14 @@ public class AbstractFactTest {
 
         assertTrue(fact.matchWithFluxTL(idTypes));
     }
+    @Test
+    public void testMatchWithFluxTL_1() {
+        IdType idType3 = RuleTestHelper.getIdType("SRC", "FLUX_GP_PARTY");
+        List<IdType> idTypes = Arrays.asList(idType3);
+        fact.setSenderOrReceiver("SRC:FTF");
+        assertTrue(fact.matchWithFluxTL(idTypes));
+    }
+
 
     @Test
     public void testMatchWithFluxTLCorrectValueAndNullAndEmpty() {
@@ -1811,9 +1830,9 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
-        fact.setSenderOrReceiver("SDF");
+        fact.setSenderOrReceiver("XES");
 
-        assertTrue(fact.matchWithFluxTLExceptParties(idTypes, "XEU", "XFD"));
+        assertFalse(fact.matchWithFluxTL(idTypes));
     }
 
     @Test
@@ -1824,23 +1843,23 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
-        fact.setSenderOrReceiver("SDF");
+        fact.setSenderOrReceiver("XEU");
 
-        assertFalse(fact.matchWithFluxTLExceptParties(idTypes, "XED", "XFD"));
+        assertTrue(fact.matchWithFluxTL(idTypes));
     }
 
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
-        assertTrue(fact.getIdTypeValueArray(idType, ":").length == 3);
+        assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
-        assertFalse(fact.getIdTypeValueArray(idType, "'").length == 3);
+        assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
     @Test

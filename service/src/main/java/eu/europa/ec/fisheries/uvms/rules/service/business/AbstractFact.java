@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -59,6 +58,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 @ToString
 public abstract class AbstractFact {
 
+    private static final String COLON = ":";
     private static volatile int counter = 0;
 
     protected FactType factType;
@@ -1237,61 +1237,40 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean matchWithFluxTLExceptParties(List<IdType> idTypes, String... parties) {
-        if (isEmpty(idTypes) || ArrayUtils.isEmpty(parties)) {
-            return false;
-        }
-        List<String> partiesAllowedToSend = Arrays.asList(parties);
-        for (IdType idType : idTypes) {
-            String[] idTypeValueArray = getIdTypeValueArray(idType, ":");
-
-            if (idTypeValueArray != null) {
-                if (partiesAllowedToSend.contains(idTypeValueArray[0]) || matchWithFluxTL(idType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean matchWithFluxTL(List<IdType> idTypes) {
-        boolean match = false;
+        boolean isMatch = false;
         for (IdType idType : idTypes) {
-            match = matchWithFluxTL(idType);
-            if (match) {
+            isMatch = matchWithFluxTL(idType);
+            if (isMatch) {
                 break;
             }
         }
-        return match;
+        return isMatch;
     }
 
     private boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
         if (idType != null) {
-            String[] idValueArray = getIdTypeValueArray(idType, ":");
-
-            if (idValueArray != null) {
-                match = StringUtils.equals(idValueArray[0], senderOrReceiver);
+            String[] idValueArray = split(idType.getValue(), COLON);
+            if (ArrayUtils.isNotEmpty(idValueArray)) {
+                String[] split = split(senderOrReceiver, COLON);
+                match = StringUtils.equals(idValueArray[0], split[0]);
             }
         }
         return match;
     }
 
-    public String[] getIdTypeValueArray(IdType idType, String separator) {
+    public String[] split(String value, String separator) {
         if (StringUtils.isBlank(separator)) {
-            return null;
+            return new String[0];
         }
-        String[] idValueArray = null;
-        if (idType != null && idType.getValue()!=null) {
-            try {
-                idValueArray = idType.getValue().split(separator);
-            } catch (NullPointerException | PatternSyntaxException ex) {
-                log.error("Error splitting IdType's value to array!", ex);
-                return null;
-            }
+        String[] strings = null;
+        if (StringUtils.isNotEmpty(value)) {
+            strings = value.split(separator);
         }
-        return idValueArray;
+        return strings;
     }
+
 
     public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
         if (CollectionUtils.isEmpty(assetList)) {
