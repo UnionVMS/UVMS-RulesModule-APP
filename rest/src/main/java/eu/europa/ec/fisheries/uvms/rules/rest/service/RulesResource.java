@@ -30,7 +30,6 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
@@ -71,9 +70,6 @@ public class RulesResource {
 
     @EJB
     private RulesEngineBean rulesEngine;
-
-    @EJB
-    private RulesService rulesService;
 
     @EJB
     private TemplateEngine templateEngine;
