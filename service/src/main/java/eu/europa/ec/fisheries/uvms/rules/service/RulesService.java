@@ -146,7 +146,7 @@ public interface RulesService {
 
     String reprocessAlarm(List<String> alarms, String username) throws RulesServiceException, RulesFaultException;
 
-    RawMovementFact setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
+    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm
