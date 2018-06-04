@@ -19,17 +19,21 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_QUALITY_ANALYSIS;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 /**
  * @author padhyad
@@ -72,6 +76,18 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
                 facts.addAll(addFactsForValidationQualityAnalysis(validationResultDocument.getRelatedValidationQualityAnalysises()));
 
                 index++;
+            }
+        }
+
+        if (fluxResponseMessage.getFLUXResponseDocument() != null){
+            DateTimeType creationDateTime = fluxResponseMessage.getFLUXResponseDocument().getCreationDateTime();
+            for (AbstractFact fact : facts) {
+                if(creationDateTime != null){
+                    Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+                    if(repDat != null){
+                        fact.setCreationDateOfMessage(new DateTime(repDat));
+                    }
+                }
             }
         }
 
