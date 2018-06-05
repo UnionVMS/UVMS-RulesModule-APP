@@ -37,7 +37,7 @@ public class FaResponseFact extends AbstractFact {
     private List<IdType> validatorIDs;
     private FLUXParty respondentFLUXParty;
 
-    public boolean ifValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
+    public boolean isValidatorIdPresent(List<ValidationResultDocument> relatedValidationResultDocuments) {
         if (CollectionUtils.isEmpty(relatedValidationResultDocuments)) {
             return false;
         }
