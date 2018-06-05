@@ -43,6 +43,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -480,7 +481,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 }
                 validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(reportGUID));
             }
-        } catch (SAXException | JAXBException e) {
+        } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
@@ -524,7 +525,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     log.info(VALIDATION_EXISTS + logGuid + "]. \nNot going to process or send it to Exchange module!");
                 }
             }
-        } catch (SAXException | JAXBException e) {
+        } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
@@ -603,7 +604,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     evaluateOutgoingFaReport(setFLUXFAReportMessageRequest);
                 }
             }
-        } catch (SAXException | JAXBException e) {
+        } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
@@ -653,7 +654,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     log.info(VALIDATION_EXISTS + logGuid + "]. Not going to process or send it to Exchange module!");
                 }
             }
-        } catch (SAXException | JAXBException e) {
+        } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
@@ -695,7 +696,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                     log.info(VALIDATION_EXISTS + logGuid + "]. Not going to process!");
                 }
             }
-        } catch (SAXException | JAXBException e) {
+        } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             throw new RulesServiceException(e.getMessage(), e);
@@ -733,25 +734,41 @@ public class RulesMessageServiceBean implements RulesMessageService {
         return resultDto;
     }
 
-    private FLUXFAReportMessage unMarshallFluxFaReportMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
+    private FLUXFAReportMessage unMarshallFluxFaReportMessage(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
     }
 
-    private FLUXFAQueryMessage unMarshallFaQueryMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
+    private FLUXFAQueryMessage unMarshallFaQueryMessage(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
     }
 
-    private FLUXResponseMessage unMarshallFluxResponseMessage(String request) throws SAXException, JAXBException {
-        return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
+    private FLUXResponseMessage unMarshallFluxResponseMessage(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
     }
 
-    private Schema loadXSDSchema(String xsdLocation) throws SAXException {
+    private Schema loadXSDSchema(String xsdLocation) throws UnmarshalException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         URL resource = getClass().getClassLoader().getResource(xsdLocation);
         if (resource != null) {
-            return sf.newSchema(resource);
+            try {
+                return sf.newSchema(resource);
+            } catch (SAXException e) {
+                throw new UnmarshalException(e.getMessage(), e);
+            }
         }
-        throw new SAXException("XSD SCHEMA NOT FOUND");
+        throw new UnmarshalException("ERROR WHILE TRYING TO LOOKUP XSD SCHEMA");
     }
 
     private Boolean continueValidation(Map<Boolean, ValidationResultDto> validationMap) {
