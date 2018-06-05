@@ -80,6 +80,7 @@ import eu.europa.ec.fisheries.schema.sales.Report;
 import eu.europa.ec.fisheries.schema.sales.SalesIdType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -1121,7 +1122,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
-            String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj);
+            String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
             String logGuid = request.getLogGuid();
             Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, fluxNationCode);
             log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);

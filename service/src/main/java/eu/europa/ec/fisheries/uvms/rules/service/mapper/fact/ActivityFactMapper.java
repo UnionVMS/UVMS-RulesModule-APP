@@ -107,6 +107,7 @@ import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
@@ -148,6 +149,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
@@ -1840,7 +1842,6 @@ public class ActivityFactMapper {
         }
 
         FaQueryFact faQueryFact = new FaQueryFact();
-
         faQueryFact.setSenderOrReceiver(senderReceiver);
 
         faQueryFact.setId(mapToSingleIdType(faQuery.getID()));
@@ -2020,7 +2021,6 @@ public class ActivityFactMapper {
 
         FaResponseFact faResponseFact = new FaResponseFact();
         faResponseFact.setSenderOrReceiver(senderReceiver);
-
         String partialXpath = xPathUtil.getValue();
 
         final FLUXResponseDocument fluxResponseDocument1 = fluxResponseMessage.getFLUXResponseDocument();

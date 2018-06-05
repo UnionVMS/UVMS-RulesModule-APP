@@ -141,34 +141,36 @@ public class RulesValidator {
 
     @Lock(LockType.READ)
     public void evaluate(RawMovementFact fact) {
-        if (sanityKcontainer != null) {
-            LOG.info("Verify sanity rules");
 
-            KieSession ksession = sanityKcontainer.newKieSession();
+        KieSession ksession = getKieSession();
 
-            // Inject beans
-            ksession.setGlobal("validationService", validationService);
-            ksession.setGlobal("logger", LOG);
+        // Inject beans
+        ksession.setGlobal("validationService", validationService);
+        ksession.setGlobal("logger", LOG);
 
-            ksession.insert(fact);
-            ksession.fireAllRules();
-        }
+        ksession.insert(fact);
+        ksession.fireAllRules();
+    }
+
+    private KieSession getKieSession() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+        return kieContainer.newKieSession();
     }
 
     @Lock(LockType.READ)
     public void evaluate(MovementFact fact) {
-        if (customKcontainer != null) {
-            LOG.info("Verify user defined rules");
 
-            KieSession ksession = customKcontainer.newKieSession();
+        LOG.info("Verify user defined rules");
 
-            // Inject beans
-            ksession.setGlobal("validationService", validationService);
-            ksession.setGlobal("logger", LOG);
+        KieSession ksession = getKieSession();
 
-            ksession.insert(fact);
-            ksession.fireAllRules();
-        }
+        // Inject beans
+        ksession.setGlobal("validationService", validationService);
+        ksession.setGlobal("logger", LOG);
+
+        ksession.insert(fact);
+        ksession.fireAllRules();
     }
 
     private String generateCustomRuleDrl(String template, List<CustomRuleDto> ruleDtos) {
