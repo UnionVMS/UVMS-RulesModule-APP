@@ -529,7 +529,16 @@ public class ActivityFactMapper {
         FluxFaReportMessageFact fluxFaReportMessageFact = new FluxFaReportMessageFact();
 
         fluxFaReportMessageFact.setSenderOrReceiver(senderReceiver);
-
+        FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
+        if (fluxReportDocument != null){
+            DateTimeType creationDateTime = fluxReportDocument.getCreationDateTime();
+            if(creationDateTime != null){
+                Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+                if(repDat != null){
+                    fluxFaReportMessageFact.setCreationDateOfMessage( new DateTime(repDat));
+                }
+            }
+        }
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
