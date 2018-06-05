@@ -754,6 +754,19 @@ public abstract class AbstractFact {
         return hits != found;
     }
 
+    public int count(List<CodeType> codeTypes, String value) {
+        if (value == null || CollectionUtils.isEmpty(codeTypes)) {
+            return 0;
+        }
+        int found = 0;
+        for (CodeType codeType : codeTypes) {
+            if (value.equals(codeType.getValue())) {
+                found++;
+            }
+        }
+        return found;
+    }
+
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }

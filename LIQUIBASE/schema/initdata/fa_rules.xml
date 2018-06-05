@@ -4754,7 +4754,7 @@
         <column name="rule_id" value="375"/>
         <column name="br_id" value="FA-L00-00-0375"/>
         <column name="expression"
-                value="simpleFAQueryParameterTypeCodes != null &amp;&amp; valueNotContains(simpleFAQueryParameterTypeCodes, &quot;VESSELID&quot;, 1)"/>
+                value="simpleFAQueryParameterTypeCodes != null &amp;&amp; count(simpleFAQueryParameterTypeCodes, &quot;VESSELID&quot;) &gt; 1"/>
         <column name="note"
                 value="FA_Query SimpleFA_QueryParameter TypeCode at most one occurrence must be value VESSELID."/>
         <column name="message" value="Not more than one VESSELID may be provided."/>
