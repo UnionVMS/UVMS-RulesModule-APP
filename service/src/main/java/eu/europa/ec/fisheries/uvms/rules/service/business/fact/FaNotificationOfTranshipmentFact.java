@@ -174,14 +174,11 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
      * @return
      */
     public boolean ifFLUXLocationForFACatchIsAREA(List<FACatch> specifiedFACatches){
-
         if(CollectionUtils.isEmpty(specifiedFACatches)){
             return false;
         }
-
         boolean isPresent = true;
         for(FACatch faCatch : specifiedFACatches){
-
             if(faCatch.getTypeCode()!=null && faCatch.getTypeCode().getValue().equals("LOADED") )  {
                 isPresent = false;
                  if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
@@ -194,11 +191,8 @@ public class FaNotificationOfTranshipmentFact extends AbstractFact {
                      }
                  }
             }
-
         }
-
         return isPresent;
-
     }
 
 

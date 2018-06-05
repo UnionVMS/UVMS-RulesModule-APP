@@ -1,0 +1,2854 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="rule-sales-level-0" author="matbul">
+
+        <insert tableName="rule">
+            <column name="rule_id" value="10007"/>
+            <column name="br_id" value="SALE-L00-00-0013"/>
+            <column name="expression" value="ownerFLUXParty == null"/>
+            <column name="note" value="FLUXParty in FLUXReportDocument must be present."/>
+            <column name="message" value="FLUXParty in FLUXReportDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="ownerFLUXParty"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!--Sales Report-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10009"/>
+            <column name="br_id" value="SALE-L00-00-0021"/>
+            <column name="expression" value="itemTypeCode == null"/>
+            <column name="note" value="Item Type in SalesReport must be present."/>
+            <column name="message" value="Item Type in SalesReport must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="itemTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10011"/>
+            <column name="br_id" value="SALE-L00-00-0022"/>
+            <column name="expression" value="isEmpty(includedSalesDocuments)"/>
+            <column name="note" value="Sales Document in SalesReport must be present."/>
+            <column name="message" value="Sales Document in SalesReport must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="includedSalesDocuments"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10026"/>
+            <column name="br_id" value="SALE-L00-00-0070"/>
+            <column name="expression" value="isSalesNoteAndIsFreshnessNotPresent()"/>
+            <column name="note" value="Freshness in AAPProcess must be present."/>
+            <column name="message" value="Freshness in AAPProcess in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="typeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10029"/>
+            <column name="br_id" value="SALE-L00-00-0095"/>
+            <column name="expression" value="isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName()"/>
+            <column name="note" value="Name in FLUX Organization must be present."/>
+            <column name="message" value="Name in FLUX Organization must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="name"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10134"/>
+            <column name="br_id" value="SALE-L01-00-0090"/>
+            <column name="expression" value="isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero()"/>
+            <column name="note" value="For SN"/>
+            <column name="message" value="Positive or zero value"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="chargeAmounts"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10135"/>
+            <column name="br_id" value="SALE-L01-00-0091"/>
+            <column name="expression" value="isSalesNoteAndAnyChargeAmountIsEqualToZero()"/>
+            <column name="note" value="For SN"/>
+            <column name="message" value="Charge = 0"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="chargeAmounts"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10226"/>
+            <column name="br_id" value="SALE-L02-00-0090"/>
+            <column name="expression" value="isSalesNoteAndAtLeastOneChargeAmountIsNull()"/>
+            <column name="note" value="For SN"/>
+            <column name="message" value="Mandatory for products"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="chargeAmounts"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10013"/>
+            <column name="br_id" value="SALE-L00-00-0031"/>
+            <column name="expression" value="currencyCode == null"/>
+            <column name="note" value="Sales Currency in SalesDocument must be present."/>
+            <column name="message" value="Sales Currency in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="currencyCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10014"/>
+            <column name="br_id" value="SALE-L00-00-0032"/>
+            <column name="expression" value="isEmpty(specifiedSalesEvents)"/>
+            <column name="note" value="Sales Event in SalesDocument must be present."/>
+            <column name="message" value="Sales Event in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesEvents"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10015"/>
+            <column name="br_id" value="SALE-L00-00-0033"/>
+            <column name="expression" value="isEmpty(specifiedSalesParties)"/>
+            <column name="note" value="Sales Party in SalesDocument must be present."/>
+            <column name="message" value="Sales Party in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10016"/>
+            <column name="br_id" value="SALE-L00-00-0034"/>
+            <column name="expression" value="isNotVariousSupply() &amp;&amp; isEmpty(specifiedFishingActivities)"/>
+            <column name="note" value="Fishing Activity in SalesDocument must be present."/>
+            <column name="message" value="Fishing Activity in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10017"/>
+            <column name="br_id" value="SALE-L00-00-0035"/>
+            <column name="expression" value="isEmpty(specifiedFLUXLocations)"/>
+            <column name="note" value="Flux Location in SalesDocument must be present."/>
+            <column name="message" value="Flux Location in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10018"/>
+            <column name="br_id" value="SALE-L00-00-0036"/>
+            <column name="expression" value="isEmpty(specifiedSalesBatches)"/>
+            <column name="note" value="Sales Batch in SalesDocument must be present."/>
+            <column name="message" value="Sales Batch in SalesDocument must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesBatches"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="10019"/>
+            <column name="br_id" value="SALE-L00-00-0040"/>
+            <column name="expression" value="isEmpty(roleCodes)"/>
+            <column name="note" value="Role in SalesParty must be present."/>
+            <column name="message" value="Role in SalesParty must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10020"/>
+            <column name="br_id" value="SALE-L00-00-0041"/>
+            <column name="expression" value="isBlank(name)"/>
+            <column name="note" value="Name in SalesParty must be present."/>
+            <column name="message" value="Name in SalesParty must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="name"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10021"/>
+            <column name="br_id" value="SALE-L00-00-0060"/>
+            <column name="expression" value="speciesCode == null"/>
+            <column name="note" value="Species in AAPProduct must be present."/>
+            <column name="message" value="Species in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="speciesCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10022"/>
+            <column name="br_id" value="SALE-L00-00-0061"/>
+            <column name="expression" value="usageCode == null"/>
+            <column name="note" value="Usage in AAPProduct must be present."/>
+            <column name="message" value="Usage in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="usageCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10023"/>
+            <column name="br_id" value="SALE-L00-00-0062"/>
+            <column name="expression" value="isEmpty(appliedAAPProcesses)"/>
+            <column name="note" value="AAP Process in AAPProduct must be present."/>
+            <column name="message" value="AAP Process in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="appliedAAPProcesses"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10024"/>
+            <column name="br_id" value="SALE-L00-00-0063"/>
+            <column name="expression" value="specifiedSizeDistribution == null"/>
+            <column name="note" value="Size Distribution in AAPProduct must be present."/>
+            <column name="message" value="Size Distribution in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="specifiedSizeDistribution"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10048"/>
+            <column name="br_id" value="SALE-L00-00-0065"/>
+            <column name="expression" value="isEmpty(originFLUXLocations)"/>
+            <column name="note" value="FLUX Location in AAPProduct must be present."/>
+            <column name="message" value="FLUX Location in AAPProduct must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="originFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10027"/>
+            <column name="br_id" value="SALE-L00-00-0080"/>
+            <column name="expression" value="isEmpty(classCodes)"/>
+            <column name="note" value="Class in SizeDistribution must be present."/>
+            <column name="message" value="Class in SizeDistribution must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1010"/>
+            <column name="property_names" value="classCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10028"/>
+            <column name="br_id" value="SALE-L00-00-0081"/>
+            <column name="expression" value="categoryCode == null"/>
+            <column name="note" value="Category in SizeDistribution must be present."/>
+            <column name="message" value="Category in SizeDistribution must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1010"/>
+            <column name="property_names" value="categoryCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!--SalesPrice-->
+        <!--No level 0 rules-->
+        <!--SalesPrice-->
+
+        <!--FLUXOrganization-->
+
+        <!--FishingActivity-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10030"/>
+            <column name="br_id" value="SALE-L00-00-0100"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="note" value="Type in Fishing Activity must be present."/>
+            <column name="message" value="Type in Fishing Activity must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10031"/>
+            <column name="br_id" value="SALE-L00-00-0101"/>
+            <column name="expression" value="isEmpty(specifiedDelimitedPeriods)"/>
+            <column name="note" value="Delimited Period in Fishing Activity must be present."/>
+            <column name="message" value="Delimited Period in Fishing Activity must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="specifiedDelimitedPeriods"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10032"/>
+            <column name="br_id" value="SALE-L00-00-0102"/>
+            <column name="expression" value="isEmpty(relatedVesselTransportMeans)"/>
+            <column name="note" value="Vessel Transport Means in Fishing Activity must be present."/>
+            <column name="message" value="Vessel Transport Means in Fishing Activity must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="relatedVesselTransportMeans"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10033"/>
+            <column name="br_id" value="SALE-L00-00-0103"/>
+            <column name="expression" value="specifiedFishingTrip == null"/>
+            <column name="note" value="Fishing trip must be present."/>
+            <column name="message" value="Fishing trip must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="specifiedFishingTrip"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10034"/>
+            <column name="br_id" value="SALE-L00-00-0104"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations)"/>
+            <column name="note" value="FLUX Location in Fishing Activity must be present."/>
+            <column name="message" value="FLUX Location in Fishing Activity must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10035"/>
+            <column name="br_id" value="SALE-L00-00-0110"/>
+            <column name="expression" value="startDateTime == null || startDateTime.dateTime == null"/>
+            <column name="note" value="Start in Delimited Period must be present."/>
+            <column name="message" value="Start in Delimited Period must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Sales Vessel Transport Means -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10036"/>
+            <column name="br_id" value="SALE-L00-00-0120"/>
+            <column name="expression" value="isEmpty(IDS)"/>
+            <column name="note" value="Identification in Vessel Transport Means must be present."/>
+            <column name="message" value="Identification in Vessel Transport Means must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10038"/>
+            <column name="br_id" value="SALE-L00-00-0122"/>
+            <column name="expression" value="isEmpty(specifiedContactParties)"/>
+            <column name="note" value="Contact Party in Vessel Transport Means must be present."/>
+            <column name="message" value="Contact Party in Vessel Transport Means must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="specifiedContactParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10232"/>
+            <column name="br_id" value="SALE-L02-00-0150"/>
+            <column name="expression" value="doContactPartiesWithTheSameRoleExist()"/>
+            <column name="note" value=""/>
+            <column name="message" value="No duplicated role"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="specifiedContactParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="10039"/>
+            <column name="br_id" value="SALE-L00-00-0130"/>
+            <column name="expression" value="ID == null || ID.value == null"/>
+            <column name="note" value="Identification in Vessel Country must be present."/>
+            <column name="message" value="Identification in Vessel Country must be present."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1015"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10040"/>
+            <column name="br_id" value="SALE-L00-00-0150"/>
+            <column name="expression"
+                    value="valueCodeTypeContainsAny(roleCodes, &quot;MASTER&quot;) &amp;&amp; valueCodeTypeContainsAny(roleCodes, &quot;OPERATOR&quot;)"/>
+            <column name="note" value="Master or operator role in Contact Party must be present"/>
+            <column name="message" value="Master or operator role in Contact Party must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1016"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10041"/>
+            <column name="br_id" value="SALE-L00-00-0170"/>
+            <column name="expression" value="isEmpty(IDS)"/>
+            <column name="note" value="Identification in FishingTrip must be present"/>
+            <column name="message" value="Identification in FishingTrip must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1018"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10042"/>
+            <column name="br_id" value="SALE-L00-00-0180"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="note" value="TypeCode in FLUX Location must be present"/>
+            <column name="message" value="TypeCode in FLUX Location must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10043"/>
+            <column name="br_id" value="SALE-L00-00-0190"/>
+            <column name="expression" value="latitudeMeasure == null"/>
+            <column name="note" value="LatitudeMeasure in FLUXGeographicalCoordinate must be present"/>
+            <column name="message" value="LatitudeMeasure in FLUXGeographicalCoordinate must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1020"/>
+            <column name="property_names" value="latitudeMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10044"/>
+            <column name="br_id" value="SALE-L00-00-0191"/>
+            <column name="expression" value="longitudeMeasure == null"/>
+            <column name="note" value="LongitudeMeasure in FLUXGeographicalCoordinate must be present"/>
+            <column name="message" value="LongitudeMeasure in FLUXGeographicalCoordinate must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1020"/>
+            <column name="property_names" value="longitudeMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10045"/>
+            <column name="br_id" value="SALE-L00-00-0200"/>
+            <column name="expression" value="isBlank(cityName)"/>
+            <column name="note" value="CityName in StructuredAddress must be present"/>
+            <column name="message" value="CityName in StructuredAddress must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1021"/>
+            <column name="property_names" value="cityName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10046"/>
+            <column name="br_id" value="SALE-L00-00-0201"/>
+            <column name="expression" value="isBlank(countryID)"/>
+            <column name="note" value="Country in StructuredAddress must be present"/>
+            <column name="message" value="Country in StructuredAddress must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1021"/>
+            <column name="property_names" value="countryName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10047"/>
+            <column name="br_id" value="SALE-L00-00-0202"/>
+            <column name="expression" value="isBlank(streetName)"/>
+            <column name="note" value="StreetName in StructuredAddress must be present"/>
+            <column name="message" value="StreetName in StructuredAddress must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1021"/>
+            <column name="property_names" value="streetName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10228"/>
+            <column name="br_id" value="SALE-L02-00-0092"/>
+            <column name="expression" value="isTotalPriceFieldDifferentFromSumOfProducts()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Total price must be the total of product price"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="charge"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10100"/>
+            <column name="br_id" value="SALE-L01-00-0010"/>
+            <column name="expression" value="schemeIdContainsAll(IDS, &quot;UUID&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute schemeID. Must be UUID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10101"/>
+            <column name="br_id" value="SALE-L01-00-0011"/>
+            <column name="expression" value="validateFormat(IDS)"/>
+            <column name="note" value="Must be according to RFC4122 format for UUID."/>
+            <column name="message" value="Check Format. Must be according to the specified schemeID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10102"/>
+            <column name="br_id" value="SALE-L01-00-0012"/>
+            <column name="expression"
+                    value="(creationDateTime == null || creationDateTime.dateTime == null) || creationDateTime != null &amp;&amp; creationDateTime.dateTime != null &amp;&amp; isNotUTC(creationDateTime)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Format. Must be date in UTC according to ISO8601"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="creationDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10103"/>
+            <column name="br_id" value="SALE-L01-00-0013"/>
+            <column name="expression"
+                    value="creationDateTime != null &amp;&amp; creationDateTime.dateTime != null &amp;&amp; dateNow().before(creationDateTime.dateTime.toDate())"/>
+            <column name="note" value=""/>
+            <column name="message" value="Date must be in the past."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="creationDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10104"/>
+            <column name="br_id" value="SALE-L01-00-0014"/>
+            <column name="expression" value="listIdDoesNotContainAll(purposeCode, &quot;FLUX_GP_PURPOSE&quot;)"/>
+            <column name="note" value="If listID provided."/>
+            <column name="message" value="Check attribute listID. Must be FLUX_GP_PURPOSE"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="purposeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10105"/>
+            <column name="br_id" value="SALE-L01-00-0015"/>
+            <column name="expression"
+                    value="valueContainsAny(purposeCode, &quot;9&quot;, &quot;3&quot;, &quot;5&quot;, &quot;1&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="purposeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10106"/>
+            <column name="br_id" value="SALE-L01-00-0016"/>
+            <column name="expression" value="purposeCode != null &amp;&amp; purposeCode.value == &quot;1&quot;"/>
+            <column name="note" value=""/>
+            <column name="message" value="Code for cancellation is not allowed"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="purposeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10107"/>
+            <column name="br_id" value="SALE-L01-00-0017"/>
+            <column name="expression"
+                    value="ownerFLUXParty != null &amp;&amp; schemeIdContainsAll(ownerFLUXParty.getIDS(), &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute listID. Must be FLUX_GP_PARTY"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="ownerFLUXParty"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10108"/>
+            <column name="br_id" value="SALE-L01-00-0020"/>
+            <column name="expression"
+                    value="!isAuction() &amp;&amp; (isReport() &amp;&amp; IDS != null &amp;&amp; IDS.get(0) != null
+                                    &amp;&amp; IDS.get(0).getValue() != null
+                                    &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue(), creationDateOfMessage))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10109"/>
+            <column name="br_id" value="SALE-L01-00-0021"/>
+            <column name="expression"
+                    value="valueContainsAny(itemTypeCode, &quot;SN&quot;, &quot;TOD&quot;, &quot;TRD&quot;, &quot;SN+TOD&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="itemTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10110"/>
+            <column name="br_id" value="SALE-L01-00-0022"/>
+            <column name="expression" value="valueContainsAny(itemTypeCode, &quot;SN&quot;, &quot;TOD&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only SN and TOD allowed"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="itemTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10111"/>
+            <column name="br_id" value="SALE-L01-00-0031"/>
+            <column name="expression" value="hasTheNationalNumberPartOfTheIDAnIncorrectFormat()"/>
+            <column name="note" value="country specific"/>
+            <column name="message" value="Check format of the part corresponding to the national number"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10112"/>
+            <column name="br_id" value="SALE-L01-00-0032"/>
+            <column name="expression" value="hasTheCommonPartOfTheIDAnIncorrectFormat()"/>
+            <column name="note" value="iso-3 code + '-' + type of report"/>
+            <column name="message" value="check format of the common part"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10113"/>
+            <column name="br_id" value="SALE-L01-00-0033"/>
+            <column name="expression"
+                    value="!mdrService.isCodeTypePresentInMDRList(currencyCode, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="currencyCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10115"/>
+            <column name="br_id" value="SALE-L01-00-0035"/>
+            <column name="expression" value="hasTheTakeOverDocumentIdAnIncorrectFormat()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="takeoverDocumentIDs"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10116"/>
+            <column name="br_id" value="SALE-L01-00-0036"/>
+            <column name="expression"
+                    value="!isEmpty(salesNoteIDs) &amp;&amp; salesNoteIDs[0] != null &amp;&amp; isInvalidSalesNoteID()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="salesNoteIDs"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10119"/>
+            <column name="br_id" value="SALE-L01-00-0042"/>
+            <column name="expression"
+                    value="salesPartiesValueDoesNotContainAny(specifiedSalesParties, &quot;SENDER&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="SENDER role must exist"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10117"/>
+            <column name="br_id" value="SALE-L01-00-0040"/>
+            <column name="expression"
+                    value="ID != null &amp;&amp; ID.getSchemeId() != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_SALES_PARTY_ID_TYPE&quot;, ID.getSchemeId(), creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10118"/>
+            <column name="br_id" value="SALE-L01-00-0041"/>
+            <column name="expression"
+                    value="!mdrService.isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10120"/>
+            <column name="br_id" value="SALE-L01-00-0043"/>
+            <column name="expression" value="!anyValueContainsAll(roleCodes, &quot;CARRIER&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="No code for CARRIER allowed"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10121"/>
+            <column name="br_id" value="SALE-L01-00-0050"/>
+            <column name="expression"
+                    value="(occurrenceDateTime == null || occurrenceDateTime.dateTime == null) || occurrenceDateTime != null &amp;&amp; occurrenceDateTime.dateTime != null &amp;&amp; isNotUTC(occurrenceDateTime)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1006"/>
+            <column name="property_names" value="occurrenceDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10122"/>
+            <column name="br_id" value="SALE-L01-00-0060"/>
+            <column name="expression"
+                    value="speciesCode != null &amp;&amp; speciesCode.getValue() != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FAO_SPECIES&quot;, speciesCode.getValue(), creationDateOfMessage) "/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="speciesCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10123"/>
+            <column name="br_id" value="SALE-L01-00-0061"/>
+            <column name="expression" value="unitQuantity != null &amp;&amp; unitQuantity.value &lt;= 0"/>
+            <column name="note" value=""/>
+            <column name="message" value="Positive number"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="unitQuantity"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10124"/>
+            <column name="br_id" value="SALE-L01-00-0062"/>
+            <column name="expression"
+                    value="!(weightMeasure == null || &quot;KGM&quot;.equals(weightMeasure.unitCode))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check unit code: must be KGM"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10125"/>
+            <column name="br_id" value="SALE-L01-00-0063"/>
+            <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value &lt; 0"/>
+            <column name="note" value=""/>
+            <column name="message" value="Positive number"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10126"/>
+            <column name="br_id" value="SALE-L01-00-0064"/>
+            <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value == 0"/>
+            <column name="note" value=""/>
+            <column name="message" value="Weight = 0"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10127"/>
+            <column name="br_id" value="SALE-L01-00-0065"/>
+            <column name="expression"
+                    value="weightMeasure != null &amp;&amp; speciesCode != null &amp;&amp; speciesCode.value != null &amp;&amp; !speciesCode.value.equals(&quot;BFT&quot;) &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value) &gt; 2"/>
+            <column name="note" value=""/>
+            <column name="message" value="No more than 2 decimals"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10129"/>
+            <column name="br_id" value="SALE-L01-00-0067"/>
+            <column name="expression"
+                    value="usageCode != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;PROD_USAGE&quot;, usageCode.getValue(), creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="usageCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10130"/>
+            <column name="br_id" value="SALE-L01-00-0070"/>
+            <column name="expression"
+                    value="!mdrService.isCodeTypePresentInMDRList(typeCodes, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code from the list listID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1009"/>
+            <column name="property_names" value="typeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10131"/>
+            <column name="br_id" value="SALE-L01-00-0071"/>
+            <column name="expression"
+                    value="conversionFactorNumeric != null &amp;&amp; conversionFactorNumeric.value &lt;= 0"/>
+            <column name="note" value=""/>
+            <column name="message" value="Positive number"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1009"/>
+            <column name="property_names" value="conversionFactorNumeric"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Size_Distribution entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10132"/>
+            <column name="br_id" value="SALE-L01-00-0080"/>
+            <column name="expression" value="valueContainsAny(classCodes, &quot;BMS&quot;,&quot;LSC&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1010"/>
+            <column name="property_names" value="classCodes"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10133"/>
+            <column name="br_id" value="SALE-L01-00-0082"/>
+            <column name="expression" value="categoryCode != null
+                        &amp;&amp; !mdrService.isTypeCodeValuePresentInList(categoryCode.getListId(), categoryCode, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1010"/>
+            <column name="property_names" value="categoryCode"/>
+        </insert>
+
+        <!-- Sales_Price entity -->
+
+        <!-- Fishing_Activity entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10137"/>
+            <column name="br_id" value="SALE-L01-00-0101"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !typeCode.value.equals(&quot;LAN&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="typeCode"/>
+        </insert>
+
+        <!-- Delimited_Period entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10138"/>
+            <column name="br_id" value="SALE-L01-00-0110"/>
+            <column name="expression"
+                    value="startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10139"/>
+            <column name="br_id" value="SALE-L01-00-0111"/>
+            <column name="expression"
+                    value="endDateTime != null &amp;&amp; (endDateTime.dateTime == null || endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="endDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10159"/>
+            <column name="br_id" value="SALE-L01-00-0120"/>
+            <column name="expression" value="validateFormat(IDS)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format of the CFR"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10140"/>
+            <column name="br_id" value="SALE-L01-00-0130"/>
+            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1015"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10141"/>
+            <column name="br_id" value="SALE-L01-00-0150"/>
+            <column name="expression"
+                    value="roleCodes != null &amp;&amp; valueCodeTypeContainsAny(roleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;, &quot;OWNER&quot;, &quot;OPERATOR&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1016"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10142"/>
+            <column name="br_id" value="SALE-L01-00-0160"/>
+            <column name="expression" value="givenName != null &amp;&amp; isEmpty(givenName.getValue())"/>
+            <column name="note" value="If present"/>
+            <column name="message" value="Non-empty"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="givenName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10143"/>
+            <column name="br_id" value="SALE-L01-00-0161"/>
+            <column name="note" value="If present"/>
+            <column name="expression" value="familyName != null &amp;&amp; isEmpty(familyName.getValue())"/>
+            <column name="message" value="Non-empty"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="familyName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10144"/>
+            <column name="br_id" value="SALE-L01-00-0162"/>
+            <column name="note" value="If present"/>
+            <column name="expression" value="alias != null &amp;&amp; isEmpty(alias.getValue())"/>
+            <column name="message" value="Non-empty"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="alias"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10145"/>
+            <column name="br_id" value="SALE-L01-00-0170"/>
+            <column name="expression" value="IDS != null &amp;&amp; schemeIdContainsAll(IDS, &quot;EU_TRIP_ID&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute schemeID. Must be EU_TRIP_ID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1018"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10146"/>
+            <column name="br_id" value="SALE-L01-00-0171"/>
+            <column name="expression" value="IDS != null &amp;&amp; validateFormat(IDS)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format. Must be according to schemeID rules"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1018"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10147"/>
+            <column name="br_id" value="SALE-L01-00-0180"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdDoesNotContainAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute listID. Must be FLUX_LOCATION_TYPE"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10148"/>
+            <column name="br_id" value="SALE-L01-00-0181"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; valueContainsAny(typeCode, &quot;ADDRESS&quot;,&quot;POSITION&quot;,&quot;LOCATION&quot;,&quot;AREA&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10149"/>
+            <column name="br_id" value="SALE-L01-00-0182"/>
+            <column name="expression"
+                    value="countryID != null &amp;&amp; schemeIdContainsAll(countryID, &quot;TERRITORY&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute listID. Must be TERRITORY"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="countryID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10150"/>
+            <column name="br_id" value="SALE-L01-00-0183"/>
+            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="countryID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10151"/>
+            <column name="br_id" value="SALE-L01-00-0184"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; ID !=null &amp;&amp; !((typeCode.getValue() == &quot;AREA&quot; &amp;&amp; !schemeIdContainsAny(ID, &quot;FAO_AREA&quot;, &quot;TERRITORY&quot;)) || (typeCode.getValue() == &quot;LOCATION&quot; &amp;&amp; !schemeIdContainsAny(ID, &quot;LOCATION&quot;, &quot;FARM&quot;)))"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="Check attribute listID. In case Type= 'AREA': must be FAO_AREA, TERRITORY, In case Type= 'LOCATION': must be LOCATION, FARM"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10152"/>
+            <column name="br_id" value="SALE-L01-00-0185"/>
+            <column name="expression"
+                    value="ID !=null &amp;&amp; &quot;FAO_AREA&quot;.equals(ID.getSchemeId()) &amp;&amp; ID.getValue() != null &amp;&amp; mdrService.isNotMostPreciseFAOArea(ID, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If FAO_AREA code, the more precise area must be mentioned"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="ID"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10153"/>
+            <column name="br_id" value="SALE-L01-00-0186"/>
+            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- FLUX_Geographical_Coordinate entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10155"/>
+            <column name="br_id" value="SALE-L01-00-0191"/>
+            <column name="expression"
+                    value="latitudeMeasure != null &amp;&amp; latitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(latitudeMeasure.getValue(), BigDecimal.valueOf(-90), BigDecimal.valueOf(90))"/>
+            <column name="note" value="Boundaries follow the EPSG definition."/>
+            <column name="message" value="Check range. Must be between -90 and 90"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1020"/>
+            <column name="property_names" value="latitudeMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10157"/>
+            <column name="br_id" value="SALE-L01-00-0193"/>
+            <column name="expression"
+                    value="longitudeMeasure != null &amp;&amp; longitudeMeasure.getValue() != null &amp;&amp; !isBigDecimalBetween(longitudeMeasure.getValue(), BigDecimal.valueOf(-180), BigDecimal.valueOf(180))"/>
+            <column name="note" value="Boundaries follow the EPSG definition."/>
+            <column name="message" value="Check range. Must be between -180 and 180"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1020"/>
+            <column name="property_names" value="longitudeMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10158"/>
+            <column name="br_id" value="SALE-L01-00-0200"/>
+            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1021"/>
+            <column name="property_names" value="countryID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="rule-sales-level-2" author="thovri">
+        <!-- FLUX_Sales_Report_Message entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10202"/>
+            <column name="br_id" value="SALE-L02-00-0003"/>
+            <column name="expression"
+                    value="FLUXReportDocument != null &amp;&amp; FLUXReportDocument.getPurposeCode() != null &amp;&amp; FLUXReportDocument.getPurposeCode().getValue() != &quot;3&quot; &amp;&amp; (salesReports == null || salesReports.size() != 1)"/>
+            <column name="note" value=""/>
+            <column name="message" value="One and only one occurrence of a sales report if purpose is not 'delete'"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="salesReports, purposeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10203"/>
+            <column name="br_id" value="SALE-L02-00-0010"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; (purposeCode.getValue().equals(&quot;5&quot;) || purposeCode.getValue().equals(&quot;3&quot;)) &amp;&amp; referencedID == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="If correction or deletion, the referenced identification must be provided"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="purposeCode, referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10204"/>
+            <column name="br_id" value="SALE-L02-00-0011"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; purposeCode.getValue().equals(&quot;9&quot;) &amp;&amp; referencedID != null &amp;&amp; referencedID.value != null"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="If it is a new message (creation), the referenced identification must be empty"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="purposeCode, referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10205"/>
+            <column name="br_id" value="SALE-L02-00-0020"/>
+            <column name="expression"
+                    value="includedSalesDocuments != null &amp;&amp; includedSalesDocuments.size() != 1"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one sales document"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="includedSalesDocuments"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10212"/>
+            <column name="br_id" value="SALE-L02-00-0041"/>
+            <column name="expression" value="isProviderRoleNotSpecifiedForSalesNote()"/>
+            <column name="note" value=""/>
+            <column name="message" value="PROVIDER role must exist for a SN"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="role"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10213"/>
+            <column name="br_id" value="SALE-L02-00-0042"/>
+            <column name="expression" value="isBuyerNotSpecifiedForSalesNoteWithPurchase()"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="SELLER/BUYER role must exist for a SN when products are bought (not withdrawn)"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="role"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10214"/>
+            <column name="br_id" value="SALE-L02-00-0043"/>
+            <column name="expression" value="isRecipientRoleNotSpecifiedForTakeOverDocument()"/>
+            <column name="note" value=""/>
+            <column name="message" value="RECIPIENT role must exist for a Take-over doc"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="role"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10216"/>
+            <column name="br_id" value="SALE-L02-00-0045"/>
+            <column name="expression" value="isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocument()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present for TOD"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="FLUXOrganisation"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10221"/>
+            <column name="br_id" value="SALE-L02-00-0062"/>
+            <column name="expression" value="isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProducts()"/>
+            <column name="note"
+                    value="If the stored products can benefit from the market mechanisms defined by Regulation (EU) n°1379/2013, a reference to a sales note should exist"/>
+            <column name="message"
+                    value="For a take-over doc, if the usage code equals 'STO' (Storage), the SN identifier should be communicated"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1003"/>
+            <column name="property_names" value="usage, salesNoteIdentification"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10206"/>
+            <column name="br_id" value="SALE-L02-00-0030"/>
+            <column name="expression" value="specifiedSalesEvents != null &amp;&amp; specifiedSalesEvents.size() != 1"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one sales event"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesEvents"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10207"/>
+            <column name="br_id" value="SALE-L02-00-0031"/>
+            <column name="expression"
+                    value="specifiedSalesParties != null &amp;&amp; specifiedSalesParties.size() &lt; 2"/>
+            <column name="note" value=""/>
+            <column name="message" value="At least two occurrences"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10208"/>
+            <column name="br_id" value="SALE-L02-00-0032"/>
+            <column name="expression"
+                    value="!isAuction() &amp;&amp; (specifiedFishingActivities != null &amp;&amp; specifiedFishingActivities.size() != 1)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one occurrence"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10209"/>
+            <column name="br_id" value="SALE-L02-00-0033"/>
+            <column name="expression"
+                    value="specifiedFLUXLocations != null &amp;&amp; specifiedFLUXLocations.size() != 1"/>
+            <column name="note" value="Market place or storage location"/>
+            <column name="message" value="Only one occurrence"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10210"/>
+            <column name="br_id" value="SALE-L02-00-0034"/>
+            <column name="expression"
+                    value="specifiedSalesBatches != null &amp;&amp; specifiedSalesBatches.size() != 1"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one occurrence"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedSalesBatches"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10215"/>
+            <column name="br_id" value="SALE-L02-00-0044"/>
+            <column name="expression" value="doesDocumentContainDuplicateSalesPartyRoles()"/>
+            <column name="note" value=""/>
+            <column name="message" value="No duplication of role allowed"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="roles"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10217"/>
+            <column name="br_id" value="SALE-L02-00-0050"/>
+            <column name="expression" value="isAnySalesDateBeforeLandingDate()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Sales Event date &gt;= Start date (landing)"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="occurrence, start"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10211"/>
+            <column name="br_id" value="SALE-L02-00-0040"/>
+            <column name="expression"
+                    value="roleCodes != null &amp;&amp; !valueContainsAny(roleCodes, &quot;SENDER&quot;) &amp;&amp; ID == null || (ID != null &amp;&amp; isEmpty(ID.getValue()))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Identification mandatory when role=SENDER"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10218"/>
+            <column name="br_id" value="SALE-L02-00-0055"/>
+            <column name="expression" value="isEmpty(specifiedAAPProducts)"/>
+            <column name="note" value=""/>
+            <column name="message" value="At least one must exist"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1007"/>
+            <column name="property_names" value="specifiedAAPProducts"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10219"/>
+            <column name="br_id" value="SALE-L02-00-0060"/>
+            <column name="expression" value="unitQuantity == null &amp;&amp; weightMeasure == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="One of the two must be available"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="unitQuantity, weightMeasure"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10224"/>
+            <column name="br_id" value="SALE-L02-00-0080"/>
+            <column name="expression" value="isBMSSpeciesAndUsageIsNotForNonDirectHumanConsumption()"/>
+            <column name="note" value="It is a verification rule"/>
+            <column name="message" value="Usage must be for non direct human consumption if BMS species"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="usage, class"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10238"/>
+            <column name="br_id" value="SALE-L02-00-0180"/>
+            <column name="expression" value="!isOriginFLUXLocationEmptyOrTypeNotLocation()"/>
+            <column name="note" value=""/>
+            <column name="message" value="It must not be a LOCATION code for AAP products"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="FLUXLocation, AAPProduct"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10222"/>
+            <column name="br_id" value="SALE-L02-00-0070"/>
+            <column name="expression" value="!isListEmptyOrAllListIdsUnique(typeCodes)"/>
+            <column name="note" value=""/>
+            <column name="message" value="No duplicated type codes"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1009"/>
+            <column name="property_names" value="typeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10223"/>
+            <column name="br_id" value="SALE-L02-00-0071"/>
+            <column name="expression"
+                    value="listIdDoesNotContainAll(typeCodes, &quot;FISH_PRESERVATION&quot;, &quot;FISH_PRESENTATION&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Presentation &amp; preservation must be present"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1009"/>
+            <column name="property_names" value="typeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10225"/>
+            <column name="br_id" value="SALE-L02-00-0081"/>
+            <column name="expression"
+                    value="!valueContainsAny(classCodes, &quot;BMS&quot;) &amp;&amp; (categoryCode == null || categoryCode.getValue() != &quot;N/A&quot;)"/>
+            <column name="note" value="No marketing size for BMS"/>
+            <column name="message" value="If BMS species, the category should be N/A"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1010"/>
+            <column name="property_names" value="classCodes, categoryCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10229"/>
+            <column name="br_id" value="SALE-L02-00-0100"/>
+            <column name="expression" value="!isListEmptyOrBetweenNumberOfItems(specifiedDelimitedPeriods,1,1)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one occurrence"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="specifiedDelimitedPeriods"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11530"/>
+            <column name="br_id" value="SALE-L02-00-0101"/>
+            <column name="expression" value="!isListEmptyOrBetweenNumberOfItems(relatedVesselTransportMeans,1,1)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one occurrence"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="relatedVesselTransportMeans"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11539"/>
+            <column name="br_id" value="SALE-L02-00-0181"/>
+            <column name="expression" value="!isRelatedFLUXLocationsEmptyOrTypeLocation()"/>
+            <column name="note" value=""/>
+            <column name="message" value="It must be a LOCATION code for the landing"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="fluxLocation, fishingActivity"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10231"/>
+            <column name="br_id" value="SALE-L02-00-0121"/>
+            <column name="expression" value="!isListNotEmptyAndBetweenNumberOfItems(specifiedContactParties,1,2)"/>
+            <column name="note" value=""/>
+            <column name="message" value="At least one occurrence and maximum two"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1014"/>
+            <column name="property_names" value="specifiedContactParties"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10233"/>
+            <column name="br_id" value="SALE-L02-00-0151"/>
+            <column name="expression"
+                    value="!isListEmptyOrValuesMatchPassedArguments(roleCodes, &quot;MASTER&quot;,&quot;OPERATOR&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Codes other than master/operator are not allowed"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1016"/>
+            <column name="property_names" value="roleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10234"/>
+            <column name="br_id" value="SALE-L02-00-0152"/>
+            <column name="expression" value="isEmpty(specifiedContactPersons)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present for each party"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1016"/>
+            <column name="property_names" value="specifiedContactPersons"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10235"/>
+            <column name="br_id" value="SALE-L02-00-0160"/>
+            <column name="expression" value="alias == null &amp;&amp; givenName == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence. Must be present if AliasText is not present."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="alias, givenName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10236"/>
+            <column name="br_id" value="SALE-L02-00-0161"/>
+            <column name="expression" value="alias == null &amp;&amp; familyName == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence. Must be present if AliasText is not present."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="alias, familyName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10237"/>
+            <column name="br_id" value="SALE-L02-00-0162"/>
+            <column name="expression" value="alias == null &amp;&amp; givenName == null &amp;&amp; familyName == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence. Must be present if GivenNameText or FamilyNameText is not."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1017"/>
+            <column name="property_names" value="alias, givenName, familyName"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10240"/>
+            <column name="br_id" value="SALE-L02-00-0182"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; (typeCode.getValue() == &quot;LOCATION&quot; || typeCode.getValue() == &quot;ADDRESS&quot;) &amp;&amp; countryID == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence. Must be present if Type is LOCATION or ADDRESS."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="typeCode, countryId"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10241"/>
+            <column name="br_id" value="SALE-L02-00-0183"/>
+            <column name="expression"
+                    value="ID == null &amp;&amp; (typeCode == null || !typeCode.getValue().equals(&quot;POSITION&quot;))"/>
+            <column name="note" value="Optional for geographical location"/>
+            <column name="message" value="Check presence. Must be present, unless type is 'POSITION'"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="ID, typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10242"/>
+            <column name="br_id" value="SALE-L02-00-0184"/>
+            <column name="expression"
+                    value="ID != null &amp;&amp; ID.getSchemeId() != null &amp;&amp; &quot;LOCATION&quot;.equals(ID.getSchemeId()) &amp;&amp; (isBlank(countryID) || mdrService.isLocationNotInCountry(ID, countryID, creationDateOfMessage))"/>
+            <column name="note" value=""/>
+            <column name="message" value="If LOCATION code, the place must be in the country"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="ID, countryID"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10243"/>
+            <column name="br_id" value="SALE-L02-00-0185"/>
+            <column name="expression"
+                    value="specifiedPhysicalFLUXGeographicalCoordinate == null &amp;&amp; typeCode != null &amp;&amp; typeCode.getValue() == &quot;POSITION&quot;"/>
+            <column name="note" value="Must be present if location type is POSITION."/>
+            <column name="message" value="Check presence. Must be present if Type=POSITION."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="specifiedPhysicalFLUXGeographicalCoordinate, typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10244"/>
+            <column name="br_id" value="SALE-L02-00-0186"/>
+            <column name="expression"
+                    value="ID == null &amp;&amp; physicalStructuredAddress == null &amp;&amp; (specifiedPhysicalFLUXGeographicalCoordinate == null || specifiedPhysicalFLUXGeographicalCoordinate.getLongitudeMeasure() == null || specifiedPhysicalFLUXGeographicalCoordinate.getLatitudeMeasure() == null) "/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="Latitude &amp; longitude must be provided if there is no identification and no address"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names"
+                    value="id, physicalStructuredAddress, specifiedPhysicalFLUXGeographicalCoordinate"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10245"/>
+            <column name="br_id" value="SALE-L02-00-0187"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; &quot;ADDRESS&quot;.equals(typeCode.getValue()) &amp;&amp; physicalStructuredAddress == null"/>
+            <column name="note" value="Must be present if location type is ADDRESS."/>
+            <column name="message" value="Check presence. Must be present if location Type is ADDRESS."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="physicalStructuredAddress, typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10246"/>
+            <column name="br_id" value="SALE-L02-00-0200"/>
+            <column name="expression"
+                    value="physicalStructuredAddress != null &amp;&amp; physicalStructuredAddress.countryID != countryID"/>
+            <column name="note" value=""/>
+            <column name="message" value="Should be the same value"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1019"/>
+            <column name="property_names" value="physicalStructuredAddress, countryID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Structured_Address entity -->
+        <!-- All moved to other entities -->
+
+    </changeSet>
+
+    <changeSet id="rule-sales-query-level-0" author="thovri">
+        <!-- Sales_Query entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10301"/>
+            <column name="br_id" value="SALE-L00-00-0401"/>
+            <column name="expression" value="submittedDateTime == null || submittedDateTime.dateTime == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="submittedDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10302"/>
+            <column name="br_id" value="SALE-L00-00-0402"/>
+            <column name="expression" value="typeCode == null || isEmpty(typeCode.getValue())"/>
+            <column name="note" value=""/>
+            <column name="message" value="At least one value must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10303"/>
+            <column name="br_id" value="SALE-L00-00-0403"/>
+            <column name="expression" value="specifiedDelimitedPeriod == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="specifiedDelimitedPeriod"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10304"/>
+            <column name="br_id" value="SALE-L00-00-0404"/>
+            <column name="expression" value="isEmpty(simpleSalesQueryParameters)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="simpleSalesQueryParameters"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10309"/>
+            <column name="br_id" value="SALE-L00-00-0431"/>
+            <column name="expression" value="!anyQueryParameterOfTypeRoleWithValue()"/>
+            <column name="note" value=""/>
+            <column name="message" value="A role must exist"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="type, value"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Delimited_Period entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10306"/>
+            <column name="br_id" value="SALE-L00-00-0420"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; (startDateTime == null || startDateTime.dateTime == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10307"/>
+            <column name="br_id" value="SALE-L00-00-0421"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; (endDateTime == null || endDateTime.dateTime == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="endDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="rule-sales-response-level-0" author="thovri">
+        <!-- FLUX Response_Document entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10400"/>
+            <column name="br_id" value="SALE-L00-00-0450"/>
+            <column name="expression" value="isEmpty(IDS) || IDS.get(0) == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10401"/>
+            <column name="br_id" value="SALE-L00-00-0451"/>
+            <column name="expression" value="referencedID == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10402"/>
+            <column name="br_id" value="SALE-L00-00-0452"/>
+            <column name="expression" value="responseCode == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="responseCode"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10403"/>
+            <column name="br_id" value="SALE-L00-00-0453"/>
+            <column name="expression" value="creationDateTime == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="creationDateTime"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10404"/>
+            <column name="br_id" value="SALE-L00-00-0454"/>
+            <column name="expression" value="respondentFLUXParty == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="respondentFLUXParty"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10409"/>
+            <column name="br_id" value="SALE-L00-00-0472"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; responseCode.getValue != &quot;OK&quot; &amp;&amp; !isEmpty(relatedValidationResultDocuments) &amp;&amp; anyValidationResultDocumentsWithEmptyValidationQualityAnalyses()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present if validation document"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="responseCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10406"/>
+            <column name="br_id" value="SALE-L00-00-0460"/>
+            <column name="expression" value="isResponse() &amp;&amp; (isEmpty(IDS) || IDS.get(0) == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10407"/>
+            <column name="br_id" value="SALE-L00-00-0470"/>
+            <column name="expression" value="validatorID == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1024"/>
+            <column name="property_names" value="validatorID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10408"/>
+            <column name="br_id" value="SALE-L00-00-0471"/>
+            <column name="expression" value="creationDateTime == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1024"/>
+            <column name="property_names" value="creationDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10410"/>
+            <column name="br_id" value="SALE-L00-00-0480"/>
+            <column name="expression" value="ID == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10411"/>
+            <column name="br_id" value="SALE-L00-00-0481"/>
+            <column name="expression" value="levelCode == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="levelCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10412"/>
+            <column name="br_id" value="SALE-L00-00-0482"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="l00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10500"/>
+            <column name="br_id" value="SALE-L01-00-0400"/>
+            <column name="expression" value="hasIDInvalidFormat()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Format : UUID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10501"/>
+            <column name="br_id" value="SALE-L01-00-0401"/>
+            <column name="expression"
+                    value="(submittedDateTime == null || submittedDateTime.dateTime == null) || submittedDateTime != null &amp;&amp; submittedDateTime.dateTime != null &amp;&amp; isNotUTC(submittedDateTime)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="submittedDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10502"/>
+            <column name="br_id" value="SALE-L01-00-0402"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_SALES_TYPE&quot;, typeCode)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10503"/>
+            <column name="br_id" value="SALE-L01-00-0410"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; IDS != null &amp;&amp; !IDS.isEmpty() &amp;&amp; IDS.get(0) != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, IDS.get(0).getValue(), creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10504"/>
+            <column name="br_id" value="SALE-L01-00-0420"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; ((startDateTime == null || startDateTime.dateTime == null) || (startDateTime != null &amp;&amp; startDateTime.dateTime != null &amp;&amp; isNotUTC(startDateTime)))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10505"/>
+            <column name="br_id" value="SALE-L01-00-0421"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; ((endDateTime == null || endDateTime.dateTime == null) || (endDateTime != null &amp;&amp; endDateTime.dateTime != null &amp;&amp; isNotUTC(endDateTime)))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="endDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10506"/>
+            <column name="br_id" value="SALE-L01-00-0430"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_SALES_QUERY_PARAM&quot;, typeCode)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1031"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10507"/>
+            <column name="br_id" value="SALE-L01-00-0431"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; salesService.isSalesQueryParameterValueNotValid(typeCode, valueCode)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If Type = FLAG/ROLE/PLACE, Check code of the value"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1031"/>
+            <column name="property_names" value="typeCode, valueID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10508"/>
+            <column name="br_id" value="SALE-L01-00-0432"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.getValue() == &quot;VESSEL&quot; &amp;&amp; !(valueID == null || isEmpty(valueID.getValue()) || isIdTypeValidFormat(&quot;CFR&quot;, valueID))"/>
+            <column name="note" value="If no value, the query is for all fishing vessels"/>
+            <column name="message" value="If Type=VESSEL, Check format of CFR"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1031"/>
+            <column name="property_names" value="typeCode, valueID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10509"/>
+            <column name="br_id" value="SALE-L01-00-0433"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !valueContainsAny(typeCode, &quot;SALES_ID&quot;,&quot;TRIP_ID&quot;) &amp;&amp; hasTheNationalNumberPartOfTheValueIDAnIncorrectFormat()"/>
+            <column name="note" value="country specific"/>
+            <column name="message"
+                    value="If Type = SALES_ID or TRIP_ID: Check format of the part corresponding to the national number"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1031"/>
+            <column name="property_names" value="typeCode, valueID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10510"/>
+            <column name="br_id" value="SALE-L01-00-0434"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !valueContainsAny(typeCode, &quot;SALES_ID&quot;,&quot;TRIP_ID&quot;) &amp;&amp; hasTheCommonPartOfTheValueIDAnIncorrectFormat()"/>
+            <column name="note" value="ISO-3 code + '-' + type of report"/>
+            <column name="message" value="If Type = SALES_ID or TRIP_ID: Check format of the common part"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1031"/>
+            <column name="property_names" value="typeCode, valueID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10600"/>
+            <column name="br_id" value="SALE-L01-00-0450"/>
+            <column name="expression"
+                    value="!isEmpty(IDS) &amp;&amp; IDS.get(0) != null &amp;&amp; IDS.get(0).getSchemeId() != &quot;UUID&quot;"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute schemeID. Must be UUID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10601"/>
+            <column name="br_id" value="SALE-L01-00-0451"/>
+            <column name="expression" value="hasIDInvalidFormat()"/>
+            <column name="note" value="Must be according to RFC4122 format for UUID."/>
+            <column name="message" value="Check Format. Must be according to the specified schemeID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10602"/>
+            <column name="br_id" value="SALE-L01-00-0452"/>
+            <column name="expression"
+                    value="referencedID != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.getSchemeId(), creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute schemeID. Must be in the FLUX_GP_MSG_ID list"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10603"/>
+            <column name="br_id" value="SALE-L01-00-0453"/>
+            <column name="expression" value="!isAuction() &amp;&amp; hasReferencedIDInvalidFormat()"/>
+            <column name="note" value="Must be according to RFC4122 format for UUID."/>
+            <column name="message" value="Check Format. Must be according to the specified schemeID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="referencedID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10604"/>
+            <column name="br_id" value="SALE-L01-00-0454"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; responseCode.getListId() != &quot;FLUX_GP_RESPONSE&quot;"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute listID. Must be FLUX_GP_RESPONSE"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="responseCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10605"/>
+            <column name="br_id" value="SALE-L01-00-0455"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; !isCodeTypeValidFormat(&quot;FLUX_GP_RESPONSE&quot;, responseCode)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check value. Code must be value of the specified code list in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="responseCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10606"/>
+            <column name="br_id" value="SALE-L01-00-0456"/>
+            <column name="expression"
+                    value="(creationDateTime == null || creationDateTime.dateTime == null) || creationDateTime != null &amp;&amp; creationDateTime.dateTime != null &amp;&amp; isNotUTC(creationDateTime)"/>
+            <column name="note" value="e.g. 2008-10-31T15:07:38.6875000Z."/>
+            <column name="message" value="Check Format. Must be date in UTC according to ISO8601"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="creationDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10607"/>
+            <column name="br_id" value="SALE-L01-00-0460"/>
+            <column name="expression"
+                    value="isResponse() &amp;&amp; !isEmpty(IDS) &amp;&amp; IDS.get(0) != null &amp;&amp; IDS.get(0).getSchemeId() != null &amp;&amp; !IDS.get(0).getSchemeId().equals(&quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute listID. Must be FLUX_GP_PARTY"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10608"/>
+            <column name="br_id" value="SALE-L01-00-0470"/>
+            <column name="expression"
+                    value="validatorID != null
+                            &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_PARTY&quot;, validatorID.value, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check code"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1024"/>
+            <column name="property_names" value="validatorID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10609"/>
+            <column name="br_id" value="SALE-L01-00-0471"/>
+            <column name="expression"
+                    value="(creationDateTime == null || creationDateTime.dateTime == null) || creationDateTime != null &amp;&amp; creationDateTime.dateTime != null &amp;&amp; isNotUTC(creationDateTime)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check format"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1024"/>
+            <column name="property_names" value="creationDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10610"/>
+            <column name="br_id" value="SALE-L01-00-0480"/>
+            <column name="expression"
+                    value="!isAuction() &amp;&amp; (ID != null &amp;&amp; !mdrService.isPresentInMDRList(ID.schemeId, ID.value, creationDateOfMessage))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check value. Code must be value of the specified code list in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10611"/>
+            <column name="br_id" value="SALE-L01-00-0481"/>
+            <column name="expression"
+                    value="levelCode != null &amp;&amp; !mdrService.isPresentInMDRList(levelCode.listId, levelCode.value, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Code. Must be in the list specified in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="levelCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10612"/>
+            <column name="br_id" value="SALE-L01-00-0482"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Code. Must be in the list specified in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1025"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="rule-sales-query-level-2" author="thovri">
+        <!-- Sales_Query entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10701"/>
+            <column name="br_id" value="SALE-L02-00-0401"/>
+            <column name="expression" value="submitterFLUXParty == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="submitterFLUXParty"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10705"/>
+            <column name="br_id" value="SALE-L02-00-0430"/>
+            <column name="expression" value="triesToQueryOnTypeFlagButIsNotAnInternationalOrganization()"/>
+            <column name="note" value="If no value, the query is for all flag states"/>
+            <column name="message" value="Type=FLAG only for international organization"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="queryParameter.typeCode, submitterFLUXParty.ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10706"/>
+            <column name="br_id" value="SALE-L02-00-0431"/>
+            <column name="expression"
+                    value="triesToQueryOnTypeRoleAndValueFlagOrLandButIsAnInternationalOrganization() || triesToQueryOnTypeRoleAndValueIntButIsNotAnInternationalOrganization()"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="Type=ROLE, values FLAG or LAND only for MS INT for international organization"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names"
+                    value="queryParameter.typeCode, queryParameter.valueID, submitterFLUXParty.ID"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10704"/>
+            <column name="br_id" value="SALE-L02-00-0420"/>
+            <column name="expression"
+                    value="isQuery() &amp;&amp; startDateTime != null &amp;&amp; endDateTime != null &amp;&amp; startDateTime.getDateTime() != null &amp;&amp; endDateTime.getDateTime() != null &amp;&amp; startDateTime.getDateTime().getMillis() &gt; endDateTime.getDateTime().getMillis()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Start &lt;= End"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime, endDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10800"/>
+            <column name="br_id" value="SALE-L02-00-0450"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; !responseCode.getValue().equals(&quot;OK&quot;) &amp;&amp; isEmpty(relatedValidationResultDocuments)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be present if ResponseCode != OK"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="responseCode, relatedValidationResultDocuments"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10802"/>
+            <column name="br_id" value="SALE-L02-00-0480"/>
+            <column name="expression" value="anyValidationQualityAnalysisWithoutReferencedTextItems()"/>
+            <column name="note" value=""/>
+            <column name="message" value="At least one occurrence if not link with the Sales Report"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="referencedTextItems"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Validation Result_Document entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10801"/>
+            <column name="br_id" value="SALE-L02-00-0470"/>
+            <column name="expression" value="salesService.isDateOfValidationAfterCreationDateOfResponse($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The Creation must be &lt;= to the Creation of the report"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="creation"/>
+        </insert>
+        <!---->
+        <!-- Validation_Quality Analysis entity -->
+        <!-- All entries moved to other entities -->
+
+    </changeSet>
+    <changeSet id="rule-sales-level-3" author="thovri">
+        <!-- FLUX_Sales_Report_Message  entity -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10900"/>
+            <column name="br_id" value="SALE-L03-00-0020"/>
+            <column name="expression" value="salesService.isCorrectionAndIsItemTypeTheSameAsInTheOriginal($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="In case of a correction, the item type must be the same as the item type of the referenced report"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
+        </insert>
+
+        <!--FLUX_Report_Document-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10901"/>
+            <column name="br_id" value="SALE-L03-00-0010"/>
+            <column name="expression" value="!salesService.doesReportNotExistWithId($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The identification must be unique and not already exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="ids"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="10902"/>
+            <column name="br_id" value="SALE-L03-00-0011"/>
+            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The referenced identification must be the one of a an existing sales report"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
+        </insert>
+
+        <!-- Flux Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10903"/>
+            <column name="br_id" value="SALE-L03-00-0012"/>
+            <column name="expression"
+                    value="(isReport() || isQuery()) &amp;&amp; !isEmpty(IDS) &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check if OwnerFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- Sales_Document  -->
+        <insert tableName="rule">
+            <column name="rule_id" value="10905"/>
+            <column name="br_id" value="SALE-L03-00-0030"/>
+            <column name="expression" value="salesService.isOriginalAndIsIdNotUnique($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must be unique"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="10906"/>
+            <column name="br_id" value="SALE-L03-00-0031"/>
+            <column name="expression"
+                    value="!salesService.isTheUsedCurrencyAnOfficialCurrencyOfTheCountryAtTheDateOfTheSales($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="It must be an official currency of the country at that date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="currencyCode, specifiedFLUXLocations, specifiedSalesEvents"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10908"/>
+            <column name="br_id" value="SALE-L03-00-0033"/>
+            <column name="expression" value="!salesService.doesTakeOverDocumentIdExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="takeoverDocumentIDs"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10909"/>
+            <column name="br_id" value="SALE-L03-00-0034"/>
+            <column name="expression" value="!salesService.doesSalesNoteIdExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="salesNoteIDs"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10911"/>
+            <column name="br_id" value="SALE-L03-00-0041"/>
+            <column name="expression"
+                    value="codeTypeValueContainsMatch(roleCodes, &quot;SENDER&quot;) &amp;&amp; ID != null &amp;&amp; ID.schemeId != null &amp;&amp; !ID.schemeId.equals(&quot;MS&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If SENDER role, it should be a MS Identification"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="ID"/>
+        </insert>
+        <!---->
+        <!--&lt;!&ndash; Sales_Event  &ndash;&gt;-->
+        <insert tableName="rule">
+            <column name="rule_id" value="10912"/>
+            <column name="br_id" value="SALE-L03-00-0050"/>
+            <column name="expression" value="salesService.isReceptionDate48hAfterSaleDate($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="The reception date (by Market state) should not be later than 48h after the sale date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="Creation, Occurrence"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10914"/>
+            <column name="br_id" value="SALE-L03-00-0110"/>
+            <column name="expression" value="salesService.isReceptionDate48hAfterLandingDeclaration($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="The reception date (by the Take-Over state) should not be later than 48h after the landing declaration date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1000"/>
+            <column name="property_names" value="Creation, Occurrence"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="10915"/>
+            <column name="br_id" value="SALE-L03-00-0130"/>
+            <column name="expression" value="salesService.isCFRInFleetUnderFlagStateOnLandingDate($fact)"/>
+            <column name="note" value=""/>
+            <column name="message"
+                    value="If CFR, the vessel should be in the EU fleet under the flag state at landing date"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1013"/>
+            <column name="property_names" value="RelatedVesselTransportMeans, SpecifiedDelimitedPeriods"/>
+            <column name="disabled" value="true"/>
+        </insert>
+    </changeSet>
+    <!---->
+    <changeSet id="rule-sales-query-level-3" author="thovri">
+        <!-- Sales_Query -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11000"/>
+            <column name="br_id" value="SALE-L03-00-0400"/>
+            <column name="expression" value="salesService.isIdNotUnique($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The reference must be unique"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1022"/>
+            <column name="property_names" value="id"/>
+        </insert>
+        <!---->
+        <!-- Delimited_Period  -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11001"/>
+            <column name="br_id" value="SALE-L03-00-0420"/>
+            <column name="expression" value="salesService.isStartDateMoreThan3YearsAgo($fact)"/>
+            <column name="note" value="Past data limited to three years from the current date"/>
+            <column name="message" value="StartDate >= SystemDate – 3 years"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1028"/>
+            <column name="property_names" value="startDateTime"/>
+        </insert>
+    </changeSet>
+    <!---->
+    <changeSet id="rule-sales-response-level-3" author="thovri">
+        <!-- FLUX Response_Document  -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11100"/>
+            <column name="br_id" value="SALE-L03-00-0450"/>
+            <column name="expression" value="salesService.isIdNotUnique($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The identification must be unique and not already exist"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="id"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11101"/>
+            <column name="br_id" value="SALE-L03-00-0452"/>
+            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Must be a reference of a query or sales declaration"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="referencedId"/>
+            <column name="disabled" value="true"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11103"/>
+            <column name="br_id" value="SALE-L03-00-0453"/>
+            <column name="expression" value="salesService.isDateNotInPast($fact)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Date must be in the past."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1023"/>
+            <column name="property_names" value="creation"/>
+        </insert>
+
+        <!-- FLUX_Party -->
+        <insert tableName="rule">
+            <column name="rule_id" value="11104"/>
+            <column name="br_id" value="SALE-L03-00-0460"/>
+            <column name="expression" value="isResponse() &amp;&amp; IDS != null &amp;&amp; !matchWithFluxTL(IDS)"/>
+            <column name="note" value="The party sending must be allowed to send the message"/>
+            <column name="message" value="Check if RespondentFLUXParty.ID is consistent with FLUX TL values."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="IDS"/>
+            <column name="disabled" value="true"/>
+        </insert>
+
+    </changeSet>
+    <changeSet id="rule-sales-auction" author="matbul">
+        <insert tableName="rule">
+            <column name="rule_id" value="11704"/>
+            <column name="br_id" value="SALE-BEL-01"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; (!valueCodeTypeContainsAny(roleCodes, &quot;SELLER&quot;) &amp;&amp; (ID != null &amp;&amp; ID.value != null &amp;&amp; !ID.value.startsWith(&quot;RB-&quot;)))"/>
+            <column name="note" value=""/>
+            <column name="message" value="ID of Sales Party must start with RB- when the party is a seller"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1005"/>
+            <column name="property_names" value="roleCodes, ID"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11705"/>
+            <column name="br_id" value="SALE-BEL-02"/>
+            <column name="expression" value="isAuction() &amp;&amp; (names.size() != 0)"/>
+            <column name="note" value=""/>
+            <column name="message" value="The name of the class 'FLUX_Party' must never be filled in "/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1002"/>
+            <column name="property_names" value="name"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11706"/>
+            <column name="br_id" value="SALE-BEL-04"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; (purposeCode != null &amp;&amp; purposeCode.value != null &amp;&amp; purposeCode.value.equals(&quot;3&quot;))"/>
+            <column name="note" value=""/>
+            <column name="message" value="The BEL:SALE class cannot be deleted"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="fluxSalesReportMessage"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11707"/>
+            <column name="br_id" value="SALE-BEL-05"/>
+            <column name="expression"
+                    value="isVariousSupply() &amp;&amp; (countryCode == null || countryCode.equals(&quot;&quot;))"/>
+            <column name="note" value=""/>
+            <column name="message" value="BEL:SALECountry is mandatory "/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1027"/>
+            <column name="property_names" value="countryCode"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11709"/>
+            <column name="br_id" value="SALE-BEL-06"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; !mdrService.isPresentInMDRList(&quot;TERRITORY&quot;, countryCode, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="BEL:SALECountry: code should exist in MDR"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1027"/>
+            <column name="property_names" value="countryCode"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11708"/>
+            <column name="br_id" value="SALE-BEL-07"/>
+            <column name="expression" value="isVariousSupply() &amp;&amp; (specifiedFishingActivities.size() != 0)"/>
+            <column name="note" value=""/>
+            <column name="message" value="FishingActivity:Fishing_activity should not exist"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1004"/>
+            <column name="property_names" value="specifiedFishingActivities"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
