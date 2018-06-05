@@ -408,10 +408,11 @@ public class ActivityFactMapper {
         List<FaReportDocumentFact> list = new ArrayList<>();
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-            list.add(generateFactForFaReportDocument(fAReportDocument));
+            FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
+            faReportDocumentFact.setCreationDateOfMessage(extractCreationDateTime(fAReportDocument.getRelatedFLUXReportDocument()));
+            list.add(faReportDocumentFact);
             index++;
         }
-
         return list;
     }
 
@@ -420,17 +421,13 @@ public class ActivityFactMapper {
             xPathUtil.clear();
             return null;
         }
-
         String partialXpath = xPathUtil.getValue();
-
         FishingActivityFact fishingActivityFact = getFishingActivityCoreFact(fishingActivity, partialXpath);
         fishingActivityFact.setIsSubActivity(isSubActivity);
-
         if (faReportDocument != null) {
             fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FLUX_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(fishingActivityFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
         }
-
         return fishingActivityFact;
     }
 
@@ -521,6 +518,19 @@ public class ActivityFactMapper {
         return list;
     }
 
+
+    public DateTime extractCreationDateTime(FLUXReportDocument fluxReportDoc){
+        if (fluxReportDoc != null){
+            DateTimeType creationDateTime = fluxReportDoc.getCreationDateTime();
+            if(creationDateTime != null){
+                Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+                return new DateTime(repDat);
+            }
+        }
+        return null;
+    }
+
+
     public FluxFaReportMessageFact generateFactForFluxFaReportMessage(FLUXFAReportMessage fluxfaReportMessage) {
         if (fluxfaReportMessage == null) {
             return null;
@@ -529,16 +539,9 @@ public class ActivityFactMapper {
         FluxFaReportMessageFact fluxFaReportMessageFact = new FluxFaReportMessageFact();
 
         fluxFaReportMessageFact.setSenderOrReceiver(senderReceiver);
-        FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
-        if (fluxReportDocument != null){
-            DateTimeType creationDateTime = fluxReportDocument.getCreationDateTime();
-            if(creationDateTime != null){
-                Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
-                if(repDat != null){
-                    fluxFaReportMessageFact.setCreationDateOfMessage( new DateTime(repDat));
-                }
-            }
-        }
+
+        fluxFaReportMessageFact.setCreationDateOfMessage(extractCreationDateTime(fluxfaReportMessage.getFLUXReportDocument()));
+
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
