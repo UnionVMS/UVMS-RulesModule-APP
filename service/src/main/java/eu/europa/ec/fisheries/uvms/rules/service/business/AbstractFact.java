@@ -460,7 +460,6 @@ public abstract class AbstractFact {
 
     public boolean isIsoDateStringValidFormat(String value) {
         return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
-
     }
 
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
@@ -518,6 +517,10 @@ public abstract class AbstractFact {
     }
 
     public boolean codeTypeValueEquals(CodeType codeType, String valueToMatch){
+        return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
+    }
+
+    public boolean idTypeValueEquals(IdType codeType, String valueToMatch){
         return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
     }
 

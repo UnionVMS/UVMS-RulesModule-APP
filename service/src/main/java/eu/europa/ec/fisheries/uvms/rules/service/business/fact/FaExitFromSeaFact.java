@@ -115,11 +115,8 @@ public class FaExitFromSeaFact extends AbstractFact {
         if(CollectionUtils.isEmpty(relatedFLUXLocations)){
             return false;
         }
-
         if(faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
-
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
-
                 if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
                     IDType idType = fluxLocation.getID();
                     if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
@@ -128,7 +125,6 @@ public class FaExitFromSeaFact extends AbstractFact {
                 }
             }
         }
-
         return true;
     }
 }
