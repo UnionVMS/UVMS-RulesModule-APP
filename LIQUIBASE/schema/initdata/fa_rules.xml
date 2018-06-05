@@ -5198,7 +5198,7 @@
         <column name="rule_id" valueNumeric="555"/>
         <column name="br_id" value="FA-L01-00-0555"/>
         <column name="expression"
-                value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs, creationDateOfMessage)  "/>
+                value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs, creationDateOfMessage)"/>
         <column name="note" value="Check value. Must be value from the code list specified in schemeID."/>
         <column name="message" value="Validator ID value is invalid."/>
         <column name="level" value="L01"/>
@@ -5310,10 +5310,8 @@
     <insert tableName="rule">
         <column name="rule_id" value="403"/>
         <column name="br_id" value="FA-L01-00-0403"/>
-        <column name="expression"
-                value="typeCode != null &amp;&amp; !codeTypeValueEquals(typeCode, &quot;FLUX_GP_VALIDATION_TYPE&quot;)"/>
-        <column name="note"
-                value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
+        <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot;"/>
+        <column name="note" value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
         <column name="message" value="TypeCode has an invalid listID."/>
         <column name="level" value="L01"/>
         <column name="error_type" value="ERROR"/>
@@ -5339,7 +5337,7 @@
         <column name="rule_id" value="405"/>
         <column name="br_id" value="FA-L01-00-0405"/>
         <column name="expression"
-                value="codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
+                value="(codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;)) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
         <column name="note" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
         <column name="message" value="Referenced item(s) missing."/>
         <column name="level" value="L01"/>
