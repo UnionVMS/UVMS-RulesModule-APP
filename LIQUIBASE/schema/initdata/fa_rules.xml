@@ -5,7 +5,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
                    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-<changeSet author="FluxFMC Team" id="1504524497375-5">
+<changeSet author="FluxFMC-Team" id="1504524497375-5">
 
     <!-- START FaReportMessageEntity Rules -->
 
@@ -289,7 +289,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="23"/>
         <column name="br_id" value="FA-L00-00-0023"/>
-        <column name="expression" value="!isEmpty(relatedReportIDs) isAllSchemeIdsPresent(relatedReportIDs)"/>
+        <column name="expression" value="!isEmpty(relatedReportIDs) &amp;&amp; isAllSchemeIdsPresent(relatedReportIDs)"/>
         <column name="note" value="Check attribute schemeID."/>
         <column name="message" value="SchemeID not provided for Related report ID."/>
         <column name="level" value="L00"/>
@@ -3057,7 +3057,7 @@
         <column name="br_id" value="FA-L02-00-0248"/>
         <column name="expression"
                 value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
-                          (codeTypeValueEquals(reasonCode, &quot;TRZ&quot;) || codeTypeValueEquals(reasonCode, &quot;FSH&quot;) &amp;&amp; speciesTargetCode == null"/>
+                          (codeTypeValueEquals(reasonCode, &quot;TRZ&quot;) || codeTypeValueEquals(reasonCode, &quot;FSH&quot;)) &amp;&amp; speciesTargetCode == null"/>
         <column name="level" value="L02"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on"/>

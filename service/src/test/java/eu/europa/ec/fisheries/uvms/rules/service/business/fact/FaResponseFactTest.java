@@ -29,7 +29,7 @@ public class FaResponseFactTest {
 
     @Test
     public  void testIfValidatorIdPresent(){
-        boolean result= faResponseFact.ifValidatorIdPresent(Arrays.asList(RuleTestHelper.getValidationResultDocument()));
+        boolean result= faResponseFact.isValidatorIdPresent(Arrays.asList(RuleTestHelper.getValidationResultDocument()));
         assertTrue(result);
     }
 
