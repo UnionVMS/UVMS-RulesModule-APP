@@ -54,45 +54,4 @@ public abstract class AbstractGenerator<T> {
         this.extraValueMap = map;
     }
 
-    /**
-     * This method is setting unique UUIDs to a list of facts
-     * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
-     * @param fluxRepDoc
-     * @param facts
-     */
-    void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
-        List<String> strIDs = getIds(fluxRepDoc.getIDS());
-        DateTimeType creationDateTime = fluxRepDoc.getCreationDateTime();
-        DateTime reportDateTime = null;
-        if(creationDateTime != null){
-            Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
-            if(repDat != null){
-                reportDateTime = new DateTime(repDat);
-            }
-        }
-        facts.removeAll(Collections.singleton(null));
-        for (AbstractFact fact : facts) {
-            fact.setUniqueIds(strIDs);
-            fact.setCreationDateOfMessage(reportDateTime);
-        }
-    }
-
-    private List<String> getIds(List<IDType> idTypes) {
-        ArrayList<String> ids = new ArrayList<>();
-        if (CollectionUtils.isEmpty(idTypes)) {
-            return ids;
-        }
-        if (CollectionUtils.isNotEmpty(idTypes)){
-            ids = new ArrayList<>();
-            for (IDType idType : idTypes) {
-                String value = idType.getValue();
-                String schemeID = idType.getSchemeID();
-                if (value != null && schemeID != null) {
-                    ids.add(value.concat("_").concat(schemeID));
-                }
-            }
-        }
-        return ids;
-    }
-
 }

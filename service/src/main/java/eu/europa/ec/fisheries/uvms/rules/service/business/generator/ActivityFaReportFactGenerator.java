@@ -42,14 +42,11 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -62,6 +59,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -75,6 +73,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author padhyad
@@ -401,6 +401,39 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         }
 
         xPathUtil.clear();
+    }
+
+    /**
+     * This method is setting unique UUIDs to a list of facts
+     * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
+     * @param fluxRepDoc
+     * @param facts
+     */
+    private void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
+        List<String> strIDs = getIds(fluxRepDoc.getIDS());
+        facts.removeAll(Collections.singleton(null));
+        for (AbstractFact fact : facts) {
+            fact.setUniqueIds(strIDs);
+            fact.setCreationDateOfMessage(activityFactMapper.extractCreationDateTime(fluxRepDoc));
+        }
+    }
+
+    private List<String> getIds(List<IDType> idTypes) {
+        ArrayList<String> ids = new ArrayList<>();
+        if (CollectionUtils.isEmpty(idTypes)) {
+            return ids;
+        }
+        if (CollectionUtils.isNotEmpty(idTypes)){
+            ids = new ArrayList<>();
+            for (IDType idType : idTypes) {
+                String value = idType.getValue();
+                String schemeID = idType.getSchemeID();
+                if (value != null && schemeID != null) {
+                    ids.add(value.concat("_").concat(schemeID));
+                }
+            }
+        }
+        return ids;
     }
 
 }
