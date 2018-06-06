@@ -7028,7 +7028,7 @@
             <column name="note" value=""/>
             <column name="message" value="Check format. Must be according to schemeID rules"/>
             <column name="level" value="L01"/>
-            <column name="error_type" value="WARNING"/>
+            <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="1018"/>
             <column name="property_names" value="IDS"/>
