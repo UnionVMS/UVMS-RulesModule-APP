@@ -5213,7 +5213,7 @@
         <column name="rule_id" valueNumeric="554"/>
         <column name="br_id" value="FA-L02-00-0554"/>
         <column name="expression"
-                value="codeTypeValueEquals(responseCode, &quot;OK&quot;) &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)"/>
+                value="!codeTypeValueEquals(responseCode, &quot;OK&quot;) &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)"/>
         <column name="note" value="At least one occurrence must be present if ResponseCode != OK."/>
         <column name="message" value="Quality analysis details are missing"/>
         <column name="level" value="L02"/>
