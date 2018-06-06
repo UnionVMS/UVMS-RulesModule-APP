@@ -88,6 +88,7 @@ public class MDRCache {
         try {
             populateMdrCacheDateAndCheckIfRefreshDateChanged();
             if(cacheDateChanged){
+                log.info("[START] Loading MDR Cache...");
                 ExecutorService executorService = Executors.newFixedThreadPool(10);
                 List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
                 for (final MDRAcronymType type : MDRAcronymType.values()) {
@@ -100,9 +101,8 @@ public class MDRCache {
                 }
                 executorService.invokeAll(callableList);
                 awaitTerminationAfterShutdown(executorService);
-                log.info("[INFO] MDR Cache Refresh was Needed and done already! Last time MDRs (CodeLists) were refreshed : [ " + mdrRefreshDate + " ]..");
+                log.info("[FINISH] MDR Cache Refresh was Needed and done already! Last time MDRs (CodeLists) were refreshed : [ " + mdrRefreshDate + " ]..");
                 cacheRefreshDate = new Date(mdrRefreshDate.getTime());
-                log.info("MDRCache size: " + cache.size());
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
