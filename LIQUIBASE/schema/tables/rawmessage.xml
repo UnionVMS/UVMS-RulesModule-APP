@@ -19,4 +19,10 @@
         </rollback>
     </changeSet>
 
+    <changeSet author="matbul" id="rawmessage-02">
+        <addColumn tableName="rawmessage">
+            <column name="mdc_request_id" type="text"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
