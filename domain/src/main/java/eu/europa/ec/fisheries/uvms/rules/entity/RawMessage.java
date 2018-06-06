@@ -32,6 +32,7 @@ import java.util.Set;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 
 /**
  * Created by padhyad on 5/3/2017.
@@ -66,12 +67,17 @@ public class RawMessage implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rawMessage", cascade = CascadeType.ALL)
     private Set<ValidationMessage> validationMessages;
 
+    @Column(name = "mdc_request_id")
+    private String mdcRequestId;
+
     @PrePersist
     public void prePersist(){
         if (StringUtils.isNotEmpty(rawMessage)){
             rawMessage = rawMessage.replaceAll("<\\?xml(.+?)\\?>", "")
                     .replaceAll("(?s)<!--.*?-->", "").trim();
         }
+
+        setMdcRequestId(MDC.get("requestId"));
     }
     public Long getId() {
         return id;
@@ -102,5 +108,13 @@ public class RawMessage implements Serializable {
     }
     public void setRawMsgType(RawMsgType rawMsgType) {
         this.rawMsgType = rawMsgType;
+    }
+
+    public String getMdcRequestId() {
+        return mdcRequestId;
+    }
+
+    public void setMdcRequestId(String mdcRequestId) {
+        this.mdcRequestId = mdcRequestId;
     }
 }
