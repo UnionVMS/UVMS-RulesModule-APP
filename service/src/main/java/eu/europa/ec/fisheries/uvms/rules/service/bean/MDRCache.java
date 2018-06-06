@@ -1,3 +1,5 @@
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
+
 /*
  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
 
@@ -7,8 +9,6 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
@@ -39,9 +39,7 @@ import javax.ejb.*;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
@@ -57,7 +55,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class MDRCache {
 
     @Getter
-    private LoadingCache<MDRAcronymType, List<ObjectRepresentation>> cache;
+    private Map<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
     private RulesResponseConsumer consumer;
@@ -76,93 +74,74 @@ public class MDRCache {
 
     @PostConstruct
     public void init() {
-        cache = CacheBuilder.newBuilder()
-                .refreshAfterWrite(10, TimeUnit.MINUTES)
-                .maximumSize(100)
-                .initialCapacity(80)
-                .build(new CacheLoader<MDRAcronymType, List<ObjectRepresentation>>() {
-
-                           @Override
-                           public List<ObjectRepresentation> load(MDRAcronymType acronymType) {
-                               cacheRefreshDate = mdrRefreshDate;
-                               return mdrCodeListByAcronymType(acronymType);
-                           }
-
-                           @Override
-                           public ListenableFuture<List<ObjectRepresentation>> reload(final MDRAcronymType key, List<ObjectRepresentation> prevObjRappres) throws ExecutionException, InterruptedException {
-                               if (CollectionUtils.isEmpty(prevObjRappres) || cacheDateChanged) { // We also check for emptiness.
-                                   ListenableFutureTask<List<ObjectRepresentation>> task = ListenableFutureTask.create(new Callable<List<ObjectRepresentation>>() {
-                                       public List<ObjectRepresentation> call() {
-                                           return mdrCodeListByAcronymType(key);
-                                       }
-                                   });
-                                   Executors.newSingleThreadExecutor().execute(task);
-                                   task.get(); // Otherwise it creates problems with the upper calling code...
-                                   return task; // Wierd but this doesnt work : return Futures.immediateFuture(load(key));
-                               } else {
-                                   return Futures.immediateFuture(prevObjRappres);
-                               }
-                           }
-                       }
-                );
+        cache = new ConcurrentHashMap<>();
     }
 
+
+    /**
+     *  It fetches the latest refresh date from MDR and checks if the local cache needs to be refreshed.
+     *
+     */
     @AccessTimeout(value = 10, unit = MINUTES)
     @Lock(LockType.WRITE)
     public void loadAllMdrCodeLists() {
         try {
             populateMdrCacheDateAndCheckIfRefreshDateChanged();
-            ExecutorService executorService = Executors.newFixedThreadPool(5);
-            List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
-            for (final MDRAcronymType type : MDRAcronymType.values()) {
-                callableList.add(new Callable<List<ObjectRepresentation>>() {
-                    @Override
-                    public List<ObjectRepresentation> call() {
-                        return getEntry(type);
-                    }
-                });
-            }
-            List<Future<List<ObjectRepresentation>>> futuresList = new ArrayList<>();
-            for (Callable<List<ObjectRepresentation>> callable : callableList) {
-                futuresList.add(executorService.submit(callable));
-            }
-            executorService.invokeAll(callableList);
-            executorService.shutdown();
-            // To make sure that the method loadAllMdrCodeLists() as a whole has executed all the Collables before exiting.
-            // awaitTermination doesn't stop as expected so wee need to call get() of Future here to make it wait for each task to finish!
-            for (Future<List<ObjectRepresentation>> future : futuresList) {
-                future.get();
-            }
-            if (cacheDateChanged) {
+            if(cacheDateChanged){
+                ExecutorService executorService = Executors.newFixedThreadPool(10);
+                List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
+                for (final MDRAcronymType type : MDRAcronymType.values()) {
+                    callableList.add(new Callable<List<ObjectRepresentation>>() {
+                        @Override
+                        public List<ObjectRepresentation> call() {
+                            return mdrCodeListByAcronymType(type);
+                        }
+                    });
+                }
+                executorService.invokeAll(callableList);
+                awaitTerminationAfterShutdown(executorService);
                 log.info("[INFO] MDR Cache Refresh was Needed and done already! Last time MDRs (CodeLists) were refreshed : [ " + mdrRefreshDate + " ]..");
                 cacheRefreshDate = new Date(mdrRefreshDate.getTime());
-                log.debug(cache.stats().toString());
                 log.info("MDRCache size: " + cache.size());
             }
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    @Lock(LockType.READ)
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        List<ObjectRepresentation> result = emptyList();
+        List<ObjectRepresentation> result;
         if (acronymType != null) {
-            result = cache.getUnchecked(acronymType);
+            result = cache.get(acronymType);
+            if(CollectionUtils.isEmpty(result)){ // reload if its empty! Shouldn't happen, but if it does we have the meccanism set up!
+                cache.put(acronymType,mdrCodeListByAcronymType(acronymType));
+                result = cache.get(acronymType);
+                if(CollectionUtils.isEmpty(result)){
+                    log.error("[ERROR] Tried to reload (since it was empty) acronym [ "+acronymType+" ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
+                            "Please Have a look at MDRAcronymType!");
+                }
+            }
+            return result;
         }
+        return emptyList();
+    }
+
+    /**
+     *  Gtes an mdr codelist from MDR modules.
+     *
+     * @param acronymType
+     * @return
+     */
+    @SneakyThrows
+    private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronymType) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
+        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
+        TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
         if (elapsed > 0.5) {
             log.info("Loading " + acronymType + " took " + stopwatch);
         }
-        return result;
-    }
-
-    @SneakyThrows
-    private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronym) {
-        String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronym.name());
-        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
-        TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
             return response.getDataSets();
@@ -208,9 +187,16 @@ public class MDRCache {
         }
     }
 
-    private static long getDifferenceBetweenDates(Date firstDate, Date secondDate, TimeUnit timeUnit) {
-        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
-        return TimeUnit.DAYS.convert(diffInMillies, timeUnit);
+    public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(5, TimeUnit.MINUTES)) {
+                threadPool.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            threadPool.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
 }
