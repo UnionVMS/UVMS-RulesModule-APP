@@ -5778,7 +5778,7 @@
             <column name="rule_id" value="383"/>
             <column name="br_id" value="FA-L00-00-0383"/>
             <column name="expression"
-                    value="referencedID !=null &amp;&amp; referencedID.schemeId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId)"/>
+                    value="referencedID != null &amp;&amp; referencedID.schemeId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId)"/>
             <column name="note" value="Check attribute schemeID. Must be a valid value from code list FLUX_GP_MSG_ID."/>
             <column name="message" value="Response referenced ID has invalid schemeID."/>
             <column name="level" value="L00"/>
@@ -6627,7 +6627,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10113"/>
             <column name="br_id" value="SALE-L01-00-0033"/>
-            <column name="expression" value="!mdrService.isCodeTypePresentInMDRList(currencyCode, creationDateOfMessage)"/>
+            <column name="expression" value="currencyCode != null &amp;&amp; !mdrService.isCodeTypePresentInMDRList(currencyCode, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check Code"/>
             <column name="level" value="L01"/>
@@ -6697,7 +6697,7 @@
             <column name="rule_id" value="10118"/>
             <column name="br_id" value="SALE-L01-00-0041"/>
             <column name="expression"
-                    value="!mdrService.isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes, creationDateOfMessage)"/>
+                    value="!isEmpty(roleCodes) &amp;&amp; !mdrService.isTypeCodeValuePresentInList(&quot;FLUX_SALES_PARTY_ROLE&quot;, roleCodes, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -6834,7 +6834,7 @@
             <column name="rule_id" value="10130"/>
             <column name="br_id" value="SALE-L01-00-0070"/>
             <column name="expression"
-                    value="!mdrService.isCodeTypePresentInMDRList(typeCodes, creationDateOfMessage)"/>
+                    value="!isEmpty(typeCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(typeCodes, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code from the list listID"/>
             <column name="level" value="L01"/>
@@ -6945,7 +6945,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10140"/>
             <column name="br_id" value="SALE-L01-00-0130"/>
-            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
+            <column name="expression" value="ID != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -7079,7 +7079,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10150"/>
             <column name="br_id" value="SALE-L01-00-0183"/>
-            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
+            <column name="expression" value="countryID != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="level" value="L01"/>
@@ -7119,7 +7119,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10153"/>
             <column name="br_id" value="SALE-L01-00-0186"/>
-            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
+            <column name="expression" value="ID != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(ID, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code. Must be existing in the list specified in attribute listID"/>
             <column name="level" value="L01"/>
@@ -7162,7 +7162,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10158"/>
             <column name="br_id" value="SALE-L01-00-0200"/>
-            <column name="expression" value="!mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
+            <column name="expression" value="countryID != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(countryID, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="Check code"/>
             <column name="level" value="L01"/>
@@ -8704,7 +8704,7 @@
             <column name="rule_id" value="11709"/>
             <column name="br_id" value="SALE-BEL-06"/>
             <column name="expression"
-                    value="isAuction() &amp;&amp; !mdrService.isPresentInMDRList(&quot;TERRITORY&quot;, countryCode, creationDateOfMessage)"/>
+                    value="isAuction() &amp;&amp; countryCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;TERRITORY&quot;, countryCode, creationDateOfMessage)"/>
             <column name="note" value=""/>
             <column name="message" value="BEL:SALECountry: code should exist in MDR"/>
             <column name="level" value="L00"/>
