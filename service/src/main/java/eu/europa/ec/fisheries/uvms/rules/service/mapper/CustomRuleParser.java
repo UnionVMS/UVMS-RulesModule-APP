@@ -12,8 +12,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
@@ -34,6 +35,13 @@ public class CustomRuleParser {
             rulesDto.setRuleGuid(rawRule.getGuid());
 
             List<CustomRuleSegmentType> segments = rawRule.getDefinitions();
+            Collections.sort(segments, new Comparator<CustomRuleSegmentType>() {
+                @Override
+                public int compare(CustomRuleSegmentType o1, CustomRuleSegmentType o2) {
+                    return Integer.valueOf(o1.getOrder()).compareTo(Integer.valueOf(o2.getOrder()));
+                }
+            });
+            
             StringBuilder sb = new StringBuilder();
 
             for (CustomRuleSegmentType segment : segments) {
