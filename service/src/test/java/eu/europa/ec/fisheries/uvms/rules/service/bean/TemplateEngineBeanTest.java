@@ -118,7 +118,6 @@ public class TemplateEngineBeanTest {
     @Test
     public void testInitialize() {
         try {
-            Mockito.doNothing().when(cacheService).loadCacheForFailureMessages();
             Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
             Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
             templateEngine.initialize();
