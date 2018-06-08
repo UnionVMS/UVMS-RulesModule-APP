@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
@@ -40,6 +41,18 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<ContactPerson> specifiedContactPersons;
 
     private List<IdTypeWithFlagState> assetList;
+
+
+    public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
+        boolean containsValidSchemeId = false;
+        for (IdType id : ids) {
+            if(schemeId.equals(id.getSchemeId()) && StringUtils.isNotEmpty(id.getValue())){
+                containsValidSchemeId = true;
+            }
+        }
+        return containsValidSchemeId;
+    }
+
 
     @Override
     public void setFactType() {
