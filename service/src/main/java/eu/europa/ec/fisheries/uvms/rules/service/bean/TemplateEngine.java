@@ -78,7 +78,6 @@ public class TemplateEngine {
     }
 
     private void refreshRulesValidationMessages(List<TemplateRuleMapDto> templatesAndRules) {
-        cacheService.loadCacheForFailureMessages();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());

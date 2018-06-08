@@ -11,12 +11,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
  */
 
 import com.google.common.base.Stopwatch;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
@@ -25,11 +19,14 @@ import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -66,15 +63,16 @@ public class MDRCache {
     // This variable will store the Date last time this @cache was refreshed.
     private Date cacheRefreshDate;
 
-    // This is the date that the last entity in mdr (module) was refreshed.
+    // This variable will store the date that the last entity in mdr (module) was refreshed.
+    // @Info : refres to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
     private Date mdrRefreshDate;
 
-    // This will avoid 70 date comparisons, otherwise unavoidable..
-    private boolean cacheDateChanged;
+    private Map<String, EnrichedBRMessage> errorMessages;
 
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
+        errorMessages = new ConcurrentHashMap<>();
     }
 
 
@@ -86,29 +84,30 @@ public class MDRCache {
     @Lock(LockType.WRITE)
     public void loadAllMdrCodeLists() {
         try {
-            populateMdrCacheDateAndCheckIfRefreshDateChanged();
-            if(cacheDateChanged){
+            if(populateMdrCacheDateAndCheckIfRefreshDateChanged()){
                 log.info("[START] Loading MDR Cache...");
                 ExecutorService executorService = Executors.newFixedThreadPool(10);
                 List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
                 for (final MDRAcronymType type : MDRAcronymType.values()) {
                     callableList.add(new Callable<List<ObjectRepresentation>>() {
-                        @Override
                         public List<ObjectRepresentation> call() {
                             return mdrCodeListByAcronymType(type);
                         }
                     });
                 }
-                executorService.invokeAll(callableList);
-                awaitTerminationAfterShutdown(executorService);
-                log.info("[FINISH] MDR Cache Refresh was Needed and done already! Last time MDRs (CodeLists) were refreshed : [ " + mdrRefreshDate + " ]..");
+                waitWhileAllTasksFinish(executorService.invokeAll(callableList));
+                executorService.shutdown();
                 cacheRefreshDate = new Date(mdrRefreshDate.getTime());
+                loadCacheForFailureMessages();
+                log.info("[FINISH] MDR Cache Refresh was needed and done already! New refresh Date : [" + mdrRefreshDate + "]");
             }
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
     }
 
+    @AccessTimeout(value = 10, unit = MINUTES)
+    @Lock(LockType.READ)
     public List<ObjectRepresentation> getEntry(MDRAcronymType acronymType) {
         List<ObjectRepresentation> result;
         if (acronymType != null) {
@@ -153,18 +152,18 @@ public class MDRCache {
      * Checks if the refresh date from mdr module has changed.
      * If it has changed sets cacheDateChanged=true; and refreshed the mdrRefreshDate with the new date.
      */
-    private void populateMdrCacheDateAndCheckIfRefreshDateChanged() {
-        cacheDateChanged = false;
-        // TODO : optimize for : if at least 5 minutes have passed...
+    private boolean populateMdrCacheDateAndCheckIfRefreshDateChanged() {
+        boolean cacheDateChanged = false;
         try {
             Date mdrDate = getLastTimeMdrWasRefreshedFromMdrModule();
-            if (mdrRefreshDate == null || !mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
+            if (!mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
                 mdrRefreshDate = mdrDate;
                 cacheDateChanged = true;
             }
         } catch (MessageException e) {
             log.error("[ERROR] Couldn't populate MDR Refresh date.. MDR Module is deployed?");
         }
+        return cacheDateChanged;
     }
 
     /**
@@ -185,6 +184,59 @@ public class MDRCache {
         } catch (MdrModelMarshallException | JAXBException | JMSException e) {
             throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
         }
+    }
+
+    private void waitWhileAllTasksFinish(List<Future<List<ObjectRepresentation>>> futures) {
+        boolean done = true;
+        for (Future<List<ObjectRepresentation>> future : futures) {
+            if(!future.isDone()){
+                done = false;
+            }
+        }
+        if(!done){
+            log.info("Waiting...");
+            waitWhileAllTasksFinish(futures);
+        }
+    }
+
+    /**
+     * This function maps all the error messages to the ones defined in MDR;
+     */
+    public void loadCacheForFailureMessages() {
+        if (!MapUtils.isEmpty(errorMessages)) {
+            return;
+        }
+        errorMessages = new HashMap<>();
+        final List<ObjectRepresentation> objRapprList = new ArrayList<ObjectRepresentation>() {{
+            addAll(getEntry(MDRAcronymType.FA_BR_DEF));
+            addAll(getEntry(MDRAcronymType.SALE_BR_DEF));
+        }};
+        final String MESSAGE_COLUMN = "messageIfFailing";
+        final String BR_ID_COLUMN = "code";
+        final String BR_NOTE_COLUMN = "note";
+        for (ObjectRepresentation objectRepr : objRapprList) {
+            String brId = null;
+            String errorMessage = null;
+            String note = null;
+
+            for (ColumnDataType field : objectRepr.getFields()) {
+                final String columnName = field.getColumnName();
+                if (MESSAGE_COLUMN.equals(columnName)) {
+                    errorMessage = field.getColumnValue();
+                }
+                if (BR_ID_COLUMN.equals(columnName)) {
+                    brId = field.getColumnValue();
+                }
+                if (BR_NOTE_COLUMN.equals(columnName)) {
+                    note = field.getColumnValue();
+                }
+            }
+            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage));
+        }
+    }
+
+    public EnrichedBRMessage getErrorMessage(String brId){
+        return errorMessages.get(brId);
     }
 
     public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
