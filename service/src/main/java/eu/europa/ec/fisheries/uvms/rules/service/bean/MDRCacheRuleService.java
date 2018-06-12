@@ -24,8 +24,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 @Local
 public interface MDRCacheRuleService {
 
-    void loadCacheForFailureMessages();
-
     EnrichedBRMessage getErrorMessageForBrId(String brId);
 
     boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage);

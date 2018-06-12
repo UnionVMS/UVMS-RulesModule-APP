@@ -426,8 +426,7 @@ public class RulesServiceBean implements RulesService {
     public long countTicketsByMovements(List<String> movements) throws RulesServiceException, RulesFaultException {
         LOG.info("[INFO] Get number of tickets by movements invoked in service layer");
         try {
-            long countTicketListByMovements = rulesDomainModel.countTicketListByMovements(movements);
-            return countTicketListByMovements;
+            return rulesDomainModel.countTicketListByMovements(movements);
         } catch (RulesModelException e) {
             throw new RulesServiceException(e.getMessage());
         }
