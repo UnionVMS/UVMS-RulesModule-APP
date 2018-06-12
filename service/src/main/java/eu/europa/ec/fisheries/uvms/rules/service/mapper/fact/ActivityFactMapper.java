@@ -107,6 +107,7 @@ import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
@@ -148,6 +149,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
@@ -406,10 +408,11 @@ public class ActivityFactMapper {
         List<FaReportDocumentFact> list = new ArrayList<>();
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-            list.add(generateFactForFaReportDocument(fAReportDocument));
+            FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
+            faReportDocumentFact.setCreationDateOfMessage(extractCreationDateTime(fAReportDocument.getRelatedFLUXReportDocument()));
+            list.add(faReportDocumentFact);
             index++;
         }
-
         return list;
     }
 
@@ -418,17 +421,13 @@ public class ActivityFactMapper {
             xPathUtil.clear();
             return null;
         }
-
         String partialXpath = xPathUtil.getValue();
-
         FishingActivityFact fishingActivityFact = getFishingActivityCoreFact(fishingActivity, partialXpath);
         fishingActivityFact.setIsSubActivity(isSubActivity);
-
         if (faReportDocument != null) {
             fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FLUX_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(fishingActivityFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
         }
-
         return fishingActivityFact;
     }
 
@@ -519,6 +518,19 @@ public class ActivityFactMapper {
         return list;
     }
 
+
+    public DateTime extractCreationDateTime(FLUXReportDocument fluxReportDoc){
+        if (fluxReportDoc != null){
+            DateTimeType creationDateTime = fluxReportDoc.getCreationDateTime();
+            if(creationDateTime != null){
+                Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+                return new DateTime(repDat);
+            }
+        }
+        return null;
+    }
+
+
     public FluxFaReportMessageFact generateFactForFluxFaReportMessage(FLUXFAReportMessage fluxfaReportMessage) {
         if (fluxfaReportMessage == null) {
             return null;
@@ -527,6 +539,8 @@ public class ActivityFactMapper {
         FluxFaReportMessageFact fluxFaReportMessageFact = new FluxFaReportMessageFact();
 
         fluxFaReportMessageFact.setSenderOrReceiver(senderReceiver);
+
+        fluxFaReportMessageFact.setCreationDateOfMessage(extractCreationDateTime(fluxfaReportMessage.getFLUXReportDocument()));
 
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 
@@ -1840,7 +1854,6 @@ public class ActivityFactMapper {
         }
 
         FaQueryFact faQueryFact = new FaQueryFact();
-
         faQueryFact.setSenderOrReceiver(senderReceiver);
 
         faQueryFact.setId(mapToSingleIdType(faQuery.getID()));
@@ -2020,7 +2033,6 @@ public class ActivityFactMapper {
 
         FaResponseFact faResponseFact = new FaResponseFact();
         faResponseFact.setSenderOrReceiver(senderReceiver);
-
         String partialXpath = xPathUtil.getValue();
 
         final FLUXResponseDocument fluxResponseDocument1 = fluxResponseMessage.getFLUXResponseDocument();

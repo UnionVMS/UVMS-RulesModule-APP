@@ -17,14 +17,19 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SE
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import java.util.ArrayList;
-import java.util.List;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 /**
  * @author padhyad
@@ -61,6 +66,19 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
                 factList.addAll(activityFactMapper.generateFactsForFaQueryParameters(faQuery.getSimpleFAQueryParameters(), faQuery));
             }
         }
+
+        if (fluxfaQueryMessage != null){
+            DateTimeType creationDateTime = fluxfaQueryMessage.getFAQuery().getSubmittedDateTime();
+            for (AbstractFact fact : factList) {
+                if(creationDateTime != null){
+                    Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+                    if(repDat != null){
+                        fact.setCreationDateOfMessage(new DateTime(repDat));
+                    }
+                }
+            }
+        }
+
         return factList;
     }
 

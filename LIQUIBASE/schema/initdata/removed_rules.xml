@@ -1,0 +1,383 @@
+<!-- removed since 2.2
+        <insert tableName="rule">
+            <column name="rule_id" value="330"/>
+            <column name="br_id" value="FA-L02-00-0330"/>
+            <column name="expression"
+                    value="fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; !(fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; || fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||  faReportDocumentTypeCode.value != &quot;NOTIFICATION&quot;"/>
+            <column name="note"
+                    value="Fishing_Activity TypeCode must be  TRANSHIPMENT or RELOCATION, FA_Report Document TypeCode must be NOTIFICATION"/>
+            <column name="message"
+                    value="Fishing_Activity TypeCode must be TRANSHIPMENT or RELOCATION, FA_Report Document TypeCode must be NOTIFICATION"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="28"/>
+            <column name="property_names" value="faReportDocumentTypeCode, fishingActivityTypeCode"/>
+            <column name="disabled" value="true"/>
+        </insert>
+
+<insert tableName="rule">
+    <column name="rule_id" value="345"/>
+    <column name="br_id" value="FA-L02-00-0345"/>
+    <column name="expression"
+            value="!isEmpty(faCatchSpecifiedFLUXLocationsTypeCodes) &amp;&amp; validateFormatCodeTypes(faCatchSpecifiedFLUXLocationsTypeCodes)"/>
+    <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330)"/>
+    <column name="message"
+            value="SpecifiedFA_Catch.FLUX_Location CodeType@schemeID format must be according to the specified schemeID."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+    <column name="template_id" value="28"/>
+    <column name="property_names" value="faCatchSpecifiedFLUXLocationsTypeCodes"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+
+ remoeved since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="310"/>
+    <column name="br_id" value="FA-L02-00-0310"/>
+    <column name="expression"
+            value="faReportDocumentTypeCode == null || faReportDocumentTypeCode.value != &quot;DECLARATION&quot; || fishingActivityCodeType.value  != &quot;LANDING&quot;"/>
+    <column name="note" value="TypeCode must be DECLARATION "/>
+    <column name="message" value="Must be DECLARATION"/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
+    <column name="template_id" value="26"/>
+    <column name="property_names" value="faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+
+removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="285"/>
+    <column name="br_id" value="FA-L02-00-0285"/>
+    <column name="expression"
+            value="fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode != null  &amp;&amp; fishingActivityTypeCode.value != &quot;AREA_EXIT&quot; || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
+    <column name="note"
+            value="Fishing_Activity TypeCode Must be AREA_EXIT and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="message"
+            value="Fishing_Activity TypeCode Must be AREA_EXIT and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on"/>
+    <column name="template_id" value="23"/>
+    <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+<insert tableName="rule">
+    <column name="rule_id" value="233"/>
+    <column name="br_id" value="FA-L02-00-0233"/>
+    <column name="expression"
+            value="faReportDocumentTypeCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value != &quot;DEPARTURE&quot; || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;"/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="note"
+            value="Fishing_Activity TypeCode Must be DEPARTURE and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="message"
+            value="Fishing_Activity TypeCode Must be DEPARTURE and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="rule_created_on"/>
+    <column name="template_id" value="17"/>
+    <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+ removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="245"/>
+    <column name="br_id" value="FA-L02-00-0245"/>
+    <column name="expression"
+            value="fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; (fishingActivityTypeCode.value != &quot;AREA_ENTRY&quot; || faReportDocumentTypeCode.value != &quot;DECLARATION&quot;)"/>
+    <column name="note"
+            value="Fishing_Activity TypeCode Must be AREA_ENTRY and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="message"
+            value="Fishing_Activity TypeCode Must be AREA_ENTRY and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on"/>
+    <column name="template_id" value="18"/>
+    <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+ removed since 1.2.2
+<insert tableName="rule">
+    <column name="rule_id" value="63"/>
+    <column name="br_id" value="FA-L03-00-0063"/>
+    <column name="expression"
+            value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;)"/>
+    <column name="note" value="If vessel from EU Member States at time of activity, then CFR mandatory."/>
+    <column name="message" value="If vessel from EU Member States at time of activity, then CFR mandatory."/>
+    <column name="level" value="L03"/>
+    <column name="error_type" value="WARNING"/>
+    <column name="rule_created_on"/>
+    <column name="template_id" value="3"/>
+    <column name="property_names" value="ids"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+removes since 2.2
+   <insert tableName="rule">
+       <column name="rule_id" value="500"/>
+       <column name="br_id" value="FA-L00-00-0500"/>
+       <column name="expression"
+               value="!isEmpty(specifiedFluxLocationRFMOCodeList) &amp;&amp; listIdContainsAll(specifiedFluxLocationRFMOCodeList, &quot;RFMO&quot;)"/>
+       <column name="note"
+               value="If provided.Please note that brId for this rule is FA-L01-00-0205. Different Id is used for uniqueness"/>
+       <column name="message" value="specifiedFluxLocationRFMOCodeList must have listId RFMO"/>
+       <column name="level" value="L00"/>
+       <column name="error_type" value="ERROR"/>
+       <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
+       <column name="template_id" value="8"/>
+       <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
+       <column name="disabled" value="true"/>
+   </insert>
+
+removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="501"/>
+    <column name="br_id" value="FA-L00-00-0501"/>
+    <column name="expression"
+            value="!isEmpty(specifiedFluxLocationRFMOCodeList) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;RFMO&quot; , specifiedFluxLocationRFMOCodeList )"/>
+    <column name="note"
+            value="If provided. Please note that brId for this rule is FA-L01-00-0204. Different Id is used for uniqueness"/>
+    <column name="message" value="specifiedFluxLocationRFMOCodeList value must be present in MDR list RFMO."/>
+    <column name="level" value="L00"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
+    <column name="template_id" value="8"/>
+    <column name="property_names" value="specifiedFluxLocationRFMOCodeList"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+
+
+<insert tableName="rule">
+    <column name="rule_id" value="188"/>
+    <column name="br_id" value="FA-L02-00-0188"/>
+    <column name="expression"
+            value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; listIdContainsAll(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
+    <column name="note"
+            value="AppliedAAP_Process.ResultAAP_Product UnitQuantity must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL."/>
+    <column name="message"
+            value="AppliedAAP_Process.ResultAAP_Product UnitQuantity must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="WARNING"/>
+    <column name="rule_created_on" valueDate="2017-06-21 00:00:00.0"/>
+    <column name="template_id" value="8"/>
+    <column name="property_names"
+            value="resultAAPProductUnitQuantity,typeCode,resultAAPProductPackagingTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+
+        <insert tableName="rule">
+           <column name="rule_id" value="441"/>
+           <column name="br_id" value="FA-L02-00-0441"/>
+           <column name="expression"
+                   value="isEmpty(resultAAPProduct) &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
+                   (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp;
+                   listIdNotContains(resultAAPProductPackagingTypeCode, &quot;BUL&quot;)"/>
+           <column name="note"
+                   value="AppliedAAP_Process.ResultAAP_Product must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL"/>
+           <column name="message"
+                   value="AppliedAAP_Process.ResultAAP_Product must be present if used in LANDING or TRANSHIPMENT and PackagingTypeCode is not BUL"/>
+           <column name="level" value="L02"/>
+           <column name="error_type" value="WARNING"/>
+           <column name="rule_created_on" valueDate="2017-06-21 00:00:00.0"/>
+           <column name="template_id" value="8"/>
+           <column name="property_names" value="resultAAPProduct,typeCode,typeCode,resultAAPProductPackagingTypeCode"/>
+           <column name="disabled" value="true"/>
+       </insert>
+
+
+ removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="300"/>
+    <column name="br_id" value="FA-L02-00-0300"/>
+    <column name="expression"
+            value="fishingActivityTypeCode != null &amp;&amp; faReportTypeCode != null &amp;&amp; (fishingActivityTypeCode.value != &quot;ARRIVAL&quot; || faReportTypeCode.value != &quot;DECLARATION&quot;)"/>
+    <column name="note"
+            value="Fishing_Activity TypeCode must be ARRIVAL, FA_Report Document TypeCode must be DECLARATION"/>
+    <column name="message"
+            value="Fishing_Activity TypeCode must be ARRIVAL, FA_Report Document TypeCode must be DECLARATION"/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+    <column name="template_id" value="25"/>
+    <column name="property_names" value="faReportTypeCode, fishingActivityTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+<insert tableName="rule">
+    <column name="rule_id" value="449"/>
+    <column name="br_id" value="FA-L00-00-0449"/>
+    <column name="expression"
+            value="!valueContainsAny(faCatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !isEmpty(specifiedFLUXCharacteristics)      &amp;&amp; !checkRuleForSpecifiedFLUXCharacteristic(specifiedFLUXCharacteristics, &quot;LOCATION&quot;)"/>
+    <column name="note"
+            value="If any FACatch has type UNLOADED then specifiedFLUXCharacteristicCode must be DESTINATION_ LOCATION  and FLUXLocation has typecode LOCATION and ID LOCATION. "/>
+    <column name="message"
+            value="If any FACatch has type UNLOADED then specifiedFLUXCharacteristicCode must be DESTINATION_ LOCATION  and FLUXLocation has typecode LOCATION and ID LOCATION."/>
+    <column name="level" value="L00"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
+    <column name="template_id" value="27"/>
+    <column name="property_names" value="specifiedFLUXCharacteristics"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+<insert tableName="rule">
+<column name="rule_id" value="420"/>
+<column name="br_id" value="FA-L02-00-0420"/>
+<column name="expression"
+        value="faReportDocumentTypeCode != null &amp;&amp; faReportDocumentTypeCode.value != &quot;DECLARATION&quot; "/>
+<column name="note" value="FAReportDocument typeCode must be DECLARATION."/>
+<column name="message" value="FAReportDocument typeCode must be DECLARATION."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+<column name="template_id" value="20"/>
+<column name="property_names" value="faReportDocumentTypeCode"/>
+<column name="disabled" value="true"/>
+</insert>
+
+
+
+     <changeSet id="rule-init01" author="patilva">
+
+          &lt;!&ndash;  FaLanding &ndash;&gt;
+
+          <insert tableName="rule">
+              <column name="rule_id" value="311"/>
+              <column name="br_id" value="FA-L02-00-0311"/>
+              <column name="expression" value="relatedFluxLocations == null || relatedFluxLocations.empty == true"/>
+              <column name="note" value="If landing declaration"/>
+              <column name="message" value="Must be present"/>
+              <column name="level" value="L02"/>
+              <column name="error_type" value="ERROR"/>
+              <column name="template_id" value="26"/>
+          </insert>
+          &lt;!&ndash;  FishingTrip &ndash;&gt;
+          <insert tableName="rule">
+              <column name="rule_id" value="190"/>
+              <column name="br_id" value="FA-L00-00-0190"/>
+              <column name="expression" value="ids == null || ids.empty == true"/>
+              <column name="note" value="Must be present"/>
+              <column name="message" value="Must be present"/>
+              <column name="level" value="L02"/>
+              <column name="error_type" value="ERROR"/>
+              <column name="template_id" value="9"/>
+          </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="290"/>
+            <column name="br_id" value="FA-L02-00-0290"/>
+            <column name="expression"
+                    value="fishingActivityTypeCode != null  &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; (fishingActivityTypeCode.value != &quot;ARRIVAL&quot; || faReportDocumentTypeCode.value != &quot;NOTIFICATION&quot;)"/>
+            <column name="note"
+                    value="Fishing_Activity TypeCode Must be ARRIVAL and FA_Report Document TypeCode Must be NOTIFICATION."/>
+            <column name="message"
+                    value="Fishing_Activity TypeCode Must be ARRIVAL and FA_Report Document TypeCode Must be NOTIFICATION."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="24"/>
+            <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
+            <column name="disabled" value="true"/>
+        </insert>
+      </changeSet>-->
+
+
+<!-- removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="431"/>
+    <column name="br_id" value="FA-L02-00-0431"/>
+    <column name="expression"
+            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;TYPECODE&quot;) "/>
+    <column name="note"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
+    <column name="message"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="WARNING"/>
+    <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+    <column name="template_id" value="20"/>
+    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+-->
+
+<!-- removed sinsce 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="432"/>
+    <column name="br_id" value="FA-L02-00-0432"/>
+    <column name="expression"
+            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;LOCATION&quot;) "/>
+    <column name="note"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
+    <column name="message"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+    <column name="template_id" value="20"/>
+    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="disabled" value="true"/>
+</insert>
+-->
+<!-- removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="433"/>
+    <column name="br_id" value="FA-L02-00-0433"/>
+    <column name="expression"
+            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;ID&quot;) "/>
+    <column name="note"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
+    <column name="message"
+            value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+    <column name="template_id" value="20"/>
+    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="disabled" value="true"/>
+</insert>
+
+-->
+<!-- removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="255"/>
+    <column name="br_id" value="FA-L02-00-0255"/>
+    <column name="expression"
+            value="fishingActivityTypeCode != null &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; (fishingActivityTypeCode.value != &quot;FISHING_OPERATION&quot; || faReportDocumentTypeCode != &quot;DECLARATION&quot;)"/>
+    <column name="note"
+            value="Fishing_Activity TypeCode Must be FISHING_OPERATION and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="message"
+            value="Fishing_Activity TypeCode Must be FISHING_OPERATION and FA_Report Document TypeCode Must be DECLARATION."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+    <column name="template_id" value="19"/>
+    <column name="property_names" value="fishingActivityTypeCode, faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+-->
+<!-- removed since 2.2
+<insert tableName="rule">
+    <column name="rule_id" value="280"/>
+    <column name="br_id" value="FA-L02-00-0280"/>
+    <column name="expression"
+            value="faReportDocumentTypeCode != null &amp;&amp; faReportDocumentTypeCode.value != &quot;DECLARATION&quot; "/>
+    <column name="note" value="FAReportDocument typeCode must be DECLARATION."/>
+    <column name="message" value="FAReportDocument typeCode must be DECLARATION."/>
+    <column name="level" value="L02"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
+    <column name="template_id" value="22"/>
+    <column name="property_names" value="faReportDocumentTypeCode"/>
+    <column name="disabled" value="true"/>
+</insert>
+-->

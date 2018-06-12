@@ -75,6 +75,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * @author padhyad
@@ -82,7 +83,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
  * @author Andi Kovi
  */
 @Slf4j
-public class ActivityRequestFactGenerator extends AbstractGenerator {
+public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     private FLUXFAReportMessage fluxfaReportMessage;
 
@@ -90,7 +91,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
 
     private ActivityFactMapper activityFactMapper;
 
-    public ActivityRequestFactGenerator() {
+    public ActivityFaReportFactGenerator() {
         xPathUtil = new XPathStringWrapper();
         activityFactMapper = new ActivityFactMapper(xPathUtil);
     }
@@ -144,7 +145,7 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
                 if (relatedFLUXReportDocument != null){
-                    setUniqueIDs(relatedFLUXReportDocument.getIDS(), factsByReport);
+                    populateUniqueIDsAndFaReportDocumentDate(relatedFLUXReportDocument, factsByReport);
                 }
 
                 facts.addAll(factsByReport);
@@ -401,6 +402,39 @@ public class ActivityRequestFactGenerator extends AbstractGenerator {
         }
 
         xPathUtil.clear();
+    }
+
+    /**
+     * This method is setting unique UUIDs to a list of facts
+     * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
+     * @param fluxRepDoc
+     * @param facts
+     */
+    private void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
+        List<String> strIDs = getIds(fluxRepDoc.getIDS());
+        facts.removeAll(Collections.singleton(null));
+        for (AbstractFact fact : facts) {
+            fact.setUniqueIds(strIDs);
+            fact.setCreationDateOfMessage(activityFactMapper.extractCreationDateTime(fluxRepDoc));
+        }
+    }
+
+    private List<String> getIds(List<IDType> idTypes) {
+        ArrayList<String> ids = new ArrayList<>();
+        if (CollectionUtils.isEmpty(idTypes)) {
+            return ids;
+        }
+        if (CollectionUtils.isNotEmpty(idTypes)){
+            ids = new ArrayList<>();
+            for (IDType idType : idTypes) {
+                String value = idType.getValue();
+                String schemeID = idType.getSchemeID();
+                if (value != null && schemeID != null) {
+                    ids.add(value.concat("_").concat(schemeID));
+                }
+            }
+        }
+        return ids;
     }
 
 }

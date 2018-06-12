@@ -45,7 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -82,10 +82,6 @@ public class AbstractFactTest {
 
     @Before
     public void before() {
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.GEAR_TYPE, RuleTestHelper.getObjectRepresentationForGEAR_TYPE_CODES());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_CATCH_TYPE, RuleTestHelper.getObjectRepresentationForFA_CATCH());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.FA_GEAR_CHARACTERISTIC, RuleTestHelper.getObjectRepresentationForGEAR_CHARACTERISTIC());
-        //MDRCacheHolder.getInstance().addToCache(MDRAcronymType.VESSEL_STORAGE_TYPE, RuleTestHelper.getObjectRepresentationForVESSEL_STORAGE_CHARACTERISTIC());
         MockitoAnnotations.initMocks(this);
     }
 
@@ -764,6 +760,17 @@ public class AbstractFactTest {
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
         boolean result = fact.valueContainsAll(idTypes, "value1");
         assertFalse(result);
+    }
+
+    @Test
+    public void testValueContainsAll_1() {
+
+        IdType idType1 = RuleTestHelper.getIdType("value1", "XEU");
+        IdType idType2 = RuleTestHelper.getIdType("value12", "XFA");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.valueContainsAll(idTypes, "XEU","XFA");
+        assertTrue(result);
     }
 
     @Test
@@ -1780,6 +1787,14 @@ public class AbstractFactTest {
 
         assertTrue(fact.matchWithFluxTL(idTypes));
     }
+    @Test
+    public void testMatchWithFluxTL_1() {
+        IdType idType3 = RuleTestHelper.getIdType("SRC", "FLUX_GP_PARTY");
+        List<IdType> idTypes = Arrays.asList(idType3);
+        fact.setSenderOrReceiver("SRC:FTF");
+        assertTrue(fact.matchWithFluxTL(idTypes));
+    }
+
 
     @Test
     public void testMatchWithFluxTLCorrectValueAndNullAndEmpty() {
@@ -1815,9 +1830,9 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
-        fact.setSenderOrReceiver("SDF");
+        fact.setSenderOrReceiver("XES");
 
-        assertTrue(fact.matchWithFluxTLExceptParties(idTypes, "XEU", "XFD"));
+        assertFalse(fact.matchWithFluxTL(idTypes));
     }
 
     @Test
@@ -1828,23 +1843,23 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
-        fact.setSenderOrReceiver("SDF");
+        fact.setSenderOrReceiver("XEU");
 
-        assertFalse(fact.matchWithFluxTLExceptParties(idTypes, "XED", "XFD"));
+        assertTrue(fact.matchWithFluxTL(idTypes));
     }
 
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
-        assertTrue(fact.getIdTypeValueArray(idType, ":").length == 3);
+        assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
-        assertFalse(fact.getIdTypeValueArray(idType, "'").length == 3);
+        assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
     @Test
@@ -1886,7 +1901,7 @@ public class AbstractFactTest {
     public void testIsEmptyCollectionsReflective(){
         FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
                 IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(message);
         for (AbstractFact abstractFact : generator.generateAllFacts()) {
             if(abstractFact instanceof FaReportDocumentFact){

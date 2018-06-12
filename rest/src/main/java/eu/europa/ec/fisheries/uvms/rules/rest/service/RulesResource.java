@@ -27,16 +27,11 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExtraValuesMapGeneratorBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -64,9 +59,6 @@ public class RulesResource {
 
     @EJB
     private RulesPreProcessBean rulesPreProcessBean;
-
-    @EJB
-    private MDRCacheService mdrService;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -151,4 +143,16 @@ public class RulesResource {
         templateEngine.reInitialize();
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
+
+
+/*    @EJB
+    private MDRCache mdrCache2;
+
+    @GET
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Path("/loadmdrcache")
+    public Response loadMdrCache() {
+        mdrCache2.loadAllMdrCodeLists();
+        return Response.ok(new ResponseDto<>("MDR cahce loaded..", ResponseCode.OK)).build();
+    }*/
 }

@@ -20,6 +20,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service.unsecured;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,13 +36,6 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 
 @Slf4j
 @Path("/")

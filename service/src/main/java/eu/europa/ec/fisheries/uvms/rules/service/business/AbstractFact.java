@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.PatternSyntaxException;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -59,6 +58,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 @ToString
 public abstract class AbstractFact {
 
+    private static final String COLON = ":";
     private static volatile int counter = 0;
 
     protected FactType factType;
@@ -460,7 +460,6 @@ public abstract class AbstractFact {
 
     public boolean isIsoDateStringValidFormat(String value) {
         return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
-
     }
 
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
@@ -518,6 +517,10 @@ public abstract class AbstractFact {
     }
 
     public boolean codeTypeValueEquals(CodeType codeType, String valueToMatch){
+        return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
+    }
+
+    public boolean idTypeValueEquals(IdType codeType, String valueToMatch){
         return (codeType != null && StringUtils.isNotEmpty(codeType.getValue())) && (codeType.getValue().equals(valueToMatch));
     }
 
@@ -751,6 +754,19 @@ public abstract class AbstractFact {
         return hits != found;
     }
 
+    public int count(List<CodeType> codeTypes, String value) {
+        if (value == null || CollectionUtils.isEmpty(codeTypes)) {
+            return 0;
+        }
+        int found = 0;
+        for (CodeType codeType : codeTypes) {
+            if (value.equals(codeType.getValue())) {
+                found++;
+            }
+        }
+        return found;
+    }
+
     public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
@@ -788,9 +804,10 @@ public abstract class AbstractFact {
     }
 
     public boolean isPositive(List<MeasureType> value) {
-        if (value == null) {
-            return true;
+        if (CollectionUtils.isEmpty(value)) {
+            return false;
         }
+        value.removeAll(Collections.singleton(null));
         for (MeasureType type : value) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
@@ -971,6 +988,9 @@ public abstract class AbstractFact {
 	 * @return true | false
      */
     public boolean isEmpty(Collection<?> collection){
+        if(collection != null){
+            collection.removeAll(Collections.singleton(null));
+        }
         if(CollectionUtils.isEmpty(collection)){
             return true;
         }
@@ -1034,7 +1054,7 @@ public abstract class AbstractFact {
      * @param map
      * @return true | false
      */
-    public static boolean isEmpty( Map<?, ?> map ){
+    public boolean isEmpty( Map<?, ?> map ){
         return MapUtils.isEmpty(map);
     }
 
@@ -1043,7 +1063,10 @@ public abstract class AbstractFact {
      * @param object
      * @return true | false
      */
-    public static boolean isEmpty( Object object ){
+    public boolean isEmpty( Object object ){
+        if(object instanceof Collection){
+            return isEmpty((Collection)object);
+        }
         return object == null;
     }
 
@@ -1052,7 +1075,7 @@ public abstract class AbstractFact {
      * @param array
      * @return true | false
      */
-    public static boolean isEmpty( Object[] array ){
+    public boolean isEmpty( Object[] array ){
         return array == null || array.length == 0;
     }
 
@@ -1061,7 +1084,7 @@ public abstract class AbstractFact {
      * @param string
      * @return true | false
      */
-    public static boolean isEmpty( String string ){
+    public boolean isEmpty( String string ){
         return string == null || string.trim().length() == 0;
     }
 
@@ -1230,61 +1253,40 @@ public abstract class AbstractFact {
         }
     }
 
-    public boolean matchWithFluxTLExceptParties(List<IdType> idTypes, String... parties) {
-        if (isEmpty(idTypes) || ArrayUtils.isEmpty(parties)) {
-            return false;
-        }
-        List<String> partiesAllowedToSend = Arrays.asList(parties);
-        for (IdType idType : idTypes) {
-            String[] idTypeValueArray = getIdTypeValueArray(idType, ":");
-
-            if (idTypeValueArray != null) {
-                if (partiesAllowedToSend.contains(idTypeValueArray[0]) || matchWithFluxTL(idType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean matchWithFluxTL(List<IdType> idTypes) {
-        boolean match = false;
+        boolean isMatch = false;
         for (IdType idType : idTypes) {
-            match = matchWithFluxTL(idType);
-            if (match) {
+            isMatch = matchWithFluxTL(idType);
+            if (isMatch) {
                 break;
             }
         }
-        return match;
+        return isMatch;
     }
 
     private boolean matchWithFluxTL(IdType idType) {
         boolean match = false;
         if (idType != null) {
-            String[] idValueArray = getIdTypeValueArray(idType, ":");
-
-            if (idValueArray != null) {
-                match = StringUtils.equals(idValueArray[0], senderOrReceiver);
+            String[] idValueArray = split(idType.getValue(), COLON);
+            if (ArrayUtils.isNotEmpty(idValueArray)) {
+                String[] split = split(senderOrReceiver, COLON);
+                match = StringUtils.equals(idValueArray[0], split[0]);
             }
         }
         return match;
     }
 
-    public String[] getIdTypeValueArray(IdType idType, String separator) {
+    public String[] split(String value, String separator) {
         if (StringUtils.isBlank(separator)) {
-            return null;
+            return new String[0];
         }
-        String[] idValueArray = null;
-        if (idType != null && idType.getValue()!=null) {
-            try {
-                idValueArray = idType.getValue().split(separator);
-            } catch (NullPointerException | PatternSyntaxException ex) {
-                log.error("Error splitting IdType's value to array!", ex);
-                return null;
-            }
+        String[] strings = null;
+        if (StringUtils.isNotEmpty(value)) {
+            strings = value.split(separator);
         }
-        return idValueArray;
+        return strings;
     }
+
 
     public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
         if (CollectionUtils.isEmpty(assetList)) {

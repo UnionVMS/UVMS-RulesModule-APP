@@ -15,8 +15,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -24,8 +28,8 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -37,6 +41,8 @@ import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 /**
  * Created by kovian on 28/06/2017.
@@ -65,7 +71,7 @@ public class BusinessObjectFactoryTest {
     @Test
     @SneakyThrows
     public void testAllFishingActivityTypeFromGenerator(){
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(loadTestData(testXmlPath));
         List<AbstractFact> facts = generator.generateAllFacts();
 
@@ -90,7 +96,16 @@ public class BusinessObjectFactoryTest {
     @SneakyThrows
     public void testActivityResponseGeneration(){
         ActivityResponseFactGenerator actRespGenerator = new ActivityResponseFactGenerator();
-        actRespGenerator.setBusinessObjectMessage(new FLUXResponseMessage());
+        FLUXResponseMessage fluxResponseMessage = new FLUXResponseMessage();
+        FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+        DateTimeType dateTimeType = new DateTimeType();
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        dateTimeType.setDateTime(date2);
+        fluxResponseDocument.setCreationDateTime(dateTimeType);
+        fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
+        actRespGenerator.setBusinessObjectMessage(fluxResponseMessage);
         List<AbstractFact> abstractFacts = actRespGenerator.generateAllFacts();
 
         assertTrue(abstractFacts.size() == 1);

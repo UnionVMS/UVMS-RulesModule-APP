@@ -27,7 +27,7 @@ import java.util.List;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class TemplateEngineBeanTest {
         }).when(ruleEvaluator).validateFacts(Mockito.anyList());
 
         List<AbstractFact> facts = new ArrayList<>();
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(getFluxFaReportMessage());
         facts.addAll(generator.generateAllFacts());
         templateEngine.evaluateFacts(facts);
@@ -105,7 +105,7 @@ public class TemplateEngineBeanTest {
 
     @Test
     public void testGenaratorThrows(){
-        ActivityRequestFactGenerator generator = new ActivityRequestFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         boolean threw = false;
         try {
             generator.setBusinessObjectMessage(new String());
@@ -118,7 +118,6 @@ public class TemplateEngineBeanTest {
     @Test
     public void testInitialize() {
         try {
-            Mockito.doNothing().when(cacheService).loadCacheForFailureMessages();
             Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
             Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
             templateEngine.initialize();

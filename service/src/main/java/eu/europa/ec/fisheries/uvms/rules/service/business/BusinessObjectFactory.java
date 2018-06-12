@@ -15,7 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityRequestFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
@@ -35,7 +35,7 @@ public class BusinessObjectFactory {
             switch (businessObjectType) {
                 case RECEIVING_FA_REPORT_MSG:
                 case SENDING_FA_REPORT_MSG:
-                    return new ActivityRequestFactGenerator();
+                    return new ActivityFaReportFactGenerator();
                 case SENDING_FA_RESPONSE_MSG:
                 case RECEIVING_FA_RESPONSE_MSG:
                     return new ActivityResponseFactGenerator();

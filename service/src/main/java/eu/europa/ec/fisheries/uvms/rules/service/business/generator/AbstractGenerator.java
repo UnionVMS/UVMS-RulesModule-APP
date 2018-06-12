@@ -13,15 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
@@ -51,38 +52,6 @@ public abstract class AbstractGenerator<T> {
 
     public void setExtraValueMap(Map<ExtraValueType, Object> map) {
         this.extraValueMap = map;
-    }
-
-    /**
-     * This method is setting unique UUIDs to a list of facts
-     * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
-     * @param ids
-     * @param facts
-     */
-    void setUniqueIDs(List<IDType> ids, List<AbstractFact> facts) {
-        List<String> strIDs = getIds(ids);
-        facts.removeAll(Collections.singleton(null));
-        for (AbstractFact fact : facts) {
-            fact.setUniqueIds(strIDs);
-        }
-    }
-
-    private List<String> getIds(List<IDType> idTypes) {
-        ArrayList<String> ids = new ArrayList<>();
-        if (CollectionUtils.isEmpty(idTypes)) {
-            return ids;
-        }
-        if (CollectionUtils.isNotEmpty(idTypes)){
-            ids = new ArrayList<>();
-            for (IDType idType : idTypes) {
-                String value = idType.getValue();
-                String schemeID = idType.getSchemeID();
-                if (value != null && schemeID != null) {
-                    ids.add(value.concat("_").concat(schemeID));
-                }
-            }
-        }
-        return ids;
     }
 
 }

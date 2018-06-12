@@ -253,11 +253,11 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
         switch (typeCode.getValue()){
             case "ROLE":
-                return !mdrService.isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue());
+                return !mdrService.isPresentInMDRList("FLUX_SALES_QUERY_PARAM_ROLE", valueCode.getValue(), DateTime.now());
             case "FLAG":
-                return !mdrService.isPresentInMDRList("TERRITORY", valueCode.getValue());
+                return !mdrService.isPresentInMDRList("TERRITORY", valueCode.getValue(), DateTime.now());
             case "PLACE":
-                return !mdrService.isPresentInMDRList("LOCATION", valueCode.getValue());
+                return !mdrService.isPresentInMDRList("LOCATION", valueCode.getValue(), DateTime.now());
             default:
                 return true;
         }

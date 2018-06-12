@@ -10,20 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -34,7 +20,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresent
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -43,101 +28,32 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-@Singleton
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@Stateless
+@LocalBean
 @Slf4j
 public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
 
     @EJB
     private MDRCache cache;
 
-    private Map<String, EnrichedBRMessage> errorMessages;
-
-    @AccessTimeout(value = 30, unit = MINUTES)
-    @Lock(LockType.WRITE)
     public void loadMDRCache() {
-        try {
-            ExecutorService executorService = Executors.newFixedThreadPool(5);
-            List<Callable<List<ObjectRepresentation>>> myCallableList = new ArrayList<>();
-            for (final MDRAcronymType type : MDRAcronymType.values()){
-                if ((type != MDRAcronymType.FA_BR_DEF)
-                        && (type != MDRAcronymType.SALE_BR_DEF)) {
-                    myCallableList.add(new Callable<List<ObjectRepresentation>>() {
-                        @Override
-                        public List<ObjectRepresentation> call() {
-                            return cache.getEntry(type);
-                        }
-                    });
-                }
-            }
-            executorService.invokeAll(myCallableList);
-            executorService.shutdown();
-
-            // Blocks until all tasks have completed execution after a shutdown request, or the timeout occurs,
-            // or the current thread is interrupted, whichever happens first.
-            executorService.awaitTermination(30, TimeUnit.MINUTES);
-
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
-        }
-        log.debug(cache.getCache().stats().toString());
-        log.info("MDRCache size: " + cache.getCache().asMap().size());
+        cache.loadAllMdrCodeLists();
     }
 
     @Override
-    @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.READ)
-    public EnrichedBRMessage getErrorMessageForBrId(String brId){
-        return errorMessages.get(brId);
-    }
-
-    /**
-     * This function maps all the error messages to the ones defined in MDR;
-     *
-     */
-    @AccessTimeout(value = 180, unit = SECONDS)
-    @Lock(LockType.READ)
-    public void loadCacheForFailureMessages() {
-        if (!MapUtils.isEmpty(errorMessages)) {
-            return;
-        }
-        errorMessages = new HashMap<>();
-        final List<ObjectRepresentation> objRapprList = new ArrayList<ObjectRepresentation>(){{
-            addAll(cache.getEntry(MDRAcronymType.FA_BR_DEF));
-            addAll(cache.getEntry(MDRAcronymType.SALE_BR_DEF));
-        }};
-        final String MESSAGE_COLUMN = "messageIfFailing";
-        final String BR_ID_COLUMN = "code";
-        final String BR_NOTE_COLUMN = "note";
-
-        for (ObjectRepresentation objectRepr : objRapprList) {
-            String brId = null;
-            String errorMessage = null;
-            String note = null;
-
-            for (ColumnDataType field : objectRepr.getFields()) {
-                final String columnName = field.getColumnName();
-                if(MESSAGE_COLUMN.equals(columnName)){
-                    errorMessage = field.getColumnValue();
-                }
-                if(BR_ID_COLUMN.equals(columnName)){
-                    brId = field.getColumnValue();
-                }
-                if(BR_NOTE_COLUMN.equals(columnName)){
-                    note = field.getColumnValue();
-                }
-            }
-            errorMessages.put(brId,new EnrichedBRMessage(note, errorMessage));
-        }
+    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
+        return cache.getErrorMessage(brId);
     }
 
 
-    @Deprecated
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isPresentInMDRList(String listName, String codeValue) {
-        return isPresentInMDRList(listName, codeValue, DateTime.now());
-    }
 
     /**
      * Check if value passed is present in the MDR list speified
@@ -147,47 +63,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True-> if value is present in MDR list   False-> if value is not present in MDR list
      */
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage) {
+    public boolean isPresentInMDRList(String listName, String codeValue, DateTime validityDate) {
         MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (mdrAcronymType == null) {
             return false;
         }
-        List<String> values = getValues(mdrAcronymType, creationDateOfMessage);
+        List<String> values = getValues(mdrAcronymType, validityDate);
         return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
-
-    private List<String> getList(List<ObjectRepresentation> entry, DateTime date) {
-        List<String> codeColumnValues = new ArrayList<>();
-        if (CollectionUtils.isEmpty(entry)) {
-            return Collections.emptyList();
-        }
-        for (ObjectRepresentation representation : entry) {
-            List<ColumnDataType> columnDataTypes = representation.getFields();
-            if (CollectionUtils.isEmpty(columnDataTypes)) {
-                continue;
-            }
-            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn("code", representation);
-            Optional<String> startDate = ObjectRepresentationHelper.getValueOfColumn("startDate", representation);
-            Optional<String> endDate = ObjectRepresentationHelper.getValueOfColumn("endDate", representation);
-            if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
-                    && date.isAfter(ObjectRepresentationHelper.parseDate(startDate.get()))
-                    && date.isBefore(ObjectRepresentationHelper.parseDate(endDate.get()))) {
-                codeColumnValues.add(code.get());
-            }
-        }
-        return codeColumnValues;
-    }
-
-    @Deprecated
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch) {
-        return isCodeTypePresentInMDRList(valuesToMatch, DateTime.now());
-    }
-
 
     /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list defined by its listId
@@ -196,9 +79,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return true -> if all values are found in MDR list specified. false -> if even one value is not matching with MDR list
      */
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
+    public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime validityDate) {
         if (CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
@@ -210,7 +91,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             if (anEnum == null) {
                 return false;
             }
-            List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
+            List<String> codeListValues = getValues(anEnum, validityDate);
             if (!codeListValues.contains(codeType.getValue())) {
                 return false;
             }
@@ -219,23 +100,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime creationDateOfMessage) {
-        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), creationDateOfMessage);
+    public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime validityDate) {
+        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), validityDate);
     }
 
     private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
         return getList(entry, date);
-    }
-
-    @Override
-    @Deprecated
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch) {
-        return isIdTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
     }
 
     /**
@@ -246,14 +117,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime creationDateOfMessage) {
+    public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime validityDate) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
+        List<String> codeListValues = getValues(anEnum, validityDate);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -264,14 +133,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
-    @Deprecated
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch) {
-        return isCodeTypePresentInMDRList(listName, valuesToMatch, DateTime.now());
-    }
-
     /**
      * This function checks that all the CodeType values passed to the function exist in MDR code list or not
      *
@@ -280,14 +141,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return True -> if all values are found in MDR list specified. False -> If even one value is not matching with MDR list
      */
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime creationDateOfMessage) {
+    public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime validityDate) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum, creationDateOfMessage);
+        List<String> codeListValues = getValues(anEnum, validityDate);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -299,14 +158,13 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return true;
     }
 
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch) {
+    @Override
+    public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime validityDate) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
         }
-        List<String> codeListValues = getValues(anEnum, DateTime.now());
+        List<String> codeListValues = getValues(anEnum, validityDate);
         if (CollectionUtils.isEmpty(valuesToMatch) || CollectionUtils.isEmpty(codeListValues)) {
             return false;
         }
@@ -318,34 +176,16 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Deprecated
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(List<IdType> ids) {
-        return isIdTypePresentInMDRList(ids, DateTime.now());
-    }
-
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime creationDateOfMessage) {
+    public boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime validityDate) {
         if (CollectionUtils.isEmpty(ids)) {
             return false;
         }
         for (IdType idType : ids) {
-            if (!isIdTypePresentInMDRList(idType, creationDateOfMessage)) {
+            if (!isIdTypePresentInMDRList(idType, validityDate)) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    @Deprecated
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isIdTypePresentInMDRList(IdType id) {
-        return isIdTypePresentInMDRList(id, DateTime.now());
     }
 
     /**
@@ -356,8 +196,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @return true when it exists
      */
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage) {
         if (id == null) {
             return false;
@@ -373,14 +211,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes) {
-        if (StringUtils.isBlank(listName) || isEmpty(idTypes)) {
+    public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes, DateTime creationDateOfMessage) {
+        if (StringUtils.isBlank(listName) || CollectionUtils.isEmpty(idTypes)) {
             return false;
         }
         for (IdType idType : idTypes) {
-            if (!isSchemeIdPresentInMDRList(listName, idType)) {
+            if (!isSchemeIdPresentInMDRList(listName, idType, creationDateOfMessage)) {
                 return false;
             }
         }
@@ -388,40 +224,38 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode) {
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate) {
         // clean lists from nulls
         Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
         Iterables.removeIf(appliedAAPProcessTypeCodes, Predicates.isNull());
         // country column
         String country = StringUtils.EMPTY;
-        if(CollectionUtils.isNotEmpty(specifiedFLUXLocations)){
-            for(FLUXLocation location : specifiedFLUXLocations){
+        if (CollectionUtils.isNotEmpty(specifiedFLUXLocations)) {
+            for (FLUXLocation location : specifiedFLUXLocations) {
                 final IDType locId = location.getID();
-                if(locId != null && ("TERRITORY".equals(locId.getSchemeID()) || "MANAGEMENT_AREA".equals(locId.getSchemeID()))){
+                if (locId != null && ("TERRITORY".equals(locId.getSchemeID()) || "MANAGEMENT_AREA".equals(locId.getSchemeID()))) {
                     country = locId.getValue();
                 }
             }
         }
-        if(isPresentInMDRList("MEMBER_STATE", country)){
+        if (isPresentInMDRList("MEMBER_STATE", country, validityDate)) {
             country = "XEU";
         }
         // presentation, state columns
         String presentation = StringUtils.EMPTY;
         String state = StringUtils.EMPTY;
-        if(CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)){
-            for(CodeType presPreserv : appliedAAPProcessTypeCodes){
-                if("FISH_PRESENTATION".equals(presPreserv.getListId())){
+        if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
+            for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
+                if ("FISH_PRESENTATION".equals(presPreserv.getListId())) {
                     presentation = presPreserv.getValue();
                 }
-                if("FISH_PRESERVATION".equals(presPreserv.getListId())){
+                if ("FISH_PRESERVATION".equals(presPreserv.getListId())) {
                     state = presPreserv.getValue();
                 }
             }
         }
         List<ObjectRepresentation> finalList = null;
-        if(!(StringUtils.isBlank(country) || StringUtils.isBlank(presentation) || StringUtils.isBlank(state))){
+        if (!(StringUtils.isBlank(country) || StringUtils.isBlank(presentation) || StringUtils.isBlank(state))) {
             List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
             List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "placesCode", country);
             List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
@@ -431,14 +265,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return CollectionUtils.isNotEmpty(finalList);
     }
 
-    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnName, String columnValue){
-        if(CollectionUtils.isEmpty(entries) || StringUtils.isEmpty(columnValue) || StringUtils.isEmpty(columnName)){
+    private List<ObjectRepresentation> filterEntriesByColumn(List<ObjectRepresentation> entries, String columnName, String columnValue) {
+        if (CollectionUtils.isEmpty(entries) || StringUtils.isEmpty(columnValue) || StringUtils.isEmpty(columnName)) {
             return entries;
         }
         List<ObjectRepresentation> matchingList = new ArrayList<>();
-        for(ObjectRepresentation entry : entries){
-            for(ColumnDataType field : entry.getFields()){
-                if(field.getColumnName().equals(columnName) && field.getColumnValue().equals(columnValue)){
+        for (ObjectRepresentation entry : entries) {
+            for (ColumnDataType field : entry.getFields()) {
+                if (field.getColumnName().equals(columnName) && field.getColumnValue().equals(columnValue)) {
                     matchingList.add(entry);
                 }
             }
@@ -453,8 +287,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * @param codeValue value for CODE column to be matched with
      * @return DATATYPE column value for the matching record
      */
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public String getDataTypeForMDRList(String listName, String codeValue) {
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null || codeValue == null) {
@@ -464,7 +296,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         boolean valueFound = false;
         if (CollectionUtils.isNotEmpty(representations)) {
             for (ObjectRepresentation representation : representations) {
-
                 List<ColumnDataType> columnDataTypes = representation.getFields();
                 if (CollectionUtils.isEmpty(columnDataTypes)) {
                     continue;
@@ -487,55 +318,49 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return StringUtils.EMPTY;
     }
 
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isSchemeIdPresentInMDRList(String listName, IdType idType) {
-        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId());
-    }
-
-    private boolean isEmpty(List<?> list) {
-        return CollectionUtils.isEmpty(list);
-    }
-
-    @Deprecated
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode) {
-        return isTypeCodeValuePresentInList(listName, typeCode, DateTime.now());
-    }
-
     @Override
     public boolean isTypeCodeValuePresentInList(String listName, CodeType typeCode, DateTime creationDateOfMessage) {
         return isTypeCodeValuePresentInList(listName, Collections.singletonList(typeCode), creationDateOfMessage);
     }
 
-    @Deprecated
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes) {
-        return isTypeCodeValuePresentInList(listName, typeCodes, DateTime.now());
-    }
-
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isTypeCodeValuePresentInList(String listName, List<CodeType> typeCodes, DateTime creationDateOfMessage) {
         String typeCodeValue = getValueForListId(listName, typeCodes);
         return typeCodeValue != null && isPresentInMDRList(listName, typeCodeValue, creationDateOfMessage);
     }
 
-    @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
-    public String getValueForListId(String listId, List<CodeType> typeCodes) {
+    private boolean isSchemeIdPresentInMDRList(String listName, IdType idType, DateTime creationDateOfMessage) {
+        return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId(), creationDateOfMessage);
+    }
+
+    private List<String> getList(List<ObjectRepresentation> entry, DateTime date) {
+        List<String> codeColumnValues = new ArrayList<>();
+        if (CollectionUtils.isEmpty(entry) || date == null) {
+            return Collections.emptyList();
+        }
+        for (ObjectRepresentation representation : entry) {
+            List<ColumnDataType> columnDataTypes = representation.getFields();
+            if (CollectionUtils.isEmpty(columnDataTypes)) {
+                continue;
+            }
+            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn("code", representation);
+            Optional<String> startDate = ObjectRepresentationHelper.getValueOfColumn("startDate", representation);
+            Optional<String> endDate = ObjectRepresentationHelper.getValueOfColumn("endDate", representation);
+            if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
+                    && date.isAfter(ObjectRepresentationHelper.parseDate(startDate.get()))
+                    && date.isBefore(ObjectRepresentationHelper.parseDate(endDate.get()))) {
+                codeColumnValues.add(code.get());
+            }
+        }
+        return codeColumnValues;
+    }
+
+    private String getValueForListId(String listId, List<CodeType> typeCodes) {
         if (StringUtils.isBlank(listId) || CollectionUtils.isEmpty(typeCodes)) {
             return null;
         }
         for (CodeType typeCode : typeCodes) {
             String typeCodeListId = typeCode.getListId();
-
             if (StringUtils.isNotBlank(typeCodeListId) && typeCodeListId.equals(listId)) {
                 return typeCode.getValue();
             }
@@ -544,18 +369,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
-        return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn
-                (id.getValue(), "terminalInd", "1", faoAreas, creationDateOfMessage);
+        return !ObjectRepresentationHelper
+                .doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(id.getValue(), "terminalInd", "1", faoAreas, creationDateOfMessage);
     }
 
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> locations = cache.getEntry(MDRAcronymType.LOCATION);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
@@ -563,8 +384,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    @Lock(LockType.READ)
-    @AccessTimeout(value = 180, unit = SECONDS)
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
         return cache.getEntry(mdrAcronym);
     }

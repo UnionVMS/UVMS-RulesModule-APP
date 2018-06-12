@@ -331,7 +331,7 @@ public class ActivityFactMapperTest {
         FishingActivityFact fishingActivityFact = fishingActivityFacts.get(0);
 
         assertEquals(fishingActivityFact.getTypeCode().getValue(), "LANDING");
-        assertEquals(fishingActivityFact.getOccurrenceDateTime().toString(), "Sun Apr 17 09:02:00 CEST 2016");
+        assertEquals(fishingActivityFact.getOccurrenceDateTime().toString(), "Sun Apr 17 07:02:00 UTC 2016");
 
     }
 
@@ -346,7 +346,7 @@ public class ActivityFactMapperTest {
         assertNotNull(fishingActivityFact);
 
         assertEquals(fishingActivityFact.getTypeCode().getValue(), "LANDING");
-        assertEquals(fishingActivityFact.getOccurrenceDateTime().toString(), "Sun Apr 17 09:02:00 CEST 2016");
+        assertEquals(fishingActivityFact.getOccurrenceDateTime().toString(), "Sun Apr 17 07:02:00 UTC 2016");
 
     }
 
