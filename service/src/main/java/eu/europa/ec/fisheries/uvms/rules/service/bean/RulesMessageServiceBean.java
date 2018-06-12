@@ -75,6 +75,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
