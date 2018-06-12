@@ -878,6 +878,7 @@ public abstract class AbstractFact {
         return true;
     }
 
+    /*
     public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
         IdType idType = new IdType();
         idType.setValue(value);
@@ -903,6 +904,7 @@ public abstract class AbstractFact {
         }
         return !isMatchFound;
     }
+    */
 
     public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
         if (CollectionUtils.isEmpty(codeTypes)) {

@@ -23,7 +23,7 @@
     <include file="\schema\tables\validationmessage.xml"/>
     <include file="\schema\tables\messageid.xml"/>
 
-    <include file="\schema\tables\rulestatus.xml"/>
+    <include file="\schema\tables\fishingactivityid.xml"/>
 
     <include file="\schema\tables\fishinggeartypecharacteristic.xml"/>
 

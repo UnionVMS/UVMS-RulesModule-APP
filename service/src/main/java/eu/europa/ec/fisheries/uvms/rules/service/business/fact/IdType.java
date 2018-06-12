@@ -13,12 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@EqualsAndHashCode(exclude = "schemeId")
 public class IdType {
 
     private String value;
@@ -53,17 +54,4 @@ public class IdType {
         this.schemeId = schemeId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IdType)) return false;
-        IdType idType = (IdType) o;
-        return Objects.equals(value, idType.value) &&
-                Objects.equals(schemeId, idType.schemeId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, schemeId);
-    }
 }

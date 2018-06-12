@@ -11,12 +11,30 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.dao.bean;
 
+import javax.ejb.Stateless;
+import javax.persistence.EntityExistsException;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import javax.persistence.TransactionRequiredException;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.Dao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.entity.*;
+import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
+import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.Template;
+import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
+import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.exception.NoEntityFoundException;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchValue;
@@ -24,11 +42,6 @@ import eu.europa.ec.fisheries.uvms.rules.mapper.search.CustomRuleSearchValue;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.Stateless;
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Stateless
 public class RulesDaoBean extends Dao implements RulesDao {
@@ -600,38 +613,6 @@ public class RulesDaoBean extends Dao implements RulesDao {
     public void deleteRuleStatus() throws DaoException {
         try {
             ruleStatusDao.deleteRuleStatus();
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    public List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode) throws DaoException {
-        try {
-            return fishingGearTypeCharacteristicDao.getFishingGearCharacteristicCodes(fishingGearTypeCode);
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    public List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode, boolean onlyMandatory) throws DaoException {
-        try {
-            return fishingGearTypeCharacteristicDao.getFishingGearCharacteristicCodes(fishingGearTypeCode, onlyMandatory);
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    public List<String> getAllFishingGearTypeCodes() throws DaoException {
-        try {
-            return fishingGearTypeCharacteristicDao.getAllFishingGearTypeCodes();
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    public List<FishingGearTypeCharacteristic> getAllFishingGearTypeCharacteristics() throws DaoException {
-        try {
-            return fishingGearTypeCharacteristicDao.findAllEntity(FishingGearTypeCharacteristic.class);
         } catch (ServiceException e) {
             throw new DaoException(e.getMessage(), e);
         }

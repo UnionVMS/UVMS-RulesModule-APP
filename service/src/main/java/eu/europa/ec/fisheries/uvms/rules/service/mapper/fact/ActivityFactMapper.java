@@ -100,12 +100,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
@@ -205,7 +203,10 @@ public class ActivityFactMapper {
 
     private XPathStringWrapper xPathUtil;
 
-    private Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
+    private List<IdType> faReportMessageIds = new ArrayList<>();
+
+    private List<IdType> faRelatedReportIds = new ArrayList<>();
+
     private String senderReceiver = null;
     private Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds = new HashMap<>();
 
@@ -358,8 +359,8 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, TYPE_CODE).storeInRepo(faReportDocumentFact, "specifiedFishingActivitiesTypes");
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, OCCURRENCE_DATE_TIME).storeInRepo(faReportDocumentFact, "specifiedAndRealtedFishActOccurrenceDateTimes");
 
-        if (nonUniqueIdsMap != null) {
-            faReportDocumentFact.setNonUniqueIdsList(nonUniqueIdsMap.get(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY));
+        if (getFaRelatedReportIds() != null) {
+            faReportDocumentFact.setNonUniqueIdsList(faRelatedReportIds);
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
         }
 
@@ -572,8 +573,8 @@ public class ActivityFactMapper {
         fluxFaReportMessageFact.setPurposeCode(mapToCodeType(fluxfaReportMessageFLUXReportDocumentPurposeCode(fluxfaReportMessage)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(fluxFaReportMessageFact, PURPOSE_CODE_PROP);
 
-        if (nonUniqueIdsMap != null) {
-            fluxFaReportMessageFact.setNonUniqueIdsList(nonUniqueIdsMap.get(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY));
+        if (getFaReportMessageIds() != null) {
+            fluxFaReportMessageFact.setNonUniqueIdsList(faReportMessageIds);
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, ID).storeInRepo(fluxFaReportMessageFact, "nonUniqueIdsList");
         }
 
@@ -2905,14 +2906,6 @@ public class ActivityFactMapper {
         return fishingGearTypeCharacteristics;
     }
 
-    public void setNonUniqueIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap) {
-        this.nonUniqueIdsMap = nonUniqueIdsMap;
-    }
-
-    public Map<ActivityTableType, List<IdType>> getNonUniqueIdsMap() {
-        return nonUniqueIdsMap;
-    }
-
     public void setFishingActivitiesWithTripIds(Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds) {
         this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
@@ -2927,5 +2920,21 @@ public class ActivityFactMapper {
 
     public String getSenderReceiver() {
         return senderReceiver;
+    }
+
+    public List<IdType> getFaReportMessageIds() {
+        return faReportMessageIds;
+    }
+
+    public void setFaReportMessageIds(List<IdType> faReportMessageIds) {
+        this.faReportMessageIds = faReportMessageIds;
+    }
+
+    public List<IdType> getFaRelatedReportIds() {
+        return faRelatedReportIds;
+    }
+
+    public void setFaRelatedReportIds(List<IdType> faRelatedReportIds) {
+        this.faRelatedReportIds = faRelatedReportIds;
     }
 }

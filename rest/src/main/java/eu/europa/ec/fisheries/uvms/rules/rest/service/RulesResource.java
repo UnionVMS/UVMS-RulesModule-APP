@@ -31,7 +31,11 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExtraValuesMapGeneratorBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -76,7 +80,8 @@ public class RulesResource {
     public Response evaluate(FLUXFAReportMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request, "XEU");
+            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(BusinessObjectType.RECEIVING_FA_REPORT_MSG, request, "XEU");
+
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValueTypeObjectMap);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, SS_OO_MME_GUID, RawMsgType.FA_REPORT);
@@ -144,15 +149,4 @@ public class RulesResource {
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
 
-
-/*    @EJB
-    private MDRCache mdrCache2;
-
-    @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/loadmdrcache")
-    public Response loadMdrCache() {
-        mdrCache2.loadAllMdrCodeLists();
-        return Response.ok(new ResponseDto<>("MDR cahce loaded..", ResponseCode.OK)).build();
-    }*/
 }

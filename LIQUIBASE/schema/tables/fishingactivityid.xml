@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="emrinalgr" id="fishingactivityidtable">
+        <createTable tableName="fishingactivityid" remarks="Failed Rule Entity.">
+            <column name="id" type="bigint" remarks="The synthetic key.">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="fishingactivityid_pk"/>
+            </column>
+            <column name="uuid" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="fishingactivityid" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="fishingactivityid_guid_inx-01" author="emrinalgr">
+        <createIndex tableName="fishingactivityid" indexName="fishingactivityid_guid_inx_inx">
+            <column name="uuid"></column>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

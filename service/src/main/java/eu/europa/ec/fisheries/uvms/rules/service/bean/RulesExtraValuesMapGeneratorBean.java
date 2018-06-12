@@ -11,10 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 import javax.ejb.EJB;
@@ -32,6 +28,7 @@ import org.apache.commons.lang3.time.StopWatch;
 @Stateless
 @LocalBean
 @Slf4j
+@Deprecated
 public class RulesExtraValuesMapGeneratorBean {
 
     private static final String INFO_GOING_TO_GENERATE_EXRAVALUE_MAP_FOR = "[INFO] Going to generate exravalue map for : [";
@@ -45,11 +42,10 @@ public class RulesExtraValuesMapGeneratorBean {
     @EJB
     private RulesActivityServiceBean activityService;
 
-    @EJB
-    private RulesFishingGearBean rulesFishingGearBean;
 
     private StopWatch stopWatch = new StopWatch();
 
+    @Deprecated
     public Map<ExtraValueType, Object> generateExtraValueMap(BusinessObjectType businessObjectType, Object businessObject, final String senderReceiver) {
         log.info(INFO_GOING_TO_GENERATE_EXRAVALUE_MAP_FOR + businessObjectType + BUSINESS_OBJECCT_TYPE);
         stopWatch.reset();
@@ -58,15 +54,13 @@ public class RulesExtraValuesMapGeneratorBean {
 
         switch (businessObjectType) {
             case RECEIVING_FA_REPORT_MSG:
-                map.put(ACTIVITY_NON_UNIQUE_IDS, activityService.getNonUniqueIdsList(businessObject));
-                map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
-                map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
-                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics()); // FIXME @Greg cache
+              //  map.put(ACTIVITY_NON_UNIQUE_IDS, activityService.getNonUniqueIdsList(businessObject));
+              //  map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
+              //  map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
                 break;
             case SENDING_FA_REPORT_MSG:
-                map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
-                map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
-                map.put(FISHING_GEAR_TYPE_CHARACTERISTICS, rulesFishingGearBean.getAllFishingGearTypeCharacteristics());  //FIXME @Greg cache
+               // map.put(ACTIVITY_WITH_TRIP_IDS, activityService.getFishingActivitiesForTrips(businessObject));
+                //map.put(ASSET_LIST, ruleAssetsBean.getAssetList(businessObject));
                 break;
             case RECEIVING_FA_QUERY_MSG:
                 log.debug("[INFO] No need for ExtraValuesMap for this type of Message!");
