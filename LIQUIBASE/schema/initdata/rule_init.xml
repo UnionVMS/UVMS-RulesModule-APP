@@ -8612,6 +8612,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="id"/>
+            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="11101"/>
@@ -8623,7 +8624,6 @@
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1023"/>
             <column name="property_names" value="referencedId"/>
-            <column name="disabled" value="true"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="11103"/>
