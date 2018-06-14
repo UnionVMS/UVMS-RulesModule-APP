@@ -55,9 +55,7 @@ public class IdType {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         IdType idType = (IdType) o;
-
         return value != null ? value.equalsIgnoreCase(idType.value) : idType.value == null;
     }
 
