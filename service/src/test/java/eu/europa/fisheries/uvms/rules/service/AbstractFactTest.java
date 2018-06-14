@@ -138,6 +138,16 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testFLUXTLONShouldFail() {
+        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
+    }
+
+    @Test
+    public void testFLUXTLONShouldPass() {
+        assertTrue(fact.validateFormat("33EKLELKLEGFHDJjsks1", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
+    }
+
+    @Test
     public void testEXtMarking() {
         assertTrue(fact.validateFormat("P-446", AbstractFact.FORMATS.EXT_MARK.getFormatStr()));
     }
