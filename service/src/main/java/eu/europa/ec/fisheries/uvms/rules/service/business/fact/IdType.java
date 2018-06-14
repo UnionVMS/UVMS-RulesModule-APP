@@ -19,7 +19,7 @@ import lombok.EqualsAndHashCode;
  * @author padhyad
  * @author Gregory Rinaldi
  */
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "schemeId")
 public class IdType {
 
     private String value;

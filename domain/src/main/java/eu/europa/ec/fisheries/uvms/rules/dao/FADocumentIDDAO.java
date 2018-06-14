@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Set;
 
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 
-public class FishingActivityIdDao extends AbstractDAO<FishingActivityId> {
+public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
 
     private EntityManager em;
 
-    public FishingActivityIdDao(EntityManager em) {
+    public FADocumentIDDAO(EntityManager em) {
         this.em = em;
     }
 
@@ -31,12 +31,12 @@ public class FishingActivityIdDao extends AbstractDAO<FishingActivityId> {
         return em;
     }
 
-    public List<FishingActivityId> loadFishingActivityIdsByIds(Set<FishingActivityId> ids) {
+    public List<FADocumentID> loadloadFADocumentIDByIdsByIds(Set<FADocumentID> ids) {
         Set<String> stringSet = new HashSet<>();
-        for (FishingActivityId id : ids) {
+        for (FADocumentID id : ids) {
             stringSet.add(id.getUuid());
         }
-        Query query = getEntityManager().createNamedQuery(FishingActivityId.FIND_BY_UUID);
+        Query query = getEntityManager().createNamedQuery(FADocumentID.LOAD_BY_UUID);
         query.setParameter("uuids", stringSet);
         return query.getResultList();
     }

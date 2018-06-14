@@ -14,7 +14,7 @@ import static org.jgroups.util.Util.assertTrue;
 
 import java.util.Set;
 
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
@@ -26,14 +26,14 @@ public class FishingActivityRulesHelperTest {
     @Test
     public void testWithEmptyFLUXFAReportMessage(){
         FLUXFAReportMessage fluxfaReportMessage = new FLUXFAReportMessage();
-        Set<FishingActivityId> ids = rulesHelper.mapToFishingActivityId(fluxfaReportMessage);
+        Set<FADocumentID> ids = rulesHelper.mapToFishingActivityId(fluxfaReportMessage);
         assertTrue(CollectionUtils.isEmpty(ids));
     }
 
     @Test
     public void testWithNull(){
-        Set<FishingActivityId> ids = rulesHelper.mapToFishingActivityId(null);
+        Set<FADocumentID> ids = rulesHelper.mapToFishingActivityId(null);
         assertTrue(CollectionUtils.isEmpty(ids));
     }
-    
+
 }

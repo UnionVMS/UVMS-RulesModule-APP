@@ -100,9 +100,9 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
-import eu.europa.ec.fisheries.uvms.rules.dao.FishingActivityIdDao;
+import eu.europa.ec.fisheries.uvms.rules.dao.FADocumentIDDAO;
 import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristics;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
@@ -198,13 +198,13 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     @EJB private ActivityOutQueueConsumer activityConsumer;
 
-    private FishingActivityIdDao fishingActivityIdDao;
+    private FADocumentIDDAO fishingActivityIdDao;
 
     private FishingActivityRulesHelper faReportMessageHelper;
 
     @PostConstruct public void init() {
         fishingActivityMapper = FishingActivityMapper.INSTANCE;
-        fishingActivityIdDao = new FishingActivityIdDao(em);
+        fishingActivityIdDao = new FADocumentIDDAO(em);
         faReportMessageHelper = new FishingActivityRulesHelper();
     }
 
@@ -446,8 +446,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
             }
             log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + reportGUID + " ].");
 
-            Set<FishingActivityId> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FishingActivityId> fishingActivityIds = fishingActivityIdDao.loadFishingActivityIdsByIds(incomingIDs);
+            Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
+            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadloadFADocumentIDByIdsByIds(incomingIDs);
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
@@ -478,7 +478,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             validateAndSendResponseToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(reportGUID));
 
             incomingIDs.removeAll(fishingActivityIds);
-            for (FishingActivityId incomingID : incomingIDs) {
+            for (FADocumentID incomingID : incomingIDs) {
                 fishingActivityIdDao.createEntity(incomingID);
             }
 
@@ -502,8 +502,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
 
-            Set<FishingActivityId> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FishingActivityId> fishingActivityIds = fishingActivityIdDao.loadFishingActivityIdsByIds(incomingIDs);
+            Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
+            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadloadFADocumentIDByIdsByIds(incomingIDs);
             fluxfaReportMessage = unMarshallAndValidateSchema(requestStr);
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());

@@ -12,7 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,8 +28,8 @@ public interface FishingActivityMapper {
             @Mapping(target = "value", source = "uuid"),
             @Mapping(target = "schemeId", source = "type"),
     })
-    IdType mapToFishingActivityIdDto(FishingActivityId entity);
+    IdType mapToFishingActivityIdDto(FADocumentID entity);
 
-    List<IdType> mapToFishingActivityIdDto(List<FishingActivityId> entity);
+    List<IdType> mapToFishingActivityIdDto(List<FADocumentID> entity);
 
 }
