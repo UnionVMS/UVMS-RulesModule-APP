@@ -878,34 +878,6 @@ public abstract class AbstractFact {
         return true;
     }
 
-    /*
-    public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
-        IdType idType = new IdType();
-        idType.setValue(value);
-        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
-    }
-
-    public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
-        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
-    }
-
-    public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        boolean isMatchFound = false;
-        for (String val : valuesToMatch) {
-            for (IdType idType : idTypes) {
-                if (val.equals(idType.getValue())) {
-                    isMatchFound = true;
-                    break;
-                }
-            }
-        }
-        return !isMatchFound;
-    }
-    */
-
     public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
         if (CollectionUtils.isEmpty(codeTypes)) {
             return false;

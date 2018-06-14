@@ -981,7 +981,8 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
 
-      //FIXME  assertFalse(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
+      //not used in rule init
+        // assertFalse(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
     }
 
     @Test
@@ -993,7 +994,8 @@ public class AbstractFactTest {
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
 
-        //FIXME   assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
+        //not used in rule init   $
+        // assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
     }
 
     @Test
