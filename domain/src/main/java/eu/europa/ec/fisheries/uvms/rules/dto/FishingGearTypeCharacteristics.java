@@ -131,7 +131,7 @@ public class FishingGearTypeCharacteristics {
 
     @Data
     @AllArgsConstructor
-    private class FishingGearTypeCharacteristic {
+    public class FishingGearTypeCharacteristic {
         private String fishingGearTypeCode;
         private String fishingGearCharacteristicCode;
         private Boolean mandatory;

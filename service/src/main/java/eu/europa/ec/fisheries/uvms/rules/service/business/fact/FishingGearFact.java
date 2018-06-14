@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristics;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class FishingGearFact extends AbstractFact {
 
     private boolean fishingActivity;
 
-    private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
+    private List<FishingGearTypeCharacteristics.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
 
     public FishingGearFact() {
         setFactType();
@@ -83,7 +83,7 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
+    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristics.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
         this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
     }
 
@@ -123,12 +123,12 @@ public class FishingGearFact extends AbstractFact {
         return allRequiredFishingGearCharacteristicCodesPresent && optionalFishingGearCharacteristicCodesPresent;
     }
 
-    public List<String> retrieveFishingGearCharacteristicCodes(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics, CodeType fishingGearTypeCode, boolean mandatory) {
+    public List<String> retrieveFishingGearCharacteristicCodes(List<FishingGearTypeCharacteristics.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics, CodeType fishingGearTypeCode, boolean mandatory) {
         if (isEmpty(fishingGearTypeCharacteristics) || fishingGearTypeCode == null || StringUtils.isBlank(fishingGearTypeCode.getValue())) {
             return Collections.emptyList();
         }
         List<String> fishingGearCharacteristicCodes = new ArrayList<>();
-        for (FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
+        for (FishingGearTypeCharacteristics.FishingGearTypeCharacteristic fishingGearTypeCharacteristic : fishingGearTypeCharacteristics) {
             String typeCode = fishingGearTypeCharacteristic.getFishingGearTypeCode();
 
             if (mandatory == fishingGearTypeCharacteristic.getMandatory() && typeCode.equals(fishingGearTypeCode.getValue())) {
