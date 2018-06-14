@@ -447,7 +447,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + reportGUID + " ].");
 
             Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadloadFADocumentIDByIdsByIds(incomingIDs);
+            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadFADocumentIDByIdsByIds(incomingIDs);
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
@@ -503,7 +503,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
         try {
 
             Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadloadFADocumentIDByIdsByIds(incomingIDs);
+            List<FADocumentID> fishingActivityIds = fishingActivityIdDao.loadFADocumentIDByIdsByIds(incomingIDs);
             fluxfaReportMessage = unMarshallAndValidateSchema(requestStr);
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());

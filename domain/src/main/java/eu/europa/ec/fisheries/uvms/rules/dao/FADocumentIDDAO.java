@@ -31,7 +31,7 @@ public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
         return em;
     }
 
-    public List<FADocumentID> loadloadFADocumentIDByIdsByIds(Set<FADocumentID> ids) {
+    public List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> ids) {
         Set<String> stringSet = new HashSet<>();
         for (FADocumentID id : ids) {
             stringSet.add(id.getUuid());
