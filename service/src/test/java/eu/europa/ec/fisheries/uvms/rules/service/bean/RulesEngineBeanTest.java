@@ -13,8 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -22,12 +20,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,9 +50,6 @@ public class RulesEngineBeanTest {
     @InjectMocks
     RulesEngineBean rulesEngineBean;
 
-    @InjectMocks
-    RulesExtraValuesMapGeneratorBean extraValueGenerator;
-
     @Mock
     MDRCacheServiceBean mdrCacheServiceBean;
 
@@ -74,9 +67,6 @@ public class RulesEngineBeanTest {
 
     @Mock
     RulesActivityServiceBean activityService;
-
-    @Mock
-    RulesFishingGearBean rulesFishingGearBean;
 
     @Test
     public void testEvaluate() throws RulesValidationException {
@@ -118,10 +108,4 @@ public class RulesEngineBeanTest {
         return msg;
     }
 
-    @Test
-    public void testGenerateExtraValueMap(){
-        Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage(), "XEU");
-        assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_NON_UNIQUE_IDS)).size());
-        assertEquals(0, ((Map) extraValueTypeObjectMap.get(ACTIVITY_WITH_TRIP_IDS)).size());
-    }
 }

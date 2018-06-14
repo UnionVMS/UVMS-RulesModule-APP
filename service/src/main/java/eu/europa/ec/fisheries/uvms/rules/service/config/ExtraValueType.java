@@ -8,15 +8,13 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.ec.fisheries.uvms.rules.service.config;
 
-/**
- * Created by kovian on 04/07/2017.
- */
 public enum ExtraValueType {
-    ASSET_LIST,
-    ACTIVITY_NON_UNIQUE_IDS,
-    ACTIVITY_WITH_TRIP_IDS,
+    ASSET_ID,
+    FA_REPORT_DOCUMENT_IDS,
+    TRIP_ID,
     SENDER_RECEIVER,
     ORIGINATING_PLUGIN,
     FISHING_GEAR_TYPE_CHARACTERISTICS,

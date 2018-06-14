@@ -124,22 +124,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getSchemeId())) {
-                    hits++;
-                }
-            }
-        }
-        return valLength > hits;
-    }
-
     public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
         if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
             return false;
@@ -236,6 +220,22 @@ public abstract class AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength > hits;
     }
 
     public boolean isSchemeIdPresent(IdType idType) {
@@ -878,32 +878,6 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean valueIdTypeContainsAny(String value, String... valuesToMatch) {
-        IdType idType = new IdType();
-        idType.setValue(value);
-        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
-    }
-
-    public boolean valueIdTypeContainsAny(IdType idType, String... valuesToMatch) {
-        return valueIdTypeContainsAny(Collections.singletonList(idType), valuesToMatch);
-    }
-
-    public boolean valueIdTypeContainsAny(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        boolean isMatchFound = false;
-        for (String val : valuesToMatch) {
-            for (IdType idType : idTypes) {
-                if (val.equals(idType.getValue())) {
-                    isMatchFound = true;
-                    break;
-                }
-            }
-        }
-        return !isMatchFound;
-    }
-
     public boolean codeTypeValuesUnique(List<CodeType> codeTypes) {
         if (CollectionUtils.isEmpty(codeTypes)) {
             return false;
@@ -1255,6 +1229,9 @@ public abstract class AbstractFact {
 
     public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean isMatch = false;
+        if (idTypes == null){
+            return false;
+        }
         for (IdType idType : idTypes) {
             isMatch = matchWithFluxTL(idType);
             if (isMatch) {
@@ -1270,7 +1247,9 @@ public abstract class AbstractFact {
             String[] idValueArray = split(idType.getValue(), COLON);
             if (ArrayUtils.isNotEmpty(idValueArray)) {
                 String[] split = split(senderOrReceiver, COLON);
-                match = StringUtils.equals(idValueArray[0], split[0]);
+                if (ArrayUtils.isNotEmpty(split)) {
+                    match = StringUtils.equals(idValueArray[0], split[0]);
+                }
             }
         }
         return match;
@@ -1280,7 +1259,7 @@ public abstract class AbstractFact {
         if (StringUtils.isBlank(separator)) {
             return new String[0];
         }
-        String[] strings = null;
+        String[] strings = new String[0];
         if (StringUtils.isNotEmpty(value)) {
             strings = value.split(separator);
         }

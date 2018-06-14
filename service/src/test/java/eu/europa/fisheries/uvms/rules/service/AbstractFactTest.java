@@ -973,30 +973,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueIdTypeContainsAnyWhenValueIsPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("MASTER");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertFalse(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
-    }
-
-    @Test
-    public void testValueIdTypeContainsAnyWhenValueIsNotPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("eulav");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
-    }
-
-    @Test
     public void testIsListEmptyOrBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween1And1() throws Exception {
         List<String> list = Arrays.asList("", "");
 
@@ -1538,11 +1514,17 @@ public class AbstractFactTest {
         boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result);
 
-        controlList.add(new IdType("123"));
+        IdType idType = new IdType("123");
+        idType.setSchemeId("ssss");
+        controlList.add(idType);
         boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result2);
 
-        elementsToMatchList.add(new IdType("234"));
+        IdType idType2 = new IdType("234");
+        idType2.setSchemeId("ssss");
+        controlList.add(idType);
+        elementsToMatchList.add(idType2);
+
         boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result3);
 
@@ -1603,6 +1585,11 @@ public class AbstractFactTest {
     @Test
     public void testMatchWithFluxTLWithEmptyList() {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
+    }
+
+    @Test
+    public void testMatchWithFluxTLWithEmptyNull() {
+        assertFalse(fact.matchWithFluxTL(null));
     }
 
     @Test
