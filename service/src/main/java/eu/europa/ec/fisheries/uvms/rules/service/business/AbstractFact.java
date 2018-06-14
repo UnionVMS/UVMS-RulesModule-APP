@@ -1257,6 +1257,9 @@ public abstract class AbstractFact {
 
     public boolean matchWithFluxTL(List<IdType> idTypes) {
         boolean isMatch = false;
+        if (idTypes == null){
+            return false;
+        }
         for (IdType idType : idTypes) {
             isMatch = matchWithFluxTL(idType);
             if (isMatch) {
@@ -1272,7 +1275,9 @@ public abstract class AbstractFact {
             String[] idValueArray = split(idType.getValue(), COLON);
             if (ArrayUtils.isNotEmpty(idValueArray)) {
                 String[] split = split(senderOrReceiver, COLON);
-                match = StringUtils.equals(idValueArray[0], split[0]);
+                if (ArrayUtils.isNotEmpty(split)) {
+                    match = StringUtils.equals(idValueArray[0], split[0]);
+                }
             }
         }
         return match;
@@ -1282,7 +1287,7 @@ public abstract class AbstractFact {
         if (StringUtils.isBlank(separator)) {
             return new String[0];
         }
-        String[] strings = null;
+        String[] strings = new String[0];
         if (StringUtils.isNotEmpty(value)) {
             strings = value.split(separator);
         }

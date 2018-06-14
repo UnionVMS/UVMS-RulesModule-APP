@@ -14,6 +14,9 @@
             <column name="type" type="TEXT">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <rollback>
@@ -23,7 +26,7 @@
 
     <changeSet id="fishingactivityid_guid_inx-01" author="emrinalgr">
         <createIndex tableName="fishingactivityid" indexName="fishingactivityid_guid_inx_inx">
-            <column name="uuid"></column>
+            <column name="uuid"/>
         </createIndex>
     </changeSet>
 

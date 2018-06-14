@@ -17,12 +17,9 @@ import java.util.Set;
 import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
 import eu.europa.ec.fisheries.uvms.rules.entity.IdType;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 public class FishingActivityRulesHelper {
@@ -47,33 +44,6 @@ public class FishingActivityRulesHelper {
             for (FAReportDocument faReportDocument : faReportDocuments) {
                 if (faReportDocument != null){
                     mapFluxReportDocumentIDS(ids, faReportDocument.getRelatedFLUXReportDocument(), IdType.FA_FLUX_REPORT_ID);
-                    mapSpecifiedFishingActivities(ids, faReportDocument.getSpecifiedFishingActivities());
-                }
-            }
-        }
-    }
-
-    private void mapSpecifiedFishingActivities(Set<FishingActivityId> ids, List<FishingActivity> specifiedFishingActivities) {
-        if (CollectionUtils.isNotEmpty(specifiedFishingActivities)){
-            for (FishingActivity specifiedFishingActivity : specifiedFishingActivities) {
-                if (specifiedFishingActivity != null){
-                    FishingTrip specifiedFishingTrip = specifiedFishingActivity.getSpecifiedFishingTrip();
-                    mapSpecifiedFishingTrip(ids, specifiedFishingTrip);
-                }
-            }
-        }
-    }
-
-    private void mapSpecifiedFishingTrip(Set<FishingActivityId> ids, FishingTrip specifiedFishingTrip) {
-        if (specifiedFishingTrip != null){
-            List<IDType> ids1 = specifiedFishingTrip.getIDS();
-            if (CollectionUtils.isNotEmpty(ids1)){
-                for (IDType idType : ids1) {
-                    String value = idType.getValue();
-                    String schemeID = idType.getSchemeID();
-                    if (StringUtils.isNotEmpty(value) && StringUtils.isNotEmpty(schemeID)){
-                        ids.add(new FishingActivityId(null, value, IdType.TRIP_ID));
-                    }
                 }
             }
         }
@@ -82,20 +52,12 @@ public class FishingActivityRulesHelper {
     private void mapFluxReportDocumentIDS(Set<FishingActivityId> ids, FLUXReportDocument fluxReportDocument, IdType faFluxMessageId) {
         if (fluxReportDocument != null){
             List<IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
-            mapReferencedID(ids, fluxReportDocument);
             if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
                 IDType idType = fluxReportDocumentIDS.get(0);
                 if (idType != null){
-                    ids.add(new FishingActivityId(null, idType.getValue(), faFluxMessageId));
+                    ids.add(new FishingActivityId(idType.getValue(), faFluxMessageId));
                 }
             }
-        }
-    }
-
-    private void mapReferencedID(Set<FishingActivityId> ids, FLUXReportDocument fluxReportDocument) {
-        IDType referencedID = fluxReportDocument.getReferencedID();
-        if (referencedID != null){
-            ids.add(new FishingActivityId(null, referencedID.getValue(), IdType.REF_ID));
         }
     }
 

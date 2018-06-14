@@ -50,9 +50,6 @@ public class RulesEngineBeanTest {
     @InjectMocks
     RulesEngineBean rulesEngineBean;
 
-    @InjectMocks
-    RulesExtraValuesMapGeneratorBean extraValueGenerator;
-
     @Mock
     MDRCacheServiceBean mdrCacheServiceBean;
 

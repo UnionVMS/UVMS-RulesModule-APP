@@ -105,9 +105,6 @@ public class RulesMessageServiceBeanTest {
     @Mock
     RulesConfigurationCache ruleModuleCache;
 
-    @Mock
-    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
-
     private IDType idType;
 
     private CodeType codeType;

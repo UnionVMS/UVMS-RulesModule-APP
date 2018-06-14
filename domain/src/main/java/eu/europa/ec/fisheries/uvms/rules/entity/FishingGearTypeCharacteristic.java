@@ -25,6 +25,7 @@ import lombok.EqualsAndHashCode;
 })
 @Data
 @EqualsAndHashCode(exclude = "mandatory")
+@Deprecated
 public class FishingGearTypeCharacteristic implements Serializable {
 
     public static final String GET_ALL_CHARACTERISTIC_CODES_BY_TYPE_CODE = "fishingGearTypeCharacteristic.getCharacteristicCodesByTypeCode";

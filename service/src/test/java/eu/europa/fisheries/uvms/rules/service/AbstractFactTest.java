@@ -1606,6 +1606,11 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testMatchWithFluxTLWithEmptyNull() {
+        assertFalse(fact.matchWithFluxTL(null));
+    }
+
+    @Test
     public void testMatchWithFluxTLWithSenderReceiverNull() {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));

@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,12 +19,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.domain.Audit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
@@ -31,7 +36,7 @@ import lombok.NoArgsConstructor;
 @NamedQueries({
         @NamedQuery(name = FishingActivityId.FIND_BY_UUID, query = "FROM FishingActivityId f WHERE f.uuid in (:uuids)")
 })
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 public class FishingActivityId implements Serializable {
 
@@ -41,10 +46,19 @@ public class FishingActivityId implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NonNull
     private String uuid;
 
     @Enumerated(EnumType.STRING)
+    @NonNull
     private IdType type;
 
+    @Embedded
+    private Audit audit = new Audit();
+
+    @PrePersist
+    private void prePersist() {
+        audit.setCreatedOn(DateUtils.nowUTC().toDate());
+    }
 
 }

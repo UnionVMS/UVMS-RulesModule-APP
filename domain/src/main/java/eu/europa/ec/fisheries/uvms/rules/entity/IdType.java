@@ -11,9 +11,6 @@
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
 public enum IdType {
-    REF_ID,
     FA_FLUX_REPORT_ID,
     FLUX_FA_REPORT_MESSAGE_ID,
-    FA_QUERY_ID,
-    TRIP_ID
 }

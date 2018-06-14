@@ -153,7 +153,6 @@ public class RulesMessageServiceBean implements RulesMessageService {
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
     private static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400");
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
-    private static final String VALIDATION_EXISTS = "[WARNING] Found already existing Validation(s) for message with GUID [";
 
     private FishingActivityMapper fishingActivityMapper;
 
@@ -198,8 +197,6 @@ public class RulesMessageServiceBean implements RulesMessageService {
     @EJB private RuleAssetsBean ruleAssetsBean;
 
     @EJB private ActivityOutQueueConsumer activityConsumer;
-
-    @EJB private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     private FishingActivityIdDao fishingActivityIdDao;
 
@@ -456,7 +453,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
             extraValues.put(FA_REPORT_DOCUMENT_IDS, fishingActivityMapper.mapToFishingActivityIdDto(fishingActivityIds));
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
-            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds)); // TODO refactor to avoid call to activity
+            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds));
 
             List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
@@ -513,7 +510,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
             extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
             extraValues.put(FA_REPORT_DOCUMENT_IDS, fishingActivityMapper.mapToFishingActivityIdDto(fishingActivityIds));
-            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds));// TODO refactor to avoid call to activity
+            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds));
 
             List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
