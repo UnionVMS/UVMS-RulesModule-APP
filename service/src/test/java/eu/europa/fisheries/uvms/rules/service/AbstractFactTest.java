@@ -1524,11 +1524,17 @@ public class AbstractFactTest {
         boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result);
 
-        controlList.add(new IdType("123"));
+        IdType idType = new IdType("123");
+        idType.setSchemeId("ssss");
+        controlList.add(idType);
         boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result2);
 
-        elementsToMatchList.add(new IdType("234"));
+        IdType idType2 = new IdType("234");
+        idType2.setSchemeId("ssss");
+        controlList.add(idType);
+        elementsToMatchList.add(idType2);
+
         boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result3);
 

@@ -16,8 +16,6 @@ import javax.ejb.Startup;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Singleton
@@ -127,13 +125,5 @@ public class FishingGearTypeCharacteristics {
         characteristicList.add(new FishingGearTypeCharacteristic("LL","GN", true));
         characteristicList.add(new FishingGearTypeCharacteristic("LL","NI", true));
         characteristicList.add(new FishingGearTypeCharacteristic("RG","GD", false));
-    }
-
-    @Data
-    @AllArgsConstructor
-    private class FishingGearTypeCharacteristic {
-        private String fishingGearTypeCode;
-        private String fishingGearCharacteristicCode;
-        private Boolean mandatory;
     }
 }

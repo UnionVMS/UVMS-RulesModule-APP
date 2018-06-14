@@ -8,9 +8,17 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.entity;
+package eu.europa.ec.fisheries.uvms.rules.dto;
 
-public enum IdType {
-    FA_FLUX_REPORT_ID,
-    FLUX_FA_REPORT_MESSAGE_ID,
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class FishingGearTypeCharacteristic {
+    private String fishingGearTypeCode;
+    private String fishingGearCharacteristicCode;
+    private Boolean mandatory;
 }

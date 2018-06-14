@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingActivityId;
-import eu.europa.ec.fisheries.uvms.rules.entity.IdType;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
@@ -24,12 +24,12 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 public class FishingActivityRulesHelper {
 
-    public Set<FishingActivityId> mapToFishingActivityId(FLUXFAReportMessage fluxfaReportMessage) {
-        Set<FishingActivityId> ids = new HashSet<>();
+    public Set<FADocumentID> mapToFishingActivityId(FLUXFAReportMessage fluxfaReportMessage) {
+        Set<FADocumentID> ids = new HashSet<>();
         if (fluxfaReportMessage != null){
             FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
             if (fluxReportDocument != null){
-                mapFluxReportDocumentIDS(ids, fluxReportDocument, IdType.FLUX_FA_REPORT_MESSAGE_ID);
+                mapFluxReportDocumentIDS(ids, fluxReportDocument, FAUUIDType.FLUX_FA_REPORT_MESSAGE_ID);
             }
             List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
             if (CollectionUtils.isNotEmpty(faReportDocuments)){
@@ -39,23 +39,23 @@ public class FishingActivityRulesHelper {
         return ids;
     }
 
-    private void mapFaReportDocuments(Set<FishingActivityId> ids, List<FAReportDocument> faReportDocuments) {
+    private void mapFaReportDocuments(Set<FADocumentID> ids, List<FAReportDocument> faReportDocuments) {
         if (CollectionUtils.isNotEmpty(faReportDocuments)){
             for (FAReportDocument faReportDocument : faReportDocuments) {
                 if (faReportDocument != null){
-                    mapFluxReportDocumentIDS(ids, faReportDocument.getRelatedFLUXReportDocument(), IdType.FA_FLUX_REPORT_ID);
+                    mapFluxReportDocumentIDS(ids, faReportDocument.getRelatedFLUXReportDocument(), FAUUIDType.FA_FLUX_REPORT_ID);
                 }
             }
         }
     }
 
-    private void mapFluxReportDocumentIDS(Set<FishingActivityId> ids, FLUXReportDocument fluxReportDocument, IdType faFluxMessageId) {
+    private void mapFluxReportDocumentIDS(Set<FADocumentID> ids, FLUXReportDocument fluxReportDocument, FAUUIDType faFluxMessageId) {
         if (fluxReportDocument != null){
             List<IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
             if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
                 IDType idType = fluxReportDocumentIDS.get(0);
                 if (idType != null){
-                    ids.add(new FishingActivityId(idType.getValue(), faFluxMessageId));
+                    ids.add(new FADocumentID(idType.getValue(), faFluxMessageId));
                 }
             }
         }

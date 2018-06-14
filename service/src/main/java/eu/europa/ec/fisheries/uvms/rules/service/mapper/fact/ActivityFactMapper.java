@@ -106,7 +106,6 @@ import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -199,7 +198,7 @@ public class ActivityFactMapper {
      **/
     private List<IdTypeWithFlagState> assetList;
 
-    private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
+    private List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
 
     private XPathStringWrapper xPathUtil;
 
@@ -2898,11 +2897,11 @@ public class ActivityFactMapper {
         return assetList;
     }
 
-    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
+    public void setFishingGearTypeCharacteristics(List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
         this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
     }
 
-    public List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
+    public List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
         return fishingGearTypeCharacteristics;
     }
 

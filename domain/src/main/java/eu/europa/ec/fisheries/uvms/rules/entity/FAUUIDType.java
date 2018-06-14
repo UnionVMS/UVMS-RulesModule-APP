@@ -8,28 +8,9 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.mapper;
+package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import java.util.List;
-
-import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.factory.Mappers;
-
-@Mapper
-public interface FishingActivityMapper {
-
-    FishingActivityMapper INSTANCE = Mappers.getMapper(FishingActivityMapper.class);
-
-    @Mappings({
-            @Mapping(target = "value", source = "uuid"),
-            @Mapping(target = "schemeId", source = "type"),
-    })
-    IdType mapToFishingActivityIdDto(FADocumentID entity);
-
-    List<IdType> mapToFishingActivityIdDto(List<FADocumentID> entity);
-
+public enum FAUUIDType {
+    FA_FLUX_REPORT_ID,
+    FLUX_FA_REPORT_MESSAGE_ID,
 }

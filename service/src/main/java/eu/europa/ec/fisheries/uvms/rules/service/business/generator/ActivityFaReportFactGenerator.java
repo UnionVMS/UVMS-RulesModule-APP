@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.entity.IdType;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -110,10 +110,10 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
         if (CollectionUtils.isNotEmpty(idTypeList)){
             for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : idTypeList) {
-                if (IdType.FA_FLUX_REPORT_ID.name().equals(idType.getSchemeId())){
+                if (FAUUIDType.FA_FLUX_REPORT_ID.name().equals(idType.getSchemeId())){
                     activityFactMapper.getFaRelatedReportIds().add(idType);
                 }
-                else if (IdType.FLUX_FA_REPORT_MESSAGE_ID.name().equals(idType.getSchemeId())) {
+                else if (FAUUIDType.FLUX_FA_REPORT_MESSAGE_ID.name().equals(idType.getSchemeId())) {
                     activityFactMapper.getFaReportMessageIds().add(idType);
                 }
             }

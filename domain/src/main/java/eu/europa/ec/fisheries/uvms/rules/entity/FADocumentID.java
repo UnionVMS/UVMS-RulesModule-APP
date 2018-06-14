@@ -32,15 +32,15 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
-@EqualsAndHashCode(exclude = "id")
+@EqualsAndHashCode(exclude = {"id", "audit"})
 @NamedQueries({
-        @NamedQuery(name = FishingActivityId.FIND_BY_UUID, query = "FROM FishingActivityId f WHERE f.uuid in (:uuids)")
+        @NamedQuery(name = FADocumentID.LOAD_BY_UUID, query = "FROM FADocumentID f WHERE f.uuid in (:uuids)")
 })
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class FishingActivityId implements Serializable {
+public class FADocumentID implements Serializable {
 
-    public static final String FIND_BY_UUID = "fishingActivityIdType.byUUID";
+    public static final String LOAD_BY_UUID = "fADocumentID.loadByUUID";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,7 +51,7 @@ public class FishingActivityId implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @NonNull
-    private IdType type;
+    private FAUUIDType type;
 
     @Embedded
     private Audit audit = new Audit();

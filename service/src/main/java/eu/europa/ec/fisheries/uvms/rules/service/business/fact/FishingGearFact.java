@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +96,7 @@ public class FishingGearFact extends AbstractFact {
         List<String> optionalFishingGearCharacteristicCodes = retrieveFishingGearCharacteristicCodes(fishingGearTypeCharacteristics, fishingGearTypeCode, false);
         List<String> applicableGearCharacteristicCodes = retrieveGearCharacteristicTypeCodeValues(applicableGearCharacteristics, FactConstants.FA_GEAR_CHARACTERISTIC);
 
-        boolean optionalFishingGearCharacteristicCodesPresent = optionalFishingGearCharacteristicCodes.size() == 0 || optionalFishingGearCharacteristicCodes.size() == 1;
+        boolean optionalFishingGearCharacteristicCodesPresent = optionalFishingGearCharacteristicCodes.isEmpty() || optionalFishingGearCharacteristicCodes.size() == 1;
 
         if (CollectionUtils.isEmpty(mandatoryFishingGearCharacteristicCodes) && optionalFishingGearCharacteristicCodesPresent) {
             return true;

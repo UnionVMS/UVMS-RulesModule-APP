@@ -23,10 +23,10 @@
     <include file="\schema\tables\validationmessage.xml"/>
     <include file="\schema\tables\messageid.xml"/>
 
-    <include file="\schema\tables\fishingactivityid.xml"/>
+    <include file="\schema\tables\fadocumentid.xml"/>
 
     <include file="\schema\tables\fishinggeartypecharacteristic.xml"/>
-
+    <include file="\schema\tables\rulestatus.xml"/>
 
     <!-- SANITY RULES -->
     <include file="\schema\tables\sanityrule.xml"/>
