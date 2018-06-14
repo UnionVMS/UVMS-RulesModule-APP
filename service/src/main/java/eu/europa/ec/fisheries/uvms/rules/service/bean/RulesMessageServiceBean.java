@@ -680,7 +680,7 @@ public class RulesMessageServiceBean implements RulesMessageService {
                 uuidString = idType.getValue();
                 String schemeID = idType.getSchemeID();
                 if ("UUID".equals(schemeID)) {
-                    uuidIsCorrect = UUID.fromString(uuidString).toString().equals(uuidString);
+                    uuidIsCorrect = StringUtils.equalsIgnoreCase(UUID.fromString(uuidString).toString(),uuidString);
                 }
                 if (!uuidIsCorrect) {
                     log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);

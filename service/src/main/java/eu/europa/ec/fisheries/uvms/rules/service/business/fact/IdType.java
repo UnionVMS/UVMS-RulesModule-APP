@@ -13,13 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import lombok.EqualsAndHashCode;
-
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
-@EqualsAndHashCode(exclude = "schemeId")
 public class IdType {
 
     private String value;
@@ -54,4 +51,16 @@ public class IdType {
         this.schemeId = schemeId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IdType idType = (IdType) o;
+        return value != null ? value.equalsIgnoreCase(idType.value) : idType.value == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
+    }
 }
