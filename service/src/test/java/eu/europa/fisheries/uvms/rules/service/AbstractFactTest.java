@@ -55,7 +55,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -971,31 +970,6 @@ public class AbstractFactTest {
         salesPartyType3.setRoleCodes(Arrays.asList(codeType3));
 
         assertFalse(fact.salesPartiesValueDoesNotContainAny(Arrays.asList(salesPartyType1, salesPartyType2, salesPartyType3), "SENDER"));
-    }
-
-    @Test
-    @Ignore
-    public void testValueIdTypeContainsAnyWhenValueIsPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("MASTER");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertFalse(fact.schemeIdContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
-    }
-
-    @Test
-    public void testValueIdTypeContainsAnyWhenValueIsNotPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("eulav");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertTrue(fact.schemeIdContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
     }
 
     @Test

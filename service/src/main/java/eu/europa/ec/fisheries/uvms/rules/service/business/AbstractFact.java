@@ -124,22 +124,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getSchemeId())) {
-                    hits++;
-                }
-            }
-        }
-        return valLength > hits;
-    }
-
     public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
         if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
             return false;
@@ -236,6 +220,22 @@ public abstract class AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        int valLength = valuesToMatch.length;
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return valLength > hits;
     }
 
     public boolean isSchemeIdPresent(IdType idType) {
