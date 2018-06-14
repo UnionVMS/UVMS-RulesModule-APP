@@ -30,7 +30,6 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.dao.FishingActivityIdDao;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
@@ -44,7 +43,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
@@ -62,10 +60,6 @@ public class RulesResource {
 
     @EJB
     private RulesMessageService messageService;
-
-    private FishingActivityIdDao fishingActivityIdDao;
-
-    private FishingActivityRulesHelper faReportMessageHelper;
 
     @HeaderParam("FR")
     private String fr;
