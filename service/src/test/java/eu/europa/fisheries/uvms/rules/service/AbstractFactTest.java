@@ -364,12 +364,12 @@ public class AbstractFactTest {
 
     @Test
     public void testIsInRangeWith90ShouldPassTheRule() {
-        assertTrue(!fact.isInRange(new BigDecimal("-90"), -90, 90));
+        assertFalse(!fact.isInRange(new BigDecimal("-90"), -90, 90));
     }
 
     @Test
     public void testIsInRangeWithNullShouldFailTheRule() {
-        assertFalse(!fact.isInRange(null, -90, 90));
+        assertTrue(!fact.isInRange(null, -90, 90));
     }
 
     @Test
