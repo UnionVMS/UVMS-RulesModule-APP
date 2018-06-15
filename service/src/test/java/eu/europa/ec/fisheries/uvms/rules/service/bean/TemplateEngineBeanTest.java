@@ -16,16 +16,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
@@ -78,12 +75,6 @@ public class TemplateEngineBeanTest {
     @Mock
     private MDRCacheRuleService cacheService;
 
-    @Test(expected = RulesValidationException.class)
-    public void testEvaluateEmptyFacts() throws RulesValidationException {
-        List<AbstractFact> facts = new ArrayList<>();
-        templateEngine.evaluateFacts(facts, BusinessObjectType.RECEIVING_FA_REPORT_MSG);
-    }
-
     @Test
     public void testEvaluateFacts() throws RulesValidationException {
 
@@ -122,17 +113,6 @@ public class TemplateEngineBeanTest {
             threw = true;
         }
         assertTrue(threw);
-    }
-
-    @Test
-    public void testInitialize() {
-        try {
-            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
-            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
-            droolesInitializer.initialize();
-        } catch (Exception e) {
-            assertNull(e);
-        }
     }
 
     private FLUXFAReportMessage getFluxFaReportMessage() {

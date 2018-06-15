@@ -858,11 +858,9 @@ public class AbstractFactTest {
         result = fact.listIdNotContains(codeTypes, null);
         assertTrue(result);
 
-        CodeType newCodeType = RuleTestHelper.getCodeType("value1", "CFR");
         result = fact.listIdNotContains(codeTypes, "ABC");
         assertTrue(result);
     }
-
 
     @Test
     public void testValueContainsAny() {
