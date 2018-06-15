@@ -1185,7 +1185,7 @@ public abstract class AbstractFact {
     }
 
     public boolean isInRange(BigDecimal value, int lowBound, int upperBound) {
-        return value == null || !((value.compareTo(new BigDecimal(lowBound)) > 0) && (value.compareTo(new BigDecimal(upperBound)) < 0));
+        return value == null || !((value.compareTo(new BigDecimal(lowBound)) >= 0) && (value.compareTo(new BigDecimal(upperBound)) <= 0));
     }
 
     public enum FORMATS {
