@@ -54,19 +54,19 @@ public class RulesEngineBean {
 
     @SuppressWarnings("unchecked")
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
-        if (businessObject != null){
-        log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
-        generator.setBusinessObjectMessage(businessObject);
-        mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
-        generator.setExtraValueMap(map);
-        generator.setAdditionalValidationObject();
-        List<AbstractFact> facts = new ArrayList<>(generator.generateAllFacts());
-        masterEvaluator.evaluateFacts(facts, businessObjectType);
-        log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
-        log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
-        return facts;
+        if (businessObject != null) {
+            log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+            generator.setBusinessObjectMessage(businessObject);
+            mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
+            generator.setExtraValueMap(map);
+            generator.setAdditionalValidationObject();
+            List<AbstractFact> facts = new ArrayList<>(generator.generateAllFacts());
+            masterEvaluator.evaluateFacts(facts, businessObjectType);
+            log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
+            log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
+            return facts;
         }
         return new ArrayList<>();
     }
