@@ -54,6 +54,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static java.util.Collections.singletonList;
 
 @Stateless
@@ -63,9 +64,6 @@ public class FluxResponseValidatorAndSender {
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
-
-    @EJB
-    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -86,18 +84,19 @@ public class FluxResponseValidatorAndSender {
     public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided) {
         try {
             log.info("[START] Preparing FLUXResponseMessage to send back to Exchange module.");
-            if(!correctGuidProvided){
+            if (!correctGuidProvided) {
                 fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
             }
+
             // Get fluxNationCode (Eg. XEU) from Config Module.
             String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
             String logGuid = request.getLogGuid();
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, fluxNationCode);
-            log.info(TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE);
-            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValueTypeObjectMap);
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, fluxNationCode);
+            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
