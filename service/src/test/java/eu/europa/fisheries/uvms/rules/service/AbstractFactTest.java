@@ -129,12 +129,22 @@ public class AbstractFactTest {
 
     @Test
     public void testUUIDShouldPass() {
-        assertTrue(fact.validateFormat("c56a4180-65aa-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
+        assertTrue(fact.validateFormat("c56a4180-65aA-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
     }
 
     @Test
     public void testUUIDShouldFail() {
         assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
+    }
+
+    @Test
+    public void testFLUXTLONShouldFail() {
+        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
+    }
+
+    @Test
+    public void testFLUXTLONShouldPass() {
+        assertTrue(fact.validateFormat("33EKLELKLEGFHDJjsks1", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
     }
 
     @Test
@@ -973,30 +983,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueIdTypeContainsAnyWhenValueIsPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("MASTER");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertFalse(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
-    }
-
-    @Test
-    public void testValueIdTypeContainsAnyWhenValueIsNotPresent() {
-        IdType idType1 = new IdType();
-        idType1.setValue("value");
-        IdType idType2 = new IdType();
-        idType2.setValue("eulav");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-
-        assertTrue(fact.valueIdTypeContainsAny(idTypes, "MASTER", "AGENT", "OWNER", "OPERATOR"));
-    }
-
-    @Test
     public void testIsListEmptyOrBetweenNumberOfItemsWhenListSizeIs2AndShouldBeBetween1And1() throws Exception {
         List<String> list = Arrays.asList("", "");
 
@@ -1532,17 +1518,38 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testListContainsAtLeastOneFromTheOtherListEquals(){
+
+        IdType idType2 = new IdType();
+        idType2.setValue("abcd");
+        List<IdType> list = Collections.singletonList(idType2);
+
+        IdType idType3 = new IdType();
+        idType3.setValue("ABCD");
+
+        List<IdType> otherList = Collections.singletonList(idType3);
+
+        assertTrue(fact.listContainsAtLeastOneFromTheOtherList(list, otherList));
+    }
+
+    @Test
     public void testListContainsAtLeastOneFromTheOtherList() {
         List<IdType> controlList = new ArrayList<>();
         List<IdType> elementsToMatchList = new ArrayList<>();
         boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result);
 
-        controlList.add(new IdType("123"));
+        IdType idType = new IdType("123");
+        idType.setSchemeId("ssss");
+        controlList.add(idType);
         boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result2);
 
-        elementsToMatchList.add(new IdType("234"));
+        IdType idType2 = new IdType("234");
+        idType2.setSchemeId("ssss");
+        controlList.add(idType);
+        elementsToMatchList.add(idType2);
+
         boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
         assertFalse(result3);
 
@@ -1603,6 +1610,11 @@ public class AbstractFactTest {
     @Test
     public void testMatchWithFluxTLWithEmptyList() {
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
+    }
+
+    @Test
+    public void testMatchWithFluxTLWithEmptyNull() {
+        assertFalse(fact.matchWithFluxTL(null));
     }
 
     @Test
@@ -1725,7 +1737,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsAllSchemeIdsPresentOneIsEmpty() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-Ba21CE845119", "UUID");
         IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", StringUtils.EMPTY);
         IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 

@@ -13,11 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_NON_UNIQUE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ACTIVITY_WITH_TRIP_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_REPORT_DOCUMENT_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.APPLICABLE_GEAR_CHARACTERISTIC;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_FLUX_LOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.DESTINATION_VESSEL_STORAGE_CHARACTERISTIC;
@@ -48,11 +47,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -106,20 +103,27 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject() {
-        List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_LIST);
+        List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_ID);
         activityFactMapper.setAssetList(idTypeWithFlagStates);
 
-        Map<ActivityTableType, List<IdType>> activityTableTypeListMap = (Map<ActivityTableType, List<IdType>>) extraValueMap.get(ACTIVITY_NON_UNIQUE_IDS);
-        activityFactMapper.setNonUniqueIdsMap(activityTableTypeListMap);
+        List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_REPORT_DOCUMENT_IDS);
 
-        Map<String, List<FishingActivityWithIdentifiers>> stringListMap = (Map<String, List<FishingActivityWithIdentifiers>>) extraValueMap.get(ACTIVITY_WITH_TRIP_IDS);
+        if (CollectionUtils.isNotEmpty(idTypeList)){
+            for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : idTypeList) {
+                if (FAUUIDType.FA_FLUX_REPORT_ID.name().equals(idType.getSchemeId())){
+                    activityFactMapper.getFaRelatedReportIds().add(idType);
+                }
+                else if (FAUUIDType.FLUX_FA_REPORT_MESSAGE_ID.name().equals(idType.getSchemeId())) {
+                    activityFactMapper.getFaReportMessageIds().add(idType);
+                }
+            }
+        }
+
+        Map<String, List<FishingActivityWithIdentifiers>> stringListMap = (Map<String, List<FishingActivityWithIdentifiers>>) extraValueMap.get(TRIP_ID);
         activityFactMapper.setFishingActivitiesWithTripIds(stringListMap);
 
         String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);
         activityFactMapper.setSenderReceiver(senderReceiver);
-
-        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = (List<FishingGearTypeCharacteristic>) extraValueMap.get(FISHING_GEAR_TYPE_CHARACTERISTICS);
-        activityFactMapper.setFishingGearTypeCharacteristics(fishingGearTypeCharacteristics);
     }
 
     @Override
@@ -377,7 +381,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             }
         } catch (IllegalArgumentException e) {
             xPathUtil.clear();
-            log.warn("No such Fishing activity type", e);
+            log.debug("No such Fishing activity type", e);
         }
         xPathUtil.clear();
         return abstractFact;

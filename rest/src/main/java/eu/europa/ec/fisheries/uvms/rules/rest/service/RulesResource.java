@@ -12,15 +12,18 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +34,10 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -51,8 +57,15 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 public class RulesResource {
 
     private static final String SS_OO_MME_GUID = "ss-oo-mme-guid";
+
     @EJB
     private RulesMessageService messageService;
+
+    @HeaderParam("FR")
+    private String fr;
+
+    @HeaderParam("ON")
+    private String on;
 
     @EJB
     private RulePostProcessBean rulePostProcessBean;
@@ -61,13 +74,10 @@ public class RulesResource {
     private RulesPreProcessBean rulesPreProcessBean;
 
     @EJB
+    private  TemplateEngine templateEngine;
+
+    @EJB
     private RulesEngineBean rulesEngine;
-
-    @EJB
-    private TemplateEngine templateEngine;
-
-    @EJB
-    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
@@ -76,8 +86,10 @@ public class RulesResource {
     public Response evaluate(FLUXFAReportMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            Map<ExtraValueType, Object> extraValueTypeObjectMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_REPORT_MSG, request, "XEU");
-            List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValueTypeObjectMap);
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, fr);
+
+            List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, SS_OO_MME_GUID, RawMsgType.FA_REPORT);
             fluxResponseMessage = messageService.generateFluxResponseMessageForFaReport(validationResultDto, request);
@@ -98,11 +110,13 @@ public class RulesResource {
     public Response evaluate(FLUXFAQueryMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            Map<ExtraValueType, Object> extraValueMap = extraValueGenerator.generateExtraValueMap(RECEIVING_FA_QUERY_MSG, request, "XEU");
-            List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValueMap);
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, fr);
+
+            List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request, "on@val");
+            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request, fr);
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
@@ -122,7 +136,10 @@ public class RulesResource {
     public Response evaluate(FLUXResponseMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
-            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request);
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, fr);
+
+            List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_RESPONSE);
             fluxResponseMessage = messageService.generateFluxResponseMessageForFaResponse(validationResultDto, request);
@@ -144,15 +161,4 @@ public class RulesResource {
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
 
-
-/*    @EJB
-    private MDRCache mdrCache2;
-
-    @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/loadmdrcache")
-    public Response loadMdrCache() {
-        mdrCache2.loadAllMdrCodeLists();
-        return Response.ok(new ResponseDto<>("MDR cahce loaded..", ResponseCode.OK)).build();
-    }*/
 }
