@@ -373,11 +373,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsInRangeNull() {
-        assertTrue(fact.isInRange(null, -10, 200));
-    }
-
-    @Test
     public void testIsPositiveListOfMeasureShouldReturnFalseWithEmptyList() {
         List<MeasureType> measureTypes = new ArrayList<>();
         assertFalse(fact.isPositive(measureTypes));
