@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
 
 /*
  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
@@ -69,6 +69,10 @@ public class MDRCache {
 
     private Map<String, EnrichedBRMessage> errorMessages;
 
+    private boolean alreadyLoadedOnce = false;
+
+    private Date lastTimeRefreshDateWasRetreived;
+
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
@@ -77,33 +81,33 @@ public class MDRCache {
 
 
     /**
-     *  It fetches the latest refresh date from MDR and checks if the local cache needs to be refreshed.
-     *
+     * It fetches the latest refresh date from MDR and checks if the local cache needs to be refreshed.
      */
     @AccessTimeout(value = 10, unit = MINUTES)
     @Lock(LockType.WRITE)
-    public void loadAllMdrCodeLists() {
-        try {
-            if(populateMdrCacheDateAndCheckIfRefreshDateChanged()){
-                log.info("[START] Loading MDR Cache...");
-                ExecutorService executorService = Executors.newFixedThreadPool(10);
-                List<Callable<List<ObjectRepresentation>>> callableList = new ArrayList<>();
-                for (final MDRAcronymType type : MDRAcronymType.values()) {
-                    callableList.add(new Callable<List<ObjectRepresentation>>() {
-                        public List<ObjectRepresentation> call() {
-                            return mdrCodeListByAcronymType(type);
-                        }
-                    });
-                }
-                waitWhileAllTasksFinish(executorService.invokeAll(callableList));
-                executorService.shutdown();
-                cacheRefreshDate = new Date(mdrRefreshDate.getTime());
-                loadCacheForFailureMessages();
-                log.info("[FINISH] MDR Cache Refresh was needed and done already! New refresh Date : [" + mdrRefreshDate + "]");
+    public void loadAllMdrCodeLists(boolean isFromReport) {
+        if (!alreadyLoadedOnce) {
+            populateMdrCacheDateAndCheckIfRefreshDateChanged();
+            populateAllMdr();
+        } else if (isFromReport) {
+            if(oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()){ // We fetch MdrCacheDate only once per minute.
+                populateAllMdr();
             }
-        } catch (InterruptedException e) {
-            log.error(e.getMessage(), e);
         }
+    }
+
+    private boolean oneMinuteHasPassed() {
+        return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetreived.getTime())/1000) > 59;
+    }
+
+    private void populateAllMdr() {
+        log.info("[START] Loading MDR Cache...");
+        for (final MDRAcronymType type : MDRAcronymType.values()) {
+            cache.put(type, mdrCodeListByAcronymType(type));
+        }
+        cacheRefreshDate = new Date(mdrRefreshDate.getTime());
+        alreadyLoadedOnce = true;
+        log.info("[FINISH] MDR Cache Refresh was needed and done. New refresh Date : [" + mdrRefreshDate + "]");
     }
 
     @AccessTimeout(value = 10, unit = MINUTES)
@@ -112,11 +116,12 @@ public class MDRCache {
         List<ObjectRepresentation> result;
         if (acronymType != null) {
             result = cache.get(acronymType);
-            if(CollectionUtils.isEmpty(result)){ // reload if its empty! Shouldn't happen, but if it does we have the meccanism set up!
-                cache.put(acronymType,mdrCodeListByAcronymType(acronymType));
+            if (CollectionUtils.isEmpty(result)) { // reload if its empty! Shouldn't happen, but if it does we have the meccanism set up!
+                log.warn("[WARN] List +++ " + acronymType + " +++ is empty! Going to reload now()!");
+                cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
                 result = cache.get(acronymType);
-                if(CollectionUtils.isEmpty(result)){
-                    log.error("[ERROR] Tried to reload (since it was empty) acronym [ "+acronymType+" ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
+                if (CollectionUtils.isEmpty(result)) {
+                    log.error("[ERROR] Tried to reload (since it was empty) acronym [ " + acronymType + " ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
                             "Please Have a look at MDRAcronymType!");
                 }
             }
@@ -126,7 +131,7 @@ public class MDRCache {
     }
 
     /**
-     *  Gtes an mdr codelist from MDR modules.
+     * Gtes an mdr codelist from MDR modules.
      *
      * @param acronymType
      * @return
@@ -156,7 +161,8 @@ public class MDRCache {
         boolean cacheDateChanged = false;
         try {
             Date mdrDate = getLastTimeMdrWasRefreshedFromMdrModule();
-            if (!mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
+            lastTimeRefreshDateWasRetreived = new Date();
+            if (mdrDate != null && !mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
                 mdrRefreshDate = mdrDate;
                 cacheDateChanged = true;
             }
@@ -186,19 +192,6 @@ public class MDRCache {
         }
     }
 
-    private void waitWhileAllTasksFinish(List<Future<List<ObjectRepresentation>>> futures) {
-        boolean done = true;
-        for (Future<List<ObjectRepresentation>> future : futures) {
-            if(!future.isDone()){
-                done = false;
-            }
-        }
-        if(!done){
-            log.info("Waiting...");
-            waitWhileAllTasksFinish(futures);
-        }
-    }
-
     /**
      * This function maps all the error messages to the ones defined in MDR;
      */
@@ -218,7 +211,6 @@ public class MDRCache {
             String brId = null;
             String errorMessage = null;
             String note = null;
-
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if (MESSAGE_COLUMN.equals(columnName)) {
@@ -235,20 +227,8 @@ public class MDRCache {
         }
     }
 
-    public EnrichedBRMessage getErrorMessage(String brId){
+    public EnrichedBRMessage getErrorMessage(String brId) {
         return errorMessages.get(brId);
-    }
-
-    public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
-        threadPool.shutdown();
-        try {
-            if (!threadPool.awaitTermination(5, TimeUnit.MINUTES)) {
-                threadPool.shutdownNow();
-            }
-        } catch (InterruptedException ex) {
-            threadPool.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
     }
 
 }

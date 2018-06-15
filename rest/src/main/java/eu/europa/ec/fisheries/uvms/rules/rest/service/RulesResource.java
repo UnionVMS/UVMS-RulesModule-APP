@@ -30,8 +30,10 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -64,10 +66,10 @@ public class RulesResource {
     private RulesEngineBean rulesEngine;
 
     @EJB
-    private TemplateEngine templateEngine;
+    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
 
     @EJB
-    private RulesExtraValuesMapGeneratorBean extraValueGenerator;
+    private DroolsEngineInitializer drlInitializer;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
@@ -140,19 +142,15 @@ public class RulesResource {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/reinitialize")
     public Response reInitialize() {
-        templateEngine.reInitialize();
+        drlInitializer.reInitialize();
         return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
 
-
-/*    @EJB
-    private MDRCache mdrCache2;
-
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/loadmdrcache")
-    public Response loadMdrCache() {
-        mdrCache2.loadAllMdrCodeLists();
-        return Response.ok(new ResponseDto<>("MDR cahce loaded..", ResponseCode.OK)).build();
-    }*/
+    @Path("/checkrulesaredeployed")
+    public Response checkRulesAreDeployed() {
+        return Response.ok(new ResponseDto<>(drlInitializer.checkRulesAreDeployed(), ResponseCode.OK)).build();
+    }
+
 }

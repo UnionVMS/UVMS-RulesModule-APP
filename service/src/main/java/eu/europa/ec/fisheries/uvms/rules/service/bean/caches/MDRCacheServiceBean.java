@@ -8,7 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
@@ -44,8 +44,8 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @EJB
     private MDRCache cache;
 
-    public void loadMDRCache() {
-        cache.loadAllMdrCodeLists();
+    public void loadMDRCache(boolean isFromReport) {
+        cache.loadAllMdrCodeLists(isFromReport);
     }
 
     @Override
@@ -386,6 +386,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
         return cache.getEntry(mdrAcronym);
+    }
+
+    @Override
+    public void loadCacheForFailureMessages() {
+        cache.loadCacheForFailureMessages();
     }
 
 

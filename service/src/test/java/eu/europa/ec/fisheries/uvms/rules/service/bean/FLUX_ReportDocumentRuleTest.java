@@ -22,11 +22,14 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,10 +50,10 @@ public class FLUX_ReportDocumentRuleTest {
     private RuleType ruleReferencedID = new RuleType();
 
     @Mock
-    private FactRuleEvaluator generator;
+    private FaReportFactRuleEvaluator generator;
 
     @InjectMocks
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     @InjectMocks
     private SalesRulesServiceBean salesRulesService;
@@ -81,7 +84,7 @@ public class FLUX_ReportDocumentRuleTest {
     }
 
     @Test
-    public void testRuleCreationDateTime() {
+    public void testRuleCreationDateTime() throws RulesValidationException {
 
         templateRuleMapDto.setRules(Collections.singletonList(ruleCreationDateTime));
         templateRuleMapDto.setExternalRules(new ArrayList<ExternalRuleType>());
@@ -98,7 +101,7 @@ public class FLUX_ReportDocumentRuleTest {
     }
 
     @Test
-    public void testRuleID() {
+    public void testRuleID() throws RulesValidationException {
 
         ruleID = new RuleType();
         ruleID.setExpression("ids == null || ids.empty == true || ids.get(1).value != 'abc'");

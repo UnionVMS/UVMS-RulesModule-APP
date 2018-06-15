@@ -20,13 +20,17 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SE
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
 @Stateless
@@ -34,7 +38,7 @@ import org.apache.commons.lang3.time.StopWatch;
 @Slf4j
 public class RulesExtraValuesMapGeneratorBean {
 
-    private static final String INFO_GOING_TO_GENERATE_EXRAVALUE_MAP_FOR = "[INFO] Going to generate exravalue map for : [";
+    private static final String INFO_GOING_TO_GENERATE_EXRAVALUE_MAP_FOR = "[START] Going to generate exravalue map for : [";
     private static final String BUSINESS_OBJECCT_TYPE = "] BusinessObjecct type..";
     private static final String END_IT_TOOK = "[END] It took [";
     private static final String SECONDS_TO_GENERATE_THE_MAP = "] seconds to generate the map...";
@@ -79,7 +83,7 @@ public class RulesExtraValuesMapGeneratorBean {
                 break;
         }
         stopWatch.stop();
-        log.debug(END_IT_TOOK + stopWatch.getTime(TimeUnit.SECONDS) + SECONDS_TO_GENERATE_THE_MAP);
+        log.info(END_IT_TOOK + stopWatch.getTime(TimeUnit.SECONDS) + SECONDS_TO_GENERATE_THE_MAP);
         return map;
 
     }

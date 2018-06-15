@@ -25,6 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.MasterEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -61,13 +65,13 @@ public class RulesEngineBeanTest {
     MDRCacheServiceBean mdrCacheServiceBean;
 
     @Mock
-    TemplateEngine templateEngine;
+    MasterEvaluator templateEngine;
 
     @Mock
     RulesDomainModel rulesDb;
 
     @Mock
-    FactRuleEvaluator ruleEvaluator;
+    FaReportFactRuleEvaluator ruleEvaluator;
 
     @Mock
     RuleAssetsBean ruleAssetsBean;
@@ -92,7 +96,7 @@ public class RulesEngineBeanTest {
                 System.out.println("called with arguments: " + Arrays.toString(args));
                 return null;
             }
-        }).when(templateEngine).evaluateFacts(Mockito.anyList());
+        }).when(templateEngine).evaluateFacts(Mockito.anyList(), BusinessObjectType.RECEIVING_FA_REPORT_MSG);
 
         List<AbstractFact> facts = rulesEngineBean.evaluate(BusinessObjectType.RECEIVING_FA_REPORT_MSG, getFluxFaReportMessage());
         assertNotNull(facts);

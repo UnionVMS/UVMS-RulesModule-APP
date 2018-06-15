@@ -8,7 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
 
 import javax.ejb.Local;
 import java.util.List;
@@ -57,4 +57,6 @@ public interface MDRCacheRuleService {
     boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage);
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
+
+    void loadCacheForFailureMessages();
 }

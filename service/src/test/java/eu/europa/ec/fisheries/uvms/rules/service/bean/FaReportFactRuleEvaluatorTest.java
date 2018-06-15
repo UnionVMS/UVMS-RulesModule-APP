@@ -28,17 +28,24 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.KieServices;
+import org.kie.api.definition.KiePackage;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.runtime.KieContainer;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -49,13 +56,13 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @Slf4j
 @RunWith(MockitoJUnitRunner.class)
-public class FactRuleEvaluatorTest {
+public class FaReportFactRuleEvaluatorTest {
 
     @Mock
-    private FactRuleEvaluator generator;
+    private FaReportFactRuleEvaluator generator;
 
     @InjectMocks
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     @InjectMocks
     private SalesRulesServiceBean salesRulesService;
@@ -63,8 +70,21 @@ public class FactRuleEvaluatorTest {
     @InjectMocks
     private MDRCacheServiceBean mdrCacheRuleService;
 
+
+    public boolean checkRulesAreLoaded(){
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieClasspathContainer = kieServices.getKieClasspathContainer();
+        Collection<KiePackage> kiePackages = kieClasspathContainer.getKieBase().getKiePackages();
+        List<Rule> rulesList = new ArrayList<>();
+        for (KiePackage kiePackage : kiePackages) {
+            rulesList.addAll(kiePackage.getRules());
+        }
+        return rulesList.size() > 10;
+    }
+
+
     @Test
-    public void testComputeRule() {
+    public void testComputeRule() throws RulesValidationException {
         List<TemplateRuleMapDto> templates = new ArrayList<>();
         templates.add(getTemplateRuleMapForFaReport());
         templates.add(getTemplateRuleMapForVesselTM());
@@ -78,11 +98,10 @@ public class FactRuleEvaluatorTest {
         validateFacts(facts);
         // Second Validation
         facts.clear();
-
     }
 
     @Test
-    public void testComputeExternalRule() {
+    public void testComputeExternalRule() throws RulesValidationException {
         List<TemplateRuleMapDto> templates = new ArrayList<>();
         templates.add(getTemplateExternalRuleMapForFaReport());
         templates.add(getTemplateRuleMapForVesselTM());
@@ -104,7 +123,7 @@ public class FactRuleEvaluatorTest {
     }
 
     @Test
-    public void testValidateFact() {
+    public void testValidateFact() throws RulesValidationException {
         List<TemplateRuleMapDto> templates = new ArrayList<>();
 
         TemplateType template = new TemplateType();

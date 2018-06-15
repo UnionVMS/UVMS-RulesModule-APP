@@ -26,13 +26,14 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import java.util.Collections;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 
-@Singleton
+@Stateless
 @Slf4j
 public class ExchangeRuleServiceBean implements ExchangeRuleService {
 

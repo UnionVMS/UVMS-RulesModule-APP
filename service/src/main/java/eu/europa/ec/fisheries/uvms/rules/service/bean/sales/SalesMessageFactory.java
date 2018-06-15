@@ -10,7 +10,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.sales.SalesIdType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.ValidationQualityAnalysisMapper;
@@ -18,11 +18,11 @@ import eu.europa.ec.fisheries.uvms.sales.model.mapper.ValidationQualityAnalysisM
 @Stateless
 public class SalesMessageFactory {
 
-    public static final String FLUX_GP_VALIDATION_TYPE_ERR = "ERR";
-    public static final String FLUX_GP_VALIDATION_TYPE_WAR = "WAR";
-    public static final String FLUX_GP_RESPONSE_NOK = "NOK";
-    public static final String FLUX_GP_RESPONSE_WOK = "WOK";
-    public static final String FLUX_GP_RESPONSE_OK = "OK";
+    private static final String FLUX_GP_VALIDATION_TYPE_ERR = "ERR";
+    private static final String FLUX_GP_VALIDATION_TYPE_WAR = "WAR";
+    private static final String FLUX_GP_RESPONSE_NOK = "NOK";
+    private static final String FLUX_GP_RESPONSE_WOK = "WOK";
+    private static final String FLUX_GP_RESPONSE_OK = "OK";
 
     public String createSalesQueryRequest(String request, ValidationResultDto validationResult, String pluginType) throws SalesMarshallException {
         List<ValidationQualityAnalysisType> validationQualityAnalysis = mapToValidationQualityAnalysis(validationResult);

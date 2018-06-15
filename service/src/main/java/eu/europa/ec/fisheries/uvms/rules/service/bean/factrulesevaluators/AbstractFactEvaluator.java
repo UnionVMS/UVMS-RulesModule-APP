@@ -1,65 +1,37 @@
-/*
- *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
- *
- * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
- *
- *
- */
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
+import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Results;
+import org.kie.api.builder.*;
+import org.kie.api.io.Resource;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
-import javax.ejb.*;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Singleton
-@DependsOn({"MDRCacheServiceBean"})
-public class FactRuleEvaluator {
-
-    @EJB
-    private SalesRulesService salesRulesService;
-
-    @EJB
-    private MDRCacheRuleService mdrCacheRuleService;
-
-    @EJB
-    private RulesValidator rulesValidator;
-
-    @EJB
-    private ExchangeRuleService exchangeRuleService;
+abstract class AbstractFactEvaluator {
 
     private List<String> failedRules = new ArrayList<>();
     private List<AbstractFact> exceptionsList = new ArrayList<>();
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void initializeRules(Collection<TemplateRuleMapDto> templates) {
+    public KieContainer initializeRules(Collection<TemplateRuleMapDto> templates, String containerName, String packageName) {
         Map<String, String> drlsAndRules = new HashMap<>();
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
@@ -67,11 +39,43 @@ public class FactRuleEvaluator {
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
             drlsAndRules.putAll(generateExternalRulesFromTemplate(template.getExternalRules()));
         }
-        createAllPackages(drlsAndRules);
+        return createContainer(containerName, drlsAndRules, packageName);
     }
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
+
+    public KieContainer createContainer(String containerName, Map<String, String> drlsAndRules, String packageName){
+        KieServices kieServices = KieServices.Factory.get();
+        ReleaseId releaseId = kieServices.newReleaseId(packageName, containerName, "1.0.0");
+        Resource resource = kieServices.getResources().newByteArrayResource(createKJar(releaseId, drlsAndRules));
+        KieModule module = kieServices.getRepository().addKieModule(resource);
+        KieContainer kieContainer = kieServices.newKieContainer(module.getReleaseId());
+        kieServices.getRepository().removeKieModule(module.getReleaseId());
+        return kieContainer;
+    }
+
+    public static byte[] createKJar(ReleaseId releaseId, Map<String, String> drlsAndRules) {
+        KieServices kieServices = KieServices.Factory.get();
+        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
+        kieFileSystem.generateAndWritePomXML(releaseId);
+        for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
+            String rule = ruleEntrySet.getKey();
+            String templateName = ruleEntrySet.getValue();
+            String systemPackage = "src/main/resources/rule/" + templateName + ".drl";
+            kieFileSystem.write(systemPackage, rule);
+        }
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
+        Results results = kieBuilder.getResults();
+        if (results.hasMessages(Message.Level.ERROR)) {
+            for (Message result : results.getMessages()) {
+                System.out.println(result.getText());
+            }
+            throw new RuntimeException("COMPILATION ERROR IN RULES. PLEASE ADAPT THE FAILING EXPRESSIONS AND TRY AGAIN");
+        }
+        InternalKieModule kieModule = (InternalKieModule) kieServices.getRepository().getKieModule(releaseId);
+        return kieModule.getBytes();
+    }
+
+    public Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
         if (CollectionUtils.isEmpty(rules)) {
             return Collections.emptyMap();
         }
@@ -98,8 +102,8 @@ public class FactRuleEvaluator {
         return drlsAndBrId;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
+
+    public Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
         if (CollectionUtils.isEmpty(externalRules)) {
             return Collections.emptyMap();
         }
@@ -112,51 +116,27 @@ public class FactRuleEvaluator {
         return drlsAndBrId;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void createAllPackages(Map<String, String> drlsAndRules) {
-        KieContainer container = null;
-        String drl = rulesValidator.getSanityRuleDrlFile();
-        KieFileSystem kieFileSystem = KieServices.Factory.get().newKieFileSystem();
-        String sruletemplateName = "SanityRules";
-        drlsAndRules.put(drl, sruletemplateName);
-        for (Map.Entry<String, String> ruleEntrySet : drlsAndRules.entrySet()) {
-            String rule = ruleEntrySet.getKey();
-            String templateName = ruleEntrySet.getValue();
-            String systemPackage = "src/main/resources/rule/" + templateName + ".drl";
-            kieFileSystem.write(systemPackage, rule);
-        }
-        KieBuilder kieBuilder = KieServices.Factory.get().newKieBuilder(kieFileSystem).buildAll();
-        Results results = kieBuilder.getResults();
-        if (results != null && CollectionUtils.isNotEmpty(results.getMessages())){
-            throw new RuntimeException("COMPILATION ERROR IN RULES. PLEASE ADAPT THE FAILING EXPRESSIONS AND TRY AGAIN");
-        }
-        if (drlsAndRules.size() > 0){
-            container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
-        }
-        if (container != null) {
-        	 container.getKieBase().getKiePackages();
-        }
-    }
-
-    public void validateFacts(Collection<AbstractFact> facts) {
+    public void validateFacts(Collection<AbstractFact> facts, KieContainer container) {
         KieSession ksession = null;
+        Map<String, Object> globalsMap = getGlobalsMap();
         try {
-            KieContainer container = KieServices.Factory.get().newKieContainer(KieServices.Factory.get().getRepository().getDefaultReleaseId());
+            Stopwatch stopwatch = Stopwatch.createStarted();
             ksession = container.newKieSession();
-            ksession.setGlobal("salesService", salesRulesService);
-            ksession.setGlobal("mdrService", mdrCacheRuleService);
-            ksession.setGlobal("exchangeService", exchangeRuleService);
+            if(MapUtils.isNotEmpty(globalsMap)){
+                for(Map.Entry<String, Object> entry : globalsMap.entrySet()){
+                    ksession.setGlobal(entry.getKey(), entry.getValue());
+                }
+            }
             for (AbstractFact fact : facts) { // Insert All the facts
                 ksession.insert(fact);
             }
-            ksession.fireAllRules();
+            int numberOfFiredRules = ksession.fireAllRules();
             ksession.dispose();
-
+            log.info("[DROOLS] Pure Drools Validation took : [{}] ms. In this time [{}] rules were fired.", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
         } catch (RuntimeException e) {
             String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
             log.error(errorMessage);
             throw new RulesServiceTechnicalException(errorMessage, e);
-
         } catch (Exception e) {
             log.trace("EXCEPTION IN EVALUATION OF RULE");
             Collection<?> objects = null;
@@ -171,23 +151,23 @@ public class FactRuleEvaluator {
                         failedFact.addWarningOrError("WARNING", message, StringUtils.EMPTY, "L099", StringUtils.EMPTY);
                         failedFact.setOk(false);
                         facts.remove(failedFact); // remove fact with exception and re-validate the other facts
-                        exceptionsList.add(failedFact);
+                        getExceptionsList().add(failedFact);
                     }
                 }
                 if(CollectionUtils.isNotEmpty(facts)){ // Avoid looping if the last fact launched an Exception
-                    validateFacts(facts);
+                    validateFacts(facts, container);
                 }
             }
         }
     }
 
+    abstract Map<String, Object> getGlobalsMap();
+
+    public void setExceptionsList(List<AbstractFact> exceptionsList1) {
+        exceptionsList =   exceptionsList1;
+    }
     public List<AbstractFact> getExceptionsList() {
         return exceptionsList;
     }
-    public void setExceptionsList(List<AbstractFact> exceptionsList) {
-        this.exceptionsList = exceptionsList;
-    }
-    public List<String> getFailedRules() {
-        return failedRules;
-    }
+
 }

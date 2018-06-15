@@ -10,7 +10,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;

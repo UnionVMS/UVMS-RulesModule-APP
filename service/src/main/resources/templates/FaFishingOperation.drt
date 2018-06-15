@@ -14,7 +14,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaFishingOperatio
 import java.util.Arrays;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
-global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService mdrService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
 
 template "@{tname}"
