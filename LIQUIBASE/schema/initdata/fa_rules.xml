@@ -1051,7 +1051,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="80"/>
         <column name="br_id" value="FA-L00-00-0080"/>
-        <column name="expression" value="!isEmpty(postOfficeBox) &amp;&amp; isEmpty(streetName)"/>
+        <column name="expression" value="isEmpty(postOfficeBox) &amp;&amp; streetName == null"/>
         <column name="note"
                 value="A post office box (commonly referred to as a P.O. box or a postal box) is a uniquely addressable lockable box located on the premises of a post office station."/>
         <column name="message" value="Streetname missing"/>
@@ -1065,7 +1065,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="81"/>
         <column name="br_id" value="FA-L01-00-0081"/>
-        <column name="expression" value="isEmpty(streetName)"/>
+        <column name="expression" value="streetName != null &amp;&amp; isEmpty(streetName)"/>
         <column name="note" value="Specified Structured_Address Streetname must be non empty."/>
         <column name="message" value="Streetname cannot be empty."/>
         <column name="level" value="L01"/>
@@ -2653,8 +2653,7 @@
         <column name="rule_id" value="209"/>
         <column name="br_id" value="FA-L01-00-0209"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp;
-                           specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value) > 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message" value="Invalid latitude value."/>
         <column name="level" value="L01"/>
@@ -2698,8 +2697,7 @@
         <column name="rule_id" value="212"/>
         <column name="br_id" value="FA-L01-00-0212"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp;
-                           specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value) > 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message"
                 value="Invalid longitude value."/>

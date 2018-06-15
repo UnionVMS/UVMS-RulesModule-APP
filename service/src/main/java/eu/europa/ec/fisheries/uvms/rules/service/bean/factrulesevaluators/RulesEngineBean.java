@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.MasterEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
@@ -53,6 +54,7 @@ public class RulesEngineBean {
 
     @SuppressWarnings("unchecked")
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
+        if (businessObject != null){
         log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
         Stopwatch stopwatch = Stopwatch.createStarted();
         AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
@@ -65,6 +67,8 @@ public class RulesEngineBean {
         log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
         log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
         return facts;
+        }
+        return new ArrayList<>();
     }
 
 }

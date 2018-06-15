@@ -10,7 +10,7 @@
 
 package eu.europa.fisheries.uvms.rules.service.business;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_LIST;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.reflect.Whitebox.setInternalState;
@@ -42,7 +42,7 @@ public class ActivityFaReportFactGeneratorTest {
         Map<ExtraValueType, Object> map = new HashMap<>();
         idTypeWithFlagState = new IdTypeWithFlagState();
         idTypeWithFlagState.setFlagState("FLAG");
-        map.put(ASSET_LIST, singletonList(idTypeWithFlagState));
+        map.put(ASSET_ID, singletonList(idTypeWithFlagState));
         generator.setExtraValueMap(map);
     }
 
