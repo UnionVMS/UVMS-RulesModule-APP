@@ -74,10 +74,14 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
@@ -159,7 +163,8 @@ public class RulesMessageServiceBean implements RulesMessageService {
 
     private FishingActivityRulesHelper faReportMessageHelper;
 
-    @PostConstruct public void init() {
+    @PostConstruct
+    public void init() {
         fishingActivityMapper = FishingActivityMapper.INSTANCE;
         fishingActivityIdDao = new FADocumentIDDAO(em);
         faReportMessageHelper = new FishingActivityRulesHelper();
