@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
-@DependsOn({"RulesValidator"})
+@DependsOn({"MovementsRulesValidator"})
 public class RulesTimerBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(RulesTimerBean.class);
@@ -41,7 +41,7 @@ public class RulesTimerBean {
     private ValidationService validationService;
 
     @EJB
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     private ScheduledFuture comm;
 
@@ -54,7 +54,8 @@ public class RulesTimerBean {
         CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
         comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
         CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
-        changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
+        checkRulesChangesTask.run();
+        //changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
     }
 
     @PreDestroy

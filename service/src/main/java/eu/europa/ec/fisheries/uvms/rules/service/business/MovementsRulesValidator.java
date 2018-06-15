@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
-public class RulesValidator {
-    private final static Logger LOG = LoggerFactory.getLogger(RulesValidator.class);
+public class MovementsRulesValidator {
+    private final static Logger LOG = LoggerFactory.getLogger(MovementsRulesValidator.class);
 //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
     private static final String CUSTOM_RULE_DRL_FILE = "src/main/resources/rules/CustomRules.drl";
     private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";

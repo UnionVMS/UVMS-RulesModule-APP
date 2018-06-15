@@ -29,10 +29,10 @@ public class CheckRulesChangesTask implements Runnable {
     private final static Logger LOG = LoggerFactory.getLogger(CheckRulesChangesTask.class);
 
     ValidationService validationService;
-    RulesValidator rulesValidator;
+    MovementsRulesValidator rulesValidator;
     RulesService rulesService;
 
-    public CheckRulesChangesTask(ValidationService validationService, RulesValidator rulesValidator, RulesService rulesService) {
+    public CheckRulesChangesTask(ValidationService validationService, MovementsRulesValidator rulesValidator, RulesService rulesService) {
         this.validationService = validationService;
         this.rulesValidator = rulesValidator;
         this.rulesService = rulesService;
@@ -40,13 +40,13 @@ public class CheckRulesChangesTask implements Runnable {
 
     @Override
     public void run() {
-        clearCustomRules();
-        LOG.debug("Checking for changes in sanity rules");
-        rulesValidator.updateSanityRules();
+        //clearCustomRules();
+        LOG.info("Checking for changes in sanity rules");
+        //rulesValidator.updateSanityRules();
     }
 
     private void clearCustomRules() {
-        LOG.debug("Looking outdated custom rules");
+        LOG.info("Looking outdated custom rules");
         try {
             List<CustomRuleType> customRules = validationService.getRunnableCustomRules();
             boolean updateNeeded = false;
@@ -65,7 +65,7 @@ public class CheckRulesChangesTask implements Runnable {
                     }
                 }
                 if (inactivate) {
-                    LOG.debug("Inactivating {}", rule.getName());
+                    LOG.info("Inactivating {}", rule.getName());
                     rule.setActive(false);
                     rule.setUpdatedBy("UVMS");
                     rulesService.updateCustomRule(rule);
@@ -73,7 +73,7 @@ public class CheckRulesChangesTask implements Runnable {
                 }
             }
             if (updateNeeded) {
-                LOG.debug("Clear outdated custom rules");
+                LOG.info("Clear outdated custom rules");
                 rulesValidator.updateCustomRules();
             }
         } catch (RulesServiceException | RulesFaultException e) {

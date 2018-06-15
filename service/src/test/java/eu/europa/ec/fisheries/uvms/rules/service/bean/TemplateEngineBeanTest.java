@@ -16,18 +16,21 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.MasterEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,7 +55,10 @@ public class TemplateEngineBeanTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @InjectMocks
-    TemplateEngine templateEngine;
+    MasterEvaluator templateEngine;
+
+    @InjectMocks
+    DroolsEngineInitializer droolesInitializer;
 
     @Mock
     RulesDomainModel rulesDb;
@@ -61,19 +67,13 @@ public class TemplateEngineBeanTest {
     MDRCache mdrCache;
 
     @Mock
-    FactRuleEvaluator ruleEvaluator;
+    FaReportFactRuleEvaluator ruleEvaluator;
 
     @Mock
     RulesStatusUpdater rulesStatusUpdaterBean;
 
     @Mock
     private MDRCacheRuleService cacheService;
-
-    @Test(expected = RulesValidationException.class)
-    public void testEvaluateEmptyFacts() throws RulesValidationException {
-        List<AbstractFact> facts = new ArrayList<>();
-        templateEngine.evaluateFacts(facts);
-    }
 
     @Test
     public void testEvaluateFacts() throws RulesValidationException {
@@ -95,7 +95,7 @@ public class TemplateEngineBeanTest {
         ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(getFluxFaReportMessage());
         facts.addAll(generator.generateAllFacts());
-        templateEngine.evaluateFacts(facts);
+        templateEngine.evaluateFacts(facts, BusinessObjectType.RECEIVING_FA_REPORT_MSG);
 
         assertNotNull(facts);
         AbstractFact fact = facts.get(0);
@@ -113,17 +113,6 @@ public class TemplateEngineBeanTest {
             threw = true;
         }
         assertTrue(threw);
-    }
-
-    @Test
-    public void testInitialize() {
-        try {
-            Mockito.doNothing().when(ruleEvaluator).initializeRules(Collections.<TemplateRuleMapDto>emptyList());
-            Mockito.doNothing().when(rulesDb).updateFailedRules(Collections.<String>emptyList());
-            templateEngine.initialize();
-        } catch (Exception e) {
-            assertNull(e);
-        }
     }
 
     private FLUXFAReportMessage getFluxFaReportMessage() {

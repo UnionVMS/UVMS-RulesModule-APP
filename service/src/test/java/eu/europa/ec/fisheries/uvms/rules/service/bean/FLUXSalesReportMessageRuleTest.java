@@ -11,10 +11,13 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -28,10 +31,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class FLUXSalesReportMessageRuleTest {
 
     @Mock
-    private FactRuleEvaluator validator;
+    private FaReportFactRuleEvaluator validator;
 
     @InjectMocks
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     @InjectMocks
     private SalesRulesServiceBean salesRulesService;
@@ -40,7 +43,7 @@ public class FLUXSalesReportMessageRuleTest {
     private MDRCacheServiceBean mdrCacheRuleService;
 
     @Test
-    public void testFLUXReportDocumentMustBePresent() {
+    public void testFLUXReportDocumentMustBePresent() throws RulesValidationException {
         TemplateType template = new TemplateType();
         template.setTemplateName("SalesFLUXSalesReportMessage");
         template.setType(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);
@@ -64,7 +67,7 @@ public class FLUXSalesReportMessageRuleTest {
     }
 
     @Test
-    public void testFLUXReportDocumentMustBePresentWhenEverythingIsOK() {
+    public void testFLUXReportDocumentMustBePresentWhenEverythingIsOK() throws RulesValidationException {
         TemplateType template = new TemplateType();
         template.setTemplateName("SalesFLUXSalesReportMessage");
         template.setType(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);

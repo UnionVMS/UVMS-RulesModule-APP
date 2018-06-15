@@ -20,12 +20,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service.unsecured;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.TemplateEngine;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
@@ -34,7 +32,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -50,13 +47,13 @@ public class HealthResource {
     private MDRCache mdrCache;
 
     @EJB
-    private TemplateEngine templateEngine;
-
-    @EJB
     private PropertiesBean propertiesBean;
 
+    @EJB
+    private DroolsEngineInitializer initializer;
+
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getHealth() {
         Response response;
         Map<String, Object> properties = new HashMap<>();
@@ -71,18 +68,16 @@ public class HealthResource {
 
         map.put(propertiesBean.getProperty(APPLICATION_NAME), properties);
 
-        if (rulesCacheLoaded && mdrCacheLoaded){
+        if (rulesCacheLoaded && mdrCacheLoaded) {
             response = Response.ok(map).build();
-        }
-        else {
+        } else {
             response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(map).build();
         }
         return response;
     }
 
     private boolean isRulesCacheLoaded() {
-        List<RuleError> ruleErrors = templateEngine.checkRulesAreLoaded(5);
-        return CollectionUtils.isNotEmpty(ruleErrors);
+        return initializer.checkRulesAreDeployed();
     }
 
     private boolean isMdrCacheLoaded() {

@@ -11,7 +11,7 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.MasterEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
@@ -44,29 +46,29 @@ public class RulesEngineBean {
     private MDRCacheService mdrCacheService;
 
     @EJB
-    private TemplateEngine templateEngine;
+    private MasterEvaluator masterEvaluator;
 
     public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
         return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
     }
 
     @SuppressWarnings("unchecked")
-    public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
-        if (businessObject != null){
+    public List<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> map) throws RulesValidationException {
+        if (businessObject != null) {
             log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
             Stopwatch stopwatch = Stopwatch.createStarted();
-            List<AbstractFact> facts = new ArrayList<>();
             AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
             generator.setBusinessObjectMessage(businessObject);
-            mdrCacheService.loadMDRCache();
-            generator.setExtraValueMap(extraValues);
+            mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
+            generator.setExtraValueMap(map);
             generator.setAdditionalValidationObject();
-            facts.addAll(generator.generateAllFacts());
-            templateEngine.evaluateFacts(facts);
+            List<AbstractFact> facts = new ArrayList<>(generator.generateAllFacts());
+            masterEvaluator.evaluateFacts(facts, businessObjectType);
             log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
             log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
             return facts;
         }
         return new ArrayList<>();
     }
+
 }

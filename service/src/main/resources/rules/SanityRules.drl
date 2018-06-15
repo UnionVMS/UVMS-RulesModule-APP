@@ -6,7 +6,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationSer
 global org.slf4j.Logger logger;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
-global eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService mdrService;
 global eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService exchangeService;
 
 rule "Sanity rule 1 - Time missing"

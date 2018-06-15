@@ -109,7 +109,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
@@ -155,7 +155,7 @@ public class RulesServiceBean implements RulesService {
     private RulesMessageProducer producer;
 
     @EJB
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     @EJB
     private RulesDomainModel rulesDomainModel;

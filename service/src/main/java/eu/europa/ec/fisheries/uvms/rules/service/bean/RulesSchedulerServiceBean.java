@@ -11,18 +11,13 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.service.RulesSchedulerService;
-import eu.europa.ec.fisheries.uvms.rules.service.config.RulesConfigurationCache;
-import java.util.Collection;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.transaction.Transactional;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.transaction.Transactional;
+import java.util.Collection;
 
 /**
  * @author Created by kovian, gregrinaldi on 30/05/2017
@@ -42,9 +37,6 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     @EJB
     private RulesConfigurationCache rulesConfigCache;
 
-    @EJB
-    private TemplateEngine templateEngine;
-
     @Resource
     private TimerService timerServ;
 
@@ -55,7 +47,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     @Timeout
     public void timeOut() {
         log.info("\n\n\t---> Reinitializing Rules DROOLS engine as scheduled... ("+timerServ.getAllTimers().iterator().next().getSchedule().toString()+")\n");
-        templateEngine.reInitialize();
+        //templateEngine.reInitialize();
     }
 
 

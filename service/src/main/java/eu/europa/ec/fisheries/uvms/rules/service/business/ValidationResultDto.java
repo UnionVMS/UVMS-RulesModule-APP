@@ -11,7 +11,7 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service;
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.ArrayList;
 import java.util.List;

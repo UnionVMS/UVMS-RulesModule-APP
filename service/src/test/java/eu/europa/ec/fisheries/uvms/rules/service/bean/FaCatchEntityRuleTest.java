@@ -13,12 +13,15 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.FaReportFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.RulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,10 +42,10 @@ public class FaCatchEntityRuleTest {
     private AbstractFact fact;
 
     @Mock
-    private FactRuleEvaluator generator;
+    private FaReportFactRuleEvaluator generator;
 
     @InjectMocks
-    private RulesValidator rulesValidator;
+    private MovementsRulesValidator rulesValidator;
 
     @InjectMocks
     private SalesRulesServiceBean salesRulesService;
@@ -62,7 +65,7 @@ public class FaCatchEntityRuleTest {
 
 
     @Test
-    public void testComputeRule() {
+    public void testComputeRule() throws RulesValidationException {
         List<TemplateRuleMapDto> templates = new ArrayList<>();
         templates.add(templateRuleMapDto);
 
