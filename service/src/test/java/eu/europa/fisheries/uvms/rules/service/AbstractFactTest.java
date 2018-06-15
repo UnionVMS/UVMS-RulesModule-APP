@@ -363,18 +363,13 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsInRangeHappy() {
-        assertFalse(fact.isInRange(new BigDecimal("-9"), -10, 200));
+    public void testIsInRangeWith90ShouldPassTheRule() {
+        assertFalse(!fact.isInRange(new BigDecimal("-90"), -90, 90));
     }
 
     @Test
-    public void testIsInRangeSad() {
-        assertTrue(fact.isInRange(new BigDecimal("-10"), -10, 200));
-    }
-
-    @Test
-    public void testIsInRangeNull() {
-        assertTrue(fact.isInRange(null, -10, 200));
+    public void testIsInRangeWithNullShouldFailTheRule() {
+        assertTrue(!fact.isInRange(null, -90, 90));
     }
 
     @Test
