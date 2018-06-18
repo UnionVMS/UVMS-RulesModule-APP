@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Predicates;
@@ -42,7 +41,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathReposito
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1020,37 +1018,6 @@ public abstract class AbstractFact {
             }
         }
         return true;
-    }
-
-
-    /**
-     * This method returns true of the map is null or is empty.
-     * @param map
-     * @return true | false
-     */
-    public boolean isEmpty( Map<?, ?> map ){
-        return MapUtils.isEmpty(map);
-    }
-
-    /**
-     * This method returns true if the objet is null.
-     * @param object
-     * @return true | false
-     */
-    public boolean isEmpty( Object object ){
-        if(object instanceof Collection){
-            return isEmpty((Collection)object);
-        }
-        return object == null;
-    }
-
-    /**
-     * This method returns true if the input array is null or its length is zero.
-     * @param array
-     * @return true | false
-     */
-    public boolean isEmpty( Object[] array ){
-        return array == null || array.length == 0;
     }
 
     /**
