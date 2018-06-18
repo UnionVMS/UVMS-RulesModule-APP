@@ -799,7 +799,7 @@
         <column name="rule_id" value="61"/>
         <column name="br_id" value="FA-L03-00-0061"/>
         <column name="expression"
-                value="!isEmpty(ids) &amp;&amp;
+                value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp;
                 ((mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage) &amp;&amp; !containsAtLeastOneCorrectIdOfTheRequired(&quot;CFR&quot;))
                 || (!mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)
                 &amp;&amp; (!containsAtLeastOneCorrectIdOfTheRequired(&quot;IRCS&quot;) || !containsAtLeastOneCorrectIdOfTheRequired(&quot;EXT_MARK&quot;))))"/>
@@ -2653,7 +2653,7 @@
         <column name="rule_id" value="209"/>
         <column name="br_id" value="FA-L01-00-0209"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value) > 3)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value) &lt; 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message" value="Invalid latitude value."/>
         <column name="level" value="L01"/>
@@ -2697,7 +2697,7 @@
         <column name="rule_id" value="212"/>
         <column name="br_id" value="FA-L01-00-0212"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value) > 3)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value) &lt; 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message"
                 value="Invalid longitude value."/>
