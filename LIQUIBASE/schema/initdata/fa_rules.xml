@@ -799,7 +799,7 @@
         <column name="rule_id" value="61"/>
         <column name="br_id" value="FA-L03-00-0061"/>
         <column name="expression"
-                value="!isEmpty(ids) &amp;&amp;
+                value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp;
                 ((mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage) &amp;&amp; !containsAtLeastOneCorrectIdOfTheRequired(&quot;CFR&quot;))
                 || (!mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)
                 &amp;&amp; (!containsAtLeastOneCorrectIdOfTheRequired(&quot;IRCS&quot;) || !containsAtLeastOneCorrectIdOfTheRequired(&quot;EXT_MARK&quot;))))"/>
