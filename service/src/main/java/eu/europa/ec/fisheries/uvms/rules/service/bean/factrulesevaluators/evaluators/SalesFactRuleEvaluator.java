@@ -1,9 +1,12 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.ContainerType;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.AbstractFactEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -26,9 +29,6 @@ public class SalesFactRuleEvaluator extends AbstractFactEvaluator {
     private MDRCacheRuleService mdrCacheRuleService;
 
     @EJB
-    private MovementsRulesValidator movementRulesValidator;
-
-    @EJB
     private ExchangeRuleService exchangeRuleService;
 
     @EJB
@@ -36,7 +36,7 @@ public class SalesFactRuleEvaluator extends AbstractFactEvaluator {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public KieContainer initializeRules(Collection<TemplateRuleMapDto> templates) {
-        return initializeRules(templates, "sales", "ec.europa.eu.sales");
+        return initializeRules(templates, ContainerType.SALES.getContainerName(), ContainerType.SALES.getPackageName());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

@@ -17,7 +17,6 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesPreProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
