@@ -11,12 +11,15 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.ContainerType;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -28,7 +31,7 @@ import java.util.*;
 @Slf4j
 @Stateless
 @LocalBean
-public class ResponseFactRuleEvaluator extends AbstractFactEvaluator {
+public class FaReportFactRuleEvaluator extends AbstractFactEvaluator {
 
     @EJB
     private MDRCacheRuleService mdrCacheRuleService;
@@ -39,10 +42,9 @@ public class ResponseFactRuleEvaluator extends AbstractFactEvaluator {
     @EJB
     private DroolsEngineInitializer initializer;
 
-
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public KieContainer initializeRules(Collection<TemplateRuleMapDto> templates) {
-        return initializeRules(templates, "fa-response", "ec.europa.eu.faResponse");
+        return initializeRules(templates, ContainerType.FA_REPORT.getContainerName(), ContainerType.FA_REPORT.getPackageName());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -51,17 +53,15 @@ public class ResponseFactRuleEvaluator extends AbstractFactEvaluator {
             throw new RulesValidationException("No facts available for validation");
         }
         setExceptionsList(new ArrayList<AbstractFact>());
-        validateFacts(facts, initializer.getContainerByType(ContainerType.FA_RESPONSE));
+        validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT));
         facts.addAll(getExceptionsList());
     }
 
     @Override
     Map<String, Object> getGlobalsMap() {
-        return new HashMap<String, Object>(){{
+        return  new HashMap<String, Object>() {{
             put("mdrService", mdrCacheRuleService);
             put("exchangeService", exchangeRuleService);
         }};
     }
-
 }
-

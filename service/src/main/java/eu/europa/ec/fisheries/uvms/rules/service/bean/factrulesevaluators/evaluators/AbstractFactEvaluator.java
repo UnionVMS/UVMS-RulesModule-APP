@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;

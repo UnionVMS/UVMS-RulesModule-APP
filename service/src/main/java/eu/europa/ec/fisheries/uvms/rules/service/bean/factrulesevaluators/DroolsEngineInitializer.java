@@ -7,10 +7,11 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.FaQueryFactEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.FaReportFactRuleEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.FaResponseFactRuleEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.SalesFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,7 @@ public class DroolsEngineInitializer {
     private FaReportFactRuleEvaluator faReportRuleEvaluator;
 
     @EJB
-    private ResponseFactRuleEvaluator responseRuleEvaluator;
+    private FaResponseFactRuleEvaluator responseRuleEvaluator;
 
     @EJB
     private SalesFactRuleEvaluator salesRuleEvaluator;
@@ -83,14 +84,15 @@ public class DroolsEngineInitializer {
             KieContainer salesContainer = salesRuleEvaluator.initializeRules(faResponseTemplatesAndRules);
 
             containers = new HashMap<>();
-            containers.put(ContainerType.Fa_REPORT, faReportContainer);
+            containers.put(ContainerType.FA_REPORT, faReportContainer);
             containers.put(ContainerType.FA_RESPONSE, faRespContainer);
             containers.put(ContainerType.FA_QUERY, faQueryContainer);
             containers.put(ContainerType.SALES, salesContainer);
 
             // To make sure that we have deployed all the templates!
-            assert allTemplates.isEmpty();
-
+            if(allTemplates.isEmpty()){
+                throw new RuntimeException("[FATAL] Please include all the <code>FactType</code> in the KieContainers!!");
+            }
             log.info("[END] It took " + stopwatch + " to initialize the rules.");
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
@@ -236,7 +238,7 @@ public class DroolsEngineInitializer {
 
     public boolean checkRulesAreDeployed() {
         List<Rule> deployedRules = new ArrayList<>();
-        KieContainer container = containers.get(ContainerType.Fa_REPORT);
+        KieContainer container = containers.get(ContainerType.FA_REPORT);
         Collection<KiePackage> kiePackages = container.getKieBase().getKiePackages();
         for (KiePackage kiePackage : kiePackages) {
             deployedRules.addAll(kiePackage.getRules());

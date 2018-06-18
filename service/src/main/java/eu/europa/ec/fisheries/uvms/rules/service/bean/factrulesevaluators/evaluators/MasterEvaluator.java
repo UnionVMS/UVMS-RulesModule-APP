@@ -1,5 +1,6 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -17,16 +18,13 @@ public class MasterEvaluator {
     private FaReportFactRuleEvaluator faReportRuleEvaluator;
 
     @EJB
-    private ResponseFactRuleEvaluator responseRuleEvaluator;
+    private FaResponseFactRuleEvaluator responseRuleEvaluator;
 
     @EJB
     private SalesFactRuleEvaluator salesRuleEvaluator;
 
     @EJB
     private FaQueryFactEvaluator faQueryEvaluator;
-
-    @EJB
-    private DroolsEngineInitializer droolsEngineInitializer;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evaluateFacts(List<AbstractFact> facts, BusinessObjectType businessObjectType) throws RulesValidationException {
