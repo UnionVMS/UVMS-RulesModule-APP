@@ -13,6 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
@@ -48,6 +51,18 @@ public class FaJointFishingOperationFact extends AbstractFact {
 
     private List<FACatch> relatedFishingActivityFaCatch;
 
+    public List<String> getSpecifiedFACatchSpeciesCodes(){
+        List<String> results = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(relatedFishingActivityFaCatch)){
+            for (FACatch fishingActivityFaCatch : relatedFishingActivityFaCatch) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType speciesCode = fishingActivityFaCatch.getSpeciesCode();
+                if (speciesCode != null){
+                    results.add(speciesCode.getValue());
+                }
+            }
+        }
+        return results;
+    }
 
     public FaJointFishingOperationFact() {
         setFactType();

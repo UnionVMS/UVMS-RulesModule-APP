@@ -1111,7 +1111,6 @@ public abstract class AbstractFact {
             if (codeType == null) {
                 return false;
             }
-
             if (!matchList.contains(codeType.getValue())) {
                 return false;
             }
@@ -1119,13 +1118,23 @@ public abstract class AbstractFact {
         return true;
     }
 
-    @Deprecated //numberOfDecimals(BigDecimal value)
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
-        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        return getNumberOfDecimalPlaces(bigDecimal, true);
+    }
+
+    public int getNumberOfDecimalPlaces(BigDecimal bigDecimal, boolean stripTrailingZeros) {
+        String string;
+        if (stripTrailingZeros){
+            string = bigDecimal.stripTrailingZeros().toPlainString();
+        }
+        else {
+            string = bigDecimal.toPlainString();
+        }
         int index = string.indexOf('.');
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
+    @Deprecated //getNumberOfDecimalPlaces(BigDecimal value, true)
     public int numberOfDecimals(BigDecimal value) {
         if (value == null) {
             return -1;
