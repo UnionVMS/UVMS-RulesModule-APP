@@ -343,7 +343,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="27"/>
         <column name="br_id" value="FA-L03-00-0027"/>
-        <column name="expression" value="acceptanceDateTime == null || dateNotInPast(acceptanceDateTime, 10)"/>
+        <column name="expression" value="acceptanceDateTime != null &amp;&amp; dateNotInPast(acceptanceDateTime, 10)"/>
         <column name="note"
                 value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Acceptance date/time not in the past."/>
@@ -538,7 +538,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="41"/>
         <column name="br_id" value="FA-L03-00-0041"/>
-        <column name="expression" value="creationDateTime == null || dateNotInPast(creationDateTime, 10)"/>
+        <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
         <column name="note"
                 value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Report creation date/time not in the past."/>
@@ -553,7 +553,7 @@
         <column name="rule_id" value="42"/>
         <column name="br_id" value="FA-L02-00-0042"/>
         <column name="expression"
-                value="creationDateTime == null || acceptanceDateTime == null || !acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
+                value="creationDateTime != null &amp;&amp; acceptanceDateTime != null &amp;&amp; !acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
         <column name="note"
                 value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Acceptance date/time not before report creation date/time."/>
@@ -2024,7 +2024,7 @@
         <column name="rule_id" value="161"/>
         <column name="br_id" value="FA-L01-00-0161"/>
         <column name="expression"
-                value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value) &gt; 2"/>
+                value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; getNumberOfDecimalPlaces(weightMeasure.value, true) &gt; 2"/>
         <column name="note" value="Value must be with maximum 2 decimals."/>
         <column name="message" value="Not more than 2 decimals should be provided for the weight of this catch."/>
         <column name="level" value="L01"/>
@@ -2653,7 +2653,7 @@
         <column name="rule_id" value="209"/>
         <column name="br_id" value="FA-L01-00-0209"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value) &lt; 3)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, false) &lt; 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message" value="Invalid latitude value."/>
         <column name="level" value="L01"/>
@@ -2697,7 +2697,7 @@
         <column name="rule_id" value="212"/>
         <column name="br_id" value="FA-L01-00-0212"/>
         <column name="expression"
-                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value) &lt; 3)"/>
+                value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, false) &lt; 3)"/>
         <column name="note" value="Boundaries follow the EPSG definition."/>
         <column name="message"
                 value="Invalid longitude value."/>
@@ -3252,8 +3252,7 @@
         <column name="rule_id" value="422"/>
         <column name="br_id" value="FA-L01-00-0422"/>
         <column name="expression"
-                value="!isEmpty(relatedFishingActivityFaCatchTypeCodes) &amp;&amp;  valueContainsAny(relatedFishingActivityFaCatchTypeCodes, &quot;BFT&quot;) &amp;&amp;
-                           !isEmpty(fluxLocationTypeCode) &amp;&amp; valueContainsAny(fluxLocationTypeCode, &quot;POSITION&quot;)"/>
+                value="!isEmpty(specifiedFACatchSpeciesCodes) &amp;&amp; specifiedFACatchSpeciesCodes.contains(&quot;BFT&quot;) &amp;&amp; !isEmpty(fluxLocationTypeCode) &amp;&amp; valueContainsAny(fluxLocationTypeCode, &quot;POSITION&quot;)"/>
         <column name="note"
                 value="At least one occurrence of RelatedFLUXLocation/TypeCode must be POSITION if the activity is a joint fishing operation declaration and SpecifiedFACatch/SpeciesCode is BFT."/>
         <column name="message"
