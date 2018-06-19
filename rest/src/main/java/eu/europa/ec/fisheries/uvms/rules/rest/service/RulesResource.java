@@ -16,6 +16,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesMessageService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.FaResponseValidatorAndSender;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
@@ -70,6 +71,9 @@ public class RulesResource {
     @EJB
     private DroolsEngineInitializer drlInitializer;
 
+    @EJB
+    private FaResponseValidatorAndSender faResponseValidatorAndSender;
+
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
@@ -83,7 +87,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, SS_OO_MME_GUID, RawMsgType.FA_REPORT);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaReport(validationResultDto, request);
+            fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
@@ -107,7 +111,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaQuery(validationResultDto, request, fr);
+            fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaQuery(validationResultDto, request, fr);
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);
@@ -133,7 +137,7 @@ public class RulesResource {
             List<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_RESPONSE);
-            fluxResponseMessage = messageService.generateFluxResponseMessageForFaResponse(validationResultDto, request);
+            fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaResponse(validationResultDto, request);
             XPathRepository.INSTANCE.clear(facts);
         } catch (ActivityModelMarshallException e) {
             log.error(e.getMessage(), e);

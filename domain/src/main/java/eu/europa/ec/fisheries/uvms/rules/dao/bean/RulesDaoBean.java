@@ -11,30 +11,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.dao.bean;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityExistsException;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import javax.persistence.TransactionRequiredException;
-import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.Dao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
-import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
-import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
-import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
-import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
-import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
-import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
-import eu.europa.ec.fisheries.uvms.rules.entity.Template;
-import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
-import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
+import eu.europa.ec.fisheries.uvms.rules.entity.*;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.exception.NoEntityFoundException;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchValue;
@@ -42,6 +24,12 @@ import eu.europa.ec.fisheries.uvms.rules.mapper.search.CustomRuleSearchValue;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.Stateless;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Stateless
 public class RulesDaoBean extends Dao implements RulesDao {
@@ -54,15 +42,9 @@ public class RulesDaoBean extends Dao implements RulesDao {
         try {
             em.persist(entity);
             return entity;
-        } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating. ]", e);
-        } catch (PersistenceException e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating. ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating. ]", e);
+            LOG.error("[ERROR] when creating. {}", e.getMessage());
+            throw new DaoException("[ERROR] when creating. ]", e);
         }
     }
 
@@ -77,8 +59,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             LOG.error("[ No custom rule with guid '{}' can be found ]", guid);
             throw new NoEntityFoundException("[ No custom rule with guid: " + guid + " can be found ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting CustomRule by GUID. ] '{}'", e.getMessage());
-            throw new DaoException("[ Error when getting CustomRule by GUID. ] ", e);
+            LOG.error("[ERROR] when getting CustomRule by GUID. {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting CustomRule by GUID. ] ", e);
         }
 
     }
@@ -93,8 +75,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             LOG.error("[ Ticket with guid '{}' can't be found ]", guid);
             throw new NoEntityFoundException("[ Ticket with guid '" + guid + "' can't be found ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting Ticket by ID. ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting Ticket by ID. ] ", e);
+            LOG.error("[ERROR] when getting Ticket by ID. {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting Ticket by ID. ] ", e);
         }
     }
 
@@ -109,8 +91,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             LOG.error("[ No tickets found for movements ]");
             throw new NoEntityFoundException("[ No tickets found for movements ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting Ticket by movements. ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting Ticket by movements. ] ", e);
+            LOG.error("[ERROR] when getting Ticket by movements. {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting Ticket by movements. ] ", e);
         }
     }
 
@@ -121,8 +103,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             query.setParameter("movements", movements);
             return query.getSingleResult();
         } catch (Exception e) {
-            LOG.error("[ Error when getting counting tickets by movement. ] {}", e.getMessage());
-            throw new DaoException("[ Error when counting tickets by movement. ] ", e);
+            LOG.error("[ERROR] when getting counting tickets by movement. {}", e.getMessage());
+            throw new DaoException("[ERROR] when counting tickets by movement. ] ", e);
         }
     }
 
@@ -136,8 +118,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
         } catch (NoResultException e) {
             return new ArrayList<>();
         } catch (Exception e) {
-            LOG.error("[ Error when getting Tickets by userName. ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting Tickets by userName. ] ", e);
+            LOG.error("[ERROR] when getting Tickets by userName. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting Tickets by userName. ] ", e);
         }
     }
 
@@ -147,8 +129,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             TypedQuery<Long> query = em.createNamedQuery(UvmsConstants.COUNT_OPEN_ALARMS, Long.class);
             return query.getSingleResult();
         } catch (Exception e) {
-            LOG.error("[ Error when getting counting open alarms. ] {}", e.getMessage());
-            throw new DaoException("[ Error when counting open alarms. ] ", e);
+            LOG.error("[ERROR] when getting counting open alarms. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when counting open alarms. ] ", e);
         }
     }
 
@@ -161,8 +143,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
         } catch (NoResultException e) {
             return 0;
         } catch (Exception e) {
-            LOG.error("[ Error when getting counting open tickets. ] {}", e.getMessage());
-            throw new DaoException("[ Error when counting open tickets. ] ", e);
+            LOG.error("[ERROR] when getting counting open tickets. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when counting open tickets. ] ", e);
         }
     }
 
@@ -176,8 +158,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             LOG.error("[ Alarm with guid {} can't be found ]", guid);
             throw new NoEntityFoundException("[ Alarm with guid " + guid + " can't be found ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting Alarm by ID. ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting Alarm by ID. ] ", e);
+            LOG.error("[ERROR] when getting Alarm by ID. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting Alarm by ID. ] ", e);
         }
     }
 
@@ -188,11 +170,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.flush();
             return entity;
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when updating CustomRule ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating CustomRule ]", e);
+            LOG.error("[ERROR] when updating CustomRule ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating CustomRule ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when updating CustomRule ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating CustomRule ]", e);
+            LOG.error("[ERROR] when updating CustomRule ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating CustomRule ]", e);
         }
     }
 
@@ -202,11 +184,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.remove(entity);
             em.flush();
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when removing subscription ] {}", e.getMessage());
-            throw new DaoException("[ Error when removing subscription ]", e);
+            LOG.error("[ERROR] when removing subscription ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when removing subscription ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when removing subscription ] {}", e.getMessage());
-            throw new DaoException("[ Error when removing subscription ]", e);
+            LOG.error("[ERROR] when removing subscription ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when removing subscription ]", e);
         }
     }
 
@@ -216,11 +198,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.detach(subscription);
             subscription.setId(null);
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when detaching subscription ] {}", e.getMessage());
-            throw new DaoException("[ Error when detaching subscription ]", e);
+            LOG.error("[ERROR] when detaching subscription ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when detaching subscription ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when detaching subscription ] {}", e.getMessage());
-            throw new DaoException("[ Error when detaching subscription ]", e);
+            LOG.error("[ERROR] when detaching subscription ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when detaching subscription ]", e);
         }
     }
 
@@ -231,11 +213,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.flush();
             return entity;
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when updating Ticket ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating Ticket ]", e);
+            LOG.error("[ERROR] when updating Ticket ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating Ticket ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when updating Ticket ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating Ticket ]", e);
+            LOG.error("[ERROR] when updating Ticket ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating Ticket ]", e);
         }
     }
 
@@ -246,11 +228,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.flush();
             return entity;
         } catch (IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when updating Alarm ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating Alarm ]", e);
+            LOG.error("[ERROR] when updating Alarm ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating Alarm ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when updating Alarm ] {}", e.getMessage());
-            throw new DaoException("[ Error when updating CustomAlarm ]", e);
+            LOG.error("[ERROR] when updating Alarm ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when updating CustomAlarm ]", e);
         }
     }
 
@@ -260,11 +242,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             TypedQuery<CustomRule> query = em.createNamedQuery(UvmsConstants.GET_RUNNABLE_CUSTOM_RULES, CustomRule.class);
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting runnable custom rules ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting runnable custom rules ] ", e);
+            LOG.error("[ERROR] when getting runnable custom rules ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting runnable custom rules ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting runnable custom rules ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting runnable custom rules ] ", e);
+            LOG.error("[ERROR] when getting runnable custom rules ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting runnable custom rules ] ", e);
         }
     }
 
@@ -274,11 +256,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             TypedQuery<SanityRule> query = em.createNamedQuery(UvmsConstants.FIND_ALL_SANITY_RULES, SanityRule.class);
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting sanity rules ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting sanity rules ] ", e);
+            LOG.error("[ERROR] when getting sanity rules ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting sanity rules ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting sanity rules ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting sanity rules ] ", e);
+            LOG.error("[ERROR] when getting sanity rules ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting sanity rules ] ", e);
         }
     }
 
@@ -289,11 +271,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             query.setParameter("updatedBy", updatedBy);
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting custom rules by user ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting custom rules by user ] ", e);
+            LOG.error("[ERROR] when getting custom rules by user ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting custom rules by user ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting custom rules by user ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting custom rules by user ] ", e);
+            LOG.error("[ERROR] when getting custom rules by user ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting custom rules by user ] ", e);
         }
     }
 
@@ -304,8 +286,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.persist(alarmReport);
             return alarmReport;
         } catch (Exception e) {
-            LOG.error("[ Error when persisting alarm report. ] {}", e.getMessage());
-            throw new DaoException("[ Error when persisting alarm report. ]", e);
+            LOG.error("[ERROR] when persisting alarm report. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when persisting alarm report. ]", e);
         }
     }
 
@@ -316,8 +298,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             em.persist(ticket);
             return ticket;
         } catch (Exception e) {
-            LOG.error("[ Error when persisting ticket. ] {}", e.getMessage());
-            throw new DaoException("[ Error when persisting ticket. ]", e);
+            LOG.error("[ERROR] when persisting ticket. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when persisting ticket. ]", e);
         }
     }
 
@@ -332,8 +314,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             LOG.debug("Fist position report");
             return null;
         } catch (Exception e) {
-            LOG.error("[ Error when getting error report. ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting error report. ]", e);
+            LOG.error("[ERROR] when getting error report. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting error report. ]", e);
         }
 
         return errorReport;
@@ -363,11 +345,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
 
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error getting custom rule list paginated ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting custom rule list ] ", e);
+            LOG.error("[ERROR] getting custom rule list paginated ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting custom rule list ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error getting custom rule list paginated ]  {}", e.getMessage());
-            throw new DaoException("[ Error when getting custom rule list ] ", e);
+            LOG.error("[ERROR] getting custom rule list paginated ]  {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting custom rule list ] ", e);
         }
     }
 
@@ -395,11 +377,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
 
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error getting alarm list paginated ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting alarm list ] ", e);
+            LOG.error("[ERROR] getting alarm list paginated ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting alarm list ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error getting alarm list paginated ]  {}", e.getMessage());
-            throw new DaoException("[ Error when getting alarm list ] ", e);
+            LOG.error("[ERROR] getting alarm list paginated ]  {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting alarm list ] ", e);
         }
     }
 
@@ -427,11 +409,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
 
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error getting ticket list paginated ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket list ] ", e);
+            LOG.error("[ERROR] getting ticket list paginated ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket list ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error getting ticket list paginated ]  {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket list ] ", e);
+            LOG.error("[ERROR] getting ticket list paginated ]  {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket list ] ", e);
         }
     }
 
@@ -445,11 +427,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
 
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error getting ticket list paginated ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket list ] ", e);
+            LOG.error("[ERROR] getting ticket list paginated ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket list ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error getting ticket list paginated ]  {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket list ] ", e);
+            LOG.error("[ERROR] getting ticket list paginated ]  {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket list ] ", e);
         }
     }
 
@@ -459,11 +441,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
             TypedQuery<PreviousReport> query = em.createNamedQuery(UvmsConstants.GET_ALL_PREVIOUS_REPORTS, PreviousReport.class);
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting list of previous reports ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting list ] ", e);
+            LOG.error("[ERROR] when getting list of previous reports ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting list ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting list of previous reports ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting list of previous reports ] ", e);
+            LOG.error("[ERROR] when getting list of previous reports ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting list of previous reports ] ", e);
         }
     }
 
@@ -479,11 +461,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
         } catch (NoResultException e) {
             return null;
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting ticket by guid ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket by guid ] ", e);
+            LOG.error("[ERROR] when getting ticket by guid ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket by guid ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting ticket by guid ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting ticket by guid ] ", e);
+            LOG.error("[ERROR] when getting ticket by guid ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting ticket by guid ] ", e);
         }
     }
 
@@ -499,11 +481,11 @@ public class RulesDaoBean extends Dao implements RulesDao {
         } catch (NoResultException e) {
             return null;
         } catch (IllegalArgumentException e) {
-            LOG.error("[ Error when getting alarm report by guid ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting alarm report by guid ] ", e);
+            LOG.error("[ERROR] when getting alarm report by guid ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting alarm report by guid ] ", e);
         } catch (Exception e) {
-            LOG.error("[ Error when getting alarm report by guid ] {}", e.getMessage());
-            throw new DaoException("[ Error when getting alarm report by guid ] ", e);
+            LOG.error("[ERROR] when getting alarm report by guid ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when getting alarm report by guid ] ", e);
         }
     }
 
@@ -523,14 +505,14 @@ public class RulesDaoBean extends Dao implements RulesDao {
         try {
             em.merge(report);
         } catch (EntityExistsException | IllegalArgumentException | TransactionRequiredException e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating previous report. ]", e);
+            LOG.error("[ERROR] when creating. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when creating previous report. ]", e);
         } catch (PersistenceException e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating previous report. ]", e);
+            LOG.error("[ERROR] when creating. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when creating previous report. ]", e);
         } catch (Exception e) {
-            LOG.error("[ Error when creating. ] {}", e.getMessage());
-            throw new DaoException("[ Error when creating previous report. ]", e);
+            LOG.error("[ERROR] when creating. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when creating previous report. ]", e);
         }
     }
 
@@ -541,8 +523,8 @@ public class RulesDaoBean extends Dao implements RulesDao {
             query.setParameter("ruleGuid", ruleGuid);
             return query.getSingleResult();
         } catch (Exception e) {
-            LOG.error("[ Error when getting counting tickets by movement. ] {}", e.getMessage());
-            throw new DaoException("[ Error when counting tickets by movement. ] ", e);
+            LOG.error("[ERROR] when getting counting tickets by movement. ] {}", e.getMessage());
+            throw new DaoException("[ERROR] when counting tickets by movement. ] ", e);
         }
     }
 
@@ -616,5 +598,13 @@ public class RulesDaoBean extends Dao implements RulesDao {
         } catch (ServiceException e) {
             throw new DaoException(e.getMessage(), e);
         }
+    }
+
+    public List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs) {
+        return fishingActivityIdDao.loadFADocumentIDByIdsByIds(incomingIDs);
+    }
+
+    public void createFaDocumentIdEntity(FADocumentID incomingID) throws ServiceException {
+        fishingActivityIdDao.createEntity(incomingID);
     }
 }

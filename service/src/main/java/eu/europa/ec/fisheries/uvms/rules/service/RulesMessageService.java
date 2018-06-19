@@ -35,18 +35,6 @@ public interface RulesMessageService {
 
     void evaluateSetFluxFaResponseRequest(SetFluxFaResponseMessageRequest request);
 
-    FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
-
-    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult);
-
-    FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue);
-
-    FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
-
-    void mapAndSendFLUXMdrRequestToExchange(String request, String fr);
-
-    void mapAndSendFLUXMdrResponseToMdrModule(String request);
-
     void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest);
 
     void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest);

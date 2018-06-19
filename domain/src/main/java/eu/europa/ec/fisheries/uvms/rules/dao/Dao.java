@@ -42,6 +42,8 @@ public class Dao {
 
     protected RuleStatusDao ruleStatusDao;
 
+    protected FADocumentIDDAO fishingActivityIdDao;
+
     protected FishingGearTypeCharacteristicDao fishingGearTypeCharacteristicDao;
 
     @PersistenceContext(unitName = "rulesPostgresPU")
@@ -64,5 +66,6 @@ public class Dao {
         validationMessageDao = new ValidationMessageDao(em);
         ruleStatusDao = new RuleStatusDao(em);
         fishingGearTypeCharacteristicDao = new FishingGearTypeCharacteristicDao(em);
+        fishingActivityIdDao = new FADocumentIDDAO(em);
     }
 }

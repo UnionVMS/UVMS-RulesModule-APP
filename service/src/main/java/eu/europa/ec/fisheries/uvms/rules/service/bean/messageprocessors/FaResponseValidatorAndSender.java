@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors;
 
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
@@ -14,12 +14,13 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -78,7 +79,6 @@ public class FaResponseValidatorAndSender {
     @Inject
     private CodeTypeMapper codeTypeMapper;
 
-    private static final String TRIGGERING_DROOLS_VALIDATION_ON_MESSAGE = "[INFO] Triggering drools validation on message...";
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 
     @Asynchronous

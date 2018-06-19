@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
