@@ -5356,7 +5356,8 @@
         <column name="rule_id" value="405"/>
         <column name="br_id" value="FA-L01-00-0405"/>
         <column name="expression"
-                value="(codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;)) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
+                value="id != null &amp;&amp; !stringEquals(id.value, &quot;FA-L00-00-0000&quot;) &amp;&amp;
+                (codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;)) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
         <column name="note" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
         <column name="message" value="Referenced item(s) missing."/>
         <column name="level" value="L01"/>
