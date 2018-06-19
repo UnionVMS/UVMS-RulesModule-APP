@@ -1,8 +1,8 @@
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.entity.FishingGearTypeCharacteristic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

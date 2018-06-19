@@ -10,14 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
-import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
@@ -36,6 +28,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType.ERROR;
+import static eu.europa.ec.fisheries.schema.rules.template.v1.FactType.FA_REPORT_DOCUMENT;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Gregory Rinaldi

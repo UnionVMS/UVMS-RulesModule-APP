@@ -11,10 +11,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model.dto;
 
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+
 import java.io.Serializable;
 import java.util.List;
-
-import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 
 public class TicketListResponseDto implements Serializable {
 

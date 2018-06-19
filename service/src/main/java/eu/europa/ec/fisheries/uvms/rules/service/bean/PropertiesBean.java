@@ -10,6 +10,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -17,8 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Stateless
 @Slf4j

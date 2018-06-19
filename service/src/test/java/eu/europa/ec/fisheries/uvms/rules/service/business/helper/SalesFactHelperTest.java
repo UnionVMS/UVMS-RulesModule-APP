@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.junit.Test;
 
 import java.math.BigDecimal;

@@ -13,13 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

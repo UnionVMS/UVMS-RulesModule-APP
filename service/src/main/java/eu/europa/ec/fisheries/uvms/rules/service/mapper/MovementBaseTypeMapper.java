@@ -14,12 +14,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.movement.asset.v1.AssetType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementActivityType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementActivityTypeType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementPoint;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementSourceType;
-import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
+import eu.europa.ec.fisheries.schema.movement.v1.*;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 

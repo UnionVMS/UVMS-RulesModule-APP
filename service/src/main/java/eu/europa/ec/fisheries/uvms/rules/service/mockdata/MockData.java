@@ -11,11 +11,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.mockdata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockData {
 

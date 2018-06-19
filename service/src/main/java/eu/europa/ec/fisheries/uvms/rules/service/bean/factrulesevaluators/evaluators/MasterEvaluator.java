@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;

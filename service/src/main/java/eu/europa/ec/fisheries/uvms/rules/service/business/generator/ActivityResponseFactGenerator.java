@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_QUALITY_ANALYSIS;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -34,6 +25,13 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 /**
  * @author padhyad

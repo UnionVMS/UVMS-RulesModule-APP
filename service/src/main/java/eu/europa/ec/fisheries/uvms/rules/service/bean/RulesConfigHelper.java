@@ -13,11 +13,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
-import java.util.ArrayList;
-import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class RulesConfigHelper implements ConfigHelper {

@@ -13,15 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import javax.ejb.Local;
-
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+
+import javax.ejb.Local;
 
 /**
  * Created by padhyad on 5/9/2017.
@@ -34,18 +29,6 @@ public interface RulesMessageService {
     void evaluateOutgoingFAQuery(SetFaQueryMessageRequest request);
 
     void evaluateSetFluxFaResponseRequest(SetFluxFaResponseMessageRequest request);
-
-    FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage);
-
-    FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult);
-
-    FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue);
-
-    FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage);
-
-    void mapAndSendFLUXMdrRequestToExchange(String request, String fr);
-
-    void mapAndSendFLUXMdrResponseToMdrModule(String request);
 
     void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest);
 

@@ -1,18 +1,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
-import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
-import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.jms.TextMessage;
-import java.util.List;
 
 @Singleton
 public class AssetServiceBeanHelper {

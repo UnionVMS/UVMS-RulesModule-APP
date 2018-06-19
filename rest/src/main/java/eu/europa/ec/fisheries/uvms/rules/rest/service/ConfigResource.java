@@ -12,12 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.AssetStatus;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.MobileTerminalStatus;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
@@ -26,17 +21,18 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.SubCriteria;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("/config")
 @Stateless

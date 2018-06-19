@@ -13,6 +13,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.consumer;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+
 import javax.ejb.Local;
 
 

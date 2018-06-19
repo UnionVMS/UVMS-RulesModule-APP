@@ -13,16 +13,16 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import java.util.List;
 
 @Slf4j
 @Singleton

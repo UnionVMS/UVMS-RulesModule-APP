@@ -13,10 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -25,6 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.

@@ -13,10 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.interceptor;
 
-import javax.ejb.EJB;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -27,6 +23,10 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.ejb.EJB;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 
 /**
  * Created by padhyad on 7/14/2017.

@@ -11,6 +11,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.DependsOn;
@@ -21,11 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton

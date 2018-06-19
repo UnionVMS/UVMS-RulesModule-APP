@@ -11,24 +11,17 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import javax.ejb.Local;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
-import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
-import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
-import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
-import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
-import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
-import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
-import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
-import eu.europa.ec.fisheries.uvms.rules.entity.Template;
-import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
-import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.entity.*;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchValue;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.CustomRuleSearchValue;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchValue;
+
+import javax.ejb.Local;
+import java.util.List;
+import java.util.Set;
 
 @Local
 public interface RulesDao {
@@ -169,4 +162,7 @@ public interface RulesDao {
 
     void deleteRuleStatus() throws DaoException;
 
+    List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs);
+
+    void createFaDocumentIdEntity(FADocumentID incomingID) throws ServiceException;
 }

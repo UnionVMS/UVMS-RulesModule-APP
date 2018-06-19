@@ -1,12 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
 import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class SalesFactHelper {
 

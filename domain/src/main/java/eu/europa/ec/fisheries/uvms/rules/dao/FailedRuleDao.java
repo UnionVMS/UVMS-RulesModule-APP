@@ -13,13 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.FailedRule;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/19/2017.

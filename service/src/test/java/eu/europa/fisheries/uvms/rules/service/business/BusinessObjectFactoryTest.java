@@ -11,18 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.fisheries.uvms.rules.service.business;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -43,6 +31,16 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by kovian on 28/06/2017.

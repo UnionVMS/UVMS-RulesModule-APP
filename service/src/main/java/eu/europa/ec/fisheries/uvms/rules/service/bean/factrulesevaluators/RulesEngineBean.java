@@ -13,14 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.MasterEvaluator;
@@ -31,6 +23,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author padhyad

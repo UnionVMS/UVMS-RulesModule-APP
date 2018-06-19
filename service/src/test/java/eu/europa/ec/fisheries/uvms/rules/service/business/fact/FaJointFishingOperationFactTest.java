@@ -9,13 +9,13 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sanera on 26/07/2017.

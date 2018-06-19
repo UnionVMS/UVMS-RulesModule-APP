@@ -11,10 +11,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model.dto;
 
+import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
+
 import java.io.Serializable;
 import java.util.List;
-
-import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 
 public class AlarmListResponseDto implements Serializable {
 

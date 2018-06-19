@@ -11,15 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import java.io.InputStream;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -35,6 +26,10 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.List;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)

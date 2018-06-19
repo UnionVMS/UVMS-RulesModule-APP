@@ -11,8 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
@@ -20,17 +18,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetType;
 import eu.europa.ec.fisheries.schema.exchange.movement.mobileterminal.v1.IdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.mobileterminal.v1.MobileTerminalId;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementActivityType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementActivityTypeType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementComChannelType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementMetaData;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
@@ -39,6 +27,8 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperE
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class ExchangeMovementMapper {
     private final static Logger LOG = LoggerFactory.getLogger(ExchangeMovementMapper.class);

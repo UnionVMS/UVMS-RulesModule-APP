@@ -16,10 +16,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import java.util.List;
-import java.util.Map;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by padhyad on 4/21/2017.

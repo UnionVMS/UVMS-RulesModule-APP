@@ -11,8 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalAttribute;
@@ -24,6 +22,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+
+import java.util.List;
 
 public class MovementFactMapper {
     public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid, List<String> vicinityOf) throws RulesServiceException {

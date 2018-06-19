@@ -13,11 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class ValidationResultDto {

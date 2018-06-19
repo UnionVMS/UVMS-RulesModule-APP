@@ -13,11 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IndicatorType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/21/2017.

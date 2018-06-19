@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 

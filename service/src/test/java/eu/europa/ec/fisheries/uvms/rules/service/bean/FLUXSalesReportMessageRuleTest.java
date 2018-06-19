@@ -1,10 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -23,6 +18,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by MATBUL on 22/05/2017.

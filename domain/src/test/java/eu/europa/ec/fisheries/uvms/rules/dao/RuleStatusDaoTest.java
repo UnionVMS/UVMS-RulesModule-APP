@@ -13,9 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-import static org.junit.Assert.assertEquals;
-
 import com.ninja_squad.dbsetup.DbSetup;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.ninja_squad.dbsetup.operation.Operation;
@@ -24,6 +21,9 @@ import eu.europa.ec.fisheries.uvms.rules.entity.RuleStatus;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
+
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by padhyad on 7/17/2017.

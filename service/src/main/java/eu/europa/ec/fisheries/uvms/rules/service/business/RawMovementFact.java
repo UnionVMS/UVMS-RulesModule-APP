@@ -11,9 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.Date;
-
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+
+import java.util.Date;
 
 public class RawMovementFact {
     // TODO: Add asset id to RawMovement for FLUX stuff.

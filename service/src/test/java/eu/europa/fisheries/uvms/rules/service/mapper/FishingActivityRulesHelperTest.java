@@ -10,15 +10,15 @@
 
 package eu.europa.fisheries.uvms.rules.service.mapper;
 
-import static org.jgroups.util.Util.assertTrue;
-
-import java.util.Set;
-
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+
+import java.util.Set;
+
+import static org.jgroups.util.Util.assertTrue;
 
 public class FishingActivityRulesHelperTest {
 

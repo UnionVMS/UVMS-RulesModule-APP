@@ -10,14 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
+import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
-import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 
 public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
 

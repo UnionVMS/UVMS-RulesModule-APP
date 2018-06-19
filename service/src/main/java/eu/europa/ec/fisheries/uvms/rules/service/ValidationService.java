@@ -11,9 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import javax.ejb.Local;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
@@ -22,6 +19,9 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+
+import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface ValidationService {

@@ -18,12 +18,13 @@ import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
 import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by padhyad on 5/8/2017.

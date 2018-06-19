@@ -13,14 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -30,6 +22,14 @@ import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
 
 /**
  * @author padhyad

@@ -10,9 +10,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TemplateMapperTest {
 

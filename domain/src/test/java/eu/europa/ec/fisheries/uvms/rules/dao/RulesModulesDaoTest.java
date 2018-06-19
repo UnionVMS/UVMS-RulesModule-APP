@@ -10,12 +10,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
-import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static com.ninja_squad.dbsetup.Operations.sequenceOf;
-
 import com.ninja_squad.dbsetup.operation.Operation;
 import eu.europa.ec.fisheries.uvms.BaseDAOTest;
+
+import static com.ninja_squad.dbsetup.Operations.*;
 
 public abstract class RulesModulesDaoTest extends BaseDAOTest {
 

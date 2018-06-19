@@ -11,15 +11,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
 @LocalBean
 @Stateless

@@ -11,31 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
-import eu.europa.ec.fisheries.uvms.rules.message.event.RcvFluxResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaQueryEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendFaReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFluxFaQueryMessageReceivedEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+
 import javax.ejb.Local;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
-
-import eu.europa.ec.fisheries.uvms.rules.message.event.CountTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetCustomRuleReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetFLUXMDRSyncMessageResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsAndRulesByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.GetTicketsByMovementsEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.PingReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXFAReportMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetFLUXMDRSyncMessageReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SetMovementReportReceivedEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 
 @Local
 public interface EventService {

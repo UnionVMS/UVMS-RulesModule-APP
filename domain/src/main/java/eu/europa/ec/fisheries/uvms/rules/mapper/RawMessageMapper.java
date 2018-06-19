@@ -18,12 +18,13 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.rules.entity.MessageId;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
 import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
-import java.util.Collection;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by padhyad on 5/5/2017.

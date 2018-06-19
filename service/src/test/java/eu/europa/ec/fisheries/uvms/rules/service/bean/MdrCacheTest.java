@@ -11,16 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
-import javax.jms.TextMessage;
-import java.util.List;
-
 import com.google.common.cache.CacheLoader;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -40,6 +30,14 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+
+import javax.jms.TextMessage;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by padhyad, kovian on 6/7/2017.
