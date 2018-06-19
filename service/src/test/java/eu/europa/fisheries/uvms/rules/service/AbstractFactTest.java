@@ -311,7 +311,7 @@ public class AbstractFactTest {
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
         assertFalse(result);
 
-        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
+        additionalObjectList = Collections.singletonList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
         assertTrue(result);
     }
@@ -352,6 +352,11 @@ public class AbstractFactTest {
     @Test
     public void testNumberOfDecimalsHappy() {
         assertEquals(4, fact.numberOfDecimals(new BigDecimal("10.3902")));
+    }
+
+    @Test
+    public void testNumberOfDecimalsHappy2() {
+        assertEquals(4, fact.numberOfDecimals(new BigDecimal("10.3000")));
     }
 
     @Test
