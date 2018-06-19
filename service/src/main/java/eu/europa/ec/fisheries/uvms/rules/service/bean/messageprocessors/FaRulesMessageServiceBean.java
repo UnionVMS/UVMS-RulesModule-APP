@@ -17,7 +17,7 @@ import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.dao.bean.RulesDaoBean;
+import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristics;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -103,7 +103,7 @@ public class FaRulesMessageServiceBean {
     private FaResponseValidatorAndSender faResponseValidatorAndSender;
 
     @EJB
-    private RulesDaoBean rulesDaoBean;
+    private RulesDao rulesDaoBean;
 
     private FishingActivityRulesHelper faReportMessageHelper;
 

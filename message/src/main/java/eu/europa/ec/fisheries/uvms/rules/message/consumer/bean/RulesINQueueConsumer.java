@@ -10,11 +10,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
+
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 
 @Stateless
 @Local

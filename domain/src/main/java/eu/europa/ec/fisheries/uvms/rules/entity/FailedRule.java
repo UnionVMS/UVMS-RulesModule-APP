@@ -13,17 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import java.io.Serializable;
-
 import lombok.ToString;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by padhyad on 4/19/2017.

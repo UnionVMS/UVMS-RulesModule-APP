@@ -9,11 +9,11 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertTrue;
-
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sanera on 28/08/2017.

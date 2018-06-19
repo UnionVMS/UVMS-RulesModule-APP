@@ -10,22 +10,10 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
-import java.util.Map;
-import javax.jms.Destination;
-import javax.jms.Queue;
-import javax.jms.TextMessage;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
@@ -38,6 +26,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.jms.Destination;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 01/06/2017.

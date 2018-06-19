@@ -10,14 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper
 public interface FishingActivityMapper {

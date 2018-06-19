@@ -13,26 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Set;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by padhyad on 5/3/2017.

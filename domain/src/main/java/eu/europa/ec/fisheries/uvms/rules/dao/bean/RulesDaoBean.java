@@ -600,10 +600,12 @@ public class RulesDaoBean extends Dao implements RulesDao {
         }
     }
 
+    @Override
     public List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs) {
         return fishingActivityIdDao.loadFADocumentIDByIdsByIds(incomingIDs);
     }
 
+    @Override
     public void createFaDocumentIdEntity(FADocumentID incomingID) throws ServiceException {
         fishingActivityIdDao.createEntity(incomingID);
     }

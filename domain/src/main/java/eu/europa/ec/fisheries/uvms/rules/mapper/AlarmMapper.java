@@ -11,16 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmItemType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
@@ -31,25 +21,22 @@ import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.MobileTerminalType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementActivityType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementActivityTypeType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementComChannelType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementPoint;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementTypeType;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.*;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
-import eu.europa.ec.fisheries.uvms.rules.entity.Activity;
-import eu.europa.ec.fisheries.uvms.rules.entity.AlarmItem;
-import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
-import eu.europa.ec.fisheries.uvms.rules.entity.Asset;
-import eu.europa.ec.fisheries.uvms.rules.entity.MobileTerminal;
-import eu.europa.ec.fisheries.uvms.rules.entity.MobileTerminalId;
-import eu.europa.ec.fisheries.uvms.rules.entity.Position;
-import eu.europa.ec.fisheries.uvms.rules.entity.RawMovement;
+import eu.europa.ec.fisheries.uvms.rules.entity.*;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 @LocalBean
 @Stateless

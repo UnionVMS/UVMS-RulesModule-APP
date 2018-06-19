@@ -11,9 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.event.carrier;
 
-import javax.jms.TextMessage;
-
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
+
+import javax.jms.TextMessage;
 
 public class EventMessage {
 

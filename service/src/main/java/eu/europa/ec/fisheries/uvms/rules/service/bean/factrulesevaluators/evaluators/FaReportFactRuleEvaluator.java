@@ -19,14 +19,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.ContainerType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.kie.api.runtime.KieContainer;
 
 import javax.ejb.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Stateless

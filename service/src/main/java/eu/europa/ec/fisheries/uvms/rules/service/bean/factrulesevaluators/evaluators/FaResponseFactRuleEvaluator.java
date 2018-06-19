@@ -25,7 +25,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.kie.api.runtime.KieContainer;
 
 import javax.ejb.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Stateless

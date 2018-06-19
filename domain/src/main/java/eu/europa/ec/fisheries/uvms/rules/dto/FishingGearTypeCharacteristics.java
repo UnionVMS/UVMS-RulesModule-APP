@@ -10,13 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dto;
 
+import lombok.Getter;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
 
 @Singleton
 @Startup

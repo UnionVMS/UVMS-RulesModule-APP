@@ -81,7 +81,7 @@ public class RulesMessageServiceBeanTest {
     @InjectMocks
     FaRulesMessageServiceBean messageServiceBean;
 
-    @Mock
+    @InjectMocks
     FaResponseValidatorAndSender faResponseValidatorAndSender;
 
     @Mock
@@ -213,7 +213,6 @@ public class RulesMessageServiceBeanTest {
     }
 
     @Test
-    @Ignore
     public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
         when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
         FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());

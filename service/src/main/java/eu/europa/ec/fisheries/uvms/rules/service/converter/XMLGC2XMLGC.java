@@ -11,9 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.converter;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.dozer.DozerConverter;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 public class XMLGC2XMLGC extends DozerConverter<XMLGregorianCalendar, XMLGregorianCalendar> {
 

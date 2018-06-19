@@ -1,19 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 @Singleton
 @Slf4j

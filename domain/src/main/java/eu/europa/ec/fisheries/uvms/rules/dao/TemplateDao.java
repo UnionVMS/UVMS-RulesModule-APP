@@ -10,12 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import eu.europa.ec.fisheries.uvms.rules.entity.Template;
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
+import eu.europa.ec.fisheries.uvms.rules.entity.Template;
+
+import javax.persistence.EntityManager;
+import java.util.List;
 
 public class TemplateDao extends AbstractDAO<Template> {
 

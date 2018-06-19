@@ -11,9 +11,9 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model;
 
-import javax.ejb.Local;
-
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+
+import javax.ejb.Local;
 
 @Local
 public interface Model {

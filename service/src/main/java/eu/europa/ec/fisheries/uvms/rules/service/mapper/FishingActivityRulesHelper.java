@@ -10,10 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,6 +17,10 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FishingActivityRulesHelper {
 

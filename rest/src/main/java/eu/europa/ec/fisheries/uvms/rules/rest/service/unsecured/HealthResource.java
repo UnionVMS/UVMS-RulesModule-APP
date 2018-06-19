@@ -20,8 +20,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service.unsecured;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import lombok.extern.slf4j.Slf4j;
 

@@ -15,10 +15,11 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConfigSettingsBe
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesProducerBean;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by kovian on 31/05/2017.

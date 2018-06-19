@@ -11,25 +11,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.AvailabilityType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.ConditionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CriteriaType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleActionType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleSegmentType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.LogicOperatorType;
-import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubCriteriaType;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.Interval;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleAction;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleSegment;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MockData {
 

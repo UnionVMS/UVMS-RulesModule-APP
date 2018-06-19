@@ -11,43 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateCustomRuleResponse;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CountTicketListByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateAlarmReportResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.CreateTicketResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.DeleteCustomRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmReportByAssetAndRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetCustomRulesByUserResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfAssetsNotSendingResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfOpenAlarmsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetNumberOfOpenTicketsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportByAssetGuidResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetPreviousReportsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetRunnableCustomRulesResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetSanityRulesResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketsAndRulesByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetAlarmStatusResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SetTicketStatusResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SingleAlarmResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.SingleTicketResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateCustomRuleResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateTicketCountResponse;
-import eu.europa.ec.fisheries.schema.rules.source.v1.UpdateTicketStatusByQueryResponse;
+import eu.europa.ec.fisheries.schema.rules.source.v1.*;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
@@ -58,6 +28,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.List;
 
 public class RulesDataSourceResponseMapper {
 

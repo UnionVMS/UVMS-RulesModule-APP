@@ -10,9 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
 
-import javax.ejb.Local;
-import java.util.List;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -20,6 +17,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+
+import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface MDRCacheRuleService {

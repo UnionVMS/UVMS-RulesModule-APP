@@ -10,12 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.bind.JAXBException;
-import java.util.List;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
@@ -25,6 +19,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.bind.JAXBException;
+import java.util.List;
 
 @Stateless
 @LocalBean
