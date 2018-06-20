@@ -11,7 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
@@ -62,7 +61,8 @@ public class ActivityFactMapper {
     private List<IdType> faRelatedReportIds = new ArrayList<>();
 
     private String senderReceiver = null;
-    private Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds = new HashMap<>();
+
+    private List<String> fishingActivitiesWithTripIds = new ArrayList<>();
 
     private static final String VALUE_PROP = "value";
     private static final String VALUE_INDICATOR_PROP = "valueIndicator";
@@ -2760,11 +2760,11 @@ public class ActivityFactMapper {
         return fishingGearTypeCharacteristics;
     }
 
-    public void setFishingActivitiesWithTripIds(Map<String, List<FishingActivityWithIdentifiers>> fishingActivitiesWithTripIds) {
+    public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
         this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
 
-    public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesWithTripIds() {
+    public List<String> getFishingActivitiesWithTripIds() {
         return fishingActivitiesWithTripIds;
     }
 

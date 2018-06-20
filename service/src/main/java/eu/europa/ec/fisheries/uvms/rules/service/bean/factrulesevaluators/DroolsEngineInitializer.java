@@ -28,9 +28,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author Andi Kovi
- *
+ * <p>
  * This class serves to intitialize the Fact Evaluators, check if the engine is up and running and reinitialize the engine if needed.
- *
  */
 @Singleton
 @Startup
@@ -66,7 +65,7 @@ public class DroolsEngineInitializer {
             refreshRulesValidationMessages(allTemplates);
 
             // Devide the templates by type
-            List<TemplateRuleMapDto> faResponseTemplatesAndRules = getResponseRules(allTemplates);
+            List<TemplateRuleMapDto> faResponseTemplatesAndRules = getFaResponseRules(allTemplates);
             List<TemplateRuleMapDto> faTemplatesAndRules = getFaMessageRules(allTemplates);
             List<TemplateRuleMapDto> salesTemplatesAndRules = getSalesRules(allTemplates);
             List<TemplateRuleMapDto> faQueryTemplatesAndRules = getFaQueryRules(allTemplates);
@@ -90,7 +89,7 @@ public class DroolsEngineInitializer {
             containers.put(ContainerType.SALES, salesContainer);
 
             // To make sure that we have deployed all the templates!
-            if(allTemplates.isEmpty()){
+            if (!allTemplates.isEmpty()) {
                 throw new RuntimeException("[FATAL] Please include all the <code>FactType</code> in the KieContainers!!");
             }
             log.info("[END] It took " + stopwatch + " to initialize the rules.");
@@ -107,39 +106,9 @@ public class DroolsEngineInitializer {
 
     private List<TemplateRuleMapDto> getSalesRules(List<TemplateRuleMapDto> templatesAndRules) {
         List<TemplateRuleMapDto> responseTemplates = new ArrayList<>();
+        List<FactType> salesFactsTypes = getSalesFactsTypes();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
-            if (FactType.SALES_FLUX_SALES_RESPONSE_MESSAGE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_QUERY_PARAMETER.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_SALES_QUERY_MESSAGE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_AUCTION_SALE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_REPORT_WRAPPER.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_VALIDATION_QUALITY_ANALYSIS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_VALIDATION_RESULT_DOCUMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_RESPONSE_DOCUMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_QUERY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_STRUCTURED_ADDRESS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_GEOGRAPHICAL_COORDINATE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_LOCATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FISHING_TRIP.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_CONTACT_PERSON.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_CONTACT_PARTY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_VESSEL_COUNTRY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_VESSEL_TRANSPORT_MEANS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_DELIMITED_PERIOD.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FISHING_ACTIVITY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_ORGANIZATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_PRICE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_SIZE_DISTRIBUTION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_AAP_PROCESS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_AAP_PRODUCT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_BATCH.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_EVENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_PARTY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_DOCUMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_REPORT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_PARTY.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_REPORT_DOCUMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.SALES_FLUX_SALES_REPORT_MESSAGE.equals(templatesAndRule.getTemplateType().getType())) {
+            if (salesFactsTypes.contains(templatesAndRule.getTemplateType().getType())) {
                 responseTemplates.add(templatesAndRule);
             }
         }
@@ -149,32 +118,9 @@ public class DroolsEngineInitializer {
 
     private List<TemplateRuleMapDto> getFaMessageRules(List<TemplateRuleMapDto> templatesAndRules) {
         List<TemplateRuleMapDto> faTemplates = new ArrayList<>();
+        List<FactType> faReportFacts = getFaReportFactsTypes();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
-            if (FactType.FA_REPORT_DOCUMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_VALIDATION_QUALITY_ANALYSIS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FLUX_FA_REPORT_MESSAGE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.VESSEL_TRANSPORT_MEANS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.STRUCTURED_ADDRESS.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FISHING_GEAR.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.GEAR_CHARACTERISTIC.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.GEAR_PROBLEM.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_CATCH.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FISHING_TRIP.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FLUX_LOCATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FLUX_CHARACTERISTIC.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.VESSEL_STORAGE_CHARACTERISTIC.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_DEPARTURE.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_ENTRY_TO_SEA.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_FISHING_OPERATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_JOINT_FISHING_OPERATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_RELOCATION.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_DISCARD.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_EXIT_FROM_SEA.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_NOTIFICATION_OF_ARRIVAL.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_ARRIVAL.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_LANDING.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_TRANSHIPMENT.equals(templatesAndRule.getTemplateType().getType()) ||
-                    FactType.FA_NOTIFICATION_OF_TRANSHIPMENT.equals(templatesAndRule.getTemplateType().getType())) {
+            if (faReportFacts.contains(templatesAndRule.getTemplateType().getType())) {
                 faTemplates.add(templatesAndRule);
             }
         }
@@ -182,7 +128,7 @@ public class DroolsEngineInitializer {
         return faTemplates;
     }
 
-    private List<TemplateRuleMapDto> getResponseRules(List<TemplateRuleMapDto> templatesAndRules) {
+    private List<TemplateRuleMapDto> getFaResponseRules(List<TemplateRuleMapDto> templatesAndRules) {
         List<TemplateRuleMapDto> responseTemplates = new ArrayList<>();
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             if (FactType.FA_RESPONSE.equals(templatesAndRule.getTemplateType().getType()) ||
@@ -244,5 +190,73 @@ public class DroolsEngineInitializer {
             deployedRules.addAll(kiePackage.getRules());
         }
         return CollectionUtils.isNotEmpty(deployedRules);
+    }
+
+
+    private List<FactType> getFaReportFactsTypes() {
+        return new ArrayList<FactType>() {{
+            add(FactType.FA_REPORT_DOCUMENT);
+            add(FactType.FLUX_FA_REPORT_MESSAGE);
+            add(FactType.VESSEL_TRANSPORT_MEANS);
+            add(FactType.STRUCTURED_ADDRESS);
+            add(FactType.FISHING_GEAR);
+            add(FactType.GEAR_CHARACTERISTIC);
+            add(FactType.GEAR_PROBLEM);
+            add(FactType.FA_CATCH);
+            add(FactType.FISHING_TRIP);
+            add(FactType.FLUX_LOCATION);
+            add(FactType.FLUX_CHARACTERISTIC);
+            add(FactType.VESSEL_STORAGE_CHARACTERISTIC);
+            add(FactType.FISHING_ACTIVITY);
+            add(FactType.FA_DEPARTURE);
+            add(FactType.FA_ENTRY_TO_SEA);
+            add(FactType.FA_FISHING_OPERATION);
+            add(FactType.FA_JOINT_FISHING_OPERATION);
+            add(FactType.FA_RELOCATION);
+            add(FactType.FA_DISCARD);
+            add(FactType.FA_EXIT_FROM_SEA);
+            add(FactType.FA_NOTIFICATION_OF_ARRIVAL);
+            add(FactType.FA_ARRIVAL);
+            add(FactType.FA_LANDING);
+            add(FactType.FA_TRANSHIPMENT);
+            add(FactType.FA_NOTIFICATION_OF_TRANSHIPMENT);
+        }};
+    }
+
+    private List<FactType> getSalesFactsTypes() {
+        return new ArrayList<FactType>() {{
+            add(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);
+            add(FactType.SALES_FLUX_REPORT_DOCUMENT);
+            add(FactType.SALES_FLUX_PARTY);
+            add(FactType.SALES_REPORT);
+            add(FactType.SALES_DOCUMENT);
+            add(FactType.SALES_PARTY);
+            add(FactType.SALES_EVENT);
+            add(FactType.SALES_BATCH);
+            add(FactType.SALES_AAP_PRODUCT);
+            add(FactType.SALES_AAP_PROCESS);
+            add(FactType.SALES_SIZE_DISTRIBUTION);
+            add(FactType.SALES_PRICE);
+            add(FactType.SALES_FLUX_ORGANIZATION);
+            add(FactType.SALES_FISHING_ACTIVITY);
+            add(FactType.SALES_DELIMITED_PERIOD);
+            add(FactType.SALES_VESSEL_TRANSPORT_MEANS);
+            add(FactType.SALES_VESSEL_COUNTRY);
+            add(FactType.SALES_CONTACT_PARTY);
+            add(FactType.SALES_CONTACT_PERSON);
+            add(FactType.SALES_FISHING_TRIP);
+            add(FactType.SALES_FLUX_LOCATION);
+            add(FactType.SALES_FLUX_GEOGRAPHICAL_COORDINATE);
+            add(FactType.SALES_STRUCTURED_ADDRESS);
+            add(FactType.SALES_QUERY);
+            add(FactType.SALES_FLUX_RESPONSE_DOCUMENT);
+            add(FactType.SALES_VALIDATION_RESULT_DOCUMENT);
+            add(FactType.SALES_VALIDATION_QUALITY_ANALYSIS);
+            add(FactType.SALES_REPORT_WRAPPER);
+            add(FactType.SALES_AUCTION_SALE);
+            add(FactType.SALES_FLUX_SALES_QUERY_MESSAGE);
+            add(FactType.SALES_QUERY_PARAMETER);
+            add(FactType.SALES_FLUX_SALES_RESPONSE_MESSAGE);
+        }};
     }
 }

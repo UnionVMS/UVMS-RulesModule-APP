@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="kovian" id="faidspertrip_1101">
+        <createTable tableName="faidspertrip" remarks="Contains the rows of faType, reportType and tripdId.">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="faidspertrip_pk"/>
+            </column>
+            <column name="trip_id_scheme_id_fatype_report_type" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="faidspertrip" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="faidspertrip_11019" author="kovian">
+        <createIndex tableName="faidspertrip" indexName="faidspertrip_trip_id_idx">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="faidspertrip" indexName="faidspertrip_trip_id_scheme_id_fatype_report_type_idx">
+            <column name="trip_id_scheme_id_fatype_report_type"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

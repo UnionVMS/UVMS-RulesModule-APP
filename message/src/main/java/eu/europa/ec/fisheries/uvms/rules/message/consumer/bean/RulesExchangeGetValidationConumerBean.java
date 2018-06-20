@@ -15,7 +15,8 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.context.MappedDiagnosticContext;
-import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.GetValidationResultsByRawGuid;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
@@ -32,44 +33,25 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import java.util.UUID;
 
 /**
  * Message driven bean that receives all messages that
- * have a message selector, for which no other MDB has been defined.
+ * have no message selector.
  */
 @MessageDriven(mappedName = MessageConstants.QUEUE_MODULE_RULES, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"), // default: 10
-        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "1000"), // default: 1000
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "10"), // default: 5
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"), // default: 10
-        @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector NOT IN ('ReceiveSalesReportRequest', 'ValidationResultsByRawGuid')")
+        @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector = 'ValidationResultsByRawGuid'")
 })
-public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
+public class RulesExchangeGetValidationConumerBean implements MessageListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesDefaultSelectorEventConsumerBean.class);
-
-    @Inject
-    @ReceiveSalesQueryEvent
-    private Event<EventMessage> receiveSalesQueryEvent;
+    private static final Logger LOG = LoggerFactory.getLogger(RulesEventMessageConsumerBean.class);
 
     @Inject
-    @ReceiveSalesReportEvent
-    private Event<EventMessage> receiveSalesReportEvent;
-
-    @Inject
-    @ReceiveSalesResponseEvent
-    private Event<EventMessage> receiveSalesResponseEvent;
-
-    @Inject
-    @SendSalesReportEvent
-    private Event<EventMessage> sendSalesReportEvent;
-
-    @Inject
-    @SendSalesResponseEvent
-    private Event<EventMessage> sendSalesResponseEvent;
+    @GetValidationResultsByRawGuid
+    private Event<EventMessage> getValidationResultsByRawMsgGuid;
 
     @Inject
     @ErrorEvent
@@ -77,38 +59,23 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
+        String id = UUID.randomUUID().toString();
+        MDC.put("clientName", id);
         MDC.remove("requestId");
-        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
-            LOG.info("Request message method: " + method.value());
+            LOG.info("\nRequest message method: {}", method.value());
             switch (method) {
-                case RECEIVE_SALES_QUERY:
-                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
-                    break;
-                case RECEIVE_SALES_RESPONSE:
-                    receiveSalesResponseEvent.fire(new EventMessage(textMessage));
-                    break;
-                case RECEIVE_SALES_REPORT:
-                    receiveSalesReportEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SEND_SALES_REPORT:
-                    sendSalesReportEvent.fire(new EventMessage(textMessage));
-                    break;
-                case SEND_SALES_RESPONSE:
-                    sendSalesResponseEvent.fire(new EventMessage(textMessage));
+                case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
+                    getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());
                     errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));
                     break;
-            }
-            if (method == null) {
-                LOG.error("[ Request method is null ]");
-                errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules: Request method is null")));
             }
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
@@ -127,3 +94,4 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
     }
 
 }
+

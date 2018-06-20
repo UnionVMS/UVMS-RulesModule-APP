@@ -109,13 +109,12 @@ public class RulesActivityServiceBean {
     public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesForTrips(Object requestMessage) {
         GetFishingActivitiesForTripResponse response = null;
         FLUXFAReportMessage fluxFaRepMessage;
-        if (requestMessage != null && requestMessage instanceof FLUXFAReportMessage) {
+        if (requestMessage instanceof FLUXFAReportMessage) {
             fluxFaRepMessage = (FLUXFAReportMessage) requestMessage;
         } else {
             log.error("Either FLUXFAReportMessage is null or is not of the right type!");
             return MapUtils.EMPTY_MAP;
         }
-
         try {
             String strReq = ActivityModuleRequestMapper.mapToGetFishingActivitiesForTripRequest(collectFaIdsAndTripIdsFromMessage(fluxFaRepMessage));
             if (StringUtils.isEmpty(strReq)) {

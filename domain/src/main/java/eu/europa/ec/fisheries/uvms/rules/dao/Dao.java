@@ -46,6 +46,8 @@ public class Dao {
 
     protected FishingGearTypeCharacteristicDao fishingGearTypeCharacteristicDao;
 
+    protected FaIdsPerTripDao faIdsPerTripDao;
+
     @PersistenceContext(unitName = "rulesPostgresPU")
     private EntityManager postgres;
 
@@ -67,5 +69,6 @@ public class Dao {
         ruleStatusDao = new RuleStatusDao(em);
         fishingGearTypeCharacteristicDao = new FishingGearTypeCharacteristicDao(em);
         fishingActivityIdDao = new FADocumentIDDAO(em);
+        faIdsPerTripDao = new FaIdsPerTripDao(em);
     }
 }
