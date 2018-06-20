@@ -89,7 +89,7 @@ public class DroolsEngineInitializer {
             containers.put(ContainerType.SALES, salesContainer);
 
             // To make sure that we have deployed all the templates!
-            if (allTemplates.isEmpty()) {
+            if (!allTemplates.isEmpty()) {
                 throw new RuntimeException("[FATAL] Please include all the <code>FactType</code> in the KieContainers!!");
             }
             log.info("[END] It took " + stopwatch + " to initialize the rules.");
