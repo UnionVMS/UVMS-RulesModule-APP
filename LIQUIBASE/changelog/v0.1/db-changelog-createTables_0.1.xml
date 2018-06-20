@@ -24,7 +24,6 @@
     <include file="\schema\tables\messageid.xml"/>
 
     <include file="\schema\tables\fadocumentid.xml"/>
-    <include file="\schema\tables\faidspertrip.xml"/>
 
     <include file="\schema\tables\fishinggeartypecharacteristic.xml"/>
     <include file="\schema\tables\rulestatus.xml"/>
