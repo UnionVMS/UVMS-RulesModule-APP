@@ -13,18 +13,25 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class FishingActivityRulesHelper {
 
-    public Set<FADocumentID> mapToFishingActivityId(FLUXFAReportMessage fluxfaReportMessage) {
+    private static final String DASH = "-";
+
+    public Set<FADocumentID> collectReportIds(FLUXFAReportMessage fluxfaReportMessage) {
         Set<FADocumentID> ids = new HashSet<>();
         if (fluxfaReportMessage != null){
             FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
@@ -57,6 +64,43 @@ public class FishingActivityRulesHelper {
                 if (idType != null){
                     ids.add(new FADocumentID(idType.getValue(), faFluxMessageId));
                 }
+            }
+        }
+    }
+
+    public List<String> collectFaIdsAndTripIds(FLUXFAReportMessage fluxFaRepMessage) {
+        List<String> idsReqList = new ArrayList<>();
+        FLUXReportDocument fluxReportDocument = fluxFaRepMessage.getFLUXReportDocument();
+        List<FAReportDocument> faReportDocuments = fluxFaRepMessage.getFAReportDocuments();
+        if (fluxReportDocument == null || CollectionUtils.isEmpty(faReportDocuments)) {
+            return idsReqList;
+        }
+        // Purpose code
+        //CodeType purposeCode = fluxReportDocument.getPurposeCode();
+        // Check if we need the purpose codes! For now it seems not!
+        //List<String> purposeCodes = purposeCode != null && StringUtils.isNotEmpty(purposeCode.getValue()) ?
+        //Arrays.asList(purposeCode.getValue()) : Arrays.asList("1", "3", "5", "9");
+
+        // FishinActivity type, tripId, tripSchemeId
+        for (FAReportDocument faRepDoc : faReportDocuments) {
+            collectFromActivityList(idsReqList, faRepDoc.getTypeCode(), faRepDoc.getSpecifiedFishingActivities());
+        }
+        return idsReqList;
+    }
+
+    private void collectFromActivityList(List<String> aIdsPerTripEntityList, CodeType faReportTypeCode, List<FishingActivity> specifiedFishingActivities) {
+        if (CollectionUtils.isEmpty(specifiedFishingActivities) || faReportTypeCode == null || StringUtils.isEmpty(faReportTypeCode.getValue())) {
+            return;
+        }
+        String faReportTypeCodeStr = faReportTypeCode.getValue();
+        for (FishingActivity fishAct : specifiedFishingActivities) {
+            CodeType typeCode = fishAct.getTypeCode();
+            FishingTrip fishTrip = fishAct.getSpecifiedFishingTrip();
+            if (typeCode == null || StringUtils.isEmpty(typeCode.getValue()) || fishTrip == null || CollectionUtils.isEmpty(fishTrip.getIDS())) {
+                continue;
+            }
+            for (IDType tripId : fishTrip.getIDS()) {
+                aIdsPerTripEntityList.add(tripId.getValue() +DASH+ tripId.getSchemeID() +DASH+ typeCode.getValue() +DASH+ faReportTypeCodeStr);
             }
         }
     }

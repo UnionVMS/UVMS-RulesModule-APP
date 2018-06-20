@@ -125,10 +125,6 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private Event<EventMessage> sendSalesResponseEvent;
 
     @Inject
-    @GetValidationResultsByRawGuid
-    private Event<EventMessage> getValidationResultsByRawMsgGuid;
-
-    @Inject
     @ErrorEvent
     private Event<EventMessage> errorEvent;
 
@@ -207,10 +203,6 @@ public class RulesEventMessageConsumerBean implements MessageListener {
                     sendSalesResponseEvent.fire(new EventMessage(textMessage));
                     break;
                 /** end deprecation **/
-
-                case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
-                    getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
-                    break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());
                     errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));

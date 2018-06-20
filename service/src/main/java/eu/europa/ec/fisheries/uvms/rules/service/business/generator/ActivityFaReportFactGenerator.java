@@ -13,8 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
+import eu.europa.ec.fisheries.uvms.rules.entity.FaIdsPerTrip;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -30,7 +30,10 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
@@ -80,7 +83,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             }
         }
 
-        Map<String, List<FishingActivityWithIdentifiers>> stringListMap = (Map<String, List<FishingActivityWithIdentifiers>>) extraValueMap.get(TRIP_ID);
+        List<String> stringListMap = (List<String>) extraValueMap.get(TRIP_ID);
         activityFactMapper.setFishingActivitiesWithTripIds(stringListMap);
 
         String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);

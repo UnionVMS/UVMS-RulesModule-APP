@@ -63,8 +63,7 @@ import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -234,7 +233,7 @@ public class RulesMessageServiceBeanTest {
 
         boolean guidOrFluxOnValue = messageServiceBean.shouldUseFluxOn(validationResultDto);
 
-        assertEquals(true, guidOrFluxOnValue);
+        assertTrue(guidOrFluxOnValue);
     }
 
     @Test

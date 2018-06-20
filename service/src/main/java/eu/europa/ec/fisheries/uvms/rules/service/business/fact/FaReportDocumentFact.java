@@ -26,16 +26,15 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by padhyad on 4/7/2017.
  */
 @Slf4j
 public class FaReportDocumentFact extends AbstractFact {
+
+    private static final String DASH = "-";
 
     private CodeType typeCode;
 
@@ -74,7 +73,9 @@ public class FaReportDocumentFact extends AbstractFact {
     private List<IdType> nonUniqueIdsList;
 
     private List<IdType> faSpecifiedFishingTripIds;
-    private Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip;
+
+    private List<String> faTypesPerTrip;
+
     // String = tripId, Integer = Arrival declarations for this trip ID
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
     // String = tripId, Integer = Departure declarations for this trip ID
@@ -106,6 +107,22 @@ public class FaReportDocumentFact extends AbstractFact {
         for (IdType idType : specifiedFishingTripIds) {
             List<FishingActivityWithIdentifiers> fishingActivityWithIdentifiers = faTypesPerTrip.get(idType.getValue());
             if (fishingActivityWithIdentifiers != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsMoreThenOneDeclarationPerTrip(List<String> faTypesPerTripFromDb, FishingActivityType faType) {
+        if (CollectionUtils.isEmpty(faTypesPerTripFromDb) || CollectionUtils.isEmpty(faSpecifiedFishingTripIds) || faType == null) {
+            return false;
+        }
+        List<String> messageTripIds = new ArrayList<>();
+        for (IdType faSpecifiedFishingTripId : faSpecifiedFishingTripIds) {
+            messageTripIds.add(faSpecifiedFishingTripId.getValue() +DASH+ faSpecifiedFishingTripId.getSchemeId() +DASH+ faType.toString() +DASH+ "DECLARATION");
+        }
+        for (String tripId : messageTripIds) {
+            if(faTypesPerTripFromDb.contains(tripId)){
                 return true;
             }
         }
@@ -294,11 +311,11 @@ public class FaReportDocumentFact extends AbstractFact {
         this.faSpecifiedFishingTripIds = faSpecifiedFishingTripIds;
     }
 
-    public void setFaTypesPerTrip(Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip) {
+    public void setFaTypesPerTrip(List<String> faTypesPerTrip) {
         this.faTypesPerTrip = faTypesPerTrip;
     }
 
-    public Map<String, List<FishingActivityWithIdentifiers>> getFaTypesPerTrip() {
+    public List<String> getFaTypesPerTrip() {
         return faTypesPerTrip;
     }
 

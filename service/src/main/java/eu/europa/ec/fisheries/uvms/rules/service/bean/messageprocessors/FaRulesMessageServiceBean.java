@@ -67,6 +67,7 @@ public class FaRulesMessageServiceBean {
 
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
     private static final List<String> RULES_TO_USE_ON_VALUE = Arrays.asList("SALE-L01-00-0011", "SALE-L01-00-0400", "SALE-L01-00-0010");
+
     private FishingActivityMapper fishingActivityMapper;
 
     @PersistenceContext(unitName = "rulesPostgresPU")
@@ -122,22 +123,19 @@ public class FaRulesMessageServiceBean {
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
-            List<IDType> reportGUID = null;
-            if (fluxfaReportMessage.getFLUXReportDocument() != null) {
-                reportGUID = fluxfaReportMessage.getFLUXReportDocument().getIDS();
-            }
-            log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + reportGUID + " ].");
+            List<IDType> messageGUID = getReportMessageIds(fluxfaReportMessage);
 
-            Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FADocumentID> fishingActivityIds = rulesDaoBean.loadFADocumentIDByIdsByIds(incomingIDs);
-            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-            extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
-            extraValues.put(FA_REPORT_DOCUMENT_IDS, fishingActivityMapper.mapToFishingActivityIdDto(fishingActivityIds));
-            extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
-            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds));
+            log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
 
-            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
+            Set<FADocumentID> idsFromIncommingMessage = faReportMessageHelper.collectReportIds(fluxfaReportMessage);
+            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+
+            List<String> faIdsPerTripsFromMessage = faReportMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
+            List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
+
+            Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
+            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
+
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);
 
@@ -157,12 +155,14 @@ public class FaRulesMessageServiceBean {
             FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
             XPathRepository.INSTANCE.clear(faReportFacts);
 
-            faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(reportGUID));
+            faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(messageGUID));
 
-            incomingIDs.removeAll(fishingActivityIds);
-            for (FADocumentID incomingID : incomingIDs) {
-                rulesDaoBean.createFaDocumentIdEntity(incomingID);
-            }
+            // So that we don't duplicate in the DB.
+            idsFromIncommingMessage.removeAll(reportAndMessageIdsFromDB);
+            faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
+
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
+            rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
 
         } catch (UnmarshalException e) {
             log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
@@ -176,6 +176,14 @@ public class FaRulesMessageServiceBean {
         log.info("[END] Finished evaluating FLUXFAReportMessage with GUID [[ " + logGuid + " ]].");
     }
 
+    private List<IDType> getReportMessageIds(FLUXFAReportMessage fluxfaReportMessage) {
+        List<IDType> reportGUID = null;
+        if (fluxfaReportMessage.getFLUXReportDocument() != null) {
+            reportGUID = fluxfaReportMessage.getFLUXReportDocument().getIDS();
+        }
+        return reportGUID;
+    }
+
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
@@ -183,16 +191,19 @@ public class FaRulesMessageServiceBean {
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
-            Set<FADocumentID> incomingIDs = faReportMessageHelper.mapToFishingActivityId(fluxfaReportMessage);
-            List<FADocumentID> fishingActivityIds = rulesDaoBean.loadFADocumentIDByIdsByIds(incomingIDs);
-            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-            extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
-            extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
-            extraValues.put(FA_REPORT_DOCUMENT_IDS, fishingActivityMapper.mapToFishingActivityIdDto(fishingActivityIds));
-            extraValues.put(TRIP_ID, activityService.getFishingActivitiesForTrips(fishingActivityIds));
+            List<IDType> messageGUID = getReportMessageIds(fluxfaReportMessage);
 
-            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
+            log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
+
+            Set<FADocumentID> idsFromIncommingMessage = faReportMessageHelper.collectReportIds(fluxfaReportMessage);
+            List<String> faIdsPerTripsFromMessage = faReportMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
+
+            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+            List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
+
+            Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
+
+            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info("[INFO] The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
@@ -340,6 +351,19 @@ public class FaRulesMessageServiceBean {
         }
     }
 
+    private Map<ExtraValueType, Object> populateExtraValueTypeObjectMap(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
+                                                                        List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncommingMessage) {
+        Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+        extraValues.put(SENDER_RECEIVER, senderReceiver);
+        extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
+        extraValues.put(FA_REPORT_DOCUMENT_IDS, fishingActivityMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
+        extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
+        if (isIncommingMessage) {
+            extraValues.put(TRIP_ID, faIdsPerTripsListFromDb);
+        }
+        return extraValues;
+    }
+
     private boolean isCorrectUUID(List<IDType> ids) {
         boolean uuidIsCorrect = false;
         String uuidString = null;
@@ -443,4 +467,5 @@ public class FaRulesMessageServiceBean {
         }
         return false;
     }
+
 }

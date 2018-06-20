@@ -3039,7 +3039,7 @@
         <column name="br_id" value="FA-L03-00-0241"/>
         <column name="expression"
                 value="codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp;
-                    (containsMoreThenOneDeclarationPerTrip(faSpecifiedFishingTripIds, faTypesPerTrip, FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.DEPARTURE))"/>
+                    (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.DEPARTURE))"/>
         <column name="note"
                 value="If departure declaration (FA-L02-00-0233). This does not apply for corrections."/>
         <column name="message" value="More than one departure was found for this trip."/>
@@ -4022,7 +4022,7 @@
         <column name="br_id" value="FA-L03-00-0306"/>
         <column name="expression"
                 value="codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp;
-            (containsMoreThenOneDeclarationPerTrip(faSpecifiedFishingTripIds, faTypesPerTrip, FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.ARRIVAL))"/>
+            (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.ARRIVAL))"/>
         <column name="note" value="This rule does not apply for corrections."/>
         <column name="message" value="There can only be one arrival declaration in the trip."/>
         <column name="level" value="L03"/>
