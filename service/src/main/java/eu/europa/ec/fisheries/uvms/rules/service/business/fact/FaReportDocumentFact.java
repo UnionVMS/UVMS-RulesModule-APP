@@ -13,11 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -32,53 +38,33 @@ import java.util.*;
  * Created by padhyad on 4/7/2017.
  */
 @Slf4j
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class FaReportDocumentFact extends AbstractFact {
 
     private static final String DASH = "-";
 
     private CodeType typeCode;
-
     private List<IdType> relatedReportIDs;
-
     private Date acceptanceDateTime;
-
     private String acceptanceDateTimeString;
-
     private List<IdType> ids;
-
     private FLUXReportDocument relatedFLUXReportDocument;
-
     private CodeType purposeCode;
-
     private IdType referencedID;
-
     private Date creationDateTime;
-
     private String creationDateTimeString;
-
     private List<IdType> ownerFluxPartyIds;
-
     private VesselTransportMeans specifiedVesselTransportMeans;
-
     private List<FishingActivity> specifiedFishingActivities;
-
     private List<Date> specifiedAndRealtedFishActOccurrenceDateTimes;
-
     private List<String> specifiedFishingActivitiesTypes;
-
     private List<IdType> relatedFLUXReportDocumentIDs;
-
     private IdType relatedFLUXReportDocumentReferencedID;
-
     private List<IdType> nonUniqueIdsList;
-
     private List<IdType> faSpecifiedFishingTripIds;
-
     private List<String> faTypesPerTrip;
-
-    // String = tripId, Integer = Arrival declarations for this trip ID
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
-    // String = tripId, Integer = Departure declarations for this trip ID
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
 
     public boolean containsMoreThenOneArrivalOrDeparture(FishingActivityType type) {
