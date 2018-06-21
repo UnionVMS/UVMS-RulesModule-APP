@@ -13,10 +13,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.config;
 
 public enum ExtraValueType {
     ASSET_ID,
-    FA_REPORT_DOCUMENT_IDS,
+    FA_QUERY_AND_REPORT_IDS,
     TRIP_ID,
     SENDER_RECEIVER,
     ORIGINATING_PLUGIN,
     FISHING_GEAR_TYPE_CHARACTERISTICS,
-    CREATION_DATE_OF_MESSAGE
+    CREATION_DATE_OF_MESSAGE,
+    RESPONSE_IDS
 }

@@ -54,7 +54,6 @@ public class SalesFactRuleEvaluator extends AbstractFactEvaluator {
     Map<String, Object> getGlobalsMap() {
         return new HashMap<String, Object>() {{
             put("mdrService", mdrCacheRuleService);
-            put("exchangeService", exchangeRuleService);
             put("salesService", salesRulesService);
         }};
     }
