@@ -1231,7 +1231,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="93"/>
         <column name="br_id" value="FA-L02-00-0093"/>
-        <column name="expression" value="isSubActivity &amp;&amp; typeCode != null &amp;&amp;
+        <column name="expression" value="subActivity &amp;&amp; typeCode != null &amp;&amp;
                                              valueContainsAny(typeCode,&quot;GEAR_SHOT&quot;,&quot;GEAR_RETRIEVAL&quot;,&quot;RELOCATION&quot;,&quot;START_ACTIVITY&quot;)"/>
         <column name="note"
                 value="check if sub-activity is GEAR_SHOT, GEAR_RETRIEVAL, RELOCATION, START_FISHING, START_ACTIVITY"/>
@@ -1248,7 +1248,7 @@
         <column name="rule_id" value="94"/>
         <column name="br_id" value="FA-L01-00-0094"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; isDateProvided &amp;&amp; occurrenceDateTime == null"/>
+                value="!subActivity &amp;&amp; occurrenceDateTime == null"/>
         <column name="note" value="check presence"/>
         <column name="message" value="Invalid occurrence date/time of the activity."/>
         <column name="level" value="L01"/>
@@ -1262,7 +1262,7 @@
         <column name="rule_id" value="95"/>
         <column name="br_id" value="FA-L02-00-0095"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; !isDateProvided &amp;&amp; !existsAtLeastOneValid(delimitedPeriods, true, true) &amp;&amp; anyRelatedActivityIsMissingBothDates()"/>
+                value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime != null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
         <column name="note" value="check presence"/>
         <column name="message"
                 value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
@@ -1270,14 +1270,14 @@
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
         <column name="template_id" value="13"/>
-        <column name="property_names" value="delimitedPeriods,relatedFishingActivities"/>
+        <column name="property_names" value="delimitedPeriods, relatedFishingActivities"/>
         <column name="disabled" value="false"/>
     </insert>
     <insert tableName="rule">
         <column name="rule_id" value="96"/>
         <column name="br_id" value="FA-L02-00-0096"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; isEmpty(relatedFLUXLocations) &amp;&amp; (relatedActivityFluxLocations == null || relatedActivityFluxLocations.empty == true)"/>
+                value="!subActivity &amp;&amp; isEmpty(relatedFLUXLocations) &amp;&amp; (relatedActivityFluxLocations == null || relatedActivityFluxLocations.empty == true)"/>
         <column name="note" value="Check Presence"/>
         <column name="message"
                 value="The activity or sub-activity must have a location."/>
@@ -1430,9 +1430,9 @@
         <column name="rule_id" value="107"/>
         <column name="br_id" value="FA-L02-00-0107"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
                     !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (!isDateProvided &amp;&amp; validateDelimitedPeriod(delimitedPeriods, true, false))"/>
+                    (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriods, true, false))"/>
         <column name="note" value="Check presence"/>
         <column name="message"
                 value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
@@ -1447,9 +1447,9 @@
         <column name="rule_id" value="108"/>
         <column name="br_id" value="FA-L02-00-0108"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
                     !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (!isDateProvided &amp;&amp; validateDelimitedPeriod(delimitedPeriods, false, true))"/>
+                    (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriods, false, true))"/>
         <column name="note" value="Check presence"/>
         <column name="message"
                 value="EndDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
@@ -1464,7 +1464,7 @@
         <column name="rule_id" value="111"/>
         <column name="br_id" value="FA-L00-00-0111"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; isEmpty(relatedFishingTrip)"/>
+                value="!subActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; isEmpty(relatedFishingTrip)"/>
         <column name="note" value="Check presence"/>
         <column name="message" value="Fishing trip details missing."/>
         <column name="level" value="L00"/>
@@ -1478,7 +1478,7 @@
         <column name="rule_id" value="112"/>
         <column name="br_id" value="FA-L02-00-0112"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
+                value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
                 &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;))
                 || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
         <column name="note"
@@ -1491,11 +1491,12 @@
         <column name="property_names" value="relatedFishingActivities"/>
         <column name="disabled" value="false"/>
     </insert>
+
     <insert tableName="rule">
         <column name="rule_id" value="113"/>
         <column name="br_id" value="FA-L01-00-0113"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; !isEmpty(fluxCharacteristicsTypeCode) &amp;&amp; listIdContainsAll(fluxCharacteristicsTypeCode, &quot;FA_CHARACTERISTIC&quot;)"/>
+                value="!subActivity &amp;&amp; !isEmpty(fluxCharacteristicsTypeCode) &amp;&amp; listIdContainsAll(fluxCharacteristicsTypeCode, &quot;FA_CHARACTERISTIC&quot;)"/>
         <column name="note" value="Check attribute list id"/>
         <column name="message" value="Characteristics TypeCode has an invalid listID."/>
         <column name="level" value="L01"/>
@@ -1990,9 +1991,7 @@
         <column name="rule_id" value="159"/>
         <column name="br_id" value="FA-L00-00-0159"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
-                    !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (weightMeasure == null || weightMeasure.value == null)"/>
+                value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)"/>
         <column name="note"
                 value="For all types of activities the live weight must be reported, except for LANDING and TRANSHIPMENT declarations."/>
         <column name="message"
@@ -2037,8 +2036,8 @@
         <column name="br_id" value="FA-L02-00-0162"/>
         <column name="expression"
                 value="codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; isGreaterThanZero(weightMeasure) &amp;&amp;
-                    !((isSubActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;RELOCATION&quot;)) ||
-                    (!isSubActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;AREA_ENTRY&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;AREA_EXIT&quot;)))
+                    !((subActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;RELOCATION&quot;)) ||
+                    (!subActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;AREA_ENTRY&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;AREA_EXIT&quot;)))
                     &amp;&amp; (weighingMeansCode == null || isEmpty(weighingMeansCode.value))"/>
         <column name="note"
                 value="Check presence. Must be present if species BFT and not used in relocation sub-activity.."/>
@@ -2058,8 +2057,8 @@
         <column name="br_id" value="FA-L01-00-0163"/>
         <column name="expression"
                 value="weighingMeansCode != null &amp;&amp; listIdContainsAll(weighingMeansCode, &quot;WEIGHT_MEANS&quot;)"/>
-        <column name="note" value="FA_Catch Weighing_MeansCode attribute listID must be  WEIGHT_MEANS."/>
-        <column name="message" value="FA_Catch Weighing_MeansCode attribute listID must be  WEIGHT_MEANS."/>
+        <column name="note" value="FA_Catch Weighing_MeansCode attribute listID must be WEIGHT_MEANS."/>
+        <column name="message" value="FA_Catch Weighing_MeansCode attribute listID must be WEIGHT_MEANS."/>
         <column name="level" value="L01"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
@@ -2086,9 +2085,7 @@
         <column name="rule_id" value="165"/>
         <column name="br_id" value="FA-L00-00-0165"/>
         <column name="expression"
-                value="!((isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) ||
-                    (!isSubActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;)))
-                    &amp;&amp; isEmpty(sizeDistributionClassCode)"/>
+                value="!((subActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot;) || (!subActivity &amp;&amp; fishingActivityTypeCode != null &amp;&amp; (fishingActivityTypeCode.value == &quot;AREA_ENTRY&quot; || fishingActivityTypeCode.value == &quot;AREA_EXIT&quot;))) &amp;&amp; isEmpty(sizeDistributionClassCode)"/>
         <column name="note" value="Specified Size_Distribution ClassCode must be present."/>
         <column name="message" value="Size distribution information missing."/>
         <column name="level" value="L00"/>
@@ -2191,7 +2188,7 @@
         <column name="rule_id" value="253"/>
         <column name="br_id" value="FA-L02-00-0253"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;RELOCATION&quot;) &amp;&amp;
+                value="!subActivity &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;RELOCATION&quot;) &amp;&amp;
                     codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; isEmpty(destinationFLUXLocations)"/>
         <column name="note" value="Does not apply to catches declared in a related fishing activity (sub-activity)"/>
         <column name="message" value="Destination location of the BFT catches missing."/>
@@ -2205,7 +2202,7 @@
         <column name="rule_id" value="411"/>
         <column name="br_id" value="FA-L02-00-0411"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
+                value="!subActivity &amp;&amp; speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
                     (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null
                     &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
         <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
@@ -3900,7 +3897,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="299"/>
         <column name="br_id" value="FA-L02-00-0299"/>
-        <column name="expression" value="validateDelimitedPeriod(delimitedPeriods, true, false)"/>
+        <column name="expression" value="!validDelimitedPeriod(delimitedPeriods, true, false)"/>
         <column name="level" value="L02"/>
         <column name="error_type" value="WARNING"/>
         <column name="rule_created_on"/>
@@ -5517,11 +5514,8 @@
         <column name="rule_id" value="410"/>
         <column name="br_id" value="FA-L02-00-0410"/>
         <column name="expression"
-                value="!isSubActivity &amp;&amp; speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; unitQuantity == null &amp;&amp;
-                    (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null
-                    &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
-        <column name="note" value="Units (number of fish) must be provided for Bluefin tuna in GFCM.
-                                       This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
+                value="!subActivity &amp;&amp; speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;))"/>
+        <column name="note" value="Units (number of fish) must be provided for Bluefin tuna in GFCM. This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
         <column name="message"
                 value="Units (number of fish) must be provided for Bluefin tuna in GFCM"/>
         <column name="level" value="L02"/>
