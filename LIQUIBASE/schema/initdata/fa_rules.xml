@@ -452,8 +452,7 @@
         <column name="rule_id" value="35"/>
         <column name="br_id" value="FA-L03-00-0035"/>
         <column name="expression"
-                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;3&quot;
-                           || purposeCode.value == &quot;5&quot;) &amp;&amp; referencedID == null"/>
+                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;3&quot; || purposeCode.value == &quot;5&quot;) &amp;&amp; (referencedID == null || (referencedID != null &amp;&amp; isEmpty(referencedID.value)))"/>
         <column name="note"
                 value="Check presence. Must be present if correction, deletion or cancellation of an earlier report. PurposeCode = 1, 3 or 5."/>
         <column name="message" value="Referenced Report ID missing. PurposeCode = 1, 3 or 5."/>
