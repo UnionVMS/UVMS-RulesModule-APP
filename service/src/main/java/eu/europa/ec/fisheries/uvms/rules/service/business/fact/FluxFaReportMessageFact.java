@@ -41,6 +41,8 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     private List<IdType> nonUniqueIdsList;
 
+    private List<IdType> relatedFaQueryIDs;
+
     public FluxFaReportMessageFact() {
         setFactType();
     }
@@ -122,5 +124,13 @@ public class FluxFaReportMessageFact extends AbstractFact {
 
     public void setReferencedID(IdType referencedID) {
         this.referencedID = referencedID;
+    }
+
+    public List<IdType> getRelatedFaQueryIDs() {
+        return relatedFaQueryIDs;
+    }
+
+    public void setRelatedFaQueryIDs(List<IdType> relatedFaQueryIDs) {
+        this.relatedFaQueryIDs = relatedFaQueryIDs;
     }
 }

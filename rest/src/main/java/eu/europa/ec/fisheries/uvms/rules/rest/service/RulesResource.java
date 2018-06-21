@@ -35,7 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.FaResponseValidatorAndSender;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.FaResponseValidatorAndSenderBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -73,7 +73,7 @@ public class RulesResource {
     private DroolsEngineInitializer drlInitializer;
 
     @EJB
-    private FaResponseValidatorAndSender faResponseValidatorAndSender;
+    private FaResponseValidatorAndSenderBean faResponseValidatorAndSender;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})

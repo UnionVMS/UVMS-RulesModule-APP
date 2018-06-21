@@ -14,11 +14,10 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
@@ -27,16 +26,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_QUERY_ID;
+
 public class FishingActivityRulesHelper {
 
     private static final String DASH = "-";
 
-    public Set<FADocumentID> collectReportIds(FLUXFAReportMessage fluxfaReportMessage) {
+    public Set<FADocumentID> mapToFADocumentID(FLUXFAReportMessage fluxfaReportMessage) {
         Set<FADocumentID> ids = new HashSet<>();
         if (fluxfaReportMessage != null){
             FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
             if (fluxReportDocument != null){
-                mapFluxReportDocumentIDS(ids, fluxReportDocument, FAUUIDType.FLUX_FA_REPORT_MESSAGE_ID);
+                mapFluxReportDocumentIDS(ids, fluxReportDocument, FAUUIDType.FA_MESSAGE_ID);
             }
             List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
             if (CollectionUtils.isNotEmpty(faReportDocuments)){
@@ -46,11 +47,23 @@ public class FishingActivityRulesHelper {
         return ids;
     }
 
+    public Set<FADocumentID> mapQueryToFADocumentID(FLUXFAQueryMessage faQueryMessage) {
+        Set<FADocumentID> idsList = new HashSet<>();
+        if (faQueryMessage != null){
+            FAQuery faQuery = faQueryMessage.getFAQuery();
+            if (faQuery != null && faQuery.getID() != null){
+                IDType faQueryId = faQuery.getID();
+                idsList.add(new FADocumentID(faQueryId.getValue(), FA_QUERY_ID));
+            }
+        }
+        return idsList;
+    }
+
     private void mapFaReportDocuments(Set<FADocumentID> ids, List<FAReportDocument> faReportDocuments) {
         if (CollectionUtils.isNotEmpty(faReportDocuments)){
             for (FAReportDocument faReportDocument : faReportDocuments) {
                 if (faReportDocument != null){
-                    mapFluxReportDocumentIDS(ids, faReportDocument.getRelatedFLUXReportDocument(), FAUUIDType.FA_FLUX_REPORT_ID);
+                    mapFluxReportDocumentIDS(ids, faReportDocument.getRelatedFLUXReportDocument(), FAUUIDType.FA_REPORT_ID);
                 }
             }
         }
@@ -59,10 +72,14 @@ public class FishingActivityRulesHelper {
     private void mapFluxReportDocumentIDS(Set<FADocumentID> ids, FLUXReportDocument fluxReportDocument, FAUUIDType faFluxMessageId) {
         if (fluxReportDocument != null){
             List<IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
+            IDType referencedID = fluxReportDocument.getReferencedID();
             if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
                 IDType idType = fluxReportDocumentIDS.get(0);
                 if (idType != null){
                     ids.add(new FADocumentID(idType.getValue(), faFluxMessageId));
+                }
+                if(referencedID != null){
+                    ids.add(new FADocumentID(referencedID.getValue(), faFluxMessageId));
                 }
             }
         }
@@ -105,4 +122,17 @@ public class FishingActivityRulesHelper {
         }
     }
 
+    public Set<FADocumentID> mapToResponseToFADocumentID(FLUXResponseMessage fluxResponseMessageObj) {
+        Set<FADocumentID> faDocumentID = new HashSet<>();
+        if(fluxResponseMessageObj != null && fluxResponseMessageObj.getFLUXResponseDocument() != null && CollectionUtils.isNotEmpty(fluxResponseMessageObj.getFLUXResponseDocument().getIDS())){
+            IDType responseId = fluxResponseMessageObj.getFLUXResponseDocument().getIDS().get(0);
+            faDocumentID.add(new FADocumentID(responseId.getValue(), FAUUIDType.FA_RESPONSE));
+
+            IDType responseReferenceId = fluxResponseMessageObj.getFLUXResponseDocument().getReferencedID();
+            if(responseReferenceId != null){
+                faDocumentID.add(new FADocumentID(responseReferenceId.getValue(), FAUUIDType.FA_RESPONSE));
+            }
+        }
+        return faDocumentID;
+    }
 }

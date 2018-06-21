@@ -39,9 +39,6 @@ public class FaReportFactRuleEvaluator extends AbstractFactEvaluator {
     private MDRCacheRuleService mdrCacheRuleService;
 
     @EJB
-    private ExchangeRuleService exchangeRuleService;
-
-    @EJB
     private DroolsEngineInitializer initializer;
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -63,7 +60,6 @@ public class FaReportFactRuleEvaluator extends AbstractFactEvaluator {
     Map<String, Object> getGlobalsMap() {
         return  new HashMap<String, Object>() {{
             put("mdrService", mdrCacheRuleService);
-            put("exchangeService", exchangeRuleService);
         }};
     }
 }

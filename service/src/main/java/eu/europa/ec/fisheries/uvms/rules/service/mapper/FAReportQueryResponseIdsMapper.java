@@ -20,9 +20,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface FishingActivityMapper {
+public interface FAReportQueryResponseIdsMapper {
 
-    FishingActivityMapper INSTANCE = Mappers.getMapper(FishingActivityMapper.class);
+    FAReportQueryResponseIdsMapper INSTANCE = Mappers.getMapper(FAReportQueryResponseIdsMapper.class);
 
     @Mappings({
             @Mapping(target = "value", source = "uuid"),

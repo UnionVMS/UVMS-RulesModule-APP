@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
-import eu.europa.ec.fisheries.uvms.rules.entity.FaIdsPerTrip;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -70,15 +69,17 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_ID);
         activityFactMapper.setAssetList(idTypeWithFlagStates);
 
-        List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_REPORT_DOCUMENT_IDS);
+        List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS);
 
         if (CollectionUtils.isNotEmpty(idTypeList)){
             for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : idTypeList) {
-                if (FAUUIDType.FA_FLUX_REPORT_ID.name().equals(idType.getSchemeId())){
+                String type = idType.getSchemeId();
+                if (FAUUIDType.FA_REPORT_ID.name().equals(type)){
                     activityFactMapper.getFaRelatedReportIds().add(idType);
-                }
-                else if (FAUUIDType.FLUX_FA_REPORT_MESSAGE_ID.name().equals(idType.getSchemeId())) {
+                } else if (FAUUIDType.FA_MESSAGE_ID.name().equals(type)) {
                     activityFactMapper.getFaReportMessageIds().add(idType);
+                } else if(FAUUIDType.FA_QUERY_ID.name().equals(type)){
+                    activityFactMapper.getFaQueryIds().add(idType);
                 }
             }
         }

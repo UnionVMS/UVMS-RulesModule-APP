@@ -253,7 +253,7 @@ public class RulesEventServiceBean implements EventService {
     public void setFluxFaResponseMessageReceived(@Observes @RcvFluxResponseEvent EventMessage message) {
         try {
             SetFluxFaResponseMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFluxFaResponseMessageRequest.class);
-            faRulesMessageServiceBean.evaluateSetFluxFaResponseRequest(request);
+            faRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
