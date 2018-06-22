@@ -1461,15 +1461,14 @@
     <insert tableName="rule">
         <column name="rule_id" value="111"/>
         <column name="br_id" value="FA-L00-00-0111"/>
-        <column name="expression"
-                value="!subActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; isEmpty(relatedFishingTrip)"/>
+        <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; isEmpty(relatedFishingTrip)"/>
         <column name="note" value="Check presence"/>
         <column name="message" value="Fishing trip details missing."/>
         <column name="level" value="L00"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
         <column name="template_id" value="13"/>
-        <column name="property_names" value="specifiedFishingTrip,relatedFishingTrip"/>
+        <column name="property_names" value="relatedFishingTrip"/>
         <column name="disabled" value="false"/>
     </insert>
     <insert tableName="rule">
