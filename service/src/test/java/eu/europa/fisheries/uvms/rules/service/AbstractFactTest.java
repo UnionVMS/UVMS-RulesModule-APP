@@ -10,12 +10,45 @@
 
 package eu.europa.fisheries.uvms.rules.service;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -32,16 +65,14 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
 
 public class AbstractFactTest {
 
@@ -86,6 +117,66 @@ public class AbstractFactTest {
         measureType.setValue(new BigDecimal("200"));
         measureType.setUnitCode("K");
         assertFalse(fact.unitCodeContainsAll(Arrays.asList(measureType), "K"));
+    }
+
+    @Test
+    public void testValidDelimitedPeriod(){
+        FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        FishingActivity related1 = new FishingActivity();
+        DelimitedPeriod delimitedPeriod = new DelimitedPeriod();
+        delimitedPeriod.setStartDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        related1.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
+        fishingActivityFact.setRelatedFishingActivities(Collections.singletonList(related1));
+        assertFalse(fishingActivityFact.validDelimitedPeriod(fishingActivityFact.getRelatedFishingActivities()));
+    }
+
+    @Test
+    public void testValidDelimitedPeriod2() throws DatatypeConfigurationException {
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+
+        FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        FishingActivity related1 = new FishingActivity();
+        DelimitedPeriod delimitedPeriod = new DelimitedPeriod();
+        delimitedPeriod.setStartDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        delimitedPeriod.setEndDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        related1.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
+        fishingActivityFact.setRelatedFishingActivities(Collections.singletonList(related1));
+        assertTrue(fishingActivityFact.validDelimitedPeriod(fishingActivityFact.getRelatedFishingActivities()));
+    }
+
+    @Test
+    public void testValidDelimitedPeriod3(){
+        FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        FishingActivity related1 = new FishingActivity();
+        related1.setSpecifiedDelimitedPeriods(null);
+        fishingActivityFact.setRelatedFishingActivities(Collections.singletonList(related1));
+        assertFalse(fishingActivityFact.validDelimitedPeriod(fishingActivityFact.getRelatedFishingActivities()));
+    }
+
+    @Test
+    public void testValidDelimitedPeriod4(){
+        FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        FishingActivity related1 = new FishingActivity();
+        related1.setSpecifiedDelimitedPeriods(null);
+        related1.setOccurrenceDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        fishingActivityFact.setRelatedFishingActivities(Collections.singletonList(related1));
+        assertTrue(fishingActivityFact.validDelimitedPeriod(fishingActivityFact.getRelatedFishingActivities()));
+    }
+
+    @Test
+    public void testValidDelimitedPeriod5(){
+        FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        FishingActivity related1 = new FishingActivity();
+        related1.setSpecifiedDelimitedPeriods(null);
+        related1.setOccurrenceDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+
+        FishingActivity related2 = new FishingActivity();
+        related2.setSpecifiedDelimitedPeriods(null);
+
+        fishingActivityFact.setRelatedFishingActivities(Arrays.asList(related1, related2));
+        assertFalse(fishingActivityFact.validDelimitedPeriod(fishingActivityFact.getRelatedFishingActivities()));
     }
 
     @Test
@@ -187,18 +278,21 @@ public class AbstractFactTest {
 
 
     @Test
-    public void testValidateDelimitedPeriodShouldReturnFalseWhenStartEndDatePresent() {
+    public void testValidateDelimitedPeriodShouldReturnFalseWhenStartEndDatePresent() throws DatatypeConfigurationException {
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
 
         List<DelimitedPeriod> periods = new ArrayList<>();
 
         DelimitedPeriod period = new DelimitedPeriod();
-        period.setStartDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        period.setStartDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
 
-        period.setEndDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
+        period.setEndDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
 
         periods.add(period);
 
-        assertFalse(fact.validateDelimitedPeriod(periods, true, true));
+        assertFalse(!fact.validDelimitedPeriod(periods, true, true));
     }
 
     @Test
@@ -212,7 +306,7 @@ public class AbstractFactTest {
 
         periods.add(period);
 
-        assertTrue(fact.validateDelimitedPeriod(periods, true, false));
+        assertTrue(!fact.validDelimitedPeriod(periods, true, false));
     }
 
     @Test
@@ -485,7 +579,7 @@ public class AbstractFactTest {
     @Test
     public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
 
-        assertTrue(fact.validateDelimitedPeriod(null, true, false));
+        assertTrue(!fact.validDelimitedPeriod(null, true, false));
     }
 
     @Test
@@ -516,7 +610,7 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e36fab361-7338327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
+        assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test
@@ -526,7 +620,7 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
+        assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test

@@ -13,17 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 
-import java.util.List;
-
-/**
- * @autor padhyad
- * @author Gregory Rinaldi
- */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FluxLocationFact extends AbstractFact {
 
     private CodeType typeCode;
@@ -39,53 +39,8 @@ public class FluxLocationFact extends AbstractFact {
         setFactType();
     }
 
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-    public IdType getCountryID() {
-        return countryID;
-    }
-    public void setCountryID(IdType countryID) {
-        this.countryID = countryID;
-    }
-    public IdType getId() {
-        return id;
-    }
-    public void setId(IdType id) {
-        this.id = id;
-    }
-    public FLUXGeographicalCoordinate getSpecifiedPhysicalFLUXGeographicalCoordinate() {
-        return specifiedPhysicalFLUXGeographicalCoordinate;
-    }
-    public void setSpecifiedPhysicalFLUXGeographicalCoordinate(FLUXGeographicalCoordinate specifiedPhysicalFLUXGeographicalCoordinate) {
-        this.specifiedPhysicalFLUXGeographicalCoordinate = specifiedPhysicalFLUXGeographicalCoordinate;
-    }
-    public StructuredAddress getPhysicalStructuredAddress() {
-        return physicalStructuredAddress;
-    }
-    public void setPhysicalStructuredAddress(StructuredAddress physicalStructuredAddress) {
-        this.physicalStructuredAddress = physicalStructuredAddress;
-    }
-    public List<CodeType> getApplicableFLUXCharacteristicTypeCode() {
-        return applicableFLUXCharacteristicTypeCode;
-    }
-    public void setApplicableFLUXCharacteristicTypeCode(List<CodeType> applicableFLUXCharacteristicTypeCode) {
-        this.applicableFLUXCharacteristicTypeCode = applicableFLUXCharacteristicTypeCode;
-    }
     public boolean getIsSpecifiedFluxLocFromFaCatch() {
         return isSpecifiedFluxLocFromFaCatch;
-    }
-    public void setSpecifiedFluxLocFromFaCatch(boolean specifiedFluxLocFromFaCatch) {
-        isSpecifiedFluxLocFromFaCatch = specifiedFluxLocFromFaCatch;
-    }
-    public CodeType getRfmo() {
-        return rfmo;
-    }
-    public void setRfmo(CodeType rfmo) {
-        this.rfmo = rfmo;
     }
 
     @Override

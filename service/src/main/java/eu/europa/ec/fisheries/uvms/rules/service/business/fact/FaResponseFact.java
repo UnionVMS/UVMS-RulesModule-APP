@@ -13,18 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 
-import java.util.Date;
-import java.util.List;
-
-/**
- * Created by padhyad on 4/21/2017.
- */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class FaResponseFact extends AbstractFact {
 
     private List<IdType> ids;
@@ -67,67 +68,4 @@ public class FaResponseFact extends AbstractFact {
         this.factType = FactType.FA_RESPONSE;
     }
 
-    public IdType getReferencedID() {
-        return referencedID;
-    }
-    public void setReferencedID(IdType referencedID) {
-        this.referencedID = referencedID;
-    }
-    public FaResponseFact() {
-        setFactType();
-    }
-    public List<IdType> getIds() {
-        return ids;
-    }
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-    public CodeType getResponseCode() {
-        return responseCode;
-    }
-    public void setResponseCode(CodeType responseCode) {
-        this.responseCode = responseCode;
-    }
-    public Date getCreationDateTime() {
-        return creationDateTime;
-    }
-    public void setCreationDateTime(Date creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-    public String getCreationDateTimeString() {
-        return creationDateTimeString;
-    }
-    public void setCreationDateTimeString(String creationDateTimeString) {
-        this.creationDateTimeString = creationDateTimeString;
-    }
-    public List<IdType> getFluxPartyIds() {
-        return fluxPartyIds;
-    }
-    public void setFluxPartyIds(List<IdType> fluxPartyIds) {
-        this.fluxPartyIds = fluxPartyIds;
-    }
-    public List<ValidationResultDocument> getRelatedValidationResultDocuments() {
-        return relatedValidationResultDocuments;
-    }
-    public void setRelatedValidationResultDocuments(List<ValidationResultDocument> relatedValidationResultDocuments) {
-        this.relatedValidationResultDocuments = relatedValidationResultDocuments;
-    }
-    public List<IdType> getValidatorIDs() {
-        return validatorIDs;
-    }
-    public void setValidatorIDs(List<IdType> validatorIDs) {
-        this.validatorIDs = validatorIDs;
-    }
-    public FLUXParty getRespondentFLUXParty() {
-        return respondentFLUXParty;
-    }
-    public void setRespondentFLUXParty(FLUXParty respondentFLUXParty) {
-        this.respondentFLUXParty = respondentFLUXParty;
-    }
-    public List<IdType> getIdsExistinigInTheDb() {
-        return idsExistinigInTheDb;
-    }
-    public void setIdsExistinigInTheDb(List<IdType> idsExistinigInTheDb) {
-        this.idsExistinigInTheDb = idsExistinigInTheDb;
-    }
 }
