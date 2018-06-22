@@ -13,8 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -22,45 +26,26 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
-import java.util.List;
-
-/**
- * @autor padhyad
- * @author Gregory Rinaldi
- */
 @Slf4j
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class FaTranshipmentFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<FLUXLocation> faCtchSpecifiedFLUXLocations;
-
     private List<VesselTransportMeans> relatedVesselTransportMeans;
-
     private List<FACatch> specifiedFACatches;
-
     private List<CodeType> faCatchTypeCodes ;
-
     private List<CodeType> fluxLocationTypeCodes;
-
     private List<CodeType> vesselTransportMeansRoleCodes;
-
     private List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes;
-
     private List<CodeType> fluxCharacteristicTypeCodes;
-
     private List<CodeType> facatchSpeciesCode;
-
     private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
-
     private List<IdType> specifiedFlCharSpecifiedLocatIDs;
-
     private List<CodeType> specifiedFlCharSpecifiedLocatTypeCodes;
-
 
     public FaTranshipmentFact() {
         setFactType();
@@ -72,11 +57,11 @@ public class FaTranshipmentFact extends AbstractFact {
      * @return
      */
     public boolean checkFLUXLocationForFaCatch(List<FACatch> specifiedFACatches){
-        if(CollectionUtils.isEmpty(specifiedFACatches)) {
+        if (CollectionUtils.isEmpty(specifiedFACatches)) {
             return false;
         }
-        for(FACatch faCatch : specifiedFACatches){
-            if(CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
+        for (FACatch faCatch : specifiedFACatches){
+            if (CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations())){
                 return false;
             }
         }
@@ -88,102 +73,4 @@ public class FaTranshipmentFact extends AbstractFact {
         this.factType = FactType.FA_TRANSHIPMENT;
     }
 
-
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-    public List<VesselTransportMeans> getRelatedVesselTransportMeans() {
-        return relatedVesselTransportMeans;
-    }
-
-    public void setRelatedVesselTransportMeans(List<VesselTransportMeans> relatedVesselTransportMeans) {
-        this.relatedVesselTransportMeans = relatedVesselTransportMeans;
-    }
-    public List<FACatch> getSpecifiedFACatches() {
-        return specifiedFACatches;
-    }
-    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
-        this.specifiedFACatches = specifiedFACatches;
-    }
-    public List<CodeType> getFaCatchTypeCodes() {
-        return faCatchTypeCodes;
-    }
-    public void setFaCatchTypeCodes(List<CodeType> faCatchTypeCodes) {
-        this.faCatchTypeCodes = faCatchTypeCodes;
-    }
-    public List<CodeType> getFluxLocationTypeCodes() {
-        return fluxLocationTypeCodes;
-    }
-    public void setFluxLocationTypeCodes(List<CodeType> fluxLocationTypeCodes) {
-        this.fluxLocationTypeCodes = fluxLocationTypeCodes;
-    }
-    public List<CodeType> getVesselTransportMeansRoleCodes() {
-        return vesselTransportMeansRoleCodes;
-    }
-    public void setVesselTransportMeansRoleCodes(List<CodeType> vesselTransportMeansRoleCodes) {
-        this.vesselTransportMeansRoleCodes = vesselTransportMeansRoleCodes;
-    }
-    public List<FLUXLocation> getFaCtchSpecifiedFLUXLocations() {
-        return faCtchSpecifiedFLUXLocations;
-    }
-    public void setFaCtchSpecifiedFLUXLocations(List<FLUXLocation> faCtchSpecifiedFLUXLocations) {
-        this.faCtchSpecifiedFLUXLocations = faCtchSpecifiedFLUXLocations;
-    }
-    public List<CodeType> getFaCtchSpecifiedFLUXLocationsTypeCodes() {
-        return faCtchSpecifiedFLUXLocationsTypeCodes;
-    }
-    public void setFaCtchSpecifiedFLUXLocationsTypeCodes(List<CodeType> faCtchSpecifiedFLUXLocationsTypeCodes) {
-        this.faCtchSpecifiedFLUXLocationsTypeCodes = faCtchSpecifiedFLUXLocationsTypeCodes;
-    }
-    public List<CodeType> getFluxCharacteristicTypeCodes() {
-        return fluxCharacteristicTypeCodes;
-    }
-    public void setFluxCharacteristicTypeCodes(List<CodeType> fluxCharacteristicTypeCodes) {
-        this.fluxCharacteristicTypeCodes = fluxCharacteristicTypeCodes;
-    }
-    public List<FLUXCharacteristic> getSpecifiedFLUXCharacteristics() {
-        return specifiedFLUXCharacteristics;
-    }
-    public void setSpecifiedFLUXCharacteristics(List<FLUXCharacteristic> specifiedFLUXCharacteristics) {
-        this.specifiedFLUXCharacteristics = specifiedFLUXCharacteristics;
-    }
-    public List<CodeType> getFaCatchSpeciesCodes() {
-        return facatchSpeciesCode;
-    }
-    public void setFaCatchSpeciesCodes(List<CodeType> facatchSpeciesCode) {
-        this.facatchSpeciesCode = facatchSpeciesCode;
-    }
-    public List<CodeType> getFacatchSpeciesCode() {
-        return facatchSpeciesCode;
-    }
-    public void setFacatchSpeciesCode(List<CodeType> facatchSpeciesCode) {
-        this.facatchSpeciesCode = facatchSpeciesCode;
-    }
-    public List<IdType> getSpecifiedFlCharSpecifiedLocatIDs() {
-        return specifiedFlCharSpecifiedLocatIDs;
-    }
-    public void setSpecifiedFlCharSpecifiedLocatIDs(List<IdType> specifiedFlCharSpecifiedLocatIDs) {
-        this.specifiedFlCharSpecifiedLocatIDs = specifiedFlCharSpecifiedLocatIDs;
-    }
-    public List<CodeType> getSpecifiedFlCharSpecifiedLocatTypeCodes() {
-        return specifiedFlCharSpecifiedLocatTypeCodes;
-    }
-    public void setSpecifiedFlCharSpecifiedLocatTypeCodes(List<CodeType> specifiedFlCharSpecifiedLocatTypeCodes) {
-        this.specifiedFlCharSpecifiedLocatTypeCodes = specifiedFlCharSpecifiedLocatTypeCodes;
-    }
 }

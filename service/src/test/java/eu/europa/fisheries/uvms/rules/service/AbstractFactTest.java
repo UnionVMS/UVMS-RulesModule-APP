@@ -610,7 +610,7 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e36fab361-7338327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
+        assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test
@@ -620,7 +620,7 @@ public class AbstractFactTest {
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
-        assertTrue(fact.schemeIdContainsAll(idTypes, "UUID"));
+        assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test

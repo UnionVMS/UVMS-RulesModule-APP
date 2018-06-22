@@ -860,7 +860,7 @@
         <column name="rule_id" value="66"/>
         <column name="br_id" value="FA-L03-00-0066"/>
         <column name="expression"
-                value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+                value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
         <column name="note" value="If a register is available."/>
         <column name="message"
                 value="Vessel ID IRCS and external marking are provided, but the vessel is not regsitered on a list non-EU vessels."/>

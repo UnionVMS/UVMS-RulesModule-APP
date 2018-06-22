@@ -13,76 +13,30 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by padhyad on 4/19/2017.
- */
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FluxFaReportMessageFact extends AbstractFact {
 
     private IdType referencedID;
-
     private List<IdType> ids;
-
     private Date creationDateTime;
-
     private String creationDateTimeString;
-
     private CodeType purposeCode;
-
     private List<IdType> ownerFluxPartyIds;
-
     private List<FAReportDocument> faReportDocuments;
-
     private List<IdType> nonUniqueIdsList;
 
     public FluxFaReportMessageFact() {
         setFactType();
-    }
-
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-
-    public CodeType getPurposeCode() {
-        return purposeCode;
-    }
-
-    public void setPurposeCode(CodeType purposeCode) {
-        this.purposeCode = purposeCode;
-    }
-
-    public List<IdType> getOwnerFluxPartyIds() {
-        return ownerFluxPartyIds;
-    }
-
-    public void setOwnerFluxPartyIds(List<IdType> ownerFluxPartyIds) {
-        this.ownerFluxPartyIds = ownerFluxPartyIds;
-    }
-
-    public List<FAReportDocument> getFaReportDocuments() {
-        return faReportDocuments;
-    }
-
-    public void setFaReportDocuments(List<FAReportDocument> faReportDocuments) {
-        this.faReportDocuments = faReportDocuments;
-    }
-
-    public List<IdType> getNonUniqueIdsList() {
-        return nonUniqueIdsList;
-    }
-
-    public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
-        this.nonUniqueIdsList = nonUniqueIdsList;
     }
 
     @Override
@@ -100,27 +54,4 @@ public class FluxFaReportMessageFact extends AbstractFact {
         this.factType = FactType.FLUX_FA_REPORT_MESSAGE;
     }
 
-    public Date getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(Date creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
-    public String getCreationDateTimeString() {
-        return creationDateTimeString;
-    }
-
-    public void setCreationDateTimeString(String creationDateTimeString) {
-        this.creationDateTimeString = creationDateTimeString;
-    }
-
-    public IdType getReferencedID() {
-        return referencedID;
-    }
-
-    public void setReferencedID(IdType referencedID) {
-        this.referencedID = referencedID;
-    }
 }

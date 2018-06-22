@@ -1726,7 +1726,7 @@ public class ActivityFactMapper {
             faTranshipmentFact.setSpecifiedFACatches(new ArrayList<>(specifiedFACatches));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faTranshipmentFact, SPECIFIED_FA_CATCHES_PROP);
 
-            faTranshipmentFact.setFaCatchSpeciesCodes(getCodeTypesFromFaCatch(specifiedFACatches, SPECIES_CODE_FOR_FACATCH_PROP));
+            faTranshipmentFact.setFacatchSpeciesCode(getCodeTypesFromFaCatch(specifiedFACatches, SPECIES_CODE_FOR_FACATCH_PROP));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, SPECIES_CODE).storeInRepo(faTranshipmentFact, "faCatchSpeciesCodes");
 
             faTranshipmentFact.setFaCatchTypeCodes(getCodeTypesFromFaCatch(specifiedFACatches, CODE_TYPE_FOR_FACATCH_PROP));

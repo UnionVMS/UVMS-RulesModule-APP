@@ -13,19 +13,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-
 import java.util.List;
 
-/**
- * @author padhyad
- * @author Gregory Rinaldi
- */
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FishingTripFact extends AbstractFact {
 
     private List<IdType> ids;
-
     private CodeType typeCode;
 
     public FishingTripFact() {
@@ -37,19 +36,4 @@ public class FishingTripFact extends AbstractFact {
         this.factType = FactType.FISHING_TRIP;
     }
 
-    public List<IdType> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
 }

@@ -233,7 +233,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return valLength > hits;
+        return hits > 0 && valLength > hits;
     }
 
     public boolean isSchemeIdPresent(IdType idType) {

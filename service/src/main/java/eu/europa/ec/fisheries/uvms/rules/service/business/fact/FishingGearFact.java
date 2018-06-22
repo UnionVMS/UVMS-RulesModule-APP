@@ -13,33 +13,28 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by padhyad on 4/19/2017.
- */
-@Slf4j
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FishingGearFact extends AbstractFact {
 
     private CodeType typeCode;
-
     private List<CodeType> roleCodes;
-
     private List<GearCharacteristic> applicableGearCharacteristics;
-
     private boolean fishingActivity;
-
     private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
 
     public FishingGearFact() {
@@ -51,40 +46,12 @@ public class FishingGearFact extends AbstractFact {
         this.factType = FactType.FISHING_GEAR;
     }
 
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public List<CodeType> getRoleCodes() {
-        return roleCodes;
-    }
-
-    public void setRoleCodes(List<CodeType> roleCodes) {
-        this.roleCodes = roleCodes;
-    }
-
-    public List<GearCharacteristic> getApplicableGearCharacteristics() {
-        return applicableGearCharacteristics;
-    }
-
-    public void setApplicableGearCharacteristics(List<GearCharacteristic> applicableGearCharacteristics) {
-        this.applicableGearCharacteristics = applicableGearCharacteristics;
-    }
-
     public boolean isFishingActivity() {
         return fishingActivity;
     }
 
     public void setFishingActivity(boolean fishingActivity) {
         this.fishingActivity = fishingActivity;
-    }
-
-    public void setFishingGearTypeCharacteristics(List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
-        this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
     }
 
     public boolean isRequiredGearCharacteristicsPresent(CodeType fishingGearTypeCode) {
