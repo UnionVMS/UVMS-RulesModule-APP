@@ -205,6 +205,10 @@ public class ActivityFactMapper {
 
     private List<IdType> faRelatedReportIds = new ArrayList<>();
 
+    private List<IdType> faQueryIds = new ArrayList<>();
+
+    private List<IdType> faResponseIds = new ArrayList<>();
+
     private String senderReceiver = null;
 
     private List<String> fishingActivitiesWithTripIds = new ArrayList<>();
@@ -358,10 +362,8 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, TYPE_CODE).storeInRepo(faReportDocumentFact, "specifiedFishingActivitiesTypes");
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_ACTIVITY, OCCURRENCE_DATE_TIME).storeInRepo(faReportDocumentFact, "specifiedAndRealtedFishActOccurrenceDateTimes");
 
-        if (getFaRelatedReportIds() != null) {
-            faReportDocumentFact.setNonUniqueIdsList(faRelatedReportIds);
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
-        }
+        faReportDocumentFact.setNonUniqueIdsList(faRelatedReportIds);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
 
         return faReportDocumentFact;
     }
@@ -569,10 +571,11 @@ public class ActivityFactMapper {
         fluxFaReportMessageFact.setPurposeCode(mapToCodeType(fluxfaReportMessageFLUXReportDocumentPurposeCode(fluxfaReportMessage)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(fluxFaReportMessageFact, PURPOSE_CODE_PROP);
 
-        if (getFaReportMessageIds() != null) {
-            fluxFaReportMessageFact.setNonUniqueIdsList(faReportMessageIds);
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, ID).storeInRepo(fluxFaReportMessageFact, "nonUniqueIdsList");
-        }
+        fluxFaReportMessageFact.setNonUniqueIdsList(faReportMessageIds);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, ID).storeInRepo(fluxFaReportMessageFact, "nonUniqueIdsList");
+
+        fluxFaReportMessageFact.setRelatedFaQueryIDs(faQueryIds);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(fluxFaReportMessageFact, "relatedFaQueryIDs");
 
         return fluxFaReportMessageFact;
     }
@@ -2042,6 +2045,9 @@ public class ActivityFactMapper {
             faResponseFact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "ids");
 
+            faResponseFact.setIdsExistinigInTheDb(faResponseIds);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "faResponseIds");
+
             faResponseFact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
 
@@ -2932,5 +2938,21 @@ public class ActivityFactMapper {
 
     public void setFaRelatedReportIds(List<IdType> faRelatedReportIds) {
         this.faRelatedReportIds = faRelatedReportIds;
+    }
+
+    public List<IdType> getFaQueryIds() {
+        return faQueryIds;
+    }
+
+    public void setFaQueryIds(List<IdType> faQueryIds) {
+        this.faQueryIds = faQueryIds;
+    }
+
+    public List<IdType> getFaResponseIds() {
+        return faResponseIds;
+    }
+
+    public void setFaResponseIds(List<IdType> faResponseIds) {
+        this.faResponseIds = faResponseIds;
     }
 }

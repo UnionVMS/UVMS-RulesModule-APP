@@ -173,8 +173,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="13"/>
         <column name="br_id" value="FA-L03-00-0013"/>
-        <column name="expression"
-                value="referencedID != null &amp;&amp; !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;)"/>
+        <column name="expression" value="referencedID != null &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
         <column name="note" value="Only applicable if provided"/>
         <column name="message" value="The identification must exist for a FLUXFAQueryMessage"/>
         <column name="level" value="L03"/>
@@ -4963,12 +4962,9 @@
     <insert tableName="rule">
         <column name="rule_id" value="382"/>
         <column name="br_id" value="FA-L03-00-0382"/>
-        <column name="expression"
-                value="!isEmpty(ids) &amp;&amp; exchangeService.identificationExists(ids.get(0).value, &quot;FA_RESPONSE&quot;)"/>
-        <column name="note"
-                value="The identification of the FLUX response Document must be unique and not already exist"/>
-        <column name="message"
-                value="The identification of the FLUX response Document must be unique and not already exist"/>
+        <column name="expression" value="!isEmpty(ids) &amp;&amp; (getValueForSchemeId(&quot;FA_RESPONSE&quot;, idsExistinigInTheDb) != null)"/>
+        <column name="note" value="The identification of the FLUX response Document must be unique and not already exist"/>
+        <column name="message" value="The identification of the FLUX response Document must be unique and not already exist"/>
         <column name="level" value="L03"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on" valueDate="2018-01-12 00:00:00.0"/>
@@ -5008,8 +5004,8 @@
         <column name="rule_id" value="385"/>
         <column name="br_id" value="FA-L03-00-0385"/>
         <column name="expression"
-                value="referencedID != null &amp;&amp; stringEquals(referencedID.schemeId, &quot;UUID&quot;) &amp;&amp;
-                       !exchangeService.identificationRefExists(referencedID.value, &quot;FA_QUERY&quot;, &quot;FA_REPORT&quot;)"/>
+                value="referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;
+                (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
         <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
         <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
         <column name="level" value="L03"/>

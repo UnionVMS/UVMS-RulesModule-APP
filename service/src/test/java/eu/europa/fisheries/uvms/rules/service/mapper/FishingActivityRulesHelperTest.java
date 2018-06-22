@@ -26,13 +26,13 @@ public class FishingActivityRulesHelperTest {
     @Test
     public void testWithEmptyFLUXFAReportMessage(){
         FLUXFAReportMessage fluxfaReportMessage = new FLUXFAReportMessage();
-        Set<FADocumentID> ids = rulesHelper.collectReportIds(fluxfaReportMessage);
+        Set<FADocumentID> ids = rulesHelper.mapToFADocumentID(fluxfaReportMessage);
         assertTrue(CollectionUtils.isEmpty(ids));
     }
 
     @Test
     public void testWithNull(){
-        Set<FADocumentID> ids = rulesHelper.collectReportIds(null);
+        Set<FADocumentID> ids = rulesHelper.mapToFADocumentID(null);
         assertTrue(CollectionUtils.isEmpty(ids));
     }
 

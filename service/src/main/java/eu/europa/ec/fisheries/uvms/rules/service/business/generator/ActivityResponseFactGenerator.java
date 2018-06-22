@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
@@ -53,7 +55,9 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
     @Override
     public void setAdditionalValidationObject() {
         String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);
+        List<IdType> idsFromDb = (List<IdType>) extraValueMap.get(RESPONSE_IDS);
         activityFactMapper.setSenderReceiver(senderReceiver);
+        activityFactMapper.setFaResponseIds(idsFromDb);
     }
 
     @Override

@@ -10,8 +10,11 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
@@ -26,6 +29,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -44,6 +49,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -56,13 +62,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static java.util.Collections.singletonList;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class FaResponseValidatorAndSender {
+public class FaResponseValidatorAndSenderBean {
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
@@ -76,10 +83,22 @@ public class FaResponseValidatorAndSender {
     @EJB
     private RulesMessageProducer producer;
 
+    @EJB
+    private RulesDao rulesDaoBean;
+
     @Inject
     private CodeTypeMapper codeTypeMapper;
 
+    private FishingActivityRulesHelper faMessageHelper;
+    private FAReportQueryResponseIdsMapper faIdsMapper;
+
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
+
+    @PostConstruct
+    public void init(){
+        faMessageHelper = new FishingActivityRulesHelper();
+        faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
+    }
 
     @Asynchronous
     public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided) {
@@ -93,10 +112,14 @@ public class FaResponseValidatorAndSender {
             String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
+            // Get the actual Response ids and match them with the Response Ids from the DB
+            Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToResponseToFADocumentID(fluxResponseMessageObj);
+            List<FADocumentID> matchingIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
             String logGuid = request.getLogGuid();
-            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, fluxNationCode);
+            Map<ExtraValueType, Object> extraValues = populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
+
             List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
@@ -111,13 +134,23 @@ public class FaResponseValidatorAndSender {
                     nationCode, onValue, status, destination, getExchangePluginType(pluginType));
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
+
+            idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid dublication in DB.
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
             log.info("[END] FLUXFAResponse successfully sent back to Exchange.");
         } catch (JAXBException e) {
             log.error(e.getMessage(), e);
             sendFLUXResponseMessageOnException(e.getMessage(), null, request, fluxResponseMessageObj);
-        } catch (ExchangeModelMarshallException | MessageException | RulesValidationException e) {
+        } catch (ExchangeModelMarshallException | MessageException | RulesValidationException | ServiceException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
+    }
+
+    private Map<ExtraValueType, Object> populateExtraValuesMap(String fluxNationCode, List<FADocumentID> matchingIdsFromDB) {
+        Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+        extraValues.put(SENDER_RECEIVER, fluxNationCode);
+        extraValues.put(RESPONSE_IDS, faIdsMapper.mapToFishingActivityIdDto(matchingIdsFromDB));
+        return extraValues;
     }
 
     public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue) {

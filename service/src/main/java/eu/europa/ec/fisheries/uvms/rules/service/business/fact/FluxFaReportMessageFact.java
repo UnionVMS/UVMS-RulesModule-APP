@@ -35,6 +35,8 @@ public class FluxFaReportMessageFact extends AbstractFact {
     private List<FAReportDocument> faReportDocuments;
     private List<IdType> nonUniqueIdsList;
 
+    private List<IdType> relatedFaQueryIDs;
+
     public FluxFaReportMessageFact() {
         setFactType();
     }
@@ -54,4 +56,35 @@ public class FluxFaReportMessageFact extends AbstractFact {
         this.factType = FactType.FLUX_FA_REPORT_MESSAGE;
     }
 
+    public Date getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(Date creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public String getCreationDateTimeString() {
+        return creationDateTimeString;
+    }
+
+    public void setCreationDateTimeString(String creationDateTimeString) {
+        this.creationDateTimeString = creationDateTimeString;
+    }
+
+    public IdType getReferencedID() {
+        return referencedID;
+    }
+
+    public void setReferencedID(IdType referencedID) {
+        this.referencedID = referencedID;
+    }
+
+    public List<IdType> getRelatedFaQueryIDs() {
+        return relatedFaQueryIDs;
+    }
+
+    public void setRelatedFaQueryIDs(List<IdType> relatedFaQueryIDs) {
+        this.relatedFaQueryIDs = relatedFaQueryIDs;
+    }
 }
