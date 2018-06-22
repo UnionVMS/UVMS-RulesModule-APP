@@ -888,7 +888,7 @@
         <column name="rule_id" value="68"/>
         <column name="br_id" value="FA-L00-00-0068"/>
         <column name="expression"
-                value="roleCode != null &amp;&amp; roleCode.listId == &quot;PAIR_FISHING_PARTNER&quot; &amp;&amp; isEmpty(specifiedContactParties)"/>
+                value="roleCode != null &amp;&amp; roleCode.value == &quot;PAIR_FISHING_PARTNER&quot; &amp;&amp; isEmpty(specifiedContactParties)"/>
         <column name="note" value="Must be present in case of pair fishing operations."/>
         <column name="message" value="Contact details are missing for the pair fishing partner."/>
         <column name="level" value="L00"/>
