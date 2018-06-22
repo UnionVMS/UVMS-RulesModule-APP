@@ -3125,7 +3125,7 @@
         <column name="rule_id" value="252"/>
         <column name="br_id" value="FA-L02-00-0252"/>
         <column name="expression"
-                value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+                value="!isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
         <column name="level" value="L02"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on"/>
