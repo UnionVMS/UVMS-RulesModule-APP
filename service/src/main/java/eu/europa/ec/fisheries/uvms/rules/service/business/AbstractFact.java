@@ -220,6 +220,26 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean schemeIdContainsOnly(List<IdType> idTypes, String... valuesToMatch) {
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return false;
+        }
+        int hits = 0;
+        for (String val : valuesToMatch) {
+            for (IdType IdType : idTypes) {
+                if (IdType != null && val.equals(IdType.getSchemeId())) {
+                    hits++;
+                }
+            }
+        }
+        return idTypes.size() == hits;
+    }
+
+    public boolean schemeIdContains(List<IdType> idTypes, String... valuesToMatch) {
+        return !schemeIdContainsAll(idTypes, valuesToMatch);
+    }
+
+    @Deprecated
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -233,7 +253,7 @@ public abstract class AbstractFact {
                 }
             }
         }
-        return hits > 0 && valLength > hits;
+        return valLength > hits;
     }
 
     public boolean isSchemeIdPresent(IdType idType) {
