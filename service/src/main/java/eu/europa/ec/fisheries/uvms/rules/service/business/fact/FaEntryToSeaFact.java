@@ -13,37 +13,31 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import java.util.List;
-
-/**
- * @author padhyad
- * @author Gregory Rinaldi
- */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class FaEntryToSeaFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private CodeType reasonCode;
-
     private CodeType speciesTargetCode;
-
     private List<CodeType> specifiedFACatchesTypeCodes;
-
+    private List<FACatch> specifiedFACatches;
     private List<CodeType> relatedFluxLocationTypeCodes;
-
     private List<IdType> relatedFluxLocationIDs;
-
     private List<FishingActivity> relatedFishingActivities;
 
     public FaEntryToSeaFact() {
@@ -55,91 +49,12 @@ public class FaEntryToSeaFact extends AbstractFact {
         this.factType = FactType.FA_ENTRY_TO_SEA;
     }
 
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public CodeType getReasonCode() {
-        return reasonCode;
-    }
-
-    public void setReasonCode(CodeType reasonCode) {
-        this.reasonCode = reasonCode;
-    }
-
-    public CodeType getSpeciesTargetCode() {
-        return speciesTargetCode;
-    }
-
-    public void setSpeciesTargetCode(CodeType speciesTargetCode) {
-        this.speciesTargetCode = speciesTargetCode;
-    }
-
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-
-    public List<CodeType> getSpecifiedFACatchesTypeCodes() {
-        return specifiedFACatchesTypeCodes;
-    }
-
-    public void setSpecifiedFACatchesTypeCodes(List<CodeType> specifiedFACatchesTypeCodes) {
-        this.specifiedFACatchesTypeCodes = specifiedFACatchesTypeCodes;
-    }
-
-    public List<CodeType> getRelatedFluxLocationTypeCodes() {
-        return relatedFluxLocationTypeCodes;
-    }
-
-    public void setRelatedFluxLocationTypeCodes(List<CodeType> relatedFluxLocationTypeCodes) {
-        this.relatedFluxLocationTypeCodes = relatedFluxLocationTypeCodes;
-    }
-
-    public List<IdType> getRelatedFluxLocationIDs() {
-        return relatedFluxLocationIDs;
-    }
-
-    public void setRelatedFluxLocationIDs(List<IdType> relatedFluxLocationIDs) {
-        this.relatedFluxLocationIDs = relatedFluxLocationIDs;
-    }
-
-    public List<FishingActivity> getRelatedFishingActivities() {
-        return relatedFishingActivities;
-    }
-
-    public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
-        this.relatedFishingActivities = relatedFishingActivities;
-    }
-
-    /**
-     * For  Rule FA-L02-00-0251
-     * @return
-     */
     public boolean verifyFLUXLocationIDValue(List<FLUXLocation> relatedFLUXLocations){
-        if(CollectionUtils.isEmpty(relatedFLUXLocations)){
+        if (CollectionUtils.isEmpty(relatedFLUXLocations)){
             return false;
         }
-
-        if(faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
-
+        if (faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
-
                 if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
                     IDType idType = fluxLocation.getID();
                     if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
@@ -148,7 +63,6 @@ public class FaEntryToSeaFact extends AbstractFact {
                 }
             }
         }
-
         return true;
     }
 }
