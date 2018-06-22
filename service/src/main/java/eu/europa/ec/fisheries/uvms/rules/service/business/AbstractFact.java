@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -376,7 +377,9 @@ public abstract class AbstractFact {
             return true;
         }
         try {
-            if (!validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
+            String schemeId = id.getSchemeId();
+            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue())
+                    || !validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -1189,6 +1192,7 @@ public abstract class AbstractFact {
         // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
 
         UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+
         EXT_MARK(".{1,14}"),
         IRCS("[a-zA-Z0-9]{1,7}"),
         CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
