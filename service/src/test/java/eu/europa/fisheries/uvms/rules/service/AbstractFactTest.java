@@ -606,17 +606,15 @@ public class AbstractFactTest {
     @Test
     public void testValidateIDTypeHappy() {
         IdType idType = new IdType();
-        idType.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
-        IdType idType2 = new IdType();
-        idType2.setSchemeId("53e36fab361-7338327c7d81");
-        List<IdType> idTypes = Arrays.asList(idType, idType2);
+        idType.setSchemeId("UUID");
+        List<IdType> idTypes = Arrays.asList(idType);
         assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
     }
 
     @Test
     public void testValidateIDType() {
         IdType idType = new IdType();
-        idType.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
+        idType.setSchemeId("UUID");
         IdType idType2 = new IdType();
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
@@ -633,6 +631,41 @@ public class AbstractFactTest {
         idType3.setSchemeId("EXT_MARK");
         List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
         boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testContainsSchemeIdHappy2() {
+        IdType idType = new IdType();
+        idType.setSchemeId("CFR");
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("IRCS");
+        List<IdType> idTypes = Arrays.asList(idType, idType2);
+        boolean result = fact.schemeIdContainsAll(idTypes, "IRCS", "CFR");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsOnly() {
+        IdType idType = new IdType();
+        idType.setSchemeId("CFR");
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("IRCS");
+        List<IdType> idTypes = Arrays.asList(idType, idType2);
+        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsOnly2() {
+        IdType idType = new IdType();
+        idType.setSchemeId("CFR");
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("IRCS");
+        IdType idType3 = new IdType();
+        idType3.setSchemeId("EXT");
+        List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
+        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
         assertFalse(result);
     }
 
