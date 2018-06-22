@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
 
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;

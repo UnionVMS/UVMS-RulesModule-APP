@@ -1,14 +1,15 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors;
-
+package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -16,10 +17,12 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
@@ -56,11 +59,13 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
@@ -69,10 +74,12 @@ import static java.util.Collections.singletonList;
 @Stateless
 @LocalBean
 @Slf4j
-public class FaResponseValidatorAndSenderBean {
+public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
+
+    private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 
     @EJB
-    private RulesConfigurationCache ruleModuleCache;
+    private RulesMessageProducer rulesProducer;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -81,23 +88,66 @@ public class FaResponseValidatorAndSenderBean {
     private RulePostProcessBean rulePostProcessBean;
 
     @EJB
-    private RulesMessageProducer producer;
+    private ActivityOutQueueConsumer activityConsumer;
+
+    @EJB
+    private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
 
     @EJB
     private RulesDao rulesDaoBean;
 
+    @EJB
+    private AyncFaIdsDaoBean asyncIdsSaver;
+
+    @EJB
+    private RulesConfigurationCache ruleModuleCache;
+
+    @EJB
+    private RulesMessageProducer producer;
+
+    private FishingActivityRulesHelper faMessageHelper;
+
+    private XSDJaxbUtil xsdJaxbUtil;
+
+    private FAReportQueryResponseIdsMapper faIdsMapper;
+
     @Inject
     private CodeTypeMapper codeTypeMapper;
 
-    private FishingActivityRulesHelper faMessageHelper;
-    private FAReportQueryResponseIdsMapper faIdsMapper;
-
-    private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
-
     @PostConstruct
-    public void init(){
-        faMessageHelper = new FishingActivityRulesHelper();
+    public void init() {
         faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
+        faMessageHelper = new FishingActivityRulesHelper();
+        xsdJaxbUtil = new XSDJaxbUtil();
+    }
+
+    @Asynchronous
+    public void evaluateIncomingFluxResponseRequest(SetFluxFaResponseMessageRequest request) {
+        String requestStr = request.getRequest();
+        final String logGuid = request.getLogGuid();
+        log.info("[INFO] Going to evaluate FLUXResponseMessage with GUID [[ " + logGuid + " ]].");
+        FLUXResponseMessage fluxResponseMessage;
+        try {
+            // Validate xsd schema
+            fluxResponseMessage = xsdJaxbUtil.unMarshallFluxResponseMessage(requestStr);
+            List<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage);
+            ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
+            updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
+            if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
+                log.info("[INFO] The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
+            } else {
+                log.info("[WARN] Validation resulted in errors. Not going to send msg to Exchange module..");
+            }
+            XPathRepository.INSTANCE.clear(fluxFaResponseFacts);
+
+        } catch (UnmarshalException e) {
+            log.error("[ERROR] Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
+            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            throw new RulesServiceException(e.getMessage(), e);
+        } catch (RulesValidationException e) {
+            log.error("[ERROR] Error during validation of the received FLUXResponseMessage!", e);
+            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+        }
     }
 
     @Asynchronous
@@ -301,27 +351,6 @@ public class FaResponseValidatorAndSenderBean {
         return responseMessage;
     }
 
-    private boolean isCorrectUUID(List<IDType> ids){
-        boolean uuidIsCorrect = false;
-        String uuidString = null;
-        try {
-            if(CollectionUtils.isNotEmpty(ids)){
-                IDType idType = ids.get(0);
-                uuidString = idType.getValue();
-                String schemeID = idType.getSchemeID();
-                if ("UUID".equals(schemeID)){
-                    uuidIsCorrect = UUID.fromString(uuidString).toString().equals(uuidString);
-                }
-                if(!uuidIsCorrect){
-                    log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);
-                }
-            }
-        } catch (IllegalArgumentException exception){
-            log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);
-        }
-        return uuidIsCorrect;
-    }
-
     private void setFluxResponseDocumentIDs(FLUXResponseDocument fluxResponseDocument) {
         IDType responseId = new IDType();
         responseId.setValue(UUID.randomUUID().toString());
@@ -467,5 +496,19 @@ public class FaResponseValidatorAndSenderBean {
         return singletonList(validationResultDocument);
     }
 
+    @Override
+    RulesMessageProducer getRulesProducer() {
+        return rulesProducer;
+    }
+
+    @Override
+    AbstractConsumer getActivityConsumer(){
+        return activityConsumer;
+    }
+
+    @Override
+    FaResponseRulesMessageServiceBean getResponseValidator() {
+        return faResponseValidatorAndSender;
+    }
 
 }
