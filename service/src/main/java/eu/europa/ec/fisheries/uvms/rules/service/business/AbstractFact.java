@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -39,6 +38,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,12 +55,15 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
 @ToString
+@Data
 public abstract class AbstractFact {
 
     private static final String COLON = ":";
     private static volatile int counter = 0;
 
     protected FactType factType;
+
+    protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
 
     protected String senderOrReceiver;
 

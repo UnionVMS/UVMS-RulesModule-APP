@@ -51,10 +51,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_LOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_FLUX_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_REPORT_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_RESULT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VESSEL_TRANSPORT_MEANS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESPONDENT_FLUX_PARTY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESPONSE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESULT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESULT_AAP_PRODUCT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ROLE_CODE;
@@ -82,7 +79,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SUBMITTER_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.UNIT_QUANTITY;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALIDATOR_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALUE_DATE_TIME;
@@ -121,7 +117,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
@@ -147,7 +142,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
@@ -162,7 +156,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
@@ -171,7 +164,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.SizeDistribution;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselStorageCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -2027,68 +2019,6 @@ public class ActivityFactMapper {
         return faNotificationOfTranshipmentFact;
     }
 
-    public FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage) {
-        if (fluxResponseMessage == null) {
-            return null;
-        }
-
-        FaResponseFact faResponseFact = new FaResponseFact();
-        faResponseFact.setSenderOrReceiver(senderReceiver);
-        String partialXpath = xPathUtil.getValue();
-
-        final FLUXResponseDocument fluxResponseDocument1 = fluxResponseMessage.getFLUXResponseDocument();
-        if (fluxResponseDocument1 != null) {
-            FLUXResponseDocument fluxResponseDocument = fluxResponseDocument1;
-
-            faResponseFact.setReferencedID(mapToSingleIdType(fluxResponseDocument.getReferencedID()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(faResponseFact, "referencedID");
-
-            faResponseFact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "ids");
-
-            faResponseFact.setIdsExistinigInTheDb(faResponseIds);
-            xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faResponseFact, "faResponseIds");
-
-            faResponseFact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(faResponseFact, "responseCode");
-
-            faResponseFact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(XPathConstants.CREATION_DATE_TIME).storeInRepo(faResponseFact, CREATION_DATE_TIME);
-
-            faResponseFact.setCreationDateTimeString(getDateXMLString(fluxResponseDocument.getCreationDateTime()));
-
-            faResponseFact.setRespondentFLUXParty(fluxResponseDocument.getRespondentFLUXParty());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY).storeInRepo(faResponseFact, "respondentFLUXParty");
-
-            if (fluxResponseDocument.getRespondentFLUXParty() != null) {
-                faResponseFact.setFluxPartyIds(mapToIdType(fluxResponseDocument.getRespondentFLUXParty().getIDS()));
-            }
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RESPONDENT_FLUX_PARTY, ID).storeInRepo(faResponseFact, "fluxPartyIds");
-
-            faResponseFact.setValidatorIDs(extractValidatorIdFromValidationResultDocument(fluxResponseDocument));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(VALIDATOR_ID).storeInRepo(faResponseFact, "validatorIDs");
-
-            faResponseFact.setRelatedValidationResultDocuments(fluxResponseDocument.getRelatedValidationResultDocuments());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VALIDATION_RESULT_DOCUMENT).storeInRepo(faResponseFact, "relatedValidationResultDocuments");
-
-        }
-        return faResponseFact;
-    }
-
-    private List<IdType> extractValidatorIdFromValidationResultDocument(FLUXResponseDocument fluxResponseDocument) {
-        List<IdType> idTypes = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(fluxResponseDocument.getRelatedValidationResultDocuments())) {
-            List<ValidationResultDocument> validationResultDocuments = fluxResponseDocument.getRelatedValidationResultDocuments();
-            for (ValidationResultDocument validationResultDocument : validationResultDocuments) {
-                if (validationResultDocument.getValidatorID() != null) {
-                    idTypes.add(mapToSingleIdType(validationResultDocument.getValidatorID()));
-                }
-            }
-        }
-        return idTypes;
-    }
-
-
     public ValidationQualityAnalysisFact generateFactsForValidationQualityAnalysis(ValidationQualityAnalysis validationQualityAnalysis) {
         if (validationQualityAnalysis == null) {
             return null;
@@ -2137,7 +2067,7 @@ public class ActivityFactMapper {
         return codeType1;
     }
 
-    private static IdType mapToSingleIdType(IDType idType) {
+    private IdType mapToSingleIdType(IDType idType) {
         if (idType == null) {
             return null;
         }
@@ -2147,7 +2077,7 @@ public class ActivityFactMapper {
         return idType1;
     }
 
-    private static List<IdType> mapToIdType(List<IDType> idTypes) {
+    private List<IdType> mapToIdType(List<IDType> idTypes) {
         List<IdType> idTypeList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(idTypes)) {
             for (IDType iDType : idTypes) {

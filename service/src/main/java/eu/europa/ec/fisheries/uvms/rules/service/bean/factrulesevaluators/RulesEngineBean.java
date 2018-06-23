@@ -13,17 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
 
-import com.google.common.base.Stopwatch;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.MasterEvaluator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import lombok.extern.slf4j.Slf4j;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -31,6 +20,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Stopwatch;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.MasterEvaluator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author padhyad
@@ -57,7 +62,34 @@ public class RulesEngineBean {
         if (businessObject != null) {
             log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
             Stopwatch stopwatch = Stopwatch.createStarted();
-            AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(businessObjectType);
+
+            AbstractGenerator generator = null;
+            if (businessObjectType != null) {
+                switch (businessObjectType) {
+                    case RECEIVING_FA_REPORT_MSG:
+                    case SENDING_FA_REPORT_MSG:
+                        generator =  new ActivityFaReportFactGenerator();
+                        break;
+                    case SENDING_FA_RESPONSE_MSG:
+                    case RECEIVING_FA_RESPONSE_MSG:
+                        generator = new ActivityResponseFactGenerator();
+                        break;
+                    case RECEIVING_FA_QUERY_MSG:
+                    case SENDING_FA_QUERY_MSG:
+                        generator = new ActivityQueryFactGenerator();
+                        break;
+                    case FLUX_SALES_QUERY_MSG:
+                        generator = new SalesQueryFactGenerator();
+                        break;
+                    case FLUX_SALES_REPORT_MSG:
+                        generator = new SalesReportFactGenerator();
+                        break;
+                    case FLUX_SALES_RESPONSE_MSG:
+                        generator = new SalesResponseFactGenerator();
+                        break;
+                }
+            }
+
             generator.setBusinessObjectMessage(businessObject);
             mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
             generator.setExtraValueMap(map);

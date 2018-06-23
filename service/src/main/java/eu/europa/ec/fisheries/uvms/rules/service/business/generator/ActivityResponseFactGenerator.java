@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,30 +36,9 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RE
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
-/**
- * @author padhyad
- * @author Gregory Rinaldi
- */
 public class ActivityResponseFactGenerator extends AbstractGenerator {
 
     private FLUXResponseMessage fluxResponseMessage;
-
-    private XPathStringWrapper xPathUtil;
-
-    private ActivityFactMapper activityFactMapper;
-
-    public ActivityResponseFactGenerator() {
-        xPathUtil = new XPathStringWrapper();
-        activityFactMapper = new ActivityFactMapper(xPathUtil);
-    }
-
-    @Override
-    public void setAdditionalValidationObject() {
-        String senderReceiver = (String) extraValueMap.get(SENDER_RECEIVER);
-        List<IdType> idsFromDb = (List<IdType>) extraValueMap.get(RESPONSE_IDS);
-        activityFactMapper.setSenderReceiver(senderReceiver);
-        activityFactMapper.setFaResponseIds(idsFromDb);
-    }
 
     @Override
     public List<AbstractFact> generateAllFacts() {

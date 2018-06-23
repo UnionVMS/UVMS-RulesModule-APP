@@ -1,5 +1,20 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -18,12 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.util.*;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 
 /**
@@ -58,7 +67,7 @@ public class DroolsEngineInitializer {
 
     @PostConstruct
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void initialize() {
+    public void init() {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             List<TemplateRuleMapDto> allTemplates = rulesDb.getAllFactTemplatesAndRules();
@@ -82,7 +91,7 @@ public class DroolsEngineInitializer {
             log.info("[START] Initializing templates and rules forSales facts. Nr. of Rules : [{}]", salesTemplatesAndRules.size());
             KieContainer salesContainer = salesRuleEvaluator.initializeRules(salesTemplatesAndRules);
 
-            containers = new HashMap<>();
+            containers = new EnumMap<>(ContainerType.class);
             containers.put(ContainerType.FA_REPORT, faReportContainer);
             containers.put(ContainerType.FA_RESPONSE, faRespContainer);
             containers.put(ContainerType.FA_QUERY, faQueryContainer);
@@ -100,8 +109,8 @@ public class DroolsEngineInitializer {
 
     @AccessTimeout(value = 180, unit = SECONDS)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void reInitialize() {
-        initialize();
+    public void reload() {
+        init();
     }
 
     private List<TemplateRuleMapDto> getSalesRules(List<TemplateRuleMapDto> templatesAndRules) {
@@ -176,7 +185,7 @@ public class DroolsEngineInitializer {
     public void checkRulesAreDeployed(int retries) {
         if (!checkRulesAreDeployed()) {
             log.warn("[WARINIG] Rules were reinitialized cause they resulted not initialized!! Retry numer [{}]", retries);
-            initialize();
+            init();
             retries++;
             checkRulesAreDeployed(retries);
         }
