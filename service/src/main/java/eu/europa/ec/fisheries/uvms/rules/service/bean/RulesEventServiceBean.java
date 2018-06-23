@@ -33,9 +33,11 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.FaRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.MdrRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.SalesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa.FaQueryRulesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa.FaReportRulesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.mdr.MdrRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.sales.SalesRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
@@ -75,7 +77,13 @@ public class RulesEventServiceBean implements EventService {
     private RulesService rulesService;
 
     @EJB
-    private FaRulesMessageServiceBean faRulesMessageServiceBean;
+    private FaReportRulesRulesMessageServiceBean faReportRulesMessageServiceBean;
+
+    @EJB
+    private FaResponseRulesMessageServiceBean faResponseRulesMessageServiceBean;
+
+    @EJB
+    private FaQueryRulesRulesMessageServiceBean faQueryRulesMessageServiceBean;
 
     @EJB
     private MdrRulesMessageServiceBean mdrRulesMessageServiceBean;
@@ -201,7 +209,7 @@ public class RulesEventServiceBean implements EventService {
     public void setFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message) {
         try {
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            faRulesMessageServiceBean.evaluateIncomingFLUXFAReport(request);
+            faReportRulesMessageServiceBean.evaluateIncomingFLUXFAReport(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -214,7 +222,7 @@ public class RulesEventServiceBean implements EventService {
     public void sendFaReportMessageReceived(@Observes @SendFaReportEvent EventMessage message) {
         try {
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
-            faRulesMessageServiceBean.evaluateOutgoingFaReport(request);
+            faReportRulesMessageServiceBean.evaluateOutgoingFaReport(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -227,7 +235,7 @@ public class RulesEventServiceBean implements EventService {
     public void setFaQueryMessageReceived(@Observes @SetFluxFaQueryMessageReceivedEvent EventMessage message) {
         try {
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
-            faRulesMessageServiceBean.evaluateIncomingFAQuery(request);
+            faQueryRulesMessageServiceBean.evaluateIncomingFAQuery(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -240,7 +248,7 @@ public class RulesEventServiceBean implements EventService {
     public void sendFaQueryMessageReceived(@Observes @SendFaQueryEvent EventMessage message) {
         try {
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
-            faRulesMessageServiceBean.evaluateOutgoingFAQuery(request);
+            faQueryRulesMessageServiceBean.evaluateOutgoingFAQuery(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
@@ -253,7 +261,7 @@ public class RulesEventServiceBean implements EventService {
     public void setFluxFaResponseMessageReceived(@Observes @RcvFluxResponseEvent EventMessage message) {
         try {
             SetFluxFaResponseMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFluxFaResponseMessageRequest.class);
-            faRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(request);
+            faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(request);
         } catch (RulesModelMarshallException e) {
             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
