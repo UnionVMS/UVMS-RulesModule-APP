@@ -2056,7 +2056,6 @@ public class ActivityFactMapper {
         return strList;
     }
 
-
     private eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType) {
         if (codeType == null) {
             return null;

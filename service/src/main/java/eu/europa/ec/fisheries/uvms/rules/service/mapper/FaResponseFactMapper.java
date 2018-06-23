@@ -47,19 +47,22 @@ public class FaResponseFactMapper {
     private static final String CREATION_DATE_TIME_ATTR = "creationDateTime";
 
     private XPathStringWrapper stringWrapper;
+    private String from;
+    private MessageType messageType;
+
     private List<IdType> faResponseIds = new ArrayList<>();
 
     public FaResponseFactMapper(XPathStringWrapper stringWrapper) {
         this.stringWrapper = stringWrapper;
     }
 
-    public FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage, String fr, MessageType messageType) {
+    public FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage) {
         if (fluxResponseMessage == null) {
             return null;
         }
 
         FaResponseFact fact = new FaResponseFact();
-        fact.setSenderOrReceiver(fr);
+        fact.setSenderOrReceiver(from);
         fact.setMessageType(messageType);
         String partialXpath = stringWrapper.getValue();
 
@@ -73,7 +76,6 @@ public class FaResponseFactMapper {
             fact.setIds(mapToIdType(fluxResponseDocument.getIDS()));
             stringWrapper.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(fact, IDS_ATTR);
 
-            fact.setIdsExistinigInTheDb(getFaResponseIds()); // FIXME UGLY
             stringWrapper.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(fact, FA_RESPONSE_IDS_ATTR);
 
             fact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
