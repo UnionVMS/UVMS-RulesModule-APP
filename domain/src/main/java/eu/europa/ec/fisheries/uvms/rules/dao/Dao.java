@@ -30,44 +30,24 @@ import javax.persistence.PersistenceContext;
 
 public class Dao {
 
-    protected EntityManager em;
-
     protected TemplateDao factTemplateDao;
-
     protected FailedRuleDao failedRuleDao;
-
     protected RawMessageDao rawMessageDao;
-
     protected ValidationMessageDao validationMessageDao;
-
     protected RuleStatusDao ruleStatusDao;
-
     protected FADocumentIDDAO fishingActivityIdDao;
-
-    protected FishingGearTypeCharacteristicDao fishingGearTypeCharacteristicDao;
-
     protected FaIdsPerTripDao faIdsPerTripDao;
 
     @PersistenceContext(unitName = "rulesPostgresPU")
-    private EntityManager postgres;
-
-    @PersistenceContext(unitName = "rulesOraclePU")
-    private EntityManager oracle;
+    public EntityManager em;
 
     @PostConstruct
-    public void initEntityManager() {
-        String dbDialect = System.getProperty("db.dialect");
-        if ("oracle".equalsIgnoreCase(dbDialect)) {
-            em = oracle;
-        } else {
-            em = postgres;
-        }
+    public void init() {
         factTemplateDao = new TemplateDao(em);
         failedRuleDao = new FailedRuleDao(em);
         rawMessageDao = new RawMessageDao(em);
         validationMessageDao = new ValidationMessageDao(em);
         ruleStatusDao = new RuleStatusDao(em);
-        fishingGearTypeCharacteristicDao = new FishingGearTypeCharacteristicDao(em);
         fishingActivityIdDao = new FADocumentIDDAO(em);
         faIdsPerTripDao = new FaIdsPerTripDao(em);
     }
