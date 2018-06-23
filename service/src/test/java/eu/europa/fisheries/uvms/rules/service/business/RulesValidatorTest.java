@@ -13,19 +13,22 @@ package eu.europa.fisheries.uvms.rules.service.business;
 
 //import static org.junit.Assert.assertEquals;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class RulesValidatorTest {
     @BeforeClass
@@ -53,7 +56,6 @@ public class RulesValidatorTest {
 
     }
 
-
     @Test
     public void testSome(){
         int i =0;
@@ -71,7 +73,7 @@ public class RulesValidatorTest {
 
         FaArrivalFact abstrFact = new FaArrivalFact();
 
-        int addTo = RandomUtils.nextInt(1, 5);
+        int addTo = RandomUtils.nextInt(1, 3);
 
         List<IdType> idList = new ArrayList<>();
 
@@ -95,16 +97,6 @@ public class RulesValidatorTest {
         idType_.setSchemeId("CFR");
         idList.add(idType_);
 
-        IdType idType_4 = new IdType();
-        idType_4.setValue(UUID.randomUUID().toString());
-        idType_4.setSchemeId("UUID");
-        idList.add(idType_4);
-
-        IdType idType_5 = new IdType();
-        idType_5.setValue(UUID.randomUUID().toString().toUpperCase());
-        idType_5.setSchemeId("UUID");
-        idList.add(idType_5);
-
         switch(addTo){
             case 0 :
                 idType_.setValue(idType_.getValue() + strToAddToFail);
@@ -114,10 +106,6 @@ public class RulesValidatorTest {
                 idType_2.setValue(idType_2.getValue() + strToAddToFail);
             case 3 :
                 idType_3.setValue(idType_3.getValue() + strToAddToFail);
-            case 4 :
-                idType_4.setValue(idType_4.getValue() + strToAddToFail);
-            case 5 :
-                idType_5.setValue(idType_5.getValue() + strToAddToFail);
         }
 
         final boolean trueFase = abstrFact.validateFormat(idList);

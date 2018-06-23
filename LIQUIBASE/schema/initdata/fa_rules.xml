@@ -888,7 +888,7 @@
         <column name="rule_id" value="68"/>
         <column name="br_id" value="FA-L00-00-0068"/>
         <column name="expression"
-                value="roleCode != null &amp;&amp; roleCode.listId == &quot;PAIR_FISHING_PARTNER&quot; &amp;&amp; isEmpty(specifiedContactParties)"/>
+                value="roleCode != null &amp;&amp; roleCode.value == &quot;PAIR_FISHING_PARTNER&quot; &amp;&amp; isEmpty(specifiedContactParties)"/>
         <column name="note" value="Must be present in case of pair fishing operations."/>
         <column name="message" value="Contact details are missing for the pair fishing partner."/>
         <column name="level" value="L00"/>
@@ -1461,15 +1461,14 @@
     <insert tableName="rule">
         <column name="rule_id" value="111"/>
         <column name="br_id" value="FA-L00-00-0111"/>
-        <column name="expression"
-                value="!subActivity &amp;&amp; specifiedFishingTrip == null &amp;&amp; isEmpty(relatedFishingTrip)"/>
+        <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; isEmpty(relatedFishingTrip)"/>
         <column name="note" value="Check presence"/>
         <column name="message" value="Fishing trip details missing."/>
         <column name="level" value="L00"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
         <column name="template_id" value="13"/>
-        <column name="property_names" value="specifiedFishingTrip,relatedFishingTrip"/>
+        <column name="property_names" value="relatedFishingTrip"/>
         <column name="disabled" value="false"/>
     </insert>
     <insert tableName="rule">
@@ -3126,7 +3125,7 @@
         <column name="rule_id" value="252"/>
         <column name="br_id" value="FA-L02-00-0252"/>
         <column name="expression"
-                value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+                value="!isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
         <column name="level" value="L02"/>
         <column name="error_type" value="ERROR"/>
         <column name="rule_created_on"/>
