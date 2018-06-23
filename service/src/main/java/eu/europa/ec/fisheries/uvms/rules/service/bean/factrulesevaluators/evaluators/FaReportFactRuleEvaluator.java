@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.ContainerType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;

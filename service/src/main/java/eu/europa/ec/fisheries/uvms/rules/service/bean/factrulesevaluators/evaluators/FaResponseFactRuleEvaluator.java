@@ -14,7 +14,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.ContainerType;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
@@ -39,9 +38,6 @@ public class FaResponseFactRuleEvaluator extends AbstractFactEvaluator {
     private MDRCacheRuleService mdrCacheRuleService;
 
     @EJB
-    private ExchangeRuleService exchangeRuleService;
-
-    @EJB
     private DroolsEngineInitializer initializer;
 
 
@@ -64,7 +60,6 @@ public class FaResponseFactRuleEvaluator extends AbstractFactEvaluator {
     Map<String, Object> getGlobalsMap() {
         return new HashMap<String, Object>(){{
             put("mdrService", mdrCacheRuleService);
-            put("exchangeService", exchangeRuleService);
         }};
     }
 

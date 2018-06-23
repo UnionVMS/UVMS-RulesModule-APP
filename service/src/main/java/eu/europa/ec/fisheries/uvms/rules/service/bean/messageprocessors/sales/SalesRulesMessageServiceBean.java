@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.sales;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
