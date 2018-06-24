@@ -1305,21 +1305,18 @@ public class AbstractFactTest {
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
         List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
-
         assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
     }
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
         List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
-
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
     }
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithEmptyList() {
         List<FLUXLocation> fluxLocations = new ArrayList<>();
-
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
     }
 
@@ -1331,13 +1328,11 @@ public class AbstractFactTest {
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
         List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
-
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
     }
 
     @Test
     public void testValueNotContainsEmptyList() {
-
         List<CodeType> codeTypes = new ArrayList<>();
         assertTrue(fact.valueNotContains(codeTypes, "ZZZ", 1));
     }
@@ -1517,20 +1512,20 @@ public class AbstractFactTest {
         IdType idType3 = new IdType();
         idType3.setValue("ABCD");
         List<IdType> otherList = Collections.singletonList(idType3);
-        assertTrue(fact.listContainsAtLeastOneFromTheOtherList(list, otherList));
+        assertTrue(fact.containsAny(list, otherList));
     }
 
     @Test
     public void testListContainsAtLeastOneFromTheOtherList() {
         List<IdType> controlList = new ArrayList<>();
         List<IdType> elementsToMatchList = new ArrayList<>();
-        boolean result = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        boolean result = fact.containsAny(controlList, elementsToMatchList);
         assertFalse(result);
 
         IdType idType = new IdType("123");
         idType.setSchemeId("ssss");
         controlList.add(idType);
-        boolean result2 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        boolean result2 = fact.containsAny(controlList, elementsToMatchList);
         assertFalse(result2);
 
         IdType idType2 = new IdType("234");
@@ -1538,11 +1533,11 @@ public class AbstractFactTest {
         controlList.add(idType);
         elementsToMatchList.add(idType2);
 
-        boolean result3 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        boolean result3 = fact.containsAny(controlList, elementsToMatchList);
         assertFalse(result3);
 
         elementsToMatchList.add(new IdType("123"));
-        boolean result4 = fact.listContainsAtLeastOneFromTheOtherList(controlList, elementsToMatchList);
+        boolean result4 = fact.containsAny(controlList, elementsToMatchList);
         assertTrue(result4);
     }
 

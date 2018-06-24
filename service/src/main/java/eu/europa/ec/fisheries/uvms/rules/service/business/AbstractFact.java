@@ -405,24 +405,11 @@ public abstract class AbstractFact {
     }
 
     /**
-     * If controlList contains at leat one of the elements of the elementsToMatchList returns true;
+     * Returns true if at least one element is in both collections.
      *
-     * @param controlList
-     * @param elementsToMatchList
-     * @return
      */
-    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList) {
-        if (CollectionUtils.isEmpty(controlList)) {
-            return false;
-        }
-        if (CollectionUtils.isNotEmpty(elementsToMatchList)) {
-            for (IdType idToMatch : elementsToMatchList) {
-                if (controlList.contains(idToMatch)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean containsAny(Collection col1, Collection col2) {
+        return CollectionUtils.containsAny(col1, col2);
     }
 
     public boolean validateFormat(String value, String format) {

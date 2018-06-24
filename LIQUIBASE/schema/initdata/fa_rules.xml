@@ -50,7 +50,7 @@
         <column name="rule_id" value="4"/>
         <column name="br_id" value="FA-L03-00-0004"/>
         <column name="expression"
-                value="!isEmpty(nonUniqueIdsList) &amp;&amp; listContainsAtLeastOneFromTheOtherList(ids, nonUniqueIdsList)"/>
+                value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsAny(ids, nonUniqueIdsList)"/>
         <column name="note" value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party. It is expected to return the same validation results."/>
         <column name="message" value="Message ID already exists."/>
         <column name="level" value="L03"/>
@@ -391,7 +391,7 @@
         <column name="rule_id" value="31"/>
         <column name="br_id" value="FA-L03-00-0031"/>
         <column name="expression"
-                value="!isEmpty(nonUniqueIdsList) &amp;&amp; listContainsAtLeastOneFromTheOtherList(relatedFLUXReportDocumentIDs, nonUniqueIdsList)"/>
+                value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsAny(relatedFLUXReportDocumentIDs, nonUniqueIdsList)"/>
         <column name="note"
                 value="If it exists already, the contents are considered identical and the report may be ignored by the receiving party.
                     It is expected to return the same validation results."/>
@@ -490,7 +490,7 @@
         <column name="rule_id" value="38"/>
         <column name="br_id" value="FA-L03-00-0038"/>
         <column name="expression"
-                value="messageType == &quot;PUSH&quot; &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; listContainsAtLeastOneFromTheOtherList(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+                value="messageType == &quot;PUSH&quot; &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
         <column name="note" value="Must be an identifier of an acknowledged report."/>
         <column name="message" value="Referenced Report ID does not refer to an acknowledged Report ID "/>
         <column name="level" value="L03"/>
