@@ -329,8 +329,6 @@ public class ActivityFactMapper {
         if (CollectionUtils.isNotEmpty(specifiedFishingActivities)) {
             faReportDocumentFact.setSpecifiedFishingActivities(new ArrayList<>(specifiedFishingActivities));
             faReportDocumentFact.setSpecifiedFishingActivitiesTypes(mapFishingActivityTypes(specifiedFishingActivities));
-            faReportDocumentFact.setSpecifiedAndRealtedFishActOccurrenceDateTimes(mapOccurrenceDateTimesFromFishingActivities(specifiedFishingActivities));
-
             // Added for checking that only one DECLARATION of DEPARTURE/ARRIVAL exists in xml and Activity (FA-L03-00-0306, FA-L03-00-0241)
             List<IdType> faSpecifiedFishingTripIds = new ArrayList<>();
             for (FishingActivity specFishAct : specifiedFishingActivities) {
@@ -2558,7 +2556,7 @@ public class ActivityFactMapper {
         return dateAsString;
     }
 
-    public static Date getDate(DateTimeType dateTimeType) {
+    private Date getDate(DateTimeType dateTimeType) {
         Date date = null;
         if (dateTimeType != null) {
             try {
@@ -2573,7 +2571,7 @@ public class ActivityFactMapper {
         return date;
     }
 
-    private static String getDateXMLString(DateTimeType dateTimeType) {
+    private String getDateXMLString(DateTimeType dateTimeType) {
         String xmlDateString = null;
 
         if (dateTimeType != null && dateTimeType.getDateTime() != null) {

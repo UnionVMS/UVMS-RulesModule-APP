@@ -8,7 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.fisheries.uvms.rules.service;
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -38,18 +38,8 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -1427,46 +1417,18 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testListContainsEitherThen() {
+    public void testDisjunction() {
         List<String> activityTypes = new ArrayList<String>() {{
             add("YEAH");
             add("NO");
             add("BLAH");
         }};
 
-        final boolean contains = fact.listContainsEitherThen(activityTypes, "YEAH", "BLAH");
-        assertTrue(contains);
+        Collection disjunction = fact.disjunction(activityTypes,"YEAH", "BLAH");
+        assertTrue(disjunction.size() != 0);
 
-        final boolean contains2 = fact.listContainsEitherThen(activityTypes, "NO", "BLAH", "YEAH");
-        assertFalse(contains2);
-
-        final boolean contains3 = fact.listContainsEitherThen(null, "NO", "BLAH", "YEAH");
-        assertFalse(contains3);
-
-        final boolean contains4 = fact.listContainsEitherThen(activityTypes);
-        assertFalse(contains4);
-
-
-    }
-
-    @Test
-    public void testDateComparison() {
-        FaReportDocumentFact faRepFact = new FaReportDocumentFact();
-        Date date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
-        Date date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
-        Date date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
-        Date date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains1 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
-        System.out.println("List contains sameDate [true]: " + contains1);
-        assertTrue(contains1);
-
-        date1 = new GregorianCalendar(2017, Calendar.FEBRUARY, 10).getTime();
-        date2 = new GregorianCalendar(2017, Calendar.FEBRUARY, 12).getTime();
-        date3 = new GregorianCalendar(2017, Calendar.FEBRUARY, 11).getTime();
-        date4 = new GregorianCalendar(2017, Calendar.FEBRUARY, 14).getTime();
-        final boolean contains2 = faRepFact.containsSameDayMoreTheOnce(Arrays.asList(date1, date2, date3, date4));
-        System.out.println("List contains sameDate [false]: " + contains2);
-        assertFalse(contains2);
+        Collection disjunction2 = fact.disjunction(activityTypes, "NO", "BLAH", "YEAH");
+        assertFalse(disjunction2.size() != 0);
 
     }
 
@@ -1553,11 +1515,75 @@ public class AbstractFactTest {
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
+    @Test
+    public void testWithEmptyListShouldFail(){
+        List<FishingActivity> fishingActivities = new ArrayList<>();
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(fishingActivities));
+    }
 
     @Test
-    public void testGetDataTypeForMDRListNullCheck() {
-       // String result = fact.getDataTypeForMDRList("TEST", null);
-       // assertEquals("", result);
+    public void testWithThreeIdenticalDeparturesOnSameDayShouldFail(){
+        FishingActivity departure1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        FishingActivity departure2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","DEPARTURE");
+        FishingActivity departure3 = ActivityObjectsHelper.generateActivity("31-08-1982 10:30:56","DEPARTURE");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(Arrays.asList(departure1, departure2, departure3)));
+    }
+
+    @Test
+    public void testWithOneDeparturesAndOneArrivalShouldPass(){
+        FishingActivity departure = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        FishingActivity arrival = ActivityObjectsHelper.generateActivity("20-03-1984 10:20:56","ARRIVAL");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertTrue(reportDocumentFact.isValid(Arrays.asList(departure, arrival)));
+    }
+
+    @Test
+    public void testWithSeveralFishingOperationsOnTheSameDayShouldPass(){
+        FishingActivity arrival1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","FISHING_OPERATION");
+        FishingActivity arrival2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","FISHING_OPERATION");
+        FishingActivity arrival3 = ActivityObjectsHelper.generateActivity("31-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival4 = ActivityObjectsHelper.generateActivity("31-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival5 = ActivityObjectsHelper.generateActivity("31-08-1982 10:50:56","JOINED_FISHING_OPERATION");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertTrue(reportDocumentFact.isValid(Arrays.asList(arrival1, arrival2, arrival3, arrival4, arrival5)));
+    }
+
+    @Test
+    public void testWithSeveralFishingOperationsOnTheSameDayAndTwoDeparturesOnSameDayShouldFail(){
+        FishingActivity arrival1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","FISHING_OPERATION");
+        FishingActivity arrival2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","FISHING_OPERATION");
+        FishingActivity arrival3 = ActivityObjectsHelper.generateActivity("31-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival4 = ActivityObjectsHelper.generateActivity("31-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival5 = ActivityObjectsHelper.generateActivity("31-08-1982 10:50:56","JOINED_FISHING_OPERATION");
+        FishingActivity departure1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        FishingActivity departure2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","DEPARTURE");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(Arrays.asList(arrival1, arrival2, arrival3, arrival4, arrival5, departure1, departure2)));
+    }
+
+    @Test
+    public void testWithUnknownTypeShouldFail(){
+        FishingActivity arrival = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","UNKNOWN");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(Collections.singletonList(arrival)));
+    }
+
+    @Test
+    public void testWithTwoDifferentDeparturesAndOneArrivalShouldPass(){
+        FishingActivity departure1 = ActivityObjectsHelper.generateActivity("20-08-1982 10:20:56","DEPARTURE");
+        FishingActivity departure2= ActivityObjectsHelper.generateActivity("21-08-1982 10:20:56","DEPARTURE");
+        FishingActivity arrival = ActivityObjectsHelper.generateActivity("20-03-1984 10:20:56","ARRIVAL");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertTrue(reportDocumentFact.isValid(Arrays.asList(departure1, departure2, arrival)));
+    }
+
+    @Test
+    public void testWithOneDeparturesOnSameDayShouldPass(){
+        FishingActivity departure1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
 
     @Test

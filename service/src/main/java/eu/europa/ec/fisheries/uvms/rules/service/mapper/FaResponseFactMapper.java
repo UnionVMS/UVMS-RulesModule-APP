@@ -17,7 +17,6 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESPONDENT_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESPONSE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VALIDATOR_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper.getDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
@@ -36,7 +34,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-@NoArgsConstructor
 @Data
 public class FaResponseFactMapper {
 
@@ -52,8 +49,8 @@ public class FaResponseFactMapper {
 
     private List<IdType> faResponseIds = new ArrayList<>();
 
-    public FaResponseFactMapper(XPathStringWrapper stringWrapper) {
-        this.stringWrapper = stringWrapper;
+    public FaResponseFactMapper() {
+        this.stringWrapper = new XPathStringWrapper();
     }
 
     public FaResponseFact generateFactsForFaResponse(FLUXResponseMessage fluxResponseMessage) {
@@ -81,7 +78,7 @@ public class FaResponseFactMapper {
             fact.setResponseCode(mapToCodeType(fluxResponseDocument.getResponseCode()));
             stringWrapper.appendWithoutWrapping(partialXpath).append(RESPONSE_CODE).storeInRepo(fact, RESPONSE_CODE_ATTR);
 
-            fact.setCreationDateTime(getDate(fluxResponseDocument.getCreationDateTime()));
+            fact.setCreationDateTime(fluxResponseDocument.getCreationDateTime());
             stringWrapper.appendWithoutWrapping(partialXpath).append(CREATION_DATE_TIME).storeInRepo(fact, CREATION_DATE_TIME_ATTR);
 
             DateTimeType creationDateTime = fluxResponseDocument.getCreationDateTime();

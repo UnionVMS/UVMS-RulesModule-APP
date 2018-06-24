@@ -16,8 +16,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
@@ -28,10 +30,10 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 @Slf4j
 @Data
@@ -53,7 +55,6 @@ public class FaReportDocumentFact extends AbstractFact {
     private List<IdType> ownerFluxPartyIds;
     private VesselTransportMeans specifiedVesselTransportMeans;
     private List<FishingActivity> specifiedFishingActivities;
-    private List<Date> specifiedAndRealtedFishActOccurrenceDateTimes;
     private List<String> specifiedFishingActivitiesTypes;
     private List<IdType> relatedFLUXReportDocumentIDs;
     private IdType relatedFLUXReportDocumentReferencedID;
@@ -62,6 +63,58 @@ public class FaReportDocumentFact extends AbstractFact {
     private List<String> faTypesPerTrip;
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
+
+    public boolean isValid(List<FishingActivity> specifiedFishingActivities){
+        if (CollectionUtils.isEmpty(specifiedFishingActivities)){
+            return false;
+        }
+        Set<DayMonthYearType> dayMonthYearTypeHashSet =  new HashSet<>();
+        for (FishingActivity next : specifiedFishingActivities) {
+            try {
+                if (checkDoubles(dayMonthYearTypeHashSet, next)) return false;
+            }
+            catch (IllegalArgumentException e){
+                log.trace(e.getMessage(), e);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkDoubles(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next) {
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
+        FAType activityTypeEnum = FAType.valueOf(codeType.getValue());
+        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
+            DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
+            if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
+                return true;
+            }
+            dayMonthYearTypeHashSet.add(incomingDayMonthYear);
+        }
+        return false;
+    }
+
+    enum FAType {
+        DEPARTURE, ARRIVAL, AREA_ENTRY, AREA_EXIT, FISHING_OPERATION, LANDING, TRANSHIPMENT, RELOCATION,
+        GEAR_SHOT, GEAR_RETRIEVAL, START_FISHING, JOINED_FISHING_OPERATION, START_ACTIVITY, DISCARD
+    }
+
+    @Data
+    @EqualsAndHashCode
+    private class DayMonthYearType {
+        private int day;
+        private int month;
+        private int year;
+        private FAType type;
+
+        DayMonthYearType(DateTimeType dateTimeType, FAType type){
+            this.day = dateTimeType.getDateTime().getDay();
+            this.month = dateTimeType.getDateTime().getMonth();
+            this.year = dateTimeType.getDateTime().getYear();
+            this.type = type;
+
+        }
+    }
 
     public boolean containsMoreThenOneArrivalOrDeparture(FishingActivityType type) {
         Map<String, Integer> declarationList = new HashMap<>();
@@ -109,27 +162,6 @@ public class FaReportDocumentFact extends AbstractFact {
             }
         }
         return false;
-    }
-
-
-    public boolean containsSameDayMoreTheOnce(List<Date> dateList) {
-        if (CollectionUtils.isEmpty(dateList)) {
-            return false;
-        }
-        int listSize = dateList.size();
-        for (int i = 0; i < listSize; i++) {
-            Date comparisonDate = dateList.get(i);
-            for (int j = i + 1; j < listSize; j++) {
-                if (isSameDay(comparisonDate, dateList.get(j))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isSameDay(Date date1, Date date2) {
-        return DateUtils.isSameDay(date1, date2);
     }
 
     public FaReportDocumentFact() {

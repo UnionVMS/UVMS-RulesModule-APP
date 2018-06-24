@@ -86,7 +86,7 @@ public class DroolsEngineInitializer {
             KieContainer faRespContainer = responseRuleEvaluator.initializeRules(faResponseTemplatesAndRules);
 
             log.info("[START] Initializing templates and rules for FA-Query facts. Nr. of Rules : [{}]", faQueryTemplatesAndRules.size());
-            KieContainer faQueryContainer = responseRuleEvaluator.initializeRules(faQueryTemplatesAndRules);
+            KieContainer faQueryContainer = faQueryEvaluator.initializeRules(faQueryTemplatesAndRules);
 
             log.info("[START] Initializing templates and rules forSales facts. Nr. of Rules : [{}]", salesTemplatesAndRules.size());
             KieContainer salesContainer = salesRuleEvaluator.initializeRules(salesTemplatesAndRules);

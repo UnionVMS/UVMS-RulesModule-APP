@@ -42,7 +42,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
@@ -70,7 +69,7 @@ public class RulesEngineBean {
 
     @PostConstruct
     public void init(){
-        faResponseFactMapper = new FaResponseFactMapper(new XPathStringWrapper());
+        faResponseFactMapper = new FaResponseFactMapper();
     }
 
     @SuppressWarnings("unchecked")

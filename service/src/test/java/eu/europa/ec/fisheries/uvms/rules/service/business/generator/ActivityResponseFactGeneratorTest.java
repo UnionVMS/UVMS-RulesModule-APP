@@ -26,7 +26,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +56,7 @@ public class ActivityResponseFactGeneratorTest {
     @SneakyThrows
     public void before(){
 
-        generator = new ActivityResponseFactGenerator(null, new FaResponseFactMapper(new XPathStringWrapper()));
+        generator = new ActivityResponseFactGenerator(null, new FaResponseFactMapper());
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         date = sdf.parse("31-08-1982 10:20:56");
 

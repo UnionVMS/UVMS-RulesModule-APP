@@ -51,9 +51,7 @@
         <column name="br_id" value="FA-L03-00-0004"/>
         <column name="expression"
                 value="!isEmpty(nonUniqueIdsList) &amp;&amp; listContainsAtLeastOneFromTheOtherList(ids, nonUniqueIdsList)"/>
-        <column name="note"
-                value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party.
-                     It is expected to return the same validation results."/>
+        <column name="note" value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party. It is expected to return the same validation results."/>
         <column name="message" value="Message ID already exists."/>
         <column name="level" value="L03"/>
         <column name="error_type" value="ERROR"/>
@@ -492,9 +490,9 @@
         <column name="rule_id" value="38"/>
         <column name="br_id" value="FA-L03-00-0038"/>
         <column name="expression"
-                value="(referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; listContainsAtLeastOneFromTheOtherList(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+                value="messageType == &quot;PUSH&quot; &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; listContainsAtLeastOneFromTheOtherList(nonUniqueIdsList, Arrays.asList(referencedID))"/>
         <column name="note" value="Must be an identifier of an acknowledged report."/>
-        <column name="message" value="Referenced Report ID does not refer to an acknowledged Report ID saved in 'activity_flux_report_document' table."/>
+        <column name="message" value="Referenced Report ID does not refer to an acknowledged Report ID "/>
         <column name="level" value="L03"/>
         <column name="error_type" value="WARNING"/>
         <column name="rule_created_on"/>
@@ -615,7 +613,7 @@
         <column name="rule_id" value="47"/>
         <column name="br_id" value="FA-L00-00-0047"/>
         <column name="expression"
-                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !listSizeIs(specifiedFishingActivities, 1) &amp;&amp; (isEmpty(specifiedFishingActivities) || listContainsEitherThen(specifiedFishingActivitiesTypes, &quot;JOINT_FISHING_OPERATION&quot;, &quot;FISHING_OPERATION&quot;) || !containsSameDayMoreTheOnce(specifiedAndRealtedFishActOccurrenceDateTimes))"/>
+               value="(purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !isEmpty(specifiedFishingActivities) &amp;&amp; !isValid(specifiedFishingActivities)"/>
         <column name="note" value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
         <column name="message" value="Fishing activity information missing."/>
         <column name="level" value="L00"/>
@@ -1249,7 +1247,7 @@
         <column name="rule_id" value="95"/>
         <column name="br_id" value="FA-L02-00-0095"/>
         <column name="expression"
-                value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime != null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
+                value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime == null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
         <column name="note" value="check presence"/>
         <column name="message"
                 value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
@@ -4991,8 +4989,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="385"/>
         <column name="br_id" value="FA-L03-00-0385"/>
-        <column name="expression"
-                value="referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;
+        <column name="expression" value="messageType == &quot;PULL&quot; &amp;&amp; referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;
                 (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
         <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
         <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
@@ -5061,7 +5058,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="390"/>
         <column name="br_id" value="FA-L01-00-0390"/>
-        <column name="expression" value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
+        <column name="expression" value="!isValid(creationDateTime)"/>
         <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
         <column name="message" value="Response creation date/time must be a valid UTC date and in the correct."/>
         <column name="level" value="L01"/>
@@ -5074,9 +5071,8 @@
     <insert tableName="rule">
         <column name="rule_id" value="391"/>
         <column name="br_id" value="FA-L01-00-0391"/>
-        <column name="expression" value="creationDateTime != null &amp;&amp; dateNow().before(creationDateTime)"/>
-        <column name="note"
-                value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+        <column name="expression" value="creationDateTime != null &amp;&amp; dateNow().before(toDate(creationDateTime))"/>
+        <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Response creation date/time must be in the past."/>
         <column name="level" value="L01"/>
         <column name="error_type" value="WARNING"/>

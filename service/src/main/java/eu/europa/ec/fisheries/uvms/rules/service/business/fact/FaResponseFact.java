@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -23,6 +22,7 @@ import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -31,7 +31,7 @@ public class FaResponseFact extends AbstractFact {
     private List<IdType> ids;
     private IdType referencedID;
     private CodeType responseCode;
-    private Date creationDateTime;
+    private DateTimeType creationDateTime;
     private String creationDateTimeString;
     private List<IdType> fluxPartyIds;
     private List<ValidationResultDocument> relatedValidationResultDocuments;

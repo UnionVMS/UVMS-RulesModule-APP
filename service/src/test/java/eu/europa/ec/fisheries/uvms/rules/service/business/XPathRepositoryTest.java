@@ -8,7 +8,7 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
-package eu.europa.fisheries.uvms.rules.service.mapper.fact.xpath.util;
+package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
@@ -41,12 +41,12 @@ import com.ximpleware.XPathEvalException;
 import com.ximpleware.XPathParseException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.SneakyThrows;
@@ -58,6 +58,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 /**
  * Created by kovian on 23/06/2017.
@@ -372,8 +373,7 @@ public class XPathRepositoryTest {
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
-        AbstractGenerator generator = new ActivityResponseFactGenerator(null, null);
-        generator.setBusinessObjectMessage(fluxMessage);
+        AbstractGenerator generator = new ActivityResponseFactGenerator(new FLUXResponseMessage(), new FaResponseFactMapper());
         factList.addAll(generator.generateAllFacts());
     }
 
