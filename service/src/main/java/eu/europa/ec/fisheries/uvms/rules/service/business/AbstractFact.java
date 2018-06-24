@@ -40,7 +40,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -58,7 +57,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
 @ToString
-@Data
 public abstract class AbstractFact {
 
     private static final String COLON = ":";
@@ -425,16 +423,6 @@ public abstract class AbstractFact {
             }
         }
         return false;
-    }
-
-    /**
-     * Returns a Collection containing the exclusive disjunction (symmetric difference) of the given Iterables.
-     *
-     * @param activityTypes
-     * @return
-     */
-    public Collection disjunction(List<String> activityTypes, String... values) {
-        return CollectionUtils.disjunction(activityTypes, Arrays.asList(values));
     }
 
     public boolean validateFormat(String value, String format) {
@@ -1177,6 +1165,22 @@ public abstract class AbstractFact {
 
     public MessageType getMessageType() {
         return messageType;
+    }
+
+    public void setCreationDateOfMessage(DateTime creationDateOfMessage) {
+        this.creationDateOfMessage = creationDateOfMessage;
+    }
+
+    public void setSenderOrReceiver(String senderOrReceiver) {
+        this.senderOrReceiver = senderOrReceiver;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public enum FORMATS {

@@ -1,20 +1,30 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.*;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.AAPProductType;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.schema.sales.DateTimeType;
+import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
+import eu.europa.ec.fisheries.schema.sales.FACatchType;
+import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
+import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
+import eu.europa.ec.fisheries.schema.sales.SalesEventType;
+import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SalesDocumentFactTest {
 
@@ -102,7 +112,7 @@ public class SalesDocumentFactTest {
                 .withPrefabValues(FishingActivityType.class, new FishingActivityType().withIDS(new IDType().withValue("BE")), new FishingActivityType().withIDS(new IDType().withValue("SWE")))
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withID(new IDType().withValue("a")), new FLUXLocationType().withID(new IDType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
+                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
                 .verify();
     }
 
