@@ -24,7 +24,6 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -36,7 +35,6 @@ import java.util.UUID;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
@@ -89,7 +87,7 @@ public class AbstractFactTest {
 
     @Test
     public void testListIdContainsAll() {
-        List<CodeType> codeTypes = Arrays.asList(RuleTestHelper.getCodeType("val1", "AREA"), RuleTestHelper.getCodeType("val2", "AREA1"));
+        List<CodeType> codeTypes = Arrays.asList(ActivityObjectsHelper.generateCodeType("val1", "AREA"), ActivityObjectsHelper.generateCodeType("val2", "AREA1"));
         assertTrue(fact.listIdContainsAll(codeTypes, "AREA", "AREA1", "BLA"));
     }
 
@@ -362,9 +360,9 @@ public class AbstractFactTest {
         boolean result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
         assertFalse(result);
 
-        vesselIds = Arrays.asList(RuleTestHelper.getIdType("VSl1", "TESTVSL"));
-        vesselCountryId = RuleTestHelper.getIdType("BEL", "TESTCOUNTRY");
-        additionalObjectList = Arrays.asList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
+        vesselIds = Collections.singletonList(ActivityObjectsHelper.generateIdType("VSl1", "TESTVSL"));
+        vesselCountryId = ActivityObjectsHelper.generateIdType("BEL", "TESTCOUNTRY");
+        additionalObjectList = Collections.singletonList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
 
         result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
         assertFalse(result);
@@ -476,10 +474,10 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnTrueWithNullAliasAndFalseCheckAliasEmptyness() {
         ContactPerson contactPerson1 = new ContactPerson();
-        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
-        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        contactPerson1.setFamilyName(ActivityObjectsHelper.generateTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(ActivityObjectsHelper.generateTextType("Alias1", null, null));
         ContactPerson contactPerson2 = new ContactPerson();
-        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
+        contactPerson2.setGivenName(ActivityObjectsHelper.generateTextType("GivenName2", null, null));
 
         List<ContactPerson> contactPeople = new ArrayList<>();
         contactPeople.add(contactPerson1);
@@ -491,11 +489,11 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnTrueWithEmptyAliasAndTrueCheckAliasEmptyness() {
         ContactPerson contactPerson1 = new ContactPerson();
-        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
-        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        contactPerson1.setFamilyName(ActivityObjectsHelper.generateTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(ActivityObjectsHelper.generateTextType("Alias1", null, null));
         ContactPerson contactPerson2 = new ContactPerson();
-        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
-        contactPerson2.setAlias(RuleTestHelper.getTextType(StringUtils.EMPTY, null, null));
+        contactPerson2.setGivenName(ActivityObjectsHelper.generateTextType("GivenName2", null, null));
+        contactPerson2.setAlias(ActivityObjectsHelper.generateTextType(StringUtils.EMPTY, null, null));
 
         List<ContactPerson> contactPeople = new ArrayList<>();
         contactPeople.add(contactPerson1);
@@ -507,13 +505,13 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnFalseWithAllDataTrueCheckAliasEmptyness() {
         ContactPerson contactPerson1 = new ContactPerson();
-        contactPerson1.setGivenName(RuleTestHelper.getTextType("GivenName1", null, null));
-        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
-        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        contactPerson1.setGivenName(ActivityObjectsHelper.generateTextType("GivenName1", null, null));
+        contactPerson1.setFamilyName(ActivityObjectsHelper.generateTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(ActivityObjectsHelper.generateTextType("Alias1", null, null));
         ContactPerson contactPerson2 = new ContactPerson();
-        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
-        contactPerson2.setAlias(RuleTestHelper.getTextType("FamilyName2", null, null));
-        contactPerson2.setAlias(RuleTestHelper.getTextType("Alias2", null, null));
+        contactPerson2.setGivenName(ActivityObjectsHelper.generateTextType("GivenName2", null, null));
+        contactPerson2.setAlias(ActivityObjectsHelper.generateTextType("FamilyName2", null, null));
+        contactPerson2.setAlias(ActivityObjectsHelper.generateTextType("Alias2", null, null));
 
         List<ContactPerson> contactPeople = new ArrayList<>();
         contactPeople.add(contactPerson1);
@@ -525,13 +523,13 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnFalseWithAllDataFalseCheckAliasEmptyness() {
         ContactPerson contactPerson1 = new ContactPerson();
-        contactPerson1.setGivenName(RuleTestHelper.getTextType("GivenName1", null, null));
-        contactPerson1.setFamilyName(RuleTestHelper.getTextType("FamilyName1", null, null));
-        contactPerson1.setAlias(RuleTestHelper.getTextType("Alias1", null, null));
+        contactPerson1.setGivenName(ActivityObjectsHelper.generateTextType("GivenName1", null, null));
+        contactPerson1.setFamilyName(ActivityObjectsHelper.generateTextType("FamilyName1", null, null));
+        contactPerson1.setAlias(ActivityObjectsHelper.generateTextType("Alias1", null, null));
         ContactPerson contactPerson2 = new ContactPerson();
-        contactPerson2.setGivenName(RuleTestHelper.getTextType("GivenName2", null, null));
-        contactPerson2.setAlias(RuleTestHelper.getTextType("FamilyName2", null, null));
-        contactPerson2.setAlias(RuleTestHelper.getTextType("Alias2", null, null));
+        contactPerson2.setGivenName(ActivityObjectsHelper.generateTextType("GivenName2", null, null));
+        contactPerson2.setAlias(ActivityObjectsHelper.generateTextType("FamilyName2", null, null));
+        contactPerson2.setAlias(ActivityObjectsHelper.generateTextType("Alias2", null, null));
 
         List<ContactPerson> contactPeople = new ArrayList<>();
         contactPeople.add(contactPerson1);
@@ -582,13 +580,13 @@ public class AbstractFactTest {
 
     @Test
     public void testListIdContainsAnySingle() {
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", "GEAR_TYPE");
+        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", "GEAR_TYPE");
         assertFalse(fact.listIdNotContains(typeCode, "GEAR_TYPE"));
     }
 
     @Test
     public void testListIdContainsAnyMultiple() {
-        List<CodeType> typeCodes = Arrays.asList(RuleTestHelper.getCodeType("PS", "GEAR_TYPE"), RuleTestHelper.getCodeType("LT", "VESSEL_ACTIVITY"));
+        List<CodeType> typeCodes = Arrays.asList(ActivityObjectsHelper.generateCodeType("PS", "GEAR_TYPE"), ActivityObjectsHelper.generateCodeType("LT", "VESSEL_ACTIVITY"));
 
         assertFalse(fact.listIdNotContains(typeCodes, "GEAR_TYPE"));
     }
@@ -749,71 +747,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsPresentInMDRList() {
-        //boolean result = fact.isPresentInMDRList("GEAR_TYPE", "LA");
-        //assertEquals(true, result);
-    }
-
-    @Test
-    public void testIsCodeTypePresentInMDRListWhenProvidingListIdAndPresent() {
-        List<CodeType> codeTypes = new ArrayList<>();
-        codeTypes.add(new CodeType("RELEASED"));
-        codeTypes.add(new CodeType("DISCARDED"));
-        codeTypes.add(new CodeType("DEMINIMIS"));
-       // boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
-      //  assertEquals(true, result);
-    }
-
-    @Test
-    public void testIsCodeTypePresentInMDRListWhenProvidingListIdAndNotPresent() {
-        List<CodeType> codeTypes = new ArrayList<>();
-        codeTypes.add(new CodeType("RELEASED"));
-        codeTypes.add(new CodeType("DISCARDED"));
-        codeTypes.add(new CodeType("STIJN_WAS_HERE"));
-        //boolean result = fact.isCodeTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
-       // assertEquals(false, result);
-    }
-
-    @Test
-    public void testIsCodeTypePresentInMDRListWhenNotProvidingAListId() {
-        List<CodeType> codeTypes = new ArrayList<>();
-        codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("DISCARDED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
-       // boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
-       // assertEquals(true, result);
-    }
-
-    @Test
-    public void testIsCodeTypePresentInMDRListWhenNotProvidingAListIdAndNotPresent() {
-        List<CodeType> codeTypes = new ArrayList<>();
-        codeTypes.add(new CodeType("RELEASED", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("STIJN_WAS_HERE_TOO", "FA_CATCH_TYPE"));
-        codeTypes.add(new CodeType("DEMINIMIS", "FA_CATCH_TYPE"));
-       // boolean result = fact.isCodeTypePresentInMDRList(codeTypes);
-       // assertEquals(false, result);
-    }
-
-    @Test
-    public void testIsCodeTypeListIdPresentInMDRList() {
-
-        List<CodeType> codeTypes = new ArrayList<>();
-
-        codeTypes.add(RuleTestHelper.getCodeType("RELEASED", "ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
-        codeTypes.add(RuleTestHelper.getCodeType("DISCARDED", "ONBOARD"));
-        //boolean result = fact.isCodeTypeListIdPresentInMDRList("FA_CATCH_TYPE", codeTypes);
-       // assertEquals(true, result);
-    }
-
-
-    @Test
-    public void testIsPresentInMdrList() {
-       // boolean result = fact.isPresentInMDRList("TEST", "TEST");
-       // assertFalse(false);
-    }
-
-    @Test
     public void testGetSetUniqueId() {
         fact.setUniqueIds(Arrays.asList("TEST"));
         List<String> ids = fact.getUniqueIds();
@@ -826,34 +759,11 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsIdTypePresentInMDRList() {
-
-        List<IdType> codeTypes = new ArrayList<>();
-        codeTypes.add(new IdType("RELEASED"));
-        codeTypes.add(new IdType("DISCARDED"));
-        codeTypes.add(new IdType("DEMINIMIS"));
-      /*
-        boolean result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", codeTypes);
-        assertEquals(true, result);
-
-        result = fact.isIdTypePresentInMDRList(null, codeTypes);
-        assertFalse(result);
-
-        result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Collections.<IdType>emptyList());
-        assertFalse(result);
-
-        result = fact.isIdTypePresentInMDRList("FA_CATCH_TYPE", Arrays.asList(new IdType("BOARD")));
-        assertFalse(result);
-        */
-    }
-
-
-    @Test
     public void testValueContainsAll() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
-        IdType idType3 = RuleTestHelper.getIdType("value13", "UUID");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("value13", "UUID");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
         boolean result = fact.valueContainsAll(idTypes, "value1");
@@ -863,8 +773,8 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAll_1() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "XEU");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "XFA");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "XEU");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "XFA");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.valueContainsAll(idTypes, "XEU","XFA");
@@ -873,9 +783,9 @@ public class AbstractFactTest {
 
     @Test
     public void testIsNumeric() {
-        NumericType numericType1 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-        NumericType numericType2 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
-        NumericType numericType3 = RuleTestHelper.getNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType1 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType2 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
+        NumericType numericType3 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
         boolean result = fact.isNumeric(numericTypes);
         assertTrue(result);
@@ -884,8 +794,8 @@ public class AbstractFactTest {
     @Test
     public void testIdListContainsValue() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.idListContainsValue(idTypes, "value1", "CFR");
@@ -895,8 +805,8 @@ public class AbstractFactTest {
     @Test
     public void testSchemeIdContainsAny() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAny(idTypes, "CFR");
@@ -906,8 +816,8 @@ public class AbstractFactTest {
     @Test
     public void testSchemeIdContainsAllOrNone() {
 
-        IdType idType1 = RuleTestHelper.getIdType("value1", "CFR");
-        IdType idType2 = RuleTestHelper.getIdType("value12", "IRCS");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2);
         boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
@@ -941,8 +851,8 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAny() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdNotContains(codeTypes, "CFR");
@@ -958,8 +868,8 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAny() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
@@ -972,8 +882,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1 = RuleTestHelper.getCodeType("value1", "CFR");
-        CodeType codeType2 = RuleTestHelper.getCodeType("value12", "IRCS");
+        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -1291,7 +1201,6 @@ public class AbstractFactTest {
         assertFalse(fact.isCodeTypeValidFormat("FLUX_SALES_TYPE", codeType));
     }
 
-
     private CodeType getCodeTypeWithListID(String listId) {
         CodeType codeType = new CodeType();
         codeType.setListId(listId);
@@ -1302,19 +1211,6 @@ public class AbstractFactTest {
         CodeType codeType = new CodeType();
         codeType.setValue(value);
         return codeType;
-    }
-
-    @Test
-    public void testIsTypeCodeValuePresentInMDRList() {
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("VESSEL_STORAGE_TYPE");
-        typeCode.setValue("OTR");
-        CodeType typeCode2 = new CodeType();
-        typeCode2.setListId("FAKE_LIST_ID");
-        typeCode2.setValue("NCC");
-        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
-        //boolean typeCodeValuePresentInList = fact.isCodeTypePresentInMDRList("VESSEL_STORAGE_TYPE", typeCodes);
-        //assertEquals(true, typeCodeValuePresentInList);
     }
 
     @Test
@@ -1332,17 +1228,17 @@ public class AbstractFactTest {
     @SneakyThrows
     public void testIsRequiredGearCharacteristicsPresent() {
         FishingGearFact fishingGearFact = new FishingGearFact();
-        fishingGearFact.setFishingGearTypeCharacteristics(RuleTestHelper.getFishingGearTypeCharacteristics());
-        fishingGearFact.setApplicableGearCharacteristics(RuleTestHelper.getGearCharacteristics());
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
+        fishingGearFact.setFishingGearTypeCharacteristics(ActivityObjectsHelper.generateFishingGearTypeCharacteristics());
+        fishingGearFact.setApplicableGearCharacteristics(ActivityObjectsHelper.generateGearCharacteristics());
+        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
         assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
     }
 
     @Test
     public void testRetrieveGearCharacteristicTypeCodeValues() {
         FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
+        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(ActivityObjectsHelper.generateFishingGearTypeCharacteristics(), typeCode, true);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1352,8 +1248,7 @@ public class AbstractFactTest {
     @Test
     public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
         FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
         assertTrue(fishingGearCharacteristicCodes.contains("HE"));
         assertTrue(fishingGearCharacteristicCodes.contains("GM"));
         assertTrue(fishingGearCharacteristicCodes.contains("ME"));
@@ -1363,21 +1258,12 @@ public class AbstractFactTest {
     @Test
     public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
         FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
+        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.GEAR_TYPE);
         assertFalse(fishingGearCharacteristicCodes.contains("HE"));
         assertFalse(fishingGearCharacteristicCodes.contains("GM"));
         assertFalse(fishingGearCharacteristicCodes.contains("ME"));
         assertFalse(fishingGearCharacteristicCodes.contains("GD"));
     }
-
-    @Test
-    public void testGetDataTypeForMDRList() {
-
-       // String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC", "ME");
-       // assertEquals("MEASURE", result);
-    }
-
 
     @Test
     public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
@@ -1417,31 +1303,15 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testDisjunction() {
-        List<String> activityTypes = new ArrayList<String>() {{
-            add("YEAH");
-            add("NO");
-            add("BLAH");
-        }};
-
-        Collection disjunction = fact.disjunction(activityTypes,"YEAH", "BLAH");
-        assertTrue(disjunction.size() != 0);
-
-        Collection disjunction2 = fact.disjunction(activityTypes, "NO", "BLAH", "YEAH");
-        assertFalse(disjunction2.size() != 0);
-
-    }
-
-    @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
-        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
 
         assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
     }
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
-        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
 
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
     }
@@ -1460,7 +1330,7 @@ public class AbstractFactTest {
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
-        List<FLUXLocation> fluxLocations = RuleTestHelper.createFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
 
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
     }
@@ -1511,7 +1381,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsGreaterThanZero() {
-        List<MeasureType> measureTypeList = Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(1), "km"));
+        List<MeasureType> measureTypeList = Collections.singletonList(ActivityObjectsHelper.generateMeasureType(new BigDecimal(1), "km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
@@ -1641,16 +1511,12 @@ public class AbstractFactTest {
 
     @Test
     public void testListContainsAtLeastOneFromTheOtherListEquals(){
-
         IdType idType2 = new IdType();
         idType2.setValue("abcd");
         List<IdType> list = Collections.singletonList(idType2);
-
         IdType idType3 = new IdType();
         idType3.setValue("ABCD");
-
         List<IdType> otherList = Collections.singletonList(idType3);
-
         assertTrue(fact.listContainsAtLeastOneFromTheOtherList(list, otherList));
     }
 
@@ -1680,33 +1546,6 @@ public class AbstractFactTest {
         assertTrue(result4);
     }
 
-
-    @Test
-    public void testIsTypeCodeValuePresentInList() {
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("VESSEL_STORAGE_TYPE");
-        typeCode.setValue("OTR");
-        CodeType typeCode2 = new CodeType();
-        typeCode2.setListId("FAKE_LIST_ID");
-        typeCode2.setValue("NCC");
-        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
-       // boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCodes);
-       // assertEquals(true, typeCodeValuePresentInList);
-
-    }
-
-    @Test
-    public void testIsTypeCodeValuePresentInList_single() {
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("VESSEL_STORAGE_TYPE");
-        typeCode.setValue("OTR");
-
-       // boolean typeCodeValuePresentInList = fact.isTypeCodeValuePresentInList("VESSEL_STORAGE_TYPE", typeCode);
-      //  assertEquals(true, typeCodeValuePresentInList);
-
-    }
-
-
     @Test
     public void testValidateFormatCodeTypes() {
         CodeType typeCode = new CodeType();
@@ -1720,13 +1559,12 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
-
     @Test
     public void testMatchWithFluxTL() {
         IdType idType = new IdType();
         idType.setValue("TEST");
         fact.setSenderOrReceiver("TEST");
-        assertTrue(fact.matchWithFluxTL(Arrays.asList(idType)));
+        assertTrue(fact.matchWithFluxTL(Collections.singletonList(idType)));
     }
 
     @Test
@@ -1743,36 +1581,6 @@ public class AbstractFactTest {
     public void testMatchWithFluxTLWithSenderReceiverNull() {
         fact.setSenderOrReceiver(null);
         assertFalse(fact.matchWithFluxTL(new ArrayList<IdType>()));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenIdIsNull() {
-        IdType idType = null;
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenSchemeIdIsNotAKnownListInMDR() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.FLUX_SALES_PARTY_ROLE.name());
-        idType.setValue("test");
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenNotPresent() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
-        idType.setValue("fake");
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenPresent() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
-        idType.setValue("PS1");
-        //assertTrue(fact.isIdTypePresentInMDRList(idType));
     }
 
     @Test
@@ -1805,20 +1613,18 @@ public class AbstractFactTest {
         assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
     }
 
-
     @Test
     public void testisPositiveInteger() {
 
-        boolean result = fact.isPositiveInteger(Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(22), null)));
+        boolean result = fact.isPositiveInteger(Collections.singletonList(ActivityObjectsHelper.generateMeasureType(new BigDecimal(22), null)));
         assertTrue(result);
     }
-
 
     @Test
     public void testGetValueForSchemeId() {
         List<IdType> idTypes = new ArrayList<>();
-        IdType idType1 = RuleTestHelper.getIdType("FARM_VALUE", "FARM");
-        IdType idType2 = RuleTestHelper.getIdType("ICCAT_VALUE", "ICCAT");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("FARM_VALUE", "FARM");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("ICCAT_VALUE", "ICCAT");
         idTypes.add(idType1);
         idTypes.add(idType2);
 
@@ -1826,74 +1632,30 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsSchemeIdPresent() {
-        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
-
-        assertTrue(fact.isSchemeIdPresent(idType));
-    }
-
-    @Test
-    public void testIsSchemeIdPresentNullValue() {
-        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
-
-        assertFalse(fact.isSchemeIdPresent(idType));
-    }
-
-    @Test
     public void testIsAllSchemeIdsPresent() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
-        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
-        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
         assertFalse(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
     public void testIsAllSchemeIdsPresentOneIsNull() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
-        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
-        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
+        IdType idType3 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
         assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
     public void testIsAllSchemeIdsPresentOneIsEmpty() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-Ba21CE845119", "UUID");
-        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", StringUtils.EMPTY);
-        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-Ba21CE845119", "UUID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", StringUtils.EMPTY);
+        IdType idType3 = ActivityObjectsHelper.generateIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "UUID");
 
         assertTrue(fact.isAllSchemeIdsPresent(Arrays.asList(idType1, idType2, idType3)));
-    }
-
-    @Test
-    public void testIsSchemeIdPresentInMDRList() {
-        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
-        //assertTrue(fact.isSchemeIdPresentInMDRList("VESSEL_STORAGE_TYPE", idType));
-    }
-
-    @Test
-    public void testIsSchemeIdPresentInMDRListNullValue() {
-        IdType idType = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
-        //assertFalse(fact.isSchemeIdPresentInMDRList("VESSEL_STORAGE_TYPE", idType));
-    }
-
-    @Test
-    public void testIsAllSchemeIdsPresentInMDRList() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
-        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OSS");
-        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "NCC");
-
-        //assertTrue(fact.isAllSchemeIdsPresentInMDRList("VESSEL_STORAGE_TYPE", Arrays.asList(idType1, idType2, idType3)));
-    }
-
-    @Test
-    public void testIsAllSchemeIdsPresentInMDRListNullValue() {
-        IdType idType1 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "OTR");
-        IdType idType2 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", null);
-        IdType idType3 = RuleTestHelper.getIdType("E75BB8B-C24D-4D9C-B1FD-BA21CE845119", "NCC");
-
-        //assertFalse(fact.isAllSchemeIdsPresentInMDRList("VESSEL_STORAGE_TYPE", Arrays.asList(idType1, idType2, idType3)));
     }
 
     @Test
@@ -1911,9 +1673,9 @@ public class AbstractFactTest {
 
     @Test
     public void testMatchWithFluxTLCorrectValues() {
-        IdType idType1 = RuleTestHelper.getIdType("ABC:DEF", "FLUX_GP_PARTY");
-        IdType idType2 = RuleTestHelper.getIdType("SDF:GHJ", "FLUX_GP_PARTY");
-        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("ABC:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("SDF:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("WER:XCV", "FLUX_GP_PARTY");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
@@ -1923,8 +1685,8 @@ public class AbstractFactTest {
     }
     @Test
     public void testMatchWithFluxTL_1() {
-        IdType idType3 = RuleTestHelper.getIdType("SRC", "FLUX_GP_PARTY");
-        List<IdType> idTypes = Arrays.asList(idType3);
+        IdType idType3 = ActivityObjectsHelper.generateIdType("SRC", "FLUX_GP_PARTY");
+        List<IdType> idTypes = Collections.singletonList(idType3);
         fact.setSenderOrReceiver("SRC:FTF");
         assertTrue(fact.matchWithFluxTL(idTypes));
     }
@@ -1932,9 +1694,9 @@ public class AbstractFactTest {
 
     @Test
     public void testMatchWithFluxTLCorrectValueAndNullAndEmpty() {
-        IdType idType1 = RuleTestHelper.getIdType(null, "FLUX_GP_PARTY");
-        IdType idType2 = RuleTestHelper.getIdType(StringUtils.EMPTY, "FLUX_GP_PARTY");
-        IdType idType3 = RuleTestHelper.getIdType("SDF:GHJ", "FLUX_GP_PARTY");
+        IdType idType1 = ActivityObjectsHelper.generateIdType(null, "FLUX_GP_PARTY");
+        IdType idType2 = ActivityObjectsHelper.generateIdType(StringUtils.EMPTY, "FLUX_GP_PARTY");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("SDF:GHJ", "FLUX_GP_PARTY");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
@@ -1945,9 +1707,9 @@ public class AbstractFactTest {
 
     @Test
     public void testMatchWithFluxTLWrongValues() {
-        IdType idType1 = RuleTestHelper.getIdType("SDF;DEF", "FLUX_GP_PARTY");
-        IdType idType2 = RuleTestHelper.getIdType("SDFGHJ", "FLUX_GP_PARTY");
-        IdType idType3 = RuleTestHelper.getIdType("SDF-XCV", "FLUX_GP_PARTY");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("SDF;DEF", "FLUX_GP_PARTY");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("SDFGHJ", "FLUX_GP_PARTY");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("SDF-XCV", "FLUX_GP_PARTY");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
@@ -1958,9 +1720,9 @@ public class AbstractFactTest {
 
     @Test
     public void testMatchWithFluxTLExceptPartiesCorrectValues() {
-        IdType idType1 = RuleTestHelper.getIdType("XEU:DEF", "FLUX_GP_PARTY");
-        IdType idType2 = RuleTestHelper.getIdType("XFA:GHJ", "FLUX_GP_PARTY");
-        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("XEU:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("XFA:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("WER:XCV", "FLUX_GP_PARTY");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
@@ -1971,9 +1733,9 @@ public class AbstractFactTest {
 
     @Test
     public void testMatchWithFluxTLExceptPartiesWrongValues() {
-        IdType idType1 = RuleTestHelper.getIdType("XEU:DEF", "FLUX_GP_PARTY");
-        IdType idType2 = RuleTestHelper.getIdType("XFA:GHJ", "FLUX_GP_PARTY");
-        IdType idType3 = RuleTestHelper.getIdType("WER:XCV", "FLUX_GP_PARTY");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("XEU:DEF", "FLUX_GP_PARTY");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("XFA:GHJ", "FLUX_GP_PARTY");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("WER:XCV", "FLUX_GP_PARTY");
 
         List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
 
@@ -1984,49 +1746,49 @@ public class AbstractFactTest {
 
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
-        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
+        IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
         assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
-        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
+        IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
 
         assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
     @Test
     public void testCodeTypeValueContainsMatch() {
-        boolean result = fact.codeTypeValueContainsMatch(Arrays.asList(RuleTestHelper.getCodeType("TEST", null)), "TEST");
+        boolean result = fact.codeTypeValueContainsMatch(Arrays.asList(ActivityObjectsHelper.generateCodeType("TEST", null)), "TEST");
         assertTrue(result);
     }
 
     @Test
     public void testValueStartsWithMultipleIdTypesNoneCorrect() {
-        List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA"),
-                RuleTestHelper.getIdType("28.3.d.27", "FAO_AREA"), RuleTestHelper.getIdType("27.3.bd.27", "FAO_AREA"));
+        List<IdType> idTypes = Arrays.asList(ActivityObjectsHelper.generateIdType("27.3.b.27", "FAO_AREA"),
+                ActivityObjectsHelper.generateIdType("28.3.d.27", "FAO_AREA"), ActivityObjectsHelper.generateIdType("27.3.bd.27", "FAO_AREA"));
 
         assertFalse(fact.valueStartsWith(idTypes, "27.3.d"));
     }
 
     @Test
     public void testValueStartsWithMultipleIdTypesAllCorrect() {
-        List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.d.27", "FAO_AREA"),
-                RuleTestHelper.getIdType("27.3.d.27.b", "FAO_AREA"), RuleTestHelper.getIdType("27.3.d", "FAO_AREA"));
+        List<IdType> idTypes = Arrays.asList(ActivityObjectsHelper.generateIdType("27.3.d.27", "FAO_AREA"),
+                ActivityObjectsHelper.generateIdType("27.3.d.27.b", "FAO_AREA"), ActivityObjectsHelper.generateIdType("27.3.d", "FAO_AREA"));
 
         assertTrue(fact.valueStartsWith(idTypes, "27.3.d"));
     }
 
     @Test
     public void testValueStartsWithSingleIdTypeOneCorrect() {
-        IdType idType = RuleTestHelper.getIdType("27.3.d.27", "FAO_AREA");
+        IdType idType = ActivityObjectsHelper.generateIdType("27.3.d.27", "FAO_AREA");
         assertTrue(fact.valueStartsWith(idType, "27.3.d"));
     }
 
     @Test
     public void testValueStartsWithSingleIdTypeNoneCorrect() {
-        IdType idType = RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA");
+        IdType idType = ActivityObjectsHelper.generateIdType("27.3.b.27", "FAO_AREA");
         assertFalse(fact.valueStartsWith(idType, "27.3.d"));
     }
 

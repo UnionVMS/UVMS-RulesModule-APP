@@ -252,10 +252,6 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-    public boolean isSchemeIdPresent(IdType idType) {
-        return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
-    }
-
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
             return false;
@@ -268,6 +264,10 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    private boolean isSchemeIdPresent(IdType idType) {
+        return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
     }
 
     /**
@@ -454,12 +454,12 @@ public abstract class AbstractFact {
         return dateTimeType != null && dateTimeType.getDateTime() != null && dateTimeType.getDateTime().toString().matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
-    @Deprecated // use DateTimeType on fact
+    @Deprecated // use DateTimeType mapped on fact
     public boolean isIsoDateStringValidFormat(String value) {
         return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
-    public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
+    public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) { // FIXME kind of duplicated method with activity one
         if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || !idType.getSchemeId().equals(requiredSchemeId)) {
             return false;
         }
@@ -532,7 +532,7 @@ public abstract class AbstractFact {
         return listIdDoesNotContainAll(Collections.singletonList(codeType), valuesToMatch);
     }
 
-
+    // FIXME move method to SalesPartyFact not really re-usable
     public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
         List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
@@ -1310,10 +1310,6 @@ public abstract class AbstractFact {
             }
         }
         return null;
-    }
-
-    public boolean stringEquals(String str1, String str2){
-        return StringUtils.equals(str1, str2);
     }
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {

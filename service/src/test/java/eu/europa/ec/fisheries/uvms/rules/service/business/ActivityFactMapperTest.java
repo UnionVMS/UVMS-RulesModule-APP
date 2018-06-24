@@ -27,13 +27,13 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDepartureFact;
@@ -64,6 +64,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddress
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -246,12 +247,12 @@ public class ActivityFactMapperTest {
         faQuery.setTypeCode(codeType);
 
         flapDocumentList = new ArrayList<>();
-        flapDocumentList.add(RuleTestHelper.getFLAPDocument());
+        flapDocumentList.add(ActivityObjectsHelper.generateFLAPDocument());
 
         fluxResponseMessage = new FLUXResponseMessage();
         FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
         fluxResponseDocument.setResponseCode(codeType);
-        fluxResponseDocument.setIDS(Arrays.asList(idType));
+        fluxResponseDocument.setIDS(Collections.singletonList(idType));
 
         List<ValidationResultDocument> validationResultDocuments = new ArrayList<>();
         validationResultDocument = new ValidationResultDocument();
@@ -667,7 +668,7 @@ public class ActivityFactMapperTest {
 
         FishingActivity fishingActivity = new FishingActivity();
 
-        fishingActivity.setSpecifiedFACatches(RuleTestHelper.getFACatchList());
+        fishingActivity.setSpecifiedFACatches(ActivityObjectsHelper.generateFACatchList());
 
         FaRelocationFact faRelocationFact = activityMapper.generateFactsForRelocation(fishingActivity, new FAReportDocument());
 
@@ -881,7 +882,7 @@ public class ActivityFactMapperTest {
         List<IdType> idTypes = activityMapper.getFLAPDocumentIds(flapDocumentList);
 
         List<IdType> expectedResult = new ArrayList<>();
-        expectedResult.add(RuleTestHelper.getIdType("value", "FLAP_DOCUMENT_ID"));
+        expectedResult.add(ActivityObjectsHelper.generateIdType("value", "FLAP_DOCUMENT_ID"));
 
         assertEquals(expectedResult.size(), idTypes.size());
         assertEquals(expectedResult.iterator().next().getValue(), idTypes.iterator().next().getValue());

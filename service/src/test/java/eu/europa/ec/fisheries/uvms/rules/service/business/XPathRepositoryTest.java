@@ -43,10 +43,9 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.SneakyThrows;
@@ -58,7 +57,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 /**
  * Created by kovian on 23/06/2017.
@@ -66,15 +64,10 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 public class XPathRepositoryTest {
 
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
-
     XPathStringWrapper xpathUtil;
-
     XPathRepository repo;
-
     FLUXFAReportMessage fluxMessage;
-
     List<AbstractFact> factList;
-
     Map<String, String> failedMap;
 
     @Before
@@ -95,7 +88,6 @@ public class XPathRepositoryTest {
         fluxMessage = null;
         factList = null;
     }
-
 
     @Test
     @SneakyThrows
@@ -373,7 +365,8 @@ public class XPathRepositoryTest {
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
-        AbstractGenerator generator = new ActivityResponseFactGenerator(new FLUXResponseMessage(), new FaResponseFactMapper());
+        AbstractGenerator generator = new ActivityFaReportFactGenerator();
+        generator.setBusinessObjectMessage(fluxMessage);
         factList.addAll(generator.generateAllFacts());
     }
 
