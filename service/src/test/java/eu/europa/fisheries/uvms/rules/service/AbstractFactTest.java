@@ -42,7 +42,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
@@ -50,7 +49,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
@@ -1315,79 +1313,15 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsTypeCodeValuePresentInMDRList() {
-        CodeType typeCode = new CodeType();
-        typeCode.setListId("VESSEL_STORAGE_TYPE");
-        typeCode.setValue("OTR");
-        CodeType typeCode2 = new CodeType();
-        typeCode2.setListId("FAKE_LIST_ID");
-        typeCode2.setValue("NCC");
-        List<CodeType> typeCodes = Arrays.asList(typeCode, typeCode2);
-        //boolean typeCodeValuePresentInList = fact.isCodeTypePresentInMDRList("VESSEL_STORAGE_TYPE", typeCodes);
-        //assertEquals(true, typeCodeValuePresentInList);
-    }
-
-    @Test
     public void testGetValueForListId() {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OHL");
-        List<CodeType> typeCodes = Arrays.asList(typeCode);
+        List<CodeType> typeCodes = Collections.singletonList(typeCode);
         String valueForListId = fact.getValueForListId("VESSEL_STORAGE_TYPE", typeCodes);
         assertNotNull(valueForListId);
         assertEquals("OHL", valueForListId);
     }
-
-    @Test
-    @SneakyThrows
-    public void testIsRequiredGearCharacteristicsPresent() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        fishingGearFact.setFishingGearTypeCharacteristics(RuleTestHelper.getFishingGearTypeCharacteristics());
-        fishingGearFact.setApplicableGearCharacteristics(RuleTestHelper.getGearCharacteristics());
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
-    }
-
-    @Test
-    public void testRetrieveGearCharacteristicTypeCodeValues() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(RuleTestHelper.getFishingGearTypeCharacteristics(), typeCode, true);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = RuleTestHelper.getCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(RuleTestHelper.getGearCharacteristics(), FactConstants.GEAR_TYPE);
-        assertFalse(fishingGearCharacteristicCodes.contains("HE"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GM"));
-        assertFalse(fishingGearCharacteristicCodes.contains("ME"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testGetDataTypeForMDRList() {
-
-       // String result = fact.getDataTypeForMDRList("FA_GEAR_CHARACTERISTIC", "ME");
-       // assertEquals("MEASURE", result);
-    }
-
 
     @Test
     public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
@@ -1553,13 +1487,6 @@ public class AbstractFactTest {
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
-
-    @Test
-    public void testGetDataTypeForMDRListNullCheck() {
-       // String result = fact.getDataTypeForMDRList("TEST", null);
-       // assertEquals("", result);
-    }
-
     @Test
     public void testContainsMoreThenOneDeclarationPerTrip() {
         List<IdType> specifiedFishingTripIds = new ArrayList<>();
@@ -1720,36 +1647,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsIdTypePresentInMDRListWhenIdIsNull() {
-        IdType idType = null;
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenSchemeIdIsNotAKnownListInMDR() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.FLUX_SALES_PARTY_ROLE.name());
-        idType.setValue("test");
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenNotPresent() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
-        idType.setValue("fake");
-        //assertFalse(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
-    public void testIsIdTypePresentInMDRListWhenPresent() {
-        IdType idType = new IdType();
-        idType.setSchemeId(MDRAcronymType.GEAR_TYPE.name());
-        idType.setValue("PS1");
-        //assertTrue(fact.isIdTypePresentInMDRList(idType));
-    }
-
-    @Test
     public void testIsBlankWhenIdTypeAndIdIsNull() {
         assertTrue(fact.isBlank((IdType) null));
     }
@@ -1779,14 +1676,12 @@ public class AbstractFactTest {
         assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
     }
 
-
     @Test
     public void testisPositiveInteger() {
 
         boolean result = fact.isPositiveInteger(Arrays.asList(RuleTestHelper.getMeasureType(new BigDecimal(22), null)));
         assertTrue(result);
     }
-
 
     @Test
     public void testGetValueForSchemeId() {
@@ -1959,14 +1854,12 @@ public class AbstractFactTest {
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
         assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
         IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
         assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
@@ -1980,7 +1873,6 @@ public class AbstractFactTest {
     public void testValueStartsWithMultipleIdTypesNoneCorrect() {
         List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA"),
                 RuleTestHelper.getIdType("28.3.d.27", "FAO_AREA"), RuleTestHelper.getIdType("27.3.bd.27", "FAO_AREA"));
-
         assertFalse(fact.valueStartsWith(idTypes, "27.3.d"));
     }
 
@@ -2057,6 +1949,12 @@ public class AbstractFactTest {
             }
         }
         assertTrue(CollectionUtils.isEmpty(finalList));
+    }
+
+
+    @Test
+    public void test(){
+        ObjecRHe
     }
 
 }

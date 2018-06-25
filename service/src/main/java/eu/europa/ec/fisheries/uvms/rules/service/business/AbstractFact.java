@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
@@ -61,21 +60,13 @@ public abstract class AbstractFact {
     private static volatile int counter = 0;
 
     protected FactType factType;
-
     protected String senderOrReceiver;
-
     protected List<RuleWarning> warnings;
-
     protected List<RuleError> errors;
-
     protected List<String> uniqueIds;
-
     protected boolean ok = true;
-
     protected DateTime creationDateOfMessage;
-
     private Integer sequence = 0;
-
 
     public boolean hasWarOrErr(){
         return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);
@@ -1315,10 +1306,6 @@ public abstract class AbstractFact {
             }
         }
         return null;
-    }
-
-    public boolean stringEquals(String str1, String str2){
-        return StringUtils.equals(str1, str2);
     }
 
     public boolean isBlank(eu.europa.ec.fisheries.schema.sales.TextType textType) {

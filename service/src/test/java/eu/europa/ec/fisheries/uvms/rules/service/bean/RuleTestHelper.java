@@ -1,21 +1,27 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class RuleTestHelper {
 
@@ -139,6 +145,16 @@ public class RuleTestHelper {
         return idType;
     }
 
+    public GearCharacteristic generateGearCharacteristic(String typeCodeValue){
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FA_GEAR_CHARACTERISTIC");
+        codeType.setValue(typeCodeValue);
+        gearCharacteristic.setTypeCode(codeType);
+        return gearCharacteristic;
+    }
+
+
     public static FLAPDocument getFLAPDocument() {
         FLAPDocument flapDocument = new FLAPDocument();
         flapDocument.setID(getIdTypeUNCEFACT("value", "FLAP_DOCUMENT_ID"));
@@ -175,52 +191,6 @@ public class RuleTestHelper {
         fluxLocation.setTypeCode(typeCode);
         fluxLocation.setID(id);
         return fluxLocation;
-    }
-
-    public static List<GearCharacteristic> getGearCharacteristics() {
-        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
-        GearCharacteristic gearCharacteristic = new GearCharacteristic();
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("ME");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GM");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("HE");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GD");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        return gearCharacteristics;
-    }
-
-    public static List<FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
-        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = new ArrayList<>();
-        List<GearCharacteristic> gearCharacteristics = getGearCharacteristics();
-        for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
-            FishingGearTypeCharacteristic fishingGearTypeCharacteristic = new FishingGearTypeCharacteristic();
-            fishingGearTypeCharacteristic.setMandatory(true);
-            fishingGearTypeCharacteristic.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
-            fishingGearTypeCharacteristic.setFishingGearTypeCode("PS");
-            fishingGearTypeCharacteristics.add(fishingGearTypeCharacteristic);
-        }
-        return fishingGearTypeCharacteristics;
     }
 
     public static ContactParty getContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode,StructuredAddress structuredAddress){
