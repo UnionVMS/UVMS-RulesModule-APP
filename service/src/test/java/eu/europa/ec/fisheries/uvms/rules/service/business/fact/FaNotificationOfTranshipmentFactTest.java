@@ -9,10 +9,10 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
+import org.junit.Test;
 
 /**
  * Created by sanera on 24/07/2017.
@@ -23,14 +23,14 @@ public class FaNotificationOfTranshipmentFactTest {
     @Test
     public void testIfFLUXLocationForFACatchIsAREA(){
 
-       boolean result= faNotificationOfTranshipmentFact.ifFLUXLocationForFACatchIsAREA( RuleTestHelper.getFACatchList());
+       boolean result= faNotificationOfTranshipmentFact.ifFLUXLocationForFACatchIsAREA(ActivityObjectsHelper.generateFACatchList());
         assertTrue(result);
     }
 
     @Test
     public void testContainsAnyFaCatch(){
 
-        boolean result= faNotificationOfTranshipmentFact.containsAnyFaCatch( RuleTestHelper.getFACatchList(),"BFT","LOADED");
+        boolean result= faNotificationOfTranshipmentFact.containsAnyFaCatch(ActivityObjectsHelper.generateFACatchList(),"BFT","LOADED");
         assertTrue(result);
     }
 }

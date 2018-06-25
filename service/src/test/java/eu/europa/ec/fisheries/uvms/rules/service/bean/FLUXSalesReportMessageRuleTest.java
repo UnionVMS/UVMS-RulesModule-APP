@@ -1,5 +1,10 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -18,11 +23,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by MATBUL on 22/05/2017.
@@ -48,7 +48,7 @@ public class FLUXSalesReportMessageRuleTest {
         template.setTemplateName("SalesFLUXSalesReportMessage");
         template.setType(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);
 
-        RuleType ruleType = RuleTestHelper.createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
+        RuleType ruleType = createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(Arrays.asList(ruleType));
@@ -72,7 +72,7 @@ public class FLUXSalesReportMessageRuleTest {
         template.setTemplateName("SalesFLUXSalesReportMessage");
         template.setType(FactType.SALES_FLUX_SALES_REPORT_MESSAGE);
 
-        RuleType ruleType = RuleTestHelper.createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
+        RuleType ruleType = createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
         templateRuleMapDto.setRules(Arrays.asList(ruleType));
@@ -88,5 +88,16 @@ public class FLUXSalesReportMessageRuleTest {
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());
 
+    }
+
+    public static RuleType createRuleType(String expression, String brId, String note, ErrorType type, String errorMessage) {
+        RuleType ruleType = new RuleType();
+        ruleType.setExpression(expression);
+        ruleType.setBrId(brId);
+        ruleType.setNote(note);
+        ruleType.setErrorType(type);
+        ruleType.setMessage(errorMessage);
+        ruleType.setLevel("LevelName");
+        return ruleType;
     }
 }

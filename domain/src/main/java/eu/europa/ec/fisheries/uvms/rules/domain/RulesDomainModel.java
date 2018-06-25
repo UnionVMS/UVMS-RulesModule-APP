@@ -1,11 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.domain;
+import javax.ejb.Local;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
@@ -18,9 +20,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-
-import javax.ejb.Local;
-import java.util.List;
 
 @Local
 public interface RulesDomainModel {
@@ -102,10 +101,6 @@ public interface RulesDomainModel {
     void saveValidationMessages(RawMessageType rawMessageType) throws RulesModelException;
 
     List<ValidationMessageType> getValidationMessagesById(List<String> ids) throws RulesModelException;
-
-    RuleStatusType checkRuleStatus() throws RulesModelException;
-
-    void updateRuleStatus(RuleStatusType ruleStatusType) throws RulesModelException;
 
     List<String> getFishingGearCharacteristicCodes(String fishingGearTypeCode) throws RulesModelException;
 

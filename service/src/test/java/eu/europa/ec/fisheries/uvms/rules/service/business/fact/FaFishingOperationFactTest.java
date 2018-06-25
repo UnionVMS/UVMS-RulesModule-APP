@@ -9,11 +9,11 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import static org.junit.Assert.assertTrue;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sanera on 28/08/2017.
@@ -23,9 +23,9 @@ public class FaFishingOperationFactTest {
 
     @Test
     public void testVerifyContactPartyRule(){
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode =RuleTestHelper.getCodeTypeUNCEFACT("PAIR_FISHING_PARTNER",null);
-        ContactParty contactParty= RuleTestHelper.getContactParty(roleCode,RuleTestHelper.getStructuredAddress());
-        boolean result=faFishingOperationFact.verifyContactPartyRule(RuleTestHelper.getListOfVesselTransportMeans());
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode = ActivityObjectsHelper.generateCodeTypeUNCEFACT("PAIR_FISHING_PARTNER",null);
+        ContactParty contactParty= ActivityObjectsHelper.generateContactParty(roleCode,ActivityObjectsHelper.generateStructuredAddress());
+        boolean result=faFishingOperationFact.verifyContactPartyRule(ActivityObjectsHelper.generateListOfVesselTransportMeans());
         assertTrue(!result);
     }
 }

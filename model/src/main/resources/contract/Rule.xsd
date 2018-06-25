@@ -32,13 +32,6 @@
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:simpleType name="RuleStatusType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="SUCCESSFUL" />
-            <xsd:enumeration value="FAILED" />
-        </xsd:restriction>
-    </xsd:simpleType>
-
     <xsd:simpleType name="ErrorType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="WARNING" />

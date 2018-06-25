@@ -50,10 +50,8 @@
         <column name="rule_id" value="4"/>
         <column name="br_id" value="FA-L03-00-0004"/>
         <column name="expression"
-                value="!isEmpty(nonUniqueIdsList) &amp;&amp; listContainsAtLeastOneFromTheOtherList(ids, nonUniqueIdsList)"/>
-        <column name="note"
-                value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party.
-                     It is expected to return the same validation results."/>
+                value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsAny(ids, nonUniqueIdsList)"/>
+        <column name="note" value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party. It is expected to return the same validation results."/>
         <column name="message" value="Message ID already exists."/>
         <column name="level" value="L03"/>
         <column name="error_type" value="ERROR"/>
@@ -244,8 +242,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="20"/>
         <column name="br_id" value="FA-L00-00-0020"/>
-        <column name="expression" value="purposeCode != null  &amp;&amp; typeCode == null &amp;&amp;
-                                             (stringEquals(purposeCode.value, &quot;9&quot;) || stringEquals(purposeCode.value, &quot;5&quot;))"/>
+        <column name="expression" value="purposeCode != null &amp;&amp; typeCode == null &amp;&amp; (purposeCode.value == &quot;9&quot; || purposeCode.value == &quot;5&quot;)"/>
         <column name="note" value="PurposeCode 9 or 5."/>
         <column name="message" value="Report type must be present for new reports or corrections."/>
         <column name="level" value="L00"/>
@@ -394,7 +391,7 @@
         <column name="rule_id" value="31"/>
         <column name="br_id" value="FA-L03-00-0031"/>
         <column name="expression"
-                value="!isEmpty(nonUniqueIdsList) &amp;&amp; listContainsAtLeastOneFromTheOtherList(relatedFLUXReportDocumentIDs, nonUniqueIdsList)"/>
+                value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsAny(relatedFLUXReportDocumentIDs, nonUniqueIdsList)"/>
         <column name="note"
                 value="If it exists already, the contents are considered identical and the report may be ignored by the receiving party.
                     It is expected to return the same validation results."/>
@@ -479,8 +476,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="37"/>
         <column name="br_id" value="FA-L01-00-0037"/>
-        <column name="expression"
-                value="relatedFLUXReportDocumentReferencedID != null &amp;&amp; validateFormat(relatedFLUXReportDocumentReferencedID)"/>
+        <column name="expression"  value="relatedFLUXReportDocumentReferencedID != null &amp;&amp; validateFormat(relatedFLUXReportDocumentReferencedID)"/>
         <column name="note" value="Must be according to RFC4122 format for UUID."/>
         <column name="message" value="Referenced Report ID value not according to schemeID."/>
         <column name="level" value="L01"/>
@@ -494,10 +490,9 @@
         <column name="rule_id" value="38"/>
         <column name="br_id" value="FA-L03-00-0038"/>
         <column name="expression"
-                value="referencedID != null &amp;&amp; listContainsAtLeastOneFromTheOtherList(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+                value="messageType == &quot;PUSH&quot; &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
         <column name="note" value="Must be an identifier of an acknowledged report."/>
-        <column name="message"
-                value="Referenced Report ID does not refer to an acknowledged Report ID saved in 'activity_flux_report_document' table."/>
+        <column name="message" value="Referenced Report ID does not refer to an acknowledged Report ID "/>
         <column name="level" value="L03"/>
         <column name="error_type" value="WARNING"/>
         <column name="rule_created_on"/>
@@ -535,8 +530,7 @@
         <column name="rule_id" value="41"/>
         <column name="br_id" value="FA-L03-00-0041"/>
         <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
-        <column name="note"
-                value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+        <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Report creation date/time not in the past."/>
         <column name="level" value="L03"/>
         <column name="error_type" value="WARNING"/>
@@ -576,8 +570,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="44"/>
         <column name="br_id" value="FA-L01-00-0044"/>
-        <column name="expression"
-                value="!isEmpty(ownerFluxPartyIds) &amp;&amp; schemeIdContainsAll(ownerFluxPartyIds, &quot;FLUX_GP_PARTY&quot;) "/>
+        <column name="expression" value="!isEmpty(ownerFluxPartyIds) &amp;&amp; schemeIdContainsAll(ownerFluxPartyIds, &quot;FLUX_GP_PARTY&quot;) "/>
         <column name="note" value="Check attribute schemeID. Must be FLUX_GP_PARTY"/>
         <column name="message" value="Report Owner ID has an invalid schemeID."/>
         <column name="level" value="L01"/>
@@ -606,8 +599,7 @@
         <column name="rule_id" value="46"/>
         <column name="br_id" value="FA-L00-00-0046"/>
         <column name="expression"
-                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)
-                          &amp;&amp; specifiedVesselTransportMeans == null"/>
+                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; specifiedVesselTransportMeans == null"/>
         <column name="note" value="If purposeCode 9 or 5, this entity is mandatory"/>
         <column name="message" value="Reporting vessel information missing."/>
         <column name="level" value="L00"/>
@@ -621,13 +613,8 @@
         <column name="rule_id" value="47"/>
         <column name="br_id" value="FA-L00-00-0047"/>
         <column name="expression"
-                value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;)
-                          &amp;&amp; !listSizeIs(specifiedFishingActivities, 1) &amp;&amp; (isEmpty(specifiedFishingActivities) ||
-                          listContainsEitherThen(specifiedFishingActivitiesTypes, &quot;JOINT_FISHING_OPERATION&quot;, &quot;FISHING_OPERATION&quot;) ||
-                          !containsSameDayMoreTheOnce(specifiedAndRealtedFishActOccurrenceDateTimes))"/>
-        <column name="note"
-                value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations
-                    (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
+               value="(purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !isEmpty(specifiedFishingActivities)) &amp;&amp; !isValid(specifiedFishingActivities)"/>
+        <column name="note" value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
         <column name="message" value="Fishing activity information missing."/>
         <column name="level" value="L00"/>
         <column name="error_type" value="ERROR"/>
@@ -1202,7 +1189,7 @@
         <column name="rule_id" value="91"/>
         <column name="br_id" value="FA-L01-00-0091"/>
         <column name="expression"
-                value="typeCode != null &amp;&amp; !stringEquals(typeCode.listId, &quot;FLUX_FA_TYPE&quot;)"/>
+                value="typeCode != null &amp;&amp; typeCode.listId != &quot;FLUX_FA_TYPE&quot;"/>
         <column name="note" value="check presence"/>
         <column name="message" value="Fishing activity TypeCode has an invalid listID."/>
         <column name="level" value="L01"/>
@@ -1260,7 +1247,7 @@
         <column name="rule_id" value="95"/>
         <column name="br_id" value="FA-L02-00-0095"/>
         <column name="expression"
-                value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime != null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
+                value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime == null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
         <column name="note" value="check presence"/>
         <column name="message"
                 value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
@@ -1304,7 +1291,7 @@
         <column name="rule_id" value="98"/>
         <column name="br_id" value="FA-L00-00-0098"/>
         <column name="expression"
-                value="fisheryTypeCode != null &amp;&amp; !stringEquals(fisheryTypeCode.listId, &quot;FA_FISHERY&quot;)"/>
+                value="fisheryTypeCode != null &amp;&amp; fisheryTypeCode.listId != &quot;FA_FISHERY&quot;"/>
         <column name="note" value="Check attribute listID"/>
         <column name="message" value="FisheryTypeCode has an invalid listID."/>
         <column name="level" value="L00"/>
@@ -4385,7 +4372,7 @@
         <column name="rule_id" value="338"/>
         <column name="br_id" value="FA-L02-00-0338"/>
         <column name="expression"
-                value="stringEquals(fluxCharacteristicType, &quot;SpecifiedFLUXCharacteristic&quot;) &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp;
+                value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp;
                            (valueQuantity == null || !isPositiveIntegerValue(valueQuantity.value))"/>
         <column name="note" value="FLUXCharacteristic ValueQuantity Must be greater than 0. "/>
         <column name="message"
@@ -5002,8 +4989,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="385"/>
         <column name="br_id" value="FA-L03-00-0385"/>
-        <column name="expression"
-                value="referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;
+        <column name="expression" value="messageType == &quot;PULL&quot; &amp;&amp; referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;
                 (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
         <column name="note" value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
         <column name="message" value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
@@ -5072,7 +5058,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="390"/>
         <column name="br_id" value="FA-L01-00-0390"/>
-        <column name="expression" value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
+        <column name="expression" value="!isValid(creationDateTime)"/>
         <column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
         <column name="message" value="Response creation date/time must be a valid UTC date and in the correct."/>
         <column name="level" value="L01"/>
@@ -5085,9 +5071,8 @@
     <insert tableName="rule">
         <column name="rule_id" value="391"/>
         <column name="br_id" value="FA-L01-00-0391"/>
-        <column name="expression" value="creationDateTime != null &amp;&amp; dateNow().before(creationDateTime)"/>
-        <column name="note"
-                value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+        <column name="expression" value="creationDateTime != null &amp;&amp; dateNow().before(toDate(creationDateTime))"/>
+        <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
         <column name="message" value="Response creation date/time must be in the past."/>
         <column name="level" value="L01"/>
         <column name="error_type" value="WARNING"/>
@@ -5159,8 +5144,7 @@
         <column name="rule_id" value="394"/>
         <column name="br_id" value="FA-L03-00-0394"/>
         <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; !matchWithFluxTL(fluxPartyIds)"/>
-        <column name="note"
-                value="The party sending the response must be the same as the one from the FR value of the FLUX TL envelope. Only the part before the first colon is to be considered: Eg. ABC:something => only ABC refres to the party for the purpose of this rule."/>
+        <column name="note" value="The party sending the response must be the same as the one from the FR value of the FLUX TL envelope. Only the part before the first colon is to be considered: Eg. ABC:something => only ABC refres to the party for the purpose of this rule."/>
         <column name="message" value="Respondent ID is not consistent with FLUX TL envelope parameters."/>
         <column name="level" value="L03"/>
         <column name="error_type" value="WARNING"/>
@@ -5190,8 +5174,7 @@
     <insert tableName="rule">
         <column name="rule_id" value="396"/>
         <column name="br_id" value="FA-L01-00-0396"/>
-        <column name="expression"
-                value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
+        <column name="expression" value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
         <column name="note" value="validatorIDs -- Check Format. Must be according to the specified schemeID."/>
         <column name="message" value="Validator ID has an invalid schemeID."/>
         <column name="level" value="L01"/>
@@ -5204,8 +5187,7 @@
     <insert tableName="rule">
         <column name="rule_id" valueNumeric="555"/>
         <column name="br_id" value="FA-L01-00-0555"/>
-        <column name="expression"
-                value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs, creationDateOfMessage)"/>
+        <column name="expression" value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs, creationDateOfMessage)"/>
         <column name="note" value="Check value. Must be value from the code list specified in schemeID."/>
         <column name="message" value="Validator ID value is invalid."/>
         <column name="level" value="L01"/>
@@ -5217,8 +5199,7 @@
     <insert tableName="rule">
         <column name="rule_id" valueNumeric="554"/>
         <column name="br_id" value="FA-L02-00-0554"/>
-        <column name="expression"
-                value="!codeTypeValueEquals(responseCode, &quot;OK&quot;) &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)"/>
+        <column name="expression" value="!codeTypeValueEquals(responseCode, &quot;OK&quot;) &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)"/>
         <column name="note" value="At least one occurrence must be present if ResponseCode != OK."/>
         <column name="message" value="Quality analysis details are missing"/>
         <column name="level" value="L02"/>
@@ -5233,7 +5214,7 @@
     <!-- START ValidationQualityAnalysis Rules -->
 
     <insert tableName="rule">
-        <column name="rule_id" valueNumeric="397"/>
+        <column name="rule_id" value="397"/>
         <column name="br_id" value="FA-L00-00-0397"/>
         <column name="expression" value="id == null"/>
         <column name="note" value="Id must be present."/>
@@ -5261,10 +5242,8 @@
     <insert tableName="rule">
         <column name="rule_id" value="399"/>
         <column name="br_id" value="FA-L01-00-0399"/>
-        <column name="expression"
-                value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value, creationDateOfMessage)"/>
-        <column name="note"
-                value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
+        <column name="expression" value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value, creationDateOfMessage)"/>
+        <column name="note" value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
         <column name="message" value="Quality analysis ID value is invalid."/>
         <column name="level" value="L01"/>
         <column name="error_type" value="ERROR"/>
@@ -5344,7 +5323,7 @@
         <column name="rule_id" value="405"/>
         <column name="br_id" value="FA-L01-00-0405"/>
         <column name="expression"
-                value="id != null &amp;&amp; !stringEquals(id.value, &quot;FA-L00-00-0000&quot;) &amp;&amp;
+                value="id != null &amp;&amp; id.value != &quot;FA-L00-00-0000&quot; &amp;&amp;
                 (codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;)) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
         <column name="note" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
         <column name="message" value="Referenced item(s) missing."/>

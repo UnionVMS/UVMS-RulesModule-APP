@@ -47,7 +47,7 @@ public class RulesSchedulerServiceBean implements RulesSchedulerService {
     @Timeout
     public void timeOut() {
         log.info("\n\n\t---> Reinitializing Rules DROOLS engine as scheduled... ("+timerServ.getAllTimers().iterator().next().getSchedule().toString()+")\n");
-        //templateEngine.reInitialize();
+        //templateEngine.reload();
     }
 
 

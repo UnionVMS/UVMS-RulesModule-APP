@@ -13,6 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
@@ -26,14 +34,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Stateless
 @LocalBean
@@ -65,8 +65,6 @@ public class RulePostProcessBean {
                 }
             }
             saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
-
-            // TODO : Create alarm in future
             return createValidationResultDtoFromParams(isError, isWarning, validationMessages.isEmpty(), validationMessages);
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);

@@ -9,14 +9,39 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.dao.bean;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleStatusType;
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TransactionRequiredException;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-import eu.europa.ec.fisheries.uvms.rules.dao.Dao;
+import eu.europa.ec.fisheries.uvms.rules.dao.FADocumentIDDAO;
+import eu.europa.ec.fisheries.uvms.rules.dao.FaIdsPerTripDao;
+import eu.europa.ec.fisheries.uvms.rules.dao.RawMessageDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.entity.*;
+import eu.europa.ec.fisheries.uvms.rules.dao.TemplateDao;
+import eu.europa.ec.fisheries.uvms.rules.dao.ValidationMessageDao;
+import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.FaIdsPerTrip;
+import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
+import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
+import eu.europa.ec.fisheries.uvms.rules.entity.SanityRule;
+import eu.europa.ec.fisheries.uvms.rules.entity.Template;
+import eu.europa.ec.fisheries.uvms.rules.entity.Ticket;
+import eu.europa.ec.fisheries.uvms.rules.entity.ValidationMessage;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.exception.NoEntityFoundException;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.AlarmSearchValue;
@@ -25,17 +50,29 @@ import eu.europa.ec.fisheries.uvms.rules.mapper.search.TicketSearchValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
-import javax.ejb.Stateless;
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 @Stateless
 @Slf4j
-public class RulesDaoBean extends Dao implements RulesDao {
+public class RulesDaoBean implements RulesDao {
 
     private static final String MOVEMENT_GUID_PARAMETER = "movementGuid";
+
+    private TemplateDao factTemplateDao;
+    private RawMessageDao rawMessageDao;
+    private ValidationMessageDao validationMessageDao;
+    private FADocumentIDDAO fishingActivityIdDao;
+    private FaIdsPerTripDao faIdsPerTripDao;
+
+    @PersistenceContext(unitName = "rulesPostgresPU")
+    public EntityManager em;
+
+    @PostConstruct
+    public void init() {
+        factTemplateDao = new TemplateDao(em);
+        rawMessageDao = new RawMessageDao(em);
+        validationMessageDao = new ValidationMessageDao(em);
+        fishingActivityIdDao = new FADocumentIDDAO(em);
+        faIdsPerTripDao = new FaIdsPerTripDao(em);
+    }
 
     @Override
     public CustomRule createCustomRule(CustomRule entity) throws DaoException {
@@ -505,15 +542,6 @@ public class RulesDaoBean extends Dao implements RulesDao {
     }
 
     @Override
-    public void updatedFailedRules(List<String> brIds) throws DaoException {
-        try {
-            failedRuleDao.updateFailedRules(brIds);
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    @Override
     public void saveValidationMessages(List<RawMessage> rawMessages) throws DaoException {
         try {
             rawMessageDao.saveRawMessages(rawMessages);
@@ -535,33 +563,6 @@ public class RulesDaoBean extends Dao implements RulesDao {
     public List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws DaoException {
         try {
             return validationMessageDao.getValidationMessagesByRawMessageGuid(rawMsgGuid, type);
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public RuleStatusType checkRuleStatus() throws DaoException {
-        try {
-            return ruleStatusDao.findRuleStatus();
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void createRuleStatus(RuleStatus ruleStatus) throws DaoException {
-        try {
-            ruleStatusDao.createRuleStatus(ruleStatus);
-        } catch (ServiceException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void deleteRuleStatus() throws DaoException {
-        try {
-            ruleStatusDao.deleteRuleStatus();
         } catch (ServiceException e) {
             throw new DaoException(e.getMessage(), e);
         }
