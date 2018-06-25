@@ -31,6 +31,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
@@ -50,6 +52,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
@@ -60,6 +63,10 @@ public abstract class AbstractFact {
     private static volatile int counter = 0;
 
     protected FactType factType;
+<<<<<<< HEAD
+=======
+    protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
+>>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c
     protected String senderOrReceiver;
     protected List<RuleWarning> warnings;
     protected List<RuleError> errors;
@@ -248,10 +255,6 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
-    public boolean isSchemeIdPresent(IdType idType) {
-        return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
-    }
-
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
             return false;
@@ -264,6 +267,10 @@ public abstract class AbstractFact {
             }
         }
         return false;
+    }
+
+    private boolean isSchemeIdPresent(IdType idType) {
+        return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
     }
 
     /**
@@ -369,8 +376,7 @@ public abstract class AbstractFact {
         }
         try {
             String schemeId = id.getSchemeId();
-            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue())
-                    || !validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
+            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
                 return true;
             }
         } catch (IllegalArgumentException ex) {
@@ -402,62 +408,18 @@ public abstract class AbstractFact {
     }
 
     /**
-     * If controlList contains at leat one of the elements of the elementsToMatchList returns true;
+     * Returns true if at least one element is in both collections.
      *
-     * @param controlList
-     * @param elementsToMatchList
-     * @return
      */
-    public boolean listContainsAtLeastOneFromTheOtherList(List<IdType> controlList, List<IdType> elementsToMatchList) {
-        if (CollectionUtils.isEmpty(controlList)) {
-            return false;
-        }
-        if (CollectionUtils.isNotEmpty(elementsToMatchList)) {
-            for (IdType idToMatch : elementsToMatchList) {
-                if (controlList.contains(idToMatch)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the list size is the expected one [listSize].
-     *
-     * @param list
-     * @param listSize
-     * @return
-     */
-    public boolean listSizeIs(List<?> list, int listSize) {
-        return !(isEmpty(list) || list.size() != listSize);
-    }
-
-    /**
-     * This method returns true if activityTypes list contains other elements then the ones contained in permitedElements.
-     *
-     * @param activityTypes
-     * @return
-     */
-    public boolean listContainsEitherThen(List<String> activityTypes, String... permitedElements) {
-        if (CollectionUtils.isEmpty(activityTypes) || permitedElements == null || permitedElements.length == 0) {
-            return false;
-        }
-        List<String> permitedElementsList = Arrays.asList(permitedElements);
-        boolean containsEitherThen = false;
-        for (String type : activityTypes) {
-            if (!permitedElementsList.contains(type)) {
-                containsEitherThen = true;
-                break;
-            }
-        }
-        return containsEitherThen;
+    public boolean containsAny(Collection col1, Collection col2) {
+        return CollectionUtils.containsAny(col1, col2);
     }
 
     public boolean validateFormat(String value, String format) {
         return !StringUtils.isEmpty(value) && !StringUtils.isEmpty(format) && value.matches(format);
     }
 
+    @Deprecated // use DateTimeType on fact
     public boolean isIsoDateStringValidFormat(List<String> datesToCheck) {
         if (CollectionUtils.isEmpty(datesToCheck)) {
             return true;
@@ -470,11 +432,24 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public Date toDate(DateTimeType dateTimeType){
+        Date date = DateUtils.START_OF_TIME.toDate();
+        if (dateTimeType != null && dateTimeType.getDateTime() != null){
+            date =  XMLDateUtils.xmlGregorianCalendarToDate(dateTimeType.getDateTime());
+        }
+        return date;
+    }
+
+    public boolean isValid(DateTimeType dateTimeType) {
+        return dateTimeType != null && dateTimeType.getDateTime() != null && dateTimeType.getDateTime().toString().matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
+    }
+
+    @Deprecated // use DateTimeType mapped on fact
     public boolean isIsoDateStringValidFormat(String value) {
         return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
-    public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) {
+    public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) { // FIXME kind of duplicated method with activity one
         if (idType == null || isEmpty(requiredSchemeId) || isEmpty(idType.getSchemeId()) || isEmpty(idType.getValue()) || !idType.getSchemeId().equals(requiredSchemeId)) {
             return false;
         }
@@ -547,7 +522,7 @@ public abstract class AbstractFact {
         return listIdDoesNotContainAll(Collections.singletonList(codeType), valuesToMatch);
     }
 
-
+    // FIXME move method to SalesPartyFact not really re-usable
     public boolean salesPartiesValueDoesNotContainAny(List<SalesPartyFact> salesPartyTypes, String... valuesToMatch) {
         List<CodeType> codeTypes = new ArrayList<>();
         HashSet<String> valuesToBeFound = new HashSet<>(Arrays.asList(valuesToMatch));
@@ -1178,12 +1153,31 @@ public abstract class AbstractFact {
         return value != null && ((value.compareTo(new BigDecimal(lowBound)) >= 0) && (value.compareTo(new BigDecimal(upperBound)) <= 0));
     }
 
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public void setCreationDateOfMessage(DateTime creationDateOfMessage) {
+        this.creationDateOfMessage = creationDateOfMessage;
+    }
+
+    public void setSenderOrReceiver(String senderOrReceiver) {
+        this.senderOrReceiver = senderOrReceiver;
+    }
+
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
     public enum FORMATS {
         // TODO : ICCAT and CFR have Territory characters reppresented [a-zA-Z]{3} which is not correct, cause it is matching not existing combinations also (Like ABC
         // TODO : which is not an existing country code). This happens with ICCAT -second sequence- and CFR -first sequence-!
 
         UUID("[a-fA-F0-9]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
-
         EXT_MARK(".{1,14}"),
         IRCS("[a-zA-Z0-9]{1,7}"),
         CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
@@ -1359,10 +1353,6 @@ public abstract class AbstractFact {
         return sequence;
     }
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
-
     /**
      * This method checks if atleast one FACatch from specifiedFACatches has matching speciesCode and typeCode value
      *
@@ -1388,15 +1378,8 @@ public abstract class AbstractFact {
         return senderOrReceiver;
     }
 
-    public void setSenderOrReceiver(String senderOrReceiver) {
-        this.senderOrReceiver = senderOrReceiver;
-    }
-
     public DateTime getCreationDateOfMessage() {
         return creationDateOfMessage;
     }
 
-    public void setCreationDateOfMessage(DateTime creationDateOfMessage) {
-        this.creationDateOfMessage = creationDateOfMessage;
-    }
 }

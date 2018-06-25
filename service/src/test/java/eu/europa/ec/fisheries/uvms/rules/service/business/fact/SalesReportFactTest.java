@@ -1,17 +1,28 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.*;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
+import eu.europa.ec.fisheries.schema.sales.AAPProductType;
+import eu.europa.ec.fisheries.schema.sales.AmountType;
+import eu.europa.ec.fisheries.schema.sales.FACatchType;
+import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
+import eu.europa.ec.fisheries.schema.sales.IDType;
+import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
+import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
+import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
+import eu.europa.ec.fisheries.schema.sales.SalesReportType;
+import eu.europa.ec.fisheries.schema.sales.TextType;
+import eu.europa.ec.fisheries.schema.sales.VehicleTransportMeansType;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SalesReportFactTest {
 
@@ -258,7 +269,7 @@ public class SalesReportFactTest {
                 .withPrefabValues(AAPProcessType.class, new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new AAPProcessType().withTypeCodes(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withPrefabValues(FACatchType.class, new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FACatchType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
+                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
                 .verify();
     }
 

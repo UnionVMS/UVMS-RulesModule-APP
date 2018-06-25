@@ -10,15 +10,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
+import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
+import static com.ninja_squad.dbsetup.Operations.insertInto;
+import static com.ninja_squad.dbsetup.Operations.sequenceOf;
+
 import com.ninja_squad.dbsetup.operation.Operation;
 import eu.europa.ec.fisheries.uvms.BaseDAOTest;
-
-import static com.ninja_squad.dbsetup.Operations.*;
 
 public abstract class RulesModulesDaoTest extends BaseDAOTest {
 
     static final Operation DELETE_ALL = sequenceOf(
-            deleteAllFrom("rules.rule", "rules.template", "rules.failedrule", "rules.validationmessage", "rules.rawmessage", "rules.messageid", "rules.rulestatus")
+            deleteAllFrom("rules.rule", "rules.template", "rules.validationmessage", "rules.rawmessage", "rules.messageid")
     );
 
     static final Operation INSERT_RULE_DATA = sequenceOf(
@@ -38,13 +40,6 @@ public abstract class RulesModulesDaoTest extends BaseDAOTest {
                     .values(3L, "ActivityTemplate", "FISHING_ACTIVITY")
                     .values(4L, "QueryTemplate", "FA_QUERY")
                     .build());
-
-    static final Operation INSERT_FAILED_DATA = sequenceOf(
-            insertInto("rules.failedrule")
-                    .columns("rule_id", "br_id")
-                    .values(1L, "br1")
-                    .values(2L, "br2")
-            .build());
 
     static final Operation INSERT_RAW_MESSAGE = sequenceOf(
                 insertInto("rules.rawmessage")

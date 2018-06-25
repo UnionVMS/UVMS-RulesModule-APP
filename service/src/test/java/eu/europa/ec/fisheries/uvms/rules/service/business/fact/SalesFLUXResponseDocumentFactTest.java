@@ -1,5 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
@@ -9,12 +15,6 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
 import org.mapstruct.ap.internal.util.Collections;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SalesFLUXResponseDocumentFactTest {
 
@@ -69,7 +69,7 @@ public class SalesFLUXResponseDocumentFactTest {
                 .suppress(Warning.STRICT_INHERITANCE)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
+                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
                 .verify();
     }
 

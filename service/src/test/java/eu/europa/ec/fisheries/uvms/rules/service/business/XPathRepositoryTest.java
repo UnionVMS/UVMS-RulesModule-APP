@@ -8,19 +8,42 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
-package eu.europa.fisheries.uvms.rules.service.mapper.fact.xpath.util;
+package eu.europa.ec.fisheries.uvms.rules.service.business;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ROLE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PARTY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_CONTACT_PERSON;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_ACTIVITY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.ximpleware.*;
+import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.BusinessObjectFactory;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
@@ -35,32 +58,16 @@ import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
-import static org.junit.Assert.*;
-
 /**
  * Created by kovian on 23/06/2017.
  */
 public class XPathRepositoryTest {
 
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
-
     XPathStringWrapper xpathUtil;
-
     XPathRepository repo;
-
     FLUXFAReportMessage fluxMessage;
-
     List<AbstractFact> factList;
-
     Map<String, String> failedMap;
 
     @Before
@@ -81,7 +88,6 @@ public class XPathRepositoryTest {
         fluxMessage = null;
         factList = null;
     }
-
 
     @Test
     @SneakyThrows
@@ -359,11 +365,10 @@ public class XPathRepositoryTest {
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
-        AbstractGenerator generator = BusinessObjectFactory.getBusinessObjFactGenerator(BusinessObjectType.RECEIVING_FA_REPORT_MSG);
+        AbstractGenerator generator = new ActivityFaReportFactGenerator();
         generator.setBusinessObjectMessage(fluxMessage);
         factList.addAll(generator.generateAllFacts());
     }
-
 
     @SneakyThrows
     private FLUXFAReportMessage loadTestData() throws IOException, MdrModelMarshallException {
@@ -371,13 +376,11 @@ public class XPathRepositoryTest {
         return JAXBUtils.unMarshallMessage(fluxFaMessageStr, FLUXFAReportMessage.class);
     }
 
-
     public static String preetyPrint(Object obj) throws JsonProcessingException {
         return new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true).writeValueAsString(obj);
     }
 
     private boolean validateXPath(String xpathVal, AutoPilot ap, VTDNav vn, AbstractFact fact) throws XPathParseException, NavException, XPathEvalException {
-
 
         System.out.println("Validating factClass : "+fact.getClass().getName());
 
@@ -416,7 +419,6 @@ public class XPathRepositoryTest {
 
         return newXpath;
     }
-
 
     private void printXMLFragment(AutoPilot ap, VTDNav vn, int evalResult) throws XPathEvalException, NavException {
         int i = evalResult;

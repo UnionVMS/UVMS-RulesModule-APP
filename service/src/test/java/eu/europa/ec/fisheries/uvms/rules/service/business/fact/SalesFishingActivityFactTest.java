@@ -1,16 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.sales.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
+import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
 import eu.europa.ec.fisheries.schema.sales.CodeType;
+import eu.europa.ec.fisheries.schema.sales.FACatchType;
+import eu.europa.ec.fisheries.schema.sales.FLUXCharacteristicType;
+import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
+import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
+import eu.europa.ec.fisheries.schema.sales.IDType;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SalesFishingActivityFactTest {
 
@@ -47,7 +52,7 @@ public class SalesFishingActivityFactTest {
                 .withPrefabValues(FLUXCharacteristicType.class, new FLUXCharacteristicType().withTypeCode(new CodeType().withValue("a")), new FLUXCharacteristicType().withTypeCode(new CodeType().withValue("b")))
                 .withPrefabValues(FishingActivityType.class, new FishingActivityType().withIDS(new IDType().withValue("BE")), new FishingActivityType().withIDS(new IDType().withValue("SWE")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
+                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
                 .verify();
     }
 

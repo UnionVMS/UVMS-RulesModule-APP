@@ -9,13 +9,13 @@
  */
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import org.junit.Test;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertTrue;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
+import org.junit.Test;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 /**
  * Created by sanera on 28/08/2017.
@@ -25,8 +25,8 @@ public class FaEntryToSeaFactTest {
 
     @Test
     public void testVerifyFLUXLocationIDValue(){
-        faEntryToSeaFact.setFaReportDocumentTypeCode(RuleTestHelper.getCodeType("DECLARATION",null));
-        FLUXLocation fluxLocation= RuleTestHelper.getFLUXLocation(RuleTestHelper.getCodeTypeUNCEFACT("AREA",null),RuleTestHelper.getIdTypeUNCEFACT(null,"EFFORT_ZONE"));
+        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
         boolean result= faEntryToSeaFact.verifyFLUXLocationIDValue(Arrays.asList(fluxLocation));
         assertTrue(result);
     }

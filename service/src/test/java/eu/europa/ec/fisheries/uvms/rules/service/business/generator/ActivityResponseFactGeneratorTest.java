@@ -8,33 +8,41 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
+
+import static org.junit.Assert.assertEquals;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-
-/**
- * Created by sanera on 28/07/2017.
- */
 public class ActivityResponseFactGeneratorTest {
-    private ActivityResponseFactGenerator generator = new ActivityResponseFactGenerator();
+    private ActivityResponseFactGenerator generator;
 
     private IDType idType;
     private CodeType codeType;
@@ -44,11 +52,11 @@ public class ActivityResponseFactGeneratorTest {
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
 
-
     @Before
     @SneakyThrows
     public void before(){
 
+        generator = new ActivityResponseFactGenerator(null, new FaResponseFactMapper());
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         date = sdf.parse("31-08-1982 10:20:56");
 
@@ -77,7 +85,7 @@ public class ActivityResponseFactGeneratorTest {
 
         FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
         fluxResponseDocument.setResponseCode(codeType);
-        fluxResponseDocument.setIDS(Arrays.asList(idType));
+        fluxResponseDocument.setIDS(Collections.singletonList(idType));
 
         List<ValidationResultDocument> validationResultDocuments = new ArrayList<>();
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
@@ -105,15 +113,9 @@ public class ActivityResponseFactGeneratorTest {
 
     @Test
     public void testEvaluate(){
-
         List<AbstractFact> abstractFacts = generator.generateAllFacts();
         FaResponseFact faResponseFact = (FaResponseFact) abstractFacts.get(0);
-
-
         assertEquals(codeType.getValue(), faResponseFact.getResponseCode().getValue());
-
-
-
     }
 
     @Test(expected = RulesValidationException.class)

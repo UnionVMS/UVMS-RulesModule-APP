@@ -7,15 +7,16 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sanera on 26/07/2017.
@@ -27,42 +28,21 @@ public class FaJointFishingOperationFactTest {
     @Test
     public void testIfVesselTransportPresent(){
 
-       boolean result= faJointFishingOperationFact.ifVesselTransportPresent(Arrays.asList(RuleTestHelper.getFishingActivity()));
+       boolean result= faJointFishingOperationFact.ifVesselTransportPresent(Collections.singletonList(ActivityObjectsHelper.generateActivity()));
         assertTrue(result);
     }
 
     @Test
     public void testIfFACatchPresent(){
-        boolean result= faJointFishingOperationFact.ifFACatchPresent(Arrays.asList(RuleTestHelper.getFishingActivity()));
+        boolean result= faJointFishingOperationFact.ifFACatchPresent(Collections.singletonList(ActivityObjectsHelper.generateActivity()));
         assertTrue(result);
     }
-
 
     @Test
     public void testAtLeastOneFaCatchTypeCodePresent(){
-        FishingActivity fishingActivity= RuleTestHelper.getFishingActivity();
-        fishingActivity.setSpecifiedFACatches(Arrays.asList(RuleTestHelper.getFACatch("ALLOCATED_TO_QUOTA","BFT")));
-        boolean result= faJointFishingOperationFact.verifyAtLeastOneFaCatchTypeCodePresent(Arrays.asList(fishingActivity));
+        FishingActivity fishingActivity = ActivityObjectsHelper.generateActivity();
+        fishingActivity.setSpecifiedFACatches(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLOCATED_TO_QUOTA", "BFT")));
+        boolean result= faJointFishingOperationFact.verifyAtLeastOneFaCatchTypeCodePresent(Collections.singletonList(fishingActivity));
         assertTrue(result);
     }
-
-    /*
-    @Test
-    public void testVallidationForDestinationFLUXLocation_typecode(){
-        boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"TYPECODE");
-        assertTrue(result);
-    }
-
-    @Test
-    public void testVallidationForDestinationFLUXLocation_location(){
-        boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"LOCATION");
-        assertTrue(result);
-    }
-
-    @Test
-    public void testVallidationForDestinationFLUXLocation_ID(){
-        boolean result= faJointFishingOperationFact.vallidationForDestinationFLUXLocation(RuleTestHelper.getFACatchList(),"ID");
-        assertFalse(result);
-    }
-    */
 }

@@ -13,23 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleTestHelper;
-import org.junit.Test;
-
-import java.util.Arrays;
-
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by sanera on 01/08/2017.
- */
+import java.util.Collections;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
+import org.junit.Test;
+
 public class FaResponseFactTest {
 
     FaResponseFact faResponseFact = new FaResponseFact();
 
     @Test
     public  void testIfValidatorIdPresent(){
-        boolean result= faResponseFact.isValidatorIdPresent(Arrays.asList(RuleTestHelper.getValidationResultDocument()));
+        boolean result= faResponseFact.isValidatorIdPresent(Collections.singletonList(ActivityObjectsHelper.generateValidationResultDocument()));
         assertTrue(result);
     }
 

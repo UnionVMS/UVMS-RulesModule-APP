@@ -20,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,9 +49,6 @@ import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
-/**
- * @author Gregory Rinaldi
- */
 @Path("/rules")
 @Slf4j
 public class RulesResource {
@@ -151,17 +149,18 @@ public class RulesResource {
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/reinitialize")
-    public Response reInitialize() {
-        drlInitializer.reInitialize();
-        return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
+    @Path("/reload")
+    public Response reloadRules() {
+        drlInitializer.reload();
+        return Response.ok(new ResponseDto<>("Rules reloading completed.", ResponseCode.OK)).build();
     }
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
-    @Path("/checkrulesaredeployed")
-    public Response checkRulesAreDeployed() {
-        return Response.ok(new ResponseDto<>(drlInitializer.checkRulesAreDeployed(), ResponseCode.OK)).build();
+    @Path("/validation/{flux_report_message_uuid}")
+    public Response getValidation(@PathParam("flux_report_message_uuid") String uuid) { // TODO
+        return Response.ok(new ResponseDto<>("Rules initialization completed successfully..", ResponseCode.OK)).build();
     }
+
 
 }
