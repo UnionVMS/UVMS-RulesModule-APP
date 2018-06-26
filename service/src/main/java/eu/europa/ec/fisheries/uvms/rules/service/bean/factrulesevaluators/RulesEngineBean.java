@@ -78,7 +78,7 @@ public class RulesEngineBean {
         mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
 
         if (businessObject != null) {
-            log.info(String.format("[START] Validating %s ", businessObject.getClass().getSimpleName()));
+            log.info(String.format("Validating %s ", businessObject.getClass().getSimpleName()));
             Stopwatch stopwatch = Stopwatch.createStarted();
 
             AbstractGenerator generator = null;
@@ -130,8 +130,8 @@ public class RulesEngineBean {
             if (generator != null){
                 List<AbstractFact> facts = new ArrayList<>(generator.generateAllFacts());
                 masterEvaluator.evaluateFacts(facts, businessObjectType);
-                log.info(String.format("[END] It took %s to evaluate the message.", stopwatch));
-                log.info(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
+                log.info(String.format("It took %s to evaluate the message.", stopwatch));
+                log.debug(String.format("%s fact instances holding in memory.", AbstractFact.getNumOfInstances()));
                 return facts;
             }
         }

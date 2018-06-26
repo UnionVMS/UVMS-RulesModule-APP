@@ -1,12 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ejb.*;
-import java.util.List;
 
 @Stateless
 @LocalBean
@@ -27,7 +31,7 @@ public class MasterEvaluator {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evaluateFacts(List<AbstractFact> facts, BusinessObjectType businessObjectType) throws RulesValidationException {
-        //droolsEngineInitializer.checkRulesAreDeployed(0);
+        //droolsEngineInitializer.isRulesLoaded(0);
         switch (businessObjectType) {
             case RECEIVING_FA_REPORT_MSG:
             case SENDING_FA_REPORT_MSG:

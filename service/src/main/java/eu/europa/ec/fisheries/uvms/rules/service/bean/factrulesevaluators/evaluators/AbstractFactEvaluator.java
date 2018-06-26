@@ -1,5 +1,14 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -16,14 +25,15 @@ import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
 import org.kie.api.KieServices;
-import org.kie.api.builder.*;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.Results;
 import org.kie.api.io.Resource;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 abstract class AbstractFactEvaluator {
@@ -67,7 +77,7 @@ abstract class AbstractFactEvaluator {
         Results results = kieBuilder.getResults();
         if (results.hasMessages(Message.Level.ERROR)) {
             for (Message result : results.getMessages()) {
-                System.out.println(result.getText());
+                log.debug(result.getText());
             }
             throw new RuntimeException("COMPILATION ERROR IN RULES. PLEASE ADAPT THE FAILING EXPRESSIONS AND TRY AGAIN");
         }
@@ -132,13 +142,13 @@ abstract class AbstractFactEvaluator {
             }
             int numberOfFiredRules = ksession.fireAllRules();
             ksession.dispose();
-            log.info("[DROOLS] Pure Drools Validation took : [{}] ms. In this time [{}] rules were fired.", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
+            log.debug("Drools eval took : [{}] ms. In this time [{}] rules were fired.", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
         } catch (RuntimeException e) {
             String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
             log.error(errorMessage);
             throw new RulesServiceTechnicalException(errorMessage, e);
         } catch (Exception e) {
-            log.trace("EXCEPTION IN EVALUATION OF RULE");
+            log.warn("EXCEPTION IN EVALUATION OF RULE");
             Collection<?> objects = null;
             if (ksession != null) {
                 objects = ksession.getObjects();

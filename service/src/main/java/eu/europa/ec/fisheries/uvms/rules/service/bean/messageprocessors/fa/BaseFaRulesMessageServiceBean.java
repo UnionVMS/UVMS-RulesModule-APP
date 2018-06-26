@@ -1,5 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
@@ -24,12 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.List;
-import java.util.UUID;
-
 @Slf4j
 abstract class BaseFaRulesMessageServiceBean {
 
@@ -45,11 +45,11 @@ abstract class BaseFaRulesMessageServiceBean {
                     uuidIsCorrect = StringUtils.equalsIgnoreCase(UUID.fromString(uuidString).toString(), uuidString);
                 }
                 if (!uuidIsCorrect) {
-                    log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);
+                    log.debug("The given UUID is not in a correct format {}", uuidString);
                 }
             }
         } catch (IllegalArgumentException exception) {
-            log.debug("[WARN] The given UUID is not in a correct format {}", uuidString);
+            log.debug("The given UUID is not in a correct format {}", uuidString);
         }
         return uuidIsCorrect;
     }
@@ -106,7 +106,7 @@ abstract class BaseFaRulesMessageServiceBean {
     }
 
     boolean isNeedToSendToExchange(SetFaQueryMessageRequest request, String requestStr, String logGuid, String onValue, FLUXFAQueryMessage faQueryMessage) {
-        log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
+        log.info("The report generated from Activity doesn't contain data (Empty report)!");
         updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
         getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue);
         return false;

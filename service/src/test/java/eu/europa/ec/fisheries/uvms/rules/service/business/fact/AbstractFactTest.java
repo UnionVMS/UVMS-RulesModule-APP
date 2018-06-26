@@ -38,7 +38,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
@@ -1218,51 +1217,10 @@ public class AbstractFactTest {
         CodeType typeCode = new CodeType();
         typeCode.setListId("VESSEL_STORAGE_TYPE");
         typeCode.setValue("OHL");
-        List<CodeType> typeCodes = Arrays.asList(typeCode);
+        List<CodeType> typeCodes = Collections.singletonList(typeCode);
         String valueForListId = fact.getValueForListId("VESSEL_STORAGE_TYPE", typeCodes);
         assertNotNull(valueForListId);
         assertEquals("OHL", valueForListId);
-    }
-
-    @Test
-    @SneakyThrows
-    public void testIsRequiredGearCharacteristicsPresent() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        fishingGearFact.setFishingGearTypeCharacteristics(ActivityObjectsHelper.generateFishingGearTypeCharacteristics());
-        fishingGearFact.setApplicableGearCharacteristics(ActivityObjectsHelper.generateGearCharacteristics());
-        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
-        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
-    }
-
-    @Test
-    public void testRetrieveGearCharacteristicTypeCodeValues() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(ActivityObjectsHelper.generateFishingGearTypeCharacteristics(), typeCode, true);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.GEAR_TYPE);
-        assertFalse(fishingGearCharacteristicCodes.contains("HE"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GM"));
-        assertFalse(fishingGearCharacteristicCodes.contains("ME"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GD"));
     }
 
     @Test
@@ -1742,14 +1700,12 @@ public class AbstractFactTest {
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
         IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
         assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
         IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
         assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
@@ -1763,7 +1719,6 @@ public class AbstractFactTest {
     public void testValueStartsWithMultipleIdTypesNoneCorrect() {
         List<IdType> idTypes = Arrays.asList(ActivityObjectsHelper.generateIdType("27.3.b.27", "FAO_AREA"),
                 ActivityObjectsHelper.generateIdType("28.3.d.27", "FAO_AREA"), ActivityObjectsHelper.generateIdType("27.3.bd.27", "FAO_AREA"));
-
         assertFalse(fact.valueStartsWith(idTypes, "27.3.d"));
     }
 

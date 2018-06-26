@@ -22,21 +22,19 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLAPDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
@@ -49,7 +47,7 @@ public class ActivityObjectsHelper {
 
     public static FishingActivity generateActivity(String occurrence, String activityType){
         FishingActivity departure = new FishingActivity();
-        CodeType codeType = new CodeType();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setValue(activityType);
         try {
             DateTimeType dateTimeType = new DateTimeType();
@@ -179,6 +177,15 @@ public class ActivityObjectsHelper {
         return idType;
     }
 
+    public static GearCharacteristic generateGearCharacteristic(String typeCodeValue){
+        GearCharacteristic gearCharacteristic = new GearCharacteristic();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setListID("FA_GEAR_CHARACTERISTIC");
+        codeType.setValue(typeCodeValue);
+        gearCharacteristic.setTypeCode(codeType);
+        return gearCharacteristic;
+    }
+
     public static FLAPDocument generateFLAPDocument() {
         FLAPDocument flapDocument = new FLAPDocument();
         flapDocument.setID(generateIdTypeUNCEFACT("value", "FLAP_DOCUMENT_ID"));
@@ -217,52 +224,6 @@ public class ActivityObjectsHelper {
         return fluxLocation;
     }
 
-    public static List<GearCharacteristic> generateGearCharacteristics() {
-        List<GearCharacteristic> gearCharacteristics = new ArrayList<>();
-        GearCharacteristic gearCharacteristic = new GearCharacteristic();
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("ME");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GM");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("HE");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        gearCharacteristic = new GearCharacteristic();
-        codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
-        codeType.setListID(FactConstants.FA_GEAR_CHARACTERISTIC);
-        codeType.setValue("GD");
-        gearCharacteristic.setTypeCode(codeType);
-        gearCharacteristics.add(gearCharacteristic);
-
-        return gearCharacteristics;
-    }
-
-    public static List<FishingGearTypeCharacteristic> generateFishingGearTypeCharacteristics() {
-        List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics = new ArrayList<>();
-        List<GearCharacteristic> gearCharacteristics = ActivityObjectsHelper.generateGearCharacteristics();
-        for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
-            FishingGearTypeCharacteristic fishingGearTypeCharacteristic = new FishingGearTypeCharacteristic();
-            fishingGearTypeCharacteristic.setMandatory(true);
-            fishingGearTypeCharacteristic.setFishingGearCharacteristicCode(gearCharacteristic.getTypeCode().getValue());
-            fishingGearTypeCharacteristic.setFishingGearTypeCode("PS");
-            fishingGearTypeCharacteristics.add(fishingGearTypeCharacteristic);
-        }
-        return fishingGearTypeCharacteristics;
-    }
-
     public static ContactParty generateContactParty(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode, StructuredAddress structuredAddress){
         ContactParty contactParty = new ContactParty();
         contactParty.setRoleCodes(Collections.singletonList(roleCode));
@@ -272,5 +233,13 @@ public class ActivityObjectsHelper {
 
     public static StructuredAddress generateStructuredAddress(){
         return new StructuredAddress();
+    }
+
+    public static FishingGear generateFishingGear(String codeType) {
+        FishingGear fishingGear = new FishingGear();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType ct = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        ct.setValue(codeType);
+        fishingGear.setTypeCode(ct);
+        return fishingGear;
     }
 }

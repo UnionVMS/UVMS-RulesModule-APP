@@ -1,6 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
@@ -18,15 +28,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Slf4j
 @Singleton
@@ -50,11 +51,9 @@ public class ActivityServiceBeanHelper {
 
     protected Optional<FishingTripResponse> unmarshal(String message) throws SalesMarshallException {
         FishingTripResponse response = JAXBMarshaller.unmarshallString(message, FishingTripResponse.class);
-
         if (isEmpty(response.getFishingActivityLists()) || isEmpty(response.getFishingTripIdLists())) {
             return Optional.absent();
         }
-
         return Optional.of(response);
     }
 
@@ -66,8 +65,7 @@ public class ActivityServiceBeanHelper {
                 new SingleValueTypeFilter(SearchFilter.PERIOD_START, formatter.print(DateTime.now().minusYears(3).toLocalDateTime())),
                 new SingleValueTypeFilter(SearchFilter.PERIOD_END, formatter.print(DateTime.now().toLocalDateTime())));
 
-        List<ListValueTypeFilter> listFilter = Arrays.asList(
-                new ListValueTypeFilter(SearchFilter.ACTIVITY_TYPE, Arrays.asList("LANDING")));
+        List<ListValueTypeFilter> listFilter = Collections.singletonList(new ListValueTypeFilter(SearchFilter.ACTIVITY_TYPE, Collections.singletonList("LANDING")));
 
         String request = activityMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
         log.debug("Send FishingTripRequest message to Activity");

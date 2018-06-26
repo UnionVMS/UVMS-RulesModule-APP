@@ -10,6 +10,28 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
+import static java.util.Collections.emptyList;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.AccessTimeout;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -30,19 +52,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
-import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * @author Gregory Rinaldi, Andi Kovi
@@ -118,11 +127,11 @@ public class MDRCache {
         if (acronymType != null) {
             result = cache.get(acronymType);
             if (CollectionUtils.isEmpty(result)) { // reload if its empty! Shouldn't happen, but if it does we have the meccanism set up!
-                log.warn("[WARN] List +++ " + acronymType + " +++ is empty! Going to reload now()!");
+                log.warn(" List +++ " + acronymType + " +++ is empty! Going to reload now()!");
                 cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
                 result = cache.get(acronymType);
                 if (CollectionUtils.isEmpty(result)) {
-                    log.error("[ERROR] Tried to reload (since it was empty) acronym [ " + acronymType + " ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
+                    log.error(" Tried to reload (since it was empty) acronym [ " + acronymType + " ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
                             "Please Have a look at MDRAcronymType!");
                 }
             }
@@ -168,7 +177,7 @@ public class MDRCache {
                 cacheDateChanged = true;
             }
         } catch (MessageException e) {
-            log.error("[ERROR] Couldn't populate MDR Refresh date.. MDR Module is deployed?");
+            log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?");
         }
         return cacheDateChanged;
     }
