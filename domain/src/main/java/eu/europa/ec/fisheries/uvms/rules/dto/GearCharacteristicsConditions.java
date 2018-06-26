@@ -10,13 +10,18 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dto;
 
-import lombok.Getter;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 
 @Singleton
 @Startup
@@ -25,53 +30,92 @@ public class FishingGearTypeCharacteristics {
     @Getter
     private List<FishingGearTypeCharacteristic> characteristicList = new ArrayList<>();
 
+    @Getter
+    private Map<String, List<Attribute>> characteristicMap = new HashMap<>();
+
     @PostConstruct
     public void init(){
-        characteristicList.add(new FishingGearTypeCharacteristic("SV","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SV","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTM","MT", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTM","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PTM","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PTM","MT", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PTB","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("PTB","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("PTB","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTB","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTB","GE", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTB","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBN","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBN","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBN","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBS","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBS","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBS","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TB","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("TB","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TB","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("SX","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SX","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBB","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBB","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("TBB","GN", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTT","GM", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTT","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTT","MT", false));
-        characteristicList.add(new FishingGearTypeCharacteristic("OTT","GN", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SDN","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SDN","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SPR","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SPR","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SSC","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("SSC","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS","HE", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS1","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS1","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS1","HE", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS2","ME", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS2","GM", true));
-        characteristicList.add(new FishingGearTypeCharacteristic("PS2","HE", true));
+
+        characteristicMap.put("OTB", Arrays.asList(
+                new Attribute("ME", false),
+                new Attribute("GM", true),
+                new Attribute("MT", true))
+        );
+        characteristicMap.put("SV", Arrays.asList(
+                new Attribute("GM", false),
+                new Attribute("ME", false))
+        );
+        characteristicMap.put("OTM", Arrays.asList(
+                new Attribute("MT", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("PTM", Arrays.asList(
+                new Attribute("ME", true),
+                new Attribute("MT", true))
+        );
+        characteristicMap.put("PTB", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("MT", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("TBN", Arrays.asList(
+                new Attribute("GM", false),
+                new Attribute("ME", true),
+                new Attribute("MT", false))
+        );
+        characteristicMap.put("TBS", Arrays.asList(
+                new Attribute("GM", false),
+                new Attribute("MT", false),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("TB", Arrays.asList(
+                new Attribute("GM", false),
+                new Attribute("ME", true),
+                new Attribute("MT", false))
+        );
+        characteristicMap.put("SX", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("TBB", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("ME", true),
+                new Attribute("GN", true))
+        );
+        characteristicMap.put("OTT", Arrays.asList(
+                new Attribute("GM", false),
+                new Attribute("ME", true),
+                new Attribute("MT", false),
+                new Attribute("GN", true))
+        );
+        characteristicMap.put("SDN", Arrays.asList(
+                new Attribute("ME", true),
+                new Attribute("GM", true))
+        );
+        characteristicMap.put("SPR", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("SSC", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("PS", Arrays.asList(
+                new Attribute("GM", true),
+                new Attribute("HE", true),
+                new Attribute("ME", true))
+        );
+        characteristicMap.put("PS1", Arrays.asList(
+                new Attribute("ME", true),
+                new Attribute("HE", true),
+                new Attribute("GM", true))
+        );
+        characteristicMap.put("PS2", Arrays.asList(
+                new Attribute("ME", true),
+                new Attribute("HE", true),
+                new Attribute("GM", true))
+        );
+
         characteristicList.add(new FishingGearTypeCharacteristic("LA","ME", true));
         characteristicList.add(new FishingGearTypeCharacteristic("LA","GM", true));
         characteristicList.add(new FishingGearTypeCharacteristic("LA","HE", true));
@@ -125,5 +169,12 @@ public class FishingGearTypeCharacteristics {
         characteristicList.add(new FishingGearTypeCharacteristic("LL","GN", true));
         characteristicList.add(new FishingGearTypeCharacteristic("LL","NI", true));
         characteristicList.add(new FishingGearTypeCharacteristic("RG","GD", false));
+    }
+
+    @Data
+    @AllArgsConstructor
+    public class Attribute {
+        private String value;
+        private boolean optional;
     }
 }
