@@ -1541,7 +1541,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="123"/>
             <column name="br_id" value="FA-L02-00-0123"/>
-            <column name="expression" value="fishingActivity &amp;&amp; !isValid(applicableGearCharacteristics)"/>
+            <column name="expression" value="fishingActivity &amp;&amp; fishingGear != null &amp;&amp; !valid(fishingGear)"/>
             <column name="note" value="None or not all required gear characteristics are present in the list"/>
             <column name="message" value="ApplicableGearCharacteristic missing"/>
             <column name="level" value="L02"/>

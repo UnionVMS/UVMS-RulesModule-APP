@@ -35,6 +35,7 @@ public class FishingGearFact extends AbstractFact {
     private List<GearCharacteristic> applicableGearCharacteristics;
     private boolean fishingActivity;
     private Map<String, List<GearMatrix.Condition>> matrix;
+    private FishingGear fishingGear;
 
     public FishingGearFact() {
         setFactType();

@@ -706,8 +706,9 @@ public class ActivityFactMapper {
         fishingGearFact.setRoleCodes(mapToCodeTypes(fishingGear.getRoleCodes()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ROLE_CODE).storeInRepo(fishingGearFact, ROLE_CODES_PROP);
 
+        fishingGearFact.setFishingGear(fishingGear);
         if (fishingGear.getApplicableGearCharacteristics() != null) {
-            fishingGearFact.setApplicableGearCharacteristics(new ArrayList<>(fishingGear.getApplicableGearCharacteristics()));
+            fishingGearFact.setApplicableGearCharacteristics(fishingGear.getApplicableGearCharacteristics());
             xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_GEAR_CHARACTERISTIC).storeInRepo(fishingGearFact, APPLICABLE_GEAR_CHARACTERISTICS_PROP);
         }
 
