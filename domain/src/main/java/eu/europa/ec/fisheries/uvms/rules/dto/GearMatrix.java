@@ -13,7 +13,6 @@ package eu.europa.ec.fisheries.uvms.rules.dto;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,116 +25,113 @@ import lombok.Getter;
 
 @Singleton
 @Startup
-public class GearCharacteristicsConditions {
+public class GearMatrix {
 
     @Getter
-    private List<FishingGearTypeCharacteristic> characteristicList = new ArrayList<>();
-
-    @Getter
-    private Map<String, List<Condition>> characteristicMap = new HashMap<>();
+    private Map<String, List<Condition>> matrix = new HashMap<>();
 
     @PostConstruct
     public void init(){
 
         // Trawl nets
 
-        characteristicMap.put("OTB", Arrays.asList(
+        matrix.put("OTB", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
                 new Condition("MT", true))
         );
-        characteristicMap.put("TBN", Arrays.asList(
+        matrix.put("TBN", Arrays.asList(
                 new Condition("ME", true),
                 new Condition("GM", false),
                 new Condition("MT", false))
         );
-        characteristicMap.put("TBS", Arrays.asList(
+        matrix.put("TBS", Arrays.asList(
                 new Condition("ME", true),
                 new Condition("GM", false),
                 new Condition("MT", false))
         );
-        characteristicMap.put("TB", Arrays.asList(
+        matrix.put("TB", Arrays.asList(
                 new Condition("ME", true),
                 new Condition("GM", false),
                 new Condition("MT", false))
         );
-        characteristicMap.put("TBB", Arrays.asList(
+        matrix.put("TBB", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("GN", false))
         );
-        characteristicMap.put("OTT", Arrays.asList(
+        matrix.put("OTT", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
                 new Condition("GN", false),
                 new Condition("MT", true))
         );
-        characteristicMap.put("PTB", Arrays.asList(
+        matrix.put("PTB", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
                 new Condition("MT", true))
         );
-        characteristicMap.put("OTM", Arrays.asList(
+        matrix.put("OTM", Arrays.asList(
                 new Condition("MT", false),
                 new Condition("ME", false))
         );
-        characteristicMap.put("PTM", Arrays.asList(
+        matrix.put("PTM", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("MT", false))
         );
 
         // Seine nets
-        characteristicMap.put("SDN", Arrays.asList(
+        matrix.put("SDN", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
-        characteristicMap.put("SSC", Arrays.asList(
+        matrix.put("SSC", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
-        characteristicMap.put("SPR", Arrays.asList(
+        matrix.put("SPR", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
-        characteristicMap.put("SX", Arrays.asList(
+        matrix.put("SX", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
-        characteristicMap.put("SV", Arrays.asList(
+        matrix.put("SV", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
 
         // Surrounding nets
-        characteristicMap.put("PS", Arrays.asList(
+        matrix.put("PS", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false))
         );
-        characteristicMap.put("PS1", Arrays.asList(
+        matrix.put("PS1", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false))
         );
-        characteristicMap.put("PS2", Arrays.asList(
+        matrix.put("PS2", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false))
         );
-        characteristicMap.put("LA", Arrays.asList(
+        matrix.put("LA", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false))
         );
 
         // Dredges
-        characteristicMap.put("DRB", Arrays.asList(
+        matrix.put("DRB", Arrays.asList(
                 new Condition("GM", false),
                 new Condition("GN", false))
         );
 
         // Gillnets && entangling nets
-        characteristicMap.put("GN", Arrays.asList(
+        matrix.put("GN", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -143,7 +139,7 @@ public class GearCharacteristicsConditions {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
-        characteristicMap.put("GNS", Arrays.asList(
+        matrix.put("GNS", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -151,7 +147,7 @@ public class GearCharacteristicsConditions {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
-        characteristicMap.put("GND", Arrays.asList(
+        matrix.put("GND", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -159,7 +155,7 @@ public class GearCharacteristicsConditions {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
-        characteristicMap.put("GNC", Arrays.asList(
+        matrix.put("GNC", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -167,7 +163,7 @@ public class GearCharacteristicsConditions {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
-        characteristicMap.put("GTN", Arrays.asList(
+        matrix.put("GTN", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -175,7 +171,7 @@ public class GearCharacteristicsConditions {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
-        characteristicMap.put("GTR", Arrays.asList(
+        matrix.put("GTR", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false),
@@ -185,46 +181,46 @@ public class GearCharacteristicsConditions {
         );
 
         // Traps
-        characteristicMap.put("FPO",
+        matrix.put("FPO",
                 Collections.singletonList(new Condition("GN", false))
         );
-        characteristicMap.put("FIX", Collections.<Condition>emptyList());
+        matrix.put("FIX", Collections.<Condition>emptyList());
 
         // Hooks & Lines
-        characteristicMap.put("LHP", Arrays.asList(
+        matrix.put("LHP", Arrays.asList(
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        characteristicMap.put("LHM", Arrays.asList(
+        matrix.put("LHM", Arrays.asList(
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        characteristicMap.put("LLS", Arrays.asList(
+        matrix.put("LLS", Arrays.asList(
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        characteristicMap.put("LLD", Arrays.asList(
+        matrix.put("LLD", Arrays.asList(
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        characteristicMap.put("LL", Arrays.asList(
+        matrix.put("LL", Arrays.asList(
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        characteristicMap.put("LTL", Collections.<Condition>emptyList());
-        characteristicMap.put("LX", Collections.<Condition>emptyList());
+        matrix.put("LTL", Collections.<Condition>emptyList());
+        matrix.put("LX", Collections.<Condition>emptyList());
 
         // Harvesting machines
-        characteristicMap.put("HMD", Collections.<Condition>emptyList());
+        matrix.put("HMD", Collections.<Condition>emptyList());
 
         // Miscellaneous gear
-        characteristicMap.put("MIS", Collections.<Condition>emptyList());
+        matrix.put("MIS", Collections.<Condition>emptyList());
 
         // Recreational gear
-        characteristicMap.put("RG", Collections.<Condition>emptyList());
+        matrix.put("RG", Collections.<Condition>emptyList());
 
         // Gear not known or not specified
-        characteristicMap.put("NK", Collections.<Condition>emptyList());
+        matrix.put("NK", Collections.<Condition>emptyList());
     }
 
     @Data

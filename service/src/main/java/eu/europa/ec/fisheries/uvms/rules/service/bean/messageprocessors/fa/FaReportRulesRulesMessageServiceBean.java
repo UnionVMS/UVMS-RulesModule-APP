@@ -34,7 +34,7 @@ import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.dto.GearCharacteristicsConditions;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
@@ -78,7 +78,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
     private RulePostProcessBean rulePostProcessBean;
 
     @EJB
-    private GearCharacteristicsConditions fishingGearTypeCharacteristics;
+    private GearMatrix fishingGearTypeCharacteristics;
 
     @EJB
     private RulesActivityServiceBean activityServiceBean;
@@ -215,7 +215,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
         extraValues.put(SENDER_RECEIVER, senderReceiver);
         extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(fluxfaReportMessage));
         extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
-        extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getCharacteristicList());
+        extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getMatrix());
         if (isIncommingMessage) {
             extraValues.put(TRIP_ID, faIdsPerTripsListFromDb);
         }

@@ -41,7 +41,7 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.dto.GearCharacteristicsConditions;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
@@ -83,7 +83,7 @@ public class SalesRulesMessageServiceBean {
     private ParameterService parameterService;
 
     @EJB
-    private GearCharacteristicsConditions fishingGearTypeCharacteristics;
+    private GearMatrix fishingGearTypeCharacteristics;
 
     @EJB
     private SalesMessageFactory salesMessageFactory;

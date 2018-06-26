@@ -13,13 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
-import eu.europa.ec.fisheries.uvms.rules.dto.GearCharacteristicsConditions;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +34,7 @@ public class FishingGearFact extends AbstractFact {
     private List<CodeType> roleCodes;
     private List<GearCharacteristic> applicableGearCharacteristics;
     private boolean fishingActivity;
-    private List<FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
+    private Map<String, List<GearMatrix.Condition>> matrix;
 
     public FishingGearFact() {
         setFactType();
@@ -55,41 +53,35 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public boolean valid(FishingGear fishingGear, GearCharacteristicsConditions characteristics) {
+    public boolean valid(FishingGear fishingGear) {
         if (fishingGear == null || CollectionUtils.isEmpty(fishingGear.getApplicableGearCharacteristics())) {
             return false;
         }
 
+        List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = fishingGear.getTypeCode();
-        List<GearCharacteristicsConditions.Condition> conditions = characteristics.getCharacteristicMap().get(codeType.getValue());
-        List<GearCharacteristic> incomingCharacteristics = fishingGear.getApplicableGearCharacteristics();
-
-        MutableInt mandatoryConditionsTotal = new MutableInt(0);
-        MutableInt optionalTotal = new MutableInt(0);
+        List<GearMatrix.Condition> conditions = matrix.get(codeType.getValue());
+        MutableInt optional = new MutableInt(0);
         MutableInt mandatoryHits = new MutableInt(0);
         MutableInt optionalHits = new MutableInt(0);
-        Set<String> incomingMandatoryUniqueValues = new HashSet<>();
 
-        for (GearCharacteristicsConditions.Condition next : conditions) {
+        for (GearMatrix.Condition next : conditions) {
             String value = next.getValue();
             if (!next.isOptional()) {
-                if (!valid(incomingCharacteristics, mandatoryHits, value, incomingMandatoryUniqueValues, mandatoryConditionsTotal))
-                    return false;
+                if (!valid(gearCharacteristics, mandatoryHits, value)) return false;
             } else {
-                valid(incomingCharacteristics, optionalHits, value, new HashSet<String>(), optionalTotal);
+                optional.increment();
+                valid(gearCharacteristics, optionalHits, value);
             }
         }
 
-        return mandatoryConditionsTotal.getValue() <= mandatoryHits.getValue() && ((optionalTotal.getValue() == 0)
-                || (optionalTotal.getValue() > 0 && optionalHits.getValue() >= 1));
+        return ((optional.getValue() == 0) || (optional.getValue() > 0 && optionalHits.getValue() >= 1));
     }
 
-    private boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value, Set<String> values, MutableInt total) {
-        total.increment();
+    private boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value) {
         for (GearCharacteristic incomingGearCharacteristic : incomingGearCharacteristics) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType code = incomingGearCharacteristic.getTypeCode();
             String incomingCodeTypeValue = code.getValue();
-            values.add(incomingCodeTypeValue);
             if (value.equals(incomingCodeTypeValue)){
                 hits.increment();
                 return true;
@@ -97,5 +89,4 @@ public class FishingGearFact extends AbstractFact {
         }
         return false;
     }
-
 }

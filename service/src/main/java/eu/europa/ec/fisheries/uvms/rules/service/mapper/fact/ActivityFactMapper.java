@@ -101,6 +101,7 @@ import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -172,10 +173,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
-/**
- * @Author kovian
- * @Author Gregory Rinaldi
- */
 @Slf4j
 public class ActivityFactMapper {
 
@@ -184,25 +181,14 @@ public class ActivityFactMapper {
     private static final String POST_OFFICE_BOX = "PostOfficeBox";
     private static final String FISHING_ACTIVITY_TYPE_CODE = "fishingActivityTypeCode";
     private static final String CREATION_DATE_TIME = "creationDateTime";
-    /**
-     * Additional objects - to be set before validation through generator.setAdditionalValidationObject(.., ..){..}
-     **/
+
     private List<IdTypeWithFlagState> assetList;
-
-    private List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics;
-
     private XPathStringWrapper xPathUtil;
-
     private List<IdType> faReportMessageIds = new ArrayList<>();
-
     private List<IdType> faRelatedReportIds = new ArrayList<>();
-
     private List<IdType> faQueryIds = new ArrayList<>();
-
     private List<IdType> faResponseIds = new ArrayList<>();
-
     private String senderReceiver = null;
-
     private List<String> fishingActivitiesWithTripIds = new ArrayList<>();
 
     private static final String VALUE_PROP = "value";
@@ -356,18 +342,6 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
 
         return faReportDocumentFact;
-    }
-
-    private List<Date> mapOccurrenceDateTimesFromFishingActivities(List<FishingActivity> fishingActivities) {
-        if (CollectionUtils.isEmpty(fishingActivities)) {
-            return emptyList();
-        }
-        List<Date> dates = new ArrayList<>();
-        for (FishingActivity activity : fishingActivities) {
-            dates.add(getDate(activity.getOccurrenceDateTime()));
-        }
-        dates.removeAll(singleton(null));
-        return dates;
     }
 
     private List<String> mapFishingActivityTypes(List<FishingActivity> specifiedFishingActivities) {
@@ -737,12 +711,10 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).append(APPLICABLE_GEAR_CHARACTERISTIC).storeInRepo(fishingGearFact, APPLICABLE_GEAR_CHARACTERISTICS_PROP);
         }
 
-        fishingGearFact.setFishingGearTypeCharacteristics(fishingGearTypeCharacteristics);
-
         return fishingGearFact;
     }
 
-    public List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears, String gearType) {
+    public List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears, String gearType, Map<String, List<GearMatrix.Condition>> matrix) {
         if (fishingGears == null) {
             xPathUtil.clear();
             return emptyList();
@@ -752,7 +724,9 @@ public class ActivityFactMapper {
         int index = 1;
         for (FishingGear fishingGear : fishingGears) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
-            list.add(generateFactsForFishingGear(fishingGear, gearType));
+            FishingGearFact fishingGearFact = generateFactsForFishingGear(fishingGear, gearType);
+            fishingGearFact.setMatrix(matrix);
+            list.add(fishingGearFact);
             index++;
         }
 
@@ -2826,14 +2800,6 @@ public class ActivityFactMapper {
 
     public List<IdTypeWithFlagState> getAssetList() {
         return assetList;
-    }
-
-    public void setFishingGearTypeCharacteristics(List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> fishingGearTypeCharacteristics) {
-        this.fishingGearTypeCharacteristics = fishingGearTypeCharacteristics;
-    }
-
-    public List<eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic> getFishingGearTypeCharacteristics() {
-        return fishingGearTypeCharacteristics;
     }
 
     public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
