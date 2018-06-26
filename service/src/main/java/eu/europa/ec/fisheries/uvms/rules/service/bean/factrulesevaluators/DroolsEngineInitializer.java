@@ -79,16 +79,16 @@ public class DroolsEngineInitializer {
             List<TemplateRuleMapDto> salesTemplatesAndRules = getSalesRules(allTemplates);
             List<TemplateRuleMapDto> faQueryTemplatesAndRules = getFaQueryRules(allTemplates);
 
-            log.info("[START] Initializing templates and rules for FA-Report facts. Nr. of Rules : [{}]", faTemplatesAndRules.size());
+            log.debug("Initializing templates and rules for FA-Report facts. Nr. of Rules : {}", faTemplatesAndRules.size());
             KieContainer faReportContainer = faReportRuleEvaluator.initializeRules(faTemplatesAndRules);
 
-            log.info("[START] Initializing templates and rules for FA-Response facts. Nr. of Rules : [{}]", faResponseTemplatesAndRules.size());
+            log.debug("Initializing templates and rules for FA-Response facts. Nr. of Rules : {}", faResponseTemplatesAndRules.size());
             KieContainer faRespContainer = responseRuleEvaluator.initializeRules(faResponseTemplatesAndRules);
 
-            log.info("[START] Initializing templates and rules for FA-Query facts. Nr. of Rules : [{}]", faQueryTemplatesAndRules.size());
+            log.debug("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", faQueryTemplatesAndRules.size());
             KieContainer faQueryContainer = faQueryEvaluator.initializeRules(faQueryTemplatesAndRules);
 
-            log.info("[START] Initializing templates and rules forSales facts. Nr. of Rules : [{}]", salesTemplatesAndRules.size());
+            log.debug("Initializing templates and rules forSales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
             KieContainer salesContainer = salesRuleEvaluator.initializeRules(salesTemplatesAndRules);
 
             containers = new EnumMap<>(ContainerType.class);
@@ -99,9 +99,9 @@ public class DroolsEngineInitializer {
 
             // To make sure that we have deployed all the templates!
             if (!allTemplates.isEmpty()) {
-                throw new RuntimeException("[FATAL] Please include all the <code>FactType</code> in the KieContainers!!");
+                throw new RuntimeException("Please include all the <code>FactType</code> in the KieContainers");
             }
-            log.info("[END] It took " + stopwatch + " to initialize the rules.");
+            log.info("It took " + stopwatch + " to initialize the rules.");
         } catch (RulesModelException e) {
             log.error(e.getMessage(), e);
         }
@@ -182,16 +182,7 @@ public class DroolsEngineInitializer {
         return containers.get(containerType);
     }
 
-    public void checkRulesAreDeployed(int retries) {
-        if (!checkRulesAreDeployed()) {
-            log.warn("[WARINIG] Rules were reinitialized cause they resulted not initialized!! Retry numer [{}]", retries);
-            init();
-            retries++;
-            checkRulesAreDeployed(retries);
-        }
-    }
-
-    public boolean checkRulesAreDeployed() {
+    public boolean isRulesLoaded() {
         List<Rule> deployedRules = new ArrayList<>();
         KieContainer container = containers.get(ContainerType.FA_REPORT);
         Collection<KiePackage> kiePackages = container.getKieBase().getKiePackages();
@@ -200,7 +191,6 @@ public class DroolsEngineInitializer {
         }
         return CollectionUtils.isNotEmpty(deployedRules);
     }
-
 
     private List<FactType> getFaReportFactsTypes() {
         return new ArrayList<FactType>() {{

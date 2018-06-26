@@ -77,7 +77,7 @@ public class HealthResource {
     }
 
     private boolean isRulesCacheLoaded() {
-        return initializer.checkRulesAreDeployed();
+        return initializer.isRulesLoaded();
     }
 
     private boolean isMdrCacheLoaded() {

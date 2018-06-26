@@ -1,5 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.mdr;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
@@ -9,8 +15,6 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.ejb.*;
 
 @Slf4j
 @Stateless
@@ -32,7 +36,7 @@ public class MdrRulesMessageServiceBean {
             if (StringUtils.isNotEmpty(exchangerStrReq)) {
                 producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
             } else {
-                log.error("ERROR : REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
+                log.error("REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
             }
         } catch (ExchangeModelMarshallException e) {
             log.error("Unable to marshall SetFLUXMDRSyncMessageRequest in RulesServiceBean.mapAndSendFLUXMdrRequestToExchange(String) : " + e.getMessage());
@@ -48,7 +52,7 @@ public class MdrRulesMessageServiceBean {
             if (StringUtils.isNotEmpty(mdrSyncResponseReq)) {
                 producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
             } else {
-                log.error("ERROR : REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
+                log.error("REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
             }
         } catch (MdrModelMarshallException e) {
             log.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : " + e.getMessage());

@@ -36,23 +36,8 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIde
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
-=======
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.FactConstants;
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
@@ -1239,50 +1224,6 @@ public class AbstractFactTest {
     }
 
     @Test
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-=======
-    @SneakyThrows
-    public void testIsRequiredGearCharacteristicsPresent() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        fishingGearFact.setFishingGearTypeCharacteristics(ActivityObjectsHelper.generateFishingGearTypeCharacteristics());
-        fishingGearFact.setApplicableGearCharacteristics(ActivityObjectsHelper.generateGearCharacteristics());
-        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
-        assertTrue(fishingGearFact.isRequiredGearCharacteristicsPresent(typeCode));
-    }
-
-    @Test
-    public void testRetrieveGearCharacteristicTypeCodeValues() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", FactConstants.GEAR_TYPE);
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveFishingGearCharacteristicCodes(ActivityObjectsHelper.generateFishingGearTypeCharacteristics(), typeCode, true);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesCorrectListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.FA_GEAR_CHARACTERISTIC);
-        assertTrue(fishingGearCharacteristicCodes.contains("HE"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GM"));
-        assertTrue(fishingGearCharacteristicCodes.contains("ME"));
-        assertTrue(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
-    public void testRetrieveFishingGearCharacteristicCodesWrongListId() {
-        FishingGearFact fishingGearFact = new FishingGearFact();
-        List<String> fishingGearCharacteristicCodes = fishingGearFact.retrieveGearCharacteristicTypeCodeValues(ActivityObjectsHelper.generateGearCharacteristics(), FactConstants.GEAR_TYPE);
-        assertFalse(fishingGearCharacteristicCodes.contains("HE"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GM"));
-        assertFalse(fishingGearCharacteristicCodes.contains("ME"));
-        assertFalse(fishingGearCharacteristicCodes.contains("GD"));
-    }
-
-    @Test
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
     public void testCodeTypeValuesUniqueShouldReturnFalseWithNonUniqueValues() {
 
         CodeType codeType = new CodeType();
@@ -1397,8 +1338,6 @@ public class AbstractFactTest {
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-=======
     @Test
     public void testWithEmptyListShouldFail(){
         List<FishingActivity> fishingActivities = new ArrayList<>();
@@ -1470,7 +1409,6 @@ public class AbstractFactTest {
         assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
 
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
     @Test
     public void testContainsMoreThenOneDeclarationPerTrip() {
         List<IdType> specifiedFishingTripIds = new ArrayList<>();
@@ -1761,23 +1699,13 @@ public class AbstractFactTest {
 
     @Test
     public void testGetIdTypeValueArrayCorrectValue() {
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-=======
         IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
         assertTrue(fact.split(idType.getValue(), ":").length == 3);
     }
 
     @Test
     public void testGetIdTypeValueArrayWrongSeparator() {
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-        IdType idType = RuleTestHelper.getIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-=======
         IdType idType = ActivityObjectsHelper.generateIdType("XEU:DEF:DEY", "FLUX_GP_PARTY");
-
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
         assertFalse(fact.split(idType.getValue(), "'").length == 3);
     }
 
@@ -1789,14 +1717,8 @@ public class AbstractFactTest {
 
     @Test
     public void testValueStartsWithMultipleIdTypesNoneCorrect() {
-<<<<<<< HEAD:service/src/test/java/eu/europa/fisheries/uvms/rules/service/AbstractFactTest.java
-        List<IdType> idTypes = Arrays.asList(RuleTestHelper.getIdType("27.3.b.27", "FAO_AREA"),
-                RuleTestHelper.getIdType("28.3.d.27", "FAO_AREA"), RuleTestHelper.getIdType("27.3.bd.27", "FAO_AREA"));
-=======
         List<IdType> idTypes = Arrays.asList(ActivityObjectsHelper.generateIdType("27.3.b.27", "FAO_AREA"),
                 ActivityObjectsHelper.generateIdType("28.3.d.27", "FAO_AREA"), ActivityObjectsHelper.generateIdType("27.3.bd.27", "FAO_AREA"));
-
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c:service/src/test/java/eu/europa/ec/fisheries/uvms/rules/service/business/fact/AbstractFactTest.java
         assertFalse(fact.valueStartsWith(idTypes, "27.3.d"));
     }
 
@@ -1873,12 +1795,6 @@ public class AbstractFactTest {
             }
         }
         assertTrue(CollectionUtils.isEmpty(finalList));
-    }
-
-
-    @Test
-    public void test(){
-        ObjecRHe
     }
 
 }

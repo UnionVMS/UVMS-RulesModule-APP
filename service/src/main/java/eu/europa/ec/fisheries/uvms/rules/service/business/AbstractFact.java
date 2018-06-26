@@ -63,10 +63,7 @@ public abstract class AbstractFact {
     private static volatile int counter = 0;
 
     protected FactType factType;
-<<<<<<< HEAD
-=======
     protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
->>>>>>> 983ed00d1bdf91b1f6b7b6b04a430fb5bbaafa9c
     protected String senderOrReceiver;
     protected List<RuleWarning> warnings;
     protected List<RuleError> errors;

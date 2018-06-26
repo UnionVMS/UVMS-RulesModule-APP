@@ -1,5 +1,31 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static java.util.Collections.singletonList;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -51,25 +77,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static java.util.Collections.singletonList;
 
 @Stateless
 @LocalBean
@@ -125,7 +132,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     public void evaluateIncomingFluxResponseRequest(SetFluxFaResponseMessageRequest request) {
         String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
-        log.info("[INFO] Going to evaluate FLUXResponseMessage with GUID [[ " + logGuid + " ]].");
+        log.info("Going to evaluate FLUXResponseMessage with GUID [[ " + logGuid + " ]].");
         FLUXResponseMessage fluxResponseMessage;
         try {
             // Validate xsd schema
@@ -134,18 +141,18 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
             updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
-                log.info("[INFO] The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
+                log.debug("The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
             } else {
-                log.info("[WARN] Validation resulted in errors. Not going to send msg to Exchange module..");
+                log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(fluxFaResponseFacts);
 
         } catch (UnmarshalException e) {
-            log.error("[ERROR] Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
+            log.info("[ERROR] Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
-            log.error("[ERROR] Error during validation of the received FLUXResponseMessage!", e);
+            log.info("[ERROR] Error during validation of the received FLUXResponseMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
         }
     }
@@ -153,7 +160,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     @Asynchronous
     public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided) {
         try {
-            log.info("[START] Preparing FLUXResponseMessage to send back to Exchange module.");
+            log.info("Preparing FLUXResponseMessage to send back to Exchange module.");
             if (!correctGuidProvided) {
                 fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
             }
@@ -187,7 +194,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
 
             idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid dublication in DB.
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
-            log.info("[END] FLUXFAResponse successfully sent back to Exchange.");
+            log.info("FLUXFAResponse successfully sent back to Exchange.");
         } catch (JAXBException e) {
             log.error(e.getMessage(), e);
             sendFLUXResponseMessageOnException(e.getMessage(), null, request, fluxResponseMessageObj);

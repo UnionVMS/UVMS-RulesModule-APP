@@ -1,5 +1,26 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.xml.bind.UnmarshalException;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
@@ -10,11 +31,10 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
-import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristics;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearCharacteristicsConditions;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
@@ -37,17 +57,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.xml.bind.UnmarshalException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
-
 @Slf4j
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
@@ -55,7 +64,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
 
-    private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
+    private static final String VALIDATION_RESULTED_IN_ERRORS = " Validation resulted in errors. Not going to send msg to Activity module..";
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -69,7 +78,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
     private RulePostProcessBean rulePostProcessBean;
 
     @EJB
-    private FishingGearTypeCharacteristics fishingGearTypeCharacteristics;
+    private GearCharacteristicsConditions fishingGearTypeCharacteristics;
 
     @EJB
     private RulesActivityServiceBean activityServiceBean;
@@ -108,7 +117,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
-            log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
+            log.info(" Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
 
             // Collect Ids from Message and match them with the ones present in the db!
             Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
@@ -129,13 +138,13 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                log.info("[INFO] The Validation of Report is successful, forwarding message to Activity.");
+                log.info(" The Validation of Report is successful, forwarding message to Activity.");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
-                    log.info("[INFO] Request has permissions. Going to send FaReportMessage to Activity Module...");
+                    log.info(" Request has permissions. Going to send FaReportMessage to Activity Module...");
                     sendRequestToActivity(requestStr, request.getUsername(), request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE);
                 } else {
-                    log.info("[WARN] Request doesn't have permissions!");
+                    log.info(" Request doesn't have permissions!");
                 }
             } else {
                 log.info(VALIDATION_RESULTED_IN_ERRORS);
@@ -147,11 +156,11 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(messageGUID));
 
         } catch (UnmarshalException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
+            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
-            log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
+            log.error(" Error during validation of the received FLUXFAReportMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
@@ -161,13 +170,13 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
-        log.info("[INFO] Going to evaluate FLUXFAReportMessage with GUID [[ " + logGuid + " ]].");
+        log.info(" Going to evaluate FLUXFAReportMessage with GUID [[ " + logGuid + " ]].");
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
-            log.info("[INFO] Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
+            log.info("Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
 
             Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
             List<String> faIdsPerTripsFromMessage = faMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
@@ -180,23 +189,23 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                log.info("[INFO] The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
+                log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
                 sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "flux", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), request.getOnValue()));
             } else {
-                log.info("[WARN] Validation resulted in errors. Not going to send msg to Exchange module..");
+                log.info(" Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(faReportFacts);
 
         } catch (UnmarshalException e) {
-            log.error("[ERROR] Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
+            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
-            log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
+            log.error(" Error during validation of the received FLUXFAReportMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("[ERROR] Error during validation of the received FLUXFAReportMessage!", e);
+            log.error(" Error during validation of the received FLUXFAReportMessage!", e);
         }
     }
 

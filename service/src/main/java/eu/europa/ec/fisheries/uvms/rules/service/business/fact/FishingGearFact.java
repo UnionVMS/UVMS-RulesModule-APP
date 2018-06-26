@@ -13,14 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.dto.FishingGearTypeCharacteristic;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearCharacteristicsConditions;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 
 @Data
@@ -50,13 +55,47 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public boolean valid(List<GearCharacteristic> applicableGearCharacteristics) {
-        if (CollectionUtils.isEmpty(applicableGearCharacteristics)) {
+    public boolean valid(FishingGear fishingGear, GearCharacteristicsConditions characteristics) {
+        if (fishingGear == null || CollectionUtils.isEmpty(fishingGear.getApplicableGearCharacteristics())) {
             return false;
         }
 
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = fishingGear.getTypeCode();
+        List<GearCharacteristicsConditions.Condition> conditions = characteristics.getCharacteristicMap().get(codeType.getValue());
+        List<GearCharacteristic> incomingCharacteristics = fishingGear.getApplicableGearCharacteristics();
 
-        return true;
+        MutableInt mandatoryConditionsTotal = new MutableInt(0);
+        MutableInt optionalTotal = new MutableInt(0);
+        MutableInt mandatoryHits = new MutableInt(0);
+        MutableInt optionalHits = new MutableInt(0);
+        Set<String> incomingMandatoryUniqueValues = new HashSet<>();
+
+        for (GearCharacteristicsConditions.Condition next : conditions) {
+            String value = next.getValue();
+            if (!next.isOptional()) {
+                if (!valid(incomingCharacteristics, mandatoryHits, value, incomingMandatoryUniqueValues, mandatoryConditionsTotal))
+                    return false;
+            } else {
+                valid(incomingCharacteristics, optionalHits, value, new HashSet<String>(), optionalTotal);
+            }
+        }
+
+        return mandatoryConditionsTotal.getValue() <= mandatoryHits.getValue() && ((optionalTotal.getValue() == 0)
+                || (optionalTotal.getValue() > 0 && optionalHits.getValue() >= 1));
+    }
+
+    private boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value, Set<String> values, MutableInt total) {
+        total.increment();
+        for (GearCharacteristic incomingGearCharacteristic : incomingGearCharacteristics) {
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType code = incomingGearCharacteristic.getTypeCode();
+            String incomingCodeTypeValue = code.getValue();
+            values.add(incomingCodeTypeValue);
+            if (value.equals(incomingCodeTypeValue)){
+                hits.increment();
+                return true;
+            }
+        }
+        return false;
     }
 
 }
