@@ -84,23 +84,30 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private boolean checkDoubles(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next) {
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
-
         if (codeType != null){
             String value = codeType.getValue();
             if (StringUtils.isNotEmpty(value)){
-                FAType activityTypeEnum = FAType.valueOf(value);
-                if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
-                    if (next.getOccurrenceDateTime() != null){
-                        DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
-                        if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
-                            return true;
-                        }
-                        dayMonthYearTypeHashSet.add(incomingDayMonthYear);
-                    }
-                }
+                Boolean x = valid(dayMonthYearTypeHashSet, next, value);
+                if (x != null) return x;
             }
         }
+        return false;
+    }
 
+    private Boolean valid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next, String value) {
+        try {
+            FAType activityTypeEnum = FAType.valueOf(value);
+            if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && next.getOccurrenceDateTime() != null){
+                DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
+                if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
+                    return true;
+                }
+                dayMonthYearTypeHashSet.add(incomingDayMonthYear);
+            }
+        }
+        catch (IllegalArgumentException e){
+            return false;
+        }
         return false;
     }
 
