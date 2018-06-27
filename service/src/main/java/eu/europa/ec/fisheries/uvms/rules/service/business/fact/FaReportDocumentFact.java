@@ -72,7 +72,9 @@ public class FaReportDocumentFact extends AbstractFact {
         Set<DayMonthYearType> dayMonthYearTypeHashSet =  new HashSet<>();
         for (FishingActivity next : specifiedFishingActivities) {
             try {
-                if (checkDoubles(dayMonthYearTypeHashSet, next)) return false;
+                if (!isValid(dayMonthYearTypeHashSet, next)) {
+                    return false;
+                }
             }
             catch (IllegalArgumentException e){
                 log.trace(e.getMessage(), e);
@@ -82,33 +84,33 @@ public class FaReportDocumentFact extends AbstractFact {
         return true;
     }
 
-    private boolean checkDoubles(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next) {
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
+    private boolean isValid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity activity) {
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = activity.getTypeCode();
         if (codeType != null){
             String value = codeType.getValue();
             if (StringUtils.isNotEmpty(value)){
-                Boolean x = valid(dayMonthYearTypeHashSet, next, value);
-                if (x != null) return x;
+                if (isValid(dayMonthYearTypeHashSet, activity, value)) return true;
             }
         }
         return false;
     }
 
-    private Boolean valid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next, String value) {
+    private Boolean isValid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next, String value) {
         try {
             FAType activityTypeEnum = FAType.valueOf(value);
             if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && next.getOccurrenceDateTime() != null){
                 DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
                 if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
-                    return true;
+                    return false;
                 }
                 dayMonthYearTypeHashSet.add(incomingDayMonthYear);
             }
         }
         catch (IllegalArgumentException e){
+            log.trace(e.getMessage(), e);
             return false;
         }
-        return false;
+        return true;
     }
 
     enum FAType {
