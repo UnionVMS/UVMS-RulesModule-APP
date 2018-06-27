@@ -1233,7 +1233,7 @@
             <column name="rule_id" value="94"/>
             <column name="br_id" value="FA-L01-00-0094"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; occurrenceDateTime == null"/>
+                    value="!subActivity &amp;&amp; !isValid(occurrenceDateTime)"/>
             <column name="note" value="check presence"/>
             <column name="message" value="Invalid occurrence date/time of the activity."/>
             <column name="level" value="L01"/>

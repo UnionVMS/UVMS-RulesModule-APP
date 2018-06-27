@@ -111,13 +111,13 @@ public class MDRCache {
     }
 
     private void populateAllMdr() {
-        log.info("[START] Loading MDR Cache...");
+        log.info("Loading MDR Cache...");
         for (final MDRAcronymType type : MDRAcronymType.values()) {
             cache.put(type, mdrCodeListByAcronymType(type));
         }
         cacheRefreshDate = new Date(mdrRefreshDate.getTime());
         alreadyLoadedOnce = true;
-        log.info("[FINISH] MDR Cache Refresh was needed and done. New refresh Date : [" + mdrRefreshDate + "]");
+        log.info("MDR Cache Refresh was needed and done. New refresh Date : " + mdrRefreshDate + "");
     }
 
     @AccessTimeout(value = 10, unit = MINUTES)
@@ -154,7 +154,7 @@ public class MDRCache {
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
         if (elapsed > 0.5) {
-            log.info("Loading " + acronymType + " took " + stopwatch);
+            log.debug("Loading " + acronymType + " took " + stopwatch);
         }
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
