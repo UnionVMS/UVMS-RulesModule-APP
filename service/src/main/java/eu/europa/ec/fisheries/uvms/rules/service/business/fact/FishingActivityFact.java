@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.Date;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -25,13 +24,14 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class FishingActivityFact extends AbstractFact {
 
     private CodeType typeCode;
-    private Date occurrenceDateTime;
+    private DateTimeType occurrenceDateTime;
     private FishingTrip specifiedFishingTrip;
     private List<FishingTrip> relatedFishingTrip;
     private List<FishingActivity> relatedFishingActivities;
