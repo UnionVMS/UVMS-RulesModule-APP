@@ -49,7 +49,7 @@ public class FaEntryToSeaFact extends AbstractFact {
         this.factType = FactType.FA_ENTRY_TO_SEA;
     }
 
-    public boolean verifyFLUXLocationIDValue(List<FLUXLocation> relatedFLUXLocations){
+    public boolean valid(List<FLUXLocation> relatedFLUXLocations){
         if (CollectionUtils.isEmpty(relatedFLUXLocations)){
             return false;
         }
@@ -57,12 +57,12 @@ public class FaEntryToSeaFact extends AbstractFact {
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
                 if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
                     IDType idType = fluxLocation.getID();
-                    if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
-                        return false;
+                    if (idType != null && "EFFORT_ZONE".equals(idType.getSchemeID())) {
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 }

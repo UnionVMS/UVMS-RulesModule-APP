@@ -7,27 +7,50 @@
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
-/**
- * Created by sanera on 28/08/2017.
- */
 public class FaEntryToSeaFactTest {
     private FaEntryToSeaFact  faEntryToSeaFact = new FaEntryToSeaFact();
 
     @Test
-    public void testVerifyFLUXLocationIDValue(){
+    public void testWithEffortZoneShouldPass(){
         faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
-        boolean result= faEntryToSeaFact.verifyFLUXLocationIDValue(Arrays.asList(fluxLocation));
+        boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
         assertTrue(result);
+    }
+
+    @Test
+    public void testWithEffortZoneAndAreaEntryShouldFail(){
+        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("AREA_ENTRY",null));
+        FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
+        boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
+        assertFalse(result);
+    }
+
+    @Test
+    public void testWithStatRectangleZoneShouldFail(){
+        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"STAT_RECTANGLE"));
+        boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
+        assertFalse(result);
+    }
+
+    @Test
+    public void testWithNullShouldFail(){
+        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,null));
+        boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
+        assertFalse(result);
     }
 }

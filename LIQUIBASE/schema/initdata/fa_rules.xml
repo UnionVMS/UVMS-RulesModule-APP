@@ -3098,7 +3098,7 @@
             <column name="rule_id" value="251"/>
             <column name="br_id" value="FA-L02-00-0251"/>
             <column name="expression"
-                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; !verifyFLUXLocationIDValue(relatedFLUXLocations)"/>
+                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; !valid(relatedFLUXLocations)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
