@@ -85,11 +85,13 @@ public class FaReportDocumentFact extends AbstractFact {
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
         FAType activityTypeEnum = FAType.valueOf(codeType.getValue());
         if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
-            DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
-            if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
-                return true;
+            if (next.getOccurrenceDateTime() != null){
+                DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
+                if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
+                    return true;
+                }
+                dayMonthYearTypeHashSet.add(incomingDayMonthYear);
             }
-            dayMonthYearTypeHashSet.add(incomingDayMonthYear);
         }
         return false;
     }
