@@ -30,7 +30,6 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -69,48 +68,30 @@ public class FaReportDocumentFact extends AbstractFact {
         if (CollectionUtils.isEmpty(specifiedFishingActivities)){
             return false;
         }
-        Set<DayMonthYearType> dayMonthYearTypeHashSet =  new HashSet<>();
-        for (FishingActivity next : specifiedFishingActivities) {
-            try {
-                if (!isValid(dayMonthYearTypeHashSet, next)) {
-                    return false;
-                }
-            }
-            catch (IllegalArgumentException e){
-                log.trace(e.getMessage(), e);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity activity) {
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = activity.getTypeCode();
-        if (codeType != null){
-            String value = codeType.getValue();
-            if (StringUtils.isNotEmpty(value)){
-                if (isValid(dayMonthYearTypeHashSet, activity, value)) return true;
-            }
-        }
-        return false;
-    }
-
-    private Boolean isValid(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next, String value) {
+        Set<DayMonthYearType> sameDays =  new HashSet<>();
         try {
-            FAType activityTypeEnum = FAType.valueOf(value);
-            if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && next.getOccurrenceDateTime() != null){
-                DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
-                if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
+            for (FishingActivity activity : specifiedFishingActivities)
+                if (isOnSameDay(sameDays, activity)) {
                     return false;
                 }
-                dayMonthYearTypeHashSet.add(incomingDayMonthYear);
-            }
         }
-        catch (IllegalArgumentException e){
+        catch (Exception e){
             log.trace(e.getMessage(), e);
             return false;
         }
         return true;
+    }
+
+    private boolean isOnSameDay(Set<DayMonthYearType> total, FishingActivity activity) {
+        FAType activityTypeEnum = FAType.valueOf(activity.getTypeCode().getValue());
+        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && activity.getOccurrenceDateTime() != null){
+            DayMonthYearType incomingDay = new DayMonthYearType(activity.getOccurrenceDateTime(), activityTypeEnum);
+            if (total.contains(incomingDay)){
+                return true;
+            }
+            total.add(incomingDay);
+        }
+        return false;
     }
 
     enum FAType {
