@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
@@ -83,16 +84,23 @@ public class FaReportDocumentFact extends AbstractFact {
 
     private boolean checkDoubles(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next) {
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
-        FAType activityTypeEnum = FAType.valueOf(codeType.getValue());
-        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
-            if (next.getOccurrenceDateTime() != null){
-                DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
-                if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
-                    return true;
+
+        if (codeType != null){
+            String value = codeType.getValue();
+            if (StringUtils.isNotEmpty(value)){
+                FAType activityTypeEnum = FAType.valueOf(value);
+                if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
+                    if (next.getOccurrenceDateTime() != null){
+                        DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
+                        if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
+                            return true;
+                        }
+                        dayMonthYearTypeHashSet.add(incomingDayMonthYear);
+                    }
                 }
-                dayMonthYearTypeHashSet.add(incomingDayMonthYear);
             }
         }
+
         return false;
     }
 

@@ -1355,6 +1355,13 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testWithNullOccurrenceThrowExceptionAndFail(){
+        FishingActivity departure1 = ActivityObjectsHelper.generateActivity(null,"DEPARTURE");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+    }
+
+    @Test
     public void testWithOneDeparturesAndOneArrivalShouldPass(){
         FishingActivity departure = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
         FishingActivity arrival = ActivityObjectsHelper.generateActivity("20-03-1984 10:20:56","ARRIVAL");

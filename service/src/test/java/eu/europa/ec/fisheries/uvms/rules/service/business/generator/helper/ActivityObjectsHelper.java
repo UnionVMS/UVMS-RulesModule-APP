@@ -51,9 +51,11 @@ public class ActivityObjectsHelper {
         codeType.setValue(activityType);
         try {
             DateTimeType dateTimeType = new DateTimeType();
-            dateTimeType.setDateTime(toXMLGregorianCalendar(occurrence));
-            departure.setTypeCode(codeType);
-            departure.setOccurrenceDateTime(dateTimeType);
+            if (occurrence != null){
+                dateTimeType.setDateTime(toXMLGregorianCalendar(occurrence));
+                departure.setTypeCode(codeType);
+                departure.setOccurrenceDateTime(dateTimeType);
+            }
         } catch (ParseException | DatatypeConfigurationException e){
             e.printStackTrace();
         }
