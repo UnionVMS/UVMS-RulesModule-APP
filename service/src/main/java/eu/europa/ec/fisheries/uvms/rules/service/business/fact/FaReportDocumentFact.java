@@ -68,30 +68,28 @@ public class FaReportDocumentFact extends AbstractFact {
         if (CollectionUtils.isEmpty(specifiedFishingActivities)){
             return false;
         }
-        Set<DayMonthYearType> dayMonthYearTypeHashSet =  new HashSet<>();
-        for (FishingActivity next : specifiedFishingActivities) {
-            try {
-                if (checkDoubles(dayMonthYearTypeHashSet, next)) return false;
-            }
-            catch (IllegalArgumentException e){
-                log.trace(e.getMessage(), e);
-                return false;
-            }
+        Set<DayMonthYearType> sameDays =  new HashSet<>();
+        try {
+            for (FishingActivity activity : specifiedFishingActivities)
+                if (isOnSameDay(sameDays, activity)) {
+                    return false;
+                }
+        }
+        catch (Exception e){
+            log.trace(e.getMessage(), e);
+            return false;
         }
         return true;
     }
 
-    private boolean checkDoubles(Set<DayMonthYearType> dayMonthYearTypeHashSet, FishingActivity next) {
-        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = next.getTypeCode();
-        FAType activityTypeEnum = FAType.valueOf(codeType.getValue());
-        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum)){
-            if (next.getOccurrenceDateTime() != null){
-                DayMonthYearType incomingDayMonthYear = new DayMonthYearType(next.getOccurrenceDateTime(), activityTypeEnum);
-                if (dayMonthYearTypeHashSet.contains(incomingDayMonthYear)){
-                    return true;
-                }
-                dayMonthYearTypeHashSet.add(incomingDayMonthYear);
+    private boolean isOnSameDay(Set<DayMonthYearType> total, FishingActivity activity) {
+        FAType activityTypeEnum = FAType.valueOf(activity.getTypeCode().getValue());
+        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && activity.getOccurrenceDateTime() != null){
+            DayMonthYearType incomingDay = new DayMonthYearType(activity.getOccurrenceDateTime(), activityTypeEnum);
+            if (total.contains(incomingDay)){
+                return true;
             }
+            total.add(incomingDay);
         }
         return false;
     }
