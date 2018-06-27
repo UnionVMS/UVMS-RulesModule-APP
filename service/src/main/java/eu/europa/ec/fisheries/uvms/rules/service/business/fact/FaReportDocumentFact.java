@@ -68,35 +68,31 @@ public class FaReportDocumentFact extends AbstractFact {
         if (CollectionUtils.isEmpty(specifiedFishingActivities)){
             return false;
         }
-        Set<DayMonthYearType> sameDays =  new HashSet<>();
+        Set<String> notFishingOps =  new HashSet<>();
+        Set<DayMonthYearType> fishingOps =  new HashSet<>();
+
         try {
-            for (FishingActivity activity : specifiedFishingActivities)
-                if (isOnSameDay(sameDays, activity)) {
-                    return false;
+            for (FishingActivity activity : specifiedFishingActivities) {
+                String value = activity.getTypeCode().getValue();
+                if (("FISHING_OPERATION".equals(value) || "JOINED_FISHING_OPERATION".equals(value)) && activity.getOccurrenceDateTime() != null) {
+                    DayMonthYearType operation = new DayMonthYearType(activity.getOccurrenceDateTime());
+                    if (CollectionUtils.isNotEmpty(fishingOps) && !fishingOps.contains(operation)) {
+                        return false;
+                    }
+                    fishingOps.add(operation);
+                } else {
+                    if (CollectionUtils.isNotEmpty(notFishingOps) && notFishingOps.contains(value)) {
+                        return false;
+                    }
+                    notFishingOps.add(value);
                 }
+            }
         }
         catch (Exception e){
             log.trace(e.getMessage(), e);
             return true;
         }
-        return sameDays.size() != 1;
-    }
-
-    private boolean isOnSameDay(Set<DayMonthYearType> total, FishingActivity activity) {
-        FAType activityTypeEnum = FAType.valueOf(activity.getTypeCode().getValue());
-        if (!FAType.FISHING_OPERATION.equals(activityTypeEnum) && !FAType.JOINED_FISHING_OPERATION.equals(activityTypeEnum) && activity.getOccurrenceDateTime() != null){
-            DayMonthYearType incomingDay = new DayMonthYearType(activity.getOccurrenceDateTime(), activityTypeEnum);
-            if (total.contains(incomingDay)){
-                return true;
-            }
-            total.add(incomingDay);
-        }
-        return false;
-    }
-
-    enum FAType {
-        DEPARTURE, ARRIVAL, AREA_ENTRY, AREA_EXIT, FISHING_OPERATION, LANDING, TRANSHIPMENT, RELOCATION,
-        GEAR_SHOT, GEAR_RETRIEVAL, START_FISHING, JOINED_FISHING_OPERATION, START_ACTIVITY, DISCARD
+        return true;
     }
 
     @Data
@@ -105,14 +101,11 @@ public class FaReportDocumentFact extends AbstractFact {
         private int day;
         private int month;
         private int year;
-        private FAType type;
 
-        DayMonthYearType(DateTimeType dateTimeType, FAType type){
+        DayMonthYearType(DateTimeType dateTimeType){
             this.day = dateTimeType.getDateTime().getDay();
             this.month = dateTimeType.getDateTime().getMonth();
             this.year = dateTimeType.getDateTime().getYear();
-            this.type = type;
-
         }
     }
 
