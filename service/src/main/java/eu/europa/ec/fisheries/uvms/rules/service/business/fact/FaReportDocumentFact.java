@@ -77,9 +77,9 @@ public class FaReportDocumentFact extends AbstractFact {
         }
         catch (Exception e){
             log.trace(e.getMessage(), e);
-            return false;
+            return true;
         }
-        return true;
+        return sameDays.size() != 1;
     }
 
     private boolean isOnSameDay(Set<DayMonthYearType> total, FishingActivity activity) {

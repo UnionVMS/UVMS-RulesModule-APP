@@ -41,10 +41,10 @@ public class FAReportDocumentFactTest {
     }
 
     @Test
-    public void testWithNullOccurrenceThrowExceptionAndFail(){
+    public void testWithNullOccurrenceThrowExceptionShouldNotBeEvaluated(){
         FishingActivity departure1 = ActivityObjectsHelper.generateActivity(null,"DEPARTURE");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        assertFalse(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+        assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
 
     @Test
@@ -80,10 +80,10 @@ public class FAReportDocumentFactTest {
     }
 
     @Test
-    public void testWithUnknownTypeShouldFail(){
+    public void testWithUnknownTypeShouldNotBeEvaluated(){
         FishingActivity arrival = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","UNKNOWN");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        assertFalse(reportDocumentFact.isValid(Collections.singletonList(arrival)));
+        assertTrue(reportDocumentFact.isValid(Collections.singletonList(arrival)));
     }
 
     @Test
@@ -96,9 +96,9 @@ public class FAReportDocumentFactTest {
     }
 
     @Test
-    public void testWithOneDeparturesOnSameDayShouldPass(){
+    public void testWithOneDeparturesOnSameDayShouldNotBeEvaluated(){
         FishingActivity departure1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+        assertFalse(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
 }
