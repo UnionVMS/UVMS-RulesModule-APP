@@ -67,6 +67,17 @@ public class FAReportDocumentFactTest {
     }
 
     @Test
+    public void testWithSeveralFishingOperationsOnDifferentDaysShouldFail(){
+        FishingActivity arrival1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","FISHING_OPERATION");
+        FishingActivity arrival2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","FISHING_OPERATION");
+        FishingActivity arrival3 = ActivityObjectsHelper.generateActivity("31-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival4 = ActivityObjectsHelper.generateActivity("22-08-1982 10:49:56","FISHING_OPERATION");
+        FishingActivity arrival5 = ActivityObjectsHelper.generateActivity("11-08-1982 10:50:56","JOINED_FISHING_OPERATION");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertFalse(reportDocumentFact.isValid(Arrays.asList(arrival1, arrival2, arrival3, arrival4, arrival5)));
+    }
+
+    @Test
     public void testWithSeveralFishingOperationsOnTheSameDayAndTwoDeparturesOnSameDayShouldFail(){
         FishingActivity arrival1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","FISHING_OPERATION");
         FishingActivity arrival2 = ActivityObjectsHelper.generateActivity("31-08-1982 10:25:56","FISHING_OPERATION");
@@ -87,18 +98,18 @@ public class FAReportDocumentFactTest {
     }
 
     @Test
-    public void testWithTwoDifferentDeparturesAndOneArrivalShouldPass(){
+    public void testWithTwoDifferentDeparturesAndOneArrivalShouldFail(){
         FishingActivity departure1 = ActivityObjectsHelper.generateActivity("20-08-1982 10:20:56","DEPARTURE");
         FishingActivity departure2= ActivityObjectsHelper.generateActivity("21-08-1982 10:20:56","DEPARTURE");
         FishingActivity arrival = ActivityObjectsHelper.generateActivity("20-03-1984 10:20:56","ARRIVAL");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        assertTrue(reportDocumentFact.isValid(Arrays.asList(departure1, departure2, arrival)));
+        assertFalse(reportDocumentFact.isValid(Arrays.asList(departure1, departure2, arrival)));
     }
 
     @Test
-    public void testWithOneDeparturesOnSameDayShouldNotBeEvaluated(){
+    public void testWithOneDeparturesOnSameDayShouldPass(){
         FishingActivity departure1 = ActivityObjectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        assertFalse(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+        assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
 }
