@@ -111,6 +111,7 @@ public class MDRCache {
         for (final MDRAcronymType type : MDRAcronymType.values()) {
             cache.put(type, mdrCodeListByAcronymType(type));
         }
+        log.info("{} lists cached", cache.size());
         cacheRefreshDate = new Date(mdrRefreshDate.getTime());
         alreadyLoadedOnce = true;
         log.info("MDR refresh Date {}", mdrRefreshDate);
@@ -147,8 +148,8 @@ public class MDRCache {
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
-        long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
-        if (elapsed > 0.3) {
+        long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        if (elapsed > 100) {
             log.info("Loading {} took {} ", acronymType, stopwatch);
         }
         if (message != null) {
