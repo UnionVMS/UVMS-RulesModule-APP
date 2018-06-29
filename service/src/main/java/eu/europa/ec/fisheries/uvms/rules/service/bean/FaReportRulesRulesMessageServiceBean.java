@@ -121,10 +121,10 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
-            log.info(" Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
+            log.info("Evaluating FLUXFAReportMessage {} ", messageGUID);
 
-            Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
-            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+            Set<FADocumentID> idsFromIncomingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
+            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
             List<String> faIdsPerTripsFromMessage = faMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
@@ -132,22 +132,22 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
 
-            idsFromIncommingMessage.removeAll(reportAndMessageIdsFromDB);
+            idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
             rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsListFromDb);
 
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                log.info(" The Validation of Report is successful, forwarding message to Activity.");
+                log.debug(" The Validation of Report is successful, forwarding message to Activity.");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
-                    log.info(" Request has permissions. Going to send FaReportMessage to Activity Module...");
+                    log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
                     sendRequestToActivity(requestStr, request.getUsername(), request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE);
                 } else {
-                    log.info(" Request doesn't have permissions!");
+                    log.debug(" Request doesn't have permissions!");
                 }
             } else {
                 log.info(VALIDATION_RESULTED_IN_ERRORS);

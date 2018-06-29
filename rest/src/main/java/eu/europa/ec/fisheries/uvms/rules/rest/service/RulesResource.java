@@ -12,6 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -36,6 +37,7 @@ import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleKieContainer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -78,6 +80,9 @@ public class RulesResource {
     @EJB
     private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
 
+    @EJB
+    private RuleAssetsBean ruleAssetsBean;
+
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
@@ -88,6 +93,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
+            extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(request));
 
             Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
