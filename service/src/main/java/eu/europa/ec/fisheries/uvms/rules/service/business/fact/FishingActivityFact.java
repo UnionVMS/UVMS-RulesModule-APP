@@ -58,26 +58,25 @@ public class FishingActivityFact extends AbstractFact {
         this.factType = FactType.FISHING_ACTIVITY;
     }
 
-    public boolean validActivityDates(){
-        if (!subActivity && (occurrenceDateTime != null || delimitedPeriod != null && validDelimitedPeriod(delimitedPeriod, true, true))) {
+    public boolean validDates(){
+        if (!subActivity && (occurrenceDateTime != null || delimitedPeriod != null)) {
             return true;
         }
-        return false;
+        return validDelimitedPeriod(relatedFishingActivities);
     }
 
-    public boolean validRelatedActivity(){
-        if (subActivity && validDelimitedPeriod(relatedFishingActivities)) {
-            return true;
-        }
-        return false;
-    }
     public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities){
         Boolean isMatch = false;
         if (CollectionUtils.isEmpty(relatedFishingActivities)){
             return false;
         }
         for (FishingActivity related : relatedFishingActivities) {
-            isMatch = related.getOccurrenceDateTime() != null || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods()) && !validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
+            isMatch = related.getOccurrenceDateTime() != null
+            || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods())
+            && validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
+            if(!isMatch){
+                return false;
+            }
         }
         return isMatch;
     }

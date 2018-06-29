@@ -246,8 +246,8 @@ public class ActivityFactMapper {
     private static final String RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP = "relatedFluxLocationTypeCodes";
     private static final String RELATED_FLUX_LOCATIONS_ID_PROP = "relatedFluxLocationIDs";
 
-    private ActivityFactMapper() {
-        super();
+    public ActivityFactMapper() {
+        setxPathUtil(new XPathStringWrapper());
     }
 
     public ActivityFactMapper(XPathStringWrapper strUtil1) {

@@ -41,11 +41,11 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class ActivityObjectsHelper {
 
-    private ActivityObjectsHelper(){
+    public ActivityObjectsHelper(){
 
     }
 
-    public static FishingActivity generateActivity(String occurrence, String activityType){
+    public FishingActivity generateActivity(String occurrence, String activityType){
         FishingActivity departure = new FishingActivity();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setValue(activityType);
@@ -62,7 +62,7 @@ public class ActivityObjectsHelper {
         return departure;
     }
 
-    private static XMLGregorianCalendar toXMLGregorianCalendar(String dateString) throws ParseException, DatatypeConfigurationException {
+    public XMLGregorianCalendar toXMLGregorianCalendar(String dateString) throws ParseException, DatatypeConfigurationException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         Date date = sdf.parse(dateString);
         GregorianCalendar c = new GregorianCalendar();
@@ -70,14 +70,14 @@ public class ActivityObjectsHelper {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
     }
 
-    public static eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType generateCodeType(String value, String listId) {
+    public eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType generateCodeType(String value, String listId) {
         eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
         codeType.setValue(value);
         codeType.setListId(listId);
         return codeType;
     }
 
-    public static MeasureType generateMeasureType(BigDecimal value, String unitCode) {
+    public MeasureType generateMeasureType(BigDecimal value, String unitCode) {
         MeasureType measureType = new MeasureType();
         measureType.setValue(value);
         measureType.setUnitCode(unitCode);

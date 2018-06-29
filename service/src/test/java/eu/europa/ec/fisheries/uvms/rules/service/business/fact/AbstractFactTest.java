@@ -65,6 +65,8 @@ public class AbstractFactTest {
 
     private AbstractFact fact = new FaArrivalFact();
 
+    private ActivityObjectsHelper objectsHelper = new ActivityObjectsHelper();
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -86,7 +88,7 @@ public class AbstractFactTest {
 
     @Test
     public void testListIdContainsAll() {
-        List<CodeType> codeTypes = Arrays.asList(ActivityObjectsHelper.generateCodeType("val1", "AREA"), ActivityObjectsHelper.generateCodeType("val2", "AREA1"));
+        List<CodeType> codeTypes = Arrays.asList(objectsHelper.generateCodeType("val1", "AREA"), objectsHelper.generateCodeType("val2", "AREA1"));
         assertTrue(fact.listIdContainsAll(codeTypes, "AREA", "AREA1", "BLA"));
     }
 
@@ -566,13 +568,13 @@ public class AbstractFactTest {
 
     @Test
     public void testListIdContainsAnySingle() {
-        CodeType typeCode = ActivityObjectsHelper.generateCodeType("PS", "GEAR_TYPE");
+        CodeType typeCode = objectsHelper.generateCodeType("PS", "GEAR_TYPE");
         assertFalse(fact.listIdNotContains(typeCode, "GEAR_TYPE"));
     }
 
     @Test
     public void testListIdContainsAnyMultiple() {
-        List<CodeType> typeCodes = Arrays.asList(ActivityObjectsHelper.generateCodeType("PS", "GEAR_TYPE"), ActivityObjectsHelper.generateCodeType("LT", "VESSEL_ACTIVITY"));
+        List<CodeType> typeCodes = Arrays.asList(objectsHelper.generateCodeType("PS", "GEAR_TYPE"), objectsHelper.generateCodeType("LT", "VESSEL_ACTIVITY"));
 
         assertFalse(fact.listIdNotContains(typeCodes, "GEAR_TYPE"));
     }
@@ -837,8 +839,8 @@ public class AbstractFactTest {
     @Test
     public void testListIdContainsAny() {
 
-        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
-        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
+        CodeType codeType1 = objectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = objectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.listIdNotContains(codeTypes, "CFR");
@@ -854,8 +856,8 @@ public class AbstractFactTest {
     @Test
     public void testValueContainsAny() {
 
-        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
-        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
+        CodeType codeType1 = objectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = objectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.valueContainsAny(codeTypes, "value1");
@@ -868,8 +870,8 @@ public class AbstractFactTest {
     @Test
     public void testAnyValueContainsAll() {
 
-        CodeType codeType1 = ActivityObjectsHelper.generateCodeType("value1", "CFR");
-        CodeType codeType2 = ActivityObjectsHelper.generateCodeType("value12", "IRCS");
+        CodeType codeType1 = objectsHelper.generateCodeType("value1", "CFR");
+        CodeType codeType2 = objectsHelper.generateCodeType("value12", "IRCS");
 
         List<CodeType> codeTypes = Arrays.asList(codeType1, codeType2);
         boolean result = fact.anyValueContainsAll(codeTypes, "value1");
@@ -1321,7 +1323,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsGreaterThanZero() {
-        List<MeasureType> measureTypeList = Collections.singletonList(ActivityObjectsHelper.generateMeasureType(new BigDecimal(1), "km"));
+        List<MeasureType> measureTypeList = Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(1), "km"));
         assertTrue(fact.isGreaterThanZero(measureTypeList));
     }
 
@@ -1485,7 +1487,7 @@ public class AbstractFactTest {
     @Test
     public void testisPositiveInteger() {
 
-        boolean result = fact.isPositiveInteger(Collections.singletonList(ActivityObjectsHelper.generateMeasureType(new BigDecimal(22), null)));
+        boolean result = fact.isPositiveInteger(Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(22), null)));
         assertTrue(result);
     }
 
@@ -1627,7 +1629,7 @@ public class AbstractFactTest {
 
     @Test
     public void testCodeTypeValueContainsMatch() {
-        boolean result = fact.codeTypeValueContainsMatch(Arrays.asList(ActivityObjectsHelper.generateCodeType("TEST", null)), "TEST");
+        boolean result = fact.codeTypeValueContainsMatch(Collections.singletonList(objectsHelper.generateCodeType("TEST", null)), "TEST");
         assertTrue(result);
     }
 

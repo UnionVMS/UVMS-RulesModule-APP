@@ -1244,7 +1244,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="95"/>
             <column name="br_id" value="FA-L02-00-0095"/>
-            <column name="expression" value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriod, true, true) || occurrenceDateTime == null))"/>
+            <column name="expression" value="!subActivity &amp;&amp; !validDates()"/>
             <column name="note" value="check presence"/>
             <column name="message" value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
             <column name="level" value="L02"/>
