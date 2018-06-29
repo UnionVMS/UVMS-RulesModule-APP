@@ -2,7 +2,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
@@ -11,17 +10,13 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.evaluators.FaReportFactRuleEvaluator;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
@@ -29,9 +24,6 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class FLUXSalesReportMessageRuleTest {
-
-    @Mock
-    private FaReportFactRuleEvaluator validator;
 
     @InjectMocks
     private MovementsRulesValidator rulesValidator;
@@ -51,15 +43,11 @@ public class FLUXSalesReportMessageRuleTest {
         RuleType ruleType = createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
-        templateRuleMapDto.setRules(Arrays.asList(ruleType));
+        templateRuleMapDto.setRules(Collections.singletonList(ruleType));
         templateRuleMapDto.setTemplateType(template);
-
-        validator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
         fact.setFLUXReportDocument(null);
-
-        validator.validateFacts(Collections.<AbstractFact>singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());
@@ -75,15 +63,11 @@ public class FLUXSalesReportMessageRuleTest {
         RuleType ruleType = createRuleType("FLUXReportDocument == null", "abc", "note", ErrorType.ERROR, "doesn't look good");
 
         TemplateRuleMapDto templateRuleMapDto = new TemplateRuleMapDto();
-        templateRuleMapDto.setRules(Arrays.asList(ruleType));
+        templateRuleMapDto.setRules(Collections.singletonList(ruleType));
         templateRuleMapDto.setTemplateType(template);
-
-        validator.initializeRules(Collections.singletonList(templateRuleMapDto));
 
         SalesFLUXSalesReportMessageFact fact = new SalesFLUXSalesReportMessageFact();
         fact.setFLUXReportDocument(new FLUXReportDocumentType());
-
-        validator.validateFacts(Collections.<AbstractFact>singletonList(fact));
 
         assertTrue(fact.getErrors().isEmpty());
         assertTrue(fact.getWarnings().isEmpty());

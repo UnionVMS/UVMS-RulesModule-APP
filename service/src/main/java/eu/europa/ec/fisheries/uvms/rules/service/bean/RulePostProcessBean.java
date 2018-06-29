@@ -18,6 +18,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class RulePostProcessBean {
     private RulesDomainModel rulesDomainModel;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResult(List<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
+    public ValidationResultDto checkAndUpdateValidationResult(Collection<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
         try {
             boolean isError = false;
             boolean isWarning = false;

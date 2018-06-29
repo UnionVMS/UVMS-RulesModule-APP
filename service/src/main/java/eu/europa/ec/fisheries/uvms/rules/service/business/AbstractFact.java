@@ -608,16 +608,14 @@ public abstract class AbstractFact {
         return valuesToMatch.length > hits;
     }
 
-    public boolean validDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
-        if (CollectionUtils.isEmpty(delimitedPeriods)) {
-            return false;
+    public boolean validDelimitedPeriod(DelimitedPeriod delimitedPeriod, boolean start, boolean end) {
+        if (delimitedPeriod == null) {
+            return true;
         }
-        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-            if ((start && end && ((delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null) && (delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)))
-                    || (start && !end && delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null)
-                    || (end && !start && delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)) {
-                return true;
-            }
+        if ((start && end && ((delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null) && (delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)))
+                || (start && !end && delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null)
+                || (end && !start && delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)) {
+            return true;
         }
         return false;
     }

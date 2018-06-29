@@ -1,5 +1,3 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
-
 /*
  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
 
@@ -9,6 +7,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
@@ -53,9 +53,6 @@ import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
-/**
- * @author Gregory Rinaldi, Andi Kovi
- */
 @Singleton
 @Startup
 @Slf4j
@@ -74,21 +71,20 @@ public class MDRCache {
     private Date cacheRefreshDate;
 
     // This variable will store the date that the last entity in mdr (module) was refreshed.
-    // @Info : refres to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
+    // @Info : refresh to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
     private Date mdrRefreshDate;
 
     private Map<String, EnrichedBRMessage> errorMessages;
 
     private boolean alreadyLoadedOnce = false;
 
-    private Date lastTimeRefreshDateWasRetreived;
+    private Date lastTimeRefreshDateWasRetrieved;
 
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
         errorMessages = new ConcurrentHashMap<>();
     }
-
 
     /**
      * It fetches the latest refresh date from MDR and checks if the local cache needs to be refreshed.
@@ -107,17 +103,17 @@ public class MDRCache {
     }
 
     private boolean oneMinuteHasPassed() {
-        return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetreived.getTime())/1000) > 59;
+        return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetrieved.getTime())/1000) > 59;
     }
 
     private void populateAllMdr() {
-        log.info("Loading MDR Cache...");
+        log.info("Loading MDR");
         for (final MDRAcronymType type : MDRAcronymType.values()) {
             cache.put(type, mdrCodeListByAcronymType(type));
         }
         cacheRefreshDate = new Date(mdrRefreshDate.getTime());
         alreadyLoadedOnce = true;
-        log.info("MDR Cache Refresh was needed and done. New refresh Date : " + mdrRefreshDate + "");
+        log.info("MDR refresh Date {}", mdrRefreshDate);
     }
 
     @AccessTimeout(value = 10, unit = MINUTES)
@@ -126,13 +122,12 @@ public class MDRCache {
         List<ObjectRepresentation> result;
         if (acronymType != null) {
             result = cache.get(acronymType);
-            if (CollectionUtils.isEmpty(result)) { // reload if its empty! Shouldn't happen, but if it does we have the meccanism set up!
-                log.warn(" List +++ " + acronymType + " +++ is empty! Going to reload now()!");
+            if (CollectionUtils.isEmpty(result)) {
+                log.warn(" Reloading {}",acronymType);
                 cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
                 result = cache.get(acronymType);
                 if (CollectionUtils.isEmpty(result)) {
-                    log.error(" Tried to reload (since it was empty) acronym [ " + acronymType + " ] but in the end it is again empty! Is it a good acronym that exists in MDR??" +
-                            "Please Have a look at MDRAcronymType!");
+                    log.error(" Failed to reload {}",acronymType);
                 }
             }
             return result;
@@ -141,7 +136,7 @@ public class MDRCache {
     }
 
     /**
-     * Gtes an mdr codelist from MDR modules.
+     * Get one mdr codeList from MDR.
      *
      * @param acronymType
      * @return
@@ -153,8 +148,8 @@ public class MDRCache {
         String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
-        if (elapsed > 0.5) {
-            log.debug("Loading " + acronymType + " took " + stopwatch);
+        if (elapsed > 0.3) {
+            log.info("Loading {} took {} ", acronymType, stopwatch);
         }
         if (message != null) {
             MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
@@ -171,7 +166,7 @@ public class MDRCache {
         boolean cacheDateChanged = false;
         try {
             Date mdrDate = getLastTimeMdrWasRefreshedFromMdrModule();
-            lastTimeRefreshDateWasRetreived = new Date();
+            lastTimeRefreshDateWasRetrieved = new Date();
             if (mdrDate != null && !mdrDate.equals(mdrRefreshDate)) { // This means we have a new date from MDR module..
                 mdrRefreshDate = mdrDate;
                 cacheDateChanged = true;

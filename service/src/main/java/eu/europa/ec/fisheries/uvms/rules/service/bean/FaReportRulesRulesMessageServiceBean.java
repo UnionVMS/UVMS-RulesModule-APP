@@ -1,4 +1,14 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
+/*
+ Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+ This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+ and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
@@ -16,6 +26,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.xml.bind.UnmarshalException;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +50,6 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesActivityServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
@@ -95,9 +102,6 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
     @EJB
     private RulesDao rulesDaoBean;
 
-    @EJB
-    private AyncFaIdsDaoBean asyncIdsSaver;
-
     private FishingActivityRulesHelper faMessageHelper;
 
     private XSDJaxbUtil xsdJaxbUtil;
@@ -119,7 +123,6 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
 
             log.info(" Evaluating FLUXFAReportMessage with ID [ " + messageGUID + " ].");
 
-            // Collect Ids from Message and match them with the ones present in the db!
             Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
             List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
 
@@ -127,12 +130,12 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
             Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
-            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
 
-            // So that we don't duplicate in the DB.
             idsFromIncommingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
-            asyncIdsSaver.saveIdsAssync(idsFromIncommingMessage, faIdsPerTripsFromMessage);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
+            rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsListFromDb);
 
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);
@@ -186,7 +189,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
 
             Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
 
-            List<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");

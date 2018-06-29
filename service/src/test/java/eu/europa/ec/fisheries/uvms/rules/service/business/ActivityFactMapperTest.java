@@ -53,7 +53,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaRelocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaTranshipmentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingActivityFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingGearFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FishingTripFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxCharacteristicsFact;
@@ -317,40 +316,6 @@ public class ActivityFactMapperTest {
         assertEquals(idType.getSchemeID(), mappedFact.getIds().get(0).getSchemeId());
 
         assertEquals(codeType.getValue(), mappedFact.getSpecifiedContactPartyRoleCodes().get(0).getValue());
-
-    }
-
-    @Test
-    public void testGenerateFactForFishingActivity() {
-
-        List<FAReportDocument> faReportDocuments = fluxFaTestMessage.getFAReportDocuments();
-        FAReportDocument faReportDocument = faReportDocuments.iterator().next();
-        List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
-
-        List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(specifiedFishingActivities, faReportDocument);
-
-        assertNotNull(fishingActivityFacts);
-        assertTrue(fishingActivityFacts.size() == 1);
-
-        FishingActivityFact fishingActivityFact = fishingActivityFacts.get(0);
-
-        assertEquals(fishingActivityFact.getTypeCode().getValue(), "LANDING");
-        assertNotNull(fishingActivityFact.getOccurrenceDateTime().toString());
-
-    }
-
-    @Test
-    public void generateFactForFishingActivityWithBoolean() {
-        List<FAReportDocument> faReportDocuments = fluxFaTestMessage.getFAReportDocuments();
-        FAReportDocument faReportDocument = faReportDocuments.iterator().next();
-        List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
-
-        FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(specifiedFishingActivities.iterator().next(), false);
-
-        assertNotNull(fishingActivityFact);
-
-        assertEquals(fishingActivityFact.getTypeCode().getValue(), "LANDING");
-        assertNotNull(fishingActivityFact.getOccurrenceDateTime().toString());
 
     }
 
@@ -745,12 +710,10 @@ public class ActivityFactMapperTest {
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null");
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
         final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null);
-        final FishingActivityFact fishingActivityFact = activityMapper.generateFactForFishingActivity(null, true);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
-        final List<FishingActivityFact> fishingActivityFacts = activityMapper.generateFactForFishingActivities(null, null);
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
@@ -761,7 +724,6 @@ public class ActivityFactMapperTest {
         final GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(null);
 
         final List<FaReportDocumentFact> faReportDocumentFacts = activityMapper.generateFactForFaReportDocuments(null);
-        final FishingActivityFact fishingActivityFact1 = activityMapper.generateFactForFishingActivity(null, null,false);
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
@@ -777,7 +739,6 @@ public class ActivityFactMapperTest {
         assertTrue(isEmpty(gearList));
         assertTrue(isEmpty(fishingTripFacts));
         assertTrue(isEmpty(gearCharacteristicsFacts));
-        assertTrue(isEmpty(fishingActivityFacts));
         assertTrue(isEmpty(vesselTransportMeansFacts));
         assertTrue(isEmpty(structuredAddressFacts));
         assertTrue(isEmpty(fishingGearFacts));
@@ -798,14 +759,11 @@ public class ActivityFactMapperTest {
         assertNull(faDepartureFact);
         assertNull(faLandingFact);
         assertNull(vesselTransportMeansFact);
-        assertNull(fishingActivityFact);
         assertNull(fluxFaReportMessageFact);
         assertNull(fishingGearFact);
         assertNull(faReportDocumentFact);
-
         assertNull(gearCharacteristicsFact);
         assertNull(gearProblemFact);
-        assertNull(fishingActivityFact1);
         assertNull(fishingTripFact);
         assertNull(fluxCharacteristicsFact);
         assertNull(faExitFromSeaFact);
@@ -815,7 +773,6 @@ public class ActivityFactMapperTest {
         assertNull(qualityAnalysisFact);
 
     }
-
 
     @Test
     public void testMapToMeasureType() {

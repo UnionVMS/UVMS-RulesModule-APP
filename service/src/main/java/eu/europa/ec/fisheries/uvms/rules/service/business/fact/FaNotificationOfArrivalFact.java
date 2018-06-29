@@ -13,41 +13,31 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
-import java.util.Date;
-import java.util.List;
-
-/**
- * @author padhyad
- * @author Gregory Rinaldi
- */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FaNotificationOfArrivalFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<CodeType> relatedFLUXLocationTypeCodes;
-
     private Date occurrenceDateTime;
-
-    private List<DelimitedPeriod> delimitedPeriods;
-
+    private DelimitedPeriod delimitedPeriods;
     private CodeType reasonCode;
-
     private List<CodeType> specifiedFACatchTypeCodes;
-
     private List<FACatch> specifiedFACatches;
-
     private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
-
     private List<String> specifiedFLUXCharacteristicValueDateTimes;
 
     public FaNotificationOfArrivalFact() {
@@ -59,91 +49,4 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
         this.factType = FactType.FA_NOTIFICATION_OF_ARRIVAL;
     }
 
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-
-    public CodeType getReasonCode() {
-        return reasonCode;
-    }
-
-    public void setReasonCode(CodeType reasonCode) {
-        this.reasonCode = reasonCode;
-    }
-
-    public Date getOccurrenceDateTime() {
-        return occurrenceDateTime;
-    }
-
-    public void setOccurrenceDateTime(Date occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
-    }
-
-    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
-        return relatedFLUXLocationTypeCodes;
-    }
-
-    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
-        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
-    }
-
-    public List<CodeType> getSpecifiedFACatchTypeCodes() {
-        return specifiedFACatchTypeCodes;
-    }
-
-    public void setSpecifiedFACatchTypeCodes(List<CodeType> specifiedFACatchTypeCodes) {
-        this.specifiedFACatchTypeCodes = specifiedFACatchTypeCodes;
-    }
-
-    public List<FACatch> getSpecifiedFACatches() {
-        return specifiedFACatches;
-    }
-
-    public void setSpecifiedFACatches(List<FACatch> specifiedFACatches) {
-        this.specifiedFACatches = specifiedFACatches;
-    }
-
-    public List<DelimitedPeriod> getDelimitedPeriods() {
-        return delimitedPeriods;
-    }
-
-    public void setDelimitedPeriods(List<DelimitedPeriod> delimitedPeriods) {
-        this.delimitedPeriods = delimitedPeriods;
-    }
-
-    public List<CodeType> getSpecifiedFLUXCharacteristicsTypeCodes() {
-        return specifiedFLUXCharacteristicsTypeCodes;
-    }
-
-    public void setSpecifiedFLUXCharacteristicsTypeCodes(List<CodeType> specifiedFLUXCharacteristicsTypeCodes) {
-        this.specifiedFLUXCharacteristicsTypeCodes = specifiedFLUXCharacteristicsTypeCodes;
-    }
-
-    public List<String> getSpecifiedFLUXCharacteristicValueDateTimes() {
-        return specifiedFLUXCharacteristicValueDateTimes;
-    }
-
-    public void setSpecifiedFLUXCharacteristicValueDateTimes(List<String> specifiedFLUXCharacteristicValueDateTimes) {
-        this.specifiedFLUXCharacteristicValueDateTimes = specifiedFLUXCharacteristicValueDateTimes;
-    }
 }

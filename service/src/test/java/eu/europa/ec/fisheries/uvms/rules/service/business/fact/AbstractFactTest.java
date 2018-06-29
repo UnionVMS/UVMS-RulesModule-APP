@@ -269,31 +269,18 @@ public class AbstractFactTest {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
-        List<DelimitedPeriod> periods = new ArrayList<>();
-
         DelimitedPeriod period = new DelimitedPeriod();
         period.setStartDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
-
         period.setEndDateTime(new DateTimeType(date2, new DateTimeType.DateTimeString("ddfldf", "72829")));
 
-        periods.add(period);
-
-        assertFalse(!fact.validDelimitedPeriod(periods, true, true));
+        assertFalse(!fact.validDelimitedPeriod(period, true, true));
     }
 
     @Test
     public void testValidateDelimitedPeriodShouldReturnTrueWhenStartDateNotPresent() {
-
-        List<DelimitedPeriod> periods = new ArrayList<>();
-
         DelimitedPeriod period = new DelimitedPeriod();
-
         period.setEndDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
-
-        periods.add(period);
-
-        assertTrue(!fact.validDelimitedPeriod(periods, true, false));
+        assertTrue(!fact.validDelimitedPeriod(period, true, false));
     }
 
     @Test

@@ -42,7 +42,7 @@ public class FishingActivityFact extends AbstractFact {
     private Integer operationQuantity;
     private boolean subActivity = false;
     private List<MeasureType> durationMeasure;
-    private List<DelimitedPeriod> delimitedPeriods;
+    private DelimitedPeriod delimitedPeriod;
     private List<FLUXLocation> relatedFLUXLocations;
     private List<FLUXLocation> relatedActivityFluxLocations;
     private CodeType vesselRelatedActivityCode;
@@ -58,13 +58,26 @@ public class FishingActivityFact extends AbstractFact {
         this.factType = FactType.FISHING_ACTIVITY;
     }
 
+    public boolean validActivityDates(){
+        if (!subActivity && (occurrenceDateTime != null || delimitedPeriod != null && validDelimitedPeriod(delimitedPeriod, true, true))) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean validRelatedActivity(){
+        if (subActivity && validDelimitedPeriod(relatedFishingActivities)) {
+            return true;
+        }
+        return false;
+    }
     public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities){
         Boolean isMatch = false;
         if (CollectionUtils.isEmpty(relatedFishingActivities)){
             return false;
         }
         for (FishingActivity related : relatedFishingActivities) {
-            isMatch = related.getOccurrenceDateTime() != null || validDelimitedPeriod(related.getSpecifiedDelimitedPeriods(), true, true);
+            isMatch = related.getOccurrenceDateTime() != null || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods()) && !validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
         }
         return isMatch;
     }

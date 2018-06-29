@@ -13,39 +13,26 @@
 
 package eu.europa.ec.fisheries.uvms.rules.model.dto;
 
+import java.io.Serializable;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.TemplateType;
 
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * Created by padhyad on 4/13/2017.
- */
 public class TemplateRuleMapDto implements Serializable {
 
     private TemplateType templateType;
-
     private List<RuleType> rules;
-
     private List<ExternalRuleType> externalRules;
-
 
     public TemplateRuleMapDto() {
         super();
     }
 
-
     public TemplateRuleMapDto(TemplateType templateType, List<RuleType> rules) {
         this.templateType = templateType;
         this.rules = rules;
-    }
-
-
-    public TemplateRuleMapDto(TemplateType templateType, List<ExternalRuleType> externalRules, List<RuleType> rules) {
-        this.templateType = templateType;
-        this.externalRules = externalRules;
     }
 
     public TemplateType getTemplateType() {

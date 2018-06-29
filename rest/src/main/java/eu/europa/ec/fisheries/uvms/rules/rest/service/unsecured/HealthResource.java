@@ -20,11 +20,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service.unsecured;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCache;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.DroolsEngineInitializer;
-import lombok.extern.slf4j.Slf4j;
-
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,6 +28,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
+
+import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleKieContainer;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Path("/")
@@ -50,7 +50,7 @@ public class HealthResource {
     private PropertiesBean propertiesBean;
 
     @EJB
-    private DroolsEngineInitializer initializer;
+    private RuleKieContainer initializer;
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
