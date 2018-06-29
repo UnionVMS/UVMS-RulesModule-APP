@@ -749,7 +749,7 @@ public abstract class AbstractFact {
         return found;
     }
 
-    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) { // FIXME change logic true false
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
@@ -760,7 +760,7 @@ public abstract class AbstractFact {
      * @param valuesToMatch
      * @return
      */
-    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) { // FIXME change logic true false
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }

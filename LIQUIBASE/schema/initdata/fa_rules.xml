@@ -1370,7 +1370,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="104"/>
             <column name="br_id" value="FA-L01-00-0104"/>
-            <column name="expression" value="operationQuantity != null &amp;&amp; operationQuantity &lt; 0"/>
+            <column name="expression" value="operationQuantity != null  &amp;&amp; !isPositiveIntegerValue(operationQuantity)"/>
             <column name="note" value="Check Format"/>
             <column name="message" value="Not a positive integer."/>
             <column name="level" value="L01"/>
@@ -3099,8 +3099,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="252"/>
             <column name="br_id" value="FA-L02-00-0252"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+            <column name="expression" value="!isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(faReportDocumentTypeCode, &quot;DECLARATION&quot;, &quot;AREA_ENTRY&quot;, &quot;NOTIFICATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>

@@ -868,6 +868,13 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testValueContainsAny2() {
+        CodeType declaration = objectsHelper.generateCodeType("DECLARATION", null);
+        assertFalse(fact.valueContainsAny(declaration, "DECLARATION", "AREA_ENTRY"));
+
+    }
+
+    @Test
     public void testAnyValueContainsAll() {
 
         CodeType codeType1 = objectsHelper.generateCodeType("value1", "CFR");
@@ -1715,4 +1722,17 @@ public class AbstractFactTest {
         assertTrue(CollectionUtils.isEmpty(finalList));
     }
 
+    @Test
+    public void testCodeTypeValueEquals(){
+        CodeType codeType = new CodeType();
+        codeType.setValue("EEEE");
+        assertTrue(fact.codeTypeValueEquals(codeType, "EEEE"));
+    }
+
+    @Test
+    public void testCodeTypeValueEqualsFail(){
+        CodeType codeType = new CodeType();
+        codeType.setValue("DDDD");
+        assertFalse(fact.codeTypeValueEquals(codeType, "EEEE"));
+    }
 }

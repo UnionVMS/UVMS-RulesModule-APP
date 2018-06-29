@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -39,7 +40,7 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType reasonCode;
     private CodeType fisheryTypeCode;
     private CodeType speciesTargetCode;
-    private Integer operationQuantity;
+    private BigDecimal operationQuantity;
     private boolean subActivity = false;
     private List<MeasureType> durationMeasure;
     private DelimitedPeriod delimitedPeriod;
