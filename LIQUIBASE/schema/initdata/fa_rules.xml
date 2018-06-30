@@ -5340,8 +5340,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="217"/>
             <column name="br_id" value="FA-L02-00-0217"/>
-            <column name="expression"
-                    value="isSpecifiedFluxLocFromFaCatch &amp;&amp; (rfmo == null || isEmpty(rfmo.value))"/>
+            <column name="expression" value="isSpecifiedFluxLocFromFaCatch &amp;&amp; (rfmo == null || isEmpty(rfmo.value))"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
@@ -5354,22 +5353,20 @@
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
             <column name="br_id" value="FA-L02-00-0218"/>
-            <column name="expression"
-                    value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList)"/>
+            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rffmoProvided(relatedFLUXLocations)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFluxLocationRFMOCodeList"/>
+            <column name="property_names" value="relatedFluxLocationRFMOCodeList, relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="204"/>
             <column name="br_id" value="FA-L01-00-0204"/>
-            <column name="expression"
-                    value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
+            <column name="expression" value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code has an invalid schemeID."/>
             <column name="level" value="L01"/>
@@ -5382,8 +5379,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="205"/>
             <column name="br_id" value="FA-L01-00-0205"/>
-            <column name="expression"
-                    value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(rfmo.listId, rfmo, creationDateOfMessage)"/>
+            <column name="expression" value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(rfmo.listId, rfmo, creationDateOfMessage)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code value is invalid."/>
             <column name="level" value="L01"/>
@@ -5396,10 +5392,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="171"/>
             <column name="br_id" value="FA-L00-00-0171"/>
-            <column name="expression"
-                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode !=null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;)))"/>
-            <column name="note"
-                    value="Check presence. At least one occurrence with listID= FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
+            <column name="expression" value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode !=null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;)))"/>
+            <column name="note" value="Check presence. At least one occurrence with listID= FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
             <column name="message"
                     value="At least presentation (and for landing and transhipment as well preservation) of the fish must be provided."/>
             <column name="level" value="L00"/>

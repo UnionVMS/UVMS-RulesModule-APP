@@ -81,4 +81,20 @@ public class FishingActivityFact extends AbstractFact {
         }
         return isMatch;
     }
+
+    public boolean rffmoProvided( List<FLUXLocation> relatedFLUXLocations){
+        if (CollectionUtils.isEmpty(relatedFLUXLocations)){
+            return true;
+        }
+        else {
+            for (FLUXLocation relatedFLUXLocation : relatedFLUXLocations) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType rfmo = relatedFLUXLocation.getRegionalFisheriesManagementOrganizationCode();
+                if (rfmo != null){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
 }

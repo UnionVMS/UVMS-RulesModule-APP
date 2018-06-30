@@ -1258,13 +1258,13 @@ public class AbstractFactTest {
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithCorrectValue() {
-        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         assertTrue(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "POSITION"));
     }
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithWrongValue() {
-        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, "ARG4376mn.l"));
     }
 
@@ -1281,7 +1281,7 @@ public class AbstractFactTest {
 
     @Test
     public void testAnyFluxLocationTypeCodeContainsValueWithNullValue() {
-        List<FLUXLocation> fluxLocations = ActivityObjectsHelper.generateFluxLocationsWithPositionValue();
+        List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         assertFalse(fact.anyFluxLocationTypeCodeContainsValue(fluxLocations, null));
     }
 

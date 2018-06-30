@@ -106,7 +106,7 @@ public class ActivityObjectsHelper {
         return textType;
     }
 
-    public static List<FLUXLocation> generateFluxLocationsWithPositionValue() {
+    public List<FLUXLocation> generateFluxLocationsWithPositionValue() {
         List<FLUXLocation> fluxLocations = new ArrayList<>(2);
         FLUXLocation fluxLocation = generateFluxLocationWithTypeCodeValue("POSITION");
         fluxLocations.add(fluxLocation);

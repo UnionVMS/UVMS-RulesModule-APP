@@ -17,12 +17,15 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 public class FishingActivityTemplateTest {
@@ -205,4 +208,25 @@ public class FishingActivityTemplateTest {
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertTrue(specifiedActivityFact.validDates());
     }
+
+    @Test
+    public void testRffmoProvidedShouldFail(){
+        FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
+        List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
+        fluxLocations.get(0).setRegionalFisheriesManagementOrganizationCode(null);
+        assertFalse(specifiedActivityFact.rffmoProvided(fluxLocations));
+    }
+
+    @Test
+    public void testRffmoProvidedShouldPass(){
+        FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
+        List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
+        CodeType codeType = new CodeType();
+        codeType.setValue("code");
+        fluxLocations.get(0).setRegionalFisheriesManagementOrganizationCode(codeType);
+        assertTrue(specifiedActivityFact.rffmoProvided(fluxLocations));
+    }
+
 }
