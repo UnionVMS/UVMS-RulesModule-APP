@@ -1425,7 +1425,7 @@
             <column name="br_id" value="FA-L02-00-0108"/>
             <column name="expression" value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
             <column name="note" value="Check presence"/>
-            <column name="message" value="EndDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
+            <column name="message" value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -1449,12 +1449,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="112"/>
             <column name="br_id" value="FA-L02-00-0112"/>
-            <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
-                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;))
-                || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
-            <column name="note"
-                    value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
+            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
+                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;)) || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
+            <column name="note" value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
             <column name="message" value="Sub-activity information not allowed for this type of activity."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
