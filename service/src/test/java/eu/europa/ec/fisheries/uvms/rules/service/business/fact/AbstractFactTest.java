@@ -279,10 +279,10 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateDelimitedPeriodShouldReturnTrueWhenStartDateNotPresent() {
+    public void testValidateDelimitedPeriodWithEndDateShouldFail() {
         DelimitedPeriod period = new DelimitedPeriod();
         period.setEndDateTime(new DateTimeType(null, new DateTimeType.DateTimeString("ddfldf", "72829")));
-        assertTrue(!fact.validDelimitedPeriod(period, true, false));
+        assertFalse(fact.validDelimitedPeriod(period, true, false));
     }
 
     @Test
