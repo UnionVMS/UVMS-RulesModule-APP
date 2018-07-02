@@ -33,13 +33,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.Queue;
 
 @Stateless
 @LocalBean
 public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer, ConfigMessageProducer {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
     private Queue rulesResponseQueue;
     private Queue movementQueue;
@@ -71,17 +72,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException  {
-        LOG.debug("Sending message to {}", queue.name());
-        try {
-            Queue destination = getDestinationQueue(queue);
-            if(destination != null){
-                return sendMessageToSpecificQueue(text, destination, rulesResponseQueue);
-            }
-            return null;
-        } catch (Exception e) {
-            LOG.error("[ Error when sending message. ] {}", e.getMessage());
-            throw new MessageException("[ Error when sending message. ]", e);
-        }
+        return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE);
     }
 
     @Override
