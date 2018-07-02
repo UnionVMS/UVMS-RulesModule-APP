@@ -215,7 +215,7 @@ public class FishingActivityTemplateTest {
         FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
         List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         fluxLocations.get(0).setRegionalFisheriesManagementOrganizationCode(null);
-        assertFalse(specifiedActivityFact.rffmoProvided(fluxLocations));
+        assertFalse(specifiedActivityFact.rfmoProvided(fluxLocations));
     }
 
     @Test
@@ -226,7 +226,7 @@ public class FishingActivityTemplateTest {
         CodeType codeType = new CodeType();
         codeType.setValue("code");
         fluxLocations.get(0).setRegionalFisheriesManagementOrganizationCode(codeType);
-        assertTrue(specifiedActivityFact.rffmoProvided(fluxLocations));
+        assertTrue(specifiedActivityFact.rfmoProvided(fluxLocations));
     }
 
 }
