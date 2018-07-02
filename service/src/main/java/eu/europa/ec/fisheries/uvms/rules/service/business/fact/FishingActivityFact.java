@@ -82,7 +82,7 @@ public class FishingActivityFact extends AbstractFact {
         return isMatch;
     }
 
-    public boolean rffmoProvided( List<FLUXLocation> relatedFLUXLocations){
+    public boolean rfmoProvided( List<FLUXLocation> relatedFLUXLocations){
         if (CollectionUtils.isEmpty(relatedFLUXLocations)){
             return true;
         }
