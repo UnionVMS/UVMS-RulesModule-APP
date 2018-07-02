@@ -55,12 +55,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 
 /**
  * Created by kovian on 23/06/2017.
  */
+@Ignore
 public class XPathRepositoryTest {
 
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
@@ -221,6 +223,7 @@ public class XPathRepositoryTest {
 
     @Test
     @SneakyThrows
+    @Ignore
     public void testXpathCorrectness(){
 
         String filePath = new File(".", testXmlPath).getAbsolutePath();
