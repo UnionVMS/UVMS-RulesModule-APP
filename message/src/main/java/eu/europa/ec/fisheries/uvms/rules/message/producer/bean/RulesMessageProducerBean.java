@@ -86,6 +86,22 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis) throws MessageException  {
+        LOG.debug("Sending message to {}", queue.name());
+        try {
+            Queue destination = getDestinationQueue(queue);
+            if(destination != null){
+                return sendMessageToSpecificQueue(text, destination, rulesResponseQueue, timeToLiveInMillis);
+            }
+            return null;
+        } catch (Exception e) {
+            LOG.error("[ Error when sending message. ] {}", e.getMessage());
+            throw new MessageException("[ Error when sending message. ]", e);
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendConfigMessage(String text) throws ConfigMessageException {
         try {
             return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
