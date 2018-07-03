@@ -1,20 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
-
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.FACatchType;
-import eu.europa.ec.fisheries.schema.sales.FLUXLocationType;
-import eu.europa.ec.fisheries.schema.sales.FishingActivityType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
-import eu.europa.ec.fisheries.schema.sales.SizeDistributionType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -96,6 +93,104 @@ public class SalesAAPProductFactTest {
                 .withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("LOCATION"))));
 
         assertFalse(fact.isOriginFLUXLocationEmptyOrTypeNotLocation());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenTrue() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertTrue(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCode() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertFalse(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenOnlyNoFAOAreaCodes() {
+        //data set
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+
+        // execute and assert
+        assertFalse(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenTrueAndOneOfTheIDsIsNull(){
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(null);
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertTrue(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCodeAndOneOfTheIDsIsNull() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(null);
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertFalse(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenTrueAndOneOfTheSchemeIDsIsNull(){
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID(null));
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertTrue(fact.containsMultipleFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCodeAndOneOfTheSchemeIDsIsNull() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(new IDType().withSchemeID(null));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertFalse(fact.containsMultipleFAOAreaCodes());
     }
 
     @Test

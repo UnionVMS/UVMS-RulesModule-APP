@@ -1583,6 +1583,19 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
+            <column name="rule_id" value="10239"/>
+            <column name="br_id" value="SALE-L02-00-0188"/>
+            <column name="expression" value="containsMultipleFAOAreaCodes()"/>
+            <column name="note" value=""/>
+            <column name="message" value="Only one FAO_AREA code per product"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1008"/>
+            <column name="property_names" value="FLUXLocation, AAPProduct"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
             <column name="rule_id" value="10222"/>
             <column name="br_id" value="SALE-L02-00-0070"/>
             <column name="expression" value="!isListEmptyOrAllListIdsUnique(typeCodes)"/>
