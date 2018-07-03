@@ -1436,7 +1436,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="111"/>
             <column name="br_id" value="FA-L00-00-0111"/>
-            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; isEmpty(relatedFishingTrip)"/>
+            <column name="expression" value="!subActivity &amp;&amp; specifiedFishingTrip == null || (specifiedFishingTrip != null &amp;&amp; isEmpty(specifiedFishingTrip.IDS))"/>
             <column name="note" value="Check presence"/>
             <column name="message" value="Fishing trip details missing."/>
             <column name="level" value="L00"/>
