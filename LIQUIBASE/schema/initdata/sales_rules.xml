@@ -2645,10 +2645,10 @@
         <insert tableName="rule">
             <column name="rule_id" value="10912"/>
             <column name="br_id" value="SALE-L03-00-0050"/>
-            <column name="expression" value="salesService.isReceptionDate48hAfterSaleDate($fact)"/>
+            <column name="expression" value="salesService.isReceptionDate24hAfterSaleDate($fact)"/>
             <column name="note" value=""/>
             <column name="message"
-                    value="The reception date (by Market state) should not be later than 48h after the sale date"/>
+                    value="The reception date (by Market state) should not be later than 24h after the sale date"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1000"/>
@@ -2657,10 +2657,10 @@
         <insert tableName="rule">
             <column name="rule_id" value="10914"/>
             <column name="br_id" value="SALE-L03-00-0110"/>
-            <column name="expression" value="salesService.isReceptionDate48hAfterLandingDeclaration($fact)"/>
+            <column name="expression" value="salesService.isReceptionDate24hAfterLandingDeclaration($fact)"/>
             <column name="note" value=""/>
             <column name="message"
-                    value="The reception date (by the Take-Over state) should not be later than 48h after the landing declaration date"/>
+                    value="The reception date (by the Take-Over state) should not be later than 24h after the landing declaration date"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1000"/>
