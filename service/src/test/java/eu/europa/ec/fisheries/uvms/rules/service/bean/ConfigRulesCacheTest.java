@@ -13,7 +13,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;

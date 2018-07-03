@@ -21,10 +21,11 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 
 public class FaEntryToSeaFactTest {
     private FaEntryToSeaFact  faEntryToSeaFact = new FaEntryToSeaFact();
+    private ActivityObjectsHelper objectsHelper = new ActivityObjectsHelper();
 
     @Test
     public void testWithEffortZoneShouldPass(){
-        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
         boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
         assertTrue(result);
@@ -32,7 +33,7 @@ public class FaEntryToSeaFactTest {
 
     @Test
     public void testWithEffortZoneAndAreaEntryShouldFail(){
-        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("AREA_ENTRY",null));
+        faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("AREA_ENTRY",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
         boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
         assertFalse(result);
@@ -40,7 +41,7 @@ public class FaEntryToSeaFactTest {
 
     @Test
     public void testWithStatRectangleZoneShouldFail(){
-        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"STAT_RECTANGLE"));
         boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
         assertFalse(result);
@@ -48,7 +49,7 @@ public class FaEntryToSeaFactTest {
 
     @Test
     public void testWithNullShouldFail(){
-        faEntryToSeaFact.setFaReportDocumentTypeCode(ActivityObjectsHelper.generateCodeType("DECLARATION",null));
+        faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,null));
         boolean result= faEntryToSeaFact.valid(Collections.singletonList(fluxLocation));
         assertFalse(result);

@@ -814,10 +814,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
-            <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
-            <column name="note"
-                    value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatch(ids, registrationVesselCountryId, assetList)"/>
+            <column name="note" value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message" value="Vessel ID CFR is provioded but the vessel is not regsitered in EU."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
@@ -1233,7 +1231,7 @@
             <column name="rule_id" value="94"/>
             <column name="br_id" value="FA-L01-00-0094"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isValid(occurrenceDateTime)"/>
+                    value="!subActivity &amp;&amp; occurrenceDateTime != null &amp;&amp; !isValid(occurrenceDateTime)"/>
             <column name="note" value="check presence"/>
             <column name="message" value="Invalid occurrence date/time of the activity."/>
             <column name="level" value="L01"/>
@@ -1246,11 +1244,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="95"/>
             <column name="br_id" value="FA-L02-00-0095"/>
-            <column name="expression"
-                    value="!subActivity &amp;&amp; ((!validDelimitedPeriod(delimitedPeriods, true, true) || occurrenceDateTime == null) &amp;&amp; !validDelimitedPeriod(relatedFishingActivities))"/>
+            <column name="expression" value="!subActivity &amp;&amp; !validDates()"/>
             <column name="note" value="check presence"/>
-            <column name="message"
-                    value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
+            <column name="message" value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -1374,7 +1370,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="104"/>
             <column name="br_id" value="FA-L01-00-0104"/>
-            <column name="expression" value="operationQuantity != null &amp;&amp; operationQuantity &lt; 0"/>
+            <column name="expression" value="operationQuantity != null  &amp;&amp; !isPositiveIntegerValue(operationQuantity)"/>
             <column name="note" value="Check Format"/>
             <column name="message" value="Not a positive integer."/>
             <column name="level" value="L01"/>
@@ -1414,13 +1410,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="107"/>
             <column name="br_id" value="FA-L02-00-0107"/>
-            <column name="expression"
-                    value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
-                    !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriods, true, false))"/>
+            <column name="expression" value="!subActivity &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false))"/>
             <column name="note" value="Check presence"/>
-            <column name="message"
-                    value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
+            <column name="message" value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -1431,13 +1423,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="108"/>
             <column name="br_id" value="FA-L02-00-0108"/>
-            <column name="expression"
-                    value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
-                    !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp;
-                    (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriods, false, true))"/>
+            <column name="expression" value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
             <column name="note" value="Check presence"/>
-            <column name="message"
-                    value="EndDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
+            <column name="message" value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
@@ -1461,12 +1449,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="112"/>
             <column name="br_id" value="FA-L02-00-0112"/>
-            <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
-                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;))
-                || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
-            <column name="note"
-                    value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
+            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
+                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;)) || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
+            <column name="note" value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
             <column name="message" value="Sub-activity information not allowed for this type of activity."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
@@ -3111,8 +3096,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="252"/>
             <column name="br_id" value="FA-L02-00-0252"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+            <column name="expression" value="!isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(faReportDocumentTypeCode, &quot;DECLARATION&quot;, &quot;AREA_ENTRY&quot;, &quot;NOTIFICATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -5353,8 +5337,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="217"/>
             <column name="br_id" value="FA-L02-00-0217"/>
-            <column name="expression"
-                    value="isSpecifiedFluxLocFromFaCatch &amp;&amp; (rfmo == null || isEmpty(rfmo.value))"/>
+            <column name="expression" value="isSpecifiedFluxLocFromFaCatch &amp;&amp; (rfmo == null || isEmpty(rfmo.value))"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
@@ -5367,22 +5350,20 @@
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
             <column name="br_id" value="FA-L02-00-0218"/>
-            <column name="expression"
-                    value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList)"/>
+            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
             <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFluxLocationRFMOCodeList"/>
+            <column name="property_names" value="relatedFluxLocationRFMOCodeList, relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="204"/>
             <column name="br_id" value="FA-L01-00-0204"/>
-            <column name="expression"
-                    value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
+            <column name="expression" value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code has an invalid schemeID."/>
             <column name="level" value="L01"/>
@@ -5395,8 +5376,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="205"/>
             <column name="br_id" value="FA-L01-00-0205"/>
-            <column name="expression"
-                    value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(rfmo.listId, rfmo, creationDateOfMessage)"/>
+            <column name="expression" value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(rfmo.listId, rfmo, creationDateOfMessage)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code value is invalid."/>
             <column name="level" value="L01"/>
@@ -5409,10 +5389,8 @@
         <insert tableName="rule">
             <column name="rule_id" value="171"/>
             <column name="br_id" value="FA-L00-00-0171"/>
-            <column name="expression"
-                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode !=null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;)))"/>
-            <column name="note"
-                    value="Check presence. At least one occurrence with listID= FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
+            <column name="expression" value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode !=null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;)))"/>
+            <column name="note" value="Check presence. At least one occurrence with listID= FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
             <column name="message"
                     value="At least presentation (and for landing and transhipment as well preservation) of the fish must be provided."/>
             <column name="level" value="L00"/>
@@ -5532,11 +5510,9 @@
             <column name="rule_id" value="175"/>
             <column name="br_id" value="FA-L03-00-0175"/>
             <column name="expression"
-                    value="isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp;
-                    !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage)"/>
+                    value="isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage)"/>
             <column name="note" value="Mandatory if EU or national conversion factor not available."/>
-            <column name="message"
-                    value="Must be present if no conversion factor available for combination of FISH_PRESENTATION, FISH_PRESERVATION, Species and if applicable Area"/>
+            <column name="message" value="Must be present if no conversion factor available for combination of FISH_PRESENTATION, FISH_PRESERVATION, Species and if applicable Area"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2018-01-08 00:00:00.0"/>

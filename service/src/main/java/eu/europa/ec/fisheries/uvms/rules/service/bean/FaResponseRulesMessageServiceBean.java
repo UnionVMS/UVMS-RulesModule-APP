@@ -1,4 +1,14 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.messageprocessors.fa;
+/*
+ Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+ This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+ and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
@@ -18,6 +28,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.GregorianCalendar;
@@ -45,9 +56,6 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.caches.RulesConfigurationCache;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.factrulesevaluators.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
@@ -104,9 +112,6 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     private RulesDao rulesDaoBean;
 
     @EJB
-    private AyncFaIdsDaoBean asyncIdsSaver;
-
-    @EJB
     private RulesConfigurationCache ruleModuleCache;
 
     @EJB
@@ -132,12 +137,12 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     public void evaluateIncomingFluxResponseRequest(SetFluxFaResponseMessageRequest request) {
         String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
-        log.info("Going to evaluate FLUXResponseMessage with GUID [[ " + logGuid + " ]].");
+        log.info("Evaluate FLUXResponseMessage with GUID " + logGuid);
         FLUXResponseMessage fluxResponseMessage;
         try {
             // Validate xsd schema
             fluxResponseMessage = xsdJaxbUtil.unMarshallFluxResponseMessage(requestStr);
-            List<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage);
+            Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage);
             ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
             updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
@@ -148,11 +153,11 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             XPathRepository.INSTANCE.clear(fluxFaResponseFacts);
 
         } catch (UnmarshalException e) {
-            log.info("[ERROR] Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
+            log.debug("Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
-            log.info("[ERROR] Error during validation of the received FLUXResponseMessage!", e);
+            log.debug("Error during validation of the received FLUXResponseMessage!", e);
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
         }
     }
@@ -177,7 +182,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             String logGuid = request.getLogGuid();
             Map<ExtraValueType, Object> extraValues = populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
 
-            List<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
+            Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
