@@ -2611,7 +2611,7 @@
             <column name="note" value=""/>
             <column name="message" value="It must be an official currency of the country at that date"/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="template_id" value="1004"/>
             <column name="property_names" value="currencyCode, specifiedFLUXLocations, specifiedSalesEvents"/>
         </insert>
