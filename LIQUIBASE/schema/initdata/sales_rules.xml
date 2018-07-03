@@ -1312,7 +1312,8 @@
             <column name="rule_id" value="10203"/>
             <column name="br_id" value="SALE-L02-00-0010"/>
             <column name="expression"
-                    value="purposeCode != null &amp;&amp; (purposeCode.getValue().equals(&quot;5&quot;) || purposeCode.getValue().equals(&quot;3&quot;)) &amp;&amp; referencedID == null"/>
+                    value="(purposeCode != null &amp;&amp; (purposeCode.getValue().equals(&quot;5&quot;) || purposeCode.getValue().equals(&quot;3&quot;))) &amp;&amp;
+                     (referencedID == null || salesService.doesReferencedIdNotExist($fact))"/>
             <column name="note" value=""/>
             <column name="message" value="If correction or deletion, the referenced identification must be provided"/>
             <column name="level" value="L02"/>
@@ -2564,17 +2565,6 @@
             <column name="property_names" value="ids"/>
         </insert>
 
-        <insert tableName="rule">
-            <column name="rule_id" value="10902"/>
-            <column name="br_id" value="SALE-L03-00-0011"/>
-            <column name="expression" value="salesService.doesReferencedIdNotExist($fact)"/>
-            <column name="note" value=""/>
-            <column name="message" value="The referenced identification must be the one of a an existing sales report"/>
-            <column name="level" value="L03"/>
-            <column name="error_type" value="WARNING"/>
-            <column name="template_id" value="1001"/>
-            <column name="property_names" value="Item Type, Purpose, ReferencedIdentification"/>
-        </insert>
 
         <!-- Flux Party -->
         <insert tableName="rule">
