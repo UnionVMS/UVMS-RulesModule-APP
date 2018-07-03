@@ -1443,7 +1443,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFishingTrip"/>
+            <column name="property_names" value="specifiedFishingTrip"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
