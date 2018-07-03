@@ -1759,9 +1759,9 @@
             <column name="rule_id" value="10241"/>
             <column name="br_id" value="SALE-L02-00-0183"/>
             <column name="expression"
-                    value="ID == null &amp;&amp; (typeCode == null || !typeCode.getValue().equals(&quot;POSITION&quot;))"/>
+                    value="ID == null &amp;&amp; (typeCode == null || !(typeCode.getValue().equals(&quot;POSITION&quot;)) || typeCode.getValue().equals(&quot;ADDRESS&quot;)))"/>
             <column name="note" value="Optional for geographical location"/>
-            <column name="message" value="Check presence. Must be present, unless type is 'POSITION'"/>
+            <column name="message" value="Check presence. Must be present, unless type is 'POSITION' or 'ADDRESS'"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
