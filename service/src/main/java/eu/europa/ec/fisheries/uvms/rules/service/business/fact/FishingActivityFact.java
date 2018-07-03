@@ -97,4 +97,6 @@ public class FishingActivityFact extends AbstractFact {
         }
         return false;
     }
+
+
 }

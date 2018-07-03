@@ -1436,21 +1436,20 @@
         <insert tableName="rule">
             <column name="rule_id" value="111"/>
             <column name="br_id" value="FA-L00-00-0111"/>
-            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; isEmpty(relatedFishingTrip)"/>
+            <column name="expression" value="!subActivity &amp;&amp; specifiedFishingTrip == null"/>
             <column name="note" value="Check presence"/>
             <column name="message" value="Fishing trip details missing."/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="13"/>
-            <column name="property_names" value="relatedFishingTrip"/>
+            <column name="property_names" value="specifiedFishingTrip"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="112"/>
             <column name="br_id" value="FA-L02-00-0112"/>
-            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null
-                &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;)) || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
+            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; faReportDocumentTypeCode != null &amp;&amp; typeCode != null &amp;&amp; !((faReportDocumentTypeCode.value == &quot;DECLARATION&quot; &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;)) || (faReportDocumentTypeCode.value == &quot;NOTIFICATION&quot; &amp;&amp; typeCode.value == &quot;AREA_ENTRY&quot;))"/>
             <column name="note" value="Related Fishing_Activity may only be present for FISHING_OPERATION (DECLARATION) AREA_ENTRY (NOTIFICATION)"/>
             <column name="message" value="Sub-activity information not allowed for this type of activity."/>
             <column name="level" value="L02"/>
