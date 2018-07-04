@@ -5478,17 +5478,14 @@
         <insert tableName="rule">
             <column name="rule_id" value="440"/>
             <column name="br_id" value="FA-L02-00-0441"/>
-            <column name="expression"
-                    value="codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; !isNumeric(appliedAAPProcessConversionFactorNumber)"/>
-            <column name="note"
-                    value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
-            <column name="message"
-                    value="Conversion factor missing."/>
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; !isNumeric(appliedAAPProcessConversionFactorNumber)"/>
+            <column name="note" value="AppliedAAP_Process Conversion_Factor Number must be present if SpeciesCode=BFT."/>
+            <column name="message" value="Conversion factor missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="appliedAAPProcessConversionFactorNumber,speciesCode"/>
+            <column name="property_names" value="appliedAAPProcessConversionFactorNumber, speciesCode"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
