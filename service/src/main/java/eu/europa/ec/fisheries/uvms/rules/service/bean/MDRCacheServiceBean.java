@@ -20,6 +20,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -40,14 +48,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 @Stateless
 @LocalBean
 @Slf4j
@@ -64,8 +64,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public EnrichedBRMessage getErrorMessageForBrId(String brId) {
         return cache.getErrorMessage(brId);
     }
-
-
 
     /**
      * Check if value passed is present in the MDR list speified
@@ -236,11 +234,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate) {
-        // clean lists from nulls
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate){
         Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
         Iterables.removeIf(appliedAAPProcessTypeCodes, Predicates.isNull());
-        // country column
         String country = StringUtils.EMPTY;
         if (CollectionUtils.isNotEmpty(specifiedFLUXLocations)) {
             for (FLUXLocation location : specifiedFLUXLocations) {
@@ -253,7 +249,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (isPresentInMDRList("MEMBER_STATE", country, validityDate)) {
             country = "XEU";
         }
-        // presentation, state columns
         String presentation = StringUtils.EMPTY;
         String state = StringUtils.EMPTY;
         if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
