@@ -183,4 +183,19 @@ public class SalesAAPProductFact extends SalesAbstractFact {
 
         return true;
     }
+
+    public int countFAOAreaCodes() {
+        if (isEmpty(originFLUXLocations)) {
+            return 0;
+        }
+
+        int numberOfFAOAreaCodes = 0;
+        for (FLUXLocationType originFLUXLocation : originFLUXLocations) {
+            if (originFLUXLocation.getID() != null
+                    && "FAO_AREA".equals(originFLUXLocation.getID().getSchemeID())) {
+                numberOfFAOAreaCodes++;
+            }
+        }
+        return numberOfFAOAreaCodes;
+    }
 }
