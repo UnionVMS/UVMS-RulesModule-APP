@@ -342,6 +342,18 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean validateSchemeIdFormat(List<IdType> ids, String schemeID) {
+        if (CollectionUtils.isEmpty(ids) || schemeID == null) {
+            return true;
+        }
+        for (IdType id : ids) {
+            if (schemeID.equals(id.getSchemeId()) && validateFormat(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Validate the format of the value depending on the schemeId for List<CodeType>
