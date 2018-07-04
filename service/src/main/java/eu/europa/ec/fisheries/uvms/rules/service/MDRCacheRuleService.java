@@ -59,4 +59,5 @@ public interface MDRCacheRuleService {
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 
     void loadCacheForFailureMessages();
+
 }

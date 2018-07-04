@@ -5494,8 +5494,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="174"/>
             <column name="br_id" value="FA-L01-00-0174"/>
-            <column name="expression"
-                    value="!isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !isPositiveNumeric(appliedAAPProcessConversionFactorNumber)"/>
+            <column name="expression" value="!isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !isPositiveNumeric(appliedAAPProcessConversionFactorNumber)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="The value of the conversion factor must be a positive number."/>
             <column name="level" value="L01"/>
@@ -5508,27 +5507,22 @@
         <insert tableName="rule">
             <column name="rule_id" value="175"/>
             <column name="br_id" value="FA-L03-00-0175"/>
-            <column name="expression"
-                    value="isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage)"/>
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage)"/>
             <column name="note" value="Mandatory if EU or national conversion factor not available."/>
             <column name="message" value="Must be present if no conversion factor available for combination of FISH_PRESENTATION, FISH_PRESERVATION, Species and if applicable Area"/>
             <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2018-01-08 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names"
-                    value="appliedAAPProcessConversionFactorNumber,appliedAAPProcessTypeCodes,speciesCode,specifiedFLUXLocations"/>
+            <column name="property_names" value="appliedAAPProcessConversionFactorNumber, appliedAAPProcessTypeCodes, speciesCode, specifiedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="187"/>
             <column name="br_id" value="FA-L02-00-0187"/>
-            <column name="expression"
-                    value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
-            <column name="note"
-                    value="Units (number of fish) must be provided for landings/ transhipments of Swordfish from GFCM area"/>
-            <column name="message"
-                    value="Units (number of fish) must be provided for landings/transhipments of Swordfish from GFCM area."/>
+            <column name="expression" value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
+            <column name="note" value="Units (number of fish) must be provided for landings/ transhipments of Swordfish from GFCM area"/>
+            <column name="message" value="Units (number of fish) must be provided for landings/transhipments of Swordfish from GFCM area."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-21 00:00:00.0"/>
