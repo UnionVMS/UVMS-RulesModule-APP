@@ -2833,4 +2833,31 @@
             <column name="property_names" value="specifiedFishingActivities"/>
         </insert>
     </changeSet>
+
+    <changeSet id="new-rules-ig-2-5-0" author="matbul">
+        <insert tableName="rule">
+            <column name="rule_id" value="12000"/>
+            <column name="br_id" value="SALE-L01-00-0008"/>
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; schemeIdContainsAll(referencedID, 'UUID')"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check attribute schemeID. Must be UUID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="referencedID"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="12001"/>
+            <column name="br_id" value="SALE-L01-00-0009"/>
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; validateFormat(referencedID)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check Format. Must be according to the specified schemeID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1001"/>
+            <column name="property_names" value="referencedID"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
