@@ -1596,7 +1596,7 @@
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
-            <column name="rule_id" value="10240"/>
+            <column name="rule_id" value="10247"/>
             <column name="br_id" value="SALE-L02-00-0188"/>
             <column name="expression" value="countFAOAreaCodes() > 1"/>
             <column name="note" value=""/>
