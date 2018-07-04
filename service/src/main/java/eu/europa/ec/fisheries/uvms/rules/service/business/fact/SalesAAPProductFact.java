@@ -184,9 +184,9 @@ public class SalesAAPProductFact extends SalesAbstractFact {
         return true;
     }
 
-    public boolean containsMultipleFAOAreaCodes() {
+    public int countFAOAreaCodes() {
         if (isEmpty(originFLUXLocations)) {
-            return false;
+            return 0;
         }
 
         int numberOfFAOAreaCodes = 0;
@@ -196,6 +196,6 @@ public class SalesAAPProductFact extends SalesAbstractFact {
                 numberOfFAOAreaCodes++;
             }
         }
-        return numberOfFAOAreaCodes > 1;
+        return numberOfFAOAreaCodes;
     }
 }

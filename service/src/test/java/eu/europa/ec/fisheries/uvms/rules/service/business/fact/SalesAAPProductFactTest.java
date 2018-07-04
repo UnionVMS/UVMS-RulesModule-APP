@@ -10,19 +10,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-
-/**
- * Created by MATBUL on 22/06/2017.
- */
 public class SalesAAPProductFactTest {
 
     private SalesAAPProductFact fact;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         fact = new SalesAAPProductFact();
     }
 
@@ -96,7 +91,7 @@ public class SalesAAPProductFactTest {
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenTrue() {
+    public void countFAOAreaCodesWhen2() {
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
@@ -107,11 +102,11 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertTrue(fact.containsMultipleFAOAreaCodes());
+        assertEquals(2, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCode() {
+    public void countFAOAreaCodesWhen1() {
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
@@ -121,20 +116,34 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertFalse(fact.containsMultipleFAOAreaCodes());
+        assertEquals(1, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenOnlyNoFAOAreaCodes() {
+    public void countFAOAreaCodesWhen0() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("ANOTHER_ONE"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertEquals(0, fact.countFAOAreaCodes());
+    }
+
+    @Test
+    public void containsMultipleFAOAreaCodesWhenNoOriginFLUXLocations() {
         //data set
         SalesAAPProductFact fact = new SalesAAPProductFact();
 
         // execute and assert
-        assertFalse(fact.containsMultipleFAOAreaCodes());
+        assertEquals(0, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenTrueAndOneOfTheIDsIsNull(){
+    public void countFAOAreaCodesWhen2AndOneOfTheIDsIsNull(){
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(null);
@@ -145,11 +154,11 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertTrue(fact.containsMultipleFAOAreaCodes());
+        assertEquals(2, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCodeAndOneOfTheIDsIsNull() {
+    public void countFAOAreaCodesWhen1AndOneOfTheIDsIsNull() {
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
@@ -160,11 +169,11 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertFalse(fact.containsMultipleFAOAreaCodes());
+        assertEquals(1, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenTrueAndOneOfTheSchemeIDsIsNull(){
+    public void countFAOAreaCodesWhen2AndOneOfTheSchemeIDsIsNull(){
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID(null));
@@ -175,11 +184,11 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertTrue(fact.containsMultipleFAOAreaCodes());
+        assertEquals(2, fact.countFAOAreaCodes());
     }
 
     @Test
-    public void containsMultipleFAOAreaCodesWhenOnlyOneFAOAreaCodeAndOneOfTheSchemeIDsIsNull() {
+    public void countFAOAreaCodesWhen1AndOneOfTheSchemeIDsIsNull() {
         // data set
         FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("FAO_AREA"));
         FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
@@ -190,7 +199,22 @@ public class SalesAAPProductFactTest {
         fact.setOriginFLUXLocations(originFluxLocations);
 
         // execute and assert
-        assertFalse(fact.containsMultipleFAOAreaCodes());
+        assertEquals(1, fact.countFAOAreaCodes());
+    }
+
+    @Test
+    public void countFAOAreaCodesWhen0AndOneOfTheSchemeIDsIsNull() {
+        // data set
+        FLUXLocationType fluxLocation1 = new FLUXLocationType().withID(new IDType().withSchemeID("ANOTHER_ONE"));
+        FLUXLocationType fluxLocation2 = new FLUXLocationType().withID(new IDType().withSchemeID("SOMETHING_ELSE"));
+        FLUXLocationType fluxLocation3 = new FLUXLocationType().withID(new IDType().withSchemeID(null));
+        List<FLUXLocationType> originFluxLocations = Arrays.asList(fluxLocation1, fluxLocation2, fluxLocation3);
+
+        SalesAAPProductFact fact = new SalesAAPProductFact();
+        fact.setOriginFLUXLocations(originFluxLocations);
+
+        // execute and assert
+        assertEquals(0, fact.countFAOAreaCodes());
     }
 
     @Test
