@@ -66,7 +66,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
     }
 
     @Override
-    public boolean isReceptionDate48hAfterSaleDate(SalesFLUXSalesReportMessageFact fact) {
+    public boolean isReceptionDate24hAfterSaleDate(SalesFLUXSalesReportMessageFact fact) {
         if (fact == null ||
                 isEmpty(fact.getSalesReports()) ||
                 isEmpty(fact.getSalesReports().get(0).getIncludedSalesDocuments()) ||
@@ -83,7 +83,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
         for (SalesDocumentType includedSalesDocument : includedSalesDocuments) {
             for (SalesEventType salesEventType : includedSalesDocument.getSpecifiedSalesEvents()) {
                 if (salesEventType.getOccurrenceDateTime() != null && salesEventType.getOccurrenceDateTime().getDateTime() != null
-                        && isMoreThan48HoursLater(receptionDate, salesEventType.getOccurrenceDateTime().getDateTime())) {
+                        && isMoreThan24HoursLater(receptionDate, salesEventType.getOccurrenceDateTime().getDateTime())) {
                     return true;
                 }
             }
@@ -93,18 +93,18 @@ public class SalesRulesServiceBean implements SalesRulesService {
         return false;
     }
 
-    private boolean isMoreThan48HoursLater(DateTime receptionDate, DateTime saleDate) {
-        // Add 48 hours and 1 minute to salesDate to determine the latest acceptable date.
-        // Adding 48 hours isn't enough, a report sent exactly 48h after the event is still valid.
+    private boolean isMoreThan24HoursLater(DateTime receptionDate, DateTime saleDate) {
+        // Add 24 hours and 1 minute to salesDate to determine the latest acceptable date.
+        // Adding 24 hours isn't enough, a report sent exactly 24h after the event is still valid.
         // This is why there's a buffer of 1 minute. Not sure if this is enough: time will tell (pun intended)
-        DateTime latestAcceptableDate = saleDate.plusHours(48).plusMinutes(1);
+        DateTime latestAcceptableDate = saleDate.plusHours(24).plusMinutes(1);
 
         // If receptionDate is after latestAcceptableDate, return true
         return receptionDate.isAfter(latestAcceptableDate);
     }
 
     @Override
-    public boolean isReceptionDate48hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact) {
+    public boolean isReceptionDate24hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact) {
         try {
             String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
 
@@ -127,7 +127,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
             DateTime receptionDate = fact.getFLUXReportDocument().getCreationDateTime().getDateTime();
 
-            return isMoreThan48HoursLater(receptionDate, dateTimeFromLandingActivity.get());
+            return isMoreThan24HoursLater(receptionDate, dateTimeFromLandingActivity.get());
         } catch (NullPointerException | IndexOutOfBoundsException ex) {
             // if anything is not filled in, this rule cannot be evaluated properly
             return false;

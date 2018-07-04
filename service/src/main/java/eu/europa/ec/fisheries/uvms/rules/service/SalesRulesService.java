@@ -23,18 +23,18 @@ public interface SalesRulesService {
     boolean doesReportNotExistWithId(SalesFLUXReportDocumentFact fact);
 
     /**
-     * Checks if the reception date is not within 48 hours of the sale date
+     * Checks if the reception date is not within 24 hours of the sale date
      * @param fact
      * @return
      */
-    boolean isReceptionDate48hAfterSaleDate(SalesFLUXSalesReportMessageFact fact);
+    boolean isReceptionDate24hAfterSaleDate(SalesFLUXSalesReportMessageFact fact);
 
     /**
-     * Checks if the reception date is not within 48 hours of the landing declaration
+     * Checks if the reception date is not within 24 hours of the landing declaration
      * @param fact
      * @return
      */
-    boolean isReceptionDate48hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact);
+    boolean isReceptionDate24hAfterLandingDeclaration(SalesFLUXSalesReportMessageFact fact);
 
     /**
      * Checks if a sales document exists
