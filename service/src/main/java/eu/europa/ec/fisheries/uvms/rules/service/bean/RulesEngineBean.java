@@ -54,10 +54,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportF
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -208,11 +208,21 @@ public class RulesEngineBean {
             ksession.dispose();
             return facts;
         } catch (RuntimeException e) {
+            Collection<?> objects = ksession.getObjects();
+            if (CollectionUtils.isNotEmpty(objects)) {
+                Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
+                if (CollectionUtils.isNotEmpty(failedFacts)){
+                    for (AbstractFact failedFact : failedFacts) {
+                        log.error("Error in rule {} {} {}", failedFact.getMessageType(),failedFact.getFactType(), failedFact.toString());
+                    }
+                }
+            }
             ksession.dispose();
             String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
             log.error(errorMessage);
-            throw new RulesServiceTechnicalException(errorMessage, e);
+           // throw new RulesServiceTechnicalException(errorMessage, e);
         }
+        return facts;
     }
 
 }
