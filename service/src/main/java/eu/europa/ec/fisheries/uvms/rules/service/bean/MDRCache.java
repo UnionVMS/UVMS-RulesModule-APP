@@ -162,7 +162,7 @@ public class MDRCache {
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronymType) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT);
+        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L);
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         if (elapsed > 100) {
@@ -202,7 +202,7 @@ public class MDRCache {
      */
     private Date getLastTimeMdrWasRefreshedFromMdrModule() throws MessageException {
         try {
-            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT);
+            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 30000L);
             TextMessage message = consumer.getMessage(corrId, TextMessage.class, 30000L);
             if (message != null) {
                 MdrGetLastRefreshDateResponse response = JAXBUtils.unMarshallMessage(message.getText(), MdrGetLastRefreshDateResponse.class);
