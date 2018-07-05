@@ -54,6 +54,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportF
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -220,9 +221,8 @@ public class RulesEngineBean {
             ksession.dispose();
             String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
             log.error(errorMessage);
-           // throw new RulesServiceTechnicalException(errorMessage, e);
+            throw new RulesServiceTechnicalException(errorMessage, e);
         }
-        return facts;
     }
 
 }
