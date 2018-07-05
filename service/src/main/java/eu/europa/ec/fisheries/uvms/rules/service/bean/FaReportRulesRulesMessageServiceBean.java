@@ -18,11 +18,9 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SE
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.xml.bind.UnmarshalException;
@@ -65,13 +63,10 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Slf4j
-@Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
-@DependsOn({"RulesConfigurationCache"})
+@LocalBean
+@Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
-
-    private static final String VALIDATION_RESULTED_IN_ERRORS = " Validation resulted in errors. Not going to send msg to Activity module..";
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -150,7 +145,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
                     log.debug(" Request doesn't have permissions!");
                 }
             } else {
-                log.info(VALIDATION_RESULTED_IN_ERRORS);
+                log.debug("Validation resulted in errors.");
             }
 
             FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
@@ -167,7 +162,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
-        log.info("[END] Finished evaluating FLUXFAReportMessage with GUID [[ " + logGuid + " ]].");
+        log.debug("Finished eval of FLUXFAReportMessage " + logGuid);
     }
 
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {
