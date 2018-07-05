@@ -1124,7 +1124,7 @@ public class ActivityFactMapper {
 
             FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
             String purposeCode = StringUtils.EMPTY;
-            if (relatedFLUXReportDocument != null && relatedFLUXReportDocument.getPurposeCode().getValue() != null) {
+            if (relatedFLUXReportDocument != null && relatedFLUXReportDocument.getPurposeCode() != null && relatedFLUXReportDocument.getPurposeCode().getValue() != null) {
                 purposeCode = relatedFLUXReportDocument.getPurposeCode().getValue();
             }
             faDepartureFact.setPurposeCode(purposeCode);
