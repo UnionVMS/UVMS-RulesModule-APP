@@ -8,11 +8,31 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
+/*
+ Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+ This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+ and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package eu.europa.ec.fisheries.uvms.rules.service.bean;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -27,14 +47,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Stateless
 @LocalBean
@@ -52,8 +64,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public EnrichedBRMessage getErrorMessageForBrId(String brId) {
         return cache.getErrorMessage(brId);
     }
-
-
 
     /**
      * Check if value passed is present in the MDR list speified
@@ -224,11 +234,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate) {
-        // clean lists from nulls
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate){
         Iterables.removeIf(specifiedFLUXLocations, Predicates.isNull());
         Iterables.removeIf(appliedAAPProcessTypeCodes, Predicates.isNull());
-        // country column
         String country = StringUtils.EMPTY;
         if (CollectionUtils.isNotEmpty(specifiedFLUXLocations)) {
             for (FLUXLocation location : specifiedFLUXLocations) {
@@ -241,7 +249,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (isPresentInMDRList("MEMBER_STATE", country, validityDate)) {
             country = "XEU";
         }
-        // presentation, state columns
         String presentation = StringUtils.EMPTY;
         String state = StringUtils.EMPTY;
         if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {

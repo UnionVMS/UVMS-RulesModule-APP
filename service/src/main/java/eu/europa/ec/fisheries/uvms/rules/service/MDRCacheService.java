@@ -8,7 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean.caches;
+package eu.europa.ec.fisheries.uvms.rules.service;
 
 import javax.ejb.Local;
 

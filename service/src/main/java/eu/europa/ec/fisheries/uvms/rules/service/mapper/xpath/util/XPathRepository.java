@@ -10,14 +10,14 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by kovian on 19/06/2017.
@@ -45,7 +45,7 @@ public class XPathRepository {
         }
     }
 
-    public void clear(List<AbstractFact> facts){
+    public void clear(Collection<AbstractFact> facts){
         if(CollectionUtils.isNotEmpty(facts)){
             for(AbstractFact fact : facts){
                 xpathsMap.remove(fact.getSequence());

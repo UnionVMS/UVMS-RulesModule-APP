@@ -66,13 +66,15 @@ public class FishingGearFact extends AbstractFact {
         MutableInt mandatoryHits = new MutableInt(0);
         MutableInt optionalHits = new MutableInt(0);
 
-        for (GearMatrix.Condition next : conditions) {
-            String value = next.getValue();
-            if (!next.isOptional()) {
-                if (!valid(gearCharacteristics, mandatoryHits, value)) return false;
-            } else {
-                optional.increment();
-                valid(gearCharacteristics, optionalHits, value);
+        if (CollectionUtils.isNotEmpty(conditions)){
+            for (GearMatrix.Condition next : conditions) {
+                String value = next.getValue();
+                if (!next.isOptional()) {
+                    if (!valid(gearCharacteristics, mandatoryHits, value)) return false;
+                } else {
+                    optional.increment();
+                    valid(gearCharacteristics, optionalHits, value);
+                }
             }
         }
 
@@ -82,11 +84,14 @@ public class FishingGearFact extends AbstractFact {
     private boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value) {
         for (GearCharacteristic incomingGearCharacteristic : incomingGearCharacteristics) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType code = incomingGearCharacteristic.getTypeCode();
-            String incomingCodeTypeValue = code.getValue();
-            if (value.equals(incomingCodeTypeValue)){
-                hits.increment();
-                return true;
+            if (code != null){
+                String incomingCodeTypeValue = code.getValue();
+                if (value.equals(incomingCodeTypeValue)){
+                    hits.increment();
+                    return true;
+                }
             }
+
         }
         return false;
     }

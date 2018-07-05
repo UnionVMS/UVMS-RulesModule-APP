@@ -15,7 +15,7 @@ import java.util.Arrays;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
-global eu.europa.ec.fisheries.uvms.rules.service.bean.caches.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 
 template "@{tname}"

@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -39,10 +40,10 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType reasonCode;
     private CodeType fisheryTypeCode;
     private CodeType speciesTargetCode;
-    private Integer operationQuantity;
+    private BigDecimal operationQuantity;
     private boolean subActivity = false;
     private List<MeasureType> durationMeasure;
-    private List<DelimitedPeriod> delimitedPeriods;
+    private DelimitedPeriod delimitedPeriod;
     private List<FLUXLocation> relatedFLUXLocations;
     private List<FLUXLocation> relatedActivityFluxLocations;
     private CodeType vesselRelatedActivityCode;
@@ -58,14 +59,44 @@ public class FishingActivityFact extends AbstractFact {
         this.factType = FactType.FISHING_ACTIVITY;
     }
 
+    public boolean validDates(){
+        if (!subActivity && (occurrenceDateTime != null || delimitedPeriod != null)) {
+            return true;
+        }
+        return validDelimitedPeriod(relatedFishingActivities);
+    }
+
     public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities){
         Boolean isMatch = false;
         if (CollectionUtils.isEmpty(relatedFishingActivities)){
             return false;
         }
         for (FishingActivity related : relatedFishingActivities) {
-            isMatch = related.getOccurrenceDateTime() != null || validDelimitedPeriod(related.getSpecifiedDelimitedPeriods(), true, true);
+            isMatch = related.getOccurrenceDateTime() != null
+            || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods())
+            && validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
+            if(!isMatch){
+                return false;
+            }
         }
         return isMatch;
     }
+
+    public boolean rfmoProvided( List<FLUXLocation> relatedFLUXLocations){
+        if (CollectionUtils.isEmpty(relatedFLUXLocations)){
+            return true;
+        }
+        else {
+            for (FLUXLocation relatedFLUXLocation : relatedFLUXLocations) {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType rfmo = relatedFLUXLocation.getRegionalFisheriesManagementOrganizationCode();
+                if (rfmo != null){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+
 }

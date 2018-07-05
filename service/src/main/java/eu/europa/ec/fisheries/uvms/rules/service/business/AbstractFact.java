@@ -342,6 +342,18 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean validateSchemeIdFormat(List<IdType> ids, String schemeID) {
+        if (CollectionUtils.isEmpty(ids) || schemeID == null) {
+            return true;
+        }
+        for (IdType id : ids) {
+            if (schemeID.equals(id.getSchemeId()) && validateFormat(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Validate the format of the value depending on the schemeId for List<CodeType>
@@ -608,16 +620,14 @@ public abstract class AbstractFact {
         return valuesToMatch.length > hits;
     }
 
-    public boolean validDelimitedPeriod(List<DelimitedPeriod> delimitedPeriods, boolean start, boolean end) {
-        if (CollectionUtils.isEmpty(delimitedPeriods)) {
-            return false;
+    public boolean validDelimitedPeriod(DelimitedPeriod delimitedPeriod, boolean start, boolean end) {
+        if (delimitedPeriod == null) {
+            return true;
         }
-        for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
-            if ((start && end && ((delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null) && (delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)))
-                    || (start && !end && delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null)
-                    || (end && !start && delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)) {
-                return true;
-            }
+        if ((start && end && ((delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null) && (delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)))
+                || (start && !end && delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null)
+                || (end && !start && delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)) {
+            return true;
         }
         return false;
     }
@@ -751,7 +761,7 @@ public abstract class AbstractFact {
         return found;
     }
 
-    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) { // FIXME change logic true false
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
@@ -762,7 +772,7 @@ public abstract class AbstractFact {
      * @param valuesToMatch
      * @return
      */
-    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) { // FIXME change logic true false
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
