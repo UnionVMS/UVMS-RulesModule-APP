@@ -59,7 +59,7 @@ public class SalesRulesServiceBeanTest {
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenSaleDateMoreThan48hBeforeNow() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenSaleDateMoreThan24hBeforeNow() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
 
         SalesEventType salesEventType1 = new SalesEventType()
@@ -69,7 +69,7 @@ public class SalesRulesServiceBeanTest {
         SalesEventType salesEventType3 = new SalesEventType()
                 .withOccurrenceDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(3)));
         SalesEventType salesEventType4 = new SalesEventType()
-                .withOccurrenceDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(48).minusMinutes(5)));
+                .withOccurrenceDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(24).minusMinutes(5)));
 
         SalesDocumentType salesDocumentFact1 = new SalesDocumentType();
         salesDocumentFact1.getSpecifiedSalesEvents().addAll(Arrays.asList(salesEventType1, salesEventType2, salesEventType3, salesEventType4));
@@ -81,11 +81,11 @@ public class SalesRulesServiceBeanTest {
         salesDocumentFact3.getSpecifiedSalesEvents().addAll(Arrays.asList(salesEventType1, salesEventType2, salesEventType3, salesEventType4));
 
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments(Arrays.asList(salesDocumentFact1, salesDocumentFact2, salesDocumentFact3))));
-        assertTrue(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertTrue(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenSaleDate1hBeforeNow() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenSaleDate1hBeforeNow() throws Exception {
         DateTime now = DateTime.now();
         SalesEventType salesEventType1 = new SalesEventType()
                 .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(1)));
@@ -94,7 +94,7 @@ public class SalesRulesServiceBeanTest {
         SalesEventType salesEventType3 = new SalesEventType()
                 .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(3)));
         SalesEventType salesEventType4 = new SalesEventType()
-                .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(48)));
+                .withOccurrenceDateTime(new DateTimeType().withDateTime(now.minusHours(24)));
 
         SalesDocumentType salesDocumentFact1 = new SalesDocumentType();
         salesDocumentFact1.getSpecifiedSalesEvents().addAll(Arrays.asList(salesEventType1, salesEventType2, salesEventType3, salesEventType4));
@@ -108,53 +108,53 @@ public class SalesRulesServiceBeanTest {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments(Arrays.asList(salesDocumentFact1, salesDocumentFact2, salesDocumentFact3))));
 
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenFluxReportDocumentIsNull() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenFluxReportDocumentIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType()));
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenSalesReportsIsNull() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenSalesReportsIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
         salesFLUXSalesReportMessageFact.setSalesReports(null);
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenSalesReportsIsEmpty() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenSalesReportsIsEmpty() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
         salesFLUXSalesReportMessageFact.setSalesReports(Lists.<SalesReportType>newArrayList());
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenFluxReportDocumentWhenCreationDateTimeIsNull() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenFluxReportDocumentWhenCreationDateTimeIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(null));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType()));
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterSaleDateWhenFluxReportDocumentWhenDateTimeInCreationDateTimeIsNull() throws Exception {
+    public void isReceptionDate24hAfterSaleDateWhenFluxReportDocumentWhenDateTimeInCreationDateTimeIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(null)));
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType()));
-        assertFalse(service.isReceptionDate48hAfterSaleDate(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterSaleDate(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hBefore() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenLandingDeclaration24hBefore() throws Exception {
         //data set
         String fishingTripID = "MLT-TRP-20160630000001";
 
         DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
                 .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(1)));
         DelimitedPeriodType delimitedPeriodType2 = new DelimitedPeriodType()
-                .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(48)));
+                .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(24)));
         FishingActivityType fishingActivityType1 = new FishingActivityType()
                 .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2))
                 .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
@@ -187,11 +187,11 @@ public class SalesRulesServiceBeanTest {
 
         //execute
 
-        assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenLandingDeclaration48hAfter() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenLandingDeclaration24hAfter() throws Exception {
         //data set
         String fishingTripID = "MLT-TRP-20160630000001";
 
@@ -229,35 +229,35 @@ public class SalesRulesServiceBeanTest {
         doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
 
         //execute
-        assertTrue(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertTrue(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenSalesReportsIsEmpty() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenSalesReportsIsEmpty() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Lists.<SalesReportType>newArrayList());
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
-        assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenSalesReportsIsNull() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenSalesReportsIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(null);
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
-        assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenIncludedSalesDocumentsInSalesReportsIsEmpty() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenIncludedSalesDocumentsInSalesReportsIsEmpty() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments(Lists.<SalesDocumentType>newArrayList())));
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
-        assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
     @Test
-    public void isReceptionDate48hAfterLandingDeclarationWhenIncludedSalesDocumentsInSalesReportsIsNull() throws Exception {
+    public void isReceptionDate24hAfterLandingDeclarationWhenIncludedSalesDocumentsInSalesReportsIsNull() throws Exception {
         salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(new SalesReportType().withIncludedSalesDocuments((SalesDocumentType) null)));
         salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now())));
-        assertFalse(service.isReceptionDate48hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+        assertFalse(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
     }
 
 
