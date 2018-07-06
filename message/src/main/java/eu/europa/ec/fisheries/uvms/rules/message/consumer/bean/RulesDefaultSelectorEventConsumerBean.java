@@ -48,7 +48,7 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1000"), // default: 10
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "1000"), // default: 1000
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"), // default: 5
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "0"), // default: 5
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"), // default: 10
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector NOT IN ('ReceiveSalesReportRequest', 'ValidationResultsByRawGuid')")
 })

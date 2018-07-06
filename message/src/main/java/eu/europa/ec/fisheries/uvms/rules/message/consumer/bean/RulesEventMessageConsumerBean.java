@@ -9,6 +9,7 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
 import javax.ejb.ActivationConfigProperty;
@@ -64,7 +65,7 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL"),
         @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1000"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "0"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"),
 })
 public class RulesEventMessageConsumerBean implements MessageListener {
