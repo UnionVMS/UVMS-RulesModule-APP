@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -1285,8 +1286,11 @@ public abstract class AbstractFact {
             return false;
         }
         List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
-        for (IdType idType : vesselIds) {
-            listToBeMatched.add(new IdTypeWithFlagState(idType.getSchemeId(), idType.getValue(), vesselCountryId.getValue()));
+        Iterator<IdType> iterator = vesselIds.iterator();
+        while (iterator.hasNext() && vesselCountryId != null){
+            IdType next = iterator.next();
+            listToBeMatched.add(new IdTypeWithFlagState(next.getSchemeId(), next.getValue(), vesselCountryId.getValue()));
+
         }
         for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
             if (!assetList.contains(elemFromListToBeMatched)) {
