@@ -2795,7 +2795,8 @@
             <column name="rule_id" value="226"/>
             <column name="br_id" value="FA-L00-00-0226"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;CODE&quot; &amp;&amp; valueCode == null"/>
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;CODE&quot; &amp;&amp; (valueCode == null
+                    || valueCode != null  &amp;&amp; isEmpty(valueCode.value))"/>
             <column name="note" value="Data type must be CODE"/>
             <column name="message" value="Expected code value missing."/>
             <column name="level" value="L00"/>
