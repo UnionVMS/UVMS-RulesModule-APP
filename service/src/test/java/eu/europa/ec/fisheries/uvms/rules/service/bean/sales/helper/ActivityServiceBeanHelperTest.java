@@ -61,12 +61,12 @@ public class ActivityServiceBeanHelperTest {
 
         TextMessage mockTextMessage = mock(TextMessage.class);
         doReturn(message).when(mockTextMessage).getText();
-        doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class);
+        doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class, 30000L);
 
         Optional<FishingTripResponse> fishingTripResponseOptional = helper.receiveMessageFromActivity(correlationId);
 
         verify(mockTextMessage).getText();
-        verify(messageConsumer).getMessage(correlationId, TextMessage.class);
+        verify(messageConsumer).getMessage(correlationId, TextMessage.class, 30000L);
         verifyNoMoreInteractions(messageConsumer, messageProducer);
 
         verifyStatic();
@@ -119,7 +119,7 @@ public class ActivityServiceBeanHelperTest {
 
         TextMessage mockTextMessage = mock(TextMessage.class);
         doReturn(message).when(mockTextMessage).getText();
-        doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class);
+        doReturn(mockTextMessage).when(messageConsumer).getMessage(correlationId, TextMessage.class, 30000L);
         doReturn(correlationId).when(messageProducer).sendDataSourceMessage("FishingTripResponse", DataSourceQueue.ACTIVITY);
         doReturn("FishingTripResponse").when(activityMapper).mapToActivityGetFishingTripRequest(listFilter, singleFilters);
 
@@ -129,7 +129,7 @@ public class ActivityServiceBeanHelperTest {
         Optional<FishingTripResponse> fishingTripResponseOptional = helper.findTrip(fishingTripID);
 
         verify(mockTextMessage).getText();
-        verify(messageConsumer).getMessage(correlationId, TextMessage.class);
+        verify(messageConsumer).getMessage(correlationId, TextMessage.class, 30000L);
         verify(messageProducer).sendDataSourceMessage("FishingTripResponse", DataSourceQueue.ACTIVITY);
 
         verifyNoMoreInteractions(messageConsumer, messageProducer);
