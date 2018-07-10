@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 import javax.annotation.PostConstruct;
@@ -101,6 +102,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
 
+            extraValues.put(XML, requestStr);
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues);
 
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
@@ -168,6 +170,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
 
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+            extraValues.put(XML, requestStr);
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues);
             ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {

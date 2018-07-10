@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -45,7 +46,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnical
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -92,7 +92,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.SENDING_FA_RESPONSE_MSG) {
 
@@ -105,7 +105,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_RESPONSE_MSG) {
 
@@ -118,7 +118,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_RESPONSE), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_RESPONSE), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_QUERY_MSG || businessObjectType == BusinessObjectType.SENDING_FA_QUERY_MSG) {
 
@@ -129,7 +129,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_QUERY), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_QUERY), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_QUERY_MSG) {
 
@@ -141,7 +141,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_REPORT_MSG) {
 
@@ -153,7 +153,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_RESPONSE_MSG) {
 
@@ -165,7 +165,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
             }
 
@@ -179,7 +179,7 @@ public class RulesEngineBean {
         return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
     }
 
-    public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container,  Map<String, Object> globals) {
+    public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -196,20 +196,12 @@ public class RulesEngineBean {
             ksession.dispose();
             return facts;
         } catch (RuntimeException e) {
-            Collection<?> objects = ksession.getObjects();
-            if (CollectionUtils.isNotEmpty(objects)) {
-                Collection<AbstractFact> failedFacts = (Collection<AbstractFact>) objects;
-                if (CollectionUtils.isNotEmpty(failedFacts)){
-                    for (AbstractFact failedFact : failedFacts) {
-                        log.error("Error in rule {} {} {}", failedFact.getMessageType(),failedFact.getFactType(), failedFact.toString());
-                    }
-                }
-            }
             ksession.dispose();
             String errorMessage = "Unable to validate facts. Reason: " + e.getMessage();
             log.error(errorMessage);
+            log.error("{}", extraValues.get(XML));
             throw new RulesServiceTechnicalException(errorMessage, e);
         }
-    }
 
+    }
 }

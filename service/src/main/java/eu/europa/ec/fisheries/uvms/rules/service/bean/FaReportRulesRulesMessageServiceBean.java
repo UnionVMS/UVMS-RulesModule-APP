@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
@@ -125,6 +126,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
             Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
+            extraValuesMap.put(XML, requestStr);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
@@ -183,7 +185,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
             Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
-
+            extraValuesMap.put(XML, requestStr);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {

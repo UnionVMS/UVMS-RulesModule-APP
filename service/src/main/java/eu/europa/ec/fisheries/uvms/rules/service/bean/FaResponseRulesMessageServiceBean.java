@@ -14,6 +14,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectTyp
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 import static java.util.Collections.singletonList;
 
 import javax.annotation.PostConstruct;
@@ -181,6 +182,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
             String logGuid = request.getLogGuid();
             Map<ExtraValueType, Object> extraValues = populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
+            extraValues.put(XML, fluxResponse);
 
             Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
             ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
