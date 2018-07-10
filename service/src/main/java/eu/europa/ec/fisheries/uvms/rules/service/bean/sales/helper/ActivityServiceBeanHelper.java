@@ -1,16 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
@@ -29,6 +19,16 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 @Slf4j
 @Singleton
 public class ActivityServiceBeanHelper {
@@ -43,7 +43,7 @@ public class ActivityServiceBeanHelper {
     private ActivityModuleRequestMapperFacade activityMapper;
 
     protected Optional<FishingTripResponse> receiveMessageFromActivity(String correlationId) throws MessageException, JMSException, SalesMarshallException {
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
         log.debug("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
