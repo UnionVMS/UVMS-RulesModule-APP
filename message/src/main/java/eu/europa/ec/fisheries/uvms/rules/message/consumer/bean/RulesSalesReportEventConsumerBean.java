@@ -38,15 +38,15 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
-        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "1000"),
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "10"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
+        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector = 'ReceiveSalesReportRequest'")
 })
 public class RulesSalesReportEventConsumerBean implements MessageListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesSalesReportEventConsumerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesSalesReportEventConsumerBean.class);
 
     @Inject
     @ReceiveSalesReportEvent
@@ -69,8 +69,7 @@ public class RulesSalesReportEventConsumerBean implements MessageListener {
 
             if (RulesModuleMethod.RECEIVE_SALES_REPORT.equals(method)) {
                 receiveSalesReportEvent.fire(new EventMessage(textMessage));
-            }
-            else {
+            } else {
                 String methodName = (method == null) ? "UNKNOWN" : method.name();
                 LOG.error("[ Request method '{}' is not implemented ]", methodName);
                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + methodName)));

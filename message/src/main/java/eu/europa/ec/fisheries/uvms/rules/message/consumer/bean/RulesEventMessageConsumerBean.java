@@ -44,7 +44,7 @@ import java.util.UUID;
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL"),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1000"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"),
