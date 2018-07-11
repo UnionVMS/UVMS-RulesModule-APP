@@ -13,7 +13,7 @@ public class AssetServiceBeanHelper {
 //    private RulesResponseConsumer messageConsumer;
 //
 //    protected List<Asset> receiveMessageFromAsset(String correlationId) throws MessageException, AssetModelMarshallException {
-//        TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class);
+//        TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
 //        return unmarshal(receivedMessage);
 //    }
 //
