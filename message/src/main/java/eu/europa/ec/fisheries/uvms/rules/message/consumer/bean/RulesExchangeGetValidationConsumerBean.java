@@ -11,15 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
@@ -35,6 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import java.util.UUID;
+
 /**
  * Message driven bean that receives all messages that
  * have no message selector.
@@ -49,7 +49,7 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10")
 })
-public class RulesExchangeGetValidationConumerBean implements MessageListener {
+public class RulesExchangeGetValidationConsumerBean implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(RulesEventMessageConsumerBean.class);
 
@@ -86,14 +86,6 @@ public class RulesExchangeGetValidationConumerBean implements MessageListener {
             errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
         } finally {
             MDC.remove("clientName");
-        }
-    }
-
-    private int getTimesRedelivered(Message message) {
-        try {
-            return (message.getIntProperty("JMSXDeliveryCount") - 1);
-        } catch (Exception e) {
-            return 0;
         }
     }
 

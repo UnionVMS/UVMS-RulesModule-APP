@@ -71,7 +71,7 @@ public class SalesServiceBeanHelper {
         log.info("Send CheckForUniqueIdRequest message to Sales");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 60000L);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 30000L);
         log.info("Received response message");
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
         return !response.isUnique();
