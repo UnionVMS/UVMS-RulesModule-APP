@@ -46,7 +46,7 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector = 'ValidationResultsByRawGuid'"),
         @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1000"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "0"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10")
 })
 public class RulesExchangeGetValidationConumerBean implements MessageListener {
