@@ -5,6 +5,8 @@ import javax.ejb.Singleton;
 
 @Singleton
 public class AssetServiceBeanHelper {
+
+//    public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
 //
 //    @EJB
 //    private RulesMessageProducer messageProducer;
@@ -13,12 +15,12 @@ public class AssetServiceBeanHelper {
 //    private RulesResponseConsumer messageConsumer;
 //
 //    protected List<Asset> receiveMessageFromAsset(String correlationId) throws MessageException, AssetModelMarshallException {
-//        TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
+//        TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
 //        return unmarshal(receivedMessage);
 //    }
 //
 //    protected String sendMessageToAsset(String request) throws MessageException {
-//        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.ASSET);
+//        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.ASSET, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
 //    }
 //
 //    protected List<Asset> unmarshal(TextMessage message) throws AssetModelMarshallException {

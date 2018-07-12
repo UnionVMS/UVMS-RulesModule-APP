@@ -33,6 +33,8 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 @Singleton
 public class ActivityServiceBeanHelper {
 
+    public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
+
     @EJB
     private RulesMessageProducer messageProducer;
 
@@ -43,7 +45,7 @@ public class ActivityServiceBeanHelper {
     private ActivityModuleRequestMapperFacade activityMapper;
 
     protected Optional<FishingTripResponse> receiveMessageFromActivity(String correlationId) throws MessageException, JMSException, SalesMarshallException {
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         log.debug("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
@@ -69,7 +71,7 @@ public class ActivityServiceBeanHelper {
 
         String request = activityMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
         log.debug("Send FishingTripRequest message to Activity");
-        String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY);
+        String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
         return receiveMessageFromActivity(correlationId);
     }
 }

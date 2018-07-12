@@ -29,13 +29,13 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 public class SalesServiceBeanHelperTest {
 
     @InjectMocks
-    SalesServiceBeanHelper helper;
+    private SalesServiceBeanHelper helper;
 
     @Mock
-    RulesMessageProducer producer;
+    private RulesMessageProducer producer;
 
     @Mock
-    RulesResponseConsumer consumer;
+    private RulesResponseConsumer consumer;
 
     @Test
     public void receiveMessageFromSales() throws Exception {
@@ -63,11 +63,11 @@ public class SalesServiceBeanHelperTest {
 
     @Test
     public void sendMessageToSales() throws Exception {
-        when(producer.sendDataSourceMessage("request", DataSourceQueue.SALES)).thenReturn("");
+        when(producer.sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L)).thenReturn("");
 
         helper.sendMessageToSales("request");
 
-        verify(producer).sendDataSourceMessage("request", DataSourceQueue.SALES);
+        verify(producer).sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L);
         verifyNoMoreInteractions(producer, consumer);
     }
 
@@ -85,16 +85,15 @@ public class SalesServiceBeanHelperTest {
     }
 
     @Test
-    public void findReportWheSuccess() throws Exception {
+    public void findReportWhenSuccess() throws Exception {
         FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
-        Optional<FLUXSalesReportMessage> fluxSalesReportMessageOptional = Optional.absent();
 
         TextMessage mockTextMessage = mock(TextMessage.class);
         mockStatic(SalesModuleRequestMapper.class, JAXBMarshaller.class);
         doReturn("FindReportByIdResponse").when(mockTextMessage).getText();
         doReturn(mockTextMessage).when(consumer).getMessage("correlationId", TextMessage.class, 30000L);
         when(SalesModuleRequestMapper.createFindReportByIdRequest("guid")).thenReturn("FindReportByIdRequest");
-        when(producer.sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES)).thenReturn("correlationId");
+        when(producer.sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L)).thenReturn("correlationId");
         when(JAXBMarshaller.unmarshallString("unmarshall this message content", FLUXSalesReportMessage.class))
                 .thenReturn(fluxSalesReportMessage);
         when(JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class))
@@ -104,7 +103,7 @@ public class SalesServiceBeanHelperTest {
 
         verify(mockTextMessage).getText();
         verify(consumer).getMessage("correlationId", TextMessage.class, 30000L);
-        verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES);
+        verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L);
 
         verifyStatic();
         JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class);
