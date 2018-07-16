@@ -3365,7 +3365,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="266"/>
             <column name="br_id" value="FA-L02-00-0266"/>
-            <column name="expression" value="isEmpty(relatedFLUXLocations)"/>
+            <column name="expression" value="!subActivity &amp;&amp;  isEmpty(relatedFLUXLocations)"/>
             <column name="note" value="At least one related FLUX location must be present"/>
             <column name="message" value="Location missing."/>
             <column name="level" value="L02"/>
@@ -3379,7 +3379,7 @@
             <column name="rule_id" value="267"/>
             <column name="br_id" value="FA-L02-00-0267"/>
             <column name="expression"
-                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; allValueContainsMatch(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(relatedFLUXLocations) &amp;&amp; allValueContainsMatch(relatedFLUXLocationTypeCodes, &quot;POSITION&quot;)"/>
             <column name="note" value="RelatedFLUXLocation TypeCode's listID must be POSITION"/>
             <column name="message" value="Location TypeCode value is invalid."/>
             <column name="level" value="L02"/>
@@ -3393,7 +3393,7 @@
             <column name="rule_id" value="268"/>
             <column name="br_id" value="FA-L02-00-0268"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeans)"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeans)"/>
             <column name="note" value="RelatedVesselTransportMeans must be present if FACatch SpeciesCode is BFT"/>
             <column name="message"
                     value="Vessel information of the related vessel(s) is missing for thisrelocation operation."/>
@@ -3408,7 +3408,7 @@
             <column name="rule_id" value="269"/>
             <column name="br_id" value="FA-L02-00-0269"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
                            isEmpty(destinationVesselStorageCharacteristicTypeCodes)"/>
             <column name="note"
                     value="DestinationVesselStorageCharacteristic's TypeCode must be present if SpecifiedFACAtch's TypeCode is UNLOADED and SpeciesCode is BFT"/>
@@ -3424,7 +3424,7 @@
             <column name="rule_id" value="270"/>
             <column name="br_id" value="FA-L02-00-0270"/>
             <column name="expression"
-                    value="!isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp;
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp;
                            schemeIdContainsAny(relatedVesselTransportMeansIDs, &quot;ICCAT&quot;)"/>
             <column name="note"
                     value="RelatedVesselTransportMeans ID's schemeId must be ICCAT if SpecifiedFACatch's SpeciesCode is BFT"/>
@@ -3440,7 +3440,7 @@
             <column name="rule_id" value="271"/>
             <column name="br_id" value="FA-L02-00-0271"/>
             <column name="expression"
-                    value="!isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
             <column name="note"
                     value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
             <column name="message" value="ID of the related vessel is invalid."/>
@@ -3455,7 +3455,7 @@
             <column name="rule_id" value="273"/>
             <column name="br_id" value="FA-L02-00-0273"/>
             <column name="expression"
-                    value="!isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp;
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp;
                            valueContainsAny(relatedVesselTransportMeansRoleCodes, &quot;RECEIVER&quot;)"/>
             <column name="note"
                     value="RelatedVesselTransportMeans RoleCode must be RECEIVER if present and if SpecifiedFACatch's TypeCode is UNLOADED"/>
@@ -3471,7 +3471,7 @@
             <column name="rule_id" value="274"/>
             <column name="br_id" value="FA-L02-00-0274"/>
             <column name="expression"
-                    value="!isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;) &amp;&amp;
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;) &amp;&amp;
                            valueContainsAny(relatedVesselTransportMeansRoleCodes, &quot;DONOR&quot;)"/>
             <column name="note"
                     value="RelatedVesselTransportMeans RoleCode must be DONOR if present and if SpecifiedFACatch's TypeCode is LOADED"/>
@@ -3487,7 +3487,7 @@
             <column name="rule_id" value="275"/>
             <column name="br_id" value="FA-L02-00-0275"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;)
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeans) &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;)
                           &amp;&amp; isEmpty(destinationFLUXLocations)"/>
             <column name="note"
                     value="DestinationFluxLocation must be present if SpeciesCode is BFT and RelatedTransportMeans is present and SpecifiedFACatch's TypeCode is UNLOADED"/>
@@ -3503,7 +3503,7 @@
             <column name="rule_id" value="276"/>
             <column name="br_id" value="FA-L02-00-0276"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
+                    value="!subActivity &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
                                               valueContainsAny(specifiedFACatchDestinationFluxLocationTypeCodes, &quot;LOCATION&quot;)"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation TypeCode's value must be LOCATION if SpecifiedFACatch is provided and it's SpeciesCode is BFT"/>
@@ -3519,7 +3519,7 @@
             <column name="rule_id" value="277"/>
             <column name="br_id" value="FA-L02-00-0277"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) ||
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) ||
                            !mdrService.isPresentInMDRList(&quot;FARM&quot;, getValueForSchemeId(&quot;FARM&quot;, specifiedFACatchDestinationFluxLocationIDs), creationDateOfMessage))"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation ID's schemeId must be FARM and it's value must be in the MDR list if SpecifiedFACatch's SpeciesCode is BFT"/>
@@ -3535,7 +3535,7 @@
             <column name="rule_id" value="430"/>
             <column name="br_id" value="FA-L02-00-0430"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(faReportDocumentRelatedReportIds)"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(faReportDocumentRelatedReportIds)"/>
             <column name="note"
                     value="FAReportDocument's RelatedReportID must be present if SpecifiedFACatch's SpeciesCode is BFT"/>
             <column name="message" value="FRelated report ID of the JFO catches is missing."/>
@@ -3550,7 +3550,7 @@
             <column name="rule_id" value="442"/>
             <column name="br_id" value="FA-L02-00-0442"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeansNames)"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeansNames)"/>
             <column name="note"
                     value="RelatedVesselTransportMeans Name must be present if SpecifiedFACatch's SpeciesCode is BFT"/>
             <column name="message" value="The name of the vessel participating to this relocation/transfer is missing."/>
@@ -3565,7 +3565,7 @@
             <column name="rule_id" value="443"/>
             <column name="br_id" value="FA-L02-00-0443"/>
             <column name="expression"
-                    value="valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
+                    value="!subActivity &amp;&amp; valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
             <column name="note" value="SpecifiedFACatch TypeCode must be LOADED or UNLOADED"/>
             <column name="message" value="Catch TypeCode values LOADED or UNLOADED missing."/>
             <column name="level" value="L02"/>
@@ -3579,7 +3579,7 @@
             <column name="rule_id" value="446"/>
             <column name="br_id" value="FA-L02-00-0446"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeansContactPartyRoleCodes)"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeansContactPartyRoleCodes)"/>
             <column name="note"
                     value="RelatedVesselTransportMeans ContactParty's RoleCode must be present if SpecifiedFACatch's SpeciesCode is BFT"/>
             <column name="message" value="The RoleCode of the related vessel is missing."/>
@@ -3610,7 +3610,7 @@
             <column name="rule_id" value="447"/>
             <column name="br_id" value="FA-L02-00-0447"/>
             <column name="expression"
-                    value="!valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeansContactPartyRoleCodes) &amp;&amp;
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(relatedVesselTransportMeansContactPartyRoleCodes) &amp;&amp;
                            (listIdNotContains(relatedVesselTransportMeansContactPartyRoleCodes, &quot;FLUX_CONTACT_ROLE&quot;) || valueContainsAny(relatedVesselTransportMeansContactPartyRoleCodes, &quot;MASTER&quot;))"/>
             <column name="note"
                     value="RelatedVesselTransportMeans ContactParty RoleCode's listId must be FLUX_CONTACT_ROLE and its value must be MASTER if SpecifiedFACatch's SpeciesCode is BFT"/>

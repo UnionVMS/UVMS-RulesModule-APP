@@ -136,7 +136,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.enums.EnumUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
@@ -1404,7 +1403,7 @@ public class ActivityFactMapper {
         return fishingActivityTypeCodes;
     }
 
-    public FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity, FAReportDocument faReportDocument, boolean isSubActivity) {
         if (fishingActivity == null) {
             xPathUtil.clear();
             return null;
@@ -1412,6 +1411,7 @@ public class ActivityFactMapper {
 
         final String partialXpath = xPathUtil.getValue();
         FaRelocationFact faRelocationFact = new FaRelocationFact();
+        faRelocationFact.setSubActivity(isSubActivity);
 
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
             List<CodeType> typeCodes = new ArrayList<>();
