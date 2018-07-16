@@ -3005,7 +3005,8 @@
             <column name="br_id" value="FA-L03-00-0241"/>
             <column name="expression"
                     value="codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp;
-                    (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.DEPARTURE))"/>
+                    (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.DEPARTURE) ||
+                    containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.DEPARTURE))"/>
             <column name="note"
                     value="If departure declaration (FA-L02-00-0233). This does not apply for corrections."/>
             <column name="message" value="More than one departure was found for this trip."/>
@@ -3040,7 +3041,7 @@
             <column name="br_id" value="FA-L02-00-0248"/>
             <column name="expression"
                     value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
-                          (codeTypeValueEquals(reasonCode, &quot;TRZ&quot;) || codeTypeValueEquals(reasonCode, &quot;FSH&quot;)) &amp;&amp; speciesTargetCode == null"/>
+                          (codeTypeValueEquals(reasonCode, &quot;TRZ&quot;) || codeTypeValueEquals(reasonCode, &quot;FIS&quot;)) &amp;&amp; speciesTargetCode == null"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -3083,7 +3084,7 @@
             <column name="rule_id" value="251"/>
             <column name="br_id" value="FA-L02-00-0251"/>
             <column name="expression"
-                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; !valid(relatedFLUXLocations)"/>
+                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; !fluxLocationIDIsValid(relatedFLUXLocations)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
@@ -3096,7 +3097,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="252"/>
             <column name="br_id" value="FA-L02-00-0252"/>
-            <column name="expression" value="!isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(faReportDocumentTypeCode, &quot;DECLARATION&quot;, &quot;AREA_ENTRY&quot;, &quot;NOTIFICATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+            <column name="expression" value="!isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(faReportDocumentTypeCode, &quot;DECLARATION&quot;, &quot;NOTIFICATION&quot;) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
@@ -3987,7 +3988,8 @@
             <column name="br_id" value="FA-L03-00-0306"/>
             <column name="expression"
                     value="codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp;
-            (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.ARRIVAL))"/>
+            (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.ARRIVAL) ||
+                    containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL))"/>
             <column name="note" value="This rule does not apply for corrections."/>
             <column name="message" value="There can only be one arrival declaration in the trip."/>
             <column name="level" value="L03"/>
@@ -5389,7 +5391,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="171"/>
             <column name="br_id" value="FA-L00-00-0171"/>
-            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot; || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;)))"/>
+            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;)
+            || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp;
+            listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))"/>
             <column name="note" value="Check presence. At least one occurrence with listID = FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
             <column name="message" value="At least presentation (and for landing and transhipment as well preservation) of the fish must be provided."/>
             <column name="level" value="L00"/>
