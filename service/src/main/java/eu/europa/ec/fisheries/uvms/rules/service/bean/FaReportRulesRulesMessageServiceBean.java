@@ -132,7 +132,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
-            rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsListFromDb);
+            rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
 
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);

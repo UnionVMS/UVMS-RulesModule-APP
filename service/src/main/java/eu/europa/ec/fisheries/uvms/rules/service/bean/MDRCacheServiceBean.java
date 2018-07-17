@@ -265,7 +265,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (!(StringUtils.isBlank(country) || StringUtils.isBlank(presentation) || StringUtils.isBlank(state))) {
             List<ObjectRepresentation> entry = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
             List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(entry, "placesCode", country);
-            List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "species", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+            List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "code", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
             List<ObjectRepresentation> filtered_3_list = filterEntriesByColumn(filtered_2_list, "presentation", presentation);
             finalList = filterEntriesByColumn(filtered_3_list, "state", state);
         }
