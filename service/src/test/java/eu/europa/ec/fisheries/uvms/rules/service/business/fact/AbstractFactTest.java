@@ -836,7 +836,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckContactListContainsAnyWithNull() {
 
-        assertTrue(fact.checkContactListContainsAny(null, true, true));
+        assertFalse(fact.checkContactListContainsAny(null, true, true));
     }
 
     @Test
