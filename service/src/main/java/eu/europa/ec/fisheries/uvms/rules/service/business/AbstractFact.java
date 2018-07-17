@@ -269,7 +269,7 @@ public abstract class AbstractFact {
      */
     public boolean checkContactListContainsAny(List<ContactPerson> contactPersons, boolean checkEmptyness, boolean isGivenName) {
         if (CollectionUtils.isEmpty(contactPersons)) {
-            return true;
+            return false;
         }
         for (ContactPerson contPers : contactPersons) {
             TextType givenName = contPers.getGivenName();
