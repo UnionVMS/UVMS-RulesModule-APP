@@ -930,8 +930,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="72"/>
             <column name="br_id" value="FA-L00-00-0072"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkContactListContainsAny(specifiedContactPersons, false, true)"/>
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, false, true)"/>
             <column name="note" value="Check presence. Must be present if AliasText is not present."/>
             <column name="message" value="Given name of the contact missing as no contact alias is provided."/>
             <column name="level" value="L00"/>
@@ -945,7 +944,7 @@
             <column name="rule_id" value="73"/>
             <column name="br_id" value="FA-L01-00-0073"/>
             <column name="expression"
-                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkContactListContainsAny(specifiedContactPersons, true, true)"/>
+                    value="checkContactListContainsAny(specifiedContactPersons, true, true)"/>
             <column name="note" value="Alias or GivenName text must not be empty if present."/>
             <column name="message" value="The given name cannot be empty."/>
             <column name="level" value="L01"/>
@@ -958,8 +957,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="74"/>
             <column name="br_id" value="FA-L00-00-0074"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkContactListContainsAny(specifiedContactPersons, false, false)"/>
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, false, false)"/>
             <column name="note" value="FamilyName must be present if Alias is not present."/>
             <column name="message" value="Family name of the contact missing as no contact alias is provided."/>
             <column name="level" value="L00"/>
@@ -973,7 +971,7 @@
             <column name="rule_id" value="75"/>
             <column name="br_id" value="FA-L01-00-0075"/>
             <column name="expression"
-                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkContactListContainsAny(specifiedContactPersons, true, false)"/>
+                    value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
             <column name="note" value="Check familyName not empty."/>
             <column name="message" value="The family name cannot be empty."/>
             <column name="level" value="L01"/>
@@ -987,7 +985,7 @@
             <column name="rule_id" value="76"/>
             <column name="br_id" value="FA-L00-00-0076"/>
             <column name="expression"
-                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkAliasFromContactList(specifiedContactPersons, false)"/>
+                    value="checkAliasFromContactList(specifiedContactPersons, false)"/>
             <column name="note" value="Check presence. Must be present if GivenNameText or FamilyNameText is not present."/>
             <column name="message" value="Contact alias missing as either given or family name are missing."/>
             <column name="level" value="L00"/>
