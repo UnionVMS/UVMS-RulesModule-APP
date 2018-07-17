@@ -1284,7 +1284,12 @@ public class ActivityFactMapper {
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).storeInRepo(faFishingOperationFact, "relatedFishingActivities");
                 int activityIndex = 1;
                 for (FishingActivity activity : relatedFishingActivities) {
-                    faFishingOperationFact.setFishingGearRoleCodes(getFishingGearRoleCodes(activity.getSpecifiedFishingGears()));
+                    List<CodeType> fishingGearRoleCodes1 = getFishingGearRoleCodes(activity.getSpecifiedFishingGears());
+                    List<CodeType> fishingGearRoleCodes = faFishingOperationFact.getFishingGearRoleCodes();
+                    if (CollectionUtils.isNotEmpty(fishingGearRoleCodes)){
+                        fishingGearRoleCodes.addAll(fishingGearRoleCodes1);
+                    }
+                    faFishingOperationFact.setFishingGearRoleCodes(fishingGearRoleCodes);
                     xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).appendWithIndex(VESSEL_RELATED_ACTIVITY_CODE, activityIndex)
                             .storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
                 }
