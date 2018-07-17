@@ -49,20 +49,20 @@ public class FaEntryToSeaFact extends AbstractFact {
         this.factType = FactType.FA_ENTRY_TO_SEA;
     }
 
-    public boolean valid(List<FLUXLocation> relatedFLUXLocations){
-        if (CollectionUtils.isEmpty(relatedFLUXLocations)){
-            return false;
+    public boolean fluxLocationIDIsValid(List<FLUXLocation> relatedFLUXLocations){
+        if (CollectionUtils.isEmpty(relatedFLUXLocations) || faReportDocumentTypeCode == null){
+            return true;
         }
-        if (faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
+        if ("DECLARATION".equals(faReportDocumentTypeCode.getValue())) {
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
                 if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
                     IDType idType = fluxLocation.getID();
-                    if (idType != null && "EFFORT_ZONE".equals(idType.getSchemeID())) {
-                        return true;
+                    if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 }

@@ -60,6 +60,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class AbstractFactTest {
 
@@ -531,6 +532,9 @@ public class AbstractFactTest {
         List<ContactPerson> contactPeople = new ArrayList<>();
 
         ContactPerson contactPerson = new ContactPerson();
+        TextType givenName = new TextType();
+        givenName.setValue("");
+        contactPerson.setGivenName(givenName);
         contactPeople.add(contactPerson);
 
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
@@ -832,7 +836,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckContactListContainsAnyWithNull() {
 
-        assertTrue(fact.checkContactListContainsAny(null, true, true));
+        assertFalse(fact.checkContactListContainsAny(null, true, true));
     }
 
     @Test

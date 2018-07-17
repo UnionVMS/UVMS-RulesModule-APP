@@ -13,12 +13,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
@@ -113,5 +111,39 @@ public class FAReportDocumentFactTest {
         FishingActivity departure1 = objectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
         assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+    }
+
+    @Test
+    public void containsMoreThenOneTimeTripInTheMessageItselfHappy(){
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        HashMap<FishingActivityType, List<String>> faMap = new HashMap<>();
+        faMap.put(FishingActivityType.DEPARTURE, new ArrayList<String>(){{add("ID_1");add("ID_2");}});
+        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
+
+        boolean shouldntFail = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.DEPARTURE);
+        assertFalse(shouldntFail);
+
+        faMap.put(FishingActivityType.ARRIVAL, new ArrayList<String>(){{add("ID_1");add("ID_2");}});
+        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
+
+        boolean shouldntFail1 = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL);
+        assertFalse(shouldntFail1);
+    }
+
+    @Test
+    public void containsMoreThenOneTimeTripInTheMessageItselfSad(){
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        HashMap<FishingActivityType, List<String>> faMap = new HashMap<>();
+        faMap.put(FishingActivityType.DEPARTURE, new ArrayList<String>(){{add("ID_1");add("ID_1");}});
+        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
+
+        boolean shouldFail = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.DEPARTURE);
+        assertTrue(shouldFail);
+
+        faMap.put(FishingActivityType.ARRIVAL, new ArrayList<String>(){{add("ID_1");add("ID_1");}});
+        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
+
+        boolean shouldfail1 = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL);
+        assertTrue(shouldfail1);
     }
 }

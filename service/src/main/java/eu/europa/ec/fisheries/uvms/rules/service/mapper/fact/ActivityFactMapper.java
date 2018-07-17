@@ -93,11 +93,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -134,6 +130,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddress
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselStorageCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -365,14 +362,46 @@ public class ActivityFactMapper {
         }
         int index = 1;
         List<FaReportDocumentFact> list = new ArrayList<>();
+        Map<FishingActivityType, List<String>> tripsPerFaTypeFromMessage = collectTripsPerFaTypeFromMessage(faReportDocuments);
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
             faReportDocumentFact.setCreationDateOfMessage(extractCreationDateTime(fAReportDocument.getRelatedFLUXReportDocument()));
+            faReportDocumentFact.setTripsPerFaTypeFromMessage(tripsPerFaTypeFromMessage);
             list.add(faReportDocumentFact);
             index++;
         }
         return list;
+    }
+
+    private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
+        HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<FishingActivityType, List<String>>(){{
+            put(FishingActivityType.ARRIVAL, new ArrayList<String>());
+            put(FishingActivityType.DEPARTURE, new ArrayList<String>());
+        }};
+        if(CollectionUtils.isEmpty(faReportDocuments)){
+            return tripsPerFaTypeFromFasInReports;
+        }
+        for (FAReportDocument faReportDocument : faReportDocuments) {
+            if(CollectionUtils.isNotEmpty(faReportDocument.getSpecifiedFishingActivities())){
+                for (FishingActivity fishingActivity : faReportDocument.getSpecifiedFishingActivities()) {
+                    FishingActivityType activityType = fetchActivityType(fishingActivity.getTypeCode());
+                    FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
+                    if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) &&
+                            (FishingActivityType.DEPARTURE.equals(activityType) || FishingActivityType.ARRIVAL.equals(activityType))){
+                        tripsPerFaTypeFromFasInReports.get(activityType).add(specifiedFishingTrip.getIDS().get(0).getValue());
+                    }
+                }
+            }
+        }
+        return tripsPerFaTypeFromFasInReports;
+    }
+
+    private FishingActivityType fetchActivityType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode) {
+        if(typeCode != null && StringUtils.isNotEmpty(typeCode.getValue())){
+            return FishingActivityType.valueOf(typeCode.getValue());
+        }
+        return null;
     }
 
     public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity) {
@@ -1374,7 +1403,7 @@ public class ActivityFactMapper {
         return fishingActivityTypeCodes;
     }
 
-    public FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public FaRelocationFact generateFactsForRelocation(FishingActivity fishingActivity, FAReportDocument faReportDocument, boolean isSubActivity) {
         if (fishingActivity == null) {
             xPathUtil.clear();
             return null;
@@ -1382,6 +1411,7 @@ public class ActivityFactMapper {
 
         final String partialXpath = xPathUtil.getValue();
         FaRelocationFact faRelocationFact = new FaRelocationFact();
+        faRelocationFact.setSubActivity(isSubActivity);
 
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
             List<CodeType> typeCodes = new ArrayList<>();
