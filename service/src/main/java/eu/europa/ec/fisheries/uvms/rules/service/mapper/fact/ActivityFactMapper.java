@@ -1993,86 +1993,65 @@ public class ActivityFactMapper {
         return strList;
     }
 
-    private eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType) {
+    public eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType mapToCodeType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType) {
         if (codeType == null) {
             return null;
         }
 
-        boolean notBlankListID = StringUtils.isNotBlank(codeType.getListID());
         boolean notBlankValue = StringUtils.isNotBlank(codeType.getValue());
 
-        if (notBlankListID || notBlankValue){
+        if (notBlankValue){
             eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType1 = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
-            if (notBlankListID){
-                codeType1.setListId(codeType.getListID());
-            }
-            if (notBlankValue){
-                codeType1.setValue(codeType.getValue());
-            }
+            codeType1.setListId(codeType.getListID());
+            codeType1.setValue(codeType.getValue());
             return codeType1;
         }
         return null;
     }
 
-    private MeasureType mapToMeasureType(QuantityType quantityType) {
+    public MeasureType mapToMeasureType(QuantityType quantityType) {
         if (quantityType == null) {
             return null;
         }
 
-        boolean notBlankUnitCode = StringUtils.isNotBlank(quantityType.getUnitCode());
         boolean notNullValue = quantityType.getValue() != null;
-        if (notBlankUnitCode || notNullValue){
+        if (notNullValue){
             MeasureType measureType1 = new MeasureType();
-
-            if (notBlankUnitCode){
-                measureType1.setUnitCode(quantityType.getUnitCode());
-            }
-            if (notNullValue){
-                measureType1.setValue(quantityType.getValue());
-            }
+            measureType1.setUnitCode(quantityType.getUnitCode());
+            measureType1.setValue(quantityType.getValue());
             return measureType1;
         }
         return null;
     }
 
-    private MeasureType mapToMeasureType(un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType measureType) {
+    public MeasureType mapToMeasureType(un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType measureType) {
         if (measureType == null) {
             return null;
         }
 
         boolean notNullValue = measureType.getValue() != null;
-        boolean notBlankUnitCode = StringUtils.isNotBlank(measureType.getUnitCode());
 
-        if (notBlankUnitCode || notNullValue) {
+        if (notNullValue) {
             MeasureType measureType1 = new MeasureType();
-
-            if (notBlankUnitCode){
-                measureType1.setUnitCode(measureType.getUnitCode());
-            }
-            if (notNullValue){
-                measureType1.setValue(measureType.getValue());
-            }
+            measureType1.setUnitCode(measureType.getUnitCode());
+            measureType1.setValue(measureType.getValue());
             return measureType1;
         }
         return null;
     }
 
-    private IdType mapToIdType(IDType idType) {
+    public IdType mapToIdType(IDType idType) {
         if (idType == null) {
             return null;
         }
 
-        boolean notBlankSchemeID = StringUtils.isNotBlank(idType.getSchemeID());
         boolean notBlankValue = StringUtils.isNotBlank(idType.getValue());
 
-        if(notBlankSchemeID || notBlankValue){
+        if (notBlankValue){
             IdType idType1 = new IdType();
-            if (notBlankSchemeID){
-                idType1.setSchemeId(idType.getSchemeID());
-            }
-            if (notBlankValue){
-                idType1.setValue(idType.getValue());
-            }
+            idType1.setSchemeId(idType.getSchemeID());
+            idType1.setValue(idType.getValue());
+
             return idType1;
         }
         return null;
