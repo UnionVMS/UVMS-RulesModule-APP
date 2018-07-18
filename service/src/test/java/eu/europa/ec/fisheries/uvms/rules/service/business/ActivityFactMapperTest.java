@@ -376,6 +376,63 @@ public class ActivityFactMapperTest {
     }
 
     @Test
+    public void testMapToMeasureTypeWithEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        MeasureType measureType = ActivityObjectsHelper.generateMeasureType("code", null);
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType measureType1 = activityFactMapper.mapToMeasureType(measureType);
+        assertNull(measureType1);
+    }
+
+    @Test
+    public void testMapToMeasureTypeWithNonEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        MeasureType measureType = ActivityObjectsHelper.generateMeasureType("code", new BigDecimal("1"));
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType measureType1 = activityFactMapper.mapToMeasureType(measureType);
+        assertNotNull(measureType1);
+    }
+
+    @Test
+    public void testMapToMeasureTypeWithEmptySchemeID(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        MeasureType measureType = ActivityObjectsHelper.generateMeasureType(null, new BigDecimal("1"));
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType measureType1 = activityFactMapper.mapToMeasureType(measureType);
+        assertNotNull(measureType1);
+    }
+
+    @Test
+    public void testMapToCodeTypeWithEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        CodeType codeType = ActivityObjectsHelper.generateCodeTypeModel(null, "listID");
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType1 = activityFactMapper.mapToCodeType(codeType);
+        assertNull(codeType1);
+    }
+
+    @Test
+    public void testMapToCodeTypeWithNonEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        CodeType codeType = ActivityObjectsHelper.generateCodeTypeModel("someValue", null);
+        eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType1 = activityFactMapper.mapToCodeType(codeType);
+        assertNotNull(codeType1);
+    }
+
+    @Test
+    public void testMapToIDTypeWithNonEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        IDType idType = ActivityObjectsHelper.generateIDTypeModel("someValue", null);
+        IdType idType1 = activityFactMapper.mapToIdType(idType);
+        assertNotNull(idType1);
+    }
+
+    @Test
+    public void testMapToIDTypeWithEmptyValue(){
+        ActivityFactMapper activityFactMapper = new ActivityFactMapper();
+        IDType idType = ActivityObjectsHelper.generateIDTypeModel( null, null);
+        IdType idType1 = activityFactMapper.mapToIdType(idType);
+        assertNull(idType1);
+    }
+
+
+    @Test
     public void testGenerateFactsForFaLanding() {
 
         FishingActivity fishingActivity = new FishingActivity();
