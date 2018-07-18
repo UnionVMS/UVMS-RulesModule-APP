@@ -219,6 +219,34 @@ public class FishingActivityTemplateTest {
     }
 
     @Test
+    public void testisAllowedToHaveSubactivitiesPass(){
+        FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
+        assertTrue(actFact.isAllowedToHaveSubactivities());
+    }
+
+    @Test
+    public void testisAllowedToHaveSubactivitiesPass2(){
+        FishingActivity fishingActivity = objectsHelper.generateActivity(null, "FISHING_OPERATION");
+        FishingActivity subActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        subActivity.setTypeCode(new CodeType("type","scheme","","","","","","","",""));
+        fishingActivity.getRelatedFishingActivities().add(subActivity);
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
+        actFact.setFaReportDocumentTypeCode(new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType("DECLARATION","scheme"));
+        assertTrue(actFact.isAllowedToHaveSubactivities());
+    }
+
+    @Test
+    public void testisAllowedToHaveSubactivitiesFail(){
+        FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        FishingActivity subActivity = objectsHelper.generateActivity(null, "DEPARTURE");
+        subActivity.setTypeCode(new CodeType("type","scheme","","","","","","","",""));
+        fishingActivity.getRelatedFishingActivities().add(subActivity);
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);
+        assertFalse(actFact.isAllowedToHaveSubactivities());
+    }
+
+    @Test
     public void testRffmoProvidedShouldPass(){
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
         FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, "", false);

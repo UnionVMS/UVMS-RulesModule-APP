@@ -81,7 +81,6 @@ public class HealthResource {
     }
 
     private boolean isMdrCacheLoaded() {
-        long size = mdrCache.getCache().size();
-        return size > 10;
+        return mdrCache.isMdrCacheLoaded();
     }
 }

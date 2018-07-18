@@ -813,10 +813,10 @@ public class ActivityFactMapper {
         }
 
         List<FACatch> faCatches = activity.getSpecifiedFACatches();
-        List<FLUXLocation> relatedFLUXLocations = activity.getRelatedFLUXLocations();
+        List<FLUXLocation> fishActRelatedFluxLocations = activity.getRelatedFLUXLocations();
         List<FaCatchFact> facts = new ArrayList<>();
 
-        if (CollectionUtils.isEmpty(faCatches) && relatedFLUXLocations == null) {
+        if (CollectionUtils.isEmpty(faCatches) && fishActRelatedFluxLocations == null) {
             xPathUtil.clear();
             return emptyList();
         }
@@ -895,15 +895,19 @@ public class ActivityFactMapper {
 
                 if (faCatch.getSpecifiedFLUXLocations() != null) {
                     faCatchFact.setFaCatchFluxLocationId(mapFLUXLocationIDs(faCatch.getSpecifiedFLUXLocations()));
-                    xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "faCatchFluxLocationId");
                 }
+                xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "faCatchFluxLocationId");
 
+                if(CollectionUtils.isNotEmpty(fishActRelatedFluxLocations)){
+                    faCatchFact.setFishActRelatedFluxLocationIds(mapFLUXLocationIDs(fishActRelatedFluxLocations));
+                }
+                xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fishActRelatedFluxLocationIds");
 
                 faCatchFact.setSpecifiedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(faCatch.getSpecifiedFLUXLocations()));
                 xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(faCatchFact, "specifiedFluxLocationRFMOCodeList");
 
-                if (relatedFLUXLocations != null) {
-                    faCatchFact.setFluxLocationId(mapFLUXLocationIDs(relatedFLUXLocations));
+                if (fishActRelatedFluxLocations != null) {
+                    faCatchFact.setFluxLocationId(mapFLUXLocationIDs(fishActRelatedFluxLocations));
                     xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
                 }
 
