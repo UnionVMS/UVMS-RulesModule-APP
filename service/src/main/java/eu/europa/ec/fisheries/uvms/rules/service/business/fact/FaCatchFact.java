@@ -51,6 +51,7 @@ public class FaCatchFact extends AbstractFact {
     private List<AAPProcess> appliedAAPProcess;
     private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
+    private List<IdType> fishActRelatedFluxLocationIds;
     private boolean isSubActivity = false;
 
     public FaCatchFact() {

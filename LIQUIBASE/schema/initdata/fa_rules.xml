@@ -2168,9 +2168,9 @@
             <column name="rule_id" value="411"/>
             <column name="br_id" value="FA-L02-00-0411"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; speciesCode != null  &amp;&amp; unitQuantity == null &amp;&amp; fishingActivityTypeCode != null &amp;&amp;
-                    (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null
-                    &amp;&amp; speciesCode.value == &quot;SWO&quot; &amp;&amp; schemeIdContainsAny(fluxLocationId, &quot;GFCM_GSA&quot;)) "/>
+                    value="!subActivity &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
+                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp;
+                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) "/>
             <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Swordfish in GFCM.
@@ -2345,9 +2345,9 @@
             <column name="rule_id" value="186"/>
             <column name="br_id" value="FA-L02-00-0186"/>
             <column name="expression"
-                    value="speciesCode != null &amp;&amp; fishingActivityTypeCode != null &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; ||
-                           fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; speciesCode.value != null &amp;&amp; speciesCode.value == &quot;BFT&quot; &amp;&amp;
-                           !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;) "/>
+                    value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp;
+                          (codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;)) &amp;&amp;
+                          codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;GFCM_GSA&quot;)"/>
             <column name="note"
                     value="Units (number of fish) must be provided for landings/ transhipments of Bluefin tuna from GFCM area"/>
             <column name="message"
@@ -3734,7 +3734,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="289"/>
             <column name="br_id" value="FA-L02-00-0289"/>
-            <column name="expression" value="valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+            <column name="expression" value="!isEmpty(specifiedFACatchesTypeCodes) &amp;&amp; valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
