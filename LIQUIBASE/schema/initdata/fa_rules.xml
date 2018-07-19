@@ -5450,7 +5450,9 @@
             <column name="rule_id" value="157"/>
             <column name="br_id" value="FA-L02-00-0157"/>
             <column name="expression"
-                    value="fishingActivityTypeCode != null &amp;&amp; speciesCode != null &amp;&amp; unitQuantity == null &amp;&amp; (fishingActivityTypeCode.value != &quot;LANDING&quot; &amp;&amp; fishingActivityTypeCode.value != &quot;TRANSHIPMENT&quot; &amp;&amp; speciesCode.value != null  &amp;&amp; speciesCode.value == &quot;SAL&quot; &amp;&amp; !schemeIdContainsAny(faCatchFluxLocationId, &quot;FAO_AREA&quot;) &amp;&amp; !valueContainsAll(faCatchFluxLocationId,&quot;27.3.d&quot;)) "/>
+                    value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
+                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SAL&quot;) &amp;&amp;
+                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;FAO_AREA&quot;) &amp;&amp; containsAtLeastOneFaoAreaWithValidValue(fishActRelatedFluxLocationIds)"/>
             <column name="note" value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
