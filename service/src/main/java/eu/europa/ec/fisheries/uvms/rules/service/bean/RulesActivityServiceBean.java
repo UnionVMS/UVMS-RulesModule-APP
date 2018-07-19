@@ -76,7 +76,7 @@ public class RulesActivityServiceBean {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             log.debug("Send MapToSubscriptionRequest to Activity");
             String jmsCorrelationId = producer.sendDataSourceMessage(requestStr, DataSourceQueue.ACTIVITY);
-            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class, 20000L);
+            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class, 240000L);
             log.debug("Received response message");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
