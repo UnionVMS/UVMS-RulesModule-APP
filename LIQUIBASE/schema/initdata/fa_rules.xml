@@ -3705,8 +3705,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="287"/>
             <column name="br_id" value="FA-L02-00-0287"/>
-            <column name="expression" value="isEmpty(relatedFluxLocationTypeCodes) &amp;&amp;
-                                             (valueContainsAny(relatedFluxLocationTypeCodes,&quot;POSITION&quot;) || valueContainsAny(relatedFluxLocationTypeCodes,&quot;AREA&quot;))"/>
+            <column name="expression" value="valueContainsAny(relatedFluxLocationTypeCodes,&quot;POSITION&quot;) || valueContainsAny(relatedFluxLocationTypeCodes,&quot;AREA&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
