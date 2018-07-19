@@ -4578,7 +4578,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="357"/>
             <column name="br_id" value="FA-L03-00-0357"/>
-            <column name="expression" value="submittedDateTime != null || dateNotInPast(submittedDateTime, 10)"/>
+            <column name="expression" value="submittedDateTime != null &amp;&amp; dateNotInPast(submittedDateTime, 10)"/>
             <column name="note" value="FA_Query SubmittedDateTime must be in the past."/>
             <column name="message" value="The date/time of sumission if the query must be in the past."/>
             <column name="level" value="L03"/>
