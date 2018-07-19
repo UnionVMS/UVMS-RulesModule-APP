@@ -2974,7 +2974,7 @@
             <column name="rule_id" valueNumeric="239"/>
             <column name="br_id" value="FA-L01-00-0239"/>
             <column name="expression"
-                    value="isEmpty(specifiedFishingGearRoleCodeTypes) || !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;)"/>
+                    value="specifiedFishingGearsArePresent &amp;&amp; (isEmpty(specifiedFishingGearRoleCodeTypes) || !codeTypeValueContainsMatch(specifiedFishingGearRoleCodeTypes, &quot;ONBOARD&quot;))"/>
             <column name="note" value="If departure declaration (FA-L02-00-0233) and If provided"/>
             <column name="message" value="Fishing gear Rolecode is invalid."/>
             <column name="level" value="L01"/>
@@ -3502,7 +3502,7 @@
             <column name="br_id" value="FA-L02-00-0276"/>
             <column name="expression"
                     value="!subActivity &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
-                                              valueContainsAny(specifiedFACatchDestinationFluxLocationTypeCodes, &quot;LOCATION&quot;)"/>
+                            valueContainsAny(specifiedFACatchDestinationFluxLocationTypeCodes, &quot;LOCATION&quot;)"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation TypeCode's value must be LOCATION if SpecifiedFACatch is provided and it's SpeciesCode is BFT"/>
             <column name="message" value="Destination location TypeCode is invalid."/>
@@ -3705,8 +3705,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="287"/>
             <column name="br_id" value="FA-L02-00-0287"/>
-            <column name="expression" value="isEmpty(relatedFluxLocationTypeCodes) &amp;&amp;
-                                             (valueContainsAny(relatedFluxLocationTypeCodes,&quot;POSITION&quot;) || valueContainsAny(relatedFluxLocationTypeCodes,&quot;AREA&quot;))"/>
+            <column name="expression" value="valueContainsAny(relatedFluxLocationTypeCodes,&quot;POSITION&quot;) || valueContainsAny(relatedFluxLocationTypeCodes,&quot;AREA&quot;)"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>

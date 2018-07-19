@@ -398,10 +398,15 @@ public class ActivityFactMapper {
     }
 
     private FishingActivityType fetchActivityType(un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode) {
+        FishingActivityType faType = null;
         if(typeCode != null && StringUtils.isNotEmpty(typeCode.getValue())){
-            return FishingActivityType.valueOf(typeCode.getValue());
+            try {
+                faType = FishingActivityType.valueOf(typeCode.getValue());
+            } catch(IllegalArgumentException ex){
+                log.error(ex.getMessage());
+            }
         }
-        return null;
+        return faType;
     }
 
     public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity) {
@@ -1108,16 +1113,20 @@ public class ActivityFactMapper {
                 faDepartureFact.setRelatedFLUXLocationTypeCodes(codeTypes);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE_PROP).storeInRepo(faDepartureFact, RELATED_FLUX_LOCATIONS_TYPE_CODE_PROP);
             }
-            if (fishingActivity.getSpecifiedFishingGears() != null) {
 
-                List<FishingGear> specifiedFishingGears = fishingActivity.getSpecifiedFishingGears();
-                List<CodeType> roleCodes = new ArrayList<>();
+            List<FishingGear> specifiedFishingGears = fishingActivity.getSpecifiedFishingGears();
+            List<CodeType> roleCodes = new ArrayList<>();
+            if(CollectionUtils.isNotEmpty(specifiedFishingGears)){
                 for (FishingGear fishingGear : specifiedFishingGears) {
                     roleCodes.addAll(mapToCodeTypes(fishingGear.getRoleCodes()));
                 }
-                faDepartureFact.setSpecifiedFishingGearRoleCodeTypes(roleCodes);
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faDepartureFact, "specifiedFishingGearRoleCodeTypes");
+                faDepartureFact.setSpecifiedFishingGearsArePresent(true);
+            } else {
+                faDepartureFact.setSpecifiedFishingGearsArePresent(false);
             }
+            faDepartureFact.setSpecifiedFishingGearRoleCodeTypes(roleCodes);
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR, ROLE_CODE).storeInRepo(faDepartureFact, "specifiedFishingGearRoleCodeTypes");
+
             List<FACatch> specifiedFACatches = fishingActivity.getSpecifiedFACatches();
             if (specifiedFACatches != null) {
                 List<CodeType> codeTypeList = new ArrayList<>();
@@ -1147,7 +1156,6 @@ public class ActivityFactMapper {
 
             faDepartureFact.setOccurrenceDateTime(getDate(fishingActivity.getOccurrenceDateTime()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(OCCURRENCE_DATE_TIME).storeInRepo(faDepartureFact, OCCURRENCE_DATE_TIME_PROP);
-
 
         }
         if (faReportDocument != null) {
