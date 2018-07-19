@@ -57,7 +57,7 @@ public class FaCatchFact extends AbstractFact {
     private boolean isSubActivity = false;
 
     public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){
-        if(CollectionUtils.isNotEmpty(ids)){
+        if(CollectionUtils.isEmpty(ids)){
             return false;
         }
         for (IdType id : ids) {
