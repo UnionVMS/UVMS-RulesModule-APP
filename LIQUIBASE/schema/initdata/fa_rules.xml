@@ -5468,7 +5468,7 @@
             <column name="expression"
                     value="!subActivity &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
                           !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp;
-                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; containsAtLeastOneGfcmGsaWithValidValue(fishActRelatedFluxLocationIds)"/>
+                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; containsAtLeastOneGfcmGsaWithValidValuecontainsAtLeastOneGfcmGsaWithValidValue(fishActRelatedFluxLocationIds)"/>
             <column name="note" value="Units (number of fish) must be provided for Bluefin tuna in GFCM. This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
             <column name="message"
                     value="Units (number of fish) must be provided for Bluefin tuna in GFCM"/>
