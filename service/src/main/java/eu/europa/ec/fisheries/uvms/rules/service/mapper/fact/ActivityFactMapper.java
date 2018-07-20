@@ -416,9 +416,10 @@ public class ActivityFactMapper {
         return faType;
     }
 
-    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity) {
+    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity, un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportType) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         fishingActivityFact.setSubActivity(isSubActivity);
+        fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportType));
 
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedDelimitedPeriods())) {
             fishingActivityFact.setDelimitedPeriod(fishingActivity.getSpecifiedDelimitedPeriods().get(0));

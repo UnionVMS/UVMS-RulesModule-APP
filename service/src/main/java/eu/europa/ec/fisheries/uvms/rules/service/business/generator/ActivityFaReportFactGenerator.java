@@ -186,7 +186,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 }
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFishingActivityFact(specifiedActivity, partialXpath, isSubActivity));
+                facts.add(activityFactMapper.generateFishingActivityFact(specifiedActivity, partialXpath, isSubActivity, faReportDocument.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(specifiedActivity.getRelatedVesselTransportMeans()));
