@@ -93,7 +93,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -123,7 +128,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FluxLocationFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearCharacteristicsFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.GearProblemFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.StructuredAddressFact;
@@ -133,6 +137,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMe
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -177,7 +182,9 @@ public class ActivityFactMapper {
     private static final String FISHING_ACTIVITY_TYPE_CODE = "fishingActivityTypeCode";
     private static final String CREATION_DATE_TIME = "creationDateTime";
 
-    private List<IdTypeWithFlagState> assetList;
+    private List<Asset> assetListCFR;
+    private List<Asset> assetListByICCAT;
+    private List<Asset> assetListByEXTAndIRCSNoCFR;
     private XPathStringWrapper xPathUtil;
     private List<IdType> faReportMessageIds = new ArrayList<>();
     private List<IdType> faRelatedReportIds = new ArrayList<>();
@@ -603,7 +610,9 @@ public class ActivityFactMapper {
         vesselTransportMeansFact.setSpecifiedStructuredAddresses(mapSpecifiedStructuredAddresses(specifiedContactParties));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_STRUCTURED_ADDRESS).storeInRepo(vesselTransportMeansFact, "specifiedStructuredAddresses");
 
-        vesselTransportMeansFact.setAssetList(assetList);
+        vesselTransportMeansFact.setAssetListCFR(assetListCFR);
+        vesselTransportMeansFact.setAssetListByEXTAndIRCSNoCFR(assetListByEXTAndIRCSNoCFR);
+        vesselTransportMeansFact.setAssetListByICCAT(assetListByICCAT);
 
         return vesselTransportMeansFact;
     }
@@ -2841,12 +2850,12 @@ public class ActivityFactMapper {
         this.xPathUtil = xPathUtil1;
     }
 
-    public void setAssetList(List<IdTypeWithFlagState> assetList) {
-        this.assetList = assetList;
+    public void setAssetListCFR(List<Asset> assetListCFR) {
+        this.assetListCFR = assetListCFR;
     }
 
-    public List<IdTypeWithFlagState> getAssetList() {
-        return assetList;
+    public List<Asset> getAssetListCFR() {
+        return assetListCFR;
     }
 
     public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
@@ -2867,6 +2876,22 @@ public class ActivityFactMapper {
 
     public List<IdType> getFaQueryIds() {
         return faQueryIds;
+    }
+
+    public List<Asset> getAssetListByICCAT() {
+        return assetListByICCAT;
+    }
+
+    public void setAssetListByICCAT(List<Asset> assetListByICCAT) {
+        this.assetListByICCAT = assetListByICCAT;
+    }
+
+    public List<Asset> getAssetListByEXTAndIRCSNoCFR() {
+        return assetListByEXTAndIRCSNoCFR;
+    }
+
+    public void setAssetListByEXTAndIRCSNoCFR(List<Asset> assetListByEXTAndIRCSNoCFR) {
+        this.assetListByEXTAndIRCSNoCFR = assetListByEXTAndIRCSNoCFR;
     }
 
 }

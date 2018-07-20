@@ -17,7 +17,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,16 +39,13 @@ import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
 import eu.europa.ec.fisheries.wsdl.user.types.UserFault;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-/**
- * Created by kovian on 03/07/2017.
- */
 @Stateless
 @LocalBean
 @Slf4j
@@ -61,22 +57,88 @@ public class RuleAssetsBean {
     @EJB
     private RulesMessageProducer producer;
 
-    private List<String> supportedIds = Arrays.asList("IRCS","CFR","EXT_MARK","NAME", "ICCAT");
-
-
-    public List<IdTypeWithFlagState> getAssetList(Object message){
+    public List<Asset> getAssetListByICCAT(Object message) {
         FLUXFAReportMessage fluxFaRepMessage;
         if(message instanceof FLUXFAReportMessage){
             fluxFaRepMessage = (FLUXFAReportMessage) message;
         } else {
             return Collections.emptyList();
         }
-        List<VesselTransportMeans> vessTranspMeans = extractVesselTransportMeans(fluxFaRepMessage);
-        if (CollectionUtils.isEmpty(vessTranspMeans)) {
+        List<VesselTransportMeans> vesselTransportMeans = extractVesselTransportMeans(fluxFaRepMessage);
+        if (CollectionUtils.isEmpty(vesselTransportMeans)) {
             return Collections.emptyList();
         }
-        AssetListQuery assetListQuery = createAssetListQuery(vessTranspMeans);
-        if(CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
+
+        List<IdTypeWithFlagState> idTypeForQuery = new ArrayList<>();
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            List<IDType> ids = vesselTransportMean.getIDS();
+            for (IDType idType : ids) {
+                if ("ICCAT".equals(idType.getSchemeID())){
+                    createIdTypeWithFlagState(idTypeForQuery, vesselTransportMean, idType);
+                }
+            }
+        }
+
+        AssetListQuery assetListQuery = createAssetListQuery(idTypeForQuery);
+        if (CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
+            return Collections.emptyList();
+        }
+        List<Asset> assetsRespList = new ArrayList<>();
+        try {
+            String request = AssetModuleRequestMapper.createAssetListModuleRequest(assetListQuery);
+            log.debug("Send AssetListModuleRequest message to Asset");
+            String correlationId = producer.sendDataSourceMessage(request, DataSourceQueue.ASSET);
+            TextMessage response = consumer.getMessage(correlationId, TextMessage.class);
+            log.debug("Received response message");
+            if (response != null && !isUserFault(response)) {
+                assetsRespList = AssetModuleResponseMapper.mapToAssetListFromResponse(response, correlationId);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (AssetModelMapperException | MessageException e) {
+            log.error("Something went wrong during unmarshalling of the Assets Response!", e);
+        }
+        return assetsRespList != null ? assetsRespList : Collections.<Asset>emptyList();
+
+    }
+
+    public List<Asset> getAssetListByIRCSAndExtMarkAndNoCFR(Object message) {
+        FLUXFAReportMessage fluxFaRepMessage;
+        if(message instanceof FLUXFAReportMessage){
+            fluxFaRepMessage = (FLUXFAReportMessage) message;
+        } else {
+            return Collections.emptyList();
+        }
+        List<VesselTransportMeans> vesselTransportMeans = extractVesselTransportMeans(fluxFaRepMessage);
+        if (CollectionUtils.isEmpty(vesselTransportMeans)) {
+            return Collections.emptyList();
+        }
+
+        int crit = 0;
+        List<IdTypeWithFlagState> idTypeForQuery = new ArrayList<>();
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            List<IDType> ids = vesselTransportMean.getIDS();
+            for (IDType idType : ids) {
+                if ("CFR".equals(idType.getSchemeID())){
+                    return new ArrayList<>();
+                }
+                if ("EXT_MARK".equals(idType.getSchemeID())){
+                    crit++;
+                    createIdTypeWithFlagState(idTypeForQuery, vesselTransportMean, idType);
+                }
+                if ("IRCS".equals(idType.getSchemeID())){
+                    crit++;
+                    createIdTypeWithFlagState(idTypeForQuery, vesselTransportMean, idType);
+                }
+            }
+        }
+
+        if (crit < 2){
+            return new ArrayList<>();
+        }
+
+        AssetListQuery assetListQuery = createAssetListQuery(idTypeForQuery);
+        if (CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
             log.debug("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided! Check your XML!");
             return Collections.emptyList();
         }
@@ -95,7 +157,69 @@ public class RuleAssetsBean {
         } catch (AssetModelMapperException | MessageException e) {
             log.error("Something went wrong during unmarshalling of the Assets Response!", e);
         }
-        return extractAvailableIDsFromAssets(assetsRespList != null ? assetsRespList : Collections.<Asset>emptyList());
+        return assetsRespList != null ? assetsRespList : Collections.<Asset>emptyList();
+
+    }
+
+    private void createIdTypeWithFlagState(List<IdTypeWithFlagState> idTypeForQuery, VesselTransportMeans vesselTransportMean, IDType idType) {
+        IdTypeWithFlagState idTypeWithFlagState = new IdTypeWithFlagState();
+        idTypeWithFlagState.setValue(idType.getValue());
+        idTypeWithFlagState.setSchemeId(idType.getSchemeID());
+        VesselCountry registrationVesselCountry = vesselTransportMean.getRegistrationVesselCountry();
+        if (registrationVesselCountry != null){
+            IDType id = registrationVesselCountry.getID();
+            if (id != null){
+                idTypeWithFlagState.setFlagState(id.getValue());
+            }
+        }
+        idTypeForQuery.add(idTypeWithFlagState);
+    }
+
+    public List<Asset> getAssetListByCFR(Object message){
+        FLUXFAReportMessage fluxFaRepMessage;
+        if(message instanceof FLUXFAReportMessage){
+            fluxFaRepMessage = (FLUXFAReportMessage) message;
+        } else {
+            return Collections.emptyList();
+        }
+        List<VesselTransportMeans> vesselTransportMeans = extractVesselTransportMeans(fluxFaRepMessage);
+        if (CollectionUtils.isEmpty(vesselTransportMeans)) {
+            return Collections.emptyList();
+        }
+
+        List<IdTypeWithFlagState> idTypeForQuery = new ArrayList<>();
+        {
+            for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+                List<IDType> ids = vesselTransportMean.getIDS();
+                for (IDType idType : ids) {
+                    if ("CFR".equals(idType.getSchemeID())) {
+                        createIdTypeWithFlagState(idTypeForQuery, vesselTransportMean, idType);
+                    }
+                }
+            }
+        }
+
+        AssetListQuery assetListQuery = createAssetListQuery(idTypeForQuery);
+        if (CollectionUtils.isEmpty(assetListQuery.getAssetSearchCriteria().getCriterias())){
+            log.debug("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided! Check your XML!");
+            return Collections.emptyList();
+        }
+        List<Asset> assetsRespList = new ArrayList<>();
+        try {
+            String request = AssetModuleRequestMapper.createAssetListModuleRequest(assetListQuery);
+            log.debug("Send AssetListModuleRequest message to Asset");
+            String correlationId = producer.sendDataSourceMessage(request, DataSourceQueue.ASSET);
+            TextMessage response = consumer.getMessage(correlationId, TextMessage.class);
+            log.debug("Received response message");
+            if (response != null && !isUserFault(response)) {
+                assetsRespList = AssetModuleResponseMapper.mapToAssetListFromResponse(response, correlationId);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (AssetModelMapperException | MessageException e) {
+            log.error("Something went wrong during unmarshalling of the Assets Response!", e);
+        }
+        return assetsRespList != null ? assetsRespList : Collections.<Asset>emptyList();
     }
 
     private List<VesselTransportMeans> extractVesselTransportMeans(FLUXFAReportMessage message) {
@@ -112,68 +236,29 @@ public class RuleAssetsBean {
         return vessTranspMeans;
     }
 
-    private List<IdTypeWithFlagState> extractAvailableIDsFromAssets(List<Asset> assetsRespList) {
-        List<IdTypeWithFlagState> assetTypes = new ArrayList<>();
-        for(Asset asset : assetsRespList){
-            String countryCode = asset.getCountryCode();
-            String ircs = asset.getIrcs();
-            if(StringUtils.isNotEmpty(ircs)){
-                assetTypes.add(new IdTypeWithFlagState("IRCS", ircs, countryCode));
-            }
-            String cfr = asset.getCfr();
-            if(StringUtils.isNotEmpty(cfr)){
-                assetTypes.add(new IdTypeWithFlagState("CFR", cfr, countryCode));
-            }
-            String externalMarking = asset.getExternalMarking();
-            if(StringUtils.isNotEmpty(externalMarking)){
-                assetTypes.add(new IdTypeWithFlagState("EXT_MARK", externalMarking, countryCode));
-            }
-            String name = asset.getName();
-            if(StringUtils.isNotEmpty(name)){
-                assetTypes.add(new IdTypeWithFlagState("NAME", name, countryCode));
-            }
-            String iccat = asset.getIccat();
-            if(StringUtils.isNotEmpty(iccat)){
-                assetTypes.add(new IdTypeWithFlagState("ICCAT", iccat, countryCode));
-            }
-        }
-        return assetTypes;
-    }
-
-    private AssetListQuery createAssetListQuery(List<VesselTransportMeans> vessTranspMeans) {
+    private AssetListQuery createAssetListQuery(List<IdTypeWithFlagState> idTypes) {
         AssetListQuery assetListQuery = new AssetListQuery();
         AssetListCriteria assetListCriteria = new AssetListCriteria();
         List<AssetListCriteriaPair> criterias = assetListCriteria.getCriterias();
-        for (VesselTransportMeans vessMean : vessTranspMeans) {
-            List<IDType> ids = vessMean.getIDS();
-            for (IDType idType : ids) { // Avoid imo, uvi
-                String schemeID = idType.getSchemeID();
-                if(!isInSupportedList(schemeID)){
-                    log.warn("Found not compatibile VesselTransportMeans ID : ["+schemeID+"]");
-                    continue;
-                }
-                AssetListCriteriaPair criteriaPair = new AssetListCriteriaPair();
-                if("EXT_MARK".equals(schemeID)){
-                    schemeID = "EXTERNAL_MARKING";
-                }
-                ConfigSearchField configSearchField = ConfigSearchField.fromValue(schemeID);
-                criteriaPair.setKey(configSearchField);
-                criteriaPair.setValue(idType.getValue());
-                criterias.add(criteriaPair);
-            }
-            assetListCriteria.setIsDynamic(false);
-            AssetListPagination pagination = new AssetListPagination();
-
-            pagination.setPage(1);
-            pagination.setListSize(1000);
-            assetListQuery.setPagination(pagination);
-            assetListQuery.setAssetSearchCriteria(assetListCriteria);
+        for (IdTypeWithFlagState idType : idTypes) {
+            String schemeID = idType.getSchemeId();
+            AssetListCriteriaPair criteriaPair = new AssetListCriteriaPair();
+            ConfigSearchField configSearchField = ConfigSearchField.fromValue(schemeID);
+            criteriaPair.setKey(configSearchField);
+            criteriaPair.setValue(idType.getValue());
+            criterias.add(criteriaPair);
+            AssetListCriteriaPair criteriaPair2 = new AssetListCriteriaPair();
+            criteriaPair2.setKey(ConfigSearchField.FLAG_STATE);
+            criteriaPair2.setValue(idType.getFlagState());
+            criterias.add(criteriaPair2);
         }
+        assetListCriteria.setIsDynamic(false);
+        AssetListPagination pagination = new AssetListPagination();
+        pagination.setPage(1);
+        pagination.setListSize(1000);
+        assetListQuery.setPagination(pagination);
+        assetListQuery.setAssetSearchCriteria(assetListCriteria);
         return assetListQuery;
-    }
-
-    private boolean isInSupportedList(String schemeID) {
-        return supportedIds.contains(schemeID);
     }
 
     private boolean isUserFault(TextMessage message) {
@@ -188,6 +273,5 @@ public class RuleAssetsBean {
         }
         return isErrorResponse;
     }
-
 
 }

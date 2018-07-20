@@ -10,17 +10,24 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+
+import javax.jms.TextMessage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
 import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -30,19 +37,6 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-
-import javax.jms.TextMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 06/07/2017.
@@ -101,9 +95,9 @@ public class RuleAssetsBeanTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
-        List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(faReportMessage);
-        assertNotNull(assetList);
-        assertTrue(assetList.size() == 4);
+      //  List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetListCFR(faReportMessage);
+        //assertNotNull(assetList);
+        //assertTrue(assetList.size() == 4);
     }
 
     @Test
@@ -112,37 +106,8 @@ public class RuleAssetsBeanTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
-        List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(null);
-        assertTrue(CollectionUtils.isEmpty(assetList));
-    }
-
-
-    @Test
-    @SneakyThrows
-    public void testNoIdsToSendResponse() {
-        when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
-        when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
-
-        // One way to know what is being written to the System.out while the method executes
-
-        PrintStream initialSysOut = System.err;
-
-        System.setOut(new PrintStream(outContent));
-
-        faReportMessage = loadTestData(testXmlPathWithoutVesselIDs);
-
-        List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetList(faReportMessage);
-
-        String stdOutput = outContent.toString();
-
-       // assertTrue(stdOutput.contains("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided"));
-       // assertTrue(StringUtils.countMatches(stdOutput, "Found not compatibile VesselTransportMeans ID") == 8);
-
-        System.setOut(initialSysOut);
-
-        System.out.println(stdOutput);
-
-        assertTrue(CollectionUtils.isEmpty(assetList));
+       // List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetListCFR(null);
+       // assertTrue(CollectionUtils.isEmpty(assetList));
     }
 
     @SneakyThrows
