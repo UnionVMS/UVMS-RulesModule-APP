@@ -12,7 +12,9 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -93,7 +95,9 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
-            extraValues.put(ASSET_ID, ruleAssetsBean.getAssetList(request));
+            extraValues.put(ASSET_BY_CFR, ruleAssetsBean.getAssetListByCFR(request));
+            extraValues.put(ASSET_BY_EXT, ruleAssetsBean.getAssetListByIRCSAndExtMarkAndNoCFR(request));
+            extraValues.put(ASSET_BY_ICCAT, ruleAssetsBean.getAssetListByICCAT(request));
 
             Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
