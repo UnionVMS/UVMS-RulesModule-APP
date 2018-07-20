@@ -13,7 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
@@ -52,7 +54,6 @@ import java.util.Map;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -101,8 +102,13 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject() {
-        List<IdTypeWithFlagState> idTypeWithFlagStates = (List<IdTypeWithFlagState>) extraValueMap.get(ASSET_ID);
-        activityFactMapper.setAssetList(idTypeWithFlagStates);
+        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByCfr = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_CFR);
+        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByExt = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_EXT);
+        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByIccat = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_ICCAT);
+
+        activityFactMapper.setAssetListCFR(idTypeWithFlagStatesByCfr);
+        activityFactMapper.setAssetListByEXTAndIRCSNoCFR(idTypeWithFlagStatesByExt);
+        activityFactMapper.setAssetListByICCAT(idTypeWithFlagStatesByIccat);
 
         List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS);
 

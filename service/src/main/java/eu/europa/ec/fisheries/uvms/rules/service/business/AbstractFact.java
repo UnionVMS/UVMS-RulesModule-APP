@@ -13,6 +13,19 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -20,8 +33,13 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,12 +54,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 
 @Slf4j
 @ToString
@@ -1247,12 +1259,12 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<Asset> assetList) {
         if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
         String vesselCountryIdValue = vesselCountryId.getValue();
-        for (IdTypeWithFlagState asset : assetList){
+        for (Asset asset : assetList){
             if (isSameFlagState(vesselCountryIdValue, asset)) {
                 return true;
             }
@@ -1260,30 +1272,80 @@ public abstract class AbstractFact {
         return false;
     }
 
-    private Boolean isSameFlagState(String vesselCountryIdValue, IdTypeWithFlagState asset) {
+    private Boolean isSameFlagState(String vesselCountryIdValue, Asset asset) {
         if (asset != null){
-            String flagState = asset.getFlagState();
+            String flagState = asset.getCountryCode();
             return flagState != null && flagState.equals(vesselCountryIdValue);
         }
         return false;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
-        if (CollectionUtils.isEmpty(assetList)) {
+    public boolean vesselIdsMatchICCAT(List<IdType> vesselIds, List<Asset> assets) {
+        if (CollectionUtils.isEmpty(assets)) {
             return false;
         }
-        List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
-        Iterator<IdType> iterator = vesselIds.iterator();
-        while (iterator.hasNext() && vesselCountryId != null){
-            IdType next = iterator.next();
-            listToBeMatched.add(new IdTypeWithFlagState(next.getSchemeId(), next.getValue(), vesselCountryId.getValue()));
 
+        Set<String> iccat = new HashSet<>();
+
+        for (Asset asset : assets) {
+            iccat.add(asset.getIccat());
         }
-        for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
-            if (!assetList.contains(elemFromListToBeMatched)) {
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if ("ICCAT".equals(schemeId) && !iccat.contains(value)){
                 return false;
             }
         }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatchCFR(List<IdType> vesselIds, List<Asset> assets) {
+
+        if (CollectionUtils.isEmpty(assets)) {
+            return false;
+        }
+
+        Set<String> cfr = new HashSet<>();
+
+        for (Asset asset : assets) {
+            cfr.add(asset.getCfr());
+        }
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if ("CFR".equals(schemeId) && !cfr.contains(value)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatchEXT(List<IdType> vesselIds, List<Asset> assets) {
+
+        if (CollectionUtils.isEmpty(assets)) {
+            return false;
+        }
+
+        Set<String> ext = new HashSet<>();
+
+        for (Asset asset : assets) {
+            ext.add(asset.getIrcs());
+            ext.add(asset.getExternalMarking());
+        }
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if (("IRCS".equals(schemeId) || "EXT_MARK".equals(schemeId)) && !ext.contains(value)){
+                return false;
+            }
+        }
+
         return true;
     }
 
