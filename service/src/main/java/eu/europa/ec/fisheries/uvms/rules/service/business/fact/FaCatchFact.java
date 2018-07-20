@@ -68,6 +68,18 @@ public class FaCatchFact extends AbstractFact {
         return false;
     }
 
+    public boolean containsAtLeastOneFaoAreaWithValidValue(List<IdType> ids){
+        if(CollectionUtils.isEmpty(ids)){
+            return false;
+        }
+        for (IdType id : ids) {
+            if("FAO_AREA".equals(id.getSchemeId()) && StringUtils.startsWith(id.getValue(), "27.3.d")){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public FaCatchFact() {
         setFactType();
     }

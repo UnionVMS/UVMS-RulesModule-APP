@@ -31,7 +31,7 @@ import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleKieContainer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,7 +50,7 @@ public class HealthResource {
     private PropertiesBean propertiesBean;
 
     @EJB
-    private RuleKieContainer initializer;
+    private RulesKieContainerInitializer initializer;
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})

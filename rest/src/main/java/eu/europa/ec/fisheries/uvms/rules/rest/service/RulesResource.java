@@ -40,7 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleKieContainer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -74,7 +74,7 @@ public class RulesResource {
     private RulesEngineBean rulesEngine;
 
     @EJB
-    private RuleKieContainer drlInitializer;
+    private RulesKieContainerInitializer drlInitializer;
 
     @EJB
     private GearMatrix gearMatrix;

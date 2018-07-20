@@ -115,10 +115,10 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    boolean isNeedToSendToExchange(SetFaQueryMessageRequest request, String requestStr, String logGuid, String onValue, FLUXFAQueryMessage faQueryMessage) {
-        log.info("The report generated from Activity doesn't contain data (Empty report)!");
+    boolean sendToExchangeOnEmptyReport(SetFaQueryMessageRequest request, String requestStr, String logGuid, String onValue, FLUXFAQueryMessage faQueryMessage, ValidationResultDto faQueryValidationReport) {
+        log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
         updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
-        getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue);
+        getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
         return false;
     }
 

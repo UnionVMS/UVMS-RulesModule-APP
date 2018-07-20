@@ -186,7 +186,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 }
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFishingActivityFact(specifiedActivity, partialXpath, isSubActivity));
+                facts.add(activityFactMapper.generateFishingActivityFact(specifiedActivity, partialXpath, isSubActivity, faReportDocument.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(specifiedActivity.getRelatedVesselTransportMeans()));
@@ -383,7 +383,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                         }
                         break;
                     default:
-                        log.trace("No rule to be applied for the received activity type : " + fishingActivityType);
+                        log.error("No rule to be applied for the received activity type : " + fishingActivityType);
 
                 }
             }
