@@ -179,7 +179,7 @@ public class RulesEngineBean {
         return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
     }
 
-    public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
+    private Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
