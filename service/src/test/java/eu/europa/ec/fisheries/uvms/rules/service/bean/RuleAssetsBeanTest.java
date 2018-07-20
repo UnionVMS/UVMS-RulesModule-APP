@@ -10,6 +10,8 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.jgroups.util.Util.assertTrue;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -18,16 +20,20 @@ import javax.jms.TextMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
 import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -95,9 +101,9 @@ public class RuleAssetsBeanTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
-      //  List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetListCFR(faReportMessage);
-        //assertNotNull(assetList);
-        //assertTrue(assetList.size() == 4);
+        List<Asset> assetListByCFR = ruleAssetsBean.getAssetListByCFR(faReportMessage);
+        assertNotNull(assetListByCFR);
+        assertTrue(assetListByCFR.size() == 1);
     }
 
     @Test
@@ -106,8 +112,37 @@ public class RuleAssetsBeanTest {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
 
-       // List<IdTypeWithFlagState> assetList = ruleAssetsBean.getAssetListCFR(null);
-       // assertTrue(CollectionUtils.isEmpty(assetList));
+        List<Asset> assetListByCFR = ruleAssetsBean.getAssetListByCFR(null);
+        assertTrue(CollectionUtils.isEmpty(assetListByCFR));
+    }
+
+
+    @Test
+    @SneakyThrows
+    public void testNoIdsToSendResponse() {
+        when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.ASSET))).thenReturn("SomeCorrId");
+        when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(textMessage);
+
+        // One way to know what is being written to the System.out while the method executes
+
+        PrintStream initialSysOut = System.err;
+
+        System.setOut(new PrintStream(outContent));
+
+        faReportMessage = loadTestData(testXmlPathWithoutVesselIDs);
+
+        List<Asset> assetListByCFR = ruleAssetsBean.getAssetListByCFR(faReportMessage);
+
+        String stdOutput = outContent.toString();
+
+       // assertTrue(stdOutput.contains("No compatibile VesselTransportMeans IDs were found so the call to Assets will be avoided"));
+       // assertTrue(StringUtils.countMatches(stdOutput, "Found not compatibile VesselTransportMeans ID") == 8);
+
+        System.setOut(initialSysOut);
+
+        System.out.println(stdOutput);
+
+        assertTrue(CollectionUtils.isEmpty(assetListByCFR));
     }
 
     @SneakyThrows
