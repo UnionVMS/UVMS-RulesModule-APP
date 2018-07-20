@@ -3500,8 +3500,9 @@
             <column name="rule_id" value="276"/>
             <column name="br_id" value="FA-L02-00-0276"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
-                            valueContainsAny(specifiedFACatchDestinationFluxLocationTypeCodes, &quot;LOCATION&quot;)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(specifiedFACatchDestinationFluxLocationTypeCodes) &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp;
+                           !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
+                           valueContainsAny(specifiedFACatchDestinationFluxLocationTypeCodes, &quot;LOCATION&quot;)"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation TypeCode's value must be LOCATION if SpecifiedFACatch is provided and it's SpeciesCode is BFT"/>
             <column name="message" value="Destination location TypeCode is invalid."/>
@@ -3516,8 +3517,8 @@
             <column name="rule_id" value="277"/>
             <column name="br_id" value="FA-L02-00-0277"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) ||
-                           !mdrService.isPresentInMDRList(&quot;FARM&quot;, getValueForSchemeId(&quot;FARM&quot;, specifiedFACatchDestinationFluxLocationIDs), creationDateOfMessage))"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; !isEmpty(specifiedFACatchDestinationFluxLocationIDs) &amp;&amp;
+                    (schemeIdContainsAny(specifiedFACatchDestinationFluxLocationIDs, &quot;FARM&quot;) || !mdrService.isPresentInMDRList(&quot;FARM&quot;, getValueForSchemeId(&quot;FARM&quot;, specifiedFACatchDestinationFluxLocationIDs), creationDateOfMessage))"/>
             <column name="note"
                     value="SpecifiedFACatch DestinationFluxLocation ID's schemeId must be FARM and it's value must be in the MDR list if SpecifiedFACatch's SpeciesCode is BFT"/>
             <column name="message" value="The schemeID of the destination location ID or the ID value is invalid."/>
