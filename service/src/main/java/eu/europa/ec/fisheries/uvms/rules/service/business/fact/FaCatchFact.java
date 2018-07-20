@@ -19,6 +19,8 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
@@ -51,7 +53,20 @@ public class FaCatchFact extends AbstractFact {
     private List<AAPProcess> appliedAAPProcess;
     private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
+    private List<IdType> fishActRelatedFluxLocationIds;
     private boolean isSubActivity = false;
+
+    public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){
+        if(CollectionUtils.isEmpty(ids)){
+            return false;
+        }
+        for (IdType id : ids) {
+            if("GFCM_GSA".equals(id.getSchemeId()) && StringUtils.isNotEmpty(id.getValue())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public FaCatchFact() {
         setFactType();

@@ -50,11 +50,11 @@ public class ActivityObjectsHelper {
         FishingActivity departure = new FishingActivity();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setValue(activityType);
+        departure.setTypeCode(codeType);
         try {
             DateTimeType dateTimeType = new DateTimeType();
             if (occurrence != null){
                 dateTimeType.setDateTime(toXMLGregorianCalendar(occurrence));
-                departure.setTypeCode(codeType);
                 departure.setOccurrenceDateTime(dateTimeType);
             }
         } catch (ParseException | DatatypeConfigurationException e){
