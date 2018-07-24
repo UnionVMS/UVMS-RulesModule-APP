@@ -1546,7 +1546,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10219"/>
             <column name="br_id" value="SALE-L02-00-0060"/>
-            <column name="expression" value="unitQuantity == null &amp;&amp; weightMeasure == null"/>
+            <column name="expression" value="(unitQuantity == null &amp;&amp; weightMeasure == null) || (unitQuantity != null &amp;&amp; weightMeasure != null)"/>
             <column name="note" value=""/>
             <column name="message" value="One of the two must be available"/>
             <column name="level" value="L02"/>
