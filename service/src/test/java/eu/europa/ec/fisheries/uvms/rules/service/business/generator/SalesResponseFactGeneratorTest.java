@@ -36,8 +36,7 @@ public class SalesResponseFactGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
-        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
+        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper();
         DefaultOrikaMapper defaultOrikaMapper = new DefaultOrikaMapper();
         helper = new SalesObjectsHelper();
 
@@ -62,11 +61,8 @@ public class SalesResponseFactGeneratorTest {
         extraValues.put(SENDER_RECEIVER, "BEL");
         extraValues.put(CREATION_DATE_OF_MESSAGE, creationDateOfMessage);
 
-        salesResponseFactGenerator.setBusinessObjectMessage(fluxSalesResponseMessage);
-        salesResponseFactGenerator.setExtraValueMap(extraValues);
-
         //execute
-        List<AbstractFact> allFacts = salesResponseFactGenerator.generateAllFacts();
+        List<AbstractFact> allFacts = salesResponseFactGenerator.generateAllFacts(fluxSalesResponseMessage, extraValues);
 
         //verify
         List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated =

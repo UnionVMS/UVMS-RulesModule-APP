@@ -38,7 +38,7 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
@@ -59,7 +59,7 @@ public class RulesSalesReportEventConsumerBean implements MessageListener {
     @Override
     public void onMessage(Message message) {
         MDC.remove("requestId");
-        LOG.info("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.info("Message received in rules (RulesSalesReportEventConsumerBean). Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
