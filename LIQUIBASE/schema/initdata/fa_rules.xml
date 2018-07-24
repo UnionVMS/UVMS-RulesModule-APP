@@ -4385,7 +4385,7 @@
             <column name="rule_id" value="340"/>
             <column name="br_id" value="FA-L02-00-0340"/>
             <column name="expression"
-                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isIdTypePresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes, creationDateOfMessage) "/>
+                    value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes, creationDateOfMessage) "/>
             <column name="note" value="FLAPDocument ID Must have valid value from MDR list FLAP_ID_TYPE. "/>
             <column name="message" value="Fishing License, Authorization or Permit ID has an invalid schemeID. "/>
             <column name="level" value="L02"/>
