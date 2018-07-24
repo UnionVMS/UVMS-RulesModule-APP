@@ -18,8 +18,7 @@ public class FactGeneratorHelperTest {
 
     @Before
     public void init() {
-        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
-        factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
+        factGeneratorHelper = new FactGeneratorHelper();
     }
 
     @Test

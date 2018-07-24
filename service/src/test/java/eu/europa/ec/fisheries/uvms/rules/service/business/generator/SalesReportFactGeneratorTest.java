@@ -10,7 +10,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactG
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.SalesObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -42,8 +41,7 @@ public class SalesReportFactGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
-        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
+        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper();
         DefaultOrikaMapper defaultOrikaMapper = new DefaultOrikaMapper();
         helper = new SalesObjectsHelper();
 
@@ -69,8 +67,7 @@ public class SalesReportFactGeneratorTest {
         exception.expect(RuntimeException.class);
         exception.expectMessage("SalesCategory in AuctionSale cannot be null");
 
-        salesReportFactGenerator.setBusinessObjectMessage(report);
-        salesReportFactGenerator.generateAllFacts();
+        salesReportFactGenerator.generateAllFacts(report, Collections.emptyMap());
     }
 
     @Test
@@ -84,11 +81,8 @@ public class SalesReportFactGeneratorTest {
         extraValues.put(SENDER_RECEIVER, "BEL");
         extraValues.put(CREATION_DATE_OF_MESSAGE, creationDateOfMessage);
 
-        salesReportFactGenerator.setBusinessObjectMessage(report);
-        salesReportFactGenerator.setExtraValueMap(extraValues);
-
         //execute
-        List<AbstractFact> allFacts = salesReportFactGenerator.generateAllFacts();
+        List<AbstractFact> allFacts = salesReportFactGenerator.generateAllFacts(report, extraValues);
 
         List<Class<? extends SalesAbstractFact>> listOfClassesThatShouldBeCreated = createListOfClassesThatShouldBeCreated();
 

@@ -3,17 +3,17 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactCandidate;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 
+import javax.ejb.Stateless;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Stateless
 public class FactGeneratorHelper {
 
-    private XPathStringWrapper xPathUtil;
 
-    public FactGeneratorHelper(XPathStringWrapper xPathStringWrapper) {
-        this.xPathUtil = xPathStringWrapper;
+    public FactGeneratorHelper() {
     }
 
     /**
@@ -26,16 +26,17 @@ public class FactGeneratorHelper {
      * @throws ClassNotFoundException
      */
     public List<FactCandidate> findAllObjectsWithOneOfTheFollowingClasses(Object object, Collection<Class<?>> classesToSearchFor) throws IllegalAccessException, ClassNotFoundException {
-        return findAllObjectsWithOneOfTheFollowingClasses(object, classesToSearchFor, "");
+        XPathStringWrapper xPathUtil = new XPathStringWrapper();
+        return findAllObjectsWithOneOfTheFollowingClasses(object, classesToSearchFor, "", xPathUtil);
     }
 
-    private List<FactCandidate> findAllObjectsWithOneOfTheFollowingClasses(Object object, Collection<Class<?>> classesToSearchFor, String currentXPath) throws IllegalAccessException, ClassNotFoundException {
+    private List<FactCandidate> findAllObjectsWithOneOfTheFollowingClasses(Object object, Collection<Class<?>> classesToSearchFor, String currentXPath, XPathStringWrapper xPathUtil) throws IllegalAccessException, ClassNotFoundException {
         List<FactCandidate> foundObjects = new ArrayList<>();
 
         Class<?> clazz = object.getClass();
 
         if (classesToSearchFor.contains(clazz)) {
-            foundObjects.add(createFactCandidate(object, currentXPath));
+            foundObjects.add(createFactCandidate(object, currentXPath, xPathUtil));
         }
 
         if (!clazz.isEnum()) {
@@ -62,7 +63,7 @@ public class FactGeneratorHelper {
                             String xPath = xPathUtil.getValue();
 
                             //add object to list
-                            foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(collectionAsList.get(i), classesToSearchFor, xPath));
+                            foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(collectionAsList.get(i), classesToSearchFor, xPath, xPathUtil));
                         }
                     }
 
@@ -73,7 +74,7 @@ public class FactGeneratorHelper {
                         xPathUtil.append(field.getName());
                         String xPath = xPathUtil.getValue();
 
-                        foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(fieldObject, classesToSearchFor, xPath));
+                        foundObjects.addAll(findAllObjectsWithOneOfTheFollowingClasses(fieldObject, classesToSearchFor, xPath, xPathUtil));
                     }
 
                 }
@@ -84,7 +85,7 @@ public class FactGeneratorHelper {
         return foundObjects;
     }
 
-    private FactCandidate createFactCandidate(Object object, String currentXPath) {
+    private FactCandidate createFactCandidate(Object object, String currentXPath, XPathStringWrapper xPathUtil) {
         Field[] fields = object.getClass().getDeclaredFields();
         FactCandidate factCandidate = new FactCandidate(object);
 
