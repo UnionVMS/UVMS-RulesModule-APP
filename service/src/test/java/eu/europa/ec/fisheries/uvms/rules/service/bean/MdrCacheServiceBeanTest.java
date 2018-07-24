@@ -13,6 +13,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCacheServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;

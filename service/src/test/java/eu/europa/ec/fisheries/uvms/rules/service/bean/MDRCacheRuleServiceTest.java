@@ -11,6 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import org.junit.Test;

@@ -8,13 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.List;
-import java.util.UUID;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
@@ -39,6 +33,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 abstract class BaseFaRulesMessageServiceBean {

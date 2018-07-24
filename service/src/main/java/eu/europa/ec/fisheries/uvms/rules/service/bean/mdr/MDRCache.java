@@ -8,29 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
-import static java.util.Collections.emptyList;
-import static java.util.concurrent.TimeUnit.MINUTES;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;

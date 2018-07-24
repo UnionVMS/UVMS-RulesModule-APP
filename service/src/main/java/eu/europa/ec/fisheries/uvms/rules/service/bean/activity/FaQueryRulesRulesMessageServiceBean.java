@@ -1,21 +1,5 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.bind.UnmarshalException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
@@ -31,7 +15,8 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -43,6 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.bind.UnmarshalException;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 @Stateless
 @LocalBean

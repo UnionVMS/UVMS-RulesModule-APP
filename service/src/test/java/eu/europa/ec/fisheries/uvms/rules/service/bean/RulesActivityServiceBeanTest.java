@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;

@@ -38,7 +38,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
