@@ -243,15 +243,10 @@ public class RuleAssetsBean {
         for (IdTypeWithFlagState idType : idTypes) {
             String schemeID = idType.getSchemeId();
             AssetListCriteriaPair criteriaPair = new AssetListCriteriaPair();
-            ConfigSearchField configSearchField = ConfigSearchField.CFR;
+            ConfigSearchField configSearchField = ConfigSearchField.EXTERNAL_MARKING;
 
             try {
-                if ("EXT_MARK".equals(schemeID)){
-                    configSearchField = ConfigSearchField.fromValue("EXTERNAL_MARKING");
-                }
-                else {
-                    configSearchField = ConfigSearchField.fromValue(schemeID);
-                }
+                configSearchField = ConfigSearchField.fromValue(schemeID);
             } catch (IllegalArgumentException e){
                 log.warn(e.getMessage(), e);
             }
