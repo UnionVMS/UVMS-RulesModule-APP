@@ -28,6 +28,8 @@ import java.util.List;
 @Singleton
 public class SalesServiceBeanHelper {
 
+    public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
+
     @EJB
     private RulesMessageProducer messageProducer;
 
@@ -36,7 +38,7 @@ public class SalesServiceBeanHelper {
 
     @Lock(LockType.READ)
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, 30000L);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         log.info("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
@@ -44,7 +46,7 @@ public class SalesServiceBeanHelper {
 
     @Lock(LockType.READ)
     protected String sendMessageToSales(String request) throws MessageException {
-        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES);
+        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
     }
 
     @Lock(LockType.READ)
@@ -71,7 +73,7 @@ public class SalesServiceBeanHelper {
         log.info("Send CheckForUniqueIdRequest message to Sales");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, 30000L);
+        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         log.info("Received response message");
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
         return !response.isUnique();
