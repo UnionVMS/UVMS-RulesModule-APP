@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_RESPONSE_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.LEVEL_CODE;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REFERENCED_ITEM;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RELATED_VALIDATION_QUALITY_ANALYSIS;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.RESULT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -43,6 +34,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 public class ActivityResponseFactGenerator extends AbstractGenerator {
 
@@ -67,7 +60,7 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
             int index = 1;
             String partialXpath = stringWrapper.getValue();
             for (ValidationResultDocument validationResultDocument : validationResultDocuments) {
-                String partialSpecFishActXpath = stringWrapper.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VALIDATION_QUALITY_ANALYSIS, index).getValue();
+                String partialSpecFishActXpath = stringWrapper.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_VALIDATION_RESULT_DOCUMENT, index).getValue();
                 stringWrapper.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(addFactsForValidationQualityAnalysis(validationResultDocument.getRelatedValidationQualityAnalysises()));
                 index++;

@@ -60,6 +60,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 public class AbstractFactTest {
 
@@ -341,27 +342,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testVesselIdsMatch() {
-        List<IdType> vesselIds = null;
-        IdType vesselCountryId = null;
-        List<IdTypeWithFlagState> additionalObjectList = null;
-        boolean result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
-        assertFalse(result);
-
-        vesselIds = Collections.singletonList(ActivityObjectsHelper.generateIdType("VSl1", "TESTVSL"));
-        vesselCountryId = ActivityObjectsHelper.generateIdType("BEL", "TESTCOUNTRY");
-        additionalObjectList = Collections.singletonList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BELGIUM"));
-
-        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
-        assertFalse(result);
-
-        additionalObjectList = Collections.singletonList(new IdTypeWithFlagState("TESTVSL", "VSl1", "BEL"));
-        result = fact.vesselIdsMatch(vesselIds, vesselCountryId, additionalObjectList);
-        assertTrue(result);
-    }
-
-
-    @Test
     public void testAllValueContainsMatchShouldReturnTrueWithNotAllMatchingValue() {
 
         List<CodeType> codeTypes = new ArrayList<>();
@@ -531,6 +511,9 @@ public class AbstractFactTest {
         List<ContactPerson> contactPeople = new ArrayList<>();
 
         ContactPerson contactPerson = new ContactPerson();
+        TextType givenName = new TextType();
+        givenName.setValue("");
+        contactPerson.setGivenName(givenName);
         contactPeople.add(contactPerson);
 
         assertTrue(fact.checkContactListContainsAny(contactPeople, true, true));
@@ -594,6 +577,16 @@ public class AbstractFactTest {
         idType2.setSchemeId("53e3a36a-d6fa-4ac8-b061-7088327c7d81");
         List<IdType> idTypes = Arrays.asList(idType, idType2);
         assertFalse(fact.schemeIdContainsAll(idTypes, "UUID"));
+    }
+
+    @Test
+    public void testValidateIDTypeCFR() {
+        IdType idType = new IdType();
+        idType.setSchemeId("CFR");
+        IdType idType2 = new IdType();
+        idType2.setSchemeId("ICCAT");
+        List<IdType> idTypes = Arrays.asList(idType, idType2);
+        assertFalse(fact.schemeIdContainsAll(idTypes, "CFR"));
     }
 
     @Test
@@ -832,7 +825,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckContactListContainsAnyWithNull() {
 
-        assertTrue(fact.checkContactListContainsAny(null, true, true));
+        assertFalse(fact.checkContactListContainsAny(null, true, true));
     }
 
     @Test

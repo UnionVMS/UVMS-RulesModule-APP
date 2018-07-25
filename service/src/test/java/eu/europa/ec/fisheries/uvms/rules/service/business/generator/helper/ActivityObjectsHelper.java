@@ -35,6 +35,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
@@ -49,11 +50,11 @@ public class ActivityObjectsHelper {
         FishingActivity departure = new FishingActivity();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
         codeType.setValue(activityType);
+        departure.setTypeCode(codeType);
         try {
             DateTimeType dateTimeType = new DateTimeType();
             if (occurrence != null){
                 dateTimeType.setDateTime(toXMLGregorianCalendar(occurrence));
-                departure.setTypeCode(codeType);
                 departure.setOccurrenceDateTime(dateTimeType);
             }
         } catch (ParseException | DatatypeConfigurationException e){
@@ -75,6 +76,27 @@ public class ActivityObjectsHelper {
         codeType.setValue(value);
         codeType.setListId(listId);
         return codeType;
+    }
+
+    public static CodeType generateCodeTypeModel(String value, String listID) {
+        CodeType codeType = new CodeType();
+        codeType.setValue(value);
+        codeType.setListID(listID);
+        return codeType;
+    }
+
+    public static IDType generateIDTypeModel(String value, String schemeID) {
+        IDType idType = new IDType();
+        idType.setValue(value);
+        idType.setSchemeID(schemeID);
+        return idType;
+    }
+
+    public static un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType generateMeasureType(String unitCode, BigDecimal value) {
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType mt = new un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType();
+        mt.setValue(value);
+        mt.setUnitCode(unitCode);
+        return mt;
     }
 
     public MeasureType generateMeasureType(BigDecimal value, String unitCode) {
@@ -244,4 +266,5 @@ public class ActivityObjectsHelper {
         fishingGear.setTypeCode(ct);
         return fishingGear;
     }
+
 }

@@ -48,6 +48,7 @@ public class FaRelocationFact extends AbstractFact {
     private VesselStorageCharacteristic destinationVesselStorageCharacteristic;
     private VesselStorageCharacteristic sourceVesselStorageCharacteristic;
     private List<IdType> faReportDocumentRelatedReportIds;
+    private boolean isSubActivity;
 
     public FaRelocationFact() {
         setFactType();
