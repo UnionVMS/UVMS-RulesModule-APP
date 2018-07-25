@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
@@ -44,16 +43,21 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.USED_FISHING_GEAR;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -63,6 +67,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
@@ -76,6 +81,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Slf4j
@@ -102,11 +108,11 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject() {
-        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByCfr = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_CFR);
+       // List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByCfr = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_CFR);
         List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByExt = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_EXT);
         List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByIccat = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_ICCAT);
 
-        activityFactMapper.setAssetListCFR(idTypeWithFlagStatesByCfr);
+       // activityFactMapper.setAssetListCFR(idTypeWithFlagStatesByCfr);
         activityFactMapper.setAssetListByEXTAndIRCSNoCFR(idTypeWithFlagStatesByExt);
         activityFactMapper.setAssetListByICCAT(idTypeWithFlagStatesByIccat);
 
@@ -147,7 +153,21 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 factsByReport.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
-                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
+
+                VesselTransportMeansFact vesselTransportMeansFact = activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true);
+
+                vesselTransportMeansFact.setLandingDate(DateUtils.END_OF_TIME);
+
+                DateTimeType acceptanceDateTime = faReportDocument.getAcceptanceDateTime();
+                if (acceptanceDateTime != null){
+                    XMLGregorianCalendar dateTime = acceptanceDateTime.getDateTime();
+                    if (dateTime != null){
+                        Date date = XMLDateUtils.xmlGregorianCalendarToDate(dateTime);
+                        vesselTransportMeansFact.setLandingDate(new DateTime(date));
+                    }
+                }
+
+                factsByReport.add(vesselTransportMeansFact);
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
                 addFactsForVesselTransportMeansStructuresAddress(factsByReport, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
@@ -189,7 +209,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 facts.add(activityFactMapper.generateFishingActivityFact(specifiedActivity, partialXpath, isSubActivity, faReportDocument.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(specifiedActivity.getRelatedVesselTransportMeans()));
+                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(specifiedActivity.getRelatedVesselTransportMeans(), faReportDocument));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForVesselTransportMeansStructuresAddress(facts, specifiedActivity.getRelatedVesselTransportMeans(), RELATED_VESSEL_TRANSPORT_MEANS);

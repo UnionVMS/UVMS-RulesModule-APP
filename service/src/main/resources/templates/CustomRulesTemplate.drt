@@ -12,7 +12,7 @@ global org.slf4j.Logger logger;
 global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
-
+global eu.europa.ec.fisheries.uvms.rules.service.ActivityRulesService activityService;
 
 template "CustomRulesTemplate"
 

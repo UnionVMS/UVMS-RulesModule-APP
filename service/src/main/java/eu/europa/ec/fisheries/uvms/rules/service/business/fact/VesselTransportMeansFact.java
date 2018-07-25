@@ -20,7 +20,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
@@ -40,6 +42,8 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<Asset> assetListCFR;
     private List<Asset> assetListByICCAT;
     private List<Asset> assetListByEXTAndIRCSNoCFR;
+    private DateTime landingDate;
+    private String cfr;
 
     public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
         boolean containsValidSchemeId = false;
@@ -59,7 +63,19 @@ public class VesselTransportMeansFact extends AbstractFact {
     public boolean getIsFromFaReport() {
         return isFromFaReport;
     }
+
     public void setIsFromFaReport(boolean fromFaReport) {
         isFromFaReport = fromFaReport;
+    }
+
+    public String getCfr(){
+        if (CollectionUtils.isNotEmpty(ids)){
+            for (IdType id : ids) {
+                if ("CFR".equals(id.getSchemeId())){
+                    return id.getValue();
+                }
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }
