@@ -17,13 +17,16 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
-/**
- * Created by padhyad on 4/21/2017.
- */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class FaCatchFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
@@ -50,115 +53,35 @@ public class FaCatchFact extends AbstractFact {
     private List<AAPProcess> appliedAAPProcess;
     private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
+    private List<IdType> fishActRelatedFluxLocationIds;
     private boolean isSubActivity = false;
+
+    public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){
+        if(CollectionUtils.isEmpty(ids)){
+            return false;
+        }
+        for (IdType id : ids) {
+            if("GFCM_GSA".equals(id.getSchemeId()) && StringUtils.isNotEmpty(id.getValue())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsAtLeastOneFaoAreaWithValidValue(List<IdType> ids){
+        if(CollectionUtils.isEmpty(ids)){
+            return false;
+        }
+        for (IdType id : ids) {
+            if("FAO_AREA".equals(id.getSchemeId()) && StringUtils.startsWith(id.getValue(), "27.3.d")){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public FaCatchFact() {
         setFactType();
-    }
-
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public CodeType getSpeciesCode() {
-        return speciesCode;
-    }
-
-    public void setSpeciesCode(CodeType speciesCode) {
-        this.speciesCode = speciesCode;
-    }
-
-    public List<AAPProduct> getResultAAPProduct() {
-        return resultAAPProduct;
-    }
-
-    public void setResultAAPProduct(List<AAPProduct> resultAAPProduct) {
-        this.resultAAPProduct = resultAAPProduct;
-    }
-
-    public MeasureType getUnitQuantity() {
-        return unitQuantity;
-    }
-
-    public void setUnitQuantity(MeasureType unitQuantity) {
-        this.unitQuantity = unitQuantity;
-    }
-
-    public MeasureType getWeightMeasure() {
-        return weightMeasure;
-    }
-
-    public void setWeightMeasure(MeasureType weightMeasure) {
-        this.weightMeasure = weightMeasure;
-    }
-
-    public List<CodeType> getSizeDistributionClassCode() {
-        return sizeDistributionClassCode;
-    }
-
-    public void setSizeDistributionClassCode(List<CodeType> sizeDistributionClassCode) {
-        this.sizeDistributionClassCode = sizeDistributionClassCode;
-    }
-
-    public List<CodeType> getAppliedAAPProcessTypeCodes() {
-        return appliedAAPProcessTypeCodes;
-    }
-
-    public void setAppliedAAPProcessTypeCodes(List<CodeType> appliedAAPProcessTypeCodes) {
-        this.appliedAAPProcessTypeCodes = appliedAAPProcessTypeCodes;
-
-    }
-
-    public List<MeasureType> getResultAAPProductPackagingUnitQuantity() {
-        return resultAAPProductPackagingUnitQuantity;
-    }
-
-    public void setResultAAPProductPackagingUnitQuantity(List<MeasureType> resultAAPProductPackagingUnitQuantity) {
-        this.resultAAPProductPackagingUnitQuantity = resultAAPProductPackagingUnitQuantity;
-    }
-
-    public List<CodeType> getResultAAPProductPackagingTypeCode() {
-        return resultAAPProductPackagingTypeCode;
-    }
-
-    public void setResultAAPProductPackagingTypeCode(List<CodeType> resultAAPProductPackagingTypeCode) {
-        this.resultAAPProductPackagingTypeCode = resultAAPProductPackagingTypeCode;
-    }
-
-    public List<MeasureType> getResultAAPProductPackagingUnitAverageWeightMeasure() {
-        return resultAAPProductPackagingUnitAverageWeightMeasure;
-    }
-
-    public void setResultAAPProductPackagingUnitAverageWeightMeasure(List<MeasureType> resultAAPProductPackagingUnitAverageWeightMeasure) {
-        this.resultAAPProductPackagingUnitAverageWeightMeasure = resultAAPProductPackagingUnitAverageWeightMeasure;
-    }
-
-    public List<MeasureType> getResultAAPProductUnitQuantity() {
-        return resultAAPProductUnitQuantity;
-    }
-
-    public void setResultAAPProductUnitQuantity(List<MeasureType> resultAAPProductUnitQuantity) {
-        this.resultAAPProductUnitQuantity = resultAAPProductUnitQuantity;
-    }
-
-    public List<MeasureType> getResultAAPProductWeightMeasure() {
-        return resultAAPProductWeightMeasure;
-    }
-
-    public void setResultAAPProductWeightMeasure(List<MeasureType> resultAAPProductWeightMeasure) {
-        this.resultAAPProductWeightMeasure = resultAAPProductWeightMeasure;
-    }
-
-    public List<String> getTestStringList() {
-        return testStringList;
-    }
-
-    public void setTestStringList(List<String> testStringList) {
-        this.testStringList = testStringList;
     }
 
     @Override
@@ -166,101 +89,8 @@ public class FaCatchFact extends AbstractFact {
         this.factType = FactType.FA_CATCH;
     }
 
-    public List<IdType> getFluxLocationId() {
-        return fluxLocationId;
-    }
-
-    public void setFluxLocationId(List<IdType> fluxLocationId) {
-        this.fluxLocationId = fluxLocationId;
-    }
-
-    public CodeType getWeighingMeansCode() {
-        return weighingMeansCode;
-    }
-
-    public void setWeighingMeansCode(CodeType weighingMeansCode) {
-        this.weighingMeansCode = weighingMeansCode;
-    }
-
-    public CodeType getCategoryCode() {
-        return categoryCode;
-    }
-
-    public void setCategoryCode(CodeType categoryCode) {
-        this.categoryCode = categoryCode;
-    }
-
-    public List<NumericType> getAppliedAAPProcessConversionFactorNumber() {
-        return appliedAAPProcessConversionFactorNumber;
-    }
-
-    public void setAppliedAAPProcessConversionFactorNumber(List<NumericType> appliedAAPProcessConversionFactorNumber) {
-        this.appliedAAPProcessConversionFactorNumber = appliedAAPProcessConversionFactorNumber;
-    }
-
-    public List<CodeType> getSpecifiedFluxLocationRFMOCodeList() {
-        return specifiedFluxLocationRFMOCodeList;
-    }
-
-    public void setSpecifiedFluxLocationRFMOCodeList(List<CodeType> specifiedFluxLocationRFMOCodeList) {
-        this.specifiedFluxLocationRFMOCodeList = specifiedFluxLocationRFMOCodeList;
-    }
-
-    public List<FLUXLocation> getSpecifiedFLUXLocations() {
-        return specifiedFLUXLocations;
-    }
-
-    public void setSpecifiedFLUXLocations(List<FLUXLocation> specifiedFLUXLocations) {
-        this.specifiedFLUXLocations = specifiedFLUXLocations;
-    }
-
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public List<AAPProcess> getAppliedAAPProcess() {
-        return appliedAAPProcess;
-    }
-
-    public void setAppliedAAPProcess(List<AAPProcess> appliedAAPProcess) {
-        this.appliedAAPProcess = appliedAAPProcess;
-    }
-
-    public List<FLUXLocation> getDestinationFLUXLocations() {
-        return destinationFLUXLocations;
-    }
-
-    public void setDestinationFLUXLocations(List<FLUXLocation> destinationFLUXLocations) {
-        this.destinationFLUXLocations = destinationFLUXLocations;
-    }
-
-    public List<IdType> getFaCatchFluxLocationId() {
-        return faCatchFluxLocationId;
-    }
-
-    public void setFaCatchFluxLocationId(List<IdType> faCatchFluxLocationId) {
-        this.faCatchFluxLocationId = faCatchFluxLocationId;
-    }
-
     public boolean isSubActivity() {
         return isSubActivity;
     }
 
-    public void setSubActivity(boolean subActivity) {
-
-        isSubActivity = subActivity;
-    }
-
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
 }

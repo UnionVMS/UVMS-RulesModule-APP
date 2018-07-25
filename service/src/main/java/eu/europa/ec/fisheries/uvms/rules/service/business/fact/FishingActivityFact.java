@@ -98,5 +98,16 @@ public class FishingActivityFact extends AbstractFact {
         return false;
     }
 
+    public boolean isAllowedToHaveSubactivities(){
+        if(!subActivity && !isEmpty(relatedFishingActivities)){
+            if((codeTypeValueEquals(faReportDocumentTypeCode, "DECLARATION") && (codeTypeValueEquals(typeCode, "FISHING_OPERATION") || codeTypeValueEquals(typeCode, "JOINT_FISHING_OPERATION")))
+                    || codeTypeValueEquals(faReportDocumentTypeCode, "NOTIFICATION") && codeTypeValueEquals(typeCode, "AREA_ENTRY")){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

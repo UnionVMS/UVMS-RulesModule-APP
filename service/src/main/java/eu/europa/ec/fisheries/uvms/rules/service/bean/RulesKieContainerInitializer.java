@@ -56,7 +56,7 @@ import org.kie.api.runtime.KieContainer;
 @Singleton
 @Startup
 @Slf4j
-public class RuleKieContainer {
+public class RulesKieContainerInitializer {
 
     @EJB
     private RulesDomainModel rulesDb;

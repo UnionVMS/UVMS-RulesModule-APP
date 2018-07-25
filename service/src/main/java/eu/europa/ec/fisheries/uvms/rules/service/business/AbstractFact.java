@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +35,11 @@ import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeWithFlagState;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -282,27 +281,27 @@ public abstract class AbstractFact {
      */
     public boolean checkContactListContainsAny(List<ContactPerson> contactPersons, boolean checkEmptyness, boolean isGivenName) {
         if (CollectionUtils.isEmpty(contactPersons)) {
-            return true;
+            return false;
         }
         for (ContactPerson contPers : contactPersons) {
             TextType givenName = contPers.getGivenName();
             TextType familyName = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
             TextType alias = contPers.getAlias();
-            if (checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias)) {
+            if (checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias, checkEmptyness)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean checkWithoutEmptyness(TextType nameToConsider, TextType alias) {
-        return (nameToConsider == null || nameToConsider.getValue() == null)
+    private boolean checkWithoutEmptyness(TextType nameToConsider, TextType alias, boolean checkEmptyness) {
+        return !checkEmptyness && (nameToConsider == null || nameToConsider.getValue() == null)
                 && (alias == null || alias.getValue() == null);
     }
 
     private boolean checkWithEmptyness(boolean checkEmptyness, TextType nameToConsider, TextType alias) {
-        return checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue()))
+        return checkEmptyness && ((nameToConsider != null && StringUtils.isEmpty(nameToConsider.getValue()))
                 && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
@@ -1260,12 +1259,12 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
+    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<Asset> assetList) {
         if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
         String vesselCountryIdValue = vesselCountryId.getValue();
-        for (IdTypeWithFlagState asset : assetList){
+        for (Asset asset : assetList){
             if (isSameFlagState(vesselCountryIdValue, asset)) {
                 return true;
             }
@@ -1273,30 +1272,80 @@ public abstract class AbstractFact {
         return false;
     }
 
-    private Boolean isSameFlagState(String vesselCountryIdValue, IdTypeWithFlagState asset) {
+    private Boolean isSameFlagState(String vesselCountryIdValue, Asset asset) {
         if (asset != null){
-            String flagState = asset.getFlagState();
+            String flagState = asset.getCountryCode();
             return flagState != null && flagState.equals(vesselCountryIdValue);
         }
         return false;
     }
 
-    public boolean vesselIdsMatch(List<IdType> vesselIds, IdType vesselCountryId, List<IdTypeWithFlagState> assetList) {
-        if (CollectionUtils.isEmpty(assetList)) {
+    public boolean vesselIdsMatchICCAT(List<IdType> vesselIds, List<Asset> assets) {
+        if (CollectionUtils.isEmpty(assets)) {
             return false;
         }
-        List<IdTypeWithFlagState> listToBeMatched = new ArrayList<>();
-        Iterator<IdType> iterator = vesselIds.iterator();
-        while (iterator.hasNext() && vesselCountryId != null){
-            IdType next = iterator.next();
-            listToBeMatched.add(new IdTypeWithFlagState(next.getSchemeId(), next.getValue(), vesselCountryId.getValue()));
 
+        Set<String> iccat = new HashSet<>();
+
+        for (Asset asset : assets) {
+            iccat.add(asset.getIccat());
         }
-        for (IdTypeWithFlagState elemFromListToBeMatched : listToBeMatched) {
-            if (!assetList.contains(elemFromListToBeMatched)) {
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if ("ICCAT".equals(schemeId) && !iccat.contains(value)){
                 return false;
             }
         }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatchCFR(List<IdType> vesselIds, List<Asset> assets) {
+
+        if (CollectionUtils.isEmpty(assets)) {
+            return false;
+        }
+
+        Set<String> cfr = new HashSet<>();
+
+        for (Asset asset : assets) {
+            cfr.add(asset.getCfr());
+        }
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if ("CFR".equals(schemeId) && !cfr.contains(value)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean vesselIdsMatchEXT(List<IdType> vesselIds, List<Asset> assets) {
+
+        if (CollectionUtils.isEmpty(assets)) {
+            return false;
+        }
+
+        Set<String> ext = new HashSet<>();
+
+        for (Asset asset : assets) {
+            ext.add(asset.getIrcs());
+            ext.add(asset.getExternalMarking());
+        }
+
+        for (IdType vesselId : vesselIds) {
+            String value = vesselId.getValue();
+            String schemeId = vesselId.getSchemeId();
+            if (("IRCS".equals(schemeId) || "EXT_MARK".equals(schemeId)) && !ext.contains(value)){
+                return false;
+            }
+        }
+
         return true;
     }
 
