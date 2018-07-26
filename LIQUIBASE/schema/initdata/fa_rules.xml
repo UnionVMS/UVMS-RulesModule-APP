@@ -3877,17 +3877,15 @@
             <column name="rule_id" value="415"/>
             <column name="br_id" value="FA-L02-00-0415"/>
             <column name="expression"
-                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; (isEmpty(specifiedFLUXCharacteristicsTypeCodes) ||
-                           !codeTypeValueContainsOnly(specifiedFLUXCharacteristicsTypeCodes, &quot;START_DATETIME_LANDING&quot;) || !isIsoDateStringValidFormat(specifiedFLUXCharacteristicValueDateTimes))"/>
+                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; (isEmpty(specifiedFLUXCharacteristicsTypeCodes) || !codeTypeValueContainsOnly(specifiedFLUXCharacteristicsTypeCodes, &quot;START_DATETIME_LANDING&quot;) || !isIsoDateStringValidFormat(specifiedFLUXCharacteristicValueDateTimes))"/>
             <column name="note" value="If arrival notification (FA-L02-00-0290)."/>
-            <column name="message"
-                    value="If the activity is an arrival notification check presence of SpecifiedFLUXCharacteristic/TypeCode
+            <column name="message" value="If the activity is an arrival notification check presence of SpecifiedFLUXCharacteristic/TypeCode
                     It must be present and equal to START_DATETIME_LANDING if ReasonCode is LAN (landing).
                     ValueDateTime must be date/time in UTC according to ISO8601 and format YYYY-MM-DDThh:mm:ssZ (optional milliseconds)."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="24"/>
+            <column name="template_id" value="25"/>
             <column name="property_names"
                     value="specifiedFLUXCharacteristicsTypeCodes, specifiedFLUXCharacteristicValueDateTimes"/>
             <column name="disabled" value="false"/>
@@ -3897,12 +3895,12 @@
             <column name="br_id" value="FA-L02-00-0416"/>
             <column name="expression"
                     value="!isEmpty(specifiedFLUXCharacteristicsTypeCodes) &amp;&amp; listIdContainsAll(specifiedFLUXCharacteristicsTypeCodes, &quot;FA_CHARACTERISTIC&quot;)"/>
-            <column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+            <column name="note" value="If arrival (FA-L02-00-0290)."/>
             <column name="message" value="FLUX characteristic has an invalid listID."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="24"/>
+            <column name="template_id" value="25"/>
             <column name="property_names" value="specifiedFLUXCharacteristicsTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>

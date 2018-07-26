@@ -37,8 +37,6 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
     private CodeType reasonCode;
     private List<CodeType> specifiedFACatchTypeCodes;
     private List<FACatch> specifiedFACatches;
-    private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
-    private List<String> specifiedFLUXCharacteristicValueDateTimes;
 
     public FaNotificationOfArrivalFact() {
         setFactType();
