@@ -38,8 +38,7 @@ public class SalesQueryFactGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        XPathStringWrapper xPathStringWrapper = new XPathStringWrapper();
-        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper(xPathStringWrapper);
+        FactGeneratorHelper factGeneratorHelper = new FactGeneratorHelper();
         DefaultOrikaMapper defaultOrikaMapper = new DefaultOrikaMapper();
         helper = new SalesObjectsHelper();
 
