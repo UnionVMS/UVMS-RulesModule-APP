@@ -67,7 +67,7 @@ public class SalesReportFactGeneratorTest {
         exception.expect(RuntimeException.class);
         exception.expectMessage("SalesCategory in AuctionSale cannot be null");
 
-        salesReportFactGenerator.generateAllFacts(report, Collections.emptyMap());
+        salesReportFactGenerator.generateAllFacts(report, Collections.<ExtraValueType,Object>emptyMap());
     }
 
     @Test
