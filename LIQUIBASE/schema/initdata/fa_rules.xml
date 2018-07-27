@@ -813,7 +813,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatchCFR(ids, assetListCFR)"/>
+            <column name="expression" value="registrationVesselCountryId != null &amp;&amp; !isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !activityService.isCFRInFleetUnderFlagStateOnLandingDate(cfr, registrationVesselCountryId.value, landingDate)"/>
             <column name="note" value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message" value="Vessel ID CFR is provided but the vessel is not registered in EU."/>
             <column name="level" value="L03"/>

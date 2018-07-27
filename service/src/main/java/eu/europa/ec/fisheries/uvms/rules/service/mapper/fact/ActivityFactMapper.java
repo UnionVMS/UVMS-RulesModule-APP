@@ -92,6 +92,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,6 +101,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -562,7 +564,7 @@ public class ActivityFactMapper {
         return vesselTransportMeansFact;
     }
 
-    public List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMean) {
+    public List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMean, FAReportDocument faReportDocument) {
         if (vesselTransportMean == null) {
             xPathUtil.clear();
             return emptyList();
@@ -571,8 +573,21 @@ public class ActivityFactMapper {
         int index = 1;
         String strToAppend = xPathUtil.getValue();
         for (VesselTransportMeans vesselTransportMeans : vesselTransportMean) {
-            xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index);
+
             VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMeans);
+
+            vesselTransportMeansFact.setLandingDate(DateUtils.END_OF_TIME);
+
+            DateTimeType acceptanceDateTime = faReportDocument.getAcceptanceDateTime();
+            if (acceptanceDateTime != null){
+                XMLGregorianCalendar dateTime = acceptanceDateTime.getDateTime();
+                if (dateTime != null){
+                    Date date = XMLDateUtils.xmlGregorianCalendarToDate(dateTime);
+                    vesselTransportMeansFact.setLandingDate(new DateTime(date));
+                }
+            }
+
+            xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index);
             list.add(vesselTransportMeansFact);
             index++;
         }
@@ -582,7 +597,7 @@ public class ActivityFactMapper {
     public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean) {
         if (vesselTransportMean == null) {
             xPathUtil.clear();
-            return null;
+            return new VesselTransportMeansFact();
         }
 
         // Since every time we get the final value (Eg. when storing in repo) we clean the StringBuffer inside XPathStringWrapper, we need to store and use the initial
@@ -616,7 +631,7 @@ public class ActivityFactMapper {
         vesselTransportMeansFact.setSpecifiedStructuredAddresses(mapSpecifiedStructuredAddresses(specifiedContactParties));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_STRUCTURED_ADDRESS).storeInRepo(vesselTransportMeansFact, "specifiedStructuredAddresses");
 
-        vesselTransportMeansFact.setAssetListCFR(assetListCFR);
+        //vesselTransportMeansFact.setAssetListCFR(assetListCFR);
         vesselTransportMeansFact.setAssetListByEXTAndIRCSNoCFR(assetListByEXTAndIRCSNoCFR);
         vesselTransportMeansFact.setAssetListByICCAT(assetListByICCAT);
 

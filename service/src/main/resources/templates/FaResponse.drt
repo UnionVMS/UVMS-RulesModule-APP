@@ -15,6 +15,7 @@ import java.util.Arrays;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.ActivityRulesService activityService;
 
 
 template "@{tname}"

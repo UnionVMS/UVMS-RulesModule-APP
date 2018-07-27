@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesEventFact;
 
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
+global eu.europa.ec.fisheries.uvms.rules.service.ActivityRulesService activityService;
 
 
 template "@{tname}"
