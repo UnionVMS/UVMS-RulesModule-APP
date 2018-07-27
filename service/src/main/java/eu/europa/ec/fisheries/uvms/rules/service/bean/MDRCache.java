@@ -254,4 +254,10 @@ public class MDRCache {
         return errorMessages.get(brId);
     }
 
+    @AccessTimeout(value = 10, unit = MINUTES)
+    @Lock(LockType.READ)
+    public boolean isMdrCacheLoaded(){
+        return cache.size() > 10;
+    }
+
 }

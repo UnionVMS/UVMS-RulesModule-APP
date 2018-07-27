@@ -12,8 +12,10 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(exclude = {"schemeId", "flagState"})
 public class IdTypeWithFlagState {
 
     private String schemeId;
@@ -32,6 +34,14 @@ public class IdTypeWithFlagState {
         this.flagState = flagState;
     }
 
+    public IdTypeWithFlagState(String value, String flagState) {
+        this.value = value;
+        this.flagState = flagState;
+    }
+
+    public IdTypeWithFlagState(String value) {
+        this.value = value;
+    }
 }
 
 

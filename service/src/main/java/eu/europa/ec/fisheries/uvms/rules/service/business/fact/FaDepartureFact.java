@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
 
@@ -25,6 +26,7 @@ import java.util.List;
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@Data
 public class FaDepartureFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
@@ -51,6 +53,8 @@ public class FaDepartureFact extends AbstractFact {
 
     private List<String> faTypesPerTrip;
 
+    private boolean specifiedFishingGearsArePresent;
+
     public FaDepartureFact() {
         setFactType();
     }
@@ -59,85 +63,5 @@ public class FaDepartureFact extends AbstractFact {
     public void setFactType() {
         this.factType = FactType.FA_DEPARTURE;
     }
-
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-    public CodeType getReasonCode() {
-        return reasonCode;
-    }
-    public void setReasonCode(CodeType reasonCode) {
-        this.reasonCode = reasonCode;
-    }
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-    public FishingTrip getSpecifiedFishingTrip() {
-        return specifiedFishingTrip;
-    }
-    public void setSpecifiedFishingTrip(FishingTrip specifiedFishingTrip) {
-        this.specifiedFishingTrip = specifiedFishingTrip;
-    }
-    public Date getOccurrenceDateTime() {
-        return occurrenceDateTime;
-    }
-    public void setOccurrenceDateTime(Date occurrenceDateTime) {
-        this.occurrenceDateTime = occurrenceDateTime;
-    }
-    public List<CodeType> getRelatedFLUXLocationTypeCodes() {
-        return relatedFLUXLocationTypeCodes;
-    }
-    public void setRelatedFLUXLocationTypeCodes(List<CodeType> relatedFLUXLocationTypeCodes) {
-        this.relatedFLUXLocationTypeCodes = relatedFLUXLocationTypeCodes;
-    }
-    public List<CodeType> getSpecifiedFishingGearRoleCodeTypes() {
-        return specifiedFishingGearRoleCodeTypes;
-    }
-    public void setSpecifiedFishingGearRoleCodeTypes(List<CodeType> specifiedFishingGearRoleCodeTypes) {
-        this.specifiedFishingGearRoleCodeTypes = specifiedFishingGearRoleCodeTypes;
-    }
-    public List<CodeType> getSpecifiedFACatchCodeTypes() {
-        return specifiedFACatchCodeTypes;
-    }
-    public void setSpecifiedFACatchCodeTypes(List<CodeType> specifiedFACatchCodeTypes) {
-        this.specifiedFACatchCodeTypes = specifiedFACatchCodeTypes;
-    }
-
-    public void setPurposeCode(String purposeCode) {
-        this.purposeCode = purposeCode;
-    }
-
-    public String getPurposeCode() {
-        return purposeCode;
-    }
-
-    public List<IdType> getSpecifiedFishingTripIds() {
-        return specifiedFishingTripIds;
-    }
-
-    public void setSpecifiedFishingTripIds(List<IdType> specifiedFishingTripIds) {
-        this.specifiedFishingTripIds = specifiedFishingTripIds;
-    }
-
-    public List<String> getFaTypesPerTrip() {
-        return faTypesPerTrip;
-    }
-
-    public void setFaTypesPerTrip(List<String> faTypesPerTrip) {
-        this.faTypesPerTrip = faTypesPerTrip;
-    }
-
 
 }

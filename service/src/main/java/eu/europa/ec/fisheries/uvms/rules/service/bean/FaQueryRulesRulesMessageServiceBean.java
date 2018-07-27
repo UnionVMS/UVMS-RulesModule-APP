@@ -119,12 +119,12 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
                     setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType());
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
-                        needToSendToExchange = isNeedToSendToExchange(request, requestStr, logGuid, onValue, faQueryMessage);
+                        needToSendToExchange = sendToExchangeOnEmptyReport(request, requestStr, logGuid, onValue, faQueryMessage, faQueryValidationReport);
                     }
                 } else { // Request doesn't have permissions
                     log.debug("Request doesn't have permission! It won't be transmitted to Activity Module!");
                     updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.FAILED);
-                    faResponseValidatorAndSender.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue);
+                    faResponseValidatorAndSender.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue, faQueryValidationReport);
                     needToSendToExchange = false;
                 }
             } else {
@@ -139,12 +139,10 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
                 faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)));
             }
 
-            // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed.
+            // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
             if (setFLUXFAReportMessageRequest != null && !setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                 faReportRulesMessageBean.evaluateOutgoingFaReport(setFLUXFAReportMessageRequest);
             }
-
-
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
             updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
