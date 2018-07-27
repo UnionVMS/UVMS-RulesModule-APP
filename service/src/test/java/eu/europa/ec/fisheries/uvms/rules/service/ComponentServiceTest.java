@@ -47,7 +47,7 @@ public class ComponentServiceTest {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
+    // TODO add findHistoryOfAssetBy methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
     // @Test

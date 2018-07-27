@@ -13,9 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
@@ -54,6 +52,8 @@ import java.util.Map;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -102,14 +102,8 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject() {
-        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByCfr = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_CFR);
-        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByExt = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_EXT);
-        List<eu.europa.ec.fisheries.wsdl.asset.types.Asset> idTypeWithFlagStatesByIccat = (List<eu.europa.ec.fisheries.wsdl.asset.types.Asset>) extraValueMap.get(ASSET_BY_ICCAT);
-
-        activityFactMapper.setAssetListCFR(idTypeWithFlagStatesByCfr);
-        activityFactMapper.setAssetListByEXTAndIRCSNoCFR(idTypeWithFlagStatesByExt);
-        activityFactMapper.setAssetListByICCAT(idTypeWithFlagStatesByIccat);
-
+        List<VesselTransportMeansDto> assets = (List<VesselTransportMeansDto>) extraValueMap.get(ASSET);
+        activityFactMapper.setTransportMeans(assets);
         List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS);
 
         if (CollectionUtils.isNotEmpty(idTypeList)){
@@ -147,6 +141,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 factsByReport.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
+                activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true);
                 factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
@@ -163,6 +158,15 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             }
         }
         facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
+        List<VesselTransportMeansDto> transportMeans = activityFactMapper.getTransportMeans();
+        int index = 0;
+        for (AbstractFact fact : facts) {
+            if (fact instanceof VesselTransportMeansFact){
+                ((VesselTransportMeansFact)fact).setAsset(transportMeans.get(index));
+                index++;
+            }
+        }
+
         return facts;
     }
 
@@ -430,12 +434,15 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
      * @param facts
      */
     private void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
-        List<String> strIDs = getIds(fluxRepDoc.getIDS());
-        facts.removeAll(Collections.singleton(null));
-        for (AbstractFact fact : facts) {
-            fact.setUniqueIds(strIDs);
-            fact.setCreationDateOfMessage(activityFactMapper.extractCreationDateTime(fluxRepDoc));
+        if (fluxRepDoc != null){
+            List<String> strIDs = getIds(fluxRepDoc.getIDS());
+            facts.removeAll(Collections.singleton(null));
+            for (AbstractFact fact : facts) {
+                fact.setUniqueIds(strIDs);
+                fact.setCreationDateOfMessage(activityFactMapper.extractCreationDateTime(fluxRepDoc));
+            }
         }
+
     }
 
     private List<String> getIds(List<IDType> idTypes) {

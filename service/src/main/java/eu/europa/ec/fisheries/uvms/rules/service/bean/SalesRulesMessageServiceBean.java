@@ -97,9 +97,6 @@ public class SalesRulesMessageServiceBean {
     @EJB
     private SalesMessageFactory salesMessageFactory;
 
-    @EJB
-    private RuleAssetsBean ruleAssetsBean;
-
     public void receiveSalesQueryRequest(ReceiveSalesQueryRequest receiveSalesQueryRequest) {
         log.info("Received ReceiveSalesQueryRequest message");
         try {

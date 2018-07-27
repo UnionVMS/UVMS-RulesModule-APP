@@ -102,6 +102,7 @@ import java.util.Map;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
+import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaArrivalFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaCatchFact;
@@ -137,7 +138,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMe
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -181,10 +181,7 @@ public class ActivityFactMapper {
     private static final String POST_OFFICE_BOX = "PostOfficeBox";
     private static final String FISHING_ACTIVITY_TYPE_CODE = "fishingActivityTypeCode";
     private static final String CREATION_DATE_TIME = "creationDateTime";
-
-    private List<Asset> assetListCFR;
-    private List<Asset> assetListByICCAT;
-    private List<Asset> assetListByEXTAndIRCSNoCFR;
+    private List<VesselTransportMeansDto> transportMeans;
     private XPathStringWrapper xPathUtil;
     private List<IdType> faReportMessageIds = new ArrayList<>();
     private List<IdType> faRelatedReportIds = new ArrayList<>();
@@ -615,10 +612,6 @@ public class ActivityFactMapper {
 
         vesselTransportMeansFact.setSpecifiedStructuredAddresses(mapSpecifiedStructuredAddresses(specifiedContactParties));
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_STRUCTURED_ADDRESS).storeInRepo(vesselTransportMeansFact, "specifiedStructuredAddresses");
-
-        vesselTransportMeansFact.setAssetListCFR(assetListCFR);
-        vesselTransportMeansFact.setAssetListByEXTAndIRCSNoCFR(assetListByEXTAndIRCSNoCFR);
-        vesselTransportMeansFact.setAssetListByICCAT(assetListByICCAT);
 
         return vesselTransportMeansFact;
     }
@@ -2865,14 +2858,6 @@ public class ActivityFactMapper {
         this.xPathUtil = xPathUtil1;
     }
 
-    public void setAssetListCFR(List<Asset> assetListCFR) {
-        this.assetListCFR = assetListCFR;
-    }
-
-    public List<Asset> getAssetListCFR() {
-        return assetListCFR;
-    }
-
     public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
         this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
@@ -2893,20 +2878,15 @@ public class ActivityFactMapper {
         return faQueryIds;
     }
 
-    public List<Asset> getAssetListByICCAT() {
-        return assetListByICCAT;
+    public List<VesselTransportMeansDto> getTransportMeans() {
+        return transportMeans;
     }
 
-    public void setAssetListByICCAT(List<Asset> assetListByICCAT) {
-        this.assetListByICCAT = assetListByICCAT;
+    public void setTransportMeans(List<VesselTransportMeansDto> transportMeans) {
+        this.transportMeans = transportMeans;
     }
 
-    public List<Asset> getAssetListByEXTAndIRCSNoCFR() {
-        return assetListByEXTAndIRCSNoCFR;
+    public  List<VesselTransportMeansDto> getTransportMeansDtos(){
+        return transportMeans;
     }
-
-    public void setAssetListByEXTAndIRCSNoCFR(List<Asset> assetListByEXTAndIRCSNoCFR) {
-        this.assetListByEXTAndIRCSNoCFR = assetListByEXTAndIRCSNoCFR;
-    }
-
 }

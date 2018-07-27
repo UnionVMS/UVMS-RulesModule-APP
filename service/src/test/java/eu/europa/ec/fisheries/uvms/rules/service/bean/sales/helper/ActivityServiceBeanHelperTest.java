@@ -97,7 +97,7 @@ public class ActivityServiceBeanHelperTest {
     }
 
     @Test
-    @Ignore //This test fails once in a while because of the static mocks.
+    @Ignore //This findHistoryOfAssetBy fails once in a while because of the static mocks.
     public void findTrip() throws Exception {
         mockStatic(JAXBMarshaller.class);
         String correlationId = "correlationId";

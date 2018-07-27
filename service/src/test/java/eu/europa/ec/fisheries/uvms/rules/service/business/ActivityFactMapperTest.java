@@ -112,7 +112,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
  */
 public class ActivityFactMapperTest {
 
-    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
+    String testXmlPath = "src/findHistoryOfAssetBy/resources/testData/fluxFaResponseMessage.xml";
     FLUXFAReportMessage fluxFaTestMessage;
 
     private IDType idType;

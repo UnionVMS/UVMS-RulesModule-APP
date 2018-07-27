@@ -67,7 +67,7 @@ import static org.mockito.Mockito.when;
  */
 public class RulesMessageServiceBeanTest {
 
-    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
+    String testXmlPath = "src/findHistoryOfAssetBy/resources/testData/fluxFaResponseMessage.xml";
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -207,7 +207,7 @@ public class RulesMessageServiceBeanTest {
     @Ignore
     public void testSendRequestToActivity() throws RulesServiceException, MessageException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
-        //messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX, MessageType.FLUX_FA_REPORT_MESSAGE);
+        //messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "findHistoryOfAssetBy", PluginType.FLUX, MessageType.FLUX_FA_REPORT_MESSAGE);
     }
 
     @Test
