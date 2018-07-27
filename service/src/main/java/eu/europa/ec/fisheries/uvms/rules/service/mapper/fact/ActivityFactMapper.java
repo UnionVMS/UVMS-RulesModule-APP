@@ -1672,29 +1672,8 @@ public class ActivityFactMapper {
                 }
             }
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_TRIP, SPECIFIED_DELIMITED_PERIOD).storeInRepo(faNotificationOfArrivalFact, "delimitedPeriods");
-
-            List<FLUXCharacteristic> specifiedFLUXCharacteristics = fishingActivity.getSpecifiedFLUXCharacteristics();
-            if (CollectionUtils.isNotEmpty(specifiedFLUXCharacteristics)) {
-
-                List<CodeType> codeTypes = new ArrayList<>();
-                List<String> dates = new ArrayList<>();
-
-                for (FLUXCharacteristic characteristic : specifiedFLUXCharacteristics) {
-                    if (characteristic != null) {
-                        codeTypes.add(mapToCodeType(characteristic.getTypeCode()));
-                        if (characteristic.getValueDateTime() != null && characteristic.getValueDateTime().getDateTime() != null) {
-                            dates.add(characteristic.getValueDateTime().getDateTime().toString());
-                        } else {
-                            dates.add("NOT_VALID_DATE_ELEMENT");
-                        }
-                    }
-                }
-                faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicValueDateTimes(dates);
-                faNotificationOfArrivalFact.setSpecifiedFLUXCharacteristicsTypeCodes(codeTypes);
-            }
         }
-        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicsTypeCodes");
-        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faNotificationOfArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
+
         if (faReportDocument != null) {
             faNotificationOfArrivalFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, FA_REPORT_DOCUMENT_TYPE_CODE);
@@ -1813,6 +1792,29 @@ public class ActivityFactMapper {
         FaArrivalFact faArrivalFact = new FaArrivalFact();
         String partialXpath = xPathUtil.getValue();
         if (fishingActivity != null) {
+
+            List<FLUXCharacteristic> specifiedFLUXCharacteristics = fishingActivity.getSpecifiedFLUXCharacteristics();
+            if (CollectionUtils.isNotEmpty(specifiedFLUXCharacteristics)) {
+
+                List<CodeType> codeTypes = new ArrayList<>();
+                List<String> dates = new ArrayList<>();
+
+                for (FLUXCharacteristic characteristic : specifiedFLUXCharacteristics) {
+                    if (characteristic != null) {
+                        codeTypes.add(mapToCodeType(characteristic.getTypeCode()));
+                        if (characteristic.getValueDateTime() != null && characteristic.getValueDateTime().getDateTime() != null) {
+                            dates.add(characteristic.getValueDateTime().getDateTime().toString());
+                        } else {
+                            dates.add("NOT_VALID_DATE_ELEMENT");
+                        }
+                    }
+                }
+
+                faArrivalFact.setSpecifiedFLUXCharacteristicValueDateTimes(dates);
+                faArrivalFact.setSpecifiedFLUXCharacteristicsTypeCodes(codeTypes);
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faArrivalFact, "specifiedFLUXCharacteristicsTypeCodes");
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, "ValueDateTime").storeInRepo(faArrivalFact, "specifiedFLUXCharacteristicValueDateTimes");
+            }
             faArrivalFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faArrivalFact, "fishingActivityTypeCode");
 
