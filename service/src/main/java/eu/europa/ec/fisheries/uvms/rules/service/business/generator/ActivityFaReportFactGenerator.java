@@ -162,8 +162,10 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         int index = 0;
         for (AbstractFact fact : facts) {
             if (fact instanceof VesselTransportMeansFact){
-                ((VesselTransportMeansFact)fact).setAsset(transportMeans.get(index));
-                index++;
+                if (transportMeans != null){
+                    ((VesselTransportMeansFact)fact).setAsset(transportMeans.get(index));
+                    index++;
+                }
             }
         }
 

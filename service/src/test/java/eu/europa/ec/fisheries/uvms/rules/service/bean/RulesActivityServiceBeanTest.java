@@ -13,6 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
+
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -39,15 +48,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import java.io.FileInputStream;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by padhyad, ankovi on 6/7/2017.
