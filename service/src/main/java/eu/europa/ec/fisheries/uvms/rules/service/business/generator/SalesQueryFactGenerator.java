@@ -50,9 +50,9 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
 
     public SalesQueryFactGenerator() {
         this.xPathUtil = new XPathStringWrapper();
-        this.factGeneratorHelper = new FactGeneratorHelper(xPathUtil);
         this.mapper = new DefaultOrikaMapper().getMapper();
         this.mappingsToFacts = new HashMap<>();
+        this.factGeneratorHelper = new FactGeneratorHelper();
         fillMap();
     }
 
@@ -72,7 +72,8 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         return classes;
     }
 
-    @Override public List<AbstractFact> generateAllFacts() {
+    @Override
+    public List<AbstractFact> generateAllFacts() {
         facts = new ArrayList<>();
 
         List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts();

@@ -66,6 +66,7 @@ import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
@@ -143,11 +144,19 @@ public class SalesRulesMessageServiceBean {
 
     public void receiveSalesReportRequest(ReceiveSalesReportRequest receiveSalesReportRequest) {
         log.info("Received ReceiveSalesReportRequest message");
+        StopWatch methodStopwatch = StopWatch.createStarted();
         try {
+
+            StopWatch stopWatch = StopWatch.createStarted();
+
             //get sales report message
             String salesReportMessageAsString = receiveSalesReportRequest.getRequest();
             String logGuid = receiveSalesReportRequest.getLogGuid();
             Report salesReportMessage = JAXBUtils.unMarshallMessage(salesReportMessageAsString, Report.class);
+
+            log.info("Flow Report, Unmarshalling took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -156,9 +165,22 @@ public class SalesRulesMessageServiceBean {
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesReportMessage).or(DateTime.now()));
             extraValues.put(XML, salesReportMessageAsString);
 
+            log.info("Flow Report, Populating extra values took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             //validate
             Collection<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, salesReportMessage, extraValues);
+
+            log.info("Flow Report, Evaluating the facts took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
+
+            log.info("Flow Report, Updating validation results took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
 
             //send to sales
             if (validationResult.isError()) {
@@ -170,20 +192,37 @@ public class SalesRulesMessageServiceBean {
                 log.info("Send SalesReportRequest message to Sales");
                 sendToSales(requestForSales);
             }
+
+            log.info("Flow Report, Sending to sales took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             //update log status
             updateRequestMessageStatusInExchange(logGuid, validationResult);
+
+            log.info("Flow Report, Updating request message status in exchange took {} ms", stopWatch.getTime());
         } catch (SalesMarshallException | RulesValidationException | MessageException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales report", e);
         }
+
+        log.info("Flow Report, receiveSalesReportRequest() took: {} ms", methodStopwatch.getTime());
     }
 
     public void receiveSalesResponseRequest(ReceiveSalesResponseRequest rulesRequest) {
         log.info("Received ReceiveSalesResponseRequest message");
+        StopWatch methodStopwatch = StopWatch.createStarted();
         try {
+
+            StopWatch stopWatch = StopWatch.createStarted();
+
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
             FLUXSalesResponseMessage salesResponseMessage = JAXBUtils.unMarshallMessage(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
+
+            log.info("Flow Response, Unmarshalling took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -191,24 +230,47 @@ public class SalesRulesMessageServiceBean {
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
             extraValues.put(XML, salesResponseMessageAsString);
 
+            log.info("Flow Response, Populating extra values took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             //validate
             Collection<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
+            log.info("Flow Response, Evaluating the facts took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
+            log.info("Flow Response, Updating validation results took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
 
             updateRequestMessageStatusInExchange(logGuid, validationResult);
+
+            log.info("Flow Response, Updating request message status in exchange took {} ms", stopWatch.getTime());
         } catch (RulesValidationException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
         } catch (ConfigServiceException e) {
             throw new RulesServiceException("Couldn't retrieve the FLUX local nation code from the settings", e);
         }
+
+        log.info("Flow Response, receiveSalesResponseRequest() took: {} ms", methodStopwatch.getTime());
     }
 
     public void sendSalesResponseRequest(SendSalesResponseRequest rulesRequest) {
+        StopWatch methodStopwatch = StopWatch.createStarted();
         try {
+
+            StopWatch stopWatch = StopWatch.createStarted();
+
             //get sales response message
             String salesResponseMessageAsString = rulesRequest.getRequest();
             String logGuid = rulesRequest.getLogGuid();
             FLUXSalesResponseMessage salesResponseMessage = JAXBUtils.unMarshallMessage(salesResponseMessageAsString, FLUXSalesResponseMessage.class);
+
+            log.info("Flow Response, Unmarshalling took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
@@ -217,9 +279,21 @@ public class SalesRulesMessageServiceBean {
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
             extraValues.put(XML, salesResponseMessageAsString);
 
+            log.info("Flow Response, Populating extra values took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             //validate
             Collection<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_RESPONSE_MSG, salesResponseMessage, extraValues);
+            log.info("Flow Response, Evaluating the facts took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
+            log.info("Flow Response, Updating validation results took: {} ms", stopWatch.getTime());
+            stopWatch.reset();
+            stopWatch.start();
+
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
             //send to exchange
@@ -233,9 +307,14 @@ public class SalesRulesMessageServiceBean {
 
             log.info("Send SendSalesResponseRequest message to Exchange");
             sendToExchange(requestForExchange);
+
+            log.info("Flow Response, Updating request message status in exchange took {} ms", stopWatch.getTime());
+
         } catch (ExchangeModelMarshallException | MessageException | RulesValidationException | ConfigServiceException | JAXBException e) {
             throw new RulesServiceException("Couldn't validate sales response", e);
         }
+
+        log.info("Flow Response, sendSalesResponseRequest() took: {} ms", methodStopwatch.getTime());
     }
 
     public void sendSalesReportRequest(SendSalesReportRequest rulesRequest) {

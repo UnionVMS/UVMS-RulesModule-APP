@@ -21,13 +21,20 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
 
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,20 +42,21 @@ import java.util.Map;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
+@Slf4j
+@Singleton
 public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesResponseMessage> {
 
-    private FLUXSalesResponseMessage fluxResponseMessage;
-
-    private List<AbstractFact> facts;
-    private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
+    private HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
     private MapperFacade mapper;
+
+    @EJB
     private FactGeneratorHelper factGeneratorHelper;
+
     private XPathStringWrapper xPathUtil;
 
 
     public SalesResponseFactGenerator() {
         this.xPathUtil = new XPathStringWrapper();
-        this.factGeneratorHelper = new FactGeneratorHelper(xPathUtil);
         this.mapper = new DefaultOrikaMapper().getMapper();
         this.mappingsToFacts = new HashMap<>();
         fillMap();
@@ -58,6 +66,51 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         this();
         this.factGeneratorHelper = factGeneratorHelper;
         this.mapper = mapperFacade;
+    }
+
+    @Lock(LockType.WRITE)
+    public List<AbstractFact> generateAllFacts(Object businessObject, Map<ExtraValueType, Object> extraValues) {
+        List<AbstractFact> facts = new ArrayList<>();
+        FLUXSalesResponseMessage response = (FLUXSalesResponseMessage) businessObject;
+
+        StopWatch stopWatch = StopWatch.createStarted();
+        List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts(response);
+
+        log.info("Flow Response, Find objects to map to facts took: {} ms", stopWatch.getTime());
+        stopWatch.reset();
+        stopWatch.start();
+
+        for (FactCandidate objectToMapToFact : objectsToMapToFacts) {
+            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
+            fact.setSource(Source.RESPONSE);
+            fact.setOriginatingPlugin(((String)extraValues.get(ORIGINATING_PLUGIN)));
+            fact.setSenderOrReceiver(((String)extraValues.get(SENDER_RECEIVER)));
+            fact.setCreationDateOfMessage((DateTime) extraValues.get(CREATION_DATE_OF_MESSAGE));
+
+            facts.add(fact);
+
+            for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {
+                xPathUtil.appendWithoutWrapping(propertyAndXPath.getValue());
+                xPathUtil.storeInRepo(fact, propertyAndXPath.getKey());
+            }
+        }
+
+        log.info("Flow Response, Mapping facts including xpath took: {} ms", stopWatch.getTime());
+
+        return facts;
+    }
+
+    @Override
+    @Deprecated
+    public List<AbstractFact> generateAllFacts() {
+        log.error("generateAllFacts() called in SalesResponseFactGenerator. This flow is not supported anymore");
+        return Lists.newArrayList();
+    }
+
+    @Override
+    @Deprecated
+    public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {
+        log.error("setBusinessObjectMessage() called in SalesResponseFactGenerator. This flow is not supported anymore.");
     }
 
     private List<Class<?>> findAllClassesFromOrikaMapperMap() {
@@ -70,40 +123,13 @@ public class SalesResponseFactGenerator extends AbstractGenerator<FLUXSalesRespo
         return classes;
     }
 
-    @Override public List<AbstractFact> generateAllFacts() {
-        facts = new ArrayList<>();
-
-        List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts();
-
-        for (FactCandidate objectToMapToFact : objectsToMapToFacts) {
-            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
-            fact.setSource(Source.RESPONSE);
-            fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
-            fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
-            fact.setCreationDateOfMessage((DateTime) extraValueMap.get(CREATION_DATE_OF_MESSAGE));
-            facts.add(fact);
-
-            for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {
-                xPathUtil.appendWithoutWrapping(propertyAndXPath.getValue()).storeInRepo(fact, propertyAndXPath.getKey());
-            }
-        }
-
-        return facts;
-    }
-
-    @Override
-    public void setBusinessObjectMessage(FLUXSalesResponseMessage businessObject) throws RulesValidationException {
-        this.fluxResponseMessage = businessObject;
-    }
-
-    private List<FactCandidate> findObjectsToMapToFacts() {
+    private List<FactCandidate> findObjectsToMapToFacts(FLUXSalesResponseMessage fluxResponseMessage) {
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(fluxResponseMessage, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {
             throw new RulesServiceException("Something went wrong when generating facts for a sales response", e);
         }
     }
-
 
     private void fillMap() {
         mappingsToFacts.put(FLUXSalesResponseMessage.class, SalesFLUXSalesResponseMessageFact.class);
