@@ -65,7 +65,7 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 @Ignore
 public class XPathRepositoryTest {
 
-    String testXmlPath = "src/findHistoryOfAssetBy/resources/testData/fluxFaResponseMessage.xml";
+    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
     XPathStringWrapper xpathUtil;
     XPathRepository repo;
     FLUXFAReportMessage fluxMessage;

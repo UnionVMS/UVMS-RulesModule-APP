@@ -72,7 +72,7 @@ public class RulesActivityServiceBeanTest {
 
     TextMessage responseMsg;
 
-    String testXmlPath = "src/findHistoryOfAssetBy/resources/testData/fluxFaResponseMessage.xml";
+    String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
 
     @Before
     public void setUp() throws JMSException {
