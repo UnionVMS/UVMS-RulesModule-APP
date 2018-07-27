@@ -64,6 +64,8 @@ public class FaReportDocumentFact extends AbstractFact {
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
 
+    private Map<FishingActivityType, List<String>> tripsPerFaTypeFromMessage;
+
     public boolean isValid(List<FishingActivity> specifiedFishingActivities){
         if (CollectionUtils.isEmpty(specifiedFishingActivities)){
             return false;
@@ -122,6 +124,20 @@ public class FaReportDocumentFact extends AbstractFact {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    public boolean containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType type) {
+        List<String> declaredInMessageList = new ArrayList<>();
+        if (FishingActivityType.ARRIVAL.equals(type)) {
+            declaredInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.ARRIVAL);
+        } else if (FishingActivityType.DEPARTURE.equals(type)) {
+            declaredInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.DEPARTURE);
+        }
+        if (CollectionUtils.isNotEmpty(declaredInMessageList)) {
+            Set<String> set = new HashSet<>(declaredInMessageList);
+            return declaredInMessageList.size() != set.size();
         }
         return false;
     }

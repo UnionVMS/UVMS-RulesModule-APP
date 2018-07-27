@@ -13,35 +13,33 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 
-import java.util.List;
-
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class VesselTransportMeansFact extends AbstractFact {
 
     private boolean isFromFaReport;
-
     private List<IdType> ids;
-
     private IdType registrationVesselCountryId;
-
     private CodeType roleCode;
-
     private List<ContactParty> specifiedContactParties;
-
     private List<StructuredAddress> specifiedStructuredAddresses;
-
     private List<CodeType> specifiedContactPartyRoleCodes;
-
     private List<ContactPerson> specifiedContactPersons;
-
-    private List<IdTypeWithFlagState> assetList;
-
+    private List<Asset> assetListCFR;
+    private List<Asset> assetListByICCAT;
+    private List<Asset> assetListByEXTAndIRCSNoCFR;
 
     public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
         boolean containsValidSchemeId = false;
@@ -53,7 +51,6 @@ public class VesselTransportMeansFact extends AbstractFact {
         return containsValidSchemeId;
     }
 
-
     @Override
     public void setFactType() {
         this.factType = FactType.VESSEL_TRANSPORT_MEANS;
@@ -64,56 +61,5 @@ public class VesselTransportMeansFact extends AbstractFact {
     }
     public void setIsFromFaReport(boolean fromFaReport) {
         isFromFaReport = fromFaReport;
-    }
-    public VesselTransportMeansFact() {
-        setFactType();
-    }
-    public CodeType getRoleCode() {
-        return roleCode;
-    }
-    public void setRoleCode(CodeType roleCode) {
-        this.roleCode = roleCode;
-    }
-    public List<IdType> getIds() {
-        return ids;
-    }
-    public void setIds(List<IdType> ids) {
-        this.ids = ids;
-    }
-    public IdType getRegistrationVesselCountryId() {
-        return registrationVesselCountryId;
-    }
-    public void setRegistrationVesselCountryId(IdType registrationVesselCountryId) {
-        this.registrationVesselCountryId = registrationVesselCountryId;
-    }
-    public List<ContactParty> getSpecifiedContactParties() {
-        return specifiedContactParties;
-    }
-    public void setSpecifiedContactParties(List<ContactParty> specifiedContactParties) {
-        this.specifiedContactParties = specifiedContactParties;
-    }
-    public List<CodeType> getSpecifiedContactPartyRoleCodes() {
-        return specifiedContactPartyRoleCodes;
-    }
-    public void setSpecifiedContactPartyRoleCodes(List<CodeType> specifiedContactPartyRoleCodes) {
-        this.specifiedContactPartyRoleCodes = specifiedContactPartyRoleCodes;
-    }
-    public List<ContactPerson> getSpecifiedContactPersons() {
-        return specifiedContactPersons;
-    }
-    public void setSpecifiedContactPersons(List<ContactPerson> specifiedContactPersons) {
-        this.specifiedContactPersons = specifiedContactPersons;
-    }
-    public List<StructuredAddress> getSpecifiedStructuredAddresses() {
-        return specifiedStructuredAddresses;
-    }
-    public void setSpecifiedStructuredAddresses(List<StructuredAddress> specifiedStructuredAddresses) {
-        this.specifiedStructuredAddresses = specifiedStructuredAddresses;
-    }
-    public void setAssetList(List<IdTypeWithFlagState> assetList) {
-        this.assetList = assetList;
-    }
-    public List<IdTypeWithFlagState> getAssetList() {
-        return assetList;
     }
 }

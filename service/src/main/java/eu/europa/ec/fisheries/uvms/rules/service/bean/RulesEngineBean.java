@@ -15,9 +15,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RE
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,7 +74,7 @@ public class RulesEngineBean {
     private FaResponseFactMapper faResponseFactMapper;
 
     @EJB
-    private RuleKieContainer initializer;
+    private RulesKieContainerInitializer initializer;
 
     @PostConstruct
     public void init(){
@@ -212,6 +210,6 @@ public class RulesEngineBean {
             log.error("{}", extraValues.get(XML));
             throw new RulesServiceTechnicalException(errorMessage, e);
         }
-
     }
+
 }
