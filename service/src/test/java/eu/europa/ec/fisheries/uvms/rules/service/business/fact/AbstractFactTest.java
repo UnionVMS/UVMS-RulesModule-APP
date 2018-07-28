@@ -1465,7 +1465,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenIdTypeAndIdIsNotBlank() {
-        assertFalse(fact.isBlank(new IdType("test")));
+        assertFalse(fact.isBlank(new IdType("findHistoryOfAssetBy")));
     }
 
     @Test
@@ -1480,7 +1480,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
-        assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
+        assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("findHistoryOfAssetBy")));
     }
 
     @Test

@@ -11,14 +11,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -51,6 +48,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
@@ -89,7 +87,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
     private RulesActivityServiceBean activityServiceBean;
 
     @EJB
-    private RuleAssetsBean ruleAssetsBean;
+    private AssetService assetService;
 
     @EJB
     private ActivityOutQueueConsumer activityConsumer;
@@ -215,9 +213,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
                                                                         List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
         Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
         extraValues.put(SENDER_RECEIVER, senderReceiver);
-        extraValues.put(ASSET_BY_CFR, ruleAssetsBean.getAssetListByCFR(fluxfaReportMessage));
-        extraValues.put(ASSET_BY_ICCAT, ruleAssetsBean.getAssetListByICCAT(fluxfaReportMessage));
-        extraValues.put(ASSET_BY_EXT, ruleAssetsBean.getAssetListByIRCSAndExtMarkAndNoCFR(fluxfaReportMessage));
+       // extraValues.put(ASSET, assetService.findHistoryOfAssetBy(fluxfaReportMessage)); FIXME!!!!!
         extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
         extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getMatrix());
         if (isIncomingMessage) {

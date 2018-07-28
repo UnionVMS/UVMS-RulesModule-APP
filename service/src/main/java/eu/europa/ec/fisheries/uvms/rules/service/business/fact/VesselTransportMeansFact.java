@@ -17,7 +17,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -37,10 +37,7 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<StructuredAddress> specifiedStructuredAddresses;
     private List<CodeType> specifiedContactPartyRoleCodes;
     private List<ContactPerson> specifiedContactPersons;
-    private List<Asset> assetListCFR;
-    private List<Asset> assetListByICCAT;
-    private List<Asset> assetListByEXTAndIRCSNoCFR;
-
+    private VesselTransportMeansDto asset;
     public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
         boolean containsValidSchemeId = false;
         for (IdType id : ids) {
