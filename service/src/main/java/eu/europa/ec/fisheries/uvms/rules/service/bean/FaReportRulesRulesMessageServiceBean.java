@@ -125,9 +125,9 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<String> faIdsPerTripsFromMessage = faMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
-            Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
-            extraValuesMap.put(XML, requestStr);
-            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
+            Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
+            extraValues.put(XML, requestStr);
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
@@ -184,7 +184,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
             List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
-            Map<ExtraValueType, Object> extraValuesMap = populateExtraValueTypeObjectMap(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
+            Map<ExtraValueType, Object> extraValuesMap = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
             extraValuesMap.put(XML, requestStr);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap);
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
@@ -209,11 +209,11 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
         }
     }
 
-    private Map<ExtraValueType, Object> populateExtraValueTypeObjectMap(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
-                                                                        List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
+    private Map<ExtraValueType, Object> fetchExtraValues(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
+                                                         List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
         Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
         extraValues.put(SENDER_RECEIVER, senderReceiver);
-       // extraValues.put(ASSET, assetService.findHistoryOfAssetBy(fluxfaReportMessage)); FIXME!!!!!
+        extraValues.put(ExtraValueType.ASSET, assetService.findHistoryOfAssetBy(fluxfaReportMessage.getFAReportDocuments()));
         extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
         extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getMatrix());
         if (isIncomingMessage) {
