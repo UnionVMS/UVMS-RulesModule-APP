@@ -800,7 +800,7 @@
             <column name="rule_id" value="62"/>
             <column name="br_id" value="FA-L03-00-0062"/>
             <column name="expression"
-                    value="registrationVesselCountryId != null &amp;&amp; asset != null &amp;&amp; asset.asset != null &amp;&amp; asset.asset.countryCode != registrationVesselCountryId.value"/>
+                    value="registrationVesselCountryId != null &amp;&amp; transportMeans != null &amp;&amp; transportMeans.asset != null &amp;&amp; transportMeans.asset.countryCode != registrationVesselCountryId.value"/>
             <column name="note" value="The vessel identification and registration location (flag state) must be consistent."/>
             <column name="message" value="Inconsistent information of vessel ID and registration country."/>
             <column name="level" value="L03"/>
@@ -813,7 +813,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; asset == null"/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note" value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message" value="Vessel ID CFR is provided but the vessel is not registered in EU."/>
             <column name="level" value="L03"/>
@@ -827,7 +827,7 @@
             <column name="rule_id" value="65"/>
             <column name="br_id" value="FA-L03-00-0065"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; asset == null"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note"
                     value="If ICCAT, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
@@ -843,7 +843,7 @@
             <column name="rule_id" value="66"/>
             <column name="br_id" value="FA-L03-00-0066"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; asset == null"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note" value="If a register is available."/>
             <column name="message"
                     value="Vessel ID IRCS and external marking are provided, but the vessel is not registered on a list non-EU vessels."/>

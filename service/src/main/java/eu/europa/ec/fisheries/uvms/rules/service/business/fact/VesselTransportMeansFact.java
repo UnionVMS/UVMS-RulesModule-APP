@@ -37,7 +37,7 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<StructuredAddress> specifiedStructuredAddresses;
     private List<CodeType> specifiedContactPartyRoleCodes;
     private List<ContactPerson> specifiedContactPersons;
-    private VesselTransportMeansDto asset;
+    private VesselTransportMeansDto transportMeans;
     public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
         boolean containsValidSchemeId = false;
         for (IdType id : ids) {
