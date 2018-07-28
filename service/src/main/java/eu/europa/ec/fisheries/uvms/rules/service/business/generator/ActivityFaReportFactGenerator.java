@@ -163,7 +163,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         for (AbstractFact fact : facts) {
             if (fact instanceof VesselTransportMeansFact){
                 if (transportMeans != null){
-                    ((VesselTransportMeansFact)fact).setAsset(transportMeans.get(index));
+                    ((VesselTransportMeansFact)fact).setTransportMeans(transportMeans.get(index));
                     index++;
                 }
             }
@@ -389,7 +389,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                         }
                         break;
                     default:
-                        log.error("No rule to be applied for the received activity type : " + fishingActivityType);
+                        log.debug("No rule to be applied for the received activity type : " + fishingActivityType);
 
                 }
             }
