@@ -800,7 +800,7 @@
             <column name="rule_id" value="62"/>
             <column name="br_id" value="FA-L03-00-0062"/>
             <column name="expression"
-                    value="registrationVesselCountryId != null &amp;&amp; transportMeans != null &amp;&amp; transportMeans.asset != null &amp;&amp; transportMeans.asset.countryCode != registrationVesselCountryId.value"/>
+                    value="registrationVesselCountryId != null &amp;&amp; transportMeans != null &amp;&amp; (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value)"/>
             <column name="note" value="The vessel identification and registration location (flag state) must be consistent."/>
             <column name="message" value="Inconsistent information of vessel ID and registration country."/>
             <column name="level" value="L03"/>

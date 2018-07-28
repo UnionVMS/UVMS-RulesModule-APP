@@ -95,16 +95,19 @@ public class AssetServiceBean implements AssetService {
         }
     }
 
-    private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans relatedMeans) {
-        VesselTransportMeansDto relatedMeansDto = new VesselTransportMeansDto();
-        setAcceptanceDateTime(faReportDocument, relatedMeansDto);
-        List<IDType> relatedIds = relatedMeans.getIDS();
-        for (IDType id : relatedIds) {
-            relatedMeansDto.getIds().put(id.getSchemeID(), id.getValue());
+    private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
+        if (transportMeans != null){
+            VesselTransportMeansDto relatedMeansDto = new VesselTransportMeansDto();
+            setAcceptanceDateTime(faReportDocument, relatedMeansDto);
+
+            List<IDType> relatedIds = transportMeans.getIDS();
+            for (IDType id : relatedIds) {
+                relatedMeansDto.getIds().put(id.getSchemeID(), id.getValue());
+            }
+            VesselCountry country = transportMeans.getRegistrationVesselCountry();
+            relatedMeansDto.setRegistrationVesselCountry(country.getID().getValue());
+            vesselTransportMeansFactCollectedList.add(relatedMeansDto);
         }
-        VesselCountry country = relatedMeans.getRegistrationVesselCountry();
-        relatedMeansDto.setRegistrationVesselCountry(country.getID().getValue());
-        vesselTransportMeansFactCollectedList.add(relatedMeansDto);
     }
 
     private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
