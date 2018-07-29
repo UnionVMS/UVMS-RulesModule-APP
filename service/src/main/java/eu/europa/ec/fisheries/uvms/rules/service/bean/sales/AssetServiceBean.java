@@ -92,6 +92,18 @@ public class AssetServiceBean implements AssetService {
             for (VesselTransportMeans relatedMeans : relatedVesselTransportMeans) {
                 mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, relatedMeans);
             }
+            List<FishingActivity> relatedFishingActivities = specifiedFishingActivity.getRelatedFishingActivities();
+            if (CollectionUtils.isNotEmpty(relatedFishingActivities)){
+                for (FishingActivity relatedFishingActivity : relatedFishingActivities) {
+                    List<VesselTransportMeans> relatedVesselTransportMeans2 = relatedFishingActivity.getRelatedVesselTransportMeans();
+                    if (CollectionUtils.isNotEmpty(relatedVesselTransportMeans2)){
+                        for (VesselTransportMeans vesselTransportMeans : relatedVesselTransportMeans2) {
+                            mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, vesselTransportMeans);
+
+                        }
+                    }
+                }
+            }
         }
     }
 
