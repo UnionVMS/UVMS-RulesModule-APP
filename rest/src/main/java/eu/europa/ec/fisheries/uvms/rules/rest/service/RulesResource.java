@@ -96,7 +96,6 @@ public class RulesResource {
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
 
-            assetService.findHistoryOfAssetBy(request.getFAReportDocuments());
             extraValues.put(ASSET, assetService.findHistoryOfAssetBy(request.getFAReportDocuments()));
 
             Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);

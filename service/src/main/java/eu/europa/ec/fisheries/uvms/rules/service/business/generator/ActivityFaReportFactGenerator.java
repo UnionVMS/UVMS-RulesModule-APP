@@ -161,10 +161,13 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         List<VesselTransportMeansDto> transportMeans = activityFactMapper.getTransportMeans();
         int index = 0;
         for (AbstractFact fact : facts) {
-            if (fact instanceof VesselTransportMeansFact){
-                if (transportMeans != null){
-                    ((VesselTransportMeansFact)fact).setTransportMeans(transportMeans.get(index));
+            if (fact instanceof VesselTransportMeansFact && transportMeans != null){
+                try {
+                    VesselTransportMeansDto vesselTransportMeansDto = transportMeans.get(index);
+                    ((VesselTransportMeansFact) fact).setTransportMeans(vesselTransportMeansDto);
                     index++;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    log.warn(e.getMessage(), e);
                 }
             }
         }
