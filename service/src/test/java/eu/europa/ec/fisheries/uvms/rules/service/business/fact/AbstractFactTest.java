@@ -426,7 +426,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnTrueWithEmptyList() {
         List<ContactPerson> contactPeople = new ArrayList<>();
-        assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+        assertFalse(fact.checkAliasFromContactList(contactPeople, true));
     }
 
     @Test
