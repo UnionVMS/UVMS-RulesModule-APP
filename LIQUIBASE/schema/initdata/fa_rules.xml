@@ -5384,8 +5384,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="171"/>
             <column name="br_id" value="FA-L00-00-0171"/>
-            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;)
-            || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))"/>
+            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))"/>
             <column name="note" value="Check presence. At least one occurrence with listID = FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
             <column name="message" value="At least presentation (and for landing and transhipment as well preservation) of the fish must be provided."/>
             <column name="level" value="L00"/>
