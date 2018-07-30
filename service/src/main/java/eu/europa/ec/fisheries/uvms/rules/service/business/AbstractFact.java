@@ -307,7 +307,7 @@ public abstract class AbstractFact {
 
     public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
         if (CollectionUtils.isEmpty(contactPersons)) {
-            return true;
+            return false;
         }
         for (ContactPerson contPers : contactPersons) {
             TextType givenName = contPers.getGivenName();
@@ -1023,6 +1023,14 @@ public abstract class AbstractFact {
      */
     public boolean isEmpty( String string ){
         return string == null || string.trim().length() == 0;
+    }
+
+    public boolean isEmpty( BigDecimal bigDecimal ){
+        return bigDecimal == null || isEmpty(bigDecimal.toString());
+    }
+
+    public boolean isEmpty( MeasureType measureType ){
+        return measureType == null || isEmpty(measureType.getValue());
     }
 
     /**
