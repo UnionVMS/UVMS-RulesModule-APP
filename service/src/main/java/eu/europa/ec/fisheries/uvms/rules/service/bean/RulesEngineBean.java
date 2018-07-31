@@ -200,7 +200,7 @@ public class RulesEngineBean {
                 ksession.insert(fact);
             }
             int numberOfFiredRules = ksession.fireAllRules();
-            log.info("Drools eval took : {} ms and fired {} rules", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
+            log.info("Drools eval took : {} ms failed {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
             ksession.dispose();
             return facts;
         } catch (RuntimeException e) {
