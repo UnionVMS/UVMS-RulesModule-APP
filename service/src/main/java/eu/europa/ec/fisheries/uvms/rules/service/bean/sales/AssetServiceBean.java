@@ -85,13 +85,8 @@ public class AssetServiceBean implements AssetService {
     }
 
     private void collectAndMap(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument) {
-        mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, faReportDocument.getSpecifiedVesselTransportMeans());
         List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
         for (FishingActivity specifiedFishingActivity : specifiedFishingActivities) {
-            List<VesselTransportMeans> relatedVesselTransportMeans = specifiedFishingActivity.getRelatedVesselTransportMeans();
-            for (VesselTransportMeans relatedMeans : relatedVesselTransportMeans) {
-                mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, relatedMeans);
-            }
             List<FishingActivity> relatedFishingActivities = specifiedFishingActivity.getRelatedFishingActivities();
             if (CollectionUtils.isNotEmpty(relatedFishingActivities)){
                 for (FishingActivity relatedFishingActivity : relatedFishingActivities) {
@@ -104,7 +99,12 @@ public class AssetServiceBean implements AssetService {
                     }
                 }
             }
+            List<VesselTransportMeans> relatedVesselTransportMeans = specifiedFishingActivity.getRelatedVesselTransportMeans();
+            for (VesselTransportMeans relatedMeans : relatedVesselTransportMeans) {
+                mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, relatedMeans);
+            }
         }
+        mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, faReportDocument.getSpecifiedVesselTransportMeans());
     }
 
     private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
