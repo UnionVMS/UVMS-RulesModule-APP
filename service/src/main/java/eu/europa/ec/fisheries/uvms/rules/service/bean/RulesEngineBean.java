@@ -81,11 +81,11 @@ public class RulesEngineBean {
         faResponseFactMapper = new FaResponseFactMapper();
     }
 
-    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
+    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues, String identifier) throws RulesValidationException {
         mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
 
         if (businessObject != null) {
-            log.info(String.format("Validating %s ", businessObject.getClass().getSimpleName()));
+            log.info(String.format("Validating %s %s", businessObject.getClass().getSimpleName(), identifier));
             Stopwatch stopwatch = Stopwatch.createStarted();
 
             if (businessObjectType == BusinessObjectType.RECEIVING_FA_REPORT_MSG || businessObjectType == BusinessObjectType.SENDING_FA_REPORT_MSG) {
@@ -183,8 +183,12 @@ public class RulesEngineBean {
         return new ArrayList<>();
     }
 
+    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
+            return evaluate(businessObjectType, businessObject, extraValues, "undefined");
+    }
+
     public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
-        return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
+        return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap(), "undefined");
     }
 
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
@@ -200,7 +204,7 @@ public class RulesEngineBean {
                 ksession.insert(fact);
             }
             int numberOfFiredRules = ksession.fireAllRules();
-            log.info("Drools eval took : {} ms and fired {} rules", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
+            log.info("Drools eval took : {} ms failed {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
             ksession.dispose();
             return facts;
         } catch (RuntimeException e) {

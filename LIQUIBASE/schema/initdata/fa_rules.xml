@@ -91,8 +91,7 @@
             <column name="rule_id" value="7"/>
             <column name="br_id" value="FA-L03-00-0007"/>
             <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
-            <column name="note"
-                    value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Message creation date/time not in the past."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
