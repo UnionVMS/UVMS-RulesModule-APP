@@ -455,7 +455,10 @@ public abstract class AbstractFact {
 
     @Deprecated // use DateTimeType mapped on fact
     public boolean isIsoDateStringValidFormat(String value) {
-        return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
+        if (StringUtils.isBlank(value)){
+            return true;
+        }
+        return value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) { // FIXME kind of duplicated method with activity one
