@@ -143,7 +143,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         try {
             // Validate xsd schema
             fluxResponseMessage = xsdJaxbUtil.unMarshallFluxResponseMessage(requestStr);
-            Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage);
+            Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
             ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
             updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {

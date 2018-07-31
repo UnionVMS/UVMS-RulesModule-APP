@@ -103,7 +103,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
 
             extraValues.put(XML, requestStr);
-            Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues);
+            Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
