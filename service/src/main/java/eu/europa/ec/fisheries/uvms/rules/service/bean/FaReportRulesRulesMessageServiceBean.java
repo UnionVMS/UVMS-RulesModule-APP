@@ -117,8 +117,6 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
-            log.info("Evaluating FLUXFAReportMessage {} ", messageGUID);
-
             Set<FADocumentID> idsFromIncomingMessage = faMessageHelper.mapToFADocumentID(fluxfaReportMessage);
             List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
@@ -127,7 +125,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
 
             Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             extraValues.put(XML, requestStr);
-            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues);
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, String.valueOf(messageGUID));
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
