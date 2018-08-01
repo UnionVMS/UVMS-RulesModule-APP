@@ -13,6 +13,25 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
@@ -35,7 +54,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -47,23 +65,15 @@ import org.mockito.junit.MockitoRule;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kovian on 6/7/2017.
@@ -207,10 +217,9 @@ public class RulesMessageServiceBeanTest {
     }
 
     @Test
-    @Ignore
     public void testSendRequestToActivity() throws RulesServiceException, MessageException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
-        //messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "test", PluginType.FLUX, MessageType.FLUX_FA_REPORT_MESSAGE);
+        //messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "findHistoryOfAssetBy", PluginType.FLUX, MessageType.FLUX_FA_REPORT_MESSAGE);
     }
 
     @Test

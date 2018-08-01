@@ -205,6 +205,19 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testDateShouldPass() {
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.421Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.4Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.949Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.99Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+    }
+
+    @Test
+    public void testDateShouldFail() {
+        assertFalse(fact.validateFormat("2018-07-31T08:27:00.4213Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+    }
+
+    @Test
     public void testIsPositiveIntegerValueWithNegative() {
         assertFalse(fact.isPositiveIntegerValue(new BigDecimal(-1)));
     }
@@ -426,7 +439,7 @@ public class AbstractFactTest {
     @Test
     public void testCheckAliasFromContactListShouldReturnTrueWithEmptyList() {
         List<ContactPerson> contactPeople = new ArrayList<>();
-        assertTrue(fact.checkAliasFromContactList(contactPeople, true));
+        assertFalse(fact.checkAliasFromContactList(contactPeople, true));
     }
 
     @Test
@@ -1465,7 +1478,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenIdTypeAndIdIsNotBlank() {
-        assertFalse(fact.isBlank(new IdType("test")));
+        assertFalse(fact.isBlank(new IdType("findHistoryOfAssetBy")));
     }
 
     @Test
@@ -1480,7 +1493,7 @@ public class AbstractFactTest {
 
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
-        assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("test")));
+        assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("findHistoryOfAssetBy")));
     }
 
     @Test

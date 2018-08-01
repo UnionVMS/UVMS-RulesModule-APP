@@ -91,8 +91,7 @@
             <column name="rule_id" value="7"/>
             <column name="br_id" value="FA-L03-00-0007"/>
             <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
-            <column name="note"
-                    value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
             <column name="message" value="Message creation date/time not in the past."/>
             <column name="level" value="L03"/>
             <column name="error_type" value="WARNING"/>
@@ -800,7 +799,7 @@
             <column name="rule_id" value="62"/>
             <column name="br_id" value="FA-L03-00-0062"/>
             <column name="expression"
-                    value="registrationVesselCountryId != null &amp;&amp; !isSameReportedVesselFlagState(registrationVesselCountryId, assetListCFR)"/>
+                    value="registrationVesselCountryId != null &amp;&amp; transportMeans != null &amp;&amp; (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value)"/>
             <column name="note" value="The vessel identification and registration location (flag state) must be consistent."/>
             <column name="message" value="Inconsistent information of vessel ID and registration country."/>
             <column name="level" value="L03"/>
@@ -813,7 +812,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="64"/>
             <column name="br_id" value="FA-L03-00-0064"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatchCFR(ids, assetListCFR)"/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note" value="If CFR, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message" value="Vessel ID CFR is provided but the vessel is not registered in EU."/>
             <column name="level" value="L03"/>
@@ -827,7 +826,7 @@
             <column name="rule_id" value="65"/>
             <column name="br_id" value="FA-L03-00-0065"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; !vesselIdsMatchICCAT(ids, assetListByICCAT)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note"
                     value="If ICCAT, the vessel should be in the EU fleet under the flag state at activity date."/>
             <column name="message"
@@ -843,7 +842,7 @@
             <column name="rule_id" value="66"/>
             <column name="br_id" value="FA-L03-00-0066"/>
             <column name="expression"
-                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; !vesselIdsMatchEXT(ids, assetListByEXTAndIRCSNoCFR)"/>
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
             <column name="note" value="If a register is available."/>
             <column name="message"
                     value="Vessel ID IRCS and external marking are provided, but the vessel is not registered on a list non-EU vessels."/>
@@ -3877,17 +3876,15 @@
             <column name="rule_id" value="415"/>
             <column name="br_id" value="FA-L02-00-0415"/>
             <column name="expression"
-                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; (isEmpty(specifiedFLUXCharacteristicsTypeCodes) ||
-                           !codeTypeValueContainsOnly(specifiedFLUXCharacteristicsTypeCodes, &quot;START_DATETIME_LANDING&quot;) || !isIsoDateStringValidFormat(specifiedFLUXCharacteristicValueDateTimes))"/>
+                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; (isEmpty(specifiedFLUXCharacteristicsTypeCodes) || !codeTypeValueContainsOnly(specifiedFLUXCharacteristicsTypeCodes, &quot;START_DATETIME_LANDING&quot;) || !isIsoDateStringValidFormat(specifiedFLUXCharacteristicValueDateTimes))"/>
             <column name="note" value="If arrival notification (FA-L02-00-0290)."/>
-            <column name="message"
-                    value="If the activity is an arrival notification check presence of SpecifiedFLUXCharacteristic/TypeCode
+            <column name="message" value="If the activity is an arrival notification check presence of SpecifiedFLUXCharacteristic/TypeCode
                     It must be present and equal to START_DATETIME_LANDING if ReasonCode is LAN (landing).
                     ValueDateTime must be date/time in UTC according to ISO8601 and format YYYY-MM-DDThh:mm:ssZ (optional milliseconds)."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="24"/>
+            <column name="template_id" value="25"/>
             <column name="property_names"
                     value="specifiedFLUXCharacteristicsTypeCodes, specifiedFLUXCharacteristicValueDateTimes"/>
             <column name="disabled" value="false"/>
@@ -3897,12 +3894,12 @@
             <column name="br_id" value="FA-L02-00-0416"/>
             <column name="expression"
                     value="!isEmpty(specifiedFLUXCharacteristicsTypeCodes) &amp;&amp; listIdContainsAll(specifiedFLUXCharacteristicsTypeCodes, &quot;FA_CHARACTERISTIC&quot;)"/>
-            <column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+            <column name="note" value="If arrival (FA-L02-00-0290)."/>
             <column name="message" value="FLUX characteristic has an invalid listID."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="24"/>
+            <column name="template_id" value="25"/>
             <column name="property_names" value="specifiedFLUXCharacteristicsTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -5386,9 +5383,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="171"/>
             <column name="br_id" value="FA-L00-00-0171"/>
-            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;)
-            || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp;
-            listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))"/>
+            <column name="expression" value="listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;) &amp;&amp; listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))"/>
             <column name="note" value="Check presence. At least one occurrence with listID = FISH_PRESENTATION must be present. 2 occurences must be presentIf FishingActivity/TypeCode=LANDING or TRANSHIPMENT at least an additional occurrence with listID FISH_PRESERVATION must be present as well."/>
             <column name="message" value="At least presentation (and for landing and transhipment as well preservation) of the fish must be provided."/>
             <column name="level" value="L00"/>
@@ -5401,8 +5396,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="172"/>
             <column name="br_id" value="FA-L01-00-0172"/>
-            <column name="expression"
-                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes, creationDateOfMessage)"/>
+            <column name="expression" value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypeListIdPresentInMDRList(&quot;FLUX_PROCESS_TYPE&quot; , appliedAAPProcessTypeCodes, creationDateOfMessage)"/>
             <column name="note" value="The value of the listID attribute must be on the list FLUX_PROCESS_TYPE."/>
             <column name="message" value="The listID for this processing type invalid."/>
             <column name="level" value="L01"/>
@@ -5415,8 +5409,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="173"/>
             <column name="br_id" value="FA-L01-00-0173"/>
-            <column name="expression"
-                    value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(appliedAAPProcessTypeCodes, creationDateOfMessage)"/>
+            <column name="expression" value="!isEmpty(appliedAAPProcessTypeCodes) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(appliedAAPProcessTypeCodes, creationDateOfMessage)"/>
             <column name="note" value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
             <column name="message"
                     value="AppliedAAP_ Process TypeCode value must be present in FLUX_PROCESS_TYPE list"/>
@@ -5434,8 +5427,7 @@
             <column name="rule_id" value="219"/>
             <column name="br_id" value="FA-L02-00-0219"/>
             <column name="expression"
-                    value="fishingActivityTypeCode !=null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; )
-                          &amp;&amp; isEmpty(resultAAPProduct)"/>
+                    value="fishingActivityTypeCode !=null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; ) &amp;&amp; isEmpty(resultAAPProduct)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="Information about product details is missing."/>
             <column name="level" value="L02"/>
@@ -5448,9 +5440,7 @@
             <column name="rule_id" value="157"/>
             <column name="br_id" value="FA-L02-00-0157"/>
             <column name="expression"
-                    value="isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
-                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SAL&quot;) &amp;&amp;
-                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;FAO_AREA&quot;) &amp;&amp; containsAtLeastOneFaoAreaWithValidValue(fishActRelatedFluxLocationIds)"/>
+                    value="isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SAL&quot;) &amp;&amp; !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;FAO_AREA&quot;) &amp;&amp; containsAtLeastOneFaoAreaWithValidValue(fishActRelatedFluxLocationIds)"/>
             <column name="note" value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
             <column name="message"
                     value="Units (number of fish) must be provided for Salmon in the Baltic sea"/>
@@ -5465,9 +5455,7 @@
             <column name="rule_id" value="410"/>
             <column name="br_id" value="FA-L02-00-0410"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
-                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp;
-                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; containsAtLeastOneGfcmGsaWithValidValue(fishActRelatedFluxLocationIds)"/>
+                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;BFT&quot;) &amp;&amp; !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; mdrService.isIdTypePresentInMDRList(&quot;GFCM_GSA&quot;,fishActRelatedFluxLocationIds, creationDateOfMessage) &amp;&amp; containsAtLeastOneGfcmGsaWithValidValue(fishActRelatedFluxLocationIds)"/>
             <column name="note" value="Units (number of fish) must be provided for Bluefin tuna in GFCM. This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
             <column name="message"
                     value="Units (number of fish) must be provided for Bluefin tuna in GFCM"/>

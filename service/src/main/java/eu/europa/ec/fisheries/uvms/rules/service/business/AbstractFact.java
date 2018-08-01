@@ -307,7 +307,7 @@ public abstract class AbstractFact {
 
     public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
         if (CollectionUtils.isEmpty(contactPersons)) {
-            return true;
+            return false;
         }
         for (ContactPerson contPers : contactPersons) {
             TextType givenName = contPers.getGivenName();
@@ -455,7 +455,10 @@ public abstract class AbstractFact {
 
     @Deprecated // use DateTimeType mapped on fact
     public boolean isIsoDateStringValidFormat(String value) {
-        return !StringUtils.isBlank(value) && value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
+        if (StringUtils.isBlank(value)){
+            return true;
+        }
+        return value.matches(FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr());
     }
 
     public boolean isIdTypeValidFormat(String requiredSchemeId, IdType idType) { // FIXME kind of duplicated method with activity one
@@ -1025,6 +1028,14 @@ public abstract class AbstractFact {
         return string == null || string.trim().length() == 0;
     }
 
+    public boolean isEmpty( BigDecimal bigDecimal ){
+        return bigDecimal == null || isEmpty(bigDecimal.toString());
+    }
+
+    public boolean isEmpty( MeasureType measureType ){
+        return measureType == null || isEmpty(measureType.getValue());
+    }
+
     /**
      * Checks if the list of strings contains empty (null / "") elements.
      *
@@ -1201,7 +1212,7 @@ public abstract class AbstractFact {
         FLUX_SALES_TYPE("(SN\\+TOD|SN|TOD|TRD)"),
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
-        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{3})?Z"),
+        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{1,3})?Z"),
         FLUXTL_ON("[a-zA-Z0-9]{20}");
 
         String formatStr;

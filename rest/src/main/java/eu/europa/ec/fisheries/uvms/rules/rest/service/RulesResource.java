@@ -12,9 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_CFR;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_EXT;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET_BY_ICCAT;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -35,14 +33,19 @@ import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
+import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -83,23 +86,20 @@ public class RulesResource {
     private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
 
     @EJB
-    private RuleAssetsBean ruleAssetsBean;
+    private AssetService assetService;
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
-    public Response evaluate(FLUXFAReportMessage request) {
+    public Response evaluate(FLUXFAReportMessage request) throws AssetModelMarshallException, MessageException {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
-            extraValues.put(ASSET_BY_CFR, ruleAssetsBean.getAssetListByCFR(request));
-            extraValues.put(ASSET_BY_EXT, ruleAssetsBean.getAssetListByIRCSAndExtMarkAndNoCFR(request));
-            extraValues.put(ASSET_BY_ICCAT, ruleAssetsBean.getAssetListByICCAT(request));
-
-            Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues);
+            extraValues.put(ASSET, assetService.findHistoryOfAssetBy(request.getFAReportDocuments()));
+            Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, request, extraValues, String.valueOf(request.getFLUXReportDocument().getIDS()));
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, SS_OO_MME_GUID, RawMsgType.FA_REPORT);
             fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(validationResultDto, request);
@@ -123,7 +123,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
 
-            Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValues);
+            Collection<AbstractFact> facts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, request, extraValues, String.valueOf(request.getFAQuery().getID()));
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_QUERY);
             fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaQuery(validationResultDto, request, fr);
@@ -149,7 +149,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
 
-            Collection<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request, extraValues);
+            Collection<AbstractFact> facts = rulesEngine.evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, request, extraValues,  String.valueOf(request.getFLUXResponseDocument().getIDS()));
             String s = JAXBMarshaller.marshallJaxBObjectToString(request);
             ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResult(facts, s, "ss-oo-mme-guid", RawMsgType.FA_RESPONSE);
             fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaResponse(validationResultDto, request);

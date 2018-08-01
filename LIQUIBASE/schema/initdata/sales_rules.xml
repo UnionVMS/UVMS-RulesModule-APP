@@ -1546,7 +1546,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10219"/>
             <column name="br_id" value="SALE-L02-00-0060"/>
-            <column name="expression" value="unitQuantity == null &amp;&amp; weightMeasure == null"/>
+            <column name="expression" value="(unitQuantity == null &amp;&amp; weightMeasure == null) || (unitQuantity != null &amp;&amp; weightMeasure != null)"/>
             <column name="note" value=""/>
             <column name="message" value="One of the two must be available"/>
             <column name="level" value="L02"/>
@@ -2865,7 +2865,7 @@
             <column name="rule_id" value="12000"/>
             <column name="br_id" value="SALE-L01-00-0008"/>
             <column name="expression"
-                    value="referencedID != null &amp;&amp; schemeIdContainsAll(referencedID, 'UUID')"/>
+                    value="referencedID != null &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
             <column name="note" value=""/>
             <column name="message" value="Check attribute schemeID. Must be UUID"/>
             <column name="level" value="L01"/>

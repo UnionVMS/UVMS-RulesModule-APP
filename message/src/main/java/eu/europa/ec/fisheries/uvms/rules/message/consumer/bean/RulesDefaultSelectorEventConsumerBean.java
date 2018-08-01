@@ -11,24 +11,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.context.MappedDiagnosticContext;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesQueryEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.ReceiveSalesResponseEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesReportEvent;
-import eu.europa.ec.fisheries.uvms.rules.message.event.SendSalesResponseEvent;
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
@@ -38,6 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+
 /**
  * Message driven bean that receives all messages that
  * have a message selector, for which no other MDB has been defined.
@@ -46,15 +41,15 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1000"), // default: 10
-        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "1000"), // default: 1000
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"), // default: 10
+        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"), // default: 1000
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"), // default: 5
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"), // default: 10
+        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"), // default: 10
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector NOT IN ('ReceiveSalesReportRequest', 'ValidationResultsByRawGuid')")
 })
 public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesDefaultSelectorEventConsumerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesDefaultSelectorEventConsumerBean.class);
 
     @Inject
     @ReceiveSalesQueryEvent
@@ -83,7 +78,7 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
     @Override
     public void onMessage(Message message) {
         MDC.remove("requestId");
-        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.info("Message received in rules (RulesDefaultSelectorEventConsumerBean). Times redelivered: " + getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {

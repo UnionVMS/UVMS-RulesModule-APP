@@ -21,14 +21,20 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.DefaultOrikaMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
 
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,19 +43,19 @@ import java.util.Map;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Slf4j
+@Singleton
 public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
-    private Report report;
-    private List<AbstractFact> facts;
-    private final HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
+    private HashMap<Class<?>, Class<? extends AbstractFact>> mappingsToFacts;
     private MapperFacade mapper;
+
+    @EJB
     private FactGeneratorHelper factGeneratorHelper;
+
     private XPathStringWrapper xPathUtil;
 
 
     public SalesReportFactGenerator() {
-        this.xPathUtil = new XPathStringWrapper();
-        this.factGeneratorHelper = new FactGeneratorHelper(xPathUtil);
         this.mapper = new DefaultOrikaMapper().getMapper();
         this.mappingsToFacts = new HashMap<>();
         fillMap();
@@ -59,6 +65,53 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         this();
         this.factGeneratorHelper = factGeneratorHelper;
         this.mapper = mapperFacade;
+    }
+
+    @Lock(LockType.WRITE)
+    public List<AbstractFact> generateAllFacts(Object businessObject, Map<ExtraValueType, Object> extraValues) {
+        this.xPathUtil = new XPathStringWrapper();
+        Report report = (Report) businessObject;
+
+        if (report.getAuctionSale() != null && report.getAuctionSale().getSalesCategory() == null) {
+            throw new NullPointerException("SalesCategory in AuctionSale cannot be null");
+        }
+
+        StopWatch stopWatch = StopWatch.createStarted();
+
+        List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts(report);
+
+        log.info("Flow Report, Find objects to map to facts took: {} ms", stopWatch.getTime());
+        stopWatch.reset();
+        stopWatch.start();
+
+        List<AbstractFact> facts = new ArrayList<>();
+        for (FactCandidate objectToMapToFact : objectsToMapToFacts) {
+            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
+            fillMappingVariables(fact, report, extraValues);
+            facts.add(fact);
+
+            for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {
+                xPathUtil.appendWithoutWrapping(propertyAndXPath.getValue());
+                xPathUtil.storeInRepo(fact, propertyAndXPath.getKey());
+            }
+        }
+
+        log.info("Flow Report, Mapping facts including xpath took: {} ms", stopWatch.getTime());
+
+        return facts;
+    }
+
+    @Override
+    @Deprecated
+    public List<AbstractFact> generateAllFacts() {
+        log.error("generateAllFacts() called in SalesReportFactGenerator. This flow is not supported anymore");
+        return Lists.newArrayList();
+    }
+
+    @Override
+    @Deprecated
+    public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
+        log.error("setBusinessObjectMessage() called in SalesReportFactGenerator. This flow is not supported anymore.");
     }
 
     private List<Class<?>> findAllClassesFromOrikaMapperMap() {
@@ -71,7 +124,7 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         return classes;
     }
 
-    private List<FactCandidate> findObjectsToMapToFacts() {
+    private List<FactCandidate> findObjectsToMapToFacts(Report report) {
         try {
             return factGeneratorHelper.findAllObjectsWithOneOfTheFollowingClasses(report, findAllClassesFromOrikaMapperMap());
         } catch (IllegalAccessException | ClassNotFoundException e) {
@@ -79,41 +132,15 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         }
     }
 
-    @Override public List<AbstractFact> generateAllFacts() {
-        facts = new ArrayList<>();
-
-        List<FactCandidate> objectsToMapToFacts = findObjectsToMapToFacts();
-
-        for (FactCandidate objectToMapToFact : objectsToMapToFacts) {
-            SalesAbstractFact fact = (SalesAbstractFact) mapper.map(objectToMapToFact.getObject(), mappingsToFacts.get(objectToMapToFact.getObject().getClass()));
-            fillMappingVariables(fact);
-            facts.add(fact);
-
-            for (Map.Entry<String, String> propertyAndXPath : objectToMapToFact.getPropertiesAndTheirXPaths().entrySet()) {
-                xPathUtil.appendWithoutWrapping(propertyAndXPath.getValue()).storeInRepo(fact, propertyAndXPath.getKey());
-            }
-        }
-
-        return facts;
-    }
-
-    private void fillMappingVariables(SalesAbstractFact fact) {
+    private void fillMappingVariables(SalesAbstractFact fact, Report report, Map<ExtraValueType, Object> extraValueMap) {
         fact.setSource(Source.REPORT);
-        fact.setOriginatingPlugin(((String)extraValueMap.get(ORIGINATING_PLUGIN)));
-        fact.setSenderOrReceiver(((String)extraValueMap.get(SENDER_RECEIVER)));
+        fact.setOriginatingPlugin(((String) extraValueMap.get(ORIGINATING_PLUGIN)));
+        fact.setSenderOrReceiver(((String) extraValueMap.get(SENDER_RECEIVER)));
         fact.setCreationDateOfMessage((DateTime) extraValueMap.get(CREATION_DATE_OF_MESSAGE));
 
         if (report.getAuctionSale() != null) {
             fact.setSalesCategoryType(report.getAuctionSale().getSalesCategory());
         }
-    }
-
-    @Override
-    public void setBusinessObjectMessage(Report businessObject) throws RulesValidationException {
-        if (businessObject.getAuctionSale() != null && businessObject.getAuctionSale().getSalesCategory() == null) {
-            throw new NullPointerException("SalesCategory in AuctionSale cannot be null");
-        }
-        this.report = businessObject;
     }
 
     private void fillMap() {
@@ -135,7 +162,6 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
         mappingsToFacts.put(FLUXOrganizationType.class, SalesFLUXOrganizationFact.class);
         mappingsToFacts.put(FLUXPartyType.class, SalesFLUXPartyFact.class);
         mappingsToFacts.put(FLUXReportDocumentType.class, SalesFLUXReportDocumentFact.class);
-        mappingsToFacts.put(FLUXSalesReportMessage.class, SalesFLUXSalesReportMessageFact.class);
         mappingsToFacts.put(SalesPartyType.class, SalesPartyFact.class);
         mappingsToFacts.put(SalesPriceType.class, SalesPriceFact.class);
         mappingsToFacts.put(SalesReportType.class, SalesReportFact.class);

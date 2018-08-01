@@ -12,9 +12,7 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.config;
 
 public enum ExtraValueType {
-    ASSET_BY_CFR,
-    ASSET_BY_ICCAT,
-    ASSET_BY_EXT,
+    ASSET,
     FA_QUERY_AND_REPORT_IDS,
     TRIP_ID,
     SENDER_RECEIVER,

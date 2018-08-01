@@ -138,11 +138,11 @@ public class SalesReportFactTest {
     public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenFluxOrganizationIsPresent() throws Exception {
         SalesPartyFact sender = new SalesPartyFact();
         sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
-        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("findHistoryOfAssetBy")));
 
         SalesPartyFact recipient = new SalesPartyFact();
         recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
-        recipient.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+        recipient.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("findHistoryOfAssetBy")));
 
         SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
         salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(sender, recipient));
@@ -156,7 +156,7 @@ public class SalesReportFactTest {
     public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenFluxOrganizationIsNotPresent() throws Exception {
         SalesPartyFact sender = new SalesPartyFact();
         sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
-        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("findHistoryOfAssetBy")));
 
         SalesPartyFact recipient = new SalesPartyFact();
         recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
@@ -173,7 +173,7 @@ public class SalesReportFactTest {
     public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenNameOfFluxOrganizationIsNotPresent() throws Exception {
         SalesPartyFact sender = new SalesPartyFact();
         sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
-        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("findHistoryOfAssetBy")));
 
         SalesPartyFact recipient = new SalesPartyFact();
         recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));
@@ -191,7 +191,7 @@ public class SalesReportFactTest {
     public void isFluxOrganizationNotSpecifiedOnRecipientOfTakeOverDocumentWhenNotTOD() throws Exception {
         SalesPartyFact sender = new SalesPartyFact();
         sender.setRoleCodes(Arrays.asList(new CodeType("SENDER")));
-        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("test")));
+        sender.setSpecifiedFLUXOrganization(new FLUXOrganizationType().withName(new TextType().withValue("findHistoryOfAssetBy")));
 
         SalesPartyFact recipient = new SalesPartyFact();
         recipient.setRoleCodes(Arrays.asList(new CodeType("RECIPIENT")));

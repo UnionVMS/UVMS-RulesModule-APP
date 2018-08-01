@@ -19,7 +19,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void getValueOfColumnWhenSuccess() {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -33,7 +33,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void getValueOfColumnWhenColumnDoesNotExist() {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -47,7 +47,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenTrueWithOneMatchForColumnOne() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -77,7 +77,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenTrueWithTwoMatchesForColumnOne() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -112,7 +112,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenFalseBecauseValue2NotFound() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -141,7 +141,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenFalseBecauseColumn2DoesNotExist() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -170,7 +170,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenFalseBecauseColumn1DoesNotExist() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -199,7 +199,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenFalseBecauseNoObjectRepresentations() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -211,7 +211,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenColumnsAndCorrespondingValuesWhenFalseBecauseNoObjectRepresentationsForThisDate() throws Exception {
-        String column1 = "test";
+        String column1 = "findHistoryOfAssetBy";
         String value1 = "testValue";
         String column2 = "terminal_ind";
         String value2 = "true";
@@ -241,7 +241,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenTrue() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         String startDateColumnName = "startDate";
@@ -267,7 +267,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenFalseBecauseValueNotFound() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         String startDateColumnName = "startDate";
@@ -293,7 +293,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenFalseBecauseTheMDRCodeIsNoLongerValid() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         String startDateColumnName = "startDate";
@@ -319,7 +319,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenFalseBecauseColumnDoesNotExist() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         String startDateColumnName = "startDate";
@@ -345,7 +345,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenFalseBecauseCodeDoesNotExist() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         String startDateColumnName = "startDate";
@@ -371,7 +371,7 @@ public class ObjectRepresentationHelperTest {
 
     @Test
     public void doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumnWhenFalseBecauseNoObjectRepresentations() throws Exception {
-        String codeValue = "test";
+        String codeValue = "findHistoryOfAssetBy";
         String columnName = "terminal_ind";
         String columnValue = "true";
         List<ObjectRepresentation> objectRepresentations = new ArrayList<>();

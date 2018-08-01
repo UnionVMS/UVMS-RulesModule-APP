@@ -45,6 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -63,6 +64,13 @@ public class RulesEngineBean {
     @EJB
     private MDRCacheService mdrCacheService;
 
+    @EJB
+    private SalesReportFactGenerator salesReportFactGenerator;
+
+    @EJB
+    private SalesResponseFactGenerator salesResponseFactGenerator;
+
+
     private FaResponseFactMapper faResponseFactMapper;
 
     @EJB
@@ -73,12 +81,11 @@ public class RulesEngineBean {
         faResponseFactMapper = new FaResponseFactMapper();
     }
 
-    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
-
+    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues, String identifier) throws RulesValidationException {
         mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
 
         if (businessObject != null) {
-            log.info(String.format("Validating %s ", businessObject.getClass().getSimpleName()));
+            log.info(String.format("Validating %s %s", businessObject.getClass().getSimpleName(), identifier));
             Stopwatch stopwatch = Stopwatch.createStarted();
 
             if (businessObjectType == BusinessObjectType.RECEIVING_FA_REPORT_MSG || businessObjectType == BusinessObjectType.SENDING_FA_REPORT_MSG) {
@@ -143,28 +150,31 @@ public class RulesEngineBean {
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_REPORT_MSG) {
 
-                AbstractGenerator generator = new SalesReportFactGenerator();
-                generator.setBusinessObjectMessage(businessObject);
-                generator.setExtraValueMap(extraValues);
-                generator.setAdditionalValidationObject();
-                List<AbstractFact> facts = generator.generateAllFacts();
+                StopWatch stopWatch = StopWatch.createStarted();
+
+                List<AbstractFact> facts = salesReportFactGenerator.generateAllFacts(businessObject, extraValues);
+                log.info("Flow Report, Generating the facts took: {} ms", stopWatch.getTime());
+                stopWatch.reset();
+                stopWatch.start();
+
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_RESPONSE_MSG) {
+                StopWatch stopWatch = StopWatch.createStarted();
 
-                AbstractGenerator generator = new SalesResponseFactGenerator();
-                generator.setBusinessObjectMessage(businessObject);
-                generator.setExtraValueMap(extraValues);
-                generator.setAdditionalValidationObject();
-                List<AbstractFact> facts = generator.generateAllFacts();
+                List<AbstractFact> facts = salesResponseFactGenerator.generateAllFacts(businessObject, extraValues);
+                log.info("Flow Response, Generating the facts took: {} ms", stopWatch.getTime());
+                stopWatch.reset();
+                stopWatch.start();
+
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
-                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             }
 
             log.info(String.format("It took %s to evaluate the message.", stopwatch));
@@ -173,8 +183,12 @@ public class RulesEngineBean {
         return new ArrayList<>();
     }
 
+    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
+            return evaluate(businessObjectType, businessObject, extraValues, "undefined");
+    }
+
     public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
-        return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap());
+        return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap(), "undefined");
     }
 
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
@@ -190,7 +204,7 @@ public class RulesEngineBean {
                 ksession.insert(fact);
             }
             int numberOfFiredRules = ksession.fireAllRules();
-            log.info("Drools eval took : {} ms and fired {} rules", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
+            log.info("Drools eval took : {} ms failed {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), numberOfFiredRules);
             ksession.dispose();
             return facts;
         } catch (RuntimeException e) {

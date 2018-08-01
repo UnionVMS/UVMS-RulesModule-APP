@@ -146,7 +146,7 @@ public class SalesReportFact extends SalesAbstractFact {
     public boolean isBuyerNotSpecifiedForSalesNoteWithPurchase(){
         if(isItemTypeEqualTo("SN") && !isEmpty(includedSalesDocuments)) {
             for (SalesDocumentFact salesDocument : includedSalesDocuments) {
-                // If the document does not have a price greater than zero it can not pass the test since it is not considered a purchase
+                // If the document does not have a price greater than zero it can not pass the findHistoryOfAssetBy since it is not considered a purchase
                 if (isTotalZero()) {
                     return false;
                 }
