@@ -30,6 +30,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.ValidationServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.junit.Before;

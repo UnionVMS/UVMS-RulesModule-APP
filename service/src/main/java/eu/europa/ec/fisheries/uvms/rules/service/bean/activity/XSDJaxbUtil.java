@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.utils;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import org.xml.sax.SAXException;

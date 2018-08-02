@@ -8,45 +8,14 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.FLUX_SALES_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.xml.bind.JAXBException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesQueryRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.ReceiveSalesResponseRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesReportRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SendSalesResponseRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesQueryMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesResponseMessage;
-import eu.europa.ec.fisheries.schema.sales.Report;
-import eu.europa.ec.fisheries.schema.sales.SalesIdType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
@@ -56,7 +25,8 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesMessageFactory;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -69,6 +39,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.ejb.*;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Slf4j
 @Singleton

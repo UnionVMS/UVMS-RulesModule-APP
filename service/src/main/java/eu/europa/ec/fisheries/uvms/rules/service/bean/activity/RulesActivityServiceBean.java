@@ -8,38 +8,18 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityIDType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityTableType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.ActivityUniquinessList;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FaIdsListWithTripIdMap;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityForTripIds;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetFishingActivitiesForTripResponse;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.GetNonUniqueIdsResponse;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionResponse;
@@ -56,6 +36,14 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+
 /**
  * Created by kovian on 17/07/2016.
  */
@@ -70,13 +58,20 @@ public class RulesActivityServiceBean {
     @EJB
     private RulesMessageProducer producer;
 
+    @EJB
+    private RulesActivityProducerBean rulesActivityServiceBean;
+
+    @EJB
+    private RulesResponseQueueProducer rulesResponseProducer;
+
 
     public boolean checkSubscriptionPermissions(String request, MessageType type) {
         try {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             log.debug("Send MapToSubscriptionRequest to Activity");
-            String jmsCorrelationId = producer.sendDataSourceMessage(requestStr, DataSourceQueue.ACTIVITY);
-            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class, 240000L);
+            String corrId = rulesActivityServiceBean.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(),
+                    new HashMap<String, String>() {{ put("messageSelector", "SubscriptionCheck"); }});
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 240000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
@@ -88,6 +83,14 @@ public class RulesActivityServiceBean {
         return false;
     }
 
+    /**
+     * Not used anymore cause the trip ids are getting saved here in rules!
+     * When ready remove this method from here and from Activity module!
+     *
+     * @param requestMessage
+     * @return
+     */
+    @Deprecated
     public Map<ActivityTableType, List<IdType>> getNonUniqueIdsList(Object requestMessage) {
         Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
         GetNonUniqueIdsResponse getNonUniqueIdsResponse = null;
@@ -120,6 +123,14 @@ public class RulesActivityServiceBean {
         return nonUniqueIdsMap;
     }
 
+    /**
+     * Not used anymore cause the trip ids are getting saved here in rules!
+     * When ready remove this method from here and from Activity module!
+     *
+     * @param requestMessage
+     * @return
+     */
+    @Deprecated
     public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesForTrips(Object requestMessage) {
         GetFishingActivitiesForTripResponse response = null;
         FLUXFAReportMessage fluxFaRepMessage;

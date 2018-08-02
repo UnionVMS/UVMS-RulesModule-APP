@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.europa.ec.fisheries.uvms.rules.service.bean.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.PropertiesBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
 import lombok.extern.slf4j.Slf4j;

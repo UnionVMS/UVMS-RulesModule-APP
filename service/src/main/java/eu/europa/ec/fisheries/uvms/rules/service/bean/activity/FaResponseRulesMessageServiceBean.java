@@ -8,35 +8,7 @@
  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-import static java.util.Collections.singletonList;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
@@ -57,7 +29,9 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.utils.XSDJaxbUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
@@ -86,6 +60,24 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
+import static java.util.Collections.singletonList;
 
 @Stateless
 @LocalBean

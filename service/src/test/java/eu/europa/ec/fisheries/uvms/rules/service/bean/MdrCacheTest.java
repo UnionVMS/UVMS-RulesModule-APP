@@ -15,6 +15,8 @@ import com.google.common.cache.CacheLoader;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCacheServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.SneakyThrows;
 import org.apache.activemq.artemis.api.core.SimpleString;
