@@ -117,7 +117,9 @@ public class AssetServiceBean implements AssetService {
                 relatedMeansDto.getIds().put(id.getSchemeID(), id.getValue());
             }
             VesselCountry country = transportMeans.getRegistrationVesselCountry();
-            relatedMeansDto.setRegistrationVesselCountry(country.getID().getValue());
+            if (country != null && country.getID() != null){
+                relatedMeansDto.setRegistrationVesselCountry(country.getID().getValue());
+            }
             vesselTransportMeansFactCollectedList.add(relatedMeansDto);
         }
     }
@@ -125,7 +127,9 @@ public class AssetServiceBean implements AssetService {
     private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
         DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
         XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
-        vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+        if (dateTime != null){
+            vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+        }
     }
 
     protected Optional<Asset> findAssetHistoryByDate(Date landingDate, List<Asset> assetHistories) {

@@ -4077,7 +4077,7 @@
             <column name="rule_id" value="445"/>
             <column name="br_id" value="FA-L02-00-0445"/>
             <column name="expression"
-                    value="!isEmpty(faCatchTypeCodes) &amp;&amp; valueContainsAny(faCatchTypeCodes, &quot;LOADED&quot;) &amp;&amp; valueContainsAny(faCatchTypeCodes, &quot;UNLOADED&quot;)"/>
+                    value="isEmpty(faCatchTypeCodes) || valueContainsAny(faCatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
             <column name="note"
                     value="Check FACatch typecode. At least 1 occurence of LOADED or UNLOADED must be present."/>
             <column name="message" value="The catches being loaded or unloaded in this operation are missing."/>
