@@ -25,7 +25,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RuleAssetsBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
