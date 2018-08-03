@@ -2166,7 +2166,7 @@
             <column name="rule_id" value="411"/>
             <column name="br_id" value="FA-L02-00-0411"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; isEmpty(resultAAPProductUnitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
+                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
                           !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp;
                           !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;)"/>
             <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
