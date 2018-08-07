@@ -2166,13 +2166,9 @@
             <column name="rule_id" value="411"/>
             <column name="br_id" value="FA-L02-00-0411"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
-                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp;
-                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;)"/>
+                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp; !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; mdrService.isIdTypePresentInMDRList(&quot;GFCM_GSA&quot;,fishActRelatedFluxLocationIds, creationDateOfMessage) "/>
             <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
-            <column name="message"
-                    value="Units (number of fish) must be provided for Swordfish in GFCM.
-                           This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
+            <column name="message" value="Units (number of fish) must be provided for Swordfish in GFCM. This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
