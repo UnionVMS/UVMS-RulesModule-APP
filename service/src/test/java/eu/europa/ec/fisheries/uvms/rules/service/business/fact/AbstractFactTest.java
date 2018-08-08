@@ -733,10 +733,18 @@ public class AbstractFactTest {
 
     @Test
     public void testAcceptanceDateNotBeforeCreationDate() {
-        DateTime acceptance = new DateTime(2000, 3, 26, 12, 5, 0, 0);
-        DateTime creation = new DateTime(2000, 3, 26, 12, 0, 0, 0);
+        DateTime acceptance = new DateTime(2000, 3, 26, 12, 5, 0);
+        DateTime creation = new DateTime(2000, 3, 26, 12, 0, 0);
 
-        assertTrue(fact.acceptanceDateNotBeforeCreationDate(creation.toDate(), acceptance.toDate(), 10));
+        assertTrue(fact.acceptanceDateNotBeforeCreationDate(creation.toDate(), acceptance.toDate(), -10));
+    }
+
+    @Test
+    public void testAcceptanceDateNotBeforeCreationDate2() {
+        DateTime acceptance = new DateTime(2017, 6, 12, 19, 0, 0);
+        DateTime creation = new DateTime(2017, 6, 12, 19, 2, 0);
+
+        assertTrue(fact.acceptanceDateNotBeforeCreationDate(creation.toDate(), acceptance.toDate(), -10));
     }
 
     @Test
