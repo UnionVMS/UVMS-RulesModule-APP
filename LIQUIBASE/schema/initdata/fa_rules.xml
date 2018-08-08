@@ -4664,7 +4664,7 @@
             <column name="rule_id" value="364"/>
             <column name="br_id" value="FA-L00-00-0364"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
+                    value="specifiedDelimitedPeriod != null &amp;&amp; isEmpty(sdpEndDateTimeString)"/>
             <column name="note"
                     value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
             <column name="message" value="End date/time must be provided."/>
