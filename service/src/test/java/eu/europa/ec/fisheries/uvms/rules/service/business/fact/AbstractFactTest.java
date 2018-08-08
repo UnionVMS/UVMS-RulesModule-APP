@@ -1549,6 +1549,12 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void validateFormatIsoDateStringWithMillis2() {
+        String isoDateStringWithMillis = "22016-08-01T03:48:23.000Z";
+        assertFalse(fact.isIsoDateStringValidFormat(isoDateStringWithMillis));
+    }
+
+    @Test
     public void validateFormatIsoDateStringNoMillis() {
         String isoDateStringNoMillis = "2016-08-01T03:48:23Z";
 
