@@ -304,7 +304,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1"/>
             <column name="property_names" value="relatedReportIDs"/>
-            <column name="disabled" value="true"/> <!-- UNIONVMS-2865 -->
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="25"/>
@@ -4363,8 +4363,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
             <column name="message" value="Fishing License, Authorization or Permit ID is missing."/>
             <column name="level" value="L02"/>
@@ -4665,7 +4664,7 @@
             <column name="rule_id" value="364"/>
             <column name="br_id" value="FA-L00-00-0364"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
+                    value="specifiedDelimitedPeriod != null &amp;&amp; isEmpty(sdpEndDateTimeString)"/>
             <column name="note"
                     value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
             <column name="message" value="End date/time must be provided."/>

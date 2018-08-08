@@ -664,8 +664,8 @@ public abstract class AbstractFact {
 
         boolean acceptanceDateNotAfterCreationDate = true;
         if (creationDate != null && acceptanceDate != null) {
-            DateTime creationDateTime = new DateTime(creationDate).toDateTime(DateTimeZone.UTC).plusMinutes(minutes);
-            DateTime acceptanceDateTime = new DateTime(acceptanceDate).toDateTime(DateTimeZone.UTC);
+            DateTime creationDateTime = new DateTime(creationDate).toDateTime(DateTimeZone.UTC);
+            DateTime acceptanceDateTime = new DateTime(acceptanceDate).toDateTime(DateTimeZone.UTC).plusMinutes(minutes);
             log.debug("creationDate is {}", creationDateTime.toString());
             log.debug("acceptanceDateTime is {}", acceptanceDateTime.toString());
             acceptanceDateNotAfterCreationDate = acceptanceDateTime.toDate().before(creationDateTime.toDate());
