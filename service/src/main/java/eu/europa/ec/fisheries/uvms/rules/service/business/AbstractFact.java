@@ -380,19 +380,20 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(IdType id) {
+        boolean isInvalid = false;
         if (id == null || id.getSchemeId() == null) {
-            return true;
+            return isInvalid;
         }
         try {
             String schemeId = id.getSchemeId();
             if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormat(id.getValue(), FORMATS.valueOf(id.getSchemeId()).getFormatStr())) {
-                return true;
+                isInvalid = true;
             }
         } catch (IllegalArgumentException ex) {
             log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            return true;
+            isInvalid = false;
         }
-        return false;
+        return isInvalid;
     }
 
     /**
@@ -402,18 +403,19 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean validateFormat(CodeType codeType) {
+        boolean isInvalid = false;
         if (codeType == null) {
-            return true;
+            return isInvalid;
         }
         try {
             if (!validateFormat(codeType.getValue(), FORMATS.valueOf(codeType.getListId()).getFormatStr())) {
-                return true;
+                isInvalid = true;
             }
         } catch (IllegalArgumentException ex) {
             log.debug("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
-            return true;
+            isInvalid = false;
         }
-        return false;
+        return isInvalid;
     }
 
     /**

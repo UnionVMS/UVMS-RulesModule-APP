@@ -3338,7 +3338,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="110"/>
             <column name="br_id" value="FA-L01-00-0110"/>
-            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds) "/>
+            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds)"/>
             <column name="note"
                     value="FishingActivity ID if present, Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Fishing Activity ID is invalid."/>
@@ -3432,7 +3432,7 @@
             <column name="rule_id" value="271"/>
             <column name="br_id" value="FA-L02-00-0271"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs)"/>
             <column name="note"
                     value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
             <column name="message" value="ID of the related vessel is invalid."/>
@@ -3551,7 +3551,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
             <column name="template_id" value="21"/>
-            <column name="property_names" value="relatedVesselTransportMeans"/>
+            <column name="property_names" value="relatedVesselTransportMeansNames"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
