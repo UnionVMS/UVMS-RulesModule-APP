@@ -46,7 +46,7 @@ import java.util.UUID;
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL"),
         @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "3"),
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "0"),
         @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"),
 })
 public class RulesEventMessageConsumerBean implements MessageListener {
