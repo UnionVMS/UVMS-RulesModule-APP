@@ -382,7 +382,7 @@ public abstract class AbstractFact {
     public boolean validateFormat(IdType id) {
         boolean isInvalid = false;
         if (id == null || id.getSchemeId() == null) {
-            isInvalid = false;
+            return isInvalid;
         }
         try {
             String schemeId = id.getSchemeId();
@@ -405,7 +405,7 @@ public abstract class AbstractFact {
     public boolean validateFormat(CodeType codeType) {
         boolean isInvalid = false;
         if (codeType == null) {
-            isInvalid = false;
+            return isInvalid;
         }
         try {
             if (!validateFormat(codeType.getValue(), FORMATS.valueOf(codeType.getListId()).getFormatStr())) {
