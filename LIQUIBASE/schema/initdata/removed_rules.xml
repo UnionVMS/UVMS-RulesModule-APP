@@ -295,7 +295,7 @@ removed since 2.2
     <column name="rule_id" value="431"/>
     <column name="br_id" value="FA-L02-00-0431"/>
     <column name="expression"
-            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;TYPECODE&quot;) "/>
+            value="!isEmpty(specifiedFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(specifiedFaCatch,&quot;TYPECODE&quot;) "/>
     <column name="note"
             value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be present."/>
     <column name="message"
@@ -304,7 +304,7 @@ removed since 2.2
     <column name="error_type" value="WARNING"/>
     <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
     <column name="template_id" value="20"/>
-    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="property_names" value="specifiedFaCatch"/>
     <column name="disabled" value="true"/>
 </insert>
 
@@ -315,7 +315,7 @@ removed since 2.2
     <column name="rule_id" value="432"/>
     <column name="br_id" value="FA-L02-00-0432"/>
     <column name="expression"
-            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;LOCATION&quot;) "/>
+            value="!isEmpty(specifiedFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(specifiedFaCatch,&quot;LOCATION&quot;) "/>
     <column name="note"
             value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.TypeCode must be LOCATION."/>
     <column name="message"
@@ -324,7 +324,7 @@ removed since 2.2
     <column name="error_type" value="ERROR"/>
     <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
     <column name="template_id" value="20"/>
-    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="property_names" value="specifiedFaCatch"/>
     <column name="disabled" value="true"/>
 </insert>
 -->
@@ -333,7 +333,7 @@ removed since 2.2
     <column name="rule_id" value="433"/>
     <column name="br_id" value="FA-L02-00-0433"/>
     <column name="expression"
-            value="!isEmpty(relatedFishingActivityFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(relatedFishingActivityFaCatch,&quot;ID&quot;) "/>
+            value="!isEmpty(specifiedFaCatch) &amp;&amp; !vallidationForDestinationFLUXLocation(specifiedFaCatch,&quot;ID&quot;) "/>
     <column name="note"
             value="if -SpecifiedFA_Catch. SpeciesCode is BFT , DestinationFLUXLocation.id schemeID must be FARM and The value must be from the list specified in the schemeID."/>
     <column name="message"
@@ -342,7 +342,7 @@ removed since 2.2
     <column name="error_type" value="ERROR"/>
     <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
     <column name="template_id" value="20"/>
-    <column name="property_names" value="relatedFishingActivityFaCatch"/>
+    <column name="property_names" value="specifiedFaCatch"/>
     <column name="disabled" value="true"/>
 </insert>
 

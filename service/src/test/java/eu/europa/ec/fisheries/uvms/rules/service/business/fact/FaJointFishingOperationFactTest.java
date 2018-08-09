@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -39,10 +40,26 @@ public class FaJointFishingOperationFactTest {
     }
 
     @Test
-    public void testAtLeastOneFaCatchTypeCodePresent(){
-        FishingActivity fishingActivity = ActivityObjectsHelper.generateActivity();
-        fishingActivity.setSpecifiedFACatches(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLOCATED_TO_QUOTA", "BFT")));
-        boolean result= faJointFishingOperationFact.verifyAtLeastOneFaCatchTypeCodePresent(Collections.singletonList(fishingActivity));
+    public void testAtLeastOneFaCatchTypeCodePresentHappy(){
+        FishingActivityFact fact = new FishingActivityFact();
+        fact.setSpecifiedFaCatch(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLOCATED_TO_QUOTA", "BFT")));
+        boolean result= fact.atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent();
         assertTrue(result);
+    }
+
+    @Test
+    public void testAtLeastOneFaCatchTypeCodePresentSad(){
+        FishingActivityFact fact = new FishingActivityFact();
+        fact.setSpecifiedFaCatch(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLBLAQUOTA", "BFT")));
+        boolean result= fact.atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent();
+        assertFalse(result);
+    }
+
+    @Test
+    public void testAtLeastOneFaCatchTypeCodePresentSad2(){
+        FishingActivityFact fact = new FishingActivityFact();
+        fact.setSpecifiedFaCatch(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLOCATED_TO_QUOTA", "BFTTTTTT")));
+        boolean result= fact.atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent();
+        assertFalse(result);
     }
 }
