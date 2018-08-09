@@ -3308,15 +3308,16 @@
             <column name="rule_id" value="429"/>
             <column name="br_id" value="FA-L01-00-0429"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivities) &amp;&amp; !verifyAtLeastOneFaCatchTypeCodePresent(relatedFishingActivities) "/>
+                    value="subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (mainActivityType == &quot;JOINT_FISHING_OPERATION&quot;) &amp;&amp;
+                           !atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent()"/>
             <column name="note"
                     value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
             <column name="message" value="Catch TypeCode for the related activity is invalid."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
-            <column name="template_id" value="20"/>
-            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFaCatch"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">

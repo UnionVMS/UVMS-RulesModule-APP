@@ -413,7 +413,9 @@ public class ActivityFactMapper {
         return faType;
     }
 
-    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity, un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportType) {
+    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity,
+                                                           un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportType,
+                                                           un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         fishingActivityFact.setSubActivity(isSubActivity);
         fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportType));
@@ -422,6 +424,13 @@ public class ActivityFactMapper {
             fishingActivityFact.setDelimitedPeriod(fishingActivity.getSpecifiedDelimitedPeriods().get(0));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD).storeInRepo(fishingActivityFact, "delimitedPeriod");
         }
+
+        if(mainActivityType != null){
+            fishingActivityFact.setMainActivityType(mainActivityType.getValue());
+            fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
+            xPathUtil.append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
+        }
+
         fishingActivityFact.setRelatedFishingTrip(mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "relatedFishingTrip");
 
@@ -1368,7 +1377,7 @@ public class ActivityFactMapper {
                 faJointFishingOperationFact.setRelatedFishingActivityFaCatchTypeCodes(getFishingActivityFaCatchTypeCodes(fishingActivity.getRelatedFishingActivities()));
 
                 faJointFishingOperationFact.setRelatedFishingActivityFaCatch(getFishingActivityFaCatches(fishingActivity.getRelatedFishingActivities()));
-                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FA_CATCH).storeInRepo(faJointFishingOperationFact, "relatedFishingActivityFaCatch");
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FA_CATCH).storeInRepo(faJointFishingOperationFact, "specifiedFaCatch");
             }
         }
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faJointFishingOperationFact, "relatedFishingActivityFaCatchTypeCodes");
