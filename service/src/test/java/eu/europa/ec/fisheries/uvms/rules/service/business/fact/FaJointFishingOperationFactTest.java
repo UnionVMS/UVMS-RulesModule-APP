@@ -56,10 +56,10 @@ public class FaJointFishingOperationFactTest {
     }
 
     @Test
-    public void testAtLeastOneFaCatchTypeCodePresentSad2(){
+    public void testAtLeastOneFaCatchTypeCodeHappy2(){
         FishingActivityFact fact = new FishingActivityFact();
         fact.setSpecifiedFaCatch(Collections.singletonList(ActivityObjectsHelper.generateFACatch("ALLOCATED_TO_QUOTA", "BFTTTTTT")));
         boolean result= fact.atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent();
-        assertFalse(result);
+        assertTrue(result);
     }
 }
