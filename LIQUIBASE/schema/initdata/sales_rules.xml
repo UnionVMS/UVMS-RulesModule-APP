@@ -2858,6 +2858,19 @@
             <column name="template_id" value="1004"/>
             <column name="property_names" value="specifiedFishingActivities"/>
         </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="11710"/>
+            <column name="br_id" value="SALE-BEL-08"/>
+            <column name="expression"
+                    value="isAuction() &amp;&amp; isVariousSupply() &amp;&amp; isEmpty(supplier)"/>
+            <column name="note" value=""/>
+            <column name="message" value="BEL:SALESupplier is mandatory"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="template_id" value="1027"/>
+            <column name="property_names" value="supplier"/>
+            <column name="disabled" value="true"/>
+        </insert>
     </changeSet>
 
     <changeSet id="new-rules-ig-2-5-0" author="matbul">
