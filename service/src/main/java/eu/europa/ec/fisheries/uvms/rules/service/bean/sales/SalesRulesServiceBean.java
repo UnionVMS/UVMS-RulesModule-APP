@@ -12,6 +12,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -25,6 +26,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Singleton
+@Slf4j
 public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
@@ -155,11 +157,30 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @Override
     public boolean doesReferencedIdNotExist(FactWithReferencedId fact) {
+        //We've seen that under extreme load, it's possible that a response is sent and validated, before the
+        // report gets saved. Then, we get a false positive: the referenced id does not exist yet, while a few seconds
+        // later it will be in the database. To work around this problem, if the referenced id does not exist,
+        // we retry a few seconds later.
+        return doesReferencedIdNotExist(fact, 0);
+    }
+
+    private boolean doesReferencedIdNotExist(FactWithReferencedId fact, int numberOfTries) {
         if (fact == null || fact.getReferencedID() == null || isBlank(fact.getReferencedID().getValue())) {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_REFERENCED_ID);
+        boolean doesReferencedIdExist = salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_REFERENCED_ID);
+        if (numberOfTries > 0 || doesReferencedIdExist) {
+            return !doesReferencedIdExist;
+        } else {
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+                log.error("Thread.sleep failed?", e);
+                Thread.currentThread().interrupt();
+            }
+            return doesReferencedIdNotExist(fact, ++numberOfTries);
+        }
     }
 
     @Override

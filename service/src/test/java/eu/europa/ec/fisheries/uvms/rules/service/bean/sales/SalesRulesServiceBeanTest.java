@@ -519,7 +519,19 @@ public class SalesRulesServiceBeanTest {
         doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
 
         assertTrue(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
+        verify(salesService, times(2)).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
+        verifyNoMoreInteractions(salesService);
+    }
+
+    @Test
+    public void doesReferencedIdNotExistWhenItDoesNotExistTheFirstTryButItDoesExistOnTheSecondTry() throws Exception {
+        SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
+        fact.setReferencedID(new IdType("referencedID"));
+
+        when(salesService.isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID)).thenReturn(false, true);
+
+        assertFalse(service.doesReferencedIdNotExist(fact));
+        verify(salesService, times(2)).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -534,7 +546,6 @@ public class SalesRulesServiceBeanTest {
         verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
-
 
     @Test
     public void doesReferencedIdNotExistWhenFactIsNull() throws Exception {
