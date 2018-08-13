@@ -478,7 +478,7 @@ public class ActivityFactMapperTest {
         fluxLocation.setID(idType);
         fluxLocation.setSpecifiedPhysicalFLUXGeographicalCoordinate(fluxGeographicalCoordinate);
 
-        FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(fluxLocation, false);
+        FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(fluxLocation, false, null, null, null);
 
         assertEquals(codeType.getValue(), fluxLocationFact.getTypeCode().getValue());
         assertNotNull(fluxLocationFact.getSpecifiedPhysicalFLUXGeographicalCoordinate());
@@ -760,7 +760,7 @@ public class ActivityFactMapperTest {
         final FaJointFishingOperationFact faJointFishingOperationFact = activityMapper.generateFactsForJointFishingOperation(null, null);
         final FaEntryToSeaFact faEntryToSeaFact = activityMapper.generateFactsForEntryIntoSea(null, null);
         final FaFishingOperationFact faFishingOperationFact = activityMapper.generateFactsForFishingOperation(null, null);
-        final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false);
+        final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false, null, null, null);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
         final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false, null);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
@@ -784,7 +784,7 @@ public class ActivityFactMapperTest {
         final List<GearProblemFact> gearProblemFacts = activityMapper.generateFactsForGearProblems(null);
 
         final FishingTripFact fishingTripFact = activityMapper.generateFactForFishingTrip(null);
-        final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null, false);
+        final List<FluxLocationFact> fluxLocationFacts = activityMapper.generateFactsForFluxLocations(null, false, null, null, null);
         final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null, "");
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
