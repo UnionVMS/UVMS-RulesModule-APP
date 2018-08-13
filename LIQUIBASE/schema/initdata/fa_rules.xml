@@ -4055,14 +4055,15 @@
             <column name="rule_id" value="315"/>
             <column name="br_id" value="FA-L02-00-0315"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFaCatchFluxLocationTypeCode) &amp;&amp; allValueContainsMatch(specifiedFaCatchFluxLocationTypeCode,&quot;AREA&quot;) "/>
+                    value="isSpecifiedFluxLocFromFaCatch &amp;&amp; faCatch != null &amp;&amp; (faRepDocType ==&quot;DECLARATION&quot;)
+                           &amp;&amp; (activityType == &quot;LANDING&quot;) &amp;&amp; !faCatchContainsSpecifiedFluxLocationOfType(&quot;AREA&quot;)"/>
             <column name="note" value="specified FaCatchFluxLocation TypeCode must be AREA"/>
             <column name="message" value="The area where the catches were taken must be provided."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="26"/>
-            <column name="property_names" value="specifiedFaCatchFluxLocationTypeCode"/>
+            <column name="template_id" value="10"/>
+            <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
 
