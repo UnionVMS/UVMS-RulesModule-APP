@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -31,8 +32,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
@@ -355,11 +354,10 @@ public class ActivityFactMapper {
             if (repDat != null) {
                 dateTimeOfCreationOfMessage = new DateTime(repDat);
             } else if (creationDateTime.getDateTimeString() != null && org.apache.commons.lang3.StringUtils.isNotEmpty(creationDateTime.getDateTimeString().getValue())) {
-                SimpleDateFormat df = new SimpleDateFormat();
                 try {
-                    Date parsedDate = df.parse(creationDateTime.getDateTimeString().getValue());
+                    Date parsedDate = DateUtils.parseToUTCDate(creationDateTime.getDateTimeString().getValue(),creationDateTime.getDateTimeString().getFormat());
                     dateTimeOfCreationOfMessage = new DateTime(parsedDate);
-                } catch (ParseException e) {
+                } catch (IllegalArgumentException e) {
                     log.warn("[WARN] Couldn't extract date from CreationDateTime of Message!", e);
                 }
             }
