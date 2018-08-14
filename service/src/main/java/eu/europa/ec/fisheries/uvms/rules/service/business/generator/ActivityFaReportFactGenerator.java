@@ -100,8 +100,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 factsByReport.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false, null));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
-                activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true);
-                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true));
+                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true, facts));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
                 addFactsForVesselTransportMeansStructuresAddress(factsByReport, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);
@@ -157,7 +156,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, partialXpath, isSubActivity, faReportDocument.getTypeCode(), mainActivityType));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(fishingActivity.getRelatedVesselTransportMeans()));
+                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(fishingActivity.getRelatedVesselTransportMeans(), facts));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForVesselTransportMeansStructuresAddress(facts, fishingActivity.getRelatedVesselTransportMeans(), RELATED_VESSEL_TRANSPORT_MEANS);

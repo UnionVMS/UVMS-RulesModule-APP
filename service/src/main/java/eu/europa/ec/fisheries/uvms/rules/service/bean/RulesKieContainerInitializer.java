@@ -288,6 +288,7 @@ public class RulesKieContainerInitializer {
             add(FactType.FA_LANDING);
             add(FactType.FA_TRANSHIPMENT);
             add(FactType.FA_NOTIFICATION_OF_TRANSHIPMENT);
+            add(FactType.SIMPLE_ID_TYPE_FACT);
         }};
     }
 

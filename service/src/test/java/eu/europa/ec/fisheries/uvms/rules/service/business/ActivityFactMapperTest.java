@@ -302,7 +302,7 @@ public class ActivityFactMapperTest {
         contactParty.setIDS(singletonList(idType));
         vesselTransportMeans.setSpecifiedContactParties(singletonList(contactParty));
 
-        VesselTransportMeansFact mappedFact = activityMapper.generateFactForVesselTransportMean(vesselTransportMeans, false);
+        VesselTransportMeansFact mappedFact = activityMapper.generateFactForVesselTransportMean(vesselTransportMeans, false, new ArrayList<AbstractFact>());
 
         assertEquals(codeType.getValue(), mappedFact.getRoleCode().getValue());
 
@@ -766,13 +766,13 @@ public class ActivityFactMapperTest {
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null");
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
-        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null);
+        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<AbstractFact>());
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
-        final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null);
+        final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null, new ArrayList<AbstractFact>());
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
         final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null , new HashMap<String, List<GearMatrix.Condition>>());
