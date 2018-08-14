@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -421,34 +422,33 @@ public class ActivityFactMapper {
         return ids;
     }
 
-    public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, boolean isCommingFromFaReportDocument) {
+    public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, boolean isCommingFromFaReportDocument, List<AbstractFact> facts) {
         if (vesselTransportMean == null) {
             xPathUtil.clear();
             return null;
         }
-        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean);
+        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts);
         vesselTransportMeansFact.setIsFromFaReport(isCommingFromFaReportDocument);
         return vesselTransportMeansFact;
     }
 
-    public List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMean) {
-        if (vesselTransportMean == null) {
+    public List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans, List<AbstractFact> facts) {
+        if (CollectionUtils.isEmpty(vesselTransportMeans)) {
             xPathUtil.clear();
             return emptyList();
         }
         List<VesselTransportMeansFact> list = new ArrayList<>();
         int index = 1;
         String strToAppend = xPathUtil.getValue();
-        for (VesselTransportMeans vesselTransportMeans : vesselTransportMean) {
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
             xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index);
-            VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMeans);
-            list.add(vesselTransportMeansFact);
+            list.add(generateFactForVesselTransportMean(vesselTransportMean, facts));
             index++;
         }
         return list;
     }
 
-    public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean) {
+    public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, List<AbstractFact> facts) {
         if (vesselTransportMean == null) {
             xPathUtil.clear();
             return null;
@@ -457,6 +457,11 @@ public class ActivityFactMapper {
         // Since every time we get the final value (Eg. when storing in repo) we clean the StringBuffer inside XPathStringWrapper, we need to store and use the initial
         // value which is to be used always (appended as the first string in the buffer).
         String toBeAppendedAlways = xPathUtil.getValue();
+
+        // Generate facts for ID Types. This is done so that we can have the right xPath to the specific ID that failed!
+        if(CollectionUtils.isNotEmpty(vesselTransportMean.getIDS())){
+            generateFactsForSimpleIdTypes(facts, vesselTransportMean.getIDS(), toBeAppendedAlways);
+        }
 
         VesselTransportMeansFact vesselTransportMeansFact = new VesselTransportMeansFact();
 
@@ -486,6 +491,25 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways).append(SPECIFIED_CONTACT_PARTY, SPECIFIED_STRUCTURED_ADDRESS).storeInRepo(vesselTransportMeansFact, "specifiedStructuredAddresses");
 
         return vesselTransportMeansFact;
+    }
+
+    private void generateFactsForSimpleIdTypes(List<AbstractFact> facts, List<IDType> ids, String partialXpath) {
+        if(CollectionUtils.isEmpty(ids)){
+            return;
+        }
+        int index = 1;
+        for (IDType id : ids) {
+            IdTypeFact idTypeFact = generateFactForSimpleIdType(id);
+            xPathUtil.append(partialXpath).appendWithIndex(ID, index).storeInRepo(idTypeFact, "id");
+            facts.add(idTypeFact);
+            index++;
+        }
+    }
+
+    private IdTypeFact generateFactForSimpleIdType(IDType id) {
+        IdTypeFact idTypeFact = new IdTypeFact();
+        idTypeFact.setId(mapToIdType(id));
+        return idTypeFact;
     }
 
     private List<StructuredAddress> mapSpecifiedStructuredAddresses(List<ContactParty> specifiedContactParties) {

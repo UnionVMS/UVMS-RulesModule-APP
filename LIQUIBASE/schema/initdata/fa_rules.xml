@@ -657,14 +657,14 @@
         <insert tableName="rule">
             <column name="rule_id" value="52"/>
             <column name="br_id" value="FA-L01-00-0052"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; validateFormat(ids)"/>
+            <column name="expression" value="id != null &amp;&amp; validateFormat(id)"/>
             <column name="note" value="Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Vessel ID value not according to schemeID."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="template_id" value="31"/>
+            <column name="property_names" value="id"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
