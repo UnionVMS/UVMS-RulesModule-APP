@@ -31,6 +31,8 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
@@ -234,7 +236,9 @@ public class ActivityFactMapper {
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
-            faReportDocumentFact.setCreationDateOfMessage(extractCreationDateTime(fAReportDocument.getRelatedFLUXReportDocument()));
+            if(fAReportDocument.getRelatedFLUXReportDocument() != null){
+                faReportDocumentFact.setCreationDateOfMessage(mapToJodaDateTime(fAReportDocument.getRelatedFLUXReportDocument().getCreationDateTime()));
+            }
             faReportDocumentFact.setTripsPerFaTypeFromMessage(tripsPerFaTypeFromMessage);
             list.add(faReportDocumentFact);
             index++;
@@ -344,17 +348,24 @@ public class ActivityFactMapper {
         return fishingActivityFact;
     }
 
-    public DateTime extractCreationDateTime(FLUXReportDocument fluxReportDoc){
-        if (fluxReportDoc != null){
-            DateTimeType creationDateTime = fluxReportDoc.getCreationDateTime();
-            if(creationDateTime != null){
-                Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
-                return new DateTime(repDat);
+    public DateTime mapToJodaDateTime(DateTimeType creationDateTime) {
+        DateTime dateTimeOfCreationOfMessage = null;
+        if (creationDateTime != null) {
+            Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
+            if (repDat != null) {
+                dateTimeOfCreationOfMessage = new DateTime(repDat);
+            } else if (creationDateTime.getDateTimeString() != null && org.apache.commons.lang3.StringUtils.isNotEmpty(creationDateTime.getDateTimeString().getValue())) {
+                SimpleDateFormat df = new SimpleDateFormat();
+                try {
+                    Date parsedDate = df.parse(creationDateTime.getDateTimeString().getValue());
+                    dateTimeOfCreationOfMessage = new DateTime(parsedDate);
+                } catch (ParseException e) {
+                    log.warn("[WARN] Couldn't extract date from CreationDateTime of Message!", e);
+                }
             }
         }
-        return null;
+        return dateTimeOfCreationOfMessage;
     }
-
 
     public FluxFaReportMessageFact generateFactForFluxFaReportMessage(FLUXFAReportMessage fluxfaReportMessage) {
         if (fluxfaReportMessage == null) {
@@ -365,7 +376,9 @@ public class ActivityFactMapper {
 
         fluxFaReportMessageFact.setSenderOrReceiver(senderReceiver);
 
-        fluxFaReportMessageFact.setCreationDateOfMessage(extractCreationDateTime(fluxfaReportMessage.getFLUXReportDocument()));
+        if(fluxfaReportMessage.getFLUXReportDocument() != null){
+            fluxFaReportMessageFact.setCreationDateOfMessage(mapToJodaDateTime(fluxfaReportMessage.getFLUXReportDocument().getCreationDateTime()));
+        }
 
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
 

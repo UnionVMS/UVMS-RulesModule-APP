@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
@@ -404,9 +405,10 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         if (fluxRepDoc != null){
             List<String> strIDs = getIds(fluxRepDoc.getIDS());
             facts.removeAll(Collections.singleton(null));
+            DateTime creationDateTime = activityFactMapper.mapToJodaDateTime(fluxRepDoc.getCreationDateTime());
             for (AbstractFact fact : facts) {
                 fact.setUniqueIds(strIDs);
-                fact.setCreationDateOfMessage(activityFactMapper.extractCreationDateTime(fluxRepDoc));
+                fact.setCreationDateOfMessage(creationDateTime);
             }
         }
 
