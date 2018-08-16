@@ -7,8 +7,8 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
+import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -227,6 +227,34 @@ public class SalesRulesServiceBeanTest {
 
         //mock
         doReturn(fishingTripResponse1).when(activityService).getFishingTrip(fishingTripID);
+
+        //execute
+        assertTrue(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
+    }
+
+    @Test
+    public void isReceptionDate24hAfterLandingDeclarationWhenNoFishingTripIsFound() throws Exception {
+        //data set
+        String fishingTripID = "MLT-TRP-20160630000001";
+
+        DelimitedPeriodType delimitedPeriodType1 = new DelimitedPeriodType()
+                .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(1)));
+        DelimitedPeriodType delimitedPeriodType2 = new DelimitedPeriodType()
+                .withStartDateTime(new DateTimeType().withDateTime(DateTime.now().minusHours(49)));
+        FishingActivityType fishingActivityType1 = new FishingActivityType()
+                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType1, delimitedPeriodType2))
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
+        FishingActivityType fishingActivityType2 = new FishingActivityType()
+                .withSpecifiedDelimitedPeriods(Arrays.asList(delimitedPeriodType2, delimitedPeriodType1))
+                .withSpecifiedFishingTrip(new FishingTripType().withIDS(new IDType().withValue(fishingTripID)));
+
+        SalesReportType salesReportType = new SalesReportType()
+                .withIncludedSalesDocuments(new SalesDocumentType().withSpecifiedFishingActivities(Arrays.asList(fishingActivityType1, fishingActivityType2)));
+        salesFLUXSalesReportMessageFact.setSalesReports(Arrays.asList(salesReportType));
+        salesFLUXSalesReportMessageFact.setFLUXReportDocument(new FLUXReportDocumentType().withCreationDateTime(new DateTimeType().withDateTime(DateTime.now().plusHours(49))));
+
+        //mock
+        doReturn(Optional.absent()).when(activityService).getFishingTrip(fishingTripID);
 
         //execute
         assertTrue(service.isReceptionDate24hAfterLandingDeclaration(salesFLUXSalesReportMessageFact));
@@ -491,7 +519,19 @@ public class SalesRulesServiceBeanTest {
         doReturn(false).when(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
 
         assertTrue(service.doesReferencedIdNotExist(fact));
-        verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
+        verify(salesService, times(2)).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
+        verifyNoMoreInteractions(salesService);
+    }
+
+    @Test
+    public void doesReferencedIdNotExistWhenItDoesNotExistTheFirstTryButItDoesExistOnTheSecondTry() throws Exception {
+        SalesFLUXResponseDocumentFact fact = new SalesFLUXResponseDocumentFact();
+        fact.setReferencedID(new IdType("referencedID"));
+
+        when(salesService.isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID)).thenReturn(false, true);
+
+        assertFalse(service.doesReferencedIdNotExist(fact));
+        verify(salesService, times(2)).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
 
@@ -506,7 +546,6 @@ public class SalesRulesServiceBeanTest {
         verify(salesService).isIdNotUnique("referencedID", SalesMessageIdType.SALES_REFERENCED_ID);
         verifyNoMoreInteractions(salesService);
     }
-
 
     @Test
     public void doesReferencedIdNotExistWhenFactIsNull() throws Exception {

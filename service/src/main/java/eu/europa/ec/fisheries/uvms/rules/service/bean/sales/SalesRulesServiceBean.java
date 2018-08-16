@@ -1,46 +1,32 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+import eu.europa.ec.fisheries.schema.sales.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
+import eu.europa.ec.fisheries.uvms.rules.service.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
+import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import java.util.List;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
-import eu.europa.ec.fisheries.schema.sales.IDType;
-import eu.europa.ec.fisheries.schema.sales.SalesDocumentType;
-import eu.europa.ec.fisheries.schema.sales.SalesEventType;
-import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
-import eu.europa.ec.fisheries.schema.sales.ValidationResultDocumentType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
-import eu.europa.ec.fisheries.uvms.rules.service.ActivityService;
-import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
-import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
-import eu.europa.ec.fisheries.uvms.rules.service.SalesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDelimitedPeriodFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXReportDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXResponseDocumentFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFishingActivityFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesQueryFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
-import ma.glasnost.orika.MapperFacade;
-import org.joda.time.DateTime;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Singleton
+@Slf4j
 public class SalesRulesServiceBean implements SalesRulesService {
 
     @EJB
@@ -121,14 +107,8 @@ public class SalesRulesServiceBean implements SalesRulesService {
             String fishingTripID = fact.getSalesReports().get(0).getIncludedSalesDocuments().get(0).getSpecifiedFishingActivities().get(0).getSpecifiedFishingTrip().getIDS().get(0).getValue();
 
             Optional<FishingTripResponse> fishingTripResponse = activityService.getFishingTrip(fishingTripID);
-
             if (!fishingTripResponse.isPresent()) {
-                /**
-                 * In case the query returns no values
-                 * (which means there was no fishing trip found with the ID specified in the sales note),
-                 * we don't fire the rule
-                 */
-                return false;
+                return true;
             }
 
             FishingTripResponse fishingTrip = fishingTripResponse.get();
@@ -177,11 +157,30 @@ public class SalesRulesServiceBean implements SalesRulesService {
 
     @Override
     public boolean doesReferencedIdNotExist(FactWithReferencedId fact) {
+        //We've seen that under extreme load, it's possible that a response is sent and validated, before the
+        // report gets saved. Then, we get a false positive: the referenced id does not exist yet, while a few seconds
+        // later it will be in the database. To work around this problem, if the referenced id does not exist,
+        // we retry a few seconds later.
+        return doesReferencedIdNotExist(fact, 0);
+    }
+
+    private boolean doesReferencedIdNotExist(FactWithReferencedId fact, int numberOfTries) {
         if (fact == null || fact.getReferencedID() == null || isBlank(fact.getReferencedID().getValue())) {
             return false;
         }
 
-        return !salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_REFERENCED_ID);
+        boolean doesReferencedIdExist = salesService.isIdNotUnique(fact.getReferencedID().getValue(), SalesMessageIdType.SALES_REFERENCED_ID);
+        if (numberOfTries > 0 || doesReferencedIdExist) {
+            return !doesReferencedIdExist;
+        } else {
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+                log.error("Thread.sleep failed?", e);
+                Thread.currentThread().interrupt();
+            }
+            return doesReferencedIdNotExist(fact, ++numberOfTries);
+        }
     }
 
     @Override

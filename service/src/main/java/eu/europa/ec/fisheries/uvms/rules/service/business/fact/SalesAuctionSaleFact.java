@@ -10,6 +10,7 @@ public class SalesAuctionSaleFact extends SalesAbstractFact {
 
     protected String countryCode;
     protected SalesCategoryType salesCategory;
+    protected String supplier;
 
     @Override
     public void setFactType() {
@@ -32,6 +33,14 @@ public class SalesAuctionSaleFact extends SalesAbstractFact {
         this.salesCategory = salesCategory;
     }
 
+    public String getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -39,11 +48,12 @@ public class SalesAuctionSaleFact extends SalesAbstractFact {
         SalesAuctionSaleFact that = (SalesAuctionSaleFact) o;
         return Objects.equals(countryCode, that.countryCode) &&
                 salesCategory == that.salesCategory &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(supplier, that.supplier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countryCode, salesCategory, creationDateOfMessage);
+        return Objects.hash(countryCode, salesCategory, creationDateOfMessage, supplier);
     }
 }
