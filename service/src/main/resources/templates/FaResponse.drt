@@ -13,7 +13,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaResponseFact;
 import java.util.Arrays;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
-global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 

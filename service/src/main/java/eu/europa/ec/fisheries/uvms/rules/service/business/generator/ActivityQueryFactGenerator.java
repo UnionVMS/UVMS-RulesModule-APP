@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
@@ -21,10 +20,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
@@ -55,9 +52,9 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
     @Override
     public List<AbstractFact> generateAllFacts() {
         List<AbstractFact> factList = new ArrayList<>();
-        if (fluxfaQueryMessage != null){
+        if (fluxfaQueryMessage != null) {
             FAQuery faQuery = fluxfaQueryMessage.getFAQuery();
-            if(faQuery != null){
+            if (faQuery != null) {
 
                 xPathUtil.append(FLUXFA_QUERY_MESSAGE).append(FA_QUERY);
                 factList.add(activityFactMapper.generateFactsForFaQuery(faQuery));
@@ -66,20 +63,19 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
                 factList.addAll(activityFactMapper.generateFactsForFaQueryParameters(faQuery.getSimpleFAQueryParameters(), faQuery));
             }
         }
+        populateCreationDateTime(factList);
+        return factList;
+    }
 
-        if (fluxfaQueryMessage != null){
-            DateTimeType creationDateTime = fluxfaQueryMessage.getFAQuery().getSubmittedDateTime();
-            for (AbstractFact fact : factList) {
-                if(creationDateTime != null){
-                    Date repDat = XMLDateUtils.xmlGregorianCalendarToDate(creationDateTime.getDateTime());
-                    if(repDat != null){
-                        fact.setCreationDateOfMessage(new DateTime(repDat));
-                    }
+    private void populateCreationDateTime(List<AbstractFact> factList) {
+        if (fluxfaQueryMessage != null && fluxfaQueryMessage.getFAQuery() != null) {
+            DateTime dateTimeOfCreationOfMessage = activityFactMapper.mapToJodaDateTime(fluxfaQueryMessage.getFAQuery().getSubmittedDateTime());
+            if (dateTimeOfCreationOfMessage != null) {
+                for (AbstractFact fact : factList) {
+                    fact.setCreationDateOfMessage(dateTimeOfCreationOfMessage);
                 }
             }
         }
-
-        return factList;
     }
 
     @Override

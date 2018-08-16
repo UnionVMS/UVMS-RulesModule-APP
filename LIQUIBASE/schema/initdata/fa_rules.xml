@@ -304,7 +304,7 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1"/>
             <column name="property_names" value="relatedReportIDs"/>
-            <column name="disabled" value="true"/> <!-- UNIONVMS-2865 -->
+            <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
             <column name="rule_id" value="25"/>
@@ -612,7 +612,7 @@
             <column name="rule_id" value="47"/>
             <column name="br_id" value="FA-L00-00-0047"/>
             <column name="expression"
-                    value="(purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !isEmpty(specifiedFishingActivities)) &amp;&amp; !isValid(specifiedFishingActivities)"/>
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !isValid(specifiedFishingActivities)"/>
             <column name="note" value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
             <column name="message" value="Fishing activity information missing."/>
             <column name="level" value="L00"/>
@@ -657,14 +657,14 @@
         <insert tableName="rule">
             <column name="rule_id" value="52"/>
             <column name="br_id" value="FA-L01-00-0052"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; validateFormat(ids)"/>
+            <column name="expression" value="id != null &amp;&amp; validateFormat(id)"/>
             <column name="note" value="Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Vessel ID value not according to schemeID."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
-            <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="template_id" value="31"/>
+            <column name="property_names" value="id"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -2166,13 +2166,9 @@
             <column name="rule_id" value="411"/>
             <column name="br_id" value="FA-L02-00-0411"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp;
-                          !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp;
-                          !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;)"/>
+                    value="!subActivity &amp;&amp; isEmpty(unitQuantity) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) &amp;&amp; !codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; codeTypeValueEquals(speciesCode, &quot;SWO&quot;) &amp;&amp; !schemeIdContainsAny(fishActRelatedFluxLocationIds, &quot;GFCM_GSA&quot;) &amp;&amp; mdrService.isIdTypePresentInMDRList(&quot;GFCM_GSA&quot;,fishActRelatedFluxLocationIds, creationDateOfMessage) "/>
             <column name="note" value="Units (number of fish) must be provided for Swordfish in GFCM"/>
-            <column name="message"
-                    value="Units (number of fish) must be provided for Swordfish in GFCM.
-                           This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
+            <column name="message" value="Units (number of fish) must be provided for Swordfish in GFCM. This rule only applies to catches related to the main fishing activity, not the related fishing activity."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-06-20 00:00:00.0"/>
@@ -3312,15 +3308,16 @@
             <column name="rule_id" value="429"/>
             <column name="br_id" value="FA-L01-00-0429"/>
             <column name="expression"
-                    value="!isEmpty(relatedFishingActivities) &amp;&amp; !verifyAtLeastOneFaCatchTypeCodePresent(relatedFishingActivities) "/>
+                    value="subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (mainActivityType == &quot;JOINT_FISHING_OPERATION&quot;) &amp;&amp;
+                           !atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent()"/>
             <column name="note"
                     value="RelatedFishingActivity.FACatch.Typecode At least one occurrence of  ALLOCATED_TO_QUOTA must be present."/>
             <column name="message" value="Catch TypeCode for the related activity is invalid."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-07-04 00:00:00.0"/>
-            <column name="template_id" value="20"/>
-            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFaCatch"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -3342,7 +3339,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="110"/>
             <column name="br_id" value="FA-L01-00-0110"/>
-            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds) "/>
+            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds)"/>
             <column name="note"
                     value="FishingActivity ID if present, Check Format. Must be according to the specified schemeID."/>
             <column name="message" value="Fishing Activity ID is invalid."/>
@@ -3436,7 +3433,7 @@
             <column name="rule_id" value="271"/>
             <column name="br_id" value="FA-L02-00-0271"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs) "/>
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; validateFormat(relatedVesselTransportMeansIDs)"/>
             <column name="note"
                     value="Check Format. Must be according to the specified schemeID if the activity is a relocation declaration."/>
             <column name="message" value="ID of the related vessel is invalid."/>
@@ -3555,7 +3552,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-07-26 00:00:00.0"/>
             <column name="template_id" value="21"/>
-            <column name="property_names" value="relatedVesselTransportMeans"/>
+            <column name="property_names" value="relatedVesselTransportMeansNames"/>
             <column name="disabled" value="false"/>
         </insert>
         <insert tableName="rule">
@@ -4058,14 +4055,15 @@
             <column name="rule_id" value="315"/>
             <column name="br_id" value="FA-L02-00-0315"/>
             <column name="expression"
-                    value="!isEmpty(specifiedFaCatchFluxLocationTypeCode) &amp;&amp; allValueContainsMatch(specifiedFaCatchFluxLocationTypeCode,&quot;AREA&quot;) "/>
+                    value="isSpecifiedFluxLocFromFaCatch &amp;&amp; faCatch != null &amp;&amp; (faRepDocType ==&quot;DECLARATION&quot;)
+                           &amp;&amp; (activityType == &quot;LANDING&quot;) &amp;&amp; !faCatchContainsSpecifiedFluxLocationOfType(&quot;AREA&quot;)"/>
             <column name="note" value="specified FaCatchFluxLocation TypeCode must be AREA"/>
             <column name="message" value="The area where the catches were taken must be provided."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="26"/>
-            <column name="property_names" value="specifiedFaCatchFluxLocationTypeCode"/>
+            <column name="template_id" value="10"/>
+            <column name="property_names" value="typeCode"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -4367,8 +4365,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="339"/>
             <column name="br_id" value="FA-L02-00-0339"/>
-            <column name="expression"
-                    value="!isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
             <column name="message" value="Fishing License, Authorization or Permit ID is missing."/>
             <column name="level" value="L02"/>
@@ -4669,7 +4666,7 @@
             <column name="rule_id" value="364"/>
             <column name="br_id" value="FA-L00-00-0364"/>
             <column name="expression"
-                    value="specifiedDelimitedPeriod != null &amp;&amp; !isIsoDateStringValidFormat(sdpEndDateTimeString)"/>
+                    value="specifiedDelimitedPeriod != null &amp;&amp; isEmpty(sdpEndDateTimeString)"/>
             <column name="note"
                     value="FA_Query SpecifiedDelimitedPeriod EndDateTime must be present if SpecifiedDelimitedPeriod is present."/>
             <column name="message" value="End date/time must be provided."/>

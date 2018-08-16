@@ -13,24 +13,22 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class FishingActivityFact extends AbstractFact {
 
+    private boolean subActivity = false;
     private CodeType typeCode;
     private DateTimeType occurrenceDateTime;
     private FishingTrip specifiedFishingTrip;
@@ -41,7 +39,8 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType fisheryTypeCode;
     private CodeType speciesTargetCode;
     private BigDecimal operationQuantity;
-    private boolean subActivity = false;
+    // This field will be set only when this is a subactivity;
+    private String mainActivityType;
     private List<MeasureType> durationMeasure;
     private DelimitedPeriod delimitedPeriod;
     private List<FLUXLocation> relatedFLUXLocations;
@@ -49,6 +48,7 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType vesselRelatedActivityCode;
     private CodeType faReportDocumentTypeCode;
     private List<CodeType> relatedFluxLocationRFMOCodeList;
+    private List<FACatch> specifiedFaCatch;
 
     public FishingActivityFact() {
         setFactType();
@@ -59,37 +59,36 @@ public class FishingActivityFact extends AbstractFact {
         this.factType = FactType.FISHING_ACTIVITY;
     }
 
-    public boolean validDates(){
+    public boolean validDates() {
         if (!subActivity && (occurrenceDateTime != null || delimitedPeriod != null)) {
             return true;
         }
         return validDelimitedPeriod(relatedFishingActivities);
     }
 
-    public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities){
+    public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
         Boolean isMatch = false;
-        if (CollectionUtils.isEmpty(relatedFishingActivities)){
+        if (CollectionUtils.isEmpty(relatedFishingActivities)) {
             return false;
         }
         for (FishingActivity related : relatedFishingActivities) {
             isMatch = related.getOccurrenceDateTime() != null
-            || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods())
-            && validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
-            if(!isMatch){
+                    || CollectionUtils.isNotEmpty(related.getSpecifiedDelimitedPeriods())
+                    && validDelimitedPeriod(related.getSpecifiedDelimitedPeriods().get(0), true, true);
+            if (!isMatch) {
                 return false;
             }
         }
         return isMatch;
     }
 
-    public boolean rfmoProvided( List<FLUXLocation> relatedFLUXLocations){
-        if (CollectionUtils.isEmpty(relatedFLUXLocations)){
+    public boolean rfmoProvided(List<FLUXLocation> relatedFLUXLocations) {
+        if (CollectionUtils.isEmpty(relatedFLUXLocations)) {
             return true;
-        }
-        else {
+        } else {
             for (FLUXLocation relatedFLUXLocation : relatedFLUXLocations) {
                 un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType rfmo = relatedFLUXLocation.getRegionalFisheriesManagementOrganizationCode();
-                if (rfmo != null){
+                if (rfmo != null) {
                     return true;
                 }
             }
@@ -98,12 +97,30 @@ public class FishingActivityFact extends AbstractFact {
         return false;
     }
 
-    public boolean isAllowedToHaveSubactivities(){
-        if(!subActivity && !isEmpty(relatedFishingActivities)){
-            if((codeTypeValueEquals(faReportDocumentTypeCode, "DECLARATION") && (codeTypeValueEquals(typeCode, "FISHING_OPERATION") || codeTypeValueEquals(typeCode, "JOINT_FISHING_OPERATION")))
-                    || codeTypeValueEquals(faReportDocumentTypeCode, "NOTIFICATION") && codeTypeValueEquals(typeCode, "AREA_ENTRY")){
+    public boolean isAllowedToHaveSubactivities() {
+        if (!subActivity && !isEmpty(relatedFishingActivities)) {
+            if ((codeTypeValueEquals(faReportDocumentTypeCode, "DECLARATION") && (codeTypeValueEquals(typeCode, "FISHING_OPERATION") || codeTypeValueEquals(typeCode, "JOINT_FISHING_OPERATION")))
+                    || codeTypeValueEquals(faReportDocumentTypeCode, "NOTIFICATION") && codeTypeValueEquals(typeCode, "AREA_ENTRY")) {
                 return true;
             } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * This will check if every FACatch in FishingActivity has at least one with typeCode value ALLOCATED_TO_QUOTA if FACatchSpecies is BFT
+     *
+     * @return TRUE : If every FishingActivity has FACatch with typeCode value ALLOCATED_TO_QUOTA
+     * FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
+     */
+    public boolean atLeastOneFaCatchWithBFTAndAllocatedQuotaPresent() {
+        if (CollectionUtils.isEmpty(specifiedFaCatch)) {
+            return true;
+        }
+        for (FACatch faCatch : specifiedFaCatch) {
+            if (faCatch.getSpeciesCode() != null && "BFT".equals(faCatch.getSpeciesCode().getValue()) && (faCatch.getTypeCode() == null || !"ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue()))) {
                 return false;
             }
         }

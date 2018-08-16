@@ -19,7 +19,11 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXGeographicalCoordinate;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
 
 @Data
@@ -27,6 +31,11 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 public class FluxLocationFact extends AbstractFact {
 
     private CodeType typeCode;
+
+    private String activityType;
+    private String faRepDocType;
+    private FACatch faCatch;
+
     private IdType countryID;
     private IdType id;
     private FLUXGeographicalCoordinate specifiedPhysicalFLUXGeographicalCoordinate;
@@ -41,6 +50,20 @@ public class FluxLocationFact extends AbstractFact {
 
     public boolean getIsSpecifiedFluxLocFromFaCatch() {
         return isSpecifiedFluxLocFromFaCatch;
+    }
+
+    public boolean faCatchContainsSpecifiedFluxLocationOfType(String typeStr){
+        if(faCatch == null || CollectionUtils.isEmpty(faCatch.getSpecifiedFLUXLocations()) || StringUtils.isEmpty(typeStr)){
+            return false;
+        }
+        boolean itContains = false;
+        for (FLUXLocation specifiedFLUXLocation : faCatch.getSpecifiedFLUXLocations()) {
+            if(specifiedFLUXLocation.getTypeCode() != null && typeStr.equals(specifiedFLUXLocation.getTypeCode().getValue())){
+                itContains = true;
+                break;
+            }
+        }
+        return itContains;
     }
 
     @Override

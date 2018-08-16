@@ -20,12 +20,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Singleton
 @Slf4j
@@ -134,7 +129,7 @@ public class AssetServiceBean implements AssetService {
 
     protected Optional<Asset> findAssetHistoryByDate(Date landingDate, List<Asset> assetHistories) {
         // Asset module sorts this list already, but we do it again here just to be sure
-        assetHistories.sort(assetComparator());
+        Collections.sort(assetHistories, assetComparator());
 
         Asset historyOnDate = null;
 
