@@ -1,5 +1,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -16,11 +27,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
 
 @Singleton
 @Slf4j
@@ -120,10 +126,12 @@ public class AssetServiceBean implements AssetService {
     }
 
     private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
-        DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
-        XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
-        if (dateTime != null){
-            vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+        if (faReportDocument != null && faReportDocument.getAcceptanceDateTime() != null){
+            DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
+            XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
+            if (dateTime != null){
+                vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+            }
         }
     }
 
