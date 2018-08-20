@@ -37,6 +37,7 @@ public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
         for (FADocumentID id : ids) {
             String uuid = id.getUuid();
             if(StringUtils.isNotEmpty(uuid)){
+                stringSet.add(uuid);
                 stringSet.add(uuid.toLowerCase());
                 stringSet.add(uuid.toUpperCase());
             }
