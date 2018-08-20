@@ -10,20 +10,49 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import com.google.common.collect.ImmutableList;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+
+import java.util.List;
+
 public enum ContainerType {
 
-    FA_REPORT("faReport","ec.europa.eu.faResport"),
-    FA_QUERY("faQuery","ec.europa.eu.faQuery"),
-    FA_RESPONSE("faResponse","ec.europa.eu.faResponse"),
-    SALES("sales","ec.europa.eu.sales");
+    FA_REPORT("faReport", "ec.europa.eu.faResport", FactType.FA_REPORT_DOCUMENT,
+            FactType.FLUX_FA_REPORT_MESSAGE, FactType.VESSEL_TRANSPORT_MEANS, FactType.STRUCTURED_ADDRESS,
+            FactType.FISHING_GEAR, FactType.GEAR_CHARACTERISTIC, FactType.GEAR_PROBLEM, FactType.FA_CATCH,
+            FactType.FISHING_TRIP, FactType.FLUX_LOCATION, FactType.FLUX_CHARACTERISTIC,
+            FactType.VESSEL_STORAGE_CHARACTERISTIC, FactType.FISHING_ACTIVITY, FactType.FA_DEPARTURE,
+            FactType.FA_ENTRY_TO_SEA, FactType.FA_FISHING_OPERATION, FactType.FA_JOINT_FISHING_OPERATION,
+            FactType.FA_RELOCATION, FactType.FA_DISCARD, FactType.FA_EXIT_FROM_SEA,
+            FactType.FA_NOTIFICATION_OF_ARRIVAL, FactType.FA_ARRIVAL, FactType.FA_LANDING,
+            FactType.FA_TRANSHIPMENT, FactType.FA_NOTIFICATION_OF_TRANSHIPMENT, FactType.SIMPLE_ID_TYPE_FACT),
 
+    FA_QUERY("faQuery", "ec.europa.eu.faQuery", FactType.FA_QUERY,
+            FactType.FA_QUERY_PARAMETER),
+
+    FA_RESPONSE("faResponse", "ec.europa.eu.faResponse", FactType.FA_RESPONSE,
+            FactType.FA_VALIDATION_QUALITY_ANALYSIS),
+
+    SALES("sales", "ec.europa.eu.sales", FactType.SALES_FLUX_SALES_REPORT_MESSAGE,
+            FactType.SALES_FLUX_REPORT_DOCUMENT, FactType.SALES_FLUX_PARTY, FactType.SALES_REPORT,
+            FactType.SALES_DOCUMENT, FactType.SALES_PARTY, FactType.SALES_EVENT,
+            FactType.SALES_BATCH, FactType.SALES_AAP_PRODUCT, FactType.SALES_AAP_PROCESS,
+            FactType.SALES_SIZE_DISTRIBUTION, FactType.SALES_PRICE, FactType.SALES_FLUX_ORGANIZATION,
+            FactType.SALES_FISHING_ACTIVITY, FactType.SALES_DELIMITED_PERIOD, FactType.SALES_VESSEL_TRANSPORT_MEANS,
+            FactType.SALES_VESSEL_COUNTRY, FactType.SALES_CONTACT_PARTY, FactType.SALES_CONTACT_PERSON,
+            FactType.SALES_FISHING_TRIP, FactType.SALES_FLUX_LOCATION, FactType.SALES_FLUX_GEOGRAPHICAL_COORDINATE,
+            FactType.SALES_STRUCTURED_ADDRESS, FactType.SALES_QUERY, FactType.SALES_FLUX_RESPONSE_DOCUMENT,
+            FactType.SALES_VALIDATION_RESULT_DOCUMENT, FactType.SALES_VALIDATION_QUALITY_ANALYSIS,FactType.SALES_REPORT_WRAPPER,
+            FactType.SALES_AUCTION_SALE, FactType.SALES_FLUX_SALES_QUERY_MESSAGE, FactType.SALES_QUERY_PARAMETER, FactType.SALES_FLUX_SALES_RESPONSE_MESSAGE);
 
     private String packageName;
     private String containerName;
+    private List<FactType> factTypesList;
 
-    ContainerType(String containerName, String packageName){
+    ContainerType(String containerName, String packageName, FactType... factTypesList) {
         this.containerName = containerName;
-        this.packageName  = packageName;
+        this.packageName = packageName;
+        this.factTypesList = ImmutableList.copyOf(factTypesList);
     }
 
     public String getPackageName() {
@@ -37,5 +66,11 @@ public enum ContainerType {
     }
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+    public List<FactType> getFactTypesList() {
+        return factTypesList;
+    }
+    public void setFactTypesList(List<FactType> factTypesList) {
+        this.factTypesList = factTypesList;
     }
 }
