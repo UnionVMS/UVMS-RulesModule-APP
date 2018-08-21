@@ -95,7 +95,8 @@ public class RulesEngineBean {
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
                 List<AbstractFact> facts = generator.generateAllFacts();
-                Map<String, Object> globals = new HashMap<String, Object>(){{put("mdrService", mdrCacheRuleService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.SENDING_FA_RESPONSE_MSG) {
@@ -107,7 +108,8 @@ public class RulesEngineBean {
                 faResponseFactMapper.setMessageType(MessageType.PUSH);
                 AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper);
                 List<AbstractFact> facts = generator.generateAllFacts();
-                Map<String, Object> globals = new HashMap<String, Object>(){{put("mdrService", mdrCacheRuleService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_RESPONSE_MSG) {
@@ -119,7 +121,8 @@ public class RulesEngineBean {
                 faResponseFactMapper.setMessageType(MessageType.PULL);
                 AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper);
                 List<AbstractFact> facts = generator.generateAllFacts();
-                Map<String, Object> globals = new HashMap<String, Object>(){{put("mdrService", mdrCacheRuleService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_RESPONSE), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_QUERY_MSG || businessObjectType == BusinessObjectType.SENDING_FA_QUERY_MSG) {
@@ -129,7 +132,8 @@ public class RulesEngineBean {
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
                 List<AbstractFact> facts = generator.generateAllFacts();
-                Map<String, Object> globals = new HashMap<String, Object>(){{put("mdrService", mdrCacheRuleService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_QUERY), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_QUERY_MSG) {
@@ -139,8 +143,9 @@ public class RulesEngineBean {
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
                 List<AbstractFact> facts = generator.generateAllFacts();
-                Map<String, Object> globals = new HashMap<String, Object>(){{
-                    put("mdrService", mdrCacheRuleService);put("salesService", salesRulesService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
+                globals.put("salesService", salesRulesService);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_REPORT_MSG) {
@@ -152,8 +157,9 @@ public class RulesEngineBean {
                 stopWatch.reset();
                 stopWatch.start();
 
-                Map<String, Object> globals = new HashMap<String, Object>(){{
-                    put("mdrService", mdrCacheRuleService);put("salesService", salesRulesService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
+                globals.put("salesService", salesRulesService);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_RESPONSE_MSG) {
@@ -164,8 +170,9 @@ public class RulesEngineBean {
                 stopWatch.reset();
                 stopWatch.start();
 
-                Map<String, Object> globals = new HashMap<String, Object>(){{
-                    put("mdrService", mdrCacheRuleService);put("salesService", salesRulesService);}};
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
+                globals.put("salesService", salesRulesService);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             }
@@ -179,6 +186,7 @@ public class RulesEngineBean {
     public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues) throws RulesValidationException {
             return evaluate(businessObjectType, businessObject, extraValues, "undefined");
     }
+
 
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
