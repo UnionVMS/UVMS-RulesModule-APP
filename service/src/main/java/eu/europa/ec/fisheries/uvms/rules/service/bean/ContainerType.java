@@ -45,9 +45,9 @@ public enum ContainerType {
             FactType.SALES_VALIDATION_RESULT_DOCUMENT, FactType.SALES_VALIDATION_QUALITY_ANALYSIS,FactType.SALES_REPORT_WRAPPER,
             FactType.SALES_AUCTION_SALE, FactType.SALES_FLUX_SALES_QUERY_MESSAGE, FactType.SALES_QUERY_PARAMETER, FactType.SALES_FLUX_SALES_RESPONSE_MESSAGE);
 
-    private String packageName;
-    private String containerName;
-    private List<FactType> factTypesList;
+    private final String packageName;
+    private final String containerName;
+    private final List<FactType> factTypesList;
 
     ContainerType(String containerName, String packageName, FactType... factTypesList) {
         this.containerName = containerName;
@@ -58,19 +58,10 @@ public enum ContainerType {
     public String getPackageName() {
         return packageName;
     }
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
     public String getContainerName() {
         return containerName;
     }
-    public void setContainerName(String containerName) {
-        this.containerName = containerName;
-    }
     public List<FactType> getFactTypesList() {
         return factTypesList;
-    }
-    public void setFactTypesList(List<FactType> factTypesList) {
-        this.factTypesList = factTypesList;
     }
 }
