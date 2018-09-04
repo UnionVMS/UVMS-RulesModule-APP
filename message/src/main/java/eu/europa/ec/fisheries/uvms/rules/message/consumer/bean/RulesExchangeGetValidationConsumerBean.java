@@ -37,7 +37,7 @@ import java.util.UUID;
 
 /**
  * Message driven bean that receives all messages that
- * have no message selector.
+ * have a message selector set to 'ValidationResultsByRawGuid'.
  */
 @MessageDriven(mappedName = MessageConstants.QUEUE_MODULE_RULES, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),

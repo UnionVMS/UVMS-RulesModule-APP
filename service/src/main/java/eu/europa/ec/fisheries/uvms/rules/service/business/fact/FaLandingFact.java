@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
@@ -25,87 +26,17 @@ import java.util.List;
  *
  * @author patilva
  */
+@Data
 public class FaLandingFact extends AbstractFact {
 
     private CodeType fishingActivityCodeType;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFluxLocations;
-
     private List<CodeType> specifiedFaCatchFluxLocationTypeCode;
-
     private List<FACatch> specifiedFaCatches;
-
     private List<FLUXLocation> specifiedFaCatchesSpecifiedFLUXLocations;
-
     private List<CodeType> specifiedFaCatchTypeCode;
-
     private List<CodeType> relatedFluxLocationTypeCodes;
-
-    public List<CodeType> getRelatedFluxLocationTypeCodes() {
-        return relatedFluxLocationTypeCodes;
-    }
-
-    public void setRelatedFluxLocationTypeCodes(List<CodeType> relatedFluxLocationTypeCodes) {
-        this.relatedFluxLocationTypeCodes = relatedFluxLocationTypeCodes;
-    }
-
-    public List<FLUXLocation> getSpecifiedFaCatchesSpecifiedFLUXLocations() {
-        return specifiedFaCatchesSpecifiedFLUXLocations;
-    }
-
-    public void setSpecifiedFaCatchesSpecifiedFLUXLocations(List<FLUXLocation> specifiedFaCatchesSpecifiedFLUXLocations) {
-        this.specifiedFaCatchesSpecifiedFLUXLocations = specifiedFaCatchesSpecifiedFLUXLocations;
-    }
-
-    public List<CodeType> getSpecifiedFaCatchFluxLocationTypeCode() {
-        return specifiedFaCatchFluxLocationTypeCode;
-    }
-
-    public void setSpecifiedFaCatchFluxLocationTypeCode(List<CodeType> specifiedFaCatchFluxLocationTypeCode) {
-        this.specifiedFaCatchFluxLocationTypeCode = specifiedFaCatchFluxLocationTypeCode;
-    }
-
-    public CodeType getFishingActivityCodeType() {
-        return fishingActivityCodeType;
-    }
-
-    public void setFishingActivityCodeType(CodeType fishingActivityCodeType) {
-        this.fishingActivityCodeType = fishingActivityCodeType;
-    }
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public List<FLUXLocation> getRelatedFluxLocations() {
-        return relatedFluxLocations;
-    }
-
-    public void setRelatedFluxLocations(List<FLUXLocation> relatedFluxLocations) {
-        this.relatedFluxLocations = relatedFluxLocations;
-    }
-
-    public List<FACatch> getSpecifiedFaCatches() {
-        return specifiedFaCatches;
-    }
-
-    public void setSpecifiedFaCatches(List<FACatch> specifiedFaCatches) {
-        this.specifiedFaCatches = specifiedFaCatches;
-    }
-
-    public List<CodeType> getSpecifiedFaCatchTypeCode() {
-        return specifiedFaCatchTypeCode;
-    }
-
-    public void setSpecifiedFaCatchTypeCode(List<CodeType> specifiedFaCatchTypeCode) {
-        this.specifiedFaCatchTypeCode = specifiedFaCatchTypeCode;
-    }
 
     public FaLandingFact() {
         setFactType();

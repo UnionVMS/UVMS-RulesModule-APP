@@ -195,26 +195,4 @@ public class FaJointFishingOperationFact extends AbstractFact {
         return true;
     }
 
-    /**
-     * This will check if every FACatch in FishingActivity has atleast one with typeCode value ALLOCATED_TO_QUOTA if FACatchSpecies is BFT
-     *
-     * @return TRUE : If every FishingActivity has FACatch with typeCode value ALLOCATED_TO_QUOTA
-     * FALSE : If atleast one FishingActivity is without FACatch with typeCode value ALLOCATED_TO_QUOTA OR fishingActivityList is empty
-     */
-    public boolean verifyAtLeastOneFaCatchTypeCodePresent(List<FishingActivity> fishingActivityList) {
-        if (CollectionUtils.isEmpty(fishingActivityList)) {
-            return true;
-        }
-        for (FishingActivity fishingActivity : fishingActivityList) {
-            if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedFACatches())) {
-                for (FACatch faCatch : fishingActivity.getSpecifiedFACatches()) {
-                    if (faCatch.getSpeciesCode()!=null && "BFT".equals(faCatch.getSpeciesCode().getValue()) && (faCatch.getTypeCode() == null || !"ALLOCATED_TO_QUOTA".equals(faCatch.getTypeCode().getValue()))) {
-                       return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
 }

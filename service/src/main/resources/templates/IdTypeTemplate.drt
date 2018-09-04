@@ -10,8 +10,7 @@ propertyNames
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryParameterFact;
-import java.util.Arrays;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeFact;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 
@@ -21,7 +20,7 @@ rule "Vessel Transport means @{tname} - @{brid}"
 
 when
 
-    $fact : FaQueryParameterFact(@{expression})
+    $fact : IdTypeFact(@{expression})
 
 then
     $fact.setOk(false);

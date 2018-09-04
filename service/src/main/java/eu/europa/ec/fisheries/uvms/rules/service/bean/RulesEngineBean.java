@@ -187,9 +187,6 @@ public class RulesEngineBean {
             return evaluate(businessObjectType, businessObject, extraValues, "undefined");
     }
 
-    public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject) throws RulesValidationException {
-        return evaluate(businessObjectType, businessObject, Collections.<ExtraValueType, Object>emptyMap(), "undefined");
-    }
 
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
