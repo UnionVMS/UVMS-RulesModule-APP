@@ -74,15 +74,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Stateless
-public class ValidationServiceBean implements ValidationService {
+public class MovementValidationServiceBean implements ValidationService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ValidationServiceBean.class);
-
-    @EJB
-    RulesResponseConsumer consumer;
+    private final static Logger LOG = LoggerFactory.getLogger(MovementValidationServiceBean.class);
 
     @EJB
-    RulesMessageProducer producer;
+    private RulesResponseConsumer consumer;
+
+    @EJB
+    private RulesMessageProducer producer;
 
     @Inject
     @TicketEvent

@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponseBatch;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetType;
@@ -24,14 +25,25 @@ import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeMovementMapper {
+
     private final static Logger LOG = LoggerFactory.getLogger(ExchangeMovementMapper.class);
+
+    public static List<SetReportMovementType> mapExchangeMovementBatch(List<RawMovementType> rawMovementList) {
+        List<SetReportMovementType> respTypeList = new ArrayList<>();
+        for (RawMovementType rawMovementType : rawMovementList) {
+            respTypeList.add(mapExchangeMovement(rawMovementType));
+        }
+        return respTypeList;
+    }
 
     /**
      * Maps only what Exchange needs to complete it's work in the callback
@@ -85,10 +97,8 @@ public class ExchangeMovementMapper {
             }
             movement.setAssetId(assetId);
         }
-
         setFlagState(rawMovement, movement);
         setReportMovementType.setMovement(movement);
-
         return setReportMovementType;
     }
 
@@ -104,6 +114,19 @@ public class ExchangeMovementMapper {
         response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT);
         response.setOrgRequest(orgRequest);
         response.setMovementRefType(movementRef);
+        response.setUsername(username);
+        return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username) throws ExchangeModelMarshallException {
+        ProcessedMovementResponseBatch response = new ProcessedMovementResponseBatch();
+        response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT_BATCH);
+        int index = 0;
+        for (MovementRefType movementRefType : movTypeList) {
+            response.getOrgRequest().add(setReportMovementType.get(index));
+            response.setMovementRefType(movementRefType);
+            index++;
+        }
         response.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
@@ -237,5 +260,4 @@ public class ExchangeMovementMapper {
             return null;
         }
     }
-
 }

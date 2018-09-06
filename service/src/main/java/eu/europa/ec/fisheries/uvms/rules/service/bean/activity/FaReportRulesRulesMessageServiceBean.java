@@ -177,7 +177,8 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
-                sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "flux", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), request.getOnValue()));
+                sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "movement", logGuid, request.getFluxDataFlow(),
+                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST"));
             } else {
                 log.info(" Validation resulted in errors. Not going to send msg to Exchange module..");
             }

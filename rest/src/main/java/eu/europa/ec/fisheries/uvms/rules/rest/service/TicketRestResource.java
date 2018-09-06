@@ -21,8 +21,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +40,10 @@ public class TicketRestResource {
     private final static Logger LOG = LoggerFactory.getLogger(TicketRestResource.class);
 
     @EJB
-    RulesService rulesService;
+    private RulesMovementProcessorBean rulesService;
 
     @EJB
-    ValidationService validationService;
+    private ValidationService validationService;
 
     /**
      *
@@ -130,7 +130,7 @@ public class TicketRestResource {
         LOG.info("Update ticket status invoked in rest layer");
         try {
             return new ResponseDto(rulesService.updateTicketStatus(ticketType), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+        } catch (RulesServiceException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
         }
@@ -153,7 +153,7 @@ public class TicketRestResource {
         LOG.info("Update ticket status invoked in rest layer");
         try {
             return new ResponseDto(rulesService.updateTicketStatusByQuery(loggedInUser, query, status), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+        } catch (RulesServiceException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getStackTrace());
             return ErrorHandler.getFault(e);
         }
@@ -174,7 +174,7 @@ public class TicketRestResource {
     public ResponseDto getTicketByGuid(@PathParam("guid") String guid) {
         try {
             return new ResponseDto(rulesService.getTicketByGuid(guid), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException e) {
+        } catch (RulesServiceException e) {
             LOG.error("[ Error when getting ticket by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
@@ -217,7 +217,7 @@ public class TicketRestResource {
     public ResponseDto getNumberOfAssetsNotSending() {
         try {
             return new ResponseDto(rulesService.getNumberOfAssetsNotSending(), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException e) {
+        } catch (RulesServiceException e) {
             LOG.error("[ Error when getting number of assets not sending. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }

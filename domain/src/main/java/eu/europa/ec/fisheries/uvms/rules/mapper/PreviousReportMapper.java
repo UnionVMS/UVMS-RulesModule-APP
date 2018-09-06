@@ -18,11 +18,6 @@ import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-
-@LocalBean
-@Stateless
 public class PreviousReportMapper {
 
     private final static Logger LOG = LoggerFactory.getLogger(PreviousReportMapper.class);

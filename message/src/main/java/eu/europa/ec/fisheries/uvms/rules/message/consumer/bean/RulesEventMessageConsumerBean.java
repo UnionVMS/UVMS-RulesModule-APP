@@ -54,8 +54,8 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(RulesEventMessageConsumerBean.class);
 
     @Inject
-    @SetMovementReportReceivedEvent
-    private Event<EventMessage> setMovementReportRecievedEvent;
+    @SetMovementBatchReportReceivedEvent
+    private Event<EventMessage> setMovementReportBatchRecievedEvent;
 
     @Inject
     @GetTicketsByMovementsEvent
@@ -146,8 +146,8 @@ public class RulesEventMessageConsumerBean implements MessageListener {
             RulesModuleMethod method = request.getMethod();
             LOG.info("\n\nRequest message method: {}", method.value());
             switch (method) {
-                case SET_MOVEMENT_REPORT:
-                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
+                case RECEIVE_MOVEMENT_BATCH:
+                    setMovementReportBatchRecievedEvent.fire(new EventMessage(textMessage));
                     break;
                 case PING:
                     pingReceivedEvent.fire(new EventMessage(textMessage));
