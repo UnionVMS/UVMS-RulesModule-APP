@@ -49,6 +49,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -156,8 +157,9 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     }
 
     @Asynchronous
-    public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided) {
+    public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided, Map<String, String> copyOfContextMap) {
         try {
+            MDC.setContextMap(copyOfContextMap);
             log.info("Preparing FLUXResponseMessage to send back to Exchange module.");
             if (!correctGuidProvided) {
                 fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
@@ -233,7 +235,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
 
         FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-        validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true);
+        validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
     }
 
     private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
@@ -310,7 +312,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         if (fluxResponseMessage != null) {
             fillFluxTLOnValue(fluxResponseMessage, request.getOnValue());
             log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-            validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
+            validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false, MDC.getCopyOfContextMap());
         }
     }
 

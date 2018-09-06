@@ -1419,9 +1419,9 @@
         <insert tableName="rule">
             <column name="rule_id" value="108"/>
             <column name="br_id" value="FA-L02-00-0108"/>
-            <column name="expression" value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; (occurrenceDateTime != null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
+            <column name="expression" value="!subActivity &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
             <column name="note" value="Check presence"/>
-            <column name="message" value="StartDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
+            <column name="message" value="EndDateTime must be present if FishingActivity/TypeCode is LANDING or TRANSHIPMENT declaration"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
