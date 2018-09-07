@@ -143,8 +143,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-
-                    //sendRequestToActivity(requestStr, request.getUsername(), request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, FluxEnvProperties.builder().build(), );
+                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, FluxEnvProperties.builder().build(), messageGUID);
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
