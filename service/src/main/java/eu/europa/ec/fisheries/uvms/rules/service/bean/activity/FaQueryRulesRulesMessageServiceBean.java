@@ -25,6 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
@@ -132,7 +133,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)));
+                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
@@ -169,7 +170,8 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
-                String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(), "flux", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver());
+                String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
+                        "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST");
                 sendToExchange(exchangeReq);
             } else {
                 log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");

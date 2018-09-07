@@ -49,6 +49,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -156,8 +157,9 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     }
 
     @Asynchronous
-    public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided) {
+    public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided, Map<String, String> copyOfContextMap) {
         try {
+            MDC.setContextMap(copyOfContextMap);
             log.info("Preparing FLUXResponseMessage to send back to Exchange module.");
             if (!correctGuidProvided) {
                 fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
@@ -209,7 +211,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         return extraValues;
     }
 
-    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
+    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage,
+                                                                       Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -221,7 +224,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
         }
 
-        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), RawMsgType.FA_QUERY);
+        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
+                request.getLogGuid(), RawMsgType.FA_QUERY);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
 
@@ -231,7 +235,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
 
         FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-        validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true);
+        validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
     }
 
     private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
@@ -308,7 +312,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         if (fluxResponseMessage != null) {
             fillFluxTLOnValue(fluxResponseMessage, request.getOnValue());
             log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-            validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
+            validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false, MDC.getCopyOfContextMap());
         }
     }
 
@@ -381,7 +385,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     }
 
     private void setFluxReportDocumentRespondentFluxParty(FLUXResponseDocument fluxResponseDocument) {
-        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
+        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
     }
 
     private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {

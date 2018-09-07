@@ -17,8 +17,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.CustomRulesRestResource;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mockdata.MockData;
 import org.junit.*;
@@ -49,7 +49,7 @@ public class RestResourceTest {
     CustomRulesRestResource SERVICE_NULL = new CustomRulesRestResource();
 
     @Mock
-    RulesService rulesService;
+    RulesMovementProcessorBean rulesService;
 
     @Mock
     ValidationService validationService;

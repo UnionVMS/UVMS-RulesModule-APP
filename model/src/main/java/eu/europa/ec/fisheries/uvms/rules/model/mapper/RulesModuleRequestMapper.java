@@ -31,6 +31,17 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String createSetFLUXMovementReportRequest(PluginType type, String fluxFAReportMessage, String username,
+                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue,
+                                                            String registeredClassName, String ad, String to, String todt) throws RulesModelMapperException {
+        SetFLUXMovementReportRequest request = new SetFLUXMovementReportRequest();
+        request.setMethod(RulesModuleMethod.RECEIVE_MOVEMENT_BATCH);
+        request.setRequest(fluxFAReportMessage);
+        request.setType(type);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue, registeredClassName, ad, to, todt);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String createGetTicketsAndRulesByMovementsRequest(List<String> movementsGuids) throws RulesModelMarshallException {
         GetTicketsAndRulesByMovementsRequest request = new GetTicketsAndRulesByMovementsRequest();
         request.setMethod(RulesModuleMethod.GET_TICKETS_AND_RULES_BY_MOVEMENTS);
@@ -87,12 +98,27 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    @Deprecated // Use the populateCommonProperties() with 10 parameters!
     private static void populateCommonProperties(RulesBaseRequest request, String username, String logId, String fluxDataFlow, String senderOrReceiver, String onValue) {
         request.setFluxDataFlow(fluxDataFlow);
         request.setSenderOrReceiver(senderOrReceiver);
         request.setUsername(username);
         request.setLogGuid(logId);
         request.setOnValue(onValue);
+    }
+
+    private static void populateCommonProperties(RulesBaseRequest request, String username, String logId,
+                                                 String fluxDataFlow, String senderOrReceiver, String onValue, String registeredClassName,
+                                                 String ad, String to, String todt) {
+        request.setFluxDataFlow(fluxDataFlow);
+        request.setSenderOrReceiver(senderOrReceiver);
+        request.setUsername(username);
+        request.setLogGuid(logId);
+        request.setOnValue(onValue);
+        request.setRegisteredClassName(registeredClassName);
+        request.setAd(ad);
+        request.setTo(to);
+        request.setTodt(todt);
     }
 
     public static String createReceiveSalesReportRequest(String salesReport, String messageGuid, String pluginType, String logGuid, String sender, String on) throws RulesModelMarshallException {

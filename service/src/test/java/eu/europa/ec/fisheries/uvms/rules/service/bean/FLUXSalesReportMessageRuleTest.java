@@ -12,7 +12,7 @@ import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCacheServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.MovementsRulesValidator;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Test;

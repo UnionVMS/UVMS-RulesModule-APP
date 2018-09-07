@@ -20,8 +20,8 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class AlarmRestResource {
     private final static Logger LOG = LoggerFactory.getLogger(AlarmRestResource.class);
 
     @EJB
-    private RulesService rulesService;
+    private RulesMovementProcessorBean rulesMovementProcessorBean;
 
     @EJB
     private ValidationService validationService;
@@ -66,7 +66,7 @@ public class AlarmRestResource {
     public ResponseDto<AlarmListResponseDto> getCustomRuleList(AlarmQuery query) {
         LOG.info("Get alarm list invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.getAlarmList(query), ResponseCode.OK);
+            return new ResponseDto(rulesMovementProcessorBean.getAlarmList(query), ResponseCode.OK);
         } catch (RulesServiceException | NullPointerException | RulesFaultException  e) {
             LOG.error("[ Error when getting list. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
@@ -88,8 +88,8 @@ public class AlarmRestResource {
     public ResponseDto updateAlarmStatus(final AlarmReportType alarmReportType) {
         LOG.info("Update alarm status invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.updateAlarmStatus(alarmReportType), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            return new ResponseDto(rulesMovementProcessorBean.updateAlarmStatus(alarmReportType), ResponseCode.OK);
+        } catch (RulesServiceException | NullPointerException e) {
             LOG.error("[ Error when updating. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
@@ -109,8 +109,8 @@ public class AlarmRestResource {
     @RequiresFeature(UnionVMSFeature.viewAlarmsHoldingTable)
     public ResponseDto getAlarmReportByGuid(@PathParam("guid") String guid) {
         try {
-            return new ResponseDto(rulesService.getAlarmReportByGuid(guid), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException e) {
+            return new ResponseDto(rulesMovementProcessorBean.getAlarmReportByGuid(guid), ResponseCode.OK);
+        } catch (RulesServiceException e) {
             LOG.error("[ Error when getting alarm by GUID. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
@@ -132,8 +132,8 @@ public class AlarmRestResource {
     public ResponseDto reprocessAlarm(final List<String> alarmGuidList) {
         LOG.info("Reprocess alarm invoked in rest layer");
         try {
-            return new ResponseDto(rulesService.reprocessAlarm(alarmGuidList, request.getRemoteUser()), ResponseCode.OK);
-        } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
+            return new ResponseDto(rulesMovementProcessorBean.reprocessAlarm(alarmGuidList, request.getRemoteUser()), ResponseCode.OK);
+        } catch (RulesServiceException e) {
             LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
         }
