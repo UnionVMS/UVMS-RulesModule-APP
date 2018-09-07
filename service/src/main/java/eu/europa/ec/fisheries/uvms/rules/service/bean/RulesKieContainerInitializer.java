@@ -88,7 +88,7 @@ public class RulesKieContainerInitializer {
             log.info("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", faQueryTemplatesAndRules.size());
             KieContainer faQueryContainer =  createContainer(faQueryTemplatesAndRules);
 
-            log.info("Initializing templates and rules forSales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
+            log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
             KieContainer salesContainer = createContainer(salesTemplatesAndRules);
 
             containers = new EnumMap<>(ContainerType.class);
@@ -129,7 +129,7 @@ public class RulesKieContainerInitializer {
         Results results = kieBuilder.getResults();
         if (results.hasMessages(Message.Level.ERROR)) {
             for (Message result : results.getMessages()) {
-                log.debug(result.getText());
+                log.info(result.getText());
             }
             throw new RuntimeException("COMPILATION ERROR IN RULES. PLEASE ADAPT THE FAILING EXPRESSIONS AND TRY AGAIN");
         }

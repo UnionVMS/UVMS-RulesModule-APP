@@ -211,7 +211,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         return extraValues;
     }
 
-    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
+    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage,
+                                                                       Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -223,7 +224,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
         }
 
-        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), RawMsgType.FA_QUERY);
+        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
+                request.getLogGuid(), RawMsgType.FA_QUERY);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
 
@@ -383,7 +385,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     }
 
     private void setFluxReportDocumentRespondentFluxParty(FLUXResponseDocument fluxResponseDocument) {
-        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set flux party in the response
+        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
     }
 
     private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {

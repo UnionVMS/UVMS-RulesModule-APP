@@ -17,11 +17,14 @@ import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import org.apache.commons.collections.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class RawMovementFactMapper {
+
     public static RawMovementFact mapRawMovementFact(RawMovementType rawMovement, MobileTerminalType mobileTerminal, Asset asset, String pluginType) {
         RawMovementFact fact = new RawMovementFact();
         fact.setRawMovementType(rawMovement);
@@ -118,4 +121,18 @@ public class RawMovementFactMapper {
         return fact;
     }
 
+    public static List<RawMovementFact> mapRawMovementFacts(List<RawMovementType> rawMovements, List<MobileTerminalType> mobileTerminalList, List<Asset> assetList, String pluginType) {
+        List<RawMovementFact> rawMovFactList = new ArrayList<>();
+        if(CollectionUtils.isEmpty(rawMovements)){
+            return rawMovFactList;
+        }
+        mobileTerminalList = mobileTerminalList != null ? mobileTerminalList : new ArrayList<MobileTerminalType>();
+        assetList = assetList != null ? assetList : new ArrayList<Asset>();
+        if(CollectionUtils.isNotEmpty(rawMovements)){
+            for(int i = 0; i < rawMovements.size(); i++){
+                rawMovFactList.add(mapRawMovementFact(rawMovements.get(i), mobileTerminalList.get(i), assetList.get(i), pluginType));
+            }
+        }
+        return rawMovFactList;
+    }
 }

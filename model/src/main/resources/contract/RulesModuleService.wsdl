@@ -30,8 +30,10 @@
             <!-- Rules Base Request -->
             <xsd:simpleType name="RulesModuleMethod">
                 <xsd:restriction base="xsd:string">
-                    <!-- Receive position report -->
+
+                    <!-- Movement -->
                     <xsd:enumeration value="SET_MOVEMENT_REPORT"/>
+                    <xsd:enumeration value="RECEIVE_MOVEMENT_BATCH"/>
 
                     <!-- Ping -->
                     <xsd:enumeration value="PING"/>
@@ -42,7 +44,7 @@
                     <xsd:enumeration value="GET_TICKETS_AND_RULES_BY_MOVEMENTS"/>
 
                     <!-- Activity -->
-					<xsd:enumeration value="SET_FLUX_FA_REPORT"/>
+                    <xsd:enumeration value="SET_FLUX_FA_REPORT"/>
                     <xsd:enumeration value="SEND_FLUX_FA_REPORT"/>
                     <xsd:enumeration value="SET_FLUX_FA_QUERY"/>
                     <xsd:enumeration value="SEND_FLUX_FA_QUERY"/>
@@ -128,110 +130,110 @@
                 </xsd:complexType>
             </xsd:element>
 
-			<xsd:element name="SetFLUXMDRSyncMessageRulesRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="type" type="exchange:PluginType"/>
-								<xsd:element name="request" type="xsd:string"/>
+            <xsd:element name="SetFLUXMDRSyncMessageRulesRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
                                 <xsd:element name="fr" type="xsd:string"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:element name="ReceiveSalesReportRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="request" type="xsd:string"/>
+            <xsd:element name="ReceiveSalesReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
                                 <xsd:element name="pluginType" type="xsd:string"/>
-                                <xsd:element name="sender" type="xsd:string"/>
-                                <xsd:element name="messageGuid" type="xsd:string"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
-
-			<xsd:element name="ReceiveSalesQueryRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="request" type="xsd:string"/>
-                                <xsd:element name="pluginType" type="xsd:string"/>
-                                <xsd:element name="sender" type="xsd:string"/>
-                                <xsd:element name="messageGuid" type="xsd:string"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
-
-			<xsd:element name="ReceiveSalesResponseRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="request" type="xsd:string"/>
                                 <xsd:element name="sender" type="xsd:string"/>
                                 <xsd:element name="messageGuid" type="xsd:string"/>
                             </xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:element name="SendSalesReportRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="request" type="xsd:string" minOccurs="1" maxOccurs="1" />
-                                <xsd:element name="messageGuid" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="recipient" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="pluginToSendResponseThrough" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="dateSent" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+            <xsd:element name="ReceiveSalesQueryRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
+                                <xsd:element name="pluginType" type="xsd:string"/>
+                                <xsd:element name="sender" type="xsd:string"/>
+                                <xsd:element name="messageGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:element name="SendSalesResponseRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="request" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="messageGuid" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="recipient" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="pluginToSendResponseThrough" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                                <xsd:element name="dateSent" type="xsd:dateTime" minOccurs="1" maxOccurs="1"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+            <xsd:element name="ReceiveSalesResponseRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
+                                <xsd:element name="sender" type="xsd:string"/>
+                                <xsd:element name="messageGuid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:element name="SetFLUXMDRSyncMessageRulesResponse">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:RulesBaseRequest">
-							<xsd:sequence>
-								<xsd:element name="type" type="exchange:PluginType"/>
-								<xsd:element name="request" type="xsd:string"/>
-							</xsd:sequence>
-						</xsd:extension>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+            <xsd:element name="SendSalesReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
+                                <xsd:element name="messageGuid" type="xsd:string"/>
+                                <xsd:element name="recipient" type="xsd:string"/>
+                                <xsd:element name="pluginToSendResponseThrough" type="xsd:string"/>
+                                <xsd:element name="dateSent" type="xsd:dateTime"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:complexType name="RulesBaseRequest" abstract="true">
+            <xsd:element name="SendSalesResponseRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="request" type="xsd:string"/>
+                                <xsd:element name="messageGuid" type="xsd:string"/>
+                                <xsd:element name="recipient" type="xsd:string"/>
+                                <xsd:element name="pluginToSendResponseThrough" type="xsd:string"/>
+                                <xsd:element name="dateSent" type="xsd:dateTime"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SetFLUXMDRSyncMessageRulesResponse">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:complexType name="RulesBaseRequest" abstract="true">
                 <xsd:sequence>
                     <xsd:element name="method" type="module:RulesModuleMethod"/>
                     <xsd:element name="username" type="xsd:string"/>
@@ -239,6 +241,12 @@
                     <xsd:element name="fluxDataFlow" minOccurs="0" maxOccurs="1" type="xsd:string" />
                     <xsd:element name="senderOrReceiver" minOccurs="0" maxOccurs="1" type="xsd:string"/>
                     <xsd:element name="onValue" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+                    <xsd:element name="todt" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="df" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="date" minOccurs="0" type="xsd:dateTime"/>
+                    <xsd:element name="to" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="ad" minOccurs="0" type="xsd:string"/>
+                    <xsd:element name="registeredClassName" type="xsd:string" />
                 </xsd:sequence>
             </xsd:complexType>
 
@@ -253,9 +261,21 @@
                         </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
-
             </xsd:element>
-            
+
+            <xsd:element name="SetFLUXMovementReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Create custom rule request -->
             <xsd:element name="CreateCustomRuleRequest">
                 <xsd:complexType>
@@ -268,7 +288,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Create custom rule response -->
             <xsd:element name="CreateCustomRuleResponse">
                 <xsd:complexType>
@@ -287,7 +307,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- List custom rules response -->
             <xsd:element name="GetCustomRuleListResponse">
                 <xsd:complexType>
@@ -311,7 +331,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- List tickets response -->
             <xsd:element name="GetTicketListResponse">
                 <xsd:complexType>
@@ -335,7 +355,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Create alarm report response -->
             <xsd:element name="CreateAlarmReportResponse">
                 <xsd:complexType>
@@ -357,7 +377,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Create ticket response -->
             <xsd:element name="CreateTicketResponse">
                 <xsd:complexType>
@@ -379,7 +399,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Alarms QueryList response -->
             <xsd:element name="GetAlarmListByQueryResponse">
                 <xsd:complexType>
@@ -388,7 +408,7 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Tickets QueryList request -->
             <xsd:element name="GetTicketListByQueryRequest">
                 <xsd:complexType>
@@ -401,7 +421,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Ticket QueryList response -->
             <xsd:element name="GetTicketListByQueryResponse">
                 <xsd:complexType>
@@ -527,7 +547,7 @@
     <message name="CreateCustomRuleResponse">
         <part name="body" element="module:CreateCustomRuleResponse"/>
     </message>
-    
+
     <message name="GetCustomRuleListRequest">
         <part name="body" element="module:GetCustomRuleListRequest"/>
     </message>
@@ -548,32 +568,32 @@
     <message name="CreateAlarmReportResponse">
         <part name="body" element="module:CreateAlarmReportResponse"/>
     </message>
-    
+
     <message name="CreateTicketRequest">
         <part name="body" element="module:CreateTicketRequest"/>
     </message>
     <message name="CreateTicketResponse">
         <part name="body" element="module:CreateTicketResponse"/>
     </message>
-    
+
     <message name="GetAlarmListByQueryRequest">
         <part name="body" element="module:GetAlarmListByQueryRequest"/>
     </message>
     <message name="GetAlarmListByQueryResponse">
         <part name="body" element="module:GetAlarmListByQueryResponse"/>
     </message>
-    
+
     <message name="GetTicketListByQueryRequest">
         <part name="body" element="module:GetTicketListByQueryRequest"/>
     </message>
     <message name="GetTicketListByQueryResponse">
         <part name="body" element="module:GetTicketListByQueryResponse"/>
     </message>
-    
+
     <message name="SetMovementReportRequest">
         <part name="body" element="module:SetMovementReportRequest"/>
     </message>
-    
+
     <message name="PingRequest">
         <part name="body" element="module:PingRequest"/>
     </message>
@@ -610,7 +630,7 @@
     </message>
 
     <portType name="RulesModulePortType">
-    
+
         <operation name="CreateCustomRule">
             <input message="module:CreateCustomRuleRequest"/>
             <output message="module:CreateCustomRuleResponse"/>
@@ -702,7 +722,7 @@
                 <soap:fault name="RulesException" use="literal"/>
             </fault>
         </operation>
-		
+
         <operation name="GetCustomRuleList">
             <input>
                 <soap:body use="literal"/>

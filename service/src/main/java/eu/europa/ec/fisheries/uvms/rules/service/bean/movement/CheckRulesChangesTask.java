@@ -9,13 +9,12 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.europa.ec.fisheries.uvms.rules.service.business;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.exchange.model.util.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
@@ -30,9 +29,9 @@ public class CheckRulesChangesTask implements Runnable {
 
     ValidationService validationService;
     MovementsRulesValidator rulesValidator;
-    RulesService rulesService;
+    RulesMovementProcessorBean rulesService;
 
-    public CheckRulesChangesTask(ValidationService validationService, MovementsRulesValidator rulesValidator, RulesService rulesService) {
+    public CheckRulesChangesTask(ValidationService validationService, MovementsRulesValidator rulesValidator, RulesMovementProcessorBean rulesService) {
         this.validationService = validationService;
         this.rulesValidator = rulesValidator;
         this.rulesService = rulesService;

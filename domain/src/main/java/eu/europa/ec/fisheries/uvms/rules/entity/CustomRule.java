@@ -210,7 +210,7 @@ public class CustomRule implements Serializable {
     // @XmlTransient
     public List<RuleSegment> getRuleSegmentList() {
         if (ruleSegmentList == null) {
-            ruleSegmentList = new ArrayList<RuleSegment>();
+            ruleSegmentList = new ArrayList<>();
         }
         return ruleSegmentList;
     }
@@ -222,7 +222,7 @@ public class CustomRule implements Serializable {
     // @XmlTransient
     public List<RuleAction> getRuleActionList() {
         if (ruleActionList == null) {
-            ruleActionList = new ArrayList<RuleAction>();
+            ruleActionList = new ArrayList<>();
         }
         return ruleActionList;
     }
@@ -233,7 +233,7 @@ public class CustomRule implements Serializable {
 
     public List<Interval> getIntervals() {
         if (intervals == null) {
-            intervals = new ArrayList<Interval>();
+            intervals = new ArrayList<>();
         }
         return intervals;
     }
