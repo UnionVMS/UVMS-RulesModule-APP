@@ -70,16 +70,16 @@ abstract class BaseFaRulesMessageServiceBean {
         return new ValidationResultDto(true, false, false, null);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult) {
-        updateRequestMessageStatusInExchange(logGuid, validationResult, false);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, validationResult, false);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult, Boolean duplicate) {
-        updateRequestMessageStatusInExchange(logGuid, calculateMessageValidationStatus(validationResult), duplicate);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult, Boolean duplicate) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, calculateMessageValidationStatus(validationResult), duplicate);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
-        updateRequestMessageStatusInExchange(logGuid, statusType, false);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ExchangeLogStatusTypeType statusType) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, statusType, false);
     }
 
     private void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType, Boolean duplicate) {
@@ -106,9 +106,9 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, List<IDType> fluxReportDocumentId) {
+    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, String exchangeLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), fluxReportDocumentId);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), exchangeLogGuid);
             final String corrId = getRulesProducer().sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = getActivityConsumer().getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);

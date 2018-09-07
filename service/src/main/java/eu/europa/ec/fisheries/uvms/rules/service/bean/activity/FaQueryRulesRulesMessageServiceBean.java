@@ -88,7 +88,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
 
     public void evaluateIncomingFAQuery(SetFaQueryMessageRequest request) {
         String requestStr = request.getRequest();
-        final String logGuid = request.getLogGuid();
+        final String exchangeLogGuid = request.getLogGuid();
         final String onValue = request.getOnValue();
         FLUXFAQueryMessage faQueryMessage = null;
         try {
@@ -108,8 +108,8 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
-            ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
-            updateRequestMessageStatusInExchange(logGuid, faQueryValidationReport);
+            ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
+            updateRequestMessageStatusInExchange(exchangeLogGuid, faQueryValidationReport);
 
             SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest = null;
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
@@ -117,13 +117,13 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                 if (hasPermissions) { // Send query to activity.
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
-                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), faQueryGUID);
+                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), exchangeLogGuid);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
-                        needToSendToExchange = sendToExchangeOnEmptyReport(request, requestStr, logGuid, onValue, faQueryMessage, faQueryValidationReport);
+                        needToSendToExchange = sendToExchangeOnEmptyReport(request, requestStr, exchangeLogGuid, onValue, faQueryMessage, faQueryValidationReport);
                     }
                 } else { // Request doesn't have permissions
                     log.debug("Request doesn't have permission! It won't be transmitted to Activity Module!");
-                    updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.FAILED);
+                    updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
                     faResponseValidatorAndSender.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue, faQueryValidationReport);
                     needToSendToExchange = false;
                 }
@@ -145,11 +145,11 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             }
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            updateRequestMessageStatusInExchange(exchangeLogGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error("Error during validation of the received FLUXFAQueryMessage!", e);
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            updateRequestMessageStatusInExchange(exchangeLogGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         }
     }

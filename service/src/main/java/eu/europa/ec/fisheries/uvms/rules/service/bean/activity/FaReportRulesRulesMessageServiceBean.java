@@ -114,7 +114,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
 
     public void evaluateIncomingFLUXFAReport(SetFLUXFAReportMessageRequest request) {
         final String requestStr = request.getRequest();
-        final String logGuid = request.getLogGuid();
+        final String exchangeLogGuid = request.getLogGuid();
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             fluxfaReportMessage = xsdJaxbUtil.unMarshallAndValidateSchema(requestStr);
@@ -135,15 +135,15 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
             rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
 
-            ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
-            updateRequestMessageStatusInExchange(logGuid, faReportValidationResult, false);
+            ValidationResultDto faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
+            updateRequestMessageStatusInExchange(exchangeLogGuid, faReportValidationResult, false);
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.debug(" The Validation of Report is successful, forwarding message to Activity.");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, FluxEnvProperties.builder().build(), messageGUID);
+                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, FluxEnvProperties.builder().build(), exchangeLogGuid);
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
@@ -158,14 +158,14 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            updateRequestMessageStatusInExchange(exchangeLogGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            updateRequestMessageStatusInExchange(exchangeLogGuid, generateValidationResultDtoForFailure());
             faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
-        log.debug("Finished eval of FLUXFAReportMessage " + logGuid);
+        log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
     }
 
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {
@@ -224,9 +224,9 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
         return extraValues;
     }
 
-    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, FluxEnvProperties fluxEnvProperties, List<IDType> fLUXReportDocumentIDS) {
+    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, FluxEnvProperties fluxEnvProperties, String activityLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, fluxEnvProperties, fLUXReportDocumentIDS);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, fluxEnvProperties, activityLogGuid);
             rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
