@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -105,9 +106,9 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType) {
+    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, List<IDType> fluxReportDocumentId) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), null);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), fluxReportDocumentId);
             final String corrId = getRulesProducer().sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = getActivityConsumer().getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
@@ -127,12 +128,12 @@ abstract class BaseFaRulesMessageServiceBean {
         getRulesProducer().sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
-        IDType faQueryGUID = null;
+    List<IDType> collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
+        List<IDType> idTypeList = new ArrayList<>();
         if (faQueryMessage.getFAQuery() != null) {
-            faQueryGUID = faQueryMessage.getFAQuery().getID();
+            idTypeList.add(faQueryMessage.getFAQuery().getID());
         }
-        return faQueryGUID;
+        return idTypeList;
     }
 
     abstract RulesMessageProducer getRulesProducer();
