@@ -635,7 +635,7 @@ public class RulesMovementProcessorBean {
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementBatchRequest(movementBatch, username);
                 log.debug("Send CreateMovementRequest message to Movement");
                 String messageId = rulesProducer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
-                TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 30000L);
+                TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 2400000L);
                 log.debug("Received response message");
                 movementSimpleResponse = MovementModuleResponseMapper.mapToCreateMovementBatchResponse(movJmsResponse);
             } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
