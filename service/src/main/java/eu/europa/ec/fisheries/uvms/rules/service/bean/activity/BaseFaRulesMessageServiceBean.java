@@ -10,12 +10,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.FluxEnvProperties;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -33,12 +41,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 abstract class BaseFaRulesMessageServiceBean {
@@ -104,9 +106,9 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType) {
+    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, List<IDType> fluxReportDocumentId) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, username, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), fluxReportDocumentId);
             final String corrId = getRulesProducer().sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = getActivityConsumer().getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
@@ -126,12 +128,12 @@ abstract class BaseFaRulesMessageServiceBean {
         getRulesProducer().sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
-        IDType faQueryGUID = null;
+    List<IDType> collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
+        List<IDType> idTypeList = new ArrayList<>();
         if (faQueryMessage.getFAQuery() != null) {
-            faQueryGUID = faQueryMessage.getFAQuery().getID();
+            idTypeList.add(faQueryMessage.getFAQuery().getID());
         }
-        return faQueryGUID;
+        return idTypeList;
     }
 
     abstract RulesMessageProducer getRulesProducer();

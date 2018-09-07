@@ -1,6 +1,21 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.bind.UnmarshalException;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
@@ -29,17 +44,6 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.bind.UnmarshalException;
-import java.util.*;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 @Stateless
 @LocalBean
@@ -89,12 +93,11 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
         FLUXFAQueryMessage faQueryMessage = null;
         try {
             faQueryMessage = xsdJaxbUtil.unMarshallFaQueryMessage(requestStr);
-            IDType faQueryGUID = collectFaQueryId(faQueryMessage);
-            log.info("Evaluate FAQuery with ID " + faQueryGUID.getValue());
+            List<IDType> faQueryGUID = collectFaQueryId(faQueryMessage);
+            log.info("Evaluate FAQuery with ID " + faQueryGUID);
             boolean needToSendToExchange = true;
-
-            Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapQueryToFADocumentID(faQueryMessage);
-            List<FADocumentID> faQueryIdsFromDb = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+            Set<FADocumentID> idsFromIncomingMessage = faMessageHelper.mapQueryToFADocumentID(faQueryMessage);
+            List<FADocumentID> faQueryIdsFromDb = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
@@ -102,8 +105,8 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             extraValues.put(XML, requestStr);
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 
-            idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
+            idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
             ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
             updateRequestMessageStatusInExchange(logGuid, faQueryValidationReport);
@@ -114,7 +117,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                 if (hasPermissions) { // Send query to activity.
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
-                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType());
+                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), faQueryGUID);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         needToSendToExchange = sendToExchangeOnEmptyReport(request, requestStr, logGuid, onValue, faQueryMessage, faQueryValidationReport);
                     }
@@ -133,7 +136,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
+                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(faQueryGUID), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
