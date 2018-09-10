@@ -11,6 +11,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.bind.UnmarshalException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
         FLUXFAQueryMessage faQueryMessage = null;
         try {
             faQueryMessage = xsdJaxbUtil.unMarshallFaQueryMessage(requestStr);
-            List<IDType> faQueryGUID = collectFaQueryId(faQueryMessage);
+            IDType faQueryGUID = collectFaQueryId(faQueryMessage);
             log.info("Evaluate FAQuery with ID " + faQueryGUID);
             boolean needToSendToExchange = true;
             Set<FADocumentID> idsFromIncomingMessage = faMessageHelper.mapQueryToFADocumentID(faQueryMessage);
@@ -136,7 +137,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(faQueryGUID), MDC.getCopyOfContextMap());
+                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).

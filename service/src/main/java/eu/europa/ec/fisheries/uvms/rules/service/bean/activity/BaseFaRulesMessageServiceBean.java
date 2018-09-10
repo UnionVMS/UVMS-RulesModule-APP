@@ -13,7 +13,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +22,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageReque
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FluxEnvProperties;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -108,7 +106,8 @@ abstract class BaseFaRulesMessageServiceBean {
 
     SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, String exchangeLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, FluxEnvProperties.builder().build(), exchangeLogGuid);
+
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, exchangeLogGuid);
             final String corrId = getRulesProducer().sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = getActivityConsumer().getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
@@ -128,12 +127,12 @@ abstract class BaseFaRulesMessageServiceBean {
         getRulesProducer().sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    List<IDType> collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
-        List<IDType> idTypeList = new ArrayList<>();
+    public IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
+        IDType faQueryGUID = null;
         if (faQueryMessage.getFAQuery() != null) {
-            idTypeList.add(faQueryMessage.getFAQuery().getID());
+            faQueryGUID = faQueryMessage.getFAQuery().getID();
         }
-        return idTypeList;
+        return faQueryGUID;
     }
 
     abstract RulesMessageProducer getRulesProducer();

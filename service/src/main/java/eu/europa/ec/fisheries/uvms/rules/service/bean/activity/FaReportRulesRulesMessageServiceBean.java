@@ -35,7 +35,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageReque
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.FluxEnvProperties;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -143,7 +142,7 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, FluxEnvProperties.builder().build(), exchangeLogGuid);
+                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
@@ -224,9 +223,9 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
         return extraValues;
     }
 
-    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, FluxEnvProperties fluxEnvProperties, String activityLogGuid) {
+    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String activityLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, fluxEnvProperties, activityLogGuid);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, activityLogGuid);
             rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
