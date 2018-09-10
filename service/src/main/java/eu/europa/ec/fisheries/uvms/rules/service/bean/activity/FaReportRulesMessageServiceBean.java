@@ -69,7 +69,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 @LocalBean
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
+public class FaReportRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -223,9 +223,9 @@ public class FaReportRulesRulesMessageServiceBean extends BaseFaRulesMessageServ
         return extraValues;
     }
 
-    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String activityLogGuid) {
+    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, activityLogGuid);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
             rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);

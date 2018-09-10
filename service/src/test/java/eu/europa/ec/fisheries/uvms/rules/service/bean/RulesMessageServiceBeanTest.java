@@ -42,7 +42,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
@@ -86,7 +86,7 @@ public class RulesMessageServiceBeanTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @InjectMocks
-    FaReportRulesRulesMessageServiceBean messageServiceBean;
+    FaReportRulesMessageServiceBean messageServiceBean;
 
     @InjectMocks
     SalesRulesMessageServiceBean salesRulesMessageServiceBean;

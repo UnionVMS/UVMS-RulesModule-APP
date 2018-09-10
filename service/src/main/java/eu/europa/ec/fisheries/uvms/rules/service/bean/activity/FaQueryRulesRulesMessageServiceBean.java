@@ -75,7 +75,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
     private RulesDao rulesDaoBean;
 
     @EJB
-    private FaReportRulesRulesMessageServiceBean faReportRulesMessageBean;
+    private FaReportRulesMessageServiceBean faReportRulesMessageBean;
 
     private FishingActivityRulesHelper faMessageHelper;
 
