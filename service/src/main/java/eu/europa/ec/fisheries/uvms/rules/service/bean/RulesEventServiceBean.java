@@ -33,7 +33,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaQueryRulesRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
@@ -73,7 +73,7 @@ public class RulesEventServiceBean implements EventService {
     private RulesMovementProcessorBean rulesService;
 
     @EJB
-    private FaReportRulesRulesMessageServiceBean faReportRulesMessageServiceBean;
+    private FaReportRulesMessageServiceBean faReportRulesMessageServiceBean;
 
     @EJB
     private FaResponseRulesMessageServiceBean faResponseRulesMessageServiceBean;
