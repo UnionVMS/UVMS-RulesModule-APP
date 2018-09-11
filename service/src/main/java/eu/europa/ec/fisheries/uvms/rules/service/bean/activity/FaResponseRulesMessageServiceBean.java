@@ -198,7 +198,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
             String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid,
-                    nationCode, onValue, status, destination, getExchangePluginType(pluginType));
+                    nationCode, onValue, status, destination, getExchangePluginType(pluginType),
+                    fluxResponseMessageObj.getFLUXResponseDocument().getIDS().get(0).getValue());
             producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
