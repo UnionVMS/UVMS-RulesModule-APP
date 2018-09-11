@@ -10,26 +10,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.xml.bind.UnmarshalException;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
@@ -64,6 +48,8 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Slf4j
 @LocalBean
