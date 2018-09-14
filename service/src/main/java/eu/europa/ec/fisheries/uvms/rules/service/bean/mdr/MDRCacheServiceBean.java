@@ -10,6 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -29,14 +35,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Stateless
 @LocalBean
@@ -64,6 +62,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean isPresentInMDRList(String listName, String codeValue, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (mdrAcronymType == null) {
             return false;
@@ -80,6 +81,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean isCodeTypePresentInMDRList(List<CodeType> valuesToMatch, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         if (CollectionUtils.isEmpty(valuesToMatch)) {
             return false;
         }
@@ -101,7 +105,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public boolean isCodeTypePresentInMDRList(CodeType valueToMatch, DateTime validityDate) {
-        return isCodeTypePresentInMDRList(Arrays.asList(valueToMatch), validityDate);
+        return isCodeTypePresentInMDRList(Collections.singletonList(valueToMatch), validityDate);
     }
 
     private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
@@ -118,6 +122,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean isIdTypePresentInMDRList(String listName, List<IdType> valuesToMatch, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
@@ -142,6 +149,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean isCodeTypePresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
@@ -160,6 +170,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public boolean isCodeTypeListIdPresentInMDRList(String listName, List<CodeType> valuesToMatch, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         MDRAcronymType anEnum = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (anEnum == null) {
             return false;
@@ -177,6 +190,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public boolean isIdTypePresentInMDRList(List<IdType> ids, DateTime validityDate) {
+        if (validityDate == null){
+            return true;
+        }
         if (CollectionUtils.isEmpty(ids)) {
             return false;
         }
@@ -197,6 +213,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage) {
+        if (creationDateOfMessage == null){
+            return true;
+        }
         if (id == null) {
             return false;
         }
@@ -212,6 +231,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes, DateTime creationDateOfMessage) {
+        if (creationDateOfMessage == null){
+            return true;
+        }
         if (StringUtils.isBlank(listName) || CollectionUtils.isEmpty(idTypes)) {
             return false;
         }
@@ -327,6 +349,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     private boolean isSchemeIdPresentInMDRList(String listName, IdType idType, DateTime creationDateOfMessage) {
+        if (creationDateOfMessage == null){
+            return true;
+        }
         return idType != null && !StringUtils.isBlank(idType.getSchemeId()) && isPresentInMDRList(listName, idType.getSchemeId(), creationDateOfMessage);
     }
 
