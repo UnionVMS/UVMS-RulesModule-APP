@@ -4,10 +4,10 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.43</version>
+        <version>3.0.44-SNAPSHOT</version>
     </parent>
 
-    <version>3.0.43</version>
+    <version>3.0.44-SNAPSHOT</version>
     <artifactId>rules-model</artifactId>
     <name>rules-model</name>
     <packaging>ejb</packaging>
@@ -95,7 +95,7 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>rules-3.0.43</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <profiles>
