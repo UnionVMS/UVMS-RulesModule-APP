@@ -16,6 +16,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.jms.DeliveryMode;
 import javax.jms.TextMessage;
 
 import static org.junit.Assert.assertSame;
@@ -63,11 +64,11 @@ public class SalesServiceBeanHelperTest {
 
     @Test
     public void sendMessageToSales() throws Exception {
-        when(producer.sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L)).thenReturn("");
+        when(producer.sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L, DeliveryMode.NON_PERSISTENT)).thenReturn("");
 
         helper.sendMessageToSales("request");
 
-        verify(producer).sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L);
+        verify(producer).sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L, DeliveryMode.NON_PERSISTENT);
         verifyNoMoreInteractions(producer, consumer);
     }
 
@@ -93,7 +94,7 @@ public class SalesServiceBeanHelperTest {
         doReturn("FindReportByIdResponse").when(mockTextMessage).getText();
         doReturn(mockTextMessage).when(consumer).getMessage("correlationId", TextMessage.class, 30000L);
         when(SalesModuleRequestMapper.createFindReportByIdRequest("guid")).thenReturn("FindReportByIdRequest");
-        when(producer.sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L)).thenReturn("correlationId");
+        when(producer.sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L, DeliveryMode.NON_PERSISTENT)).thenReturn("correlationId");
         when(JAXBMarshaller.unmarshallString("unmarshall this message content", FLUXSalesReportMessage.class))
                 .thenReturn(fluxSalesReportMessage);
         when(JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class))
@@ -103,7 +104,7 @@ public class SalesServiceBeanHelperTest {
 
         verify(mockTextMessage).getText();
         verify(consumer).getMessage("correlationId", TextMessage.class, 30000L);
-        verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L);
+        verify(producer).sendDataSourceMessage("FindReportByIdRequest", DataSourceQueue.SALES, 31000L, DeliveryMode.NON_PERSISTENT);
 
         verifyStatic();
         JAXBMarshaller.unmarshallString("FindReportByIdResponse", FindReportByIdResponse.class);

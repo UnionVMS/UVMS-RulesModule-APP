@@ -25,7 +25,18 @@ public interface RulesMessageProducer {
 
     String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException;
 
-    String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis) throws MessageException;
+    /**
+     * @param text the message that needs to be sent
+     * @param queue the queue it needs to be sent to (DataSourceQueue)
+     * @param timeToLiveInMillis the time that a message should live, in milliseconds.
+     *                           If the message is not picked up, after this amount of time, the message will be discarded.
+     *                           If DeliveryMode is set to "PERSISTENT", the message will be moved to the DLQ.
+     *                           Otherwise, the message is just gone, which is acceptable for 'synchronous' queries.
+     * @param deliveryMode DeliveryMode.PERSISTENT or DeliveryMode.NON_PERSISTENT
+     * @return the correlation id
+     * @throws MessageException
+     */
+    String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException;
 
     void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
 

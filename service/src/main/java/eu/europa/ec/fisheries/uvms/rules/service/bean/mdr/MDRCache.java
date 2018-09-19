@@ -33,6 +33,7 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
@@ -61,9 +62,6 @@ public class MDRCache {
     @EJB
     private RulesMessageProducer producer;
 
-    // This variable will store the Date last time this @cache was refreshed.
-    private Date cacheRefreshDate;
-
     // This variable will store the date that the last entity in mdr (module) was refreshed.
     // @Info : refresh to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
     private Date mdrRefreshDate;
@@ -89,15 +87,13 @@ public class MDRCache {
         if (!alreadyLoadedOnce) {
             populateMdrCacheDateAndCheckIfRefreshDateChanged();
             populateAllMdr();
-        } else if (isFromReport) {
-            if(oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()){ // We fetch MdrCacheDate only once per minute.
-                populateAllMdr();
-            }
+        } else if (isFromReport && oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()) { // We fetch MdrCacheDate only once per minute.
+            populateAllMdr();
         }
     }
 
     private boolean oneMinuteHasPassed() {
-        return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetrieved.getTime())/1000) > 59;
+        return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetrieved.getTime()) / 1000) > 59;
     }
 
     private void populateAllMdr() {
@@ -106,7 +102,6 @@ public class MDRCache {
             cache.put(type, mdrCodeListByAcronymType(type));
         }
         log.info("{} lists cached", cache.size());
-        cacheRefreshDate = new Date(mdrRefreshDate.getTime());
         alreadyLoadedOnce = true;
         log.info("MDR refresh Date {}", mdrRefreshDate);
     }
@@ -118,11 +113,11 @@ public class MDRCache {
         if (acronymType != null) {
             result = cache.get(acronymType);
             if (CollectionUtils.isEmpty(result)) {
-                log.warn(" Reloading {}",acronymType);
+                log.warn(" Reloading {}", acronymType);
                 cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
                 result = cache.get(acronymType);
                 if (CollectionUtils.isEmpty(result)) {
-                    log.error(" Failed to reload {}",acronymType);
+                    log.error(" Failed to reload {}", acronymType);
                 }
             }
             return result;
@@ -140,7 +135,7 @@ public class MDRCache {
     private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronymType) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L);
+        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
         TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
         long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         if (elapsed > 100) {
@@ -180,7 +175,7 @@ public class MDRCache {
      */
     private Date getLastTimeMdrWasRefreshedFromMdrModule() throws MessageException {
         try {
-            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 30000L);
+            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 30000L, DeliveryMode.NON_PERSISTENT);
             TextMessage message = consumer.getMessage(corrId, TextMessage.class, 30000L);
             if (message != null) {
                 MdrGetLastRefreshDateResponse response = JAXBUtils.unMarshallMessage(message.getText(), MdrGetLastRefreshDateResponse.class);
@@ -234,7 +229,7 @@ public class MDRCache {
 
     @AccessTimeout(value = 10, unit = MINUTES)
     @Lock(LockType.READ)
-    public boolean isMdrCacheLoaded(){
+    public boolean isMdrCacheLoaded() {
         return cache.size() > 10;
     }
 
