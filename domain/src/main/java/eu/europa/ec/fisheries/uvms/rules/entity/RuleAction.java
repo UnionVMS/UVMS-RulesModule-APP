@@ -110,4 +110,12 @@ public class RuleAction implements Serializable {
 
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int result = action != null ? action.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
+        return result;
+    }
 }
