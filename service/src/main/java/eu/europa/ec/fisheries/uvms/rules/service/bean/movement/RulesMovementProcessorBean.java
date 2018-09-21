@@ -462,7 +462,7 @@ public class RulesMovementProcessorBean {
             String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username);
             rulesProducer.sendDataSourceMessage(exchangeResponseText, DataSourceQueue.EXCHANGE);
         } catch (ExchangeModelMapperException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
