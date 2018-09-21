@@ -9,6 +9,7 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
 import javax.persistence.*;
@@ -21,6 +22,9 @@ import java.util.List;
 import java.util.UUID;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 //@formatter:off
@@ -35,6 +39,9 @@ import org.apache.commons.lang3.StringUtils;
     @NamedQuery(name = UvmsConstants.COUNT_OPEN_ALARMS, query = "SELECT count(ar) FROM AlarmReport ar where ar.status = 'OPEN'")
 })
 //@formatter:on
+@Data
+@EqualsAndHashCode(exclude = "alarmItemList")
+@ToString(exclude = "alarmItemList")
 public class AlarmReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +55,7 @@ public class AlarmReport implements Serializable {
     private String pluginType;
 
     @Column(name = "alarmrep_guid")
-    private String guid;
+    private String guid = UUID.randomUUID().toString();
 
     @Column(name = "alarmrep_assetguid")
     private String assetGuid;
@@ -76,117 +83,12 @@ public class AlarmReport implements Serializable {
     private RawMovement rawMovement;
 
     @OneToMany(mappedBy = "alarmReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<AlarmItem> alarmItemList;
-
-    public AlarmReport() {
-        this.guid = UUID.randomUUID().toString();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPluginType() {
-        return pluginType;
-    }
-
-    public void setPluginType(String pluginType) {
-        this.pluginType = pluginType;
-    }
-
-    public String getGuid() {
-        return guid;
-    }
-
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
-
-    public String getAssetGuid() {
-        return assetGuid;
-    }
-
-    public void setAssetGuid(String assetGuid) {
-        this.assetGuid = assetGuid;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public RawMovement getRawMovement() {
-        return rawMovement;
-    }
-
-    public void setRawMovement(RawMovement rawMovement) {
-        this.rawMovement = rawMovement;
-    }
+    private List<AlarmItem> alarmItemList = new ArrayList<>();
 
     public List<AlarmItem> getAlarmItemList() {
         if (alarmItemList == null) {
-            alarmItemList = new ArrayList<AlarmItem>();
+            alarmItemList = new ArrayList<>();
         }
         return alarmItemList;
-    }
-
-    public void setAlarmItemList(List<AlarmItem> alarmItemList) {
-        this.alarmItemList = alarmItemList;
-    }
-
-    @Override
-    public String toString() {
-        return "AlarmReport{" +
-                "id=" + id +
-                ", pluginType='" + pluginType + '\'' +
-                ", guid='" + guid + '\'' +
-                ", assetGuid='" + assetGuid + '\'' +
-                ", status='" + status + '\'' +
-                ", recipient='" + recipient + '\'' +
-                ", createdDate=" + createdDate +
-                ", updated=" + updated +
-                ", updatedBy='" + updatedBy + '\'' +
-//                ", rawMovement=" + rawMovement +
-//                ", alarmItemList=" + alarmItemList +
-                '}';
     }
 }
