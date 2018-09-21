@@ -11,8 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
+import org.apache.commons.lang3.StringUtils;
 
 //@formatter:off
 @Entity
@@ -65,11 +66,11 @@ public class AlarmReport implements Serializable {
     @Column(name = "alarmrep_updattim")
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated;
+    private Date updated = DateUtils.getNowDateUTC();
 
     @Column(name = "alarmrep_upuser")
     @NotNull
-    private String updatedBy;
+    private String updatedBy = StringUtils.EMPTY;
 
     @OneToOne(mappedBy = "alarmReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private RawMovement rawMovement;

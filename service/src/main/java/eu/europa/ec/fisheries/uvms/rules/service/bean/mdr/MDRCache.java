@@ -10,6 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -30,16 +38,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -200,10 +198,11 @@ public class MDRCache {
             return;
         }
         errorMessages = new HashMap<>();
-        final List<ObjectRepresentation> objRapprList = new ArrayList<ObjectRepresentation>() {{
-            addAll(getEntry(MDRAcronymType.FA_BR_DEF));
-            addAll(getEntry(MDRAcronymType.SALE_BR_DEF));
-        }};
+        final List<ObjectRepresentation> objRapprList = new ArrayList<>();
+        List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR_DEF);
+        List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR_DEF);
+        objRapprList.addAll(brDef);
+        objRapprList.addAll(saleBrDef);
         final String MESSAGE_COLUMN = "messageIfFailing";
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";

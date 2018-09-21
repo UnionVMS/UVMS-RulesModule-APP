@@ -11,6 +11,8 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+import java.math.BigDecimal;
+import java.util.*;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -30,10 +32,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.util.*;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
@@ -246,11 +244,10 @@ public class ActivityFactMapper {
     }
 
     private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
-        HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<FishingActivityType, List<String>>(){{
-            put(FishingActivityType.ARRIVAL, new ArrayList<String>());
-            put(FishingActivityType.DEPARTURE, new ArrayList<String>());
-        }};
-        if(CollectionUtils.isEmpty(faReportDocuments)){
+        HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<>();
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<String>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<String>());
+        if (CollectionUtils.isEmpty(faReportDocuments)){
             return tripsPerFaTypeFromFasInReports;
         }
         for (FAReportDocument faReportDocument : faReportDocuments) {

@@ -10,18 +10,7 @@
  * copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
-© European Union, 2015-2016.
-
-This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can
-redistribute it and/or modify it under the terms of the GNU General Public License as published by the
-Free Software Foundation, either version 3 of the License, or any later version. The IFDM Suite is distributed in
-the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
-copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
- */
-package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
+ package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -251,7 +240,7 @@ public class RulesMovementProcessorBean {
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
             CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
             ExchangeLogStatusTypeType status;
-            if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
                 // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
                 status = ExchangeLogStatusTypeType.SUCCESSFUL;
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);

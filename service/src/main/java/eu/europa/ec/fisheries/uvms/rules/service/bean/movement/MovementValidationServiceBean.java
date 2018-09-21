@@ -11,6 +11,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
@@ -62,16 +71,6 @@ import eu.europa.ec.fisheries.wsdl.user.types.EndPoint;
 import eu.europa.ec.fisheries.wsdl.user.types.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @Stateless
 public class MovementValidationServiceBean implements ValidationService {
@@ -311,8 +310,7 @@ public class MovementValidationServiceBean implements ValidationService {
                     String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, new Date(), ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
                     LOG.debug("Send SendMovementToPluginRequest message to Exchange");
                     String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
-                    TextMessage response = consumer.getMessage(messageId, TextMessage.class);
-                    LOG.debug("Received response message");
+                    LOG.debug("Received response message {}", messageId);
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
                     // TODO: Do something with the response??? Or don't send response from Exchange
@@ -498,7 +496,7 @@ public class MovementValidationServiceBean implements ValidationService {
             }
 
             TicketType createdTicket = rulesDomainModel.createTicket(ticket);
-            String request = RulesDataSourceRequestMapper.mapCreateTicket(ticket);
+            RulesDataSourceRequestMapper.mapCreateTicket(ticket);
 
             ticketEvent.fire(new NotificationMessage("guid", createdTicket.getGuid()));
 
