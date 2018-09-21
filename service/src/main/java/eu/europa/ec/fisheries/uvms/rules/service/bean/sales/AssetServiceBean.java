@@ -51,7 +51,7 @@ public class AssetServiceBean implements AssetService {
             return asset.getCountryCode().equals(flagState);
 
         } catch (MessageException | AssetModelMarshallException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return true;
     }
