@@ -12,15 +12,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-import lombok.Data;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @Table(name = "ticket")
@@ -78,11 +79,11 @@ public class Ticket implements Serializable {
     @Column(name = "ticket_updattim")
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated;
+    private Date updated = DateUtils.START_OF_TIME.toDate();
 
     @Column(name = "ticket_upuser")
     @NotNull
-    private String updatedBy;
+    private String updatedBy = StringUtils.EMPTY;
 
     public Ticket() {
         this.guid = UUID.randomUUID().toString();
