@@ -268,7 +268,7 @@ public class RulesMovementProcessorBean {
                 movementValidator.evaluate(movementFactList, true);
                 // Tell Exchange that a movement Batch was persisted in Movement
                 ExchangeLogStatusTypeType status;
-                if (movementFactList != null) {
+                if (CollectionUtils.isNotEmpty(movementFactList)) {
                     status = ExchangeLogStatusTypeType.SUCCESSFUL;
                     sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
                 } else {
@@ -778,6 +778,7 @@ public class RulesMovementProcessorBean {
                 movFactList.add(collectMovementData(mobileTerminal.get(index), asset.get(index), rawMovementType, username));
             } catch (ExecutionException | InterruptedException | RulesServiceException e) {
                 movFactList.add(null);
+                Thread.currentThread().interrupt();
             }
         }
         return movFactList;
