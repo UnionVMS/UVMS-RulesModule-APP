@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -71,9 +70,8 @@ public class AlarmReport implements Serializable {
     private Date createdDate;
 
     @Column(name = "alarmrep_updattim")
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated = DateUtils.getNowDateUTC();
+    private Date updated;
 
     @Column(name = "alarmrep_upuser")
     @NotNull
