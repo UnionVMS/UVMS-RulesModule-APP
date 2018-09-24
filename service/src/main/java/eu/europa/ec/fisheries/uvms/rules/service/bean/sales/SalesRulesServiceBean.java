@@ -7,6 +7,8 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.*;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -39,7 +41,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
     private ActivityService activityService;
 
     @EJB
-    private AssetService assetService;
+    private IAssetClient assetClientBean;
 
     @Inject
     private MapperFacade mapper;
@@ -329,7 +331,7 @@ public class SalesRulesServiceBean implements SalesRulesService {
                 return false;
             }
 
-            return !assetService.isCFRInFleetUnderFlagStateOnLandingDate(cfr.get(), flagState, landingDate);
+            return !assetClientBean.isCFRInFleetUnderFlagStateOnLandingDate(cfr.get(), flagState, landingDate);
         } catch (NullPointerException e) {
             return false;
         }

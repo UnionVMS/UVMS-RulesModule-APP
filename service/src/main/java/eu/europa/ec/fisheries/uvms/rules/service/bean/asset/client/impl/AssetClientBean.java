@@ -1,21 +1,8 @@
-package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl;
 
 import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
+import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +15,25 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-@Singleton
-@Slf4j
-public class AssetServiceBean implements AssetService {
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
 
-    @EJB
-    private AssetServiceBeanHelper helper;
+@Slf4j
+@Singleton
+public class AssetClientBean implements IAssetClient {
+
+    // Remote asset EJB
+    @EJB(lookup = "java:global/asset-module/asset-service/AssetFacade!eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade")
+
+    private IAssetFacade iAssetFacade;
 
     @Override
     public boolean isCFRInFleetUnderFlagStateOnLandingDate(String cfr, String flagState, DateTime landingDate) {
         try {
-            List<Asset> assetHistories = helper.findHistoryOfAssetByCfr(cfr);
-
+            log.info("Find history of asset by CFR: {} ", cfr);
+            List<Asset> assetHistories = iAssetFacade.findHistoryOfAssetByCfr(cfr);
             Optional<Asset> historyOnDate = findAssetHistoryByDate(landingDate.toDate(), assetHistories);
 
             if (!historyOnDate.isPresent()) {
@@ -50,13 +44,14 @@ public class AssetServiceBean implements AssetService {
             Asset asset = historyOnDate.get();
             return asset.getCountryCode().equals(flagState);
 
-        } catch (MessageException | AssetModelMarshallException e) {
+        } catch ( Exception  e) {
             e.printStackTrace();
         }
         return true;
     }
 
-    public List<VesselTransportMeansDto> findHistoryOfAssetBy(List<FAReportDocument> faReportDocuments){
+    @Override
+    public List<VesselTransportMeansDto> findHistoryOfAssetBy(List<FAReportDocument> faReportDocuments) {
         List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList = new ArrayList<>();
 
         for (FAReportDocument faReportDocument : faReportDocuments) {
@@ -65,7 +60,7 @@ public class AssetServiceBean implements AssetService {
 
         Iterator<VesselTransportMeansDto> iterator = vesselTransportMeansFactCollectedList.iterator();
 
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
             String reportDate = vesselTransportMeansDto.getAcceptanceDateTime();
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
@@ -75,9 +70,11 @@ public class AssetServiceBean implements AssetService {
             String ircs = ids.get("IRCS");
             String extMark = ids.get("EXT_MARK");
             String iccat = ids.get("ICCAT");
-            List<Asset> assets = helper.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
 
-            if (CollectionUtils.isNotEmpty(assets)){
+            log.info("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {} ", reportDate, cfr, regCountry, ircs, extMark, iccat);
+            List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
+
+            if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));
             }
         }
@@ -85,14 +82,16 @@ public class AssetServiceBean implements AssetService {
         return vesselTransportMeansFactCollectedList;
     }
 
+
+
     private void collectAndMap(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument) {
         List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
         for (FishingActivity specifiedFishingActivity : specifiedFishingActivities) {
             List<FishingActivity> relatedFishingActivities = specifiedFishingActivity.getRelatedFishingActivities();
-            if (CollectionUtils.isNotEmpty(relatedFishingActivities)){
+            if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
                 for (FishingActivity relatedFishingActivity : relatedFishingActivities) {
                     List<VesselTransportMeans> relatedVesselTransportMeans2 = relatedFishingActivity.getRelatedVesselTransportMeans();
-                    if (CollectionUtils.isNotEmpty(relatedVesselTransportMeans2)){
+                    if (CollectionUtils.isNotEmpty(relatedVesselTransportMeans2)) {
                         for (VesselTransportMeans vesselTransportMeans : relatedVesselTransportMeans2) {
                             mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, vesselTransportMeans);
 
@@ -108,8 +107,9 @@ public class AssetServiceBean implements AssetService {
         mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, faReportDocument.getSpecifiedVesselTransportMeans());
     }
 
+
     private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
-        if (transportMeans != null){
+        if (transportMeans != null) {
             VesselTransportMeansDto relatedMeansDto = new VesselTransportMeansDto();
             setAcceptanceDateTime(faReportDocument, relatedMeansDto);
 
@@ -118,7 +118,7 @@ public class AssetServiceBean implements AssetService {
                 relatedMeansDto.getIds().put(id.getSchemeID(), id.getValue());
             }
             VesselCountry country = transportMeans.getRegistrationVesselCountry();
-            if (country != null && country.getID() != null){
+            if (country != null && country.getID() != null) {
                 relatedMeansDto.setRegistrationVesselCountry(country.getID().getValue());
             }
             vesselTransportMeansFactCollectedList.add(relatedMeansDto);
@@ -126,10 +126,10 @@ public class AssetServiceBean implements AssetService {
     }
 
     private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
-        if (faReportDocument != null && faReportDocument.getAcceptanceDateTime() != null){
+        if (faReportDocument != null && faReportDocument.getAcceptanceDateTime() != null) {
             DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
             XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
-            if (dateTime != null){
+            if (dateTime != null) {
                 vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
             }
         }
@@ -170,5 +170,4 @@ public class AssetServiceBean implements AssetService {
             }
         };
     }
-
 }

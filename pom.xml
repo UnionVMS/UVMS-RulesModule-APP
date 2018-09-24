@@ -43,6 +43,7 @@
         <mdr.model.version>1.0.4</mdr.model.version>
         <subscription.model.version>1.3</subscription.model.version>
         <asset.model.version>4.0.17</asset.model.version>
+        <asset.ejb.client.version>4.0.17</asset.ejb.client.version>
         <audit.model.version>4.0.4</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>1.0.11</sales.model.version>
@@ -143,7 +144,12 @@
 			    <groupId>com.fasterxml.jackson.core</groupId>
 			    <artifactId>jackson-core</artifactId>
 			    <version>2.7.9</version>
-			</dependency>            
+			</dependency>
+            <dependency>
+                <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+                <artifactId>asset-ejb-client</artifactId>
+                <version>${asset.ejb.client.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

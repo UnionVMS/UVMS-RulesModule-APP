@@ -4,11 +4,11 @@ import org.junit.Before;
 
 public class AssetServiceBeanTest {
 
-    private AssetServiceBean assetServiceBean;
+//    private AssetServiceBean assetServiceBean;
 
     @Before
     public void setUp() throws Exception {
-        assetServiceBean = new AssetServiceBean();
+//        assetServiceBean = new AssetServiceBean();
     }
 //
 //    @Test
