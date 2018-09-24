@@ -13,7 +13,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 //@formatter:off
 @Entity
@@ -74,8 +72,7 @@ public class AlarmReport implements Serializable {
     private Date updated;
 
     @Column(name = "alarmrep_upuser")
-    @NotNull
-    private String updatedBy = StringUtils.EMPTY;
+    private String updatedBy;
 
     @OneToOne(mappedBy = "alarmReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private RawMovement rawMovement;
