@@ -11,8 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 
 //@formatter:off
 @Entity
@@ -254,37 +253,51 @@ public class CustomRule implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        int result = ruleSegmentList != null ? ruleSegmentList.hashCode() : 0;
+        result = 31 * result + (ruleActionList != null ? ruleActionList.hashCode() : 0);
+        result = 31 * result + (intervals != null ? intervals.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof CustomRule) {
             CustomRule other = (CustomRule) obj;
-            if (getRuleSegmentList().size() == other.getRuleSegmentList().size()) {
-                for (int i = 0; i < getRuleSegmentList().size(); i++) {
-                    RuleSegment a = getRuleSegmentList().get(i);
-                    RuleSegment b = other.getRuleSegmentList().get(i);
-                    if (!a.equals(b)) {
-                        return false;
-                    }
-                }
+            return (getRuleSegmentList().size() != other.getRuleSegmentList().size() || !compareRuleSegmentList(other)) && (getRuleActionList().size() != other.getRuleActionList().size() || !compareRuleActionList(other)) && (getIntervals().size() != other.getIntervals().size() || !compareRuleIntervalList(other));
+        }
+        return false;
+    }
+
+    private boolean compareRuleIntervalList(CustomRule other) {
+        for (int i = 0; i < getIntervals().size(); i++) {
+            Interval a = getIntervals().get(i);
+            Interval b = other.getIntervals().get(i);
+            if (!a.equals(b)) {
+                return true;
             }
-            if (getRuleActionList().size() == other.getRuleActionList().size()) {
-                for (int i = 0; i < getRuleActionList().size(); i++) {
-                    RuleAction a = getRuleActionList().get(i);
-                    RuleAction b = other.getRuleActionList().get(i);
-                    if (!a.equals(b)) {
-                        return false;
-                    }
-                }
+        }
+        return false;
+    }
+
+    private boolean compareRuleActionList(CustomRule other) {
+        for (int i = 0; i < getRuleActionList().size(); i++) {
+            RuleAction a = getRuleActionList().get(i);
+            RuleAction b = other.getRuleActionList().get(i);
+            if (!a.equals(b)) {
+                return true;
             }
-            if (getIntervals().size() == other.getIntervals().size()) {
-                for (int i = 0; i < getIntervals().size(); i++) {
-                    Interval a = getIntervals().get(i);
-                    Interval b = other.getIntervals().get(i);
-                    if (!a.equals(b)) {
-                        return false;
-                    }
-                }
+        }
+        return false;
+    }
+
+    private boolean compareRuleSegmentList(CustomRule other) {
+        for (int i = 0; i < getRuleSegmentList().size(); i++) {
+            RuleSegment a = getRuleSegmentList().get(i);
+            RuleSegment b = other.getRuleSegmentList().get(i);
+            if (!a.equals(b)) {
+                return true;
             }
-            return true;
         }
         return false;
     }

@@ -11,6 +11,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponseBatch;
@@ -29,9 +31,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExchangeMovementMapper {
 
@@ -206,7 +205,6 @@ public class ExchangeMovementMapper {
         }
         try {
             AssetId exAssetId = new AssetId();
-            eu.europa.ec.fisheries.schema.movement.asset.v1.AssetIdType type = assetId.getIdType();
             eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList idList = new eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList();
             idList.setIdType(AssetIdType.valueOf(assetId.getIdType().value()));
             idList.setValue(assetId.getValue());

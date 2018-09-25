@@ -186,4 +186,16 @@ public class RuleSegment implements Serializable {
 
         return false;
     }
+
+    @Override public int hashCode() {
+        int result = startOperator != null ? startOperator.hashCode() : 0;
+        result = 31 * result + (criteria != null ? criteria.hashCode() : 0);
+        result = 31 * result + (subCriteria != null ? subCriteria.hashCode() : 0);
+        result = 31 * result + (condition != null ? condition.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (endOperator != null ? endOperator.hashCode() : 0);
+        result = 31 * result + (logicOperator != null ? logicOperator.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
+        return result;
+    }
 }

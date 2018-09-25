@@ -11,6 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
@@ -25,15 +32,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProc
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.security.Principal;
-import java.util.List;
 
 @Path("/alarms")
 @Stateless
@@ -152,8 +150,6 @@ public class AlarmRestResource {
     @Path("/countopen")
     @RequiresFeature(UnionVMSFeature.viewAlarmsHoldingTable)
     public ResponseDto getNumberOfOpenAlarmReports() {
-        Principal userPrincipal = request.getUserPrincipal();
-
         try {
             return new ResponseDto(validationService.getNumberOfOpenAlarmReports(), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException e) {

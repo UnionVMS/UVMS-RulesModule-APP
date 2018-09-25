@@ -90,7 +90,7 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    protected ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
