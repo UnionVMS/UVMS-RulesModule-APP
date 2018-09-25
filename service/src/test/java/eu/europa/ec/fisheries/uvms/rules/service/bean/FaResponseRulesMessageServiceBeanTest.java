@@ -10,6 +10,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.util.Collections;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
@@ -27,7 +29,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FaResponseRulesMessageServiceBeanTest {
@@ -46,12 +49,12 @@ public class FaResponseRulesMessageServiceBeanTest {
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
     private FLUXFAReportMessage fluxResponseMessage = new FLUXFAReportMessage();
-    private FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+    private FAReportDocument fluxResponseDocument = new FAReportDocument();
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
     @Before
     public void before(){
-       // fluxResponseMessage.setFAReportDocuments(fluxResponseDocument);
+       fluxResponseMessage.setFAReportDocuments(Collections.singletonList(fluxResponseDocument));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -64,7 +67,7 @@ public class FaResponseRulesMessageServiceBeanTest {
         responseMessageRequest = new SetFluxFaResponseMessageRequest();
         faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
         // Mockito.verify(rulesEngine, times(1)).evaluate(null, null, null, null);
-        // Mockito.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
+         Mockito.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
         faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
     }
 
