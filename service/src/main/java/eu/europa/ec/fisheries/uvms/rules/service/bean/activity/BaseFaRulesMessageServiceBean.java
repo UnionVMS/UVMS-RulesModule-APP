@@ -15,11 +15,9 @@ import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 import java.util.List;
 import java.util.UUID;
-
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
-import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
@@ -32,7 +30,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -68,19 +65,7 @@ abstract class BaseFaRulesMessageServiceBean {
         return new ValidationResultDto(true, false, false, null);
     }
 
-    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult) {
-        updateRequestMessageStatusInExchange(exchangeLogGuid, validationResult, false);
-    }
-
-    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult, Boolean duplicate) {
-        updateRequestMessageStatusInExchange(exchangeLogGuid, calculateMessageValidationStatus(validationResult), duplicate);
-    }
-
-    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ExchangeLogStatusTypeType statusType) {
-        updateRequestMessageStatusInExchange(exchangeLogGuid, statusType, false);
-    }
-
-    private void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType, Boolean duplicate) {
+    protected void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
@@ -90,7 +75,7 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    public ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
@@ -114,13 +99,6 @@ abstract class BaseFaRulesMessageServiceBean {
         } catch (ActivityModelMarshallException | MessageException | JAXBException | JMSException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
-    }
-
-    boolean sendToExchangeOnEmptyReport(SetFaQueryMessageRequest request, String requestStr, String logGuid, String onValue, FLUXFAQueryMessage faQueryMessage, ValidationResultDto faQueryValidationReport) {
-        log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
-        updateRequestMessageStatusInExchange(logGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
-        getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
-        return false;
     }
 
     void sendToExchange(String message) throws MessageException {

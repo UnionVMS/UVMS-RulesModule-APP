@@ -10,15 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-import static java.util.Collections.singletonList;
-
 import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -28,16 +20,7 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
+import java.util.*;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -57,6 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -70,7 +54,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FishingActivityRulesHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -89,6 +73,12 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
+import static java.util.Collections.singletonList;
 
 @Stateless
 @LocalBean
@@ -116,14 +106,15 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     private RulesDao rulesDaoBean;
 
     @EJB
+    private ExchangeServiceBean exchangeServiceBean;
+
+    @EJB
     private RulesConfigurationCache ruleModuleCache;
 
     @EJB
     private RulesMessageProducer producer;
 
-    private FishingActivityRulesHelper faMessageHelper;
-
-    private XSDJaxbUtil xsdJaxbUtil;
+    private FLUXMessageHelper fluxMessageHelper;
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -133,22 +124,23 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     @PostConstruct
     public void init() {
         faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
-        faMessageHelper = new FishingActivityRulesHelper();
-        xsdJaxbUtil = new XSDJaxbUtil();
+        fluxMessageHelper = new FLUXMessageHelper();
     }
 
-    @Asynchronous
     public void evaluateIncomingFluxResponseRequest(SetFluxFaResponseMessageRequest request) {
+        if (request == null){
+            throw new IllegalArgumentException("SetFluxFaResponseMessageRequest is null");
+        }
         String requestStr = request.getRequest();
         final String logGuid = request.getLogGuid();
         log.info("Evaluate FLUXResponseMessage with GUID " + logGuid);
         FLUXResponseMessage fluxResponseMessage;
         try {
             // Validate xsd schema
-            fluxResponseMessage = xsdJaxbUtil.unMarshallFluxResponseMessage(requestStr);
+            fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
             Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
             ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
-            updateRequestMessageStatusInExchange(logGuid, fluxResponseValidResults);
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(fluxResponseValidResults));
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
                 log.debug("The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
             } else {
@@ -158,11 +150,11 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
 
         } catch (UnmarshalException e) {
             log.debug("Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.debug("Error during validation of the received FLUXResponseMessage!", e);
-            updateRequestMessageStatusInExchange(logGuid, generateValidationResultDtoForFailure());
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
         }
     }
 
@@ -179,7 +171,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
             // Get the actual Response ids and match them with the Response Ids from the DB
-            Set<FADocumentID> idsFromIncommingMessage = faMessageHelper.mapToResponseToFADocumentID(fluxResponseMessageObj);
+            Set<FADocumentID> idsFromIncommingMessage = fluxMessageHelper.mapToResponseToFADocumentID(fluxResponseMessageObj);
             List<FADocumentID> matchingIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
 
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
@@ -255,7 +247,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
     }
 
-    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    public ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
