@@ -83,7 +83,7 @@ import static java.util.Collections.singletonList;
 @Stateless
 @LocalBean
 @Slf4j
-public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
+public class FAResponseServiceBean extends AbstractFLUXServiceBean {
 
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 
@@ -100,7 +100,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    private FAResponseServiceBean faResponseServiceBean;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -158,7 +158,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         }
     }
 
-    public void validateAndSendResponseToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided, Map<String, String> copyOfContextMap) {
+    public void evaluateAndSendToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided, Map<String, String> copyOfContextMap) {
         try {
             MDC.setContextMap(copyOfContextMap);
             log.info("Preparing FLUXResponseMessage to send back to Exchange module.");
@@ -167,7 +167,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             }
 
             // Get fluxNationCode (Eg. XEU) from Config Module.
-            String fluxNationCode = ruleModuleCache.getSingleConfig("flux_local_nation_code");
+            String fluxNationCode = ruleModuleCache.getSingleConfig(FLUX_LOCAL_NATION_CODE);
             String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
             // Get the actual Response ids and match them with the Response Ids from the DB
@@ -206,15 +206,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         }
     }
 
-    private Map<ExtraValueType, Object> populateExtraValuesMap(String fluxNationCode, List<FADocumentID> matchingIdsFromDB) {
-        Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-        extraValues.put(SENDER_RECEIVER, fluxNationCode);
-        extraValues.put(RESPONSE_IDS, faIdsMapper.mapToFishingActivityIdDto(matchingIdsFromDB));
-        return extraValues;
-    }
-
-    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage,
-                                                                       Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
+    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -237,36 +229,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
 
         FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-        validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
-    }
-
-    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
-        IDType idType = new IDType();
-        idType.setSchemeID("FLUXTL_ON");
-        idType.setValue(onValue);
-        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
-    }
-
-    public ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
-        if (validationResult != null) {
-            if (validationResult.isError()) {
-                return ExchangeLogStatusTypeType.FAILED;
-            } else if (validationResult.isWarning()) {
-                return ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS;
-            } else {
-                return ExchangeLogStatusTypeType.SUCCESSFUL;
-            }
-        } else {
-            return ExchangeLogStatusTypeType.UNKNOWN;
-        }
-    }
-
-    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
-        if (pluginType == PluginType.BELGIAN_ACTIVITY) {
-            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
-        } else {
-            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
-        }
+        evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
     }
 
     public void sendFLUXResponseMessageOnException(String errorMessage, String rawMessage, RulesBaseRequest request, Object message) {
@@ -314,23 +277,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         if (fluxResponseMessage != null) {
             fillFluxTLOnValue(fluxResponseMessage, request.getOnValue());
             log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-            validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false, MDC.getCopyOfContextMap());
+            evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, false, MDC.getCopyOfContextMap());
         }
-    }
-
-    private RawMsgType getMessageType(RulesModuleMethod method) {
-        if (null == method) {
-            return null;
-        }
-        RawMsgType msgType = null;
-        if (RulesModuleMethod.SET_FLUX_FA_REPORT.equals(method) || RulesModuleMethod.SEND_FLUX_FA_REPORT.equals(method)) {
-            msgType = RawMsgType.FA_REPORT;
-        } else if (RulesModuleMethod.SET_FLUX_FA_QUERY.equals(method) || RulesModuleMethod.SEND_FLUX_FA_QUERY.equals(method)) {
-            msgType = RawMsgType.FA_QUERY;
-        } else if (RulesModuleMethod.SET_FLUX_RESPONSE.equals(method) || RulesModuleMethod.RCV_FLUX_RESPONSE.equals(method)) {
-            msgType = RawMsgType.FA_RESPONSE;
-        }
-        return msgType;
     }
 
     public FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue) {
@@ -369,11 +317,44 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         return responseMessage;
     }
 
+    public FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+            if (fluxfaReportMessage != null && fluxfaReportMessage.getFLUXReportDocument() != null) {
+                List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
+                fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
+            }
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+            return responseMessage;
+
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
     private void setFluxResponseDocumentIDs(FLUXResponseDocument fluxResponseDocument) {
         IDType responseId = new IDType();
         responseId.setValue(UUID.randomUUID().toString());
         responseId.setSchemeID("UUID");
         fluxResponseDocument.setIDS(singletonList(responseId)); // Set random ID
+    }
+
+    private RawMsgType getMessageType(RulesModuleMethod method) {
+        if (null == method) {
+            return null;
+        }
+        RawMsgType msgType = null;
+        if (RulesModuleMethod.SET_FLUX_FA_REPORT.equals(method) || RulesModuleMethod.SEND_FLUX_FA_REPORT.equals(method)) {
+            msgType = RawMsgType.FA_REPORT;
+        } else if (RulesModuleMethod.SET_FLUX_FA_QUERY.equals(method) || RulesModuleMethod.SEND_FLUX_FA_QUERY.equals(method)) {
+            msgType = RawMsgType.FA_QUERY;
+        } else if (RulesModuleMethod.SET_FLUX_RESPONSE.equals(method) || RulesModuleMethod.RCV_FLUX_RESPONSE.equals(method)) {
+            msgType = RawMsgType.FA_RESPONSE;
+        }
+        return msgType;
     }
 
     private void populateFluxResponseDocument(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
@@ -424,24 +405,6 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         FLUXParty fluxParty = new FLUXParty();
         fluxParty.setIDS(singletonList(idType));
         return fluxParty;
-    }
-
-    public FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
-        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
-        try {
-            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-            if (fluxfaReportMessage != null && fluxfaReportMessage.getFLUXReportDocument() != null) {
-                List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
-                fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
-            }
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
-            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
-            return responseMessage;
-
-        } catch (DatatypeConfigurationException e) {
-            log.error(e.getMessage(), e);
-        }
-        return responseMessage;
     }
 
     private FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult) {
@@ -514,6 +477,30 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         return singletonList(validationResultDocument);
     }
 
+    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
+        IDType idType = new IDType();
+        idType.setSchemeID("FLUXTL_ON");
+        idType.setValue(onValue);
+        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
+    }
+
+
+    private Map<ExtraValueType, Object> populateExtraValuesMap(String fluxNationCode, List<FADocumentID> matchingIdsFromDB) {
+        Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+        extraValues.put(SENDER_RECEIVER, fluxNationCode);
+        extraValues.put(RESPONSE_IDS, faIdsMapper.mapToFishingActivityIdDto(matchingIdsFromDB));
+        return extraValues;
+    }
+
+    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
+        if (pluginType == PluginType.BELGIAN_ACTIVITY) {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
+        } else {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
+        }
+    }
+
+
     @Override
     RulesMessageProducer getRulesProducer() {
         return rulesProducer;
@@ -525,8 +512,8 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     }
 
     @Override
-    FaResponseRulesMessageServiceBean getResponseValidator() {
-        return faResponseValidatorAndSender;
+    FAResponseServiceBean getResponseValidator() {
+        return faResponseServiceBean;
     }
 
 }

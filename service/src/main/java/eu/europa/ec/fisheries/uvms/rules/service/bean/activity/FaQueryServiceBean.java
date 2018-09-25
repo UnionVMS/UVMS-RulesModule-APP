@@ -43,7 +43,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XM
 @Stateless
 @LocalBean
 @Slf4j
-public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
+public class FaQueryServiceBean extends AbstractFLUXServiceBean {
 
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
 
@@ -63,7 +63,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    private FAResponseServiceBean faResponseServiceBean;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -72,7 +72,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
     private ExchangeServiceBean exchangeServiceBean;
 
     @EJB
-    private FaReportRulesMessageServiceBean faReportRulesMessageBean;
+    private FaReportServiceBean faReportRulesMessageBean;
 
     private FLUXMessageHelper fluxMessageHelper;
 
@@ -122,19 +122,19 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
                 } else { // Request doesn't have permissions
                     log.debug("Request doesn't have permission! It won't be transmitted to Activity Module!");
                     exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
-                    faResponseValidatorAndSender.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue, faQueryValidationReport);
+                    faResponseServiceBean.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.PERMISSION_DENIED, onValue, faQueryValidationReport);
                     needToSendToExchange = false;
                 }
             } else {
                 log.debug(VALIDATION_RESULTED_IN_ERRORS);
             }
-            FLUXResponseMessage fluxResponseMessageType = faResponseValidatorAndSender.generateFluxResponseMessageForFaQuery(faQueryValidationReport, faQueryMessage, onValue);
+            FLUXResponseMessage fluxResponseMessageType = faResponseServiceBean.generateFluxResponseMessageForFaQuery(faQueryValidationReport, faQueryMessage, onValue);
             XPathRepository.INSTANCE.clear(faQueryFacts);
 
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
+                faResponseServiceBean.evaluateAndSendToExchange(fluxResponseMessageType, request, request.getType(), isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
@@ -144,11 +144,11 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error("Error during validation of the received FLUXFAQueryMessage!", e);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
+            faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         }
     }
 
@@ -184,11 +184,11 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
             exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
+            faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         } catch (MessageException | ExchangeModelMarshallException | ServiceException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
         }
@@ -205,7 +205,7 @@ public class FaQueryRulesRulesMessageServiceBean extends BaseFaRulesMessageServi
     }
 
     @Override
-    FaResponseRulesMessageServiceBean getResponseValidator() {
-        return faResponseValidatorAndSender;
+    FAResponseServiceBean getResponseValidator() {
+        return faResponseServiceBean;
     }
 }

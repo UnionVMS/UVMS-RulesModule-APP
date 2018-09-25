@@ -12,6 +12,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
@@ -32,9 +41,9 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaQueryRulesRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaQueryServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
@@ -42,16 +51,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 
 @Stateless
 @Slf4j
@@ -73,13 +72,13 @@ public class RulesEventServiceBean implements EventService {
     private RulesMovementProcessorBean rulesService;
 
     @EJB
-    private FaReportRulesMessageServiceBean faReportRulesMessageServiceBean;
+    private FaReportServiceBean faReportRulesMessageServiceBean;
 
     @EJB
-    private FaResponseRulesMessageServiceBean faResponseRulesMessageServiceBean;
+    private FAResponseServiceBean faResponseRulesMessageServiceBean;
 
     @EJB
-    private FaQueryRulesRulesMessageServiceBean faQueryRulesMessageServiceBean;
+    private FaQueryServiceBean faQueryRulesMessageServiceBean;
 
     @EJB
     private MdrRulesMessageServiceBean mdrRulesMessageServiceBean;

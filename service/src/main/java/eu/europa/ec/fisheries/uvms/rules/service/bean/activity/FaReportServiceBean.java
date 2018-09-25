@@ -56,7 +56,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @LocalBean
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FaReportRulesMessageServiceBean extends BaseFaRulesMessageServiceBean {
+public class FaReportServiceBean extends AbstractFLUXServiceBean {
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -85,7 +85,7 @@ public class FaReportRulesMessageServiceBean extends BaseFaRulesMessageServiceBe
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    private FAResponseServiceBean faResponseValidatorAndSender;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -140,7 +140,7 @@ public class FaReportRulesMessageServiceBean extends BaseFaRulesMessageServiceBe
             FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
             XPathRepository.INSTANCE.clear(faReportFacts);
 
-            faResponseValidatorAndSender.validateAndSendResponseToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
+            faResponseValidatorAndSender.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
@@ -239,7 +239,7 @@ public class FaReportRulesMessageServiceBean extends BaseFaRulesMessageServiceBe
     }
 
     @Override
-    FaResponseRulesMessageServiceBean getResponseValidator() {
+    FAResponseServiceBean getResponseValidator() {
         return faResponseValidatorAndSender;
     }
 

@@ -17,8 +17,8 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -32,13 +32,13 @@ import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FaResponseRulesMessageServiceBeanTest {
@@ -49,10 +49,10 @@ public class FaResponseRulesMessageServiceBeanTest {
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesActivityServiceBean activityServiceBean;
     @Mock private ActivityOutQueueConsumer activityConsumer;
-    @Mock private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    @Mock private FAResponseServiceBean faResponseValidatorAndSender;
     @Mock private RulesDao rulesDaoBean;
-    @Mock private FaReportRulesMessageServiceBean faReportRulesMessageBean;
-    @InjectMocks private FaResponseRulesMessageServiceBean faResponseRulesMessageServiceBean;
+    @Mock private FaReportServiceBean faReportRulesMessageBean;
+    @InjectMocks private FAResponseServiceBean faResponseRulesMessageServiceBean;
     @Mock private FLUXMessageHelper fluxMessageHelper;
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
@@ -83,21 +83,21 @@ public class FaResponseRulesMessageServiceBeanTest {
         inOrder.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
     }
 
-    @Test(expected = RulesServiceException.class)
-    public void testIncomingFluxResponseWithWrongXMLShouldEvaluateSaveValidationUpdateExchange() throws UnmarshalException {
-        Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenThrow(UnmarshalException.class);
-        responseMessageRequest = new SetFluxFaResponseMessageRequest();
-        faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
-
-        InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
+    @Test
+    public void testIncomingFluxResponseWithWrongXMLShouldEvaluateSaveValidationUpdateExchange() throws RulesValidationException {
 
         try {
-            verify(rulesEngine, times(10)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
-        } catch (RulesValidationException e) {
-            e.printStackTrace();
+            Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenThrow(UnmarshalException.class);
+            responseMessageRequest = new SetFluxFaResponseMessageRequest();
+            faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
+        } catch (Exception e) {
+            assertTrue((e instanceof RulesServiceException));
+            InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
+            inOrder.verify(rulesEngine, times(0)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
+            inOrder.verify(rulesService, times(0)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
+            inOrder.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.FAILED);
         }
-        // verify(rulesService, times(10)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
-       // verify(exchangeServiceBean, times(20)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
+
     }
 
 }
