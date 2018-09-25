@@ -18,10 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
-import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @Table(name = "ticket")
@@ -79,11 +77,11 @@ public class Ticket implements Serializable {
     @Column(name = "ticket_updattim")
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated = DateUtils.START_OF_TIME.toDate();
+    private Date updated;
 
     @Column(name = "ticket_upuser")
     @NotNull
-    private String updatedBy = StringUtils.EMPTY;
+    private String updatedBy;
 
     public Ticket() {
         this.guid = UUID.randomUUID().toString();

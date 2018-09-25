@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-import org.apache.commons.lang3.StringUtils;
 
 //@formatter:off
 @Entity
@@ -79,11 +77,11 @@ public class CustomRule implements Serializable {
     @Column(name = "rule_updattim")
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updated = DateUtils.getNowDateUTC();
+    private Date updated;
 
     @Column(name = "rule_upuser")
     @NotNull
-    private String updatedBy = StringUtils.EMPTY;
+    private String updatedBy;
 
     @OneToMany(mappedBy = "customRule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RuleSubscription> ruleSubscriptionList;
