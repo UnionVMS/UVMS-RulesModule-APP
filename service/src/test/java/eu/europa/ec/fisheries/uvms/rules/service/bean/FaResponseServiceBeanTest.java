@@ -41,7 +41,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FaResponseRulesMessageServiceBeanTest {
+public class FaResponseServiceBeanTest {
 
     @Mock private RulesMessageProducer producer;
     @Mock private ExchangeServiceBean exchangeServiceBean;
@@ -84,7 +84,7 @@ public class FaResponseRulesMessageServiceBeanTest {
     }
 
     @Test
-    public void testIncomingFluxResponseWithWrongXMLShouldEvaluateSaveValidationUpdateExchange() throws RulesValidationException {
+    public void testIncomingFluxResponseWithWrongXMLShouldUpdateExchange() throws RulesValidationException {
 
         try {
             Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenThrow(UnmarshalException.class);
@@ -92,6 +92,24 @@ public class FaResponseRulesMessageServiceBeanTest {
             faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
         } catch (Exception e) {
             assertTrue((e instanceof RulesServiceException));
+            InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
+            inOrder.verify(rulesEngine, times(0)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
+            inOrder.verify(rulesService, times(0)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
+            inOrder.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.FAILED);
+        }
+
+    }
+
+    @Test
+    public void testIncomingFluxResponseWithValidationExceptionShouldUpdateExchange() throws RulesValidationException {
+
+        try {
+            Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenReturn(fluxResponseMessage);
+            Mockito.when(rulesEngine.evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString())).thenThrow(RulesValidationException.class);
+            responseMessageRequest = new SetFluxFaResponseMessageRequest();
+            faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
+        } catch (Exception e) {
+            assertTrue((e instanceof RulesValidationException));
             InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
             inOrder.verify(rulesEngine, times(0)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
             inOrder.verify(rulesService, times(0)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
