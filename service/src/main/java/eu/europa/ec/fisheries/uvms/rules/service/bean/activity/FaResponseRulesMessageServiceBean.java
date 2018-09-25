@@ -94,7 +94,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
     private RulesEngineBean rulesEngine;
 
     @EJB
-    private RulePostProcessBean rulePostProcessBean;
+    private RulePostProcessBean ruleService;
 
     @EJB
     private ActivityOutQueueConsumer activityConsumer;
@@ -139,7 +139,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             // Validate xsd schema
             fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
             Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
-            ValidationResultDto fluxResponseValidResults = rulePostProcessBean.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResultDto fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
             exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(fluxResponseValidResults));
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
                 log.debug("The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
@@ -180,7 +180,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             extraValues.put(XML, fluxResponse);
 
             Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
-            ValidationResultDto fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResultDto fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
 
@@ -226,7 +226,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
             ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
         }
 
-        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
+        ValidationResultDto validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
                 request.getLogGuid(), RawMsgType.FA_QUERY);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
@@ -278,7 +278,7 @@ public class FaResponseRulesMessageServiceBean extends BaseFaRulesMessageService
         xpaths.add(errorMessage);
         RuleError ruleError = new RuleError(ServiceConstants.INVALID_XML_RULE, ServiceConstants.INVALID_XML_RULE_MESSAGE, "L00", xpaths);
         RawMsgType messageType = getMessageType(request.getMethod());
-        ValidationResultDto validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
+        ValidationResultDto validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
         FLUXResponseMessage fluxResponseMessage = null;

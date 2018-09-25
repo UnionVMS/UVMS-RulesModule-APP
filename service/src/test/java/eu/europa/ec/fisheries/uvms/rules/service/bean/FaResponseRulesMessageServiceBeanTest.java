@@ -10,27 +10,35 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import java.util.Collections;
+import javax.xml.bind.UnmarshalException;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FaResponseRulesMessageServiceBeanTest {
@@ -38,7 +46,7 @@ public class FaResponseRulesMessageServiceBeanTest {
     @Mock private RulesMessageProducer producer;
     @Mock private ExchangeServiceBean exchangeServiceBean;
     @Mock private RulesEngineBean rulesEngine;
-    @Mock private RulePostProcessBean rulePostProcessBean;
+    @Mock private RulePostProcessBean rulesService;
     @Mock private RulesActivityServiceBean activityServiceBean;
     @Mock private ActivityOutQueueConsumer activityConsumer;
     @Mock private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
@@ -48,27 +56,48 @@ public class FaResponseRulesMessageServiceBeanTest {
     @Mock private FLUXMessageHelper fluxMessageHelper;
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
-    private FLUXFAReportMessage fluxResponseMessage = new FLUXFAReportMessage();
-    private FAReportDocument fluxResponseDocument = new FAReportDocument();
+    private FLUXResponseMessage fluxResponseMessage = new FLUXResponseMessage();
+    private FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
     @Before
     public void before(){
-       fluxResponseMessage.setFAReportDocuments(Collections.singletonList(fluxResponseDocument));
+       fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEvaluateIncomingFluxResponseRequestWithNullShouldThrowException(){
         faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
     }
+
     @Test
-    public void testEvaluateIncomingFluxResponseRequest() throws Exception {
-        Mockito.when(fluxMessageHelper.unMarshallAndValidateSchema(null)).thenReturn(fluxResponseMessage);
+    public void testIncomingFluxResponseShouldEvaluateSaveValidationUpdateExchange() throws Exception {
+        Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenReturn(fluxResponseMessage);
         responseMessageRequest = new SetFluxFaResponseMessageRequest();
         faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
-        // Mockito.verify(rulesEngine, times(1)).evaluate(null, null, null, null);
-         Mockito.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
+
+        InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
+
+        inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
+        inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
+        inOrder.verify(exchangeServiceBean, times(1)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
+    }
+
+    @Test(expected = RulesServiceException.class)
+    public void testIncomingFluxResponseWithWrongXMLShouldEvaluateSaveValidationUpdateExchange() throws UnmarshalException {
+        Mockito.when(fluxMessageHelper.unMarshallFluxResponseMessage(null)).thenThrow(UnmarshalException.class);
+        responseMessageRequest = new SetFluxFaResponseMessageRequest();
         faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(responseMessageRequest);
+
+        InOrder inOrder = inOrder(rulesEngine, rulesService, exchangeServiceBean);
+
+        try {
+            verify(rulesEngine, times(10)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
+        } catch (RulesValidationException e) {
+            e.printStackTrace();
+        }
+        // verify(rulesService, times(10)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
+       // verify(exchangeServiceBean, times(20)).updateExchangeMessage(null, ExchangeLogStatusTypeType.UNKNOWN);
     }
 
 }
