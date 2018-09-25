@@ -32,18 +32,16 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaQueryRulesRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -58,9 +56,7 @@ import javax.jms.TextMessage;
 @Stateless
 @Slf4j
 public class RulesEventServiceBean implements EventService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RulesEventServiceBean.class);
-
+    
     private static final String ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST = " Error when un marshalling RulesBaseRequest {}";
 
     @Inject
@@ -74,10 +70,10 @@ public class RulesEventServiceBean implements EventService {
     private RulesMessageProducer rulesProducer;
 
     @EJB
-    private RulesService rulesService;
+    private RulesMovementProcessorBean rulesService;
 
     @EJB
-    private FaReportRulesRulesMessageServiceBean faReportRulesMessageServiceBean;
+    private FaReportRulesMessageServiceBean faReportRulesMessageServiceBean;
 
     @EJB
     private FaResponseRulesMessageServiceBean faResponseRulesMessageServiceBean;
@@ -100,31 +96,28 @@ public class RulesEventServiceBean implements EventService {
             String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
             rulesProducer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
         } catch (RulesModelMarshallException | MessageException e) {
-            LOG.error(" Error when responding to ping {}", e.getMessage());
+            log.error(" Error when responding to ping {}", e.getMessage());
             errorEvent.fire(eventMessage);
         }
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message) {
-        LOG.info(" Validating movement from Received from Exchange Module..");
+    public void setMovementReportReceived(@Observes @SetMovementBatchReportReceivedEvent EventMessage message) {
+        log.info(" Validating movement from Received from Exchange Module..");
         try {
-            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
-            if (baseRequest.getMethod() != RulesModuleMethod.SET_MOVEMENT_REPORT) {
-                LOG.error(" Error, Set Movement Report invoked but it is not the intended method, caller is trying {}", baseRequest.getMethod().name());
-            }
-            SetMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetMovementReportRequest.class);
-            rulesService.setMovementReportReceived(request.getRequest(), request.getType().name(), baseRequest.getUsername());
-        } catch (RulesModelMapperException | RulesServiceException e) {
-            LOG.error(" Error when creating movement {}", e.getMessage());
+            TextMessage jmsMessage = message.getJmsMessage();
+            SetFLUXMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(jmsMessage, SetFLUXMovementReportRequest.class);
+            rulesService.setMovementReportReceived(request, jmsMessage.getJMSMessageID());
+        } catch (RulesModelMapperException | RulesServiceException | JMSException e) {
+            log.error(" Error when creating movement {}", e.getMessage());
         }
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void getCustomRule(@Observes @GetCustomRuleReceivedEvent EventMessage message) {
-        LOG.info(" Get custom rule by guid..");
+        log.info(" Get custom rule by guid..");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             if (baseRequest.getMethod() != RulesModuleMethod.GET_CUSTOM_RULE) {
@@ -135,8 +128,8 @@ public class RulesEventServiceBean implements EventService {
             GetCustomRuleRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetCustomRuleRequest.class);
             CustomRuleType response = rulesService.getCustomRuleByGuid(request.getGuid());
             rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToGetCustomRuleResponse(response));
-        } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
-            LOG.error(" Error when fetching rule by guid {}", e.getMessage());
+        } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
+            log.error(" Error when fetching rule by guid {}", e.getMessage());
             errorEvent.fire(message);
         }
     }
@@ -144,7 +137,7 @@ public class RulesEventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void getTicketsByMovements(@Observes @GetTicketsByMovementsEvent EventMessage message) {
-        LOG.info(" Fetch tickets by movements..");
+        log.info(" Fetch tickets by movements..");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             if (baseRequest.getMethod() != RulesModuleMethod.GET_TICKETS_BY_MOVEMENTS) {
@@ -157,7 +150,7 @@ public class RulesEventServiceBean implements EventService {
             String responseString = RulesModuleResponseMapper.mapToGetTicketListByMovementsResponse(response.getTickets());
             rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), responseString);
         } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
-            LOG.error(" Error when fetching tickets by movements {}", e.getMessage());
+            log.error(" Error when fetching tickets by movements {}", e.getMessage());
             errorEvent.fire(message);
         }
 
@@ -166,7 +159,7 @@ public class RulesEventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void countTicketsByMovementsEvent(@Observes @CountTicketsByMovementsEvent EventMessage message) {
-        LOG.info(" Count tickets by movements..");
+        log.info(" Count tickets by movements..");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             if (baseRequest.getMethod() != RulesModuleMethod.COUNT_TICKETS_BY_MOVEMENTS) {
@@ -178,7 +171,7 @@ public class RulesEventServiceBean implements EventService {
             long response = rulesService.countTicketsByMovements(request.getMovementGuids());
             rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToCountTicketListByMovementsResponse(response));
         } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
-            LOG.error(" Error when fetching ticket count by movements {}", e.getMessage());
+            log.error(" Error when fetching ticket count by movements {}", e.getMessage());
             errorEvent.fire(message);
         }
     }
@@ -186,7 +179,7 @@ public class RulesEventServiceBean implements EventService {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void getTicketsAndRulesByMovementsEvent(@Observes @GetTicketsAndRulesByMovementsEvent EventMessage message) {
-        LOG.info(" Fetch tickets and rules by movements..");
+        log.info(" Fetch tickets and rules by movements..");
         try {
             RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
             if (baseRequest.getMethod() != RulesModuleMethod.GET_TICKETS_AND_RULES_BY_MOVEMENTS) {
@@ -198,7 +191,7 @@ public class RulesEventServiceBean implements EventService {
             GetTicketsAndRulesByMovementsResponse response = rulesService.getTicketsAndRulesByMovements(request.getMovementGuids());
             rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.getTicketsAndRulesByMovementsResponse(response.getTicketsAndRules()));
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
-            LOG.error(" Error when fetching tickets and rules by movements {}", e.getMessage());
+            log.error(" Error when fetching tickets and rules by movements {}", e.getMessage());
             errorEvent.fire(message);
         }
     }
@@ -211,9 +204,9 @@ public class RulesEventServiceBean implements EventService {
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
             faReportRulesMessageServiceBean.evaluateIncomingFLUXFAReport(request);
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
-            LOG.error(" Error when sending FLUXFAReportMessage to rules {}", e);
+            log.error(" Error when sending FLUXFAReportMessage to rules {}", e);
         }
     }
 
@@ -224,9 +217,9 @@ public class RulesEventServiceBean implements EventService {
             SetFLUXFAReportMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXFAReportMessageRequest.class);
             faReportRulesMessageServiceBean.evaluateOutgoingFaReport(request);
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
-            LOG.error(" Error when sending FLUXFAReportMessage to rules {}", e);
+            log.error(" Error when sending FLUXFAReportMessage to rules {}", e);
         }
     }
 
@@ -237,9 +230,9 @@ public class RulesEventServiceBean implements EventService {
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
             faQueryRulesMessageServiceBean.evaluateIncomingFAQuery(request);
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
-            LOG.error(" Error when sending FLUXFAQueryMessage to rules {}", e);
+            log.error(" Error when sending FLUXFAQueryMessage to rules {}", e);
         }
     }
 
@@ -250,9 +243,9 @@ public class RulesEventServiceBean implements EventService {
             SetFaQueryMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFaQueryMessageRequest.class);
             faQueryRulesMessageServiceBean.evaluateOutgoingFAQuery(request);
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
-            LOG.error(" Error when sending FLUXFAQueryMessage to rules {}", e);
+            log.error(" Error when sending FLUXFAQueryMessage to rules {}", e);
         }
     }
 
@@ -263,21 +256,21 @@ public class RulesEventServiceBean implements EventService {
             SetFluxFaResponseMessageRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFluxFaResponseMessageRequest.class);
             faResponseRulesMessageServiceBean.evaluateIncomingFluxResponseRequest(request);
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         } catch (RulesServiceException e) {
-            LOG.error(" Error when sending FLUXResponseMessage to rules {}", e);
+            log.error(" Error when sending FLUXResponseMessage to rules {}", e);
         }
     }
 
     public void setFLUXMDRSyncRequestMessageReceivedEvent(@Observes @SetFLUXMDRSyncMessageReceivedEvent EventMessage message){
     	 try {
 	         RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
-	         LOG.debug("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
+	         log.debug("RulesBaseRequest Marshalling was successful. Method : "+baseRequest.getMethod());
 	         SetFLUXMDRSyncMessageRulesRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesRequest.class);
-	         LOG.debug("SetFLUXMDRSyncMessageRequest Marshall was successful");
+	         log.debug("SetFLUXMDRSyncMessageRequest Marshall was successful");
              mdrRulesMessageServiceBean.mapAndSendFLUXMdrRequestToExchange(request.getRequest(), request.getFr());
     	 } catch (RulesModelMarshallException e) {
-             LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+             log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
          }
     }
 
@@ -287,13 +280,13 @@ public class RulesEventServiceBean implements EventService {
             SetFLUXMDRSyncMessageRulesResponse request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), SetFLUXMDRSyncMessageRulesResponse.class);
             mdrRulesMessageServiceBean.mapAndSendFLUXMdrResponseToMdrModule(request.getRequest());
         } catch (RulesModelMarshallException e) {
-            LOG.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
+            log.error(ERROR_WHEN_UN_MARSHALLING_RULES_BASE_REQUEST, e);
         }
     }
 
     @Override
     public void receiveSalesQueryEvent(@Observes @ReceiveSalesQueryEvent EventMessage message) {
-        LOG.info(" Received ReceiveSalesQueryEvent..");
+        log.info(" Received ReceiveSalesQueryEvent..");
         try {
             ReceiveSalesQueryRequest receiveSalesQueryRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesQueryRequest.class);
             salesRulesMessageServiceBean.receiveSalesQueryRequest(receiveSalesQueryRequest);
@@ -304,7 +297,7 @@ public class RulesEventServiceBean implements EventService {
 
     @Override
     public void receiveSalesReportEvent(@Observes @ReceiveSalesReportEvent EventMessage message) {
-        LOG.info(" Received ReceiveSalesReportEvent..");
+        log.info(" Received ReceiveSalesReportEvent..");
         try {
             ReceiveSalesReportRequest receiveSalesReportRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesReportRequest.class);
             salesRulesMessageServiceBean.receiveSalesReportRequest(receiveSalesReportRequest);
@@ -315,7 +308,7 @@ public class RulesEventServiceBean implements EventService {
 
     @Override
     public void receiveSalesResponseEvent(@Observes @ReceiveSalesResponseEvent EventMessage message) {
-        LOG.info(" Received ReceiveSalesResponseEvent..");
+        log.info(" Received ReceiveSalesResponseEvent..");
         try {
             ReceiveSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), ReceiveSalesResponseRequest.class);
             salesRulesMessageServiceBean.receiveSalesResponseRequest(rulesRequest);
@@ -326,7 +319,7 @@ public class RulesEventServiceBean implements EventService {
 
     @Override
     public void sendSalesReportEvent(@Observes @SendSalesReportEvent EventMessage message) {
-        LOG.info(" Received SendSalesReportEvent..");
+        log.info(" Received SendSalesReportEvent..");
         try {
             SendSalesReportRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), SendSalesReportRequest.class);
             salesRulesMessageServiceBean.sendSalesReportRequest(rulesRequest);
@@ -337,7 +330,7 @@ public class RulesEventServiceBean implements EventService {
 
     @Override
     public void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message) {
-        LOG.info(" Received SendSalesResponseEvent..");
+        log.info(" Received SendSalesResponseEvent..");
         try {
             SendSalesResponseRequest rulesRequest = eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller.unmarshallString(message.getJmsMessage().getText(), SendSalesResponseRequest.class);
             salesRulesMessageServiceBean.sendSalesResponseRequest(rulesRequest);
@@ -365,7 +358,7 @@ public class RulesEventServiceBean implements EventService {
             rulesProducer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
         }
         catch (AuditModelMarshallException | MessageException e) {
-            LOG.error(" Error when sending message to Audit {}", e.getMessage());
+            log.error(" Error when sending message to Audit {}", e.getMessage());
         }
     }
 

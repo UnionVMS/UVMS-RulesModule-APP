@@ -45,7 +45,7 @@ public class AssetClientBean implements IAssetClient {
             return asset.getCountryCode().equals(flagState);
 
         } catch ( Exception  e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return true;
     }

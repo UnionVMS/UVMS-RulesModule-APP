@@ -12,6 +12,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import java.util.UUID;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
@@ -25,15 +33,6 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import java.util.UUID;
 
 /**
  * Message driven bean that receives all messages that
@@ -54,8 +53,8 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(RulesEventMessageConsumerBean.class);
 
     @Inject
-    @SetMovementReportReceivedEvent
-    private Event<EventMessage> setMovementReportRecievedEvent;
+    @SetMovementBatchReportReceivedEvent
+    private Event<EventMessage> setMovementReportBatchRecievedEvent;
 
     @Inject
     @GetTicketsByMovementsEvent
@@ -138,7 +137,7 @@ public class RulesEventMessageConsumerBean implements MessageListener {
         String id = UUID.randomUUID().toString();
         MDC.put("clientName", id);
         MDC.remove("requestId");
-        LOG.debug("Message received in rules. Times redelivered: " + getTimesRedelivered(message));
+        LOG.debug("Message received in rules. Times redelivered: ", getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
@@ -146,8 +145,8 @@ public class RulesEventMessageConsumerBean implements MessageListener {
             RulesModuleMethod method = request.getMethod();
             LOG.info("\n\nRequest message method: {}", method.value());
             switch (method) {
-                case SET_MOVEMENT_REPORT:
-                    setMovementReportRecievedEvent.fire(new EventMessage(textMessage));
+                case RECEIVE_MOVEMENT_BATCH:
+                    setMovementReportBatchRecievedEvent.fire(new EventMessage(textMessage));
                     break;
                 case PING:
                     pingReceivedEvent.fire(new EventMessage(textMessage));

@@ -80,7 +80,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class RulesDomainModelBean implements RulesDomainModel {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesDomainModelBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesDomainModelBean.class);
 
     @EJB
     private RulesDao rulesDao;
@@ -645,13 +645,6 @@ public class RulesDomainModelBean implements RulesDomainModel {
             List<TicketSearchValue> searchKeyValues = TicketSearchFieldMapper.mapSearchField(query.getTicketSearchCriteria());
             List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(loggedInUser);
 
-            // If no valid guids, return empty ticket list
-//            if (validRuleGuids.isEmpty()) {
-//                response.setTotalNumberOfPages(0);
-//                response.setCurrentPage(query.getPagination().getPage());
-//                response.setTicketList(ticketList);
-//                return response;
-//            }
             String sql = TicketSearchFieldMapper.createSelectSearchSql(searchKeyValues, validRuleGuids, true);
             String countSql = TicketSearchFieldMapper.createCountSearchSql(searchKeyValues, validRuleGuids, true);
             Long numberMatches = rulesDao.getTicketListSearchCount(countSql, searchKeyValues);

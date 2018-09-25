@@ -10,6 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.List;
+import java.util.UUID;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
@@ -33,12 +39,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 abstract class BaseFaRulesMessageServiceBean {
@@ -68,21 +68,21 @@ abstract class BaseFaRulesMessageServiceBean {
         return new ValidationResultDto(true, false, false, null);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult) {
-        updateRequestMessageStatusInExchange(logGuid, validationResult, false);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, validationResult, false);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult, Boolean duplicate) {
-        updateRequestMessageStatusInExchange(logGuid, calculateMessageValidationStatus(validationResult), duplicate);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ValidationResultDto validationResult, Boolean duplicate) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, calculateMessageValidationStatus(validationResult), duplicate);
     }
 
-    void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
-        updateRequestMessageStatusInExchange(logGuid, statusType, false);
+    void updateRequestMessageStatusInExchange(String exchangeLogGuid, ExchangeLogStatusTypeType statusType) {
+        updateRequestMessageStatusInExchange(exchangeLogGuid, statusType, false);
     }
 
     private void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType, Boolean duplicate) {
         try {
-            String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType, duplicate);
+            String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
             getRulesProducer().sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
         } catch (ExchangeModelMarshallException | MessageException e) {
@@ -90,7 +90,7 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    protected ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
@@ -104,9 +104,10 @@ abstract class BaseFaRulesMessageServiceBean {
         }
     }
 
-    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType) {
+    SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, String exchangeLogGuid) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, username, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC);
+
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, exchangeLogGuid);
             final String corrId = getRulesProducer().sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
             final TextMessage message = getActivityConsumer().getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
@@ -126,7 +127,7 @@ abstract class BaseFaRulesMessageServiceBean {
         getRulesProducer().sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
+    public IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
         IDType faQueryGUID = null;
         if (faQueryMessage.getFAQuery() != null) {
             faQueryGUID = faQueryMessage.getFAQuery().getID();

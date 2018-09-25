@@ -26,22 +26,19 @@ import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import java.util.List;
 
 public class MovementFactMapper {
+
     public static MovementFact mapMovementFact(MovementType movement, MobileTerminalType mobileTerminal, Asset asset, String comChannelType, List<AssetGroup> assetGroups, Long timeDiffInSeconds, Integer numberOfReportsLast24Hours, String channelGuid, List<String> vicinityOf) throws RulesServiceException {
         if (movement == null) {
-            throw new RulesServiceException("Movement was null, asset: " + asset + ", mobileTerminal: " + mobileTerminal);
+            return null;
         }
         MovementFact fact = new MovementFact();
-
         fact.setChannelGuid(channelGuid);
-
         fact.setMovementMovement(movement);
         fact.setMovementGuid(movement.getGuid());
-
         // ROOT
         for (AssetGroup assetGroup : assetGroups) {
             fact.getAssetGroups().add(assetGroup.getGuid());
         }
-
         // ACTIVITY
         if (movement.getActivity() != null) {
             fact.setActivityCallback(movement.getActivity().getCallback());
@@ -50,7 +47,6 @@ public class MovementFactMapper {
                 fact.setActivityMessageType(movement.getActivity().getMessageType().name());
             }
         }
-
         // AREA
         if (movement.getMetaData() != null) {
             List<MovementMetaDataAreaType> areas = movement.getMetaData().getAreas();
@@ -71,7 +67,6 @@ public class MovementFactMapper {
                 }
             }
         }
-
         // ASSET
         if (asset != null) {
             fact.setAssetIdGearType(asset.getGearType());
@@ -84,7 +79,6 @@ public class MovementFactMapper {
             fact.setAssetStatus(asset.isActive() ? "ACTIVE":"INACTIVE");
             fact.setMmsiNo(asset.getMmsiNo());
         }
-
         // MOBILE_TERMINAL
         if (mobileTerminal != null) {
             fact.setMobileTerminalGuid(mobileTerminal.getMobileTerminalId().getGuid());
@@ -110,7 +104,6 @@ public class MovementFactMapper {
             }
             fact.setMobileTerminalStatus(mobileTerminal.isInactive() ? "INACTIVE":"ACTIVE");
         }
-
         // POSITION
         if (movement.getPosition() != null) {
             fact.setAltitude(movement.getPosition().getAltitude());
@@ -144,11 +137,9 @@ public class MovementFactMapper {
         fact.setStatusCode(movement.getStatus());
         // TODO
         fact.setVicinityOf(vicinityOf);
-
         // REPORT
         fact.setTimeDiffPositionReport(timeDiffInSeconds);
         fact.setSumPositionReport(numberOfReportsLast24Hours);
-
         return fact;
     }
 
