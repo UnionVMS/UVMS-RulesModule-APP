@@ -159,11 +159,20 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
     }
 
     public void evaluateAndSendToExchange(FLUXResponseMessage fluxResponseMessageObj, RulesBaseRequest request, PluginType pluginType, boolean correctGuidProvided, Map<String, String> copyOfContextMap) {
+
+        String id = fluxMessageHelper.getIDs(fluxResponseMessageObj);
+        if (StringUtils.isEmpty(id)){
+            throw new IllegalArgumentException("ID is null");
+        }
+        String logGuid = request.getLogGuid();
+        String onValue = request.getOnValue();
+        String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
+        String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
         try {
             MDC.setContextMap(copyOfContextMap);
             log.info("Preparing FLUXResponseMessage to send back to Exchange module.");
             if (!correctGuidProvided) {
-                fillFluxTLOnValue(fluxResponseMessageObj, request.getOnValue());
+                fillFluxTLOnValue(fluxResponseMessageObj, onValue);
             }
 
             // Get fluxNationCode (Eg. XEU) from Config Module.
@@ -175,7 +184,6 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
             List<FADocumentID> matchingIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
 
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
-            String logGuid = request.getLogGuid();
             Map<ExtraValueType, Object> extraValues = populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
             extraValues.put(XML, fluxResponse);
 
@@ -183,19 +191,13 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
             ValidationResultDto fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
-
-            String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
-            String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
-            String onValue = request.getOnValue();
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAReponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid,
-                    nationCode, onValue, status, destination, getExchangePluginType(pluginType),
-                    fluxResponseMessageObj.getFLUXResponseDocument().getIDS().get(0).getValue());
-            producer.sendDataSourceMessage(fluxFAReponseText, DataSourceQueue.EXCHANGE);
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, onValue, status, destination, getExchangePluginType(pluginType), id);
+            getRulesProducer().sendDataSourceMessage(fluxFAResponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
-            idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid dublication in DB.
+            idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid duplication in DB.
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
             log.info("FLUXFAResponse successfully sent back to Exchange.");
         } catch (JAXBException e) {

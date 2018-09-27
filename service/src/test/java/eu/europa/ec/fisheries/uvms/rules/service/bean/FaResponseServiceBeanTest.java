@@ -11,19 +11,23 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.xml.bind.UnmarshalException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +36,7 @@ import org.mockito.*;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
@@ -50,6 +55,7 @@ public class FaResponseServiceBeanTest {
     @Mock private RulesActivityServiceBean activityServiceBean;
     @Mock private ActivityOutQueueConsumer activityConsumer;
     @Mock private FAResponseServiceBean faResponseValidatorAndSender;
+    @Mock private RulesConfigurationCache ruleModuleCache;
     @Mock private RulesDao rulesDaoBean;
     @Mock private FaReportServiceBean faReportRulesMessageBean;
     @InjectMocks private FAResponseServiceBean faResponseRulesMessageServiceBean;
@@ -58,11 +64,12 @@ public class FaResponseServiceBeanTest {
     private SetFluxFaResponseMessageRequest responseMessageRequest;
     private FLUXResponseMessage fluxResponseMessage = new FLUXResponseMessage();
     private FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-    private FAReportQueryResponseIdsMapper faIdsMapper;
+    private HashMap mdc = new HashMap<String, String>();
 
     @Before
     public void before(){
-       fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
+        faResponseRulesMessageServiceBean.init();
+        fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,4 +125,23 @@ public class FaResponseServiceBeanTest {
 
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testEvaluateAndSendToExchangeWithNullID(){
+        faResponseRulesMessageServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
+    }
+
+    @Test
+    public void testEvaluateAndSendToExchangeWithSetFaQueryMessageRequest(){
+
+        FLUXResponseMessage fluxResponseMessage = new FLUXResponseMessage();
+        FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+        List<IDType> idTypeList = new ArrayList<>();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType idType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType();
+        idType.setValue("value");
+        idTypeList.add(idType);
+        fluxResponseDocument.setIDS(idTypeList);
+        fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
+
+        faResponseRulesMessageServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
+    }
 }

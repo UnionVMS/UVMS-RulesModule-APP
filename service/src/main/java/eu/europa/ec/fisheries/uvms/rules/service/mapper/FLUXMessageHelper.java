@@ -181,4 +181,17 @@ public class FLUXMessageHelper {
         throw new UnmarshalException("ERROR WHILE TRYING TO LOOKUP XSD SCHEMA");
     }
 
+    public String getIDs(FLUXResponseMessage fluxResponseMessageObj) {
+        String id = null;
+        if (fluxResponseMessageObj != null){
+            FLUXResponseDocument fluxResponseDocument = fluxResponseMessageObj.getFLUXResponseDocument();
+            if (fluxResponseDocument != null){
+                List<IDType> ids = fluxResponseMessageObj.getFLUXResponseDocument().getIDS();
+                if (CollectionUtils.isNotEmpty(ids)){
+                    id = ids.get(0).getValue();
+                }
+            }
+        }
+        return id;
+    }
 }
