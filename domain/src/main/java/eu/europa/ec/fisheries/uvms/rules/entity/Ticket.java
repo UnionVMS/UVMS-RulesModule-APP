@@ -12,15 +12,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
-import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
-import lombok.Data;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
+import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
+import lombok.Data;
 
 @Entity
 @Table(name = "ticket")

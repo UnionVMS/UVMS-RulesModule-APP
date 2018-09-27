@@ -234,6 +234,13 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
         evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
     }
 
+    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
+        IDType idType = new IDType();
+        idType.setSchemeID("FLUXTL_ON");
+        idType.setValue(onValue);
+        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
+    }
+
     public void sendFLUXResponseMessageOnException(String errorMessage, String rawMessage, RulesBaseRequest request, Object message) {
         if (request == null) {
             log.error("Could not send FLUXResponseMessage. Request is null.");
@@ -478,14 +485,6 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
         validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
         return singletonList(validationResultDocument);
     }
-
-    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
-        IDType idType = new IDType();
-        idType.setSchemeID("FLUXTL_ON");
-        idType.setValue(onValue);
-        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
-    }
-
 
     private Map<ExtraValueType, Object> populateExtraValuesMap(String fluxNationCode, List<FADocumentID> matchingIdsFromDB) {
         Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
