@@ -21,7 +21,7 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -43,7 +43,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XM
 @Stateless
 @LocalBean
 @Slf4j
-public class FaQueryServiceBean extends AbstractFLUXServiceBean {
+public class RulesFaQueryServiceBean extends AbstractFLUXServiceBean {
 
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
 
@@ -63,16 +63,16 @@ public class FaQueryServiceBean extends AbstractFLUXServiceBean {
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FAResponseServiceBean faResponseServiceBean;
+    private RulesFAResponseServiceBean faResponseServiceBean;
 
     @EJB
     private RulesDao rulesDaoBean;
 
     @EJB
-    private ExchangeServiceBean exchangeServiceBean;
+    private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
-    private FaReportServiceBean faReportRulesMessageBean;
+    private RulesFaReportServiceBean faReportRulesMessageBean;
 
     private FLUXMessageHelper fluxMessageHelper;
 
@@ -205,7 +205,7 @@ public class FaQueryServiceBean extends AbstractFLUXServiceBean {
     }
 
     @Override
-    FAResponseServiceBean getResponseValidator() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseServiceBean;
     }
 }

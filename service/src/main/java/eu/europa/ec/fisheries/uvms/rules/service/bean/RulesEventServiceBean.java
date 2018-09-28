@@ -41,9 +41,9 @@ import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.EventService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaQueryServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
@@ -72,13 +72,13 @@ public class RulesEventServiceBean implements EventService {
     private RulesMovementProcessorBean rulesService;
 
     @EJB
-    private FaReportServiceBean faReportRulesMessageServiceBean;
+    private RulesFaReportServiceBean faReportRulesMessageServiceBean;
 
     @EJB
-    private FAResponseServiceBean faResponseRulesMessageServiceBean;
+    private RulesFAResponseServiceBean faResponseRulesMessageServiceBean;
 
     @EJB
-    private FaQueryServiceBean faQueryRulesMessageServiceBean;
+    private RulesFaQueryServiceBean faQueryRulesMessageServiceBean;
 
     @EJB
     private MdrRulesMessageServiceBean mdrRulesMessageServiceBean;

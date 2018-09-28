@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Stateless
 @LocalBean
 @Slf4j
-public class ExchangeServiceBean {
+public class RulesExchangeServiceBean {
 
     @EJB
     private RulesMessageProducer rulesProducer;

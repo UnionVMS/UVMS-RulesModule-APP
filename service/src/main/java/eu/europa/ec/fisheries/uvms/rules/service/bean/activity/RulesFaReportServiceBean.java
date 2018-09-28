@@ -33,7 +33,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -56,7 +56,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @LocalBean
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FaReportServiceBean extends AbstractFLUXServiceBean {
+public class RulesFaReportServiceBean extends AbstractFLUXServiceBean {
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -76,7 +76,7 @@ public class FaReportServiceBean extends AbstractFLUXServiceBean {
     private RulesActivityServiceBean activityServiceBean;
 
     @EJB
-    private ExchangeServiceBean exchangeServiceBean;
+    private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
     private AssetService assetService;
@@ -85,7 +85,7 @@ public class FaReportServiceBean extends AbstractFLUXServiceBean {
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FAResponseServiceBean faResponseValidatorAndSender;
+    private RulesFAResponseServiceBean faResponseValidatorAndSender;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -239,7 +239,7 @@ public class FaReportServiceBean extends AbstractFLUXServiceBean {
     }
 
     @Override
-    FAResponseServiceBean getResponseValidator() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseValidatorAndSender;
     }
 

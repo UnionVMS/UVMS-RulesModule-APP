@@ -40,7 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.ExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -83,7 +83,7 @@ import static java.util.Collections.singletonList;
 @Stateless
 @LocalBean
 @Slf4j
-public class FAResponseServiceBean extends AbstractFLUXServiceBean {
+public class RulesFAResponseServiceBean extends AbstractFLUXServiceBean {
 
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 
@@ -100,13 +100,13 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
     private ActivityOutQueueConsumer activityConsumer;
 
     @EJB
-    private FAResponseServiceBean faResponseServiceBean;
+    private RulesFAResponseServiceBean faResponseServiceBean;
 
     @EJB
     private RulesDao rulesDaoBean;
 
     @EJB
-    private ExchangeServiceBean exchangeServiceBean;
+    private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
@@ -513,7 +513,7 @@ public class FAResponseServiceBean extends AbstractFLUXServiceBean {
     }
 
     @Override
-    FAResponseServiceBean getResponseValidator() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseServiceBean;
     }
 
