@@ -2373,7 +2373,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="191"/>
             <column name="br_id" value="FA-L01-00-0191"/>
-            <column name="expression" value="!isEmpty(ids) &amp;&amp; schemeIdContainsAny(ids, &quot;EU_TRIP_ID&quot;)"/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;EU_TRIP_ID&quot;)"/>
             <column name="note" value="Check attribute schemeID .ids must be EU_TRIP_ID"/>
             <column name="message" value="Trip ID has an invalid schemeID."/>
             <column name="level" value="L01"/>
