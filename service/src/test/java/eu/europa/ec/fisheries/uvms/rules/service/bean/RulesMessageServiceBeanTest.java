@@ -42,8 +42,8 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaReportRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -86,13 +86,13 @@ public class RulesMessageServiceBeanTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @InjectMocks
-    FaReportRulesMessageServiceBean messageServiceBean;
+    RulesFaReportServiceBean messageServiceBean;
 
     @InjectMocks
     SalesRulesMessageServiceBean salesRulesMessageServiceBean;
 
     @InjectMocks
-    FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    RulesFAResponseServiceBean faResponseValidatorAndSender;
 
     @Mock
     RulesMessageProducer producer;
@@ -230,7 +230,7 @@ public class RulesMessageServiceBeanTest {
         Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), Mockito.anyString(), Mockito.any(RawMsgType.class));
         RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
         request.setUsername("USER1");
-        //messageServiceBean.validateAndSendResponseToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
+        //messageServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
     }
 
     @Test

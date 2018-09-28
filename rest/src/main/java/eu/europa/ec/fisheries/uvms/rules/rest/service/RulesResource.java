@@ -22,7 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FaResponseRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -72,7 +72,7 @@ public class RulesResource {
     private GearMatrix gearMatrix;
 
     @EJB
-    private FaResponseRulesMessageServiceBean faResponseValidatorAndSender;
+    private RulesFAResponseServiceBean faResponseValidatorAndSender;
 
     @EJB
     private AssetService assetService;
