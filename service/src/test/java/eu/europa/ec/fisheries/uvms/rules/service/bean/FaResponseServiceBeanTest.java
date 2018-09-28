@@ -27,7 +27,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServ
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ public class FaResponseServiceBeanTest {
     @Mock private RulesDao rulesDaoBean;
     @Mock private RulesFaReportServiceBean faReportRulesMessageBean;
     @InjectMocks private RulesFAResponseServiceBean faResponseRulesMessageServiceBean;
-    @Mock private FLUXMessageHelper fluxMessageHelper;
+    @Mock private RulesFLUXMessageHelper fluxMessageHelper;
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
     private FLUXResponseMessage fluxResponseMessage = new FLUXResponseMessage();
@@ -137,7 +137,7 @@ public class FaResponseServiceBeanTest {
         Mockito.when(fluxMessageHelper.getIDs(fluxResponseMessage)).thenReturn("value");
 
         faResponseRulesMessageServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
-        
+
         InOrder inOrder = inOrder(ruleModuleCache, rulesDaoBean, fluxMessageHelper, rulesEngine, rulesService);
         inOrder.verify(fluxMessageHelper, times(1)).getIDs(any(FLUXResponseMessage.class));
         inOrder.verify(ruleModuleCache, times(1)).getSingleConfig(anyString());

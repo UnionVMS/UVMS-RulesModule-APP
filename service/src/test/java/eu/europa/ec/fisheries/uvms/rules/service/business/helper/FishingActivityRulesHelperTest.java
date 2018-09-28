@@ -21,7 +21,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
@@ -32,7 +32,7 @@ import static org.jgroups.util.Util.assertTrue;
 
 public class FishingActivityRulesHelperTest {
 
-    FLUXMessageHelper rulesHelper = new FLUXMessageHelper();
+    RulesFLUXMessageHelper rulesHelper = new RulesFLUXMessageHelper();
     @Test
     public void testWithEmptyFLUXFAReportMessage(){
         FLUXFAReportMessage fluxfaReportMessage = new FLUXFAReportMessage();

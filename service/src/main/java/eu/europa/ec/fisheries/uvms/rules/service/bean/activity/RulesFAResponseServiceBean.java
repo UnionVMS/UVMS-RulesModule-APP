@@ -54,7 +54,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -114,7 +114,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXServiceBean {
     @EJB
     private RulesMessageProducer producer;
 
-    private FLUXMessageHelper fluxMessageHelper;
+    private RulesFLUXMessageHelper fluxMessageHelper;
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -124,7 +124,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXServiceBean {
     @PostConstruct
     public void init() {
         faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
-        fluxMessageHelper = new FLUXMessageHelper();
+        fluxMessageHelper = new RulesFLUXMessageHelper();
     }
 
     public void evaluateIncomingFluxResponseRequest(SetFluxFaResponseMessageRequest request) {

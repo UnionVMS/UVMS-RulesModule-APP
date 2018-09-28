@@ -33,7 +33,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_QUERY_ID;
 
-public class FLUXMessageHelper {
+public class RulesFLUXMessageHelper {
 
     private static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
     private static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
@@ -170,7 +170,7 @@ public class FLUXMessageHelper {
 
     public Schema loadXSDSchema(String xsdLocation) throws UnmarshalException {
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        URL resource = FLUXMessageHelper.class.getClassLoader().getResource(xsdLocation);
+        URL resource = RulesFLUXMessageHelper.class.getClassLoader().getResource(xsdLocation);
         if (resource != null) {
             try {
                 return sf.newSchema(resource);

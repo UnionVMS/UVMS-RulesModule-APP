@@ -42,7 +42,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.FLUXMessageHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -90,12 +90,12 @@ public class RulesFaReportServiceBean extends AbstractFLUXServiceBean {
     @EJB
     private RulesDao rulesDaoBean;
 
-    private FLUXMessageHelper fluxMessageHelper;
+    private RulesFLUXMessageHelper fluxMessageHelper;
 
     @PostConstruct
     public void init() {
         faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
-        fluxMessageHelper = new FLUXMessageHelper();
+        fluxMessageHelper = new RulesFLUXMessageHelper();
     }
 
     public void evaluateIncomingFLUXFAReport(SetFLUXFAReportMessageRequest request) {
