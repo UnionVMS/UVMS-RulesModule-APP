@@ -10,28 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
@@ -52,15 +36,12 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 public class AbstractFactTest {
 
@@ -813,6 +794,31 @@ public class AbstractFactTest {
         boolean result = fact.schemeIdContainsAny(idTypes, "CFR");
         assertFalse(result);
     }
+
+
+    @Test
+    public void testSchemeIdContainsAnyWith1EU_TRIP_IDShouldReturnFalse() {
+
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "EU_TRIP_ID");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("value3", "EU_TRIP_ID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "EU");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+        boolean result = fact.schemeIdContainsAny(idTypes, "EU_TRIP_ID");
+        assertFalse(result);
+    }
+
+    @Test
+    public void testSchemeIdContainsAnyWith0EU_TRIP_IDShouldReturnTrue() {
+
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "EU_ID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "EU");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.schemeIdContainsAny(idTypes, "EU_TRIP_ID");
+        assertTrue(result);
+    }
+
 
     @Test
     public void testSchemeIdContainsAllOrNone() {

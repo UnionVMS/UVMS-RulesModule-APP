@@ -190,7 +190,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAny(IdType idType, String... values) {
-        return schemeIdContainsAny(Arrays.asList(idType), values);
+        return schemeIdContainsAny(Collections.singletonList(idType), values);
     }
 
     /**
