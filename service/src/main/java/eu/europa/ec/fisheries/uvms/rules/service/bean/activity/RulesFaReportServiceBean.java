@@ -56,7 +56,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @LocalBean
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RulesFaReportServiceBean extends AbstractFLUXServiceBean {
+public class RulesFaReportServiceBean extends AbstractFLUXService {
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 

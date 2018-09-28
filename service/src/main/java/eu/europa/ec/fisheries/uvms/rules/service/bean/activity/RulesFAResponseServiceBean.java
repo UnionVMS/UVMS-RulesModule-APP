@@ -83,7 +83,7 @@ import static java.util.Collections.singletonList;
 @Stateless
 @LocalBean
 @Slf4j
-public class RulesFAResponseServiceBean extends AbstractFLUXServiceBean {
+public class RulesFAResponseServiceBean extends AbstractFLUXService {
 
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 

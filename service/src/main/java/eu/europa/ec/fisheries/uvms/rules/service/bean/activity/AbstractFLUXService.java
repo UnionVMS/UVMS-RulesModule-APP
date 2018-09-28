@@ -38,7 +38,7 @@ import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Slf4j
-abstract class AbstractFLUXServiceBean {
+abstract class AbstractFLUXService {
 
     boolean isCorrectUUID(List<IDType> ids) {
         boolean uuidIsCorrect = false;

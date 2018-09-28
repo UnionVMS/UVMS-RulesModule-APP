@@ -43,7 +43,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XM
 @Stateless
 @LocalBean
 @Slf4j
-public class RulesFaQueryServiceBean extends AbstractFLUXServiceBean {
+public class RulesFaQueryServiceBean extends AbstractFLUXService {
 
     private static final String VALIDATION_RESULTED_IN_ERRORS = "[WARN] Validation resulted in errors. Not going to send msg to Activity module..";
 
