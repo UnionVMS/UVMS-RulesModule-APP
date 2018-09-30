@@ -21,4 +21,12 @@
                 >
     </changeSet>
 
+    <changeSet id="23514671557256257255" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAny(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;)"/>
+            <where>BR_ID = 'FA-L02-00-0053'</where>
+        </update
+        >
+    </changeSet>
+
 </databaseChangeLog>

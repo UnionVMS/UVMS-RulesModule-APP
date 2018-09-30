@@ -118,19 +118,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
-        if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
-            return false;
-        }
-        String flagStateToMatch = StringUtils.EMPTY;
-        for (IdType idType : idTypes) {
-            if (schemeIdToSearchFor.equals(idType.getSchemeId())) {
-                flagStateToMatch = idType.getValue();
-            }
-        }
-        return StringUtils.equals(valueToMatch, flagStateToMatch);
-    }
-
     public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -171,18 +158,6 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Checks if the schemeId Contains Any then it checks if it contains all.
-     * Otherwise it means that it contains none.
-     *
-     * @param idTypes
-     * @param valuesToMatch
-     * @return
-     */
-    public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
-    }
-
-    /**
      * Checks if one of the String... array elements exists in the idType.
      *
      * @param idType
@@ -216,26 +191,6 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean schemeIdContainsOnly(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return false;
-        }
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getSchemeId())) {
-                    hits++;
-                }
-            }
-        }
-        return idTypes.size() == hits;
-    }
-
-    public boolean schemeIdContains(List<IdType> idTypes, String... valuesToMatch) {
-        return !schemeIdContainsAll(idTypes, valuesToMatch);
-    }
-
-    @Deprecated
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -252,6 +207,7 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
+    @Deprecated
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
             return false;
@@ -266,6 +222,7 @@ public abstract class AbstractFact {
         return false;
     }
 
+    @Deprecated
     private boolean isSchemeIdPresent(IdType idType) {
         return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
     }
@@ -382,7 +339,7 @@ public abstract class AbstractFact {
     public boolean validateFormat(IdType id) {
         boolean isInvalid = false;
         if (id == null || id.getSchemeId() == null) {
-            return isInvalid;
+            return false;
         }
         try {
             String schemeId = id.getSchemeId();
@@ -844,8 +801,7 @@ public abstract class AbstractFact {
     }
 
     private boolean isIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0)
-                && !(bigDecimal.toPlainString().indexOf(".") > 0);
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) && !(bigDecimal.toPlainString().indexOf(".") > 0);
     }
 
     public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
