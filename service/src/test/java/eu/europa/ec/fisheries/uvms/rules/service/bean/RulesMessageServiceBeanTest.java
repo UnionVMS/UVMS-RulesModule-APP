@@ -45,7 +45,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -238,7 +238,7 @@ public class RulesMessageServiceBeanTest {
         ValidationMessageType validationMessageType = new ValidationMessageType();
         validationMessageType.setBrId("SALE-L01-00-0011");
 
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setValidationMessages(Collections.singletonList(validationMessageType));
 
 
@@ -252,7 +252,7 @@ public class RulesMessageServiceBeanTest {
         ValidationMessageType validationMessageType = new ValidationMessageType();
         validationMessageType.setBrId("SALE-L01-00-0012");
 
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setValidationMessages(Arrays.asList(validationMessageType));
 
 
@@ -261,8 +261,8 @@ public class RulesMessageServiceBeanTest {
         assertEquals(false, guidOrFluxOnValue);
     }
 
-    private ValidationResultDto getValidationResult() {
-        ValidationResultDto faReportValidationResult = new ValidationResultDto();
+    private ValidationResult getValidationResult() {
+        ValidationResult faReportValidationResult = new ValidationResult();
         faReportValidationResult.setError(true);
         faReportValidationResult.setOk(false);
         faReportValidationResult.setWarning(false);

@@ -25,7 +25,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -103,7 +103,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
-            ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
+            ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(faQueryValidationReport));
 
             SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest = null;
@@ -116,7 +116,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
                         updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
-                        getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
+                        geRulesFAResponseServiceBean().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
                         needToSendToExchange = false;
                     }
                 } else { // Request doesn't have permissions
@@ -143,11 +143,11 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
             }
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(failure));
             faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error("Error during validation of the received FLUXFAQueryMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(failure));
             faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         }
     }
@@ -168,7 +168,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(XML, requestStr);
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues);
-            ValidationResultDto faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
+            ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
                 String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
@@ -183,11 +183,11 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
 
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
             faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
             faResponseServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         } catch (MessageException | ExchangeModelMarshallException | ServiceException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
@@ -205,7 +205,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
     }
 
     @Override
-    RulesFAResponseServiceBean getResponseValidator() {
+    RulesFAResponseServiceBean geRulesFAResponseServiceBean() {
         return faResponseServiceBean;
     }
 }

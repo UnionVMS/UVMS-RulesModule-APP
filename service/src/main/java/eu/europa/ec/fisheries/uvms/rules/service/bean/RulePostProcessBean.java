@@ -31,7 +31,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleWarning;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -45,7 +45,7 @@ public class RulePostProcessBean {
     private RulesDomainModel rulesDomainModel;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ValidationResultDto checkAndUpdateValidationResult(Collection<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
+    public ValidationResult checkAndUpdateValidationResult(Collection<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
         try {
             boolean isError = false;
             boolean isWarning = false;
@@ -74,7 +74,7 @@ public class RulePostProcessBean {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ValidationResultDto checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+    public ValidationResult checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
             List<ValidationMessageType> validationMessages = new ArrayList<>();
@@ -99,8 +99,8 @@ public class RulePostProcessBean {
         }
     }
 
-    private ValidationResultDto createValidationResultDtoFromParams(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+    private ValidationResult createValidationResultDtoFromParams(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setError(isError);
         validationResultDto.setWarning(isWarning);
         validationResultDto.setOk((isOk));
