@@ -608,30 +608,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testSchemeIdContainsOnly() {
-        IdType idType = new IdType();
-        idType.setSchemeId("CFR");
-        IdType idType2 = new IdType();
-        idType2.setSchemeId("IRCS");
-        List<IdType> idTypes = Arrays.asList(idType, idType2);
-        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
-        assertTrue(result);
-    }
-
-    @Test
-    public void testSchemeIdContainsOnly2() {
-        IdType idType = new IdType();
-        idType.setSchemeId("CFR");
-        IdType idType2 = new IdType();
-        idType2.setSchemeId("IRCS");
-        IdType idType3 = new IdType();
-        idType3.setSchemeId("EXT");
-        List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
-        assertFalse(result);
-    }
-
-    @Test
     public void testContainsSchemeIdSad() {
 
         IdType idType = new IdType();
@@ -774,17 +750,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIdListContainsValue() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.idListContainsValue(idTypes, "value1", "CFR");
-        assertTrue(result);
-    }
-
-    @Test
     public void testSchemeIdContainsAny() {
 
         IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
@@ -819,17 +784,6 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
-
-    @Test
-    public void testSchemeIdContainsAllOrNone() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
-        assertFalse(result);
-    }
 
     @Test
     public void testSchemeIdContainsAllWithNull() {

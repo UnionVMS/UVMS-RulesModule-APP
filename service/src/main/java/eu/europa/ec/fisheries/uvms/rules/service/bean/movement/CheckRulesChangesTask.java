@@ -11,6 +11,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
+import java.util.Date;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleIntervalType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.uvms.exchange.model.util.DateUtils;
@@ -20,10 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-
-public class CheckRulesChangesTask implements Runnable {
+public class CheckRulesChangesTask {
 
     private final static Logger LOG = LoggerFactory.getLogger(CheckRulesChangesTask.class);
 
@@ -37,7 +36,7 @@ public class CheckRulesChangesTask implements Runnable {
         this.rulesService = rulesService;
     }
 
-    @Override
+
     public void run() {
         //clearCustomRules();
         LOG.info("Checking for changes in sanity rules");
