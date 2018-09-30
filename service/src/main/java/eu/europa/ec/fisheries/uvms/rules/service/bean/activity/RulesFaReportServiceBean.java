@@ -239,7 +239,7 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
     }
 
     @Override
-    RulesFAResponseServiceBean geRulesFAResponseServiceBean() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseValidatorAndSender;
     }
 

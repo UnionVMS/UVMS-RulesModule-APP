@@ -116,7 +116,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
                         updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
-                        geRulesFAResponseServiceBean().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
+                        getResponseValidator().sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
                         needToSendToExchange = false;
                     }
                 } else { // Request doesn't have permissions
@@ -205,7 +205,7 @@ public class RulesFaQueryServiceBean extends AbstractFLUXService {
     }
 
     @Override
-    RulesFAResponseServiceBean geRulesFAResponseServiceBean() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseServiceBean;
     }
 }

@@ -115,5 +115,5 @@ abstract class AbstractFLUXService {
 
     abstract AbstractConsumer getActivityConsumer();
 
-    abstract RulesFAResponseServiceBean geRulesFAResponseServiceBean();
+    abstract RulesFAResponseServiceBean getResponseValidator();
 }

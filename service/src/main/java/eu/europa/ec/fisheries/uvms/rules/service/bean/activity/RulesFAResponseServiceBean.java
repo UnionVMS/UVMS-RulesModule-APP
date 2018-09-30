@@ -193,7 +193,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, onValue, status, destination, getExchangePluginType(pluginType), id);
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, null, status, destination, getExchangePluginType(pluginType), id);
             getRulesProducer().sendDataSourceMessage(fluxFAResponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
@@ -513,7 +513,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
     }
 
     @Override
-    RulesFAResponseServiceBean geRulesFAResponseServiceBean() {
+    RulesFAResponseServiceBean getResponseValidator() {
         return faResponseServiceBean;
     }
 
